@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
-
+import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -13,12 +13,8 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,12 +28,9 @@ import java.security.cert.X509CRL;
  * @author Daniel Fisher
  * @since 4.1
  */
-@RefreshScope
-@Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
-    private static final String LDAP_PREFIX = "ldap";
-    
+
     /** Search exec that looks for the attribute. */
     protected SearchExecutor searchExecutor;
 
@@ -45,7 +38,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
     protected ConnectionConfig connectionConfig;
 
     /** Serialization support. */
-    protected LdaptiveResourceCRLFetcher() {}
+    public LdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -59,22 +52,10 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         this.connectionConfig = connectionConfig;
         this.searchExecutor = searchExecutor;
     }
-
-    private boolean isLdap(final String r) {
-        return r.toLowerCase().startsWith(LDAP_PREFIX);
-    }
-
-    private boolean isLdap(final URI r) {
-        return r.getScheme().equalsIgnoreCase(LDAP_PREFIX);
-    }
-
-    private boolean isLdap(final URL r) {
-        return r.getProtocol().equalsIgnoreCase(LDAP_PREFIX);
-    }
-
+    
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
-        if (isLdap(crl.toString())) {
+        if (LdapUtils.isLdapConnectionUrl(crl.toString())) {
                 return fetchCRLFromLdap(crl);
         }
         return super.fetch(crl);
@@ -82,7 +63,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     @Override
     public X509CRL fetch(final URI crl) throws IOException, CRLException, CertificateException {
-        if (isLdap(crl)) {
+        if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
         return super.fetch(crl);
@@ -90,7 +71,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     @Override
     public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
-        if (isLdap(crl)) {
+        if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
         return super.fetch(crl);
@@ -98,7 +79,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     @Override
     public X509CRL fetch(final String crl) throws IOException, CRLException, CertificateException {
-        if (isLdap(crl)) {
+        if (LdapUtils.isLdapConnectionUrl(crl)) {
             return fetchCRLFromLdap(crl);
         }
         return super.fetch(crl);
@@ -186,14 +167,12 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
     }
-
-    @Autowired(required=false)
-    public void setSearchExecutor(@Qualifier("ldaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
+    
+    public void setSearchExecutor(final SearchExecutor searchExecutor) {
         this.searchExecutor = searchExecutor;
     }
-
-    @Autowired(required=false)
-    public void setConnectionConfig(@Qualifier("ldaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
+    
+    public void setConnectionConfig(final ConnectionConfig connectionConfig) {
         this.connectionConfig = connectionConfig;
     }
 }

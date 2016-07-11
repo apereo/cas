@@ -4,9 +4,6 @@ import org.apereo.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,8 +17,6 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("throttledUseAndTimeoutExpirationPolicy")
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -34,11 +29,8 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.throttled.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
-    /** Time time between which a ticket must wait to be used again. */
-    @Value("#{${tgt.throttled.timeInBetweenUsesInSeconds:5}*1000}")
     private long timeInBetweenUsesInMilliSeconds;
 
     /**
@@ -59,10 +51,9 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        final ZonedDateTime killTime  = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
 
-        if (ticketState.getCountOfUses() == 0
-            && (currentTime.isBefore(killTime))) {
+        if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
                     + "than the timeToKillInMilliseconds");
             return false;

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class ThrottledUseAndTimeoutExpirationPolicyTests  {
+public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     private static final long TIMEOUT = 2000;
 

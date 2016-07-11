@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.web.flow.mdui;
 
+import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +32,9 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
         super(metadataResources);
     }
 
+    public DynamicMetadataResolverAdapter() {
+    }
+
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
         buildMetadataResolverAggregate(entityId);
@@ -39,13 +44,16 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         final String encodedId = EncodingUtils.urlEncode(entityId);
-        final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
 
-        final HttpURLConnection httpcon = (HttpURLConnection) (url.openConnection());
-        httpcon.setDoOutput(true);
-        httpcon.addRequestProperty("Accept", "*/*");
-        httpcon.setRequestMethod("GET");
-        httpcon.connect();
-        return httpcon.getInputStream();
+        if (resource instanceof UrlResource) {
+            final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
+            final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+            httpcon.setDoOutput(true);
+            httpcon.addRequestProperty("Accept", "*/*");
+            httpcon.setRequestMethod("GET");
+            httpcon.connect();
+            return httpcon.getInputStream();
+        }
+        return ClosedInputStream.CLOSED_INPUT_STREAM;
     }
 }

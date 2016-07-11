@@ -1,4 +1,5 @@
 @import "variables";
+
 /*
  * CAS default overrides
  */
@@ -24,7 +25,7 @@
     h2 {
       font-weight: 300;
       color: black;
-      font-family: Lato;
+      font-family: 'Lato', sans-serif;
       margin-top: 0;
     }
 
@@ -36,7 +37,6 @@
     }
 
   }
-
 
   form > h2 {
     display: none;
@@ -56,7 +56,7 @@
   }
 
   input[type=text], input[type=password] {
-    font-size: 1.3em;
+    font-size: 1.82rem;
     padding: 5px;
     width: 100%;
   }
@@ -65,46 +65,21 @@
     text-align: center;
   }
 
-  .btn-submit {
-    background: #70ba61;
-    border: 0;
-    padding: 10px 25px;
-    font-weight: normal;
-    color: white;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    font-size: 1.25em;
-  }
-
   .btn-reset {
-    background: #eee;
-    padding: 10px 20px;
-    border: 0;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-
     display: none;
-  }
 
-  .btn-submit:hover, .btn-reset:hover {
-    cursor: pointer;
-  }
+    &:hover {
+      cursor: pointer;
+      background: #d4d4d4;
 
-  .btn-submit:hover {
-    background: #7fd36e;
-  }
-
-  .btn-reset:hover {
-    background: #d4d4d4;
+    }
   }
 
   #yubiKeyForm {
     > h2 {
       display: block;
     }
-    
+
     .btn-reset {
       display: inline-block;
     }
@@ -139,9 +114,6 @@
   }
 }
 
-
-
-
 #list-languages h3, #list-providers h3 {
   margin-bottom: 1.4em;
 }
@@ -154,11 +126,11 @@
 
 #notices {
   h2 {
-    font-size: 1.25em;
+    font-size: 1.75rem;
   }
 
   p {
-    font-size: 10pt;
+    font-size: 1.33rem;
   }
 
   ul.list-group .fa {
@@ -174,7 +146,7 @@
   .well {
     h3 {
       margin-top: 0;
-      font-size: 1.25em;
+      font-size: 1.75rem;
     }
 
     ul.list-group {

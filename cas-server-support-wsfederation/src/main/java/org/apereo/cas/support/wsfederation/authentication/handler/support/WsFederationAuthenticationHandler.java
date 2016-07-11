@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -20,8 +18,6 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
-@RefreshScope
-@Component("adfsAuthNHandler")
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**

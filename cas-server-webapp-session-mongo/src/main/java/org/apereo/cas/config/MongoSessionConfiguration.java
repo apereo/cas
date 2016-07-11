@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.mongo.JdkMongoSessionConverter;
@@ -13,6 +15,7 @@ import org.springframework.session.data.mongo.config.annotation.web.http.EnableM
  */
 @Configuration("mongoSessionConfiguration")
 @EnableMongoHttpSession
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoSessionConfiguration {
     
     /**
@@ -20,7 +23,7 @@ public class MongoSessionConfiguration {
      *
      * @return the jdk mongo session converter
      */
-    @Bean(name="jdkMongoSessionConverter")
+    @Bean
     public JdkMongoSessionConverter jdkMongoSessionConverter() {
         return new JdkMongoSessionConverter();
     }

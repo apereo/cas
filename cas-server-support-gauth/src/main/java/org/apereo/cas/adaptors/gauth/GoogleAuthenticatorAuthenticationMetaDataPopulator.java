@@ -6,11 +6,6 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationMetaDataPopulator} which inserts the
@@ -19,21 +14,19 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAuthenticatorAuthenticationMetaDataPopulator")
 public class GoogleAuthenticatorAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
     private String authenticationContextAttribute;
-
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
-
-
-    @Autowired
-    @Qualifier("googleAuthenticatorAuthenticationProvider")
     private MultifactorAuthenticationProvider provider;
+
+    public GoogleAuthenticatorAuthenticationMetaDataPopulator(final String authenticationContextAttribute, 
+                                                              final AuthenticationHandler authenticationHandler, 
+                                                              final MultifactorAuthenticationProvider provider) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+        this.authenticationHandler = authenticationHandler;
+        this.provider = provider;
+    }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {

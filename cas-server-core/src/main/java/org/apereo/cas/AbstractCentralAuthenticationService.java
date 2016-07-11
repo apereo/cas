@@ -6,7 +6,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -28,13 +27,12 @@ import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -69,38 +67,32 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * {@link TicketRegistry}  for storing and retrieving tickets as needed.
      */
-    @Resource(name = "ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /**
      * Implementation of Service Manager.
      */
-    @Resource(name = "servicesManager")
     protected ServicesManager servicesManager;
 
     /**
      * The logout manager.
      **/
-    @Resource(name = "logoutManager")
     protected LogoutManager logoutManager;
 
     /**
      * The ticket factory.
      **/
-    @Resource(name = "defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
     /**
      * The service selection strategy during validation events.
      **/
-    @Resource(name = "validationServiceSelectionStrategies")
     protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    @Resource(name = "authenticationPolicyFactory")
     protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
@@ -148,9 +140,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param principalFactory the principal factory
      */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory")
-                                    final PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 
@@ -173,6 +163,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
+    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager", 
+            noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
@@ -199,6 +191,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return (T) ticket;
     }
 
+    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
@@ -213,22 +206,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
         return c;
     }
-
-    /**
-     * Gets the authentication satisfied by policy.
-     *
-     * @param authenticationResult the authentication result
-     * @param context              the context
-     * @return the authentication satisfied by policy
-     * @throws AbstractTicketException the ticket exception
-     */
-    protected Authentication getAuthenticationSatisfiedByPolicy(
-            final AuthenticationResult authenticationResult,
-            final ServiceContext context) throws AbstractTicketException {
-
-        return getAuthenticationSatisfiedByPolicy(authenticationResult.getAuthentication(), context);
-    }
-
+    
     /**
      * Gets the authentication satisfied by policy.
      *
@@ -305,7 +283,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.logoutManager = logoutManager;
     }
 
-    public void setValidationServiceSelectionStrategies(final List<ValidationServiceSelectionStrategy> list) {
+    public void setValidationServiceSelectionStrategies(final List list) {
         this.validationServiceSelectionStrategies = list;
     }
 }

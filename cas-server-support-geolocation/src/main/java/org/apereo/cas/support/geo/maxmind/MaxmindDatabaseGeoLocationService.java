@@ -1,16 +1,16 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import com.google.common.base.Throwables;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.geo.GeoLocation;
 import org.apereo.cas.support.geo.GeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -23,15 +23,11 @@ import java.net.InetAddress;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Service("maxmindDatabaseGeoLocationService")
 public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${geo.maxmind.city.db:}")
-    private Resource cityDatabase;
-
-    @Value("${geo.maxmind.country.db:}")
-    private Resource countryDatabase;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     private DatabaseReader cityDatabaseReader;
     private DatabaseReader countryDatabaseReader;
@@ -42,15 +38,19 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     @PostConstruct
     public void init() {
         try {
-            if (this.cityDatabase.exists()) {
-                this.cityDatabaseReader = new DatabaseReader.Builder(this.cityDatabase.getFile()).withCache(new CHMCache()).build();
+            if (casProperties.getMaxmind().getCityDatabase().exists()) {
+                this.cityDatabaseReader =
+                        new DatabaseReader.Builder(casProperties.getMaxmind().getCityDatabase().getFile())
+                                .withCache(new CHMCache()).build();
             }
 
-            if (this.countryDatabase.exists()) {
-                this.countryDatabaseReader = new DatabaseReader.Builder(this.countryDatabase.getFile()).withCache(new CHMCache()).build();
+            if (casProperties.getMaxmind().getCountryDatabase().exists()) {
+                this.countryDatabaseReader =
+                        new DatabaseReader.Builder(casProperties.getMaxmind().getCountryDatabase().getFile())
+                                .withCache(new CHMCache()).build();
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

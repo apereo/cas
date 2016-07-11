@@ -12,11 +12,6 @@ import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
@@ -24,7 +19,6 @@ import javax.annotation.Nullable;
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
- * <p>
  * <ol>
  * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
  * but the {@link #setAllowMultipleResults(boolean)} property may be toggled to change that behavior.</li>
@@ -37,37 +31,22 @@ import javax.annotation.Nullable;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RefreshScope
-@Component("ldapAuthorizationGenerator")
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-
-    /**
-     * Default role prefix.
-     */
-    public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-
+    
     private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
-    private ConnectionFactory connectionFactory;
 
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorUserSearchExecutor")
+    private ConnectionFactory connectionFactory;
+    
     private SearchExecutor userSearchExecutor;
 
-    @Value("${ldap.authorizationgenerator.role.attribute:}")
     private String roleAttribute;
 
-    @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + '}')
     private String rolePrefix;
 
     /**
      * Flag that indicates whether multiple search results are allowed for a given credential.
      */
-    @Value("${ldap.authorizationgenerator.allow.multiple:false}")
     private boolean allowMultipleResults;
 
     /**

@@ -3,9 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.CasProtocolConstants;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("webApplicationServiceFactory")
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
     @Override

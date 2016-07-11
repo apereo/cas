@@ -25,12 +25,6 @@ Duo offers several options for authenticating users:
 
 ## Configuration
 
-```properties
-# cas.mfa.duo.api.host=
-# cas.mfa.duo.integration.key=
-# cas.mfa.duo.secret.key=
-# cas.mfa.duo.application.key=
-# cas.mfa.duo.rank=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 

@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -37,7 +37,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE);
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false);
         dao.save(service);
         dao.load();
     }
@@ -52,6 +52,7 @@ public class SamlRegisteredServiceTests {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(Collections.singletonList(service));
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao);
+        impl.load();
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));

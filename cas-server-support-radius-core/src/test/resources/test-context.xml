@@ -8,19 +8,10 @@
     <bean id="radiusServer"
           class="org.apereo.cas.adaptors.radius.JRadiusServerImpl"
           c:protocol="EAP_MSCHAPv2"
-          c:clientFactory-ref="radiusClientFactory" />
+          c:clientFactory-ref="radiusClientFactory"/>
 
     <bean id="radiusClientFactory"
           class="org.apereo.cas.adaptors.radius.RadiusClientFactory"
           p:inetAddress="localhost"
-          p:sharedSecret="fqhwhgads" />
-
-    <bean id="radiusAuthenticationHandler"
-          class="org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler">
-      <property name="servers">
-          <list>
-              <ref bean="radiusServer" />
-          </list>
-      </property>
-    </bean>
+          p:sharedSecret="fqhwhgads"/>
 </beans>

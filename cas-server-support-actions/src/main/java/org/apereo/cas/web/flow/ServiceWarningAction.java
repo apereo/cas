@@ -3,8 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.principal.Service;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -19,8 +17,6 @@ import java.net.URI;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("serviceWarningAction")
 public class ServiceWarningAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {

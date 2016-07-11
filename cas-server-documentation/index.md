@@ -6,8 +6,8 @@ title: CAS - Home
 # Enterprise Single Sign-On
 
 * Java (Spring Webflow/MVC servlet) server component
-* Pluggable authentication support (LDAP, database, X.509, 2-factor)
-* Support for multiple protocols (CAS, SAML, OAuth, OpenID)
+* Pluggable authentication support (LDAP, Database, X.509, MFA)
+* Support for multiple protocols (CAS, SAML, OAuth, OpenID, OIDC)
 * Cross-platform client support (Java, .Net, PHP, Perl, Apache, etc)
 * Integrates with uPortal, Liferay, BlueSocket, Moodle, and Google Apps to name a few
 
@@ -21,17 +21,12 @@ We recommend reading the following documentation in order to plan and execute a 
 
 * [Architecture](planning/Architecture.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
-* [Security Guide](planning/Security-Guide.html)
+* [Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [Authentication](installation/Configuring-Authentication-Components.html)
-* [Maven Overlay Installation](installation/Maven-Overlay-Installation.html)
-* [UI Customization](installation/User-Interface-Customization.html)
-* [CAS Protocol](protocol/CAS-Protocol.html)
-* [CAS Clients](integration/CAS-Clients.html)
 * [Attribute Release](integration/Attribute-Release.html)
 
-
 ## Demo
-The CAS web application is available for demo at [https://jasigcas.herokuapp.com](https://jasigcas.herokuapp.com)
+The CAS web application is available for demo at [https://jasigcas.herokuapp.com/cas](https://jasigcas.herokuapp.com/cas)
 
 ## Development
 CAS development is powered by: <br/>

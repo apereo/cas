@@ -179,6 +179,10 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.rejectedAttributes = rejectedAttributes;
     }
 
+    public Map<String, Set<String>> getRejectedAttributes() {
+        return this.rejectedAttributes;
+    }
+
     /**
      * {@inheritDoc}
      *

@@ -33,11 +33,7 @@ CAS attempts to record the geolocation properties of the authentication requests
 Should consent not be granted or geolocation not supported by the browser, CAS will ignore the geolocation data when it attempts to 
 record the event. 
 
-If you wish to completely disallow geolocation tracking, configure the following settings:
-
-```properties
-# events.track.geolocation=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Configuration
 The following storage backends are available for consumption of events:
@@ -53,13 +49,7 @@ Stores authentication events into a MongoDb NoSQL database.
 </dependency>
 ```
 
-Configuration consists of:
-
-```properties
-# mongodb.events.clienturi=mongodb://uri
-# mongodb.events.dropcollection=false
-# mongodb.events.collection=collectionName
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### JPA
 Stores authentication events into a RDBMS.
@@ -72,17 +62,4 @@ Stores authentication events into a RDBMS.
 </dependency>
 ```
 
-Configuration consists of:
-
-```properties
-# events.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
-# events.jpa.database.ddl.auto=create-drop
-# events.jpa.database.batchSize=1
-# events.jpa.database.driverClass=org.hsqldb.jdbcDriver
-# events.jpa.database.url=jdbc:hsqldb:mem:cas-events
-# events.jpa.database.user=sa
-# events.jpa.database.password=
-# events.jpa.database.pool.maxSize=18
-# events.jpa.database.pool.maxIdleTime=1000
-# events.jpa.database.pool.maxWait=2000
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

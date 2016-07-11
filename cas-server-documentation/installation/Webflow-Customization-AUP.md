@@ -92,13 +92,5 @@ You will need to make sure, prior to using the `ldaptive` namespace, that it is 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or 
 to accommodate other situations.
 
-The following settings may be used:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-# cas.aup.ldap.search.filter=cn={0}
-# cas.aup.ldap.url=
-# cas.aup.ldap.ssl=
-# cas.aup.ldap.startTLS=
-# cas.aup.ldap.basedn=dc=example,dc=org
-# cas.aup.attribute=
-```

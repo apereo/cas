@@ -33,7 +33,7 @@ Practically, it means that all CAS urls must use HTTPS, but it **also** means th
 ### Connections to Dependent Systems
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
-be compensating controls that make secure transport uncessary. Private networks and corporate networks with strict
+be compensating controls that make secure transport unnecessary. Private networks and corporate networks with strict
 acces controls are common exceptions, but secure transport is recommended nonetheless.
 Client certification validation can be another good solution for LDAP to bring sufficient security.
 
@@ -220,4 +220,4 @@ on the CAS login screen to provide an interstitial notification page that is dis
 By default the notification page offers the user an option to proceed with CAS authentication or abort by
 navigating away from the target service.
 
-[cas-sec-filter]: https://github.com/Jasig/cas-server-security-filter
+[cas-sec-filter]: https://github.com/apereo/cas-server-security-filter

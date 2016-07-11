@@ -8,10 +8,6 @@ import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Authenticator for client credentials authentication.
@@ -19,20 +15,10 @@ import org.springframework.stereotype.Component;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oAuthClientAuthenticator")
 public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
-
-    /** The OAuth validator. */
     
-    @Autowired
-    @Qualifier("oAuthValidator")
     private OAuthValidator validator;
-
-    /** The services manager. */
     
-    @Autowired
-    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Override

@@ -1,10 +1,5 @@
 package org.apereo.cas.web.v3;
 
-import org.apereo.cas.validation.ValidationSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
 @Controller("v3ProxyValidateController")
 public class V3ProxyValidateController extends V3ServiceValidateController {
     /**
@@ -33,15 +27,6 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         return super.handleRequestInternal(request, response);
-    }
-
-    @Override
-    @Autowired
-    @Scope("prototype")
-    public void setValidationSpecification(
-            @Qualifier("cas20ProtocolValidationSpecification")
-            final ValidationSpecification validationSpecification) {
-        super.setValidationSpecification(validationSpecification);
     }
 
 }

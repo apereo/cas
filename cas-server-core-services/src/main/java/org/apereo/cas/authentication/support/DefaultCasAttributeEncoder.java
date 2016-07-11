@@ -6,9 +6,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 /**
@@ -21,8 +18,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("casAttributeEncoder")
 public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
 
     /**

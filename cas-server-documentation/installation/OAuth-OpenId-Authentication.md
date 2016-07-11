@@ -95,30 +95,19 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 ## OAuth Code Expiration Policy
 
-The expiration policy for OAuth codes is controlled by the following properties:
-
-```properties
-# oauth.code.numberOfUses=1
-# oauth.code.timeToKillInSeconds=1
-```
+The expiration policy for OAuth codes is controlled by the `application.properties` file:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
 ## OAuth Access Token Expiration Policy
 
-The expiration policy for OAuth access tokens is controlled by the following properties:
-
-```properties
-# oauth.access.token.maxTimeToLiveInSeconds=28800
-# oauth.access.token.timeToKillInSeconds=7200
-```
+The expiration policy for OAuth access tokens is controlled by the `application.properties` file:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## OAuth Refresh Token Expiration Policy
 
-The expiration policy for OAuth refresh tokens is controlled by the following property:
-
-```properties
-# oauth.refresh.token.timeToKillInSeconds=2592000
-```
+The expiration policy for OAuth refresh tokens is controlled by the `application.properties` file.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 # OpenID Authentication
 

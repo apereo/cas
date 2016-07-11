@@ -3,12 +3,12 @@
 <Configuration monitorInterval="10" packages="org.apereo.cas.logging">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%d %p [%c{1}] - &lt;%m&gt;%n"/>
         </Console>
-
+        
         <RollingFile name="file" fileName="cas.log" append="true"
                      filePattern="cas-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -77,6 +77,9 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
+        <AsyncLogger name="org.springframework.boot.actuate.autoconfigure" level="info" additivity="false">
+            <AppenderRef ref="casConsole"/>
+        </AsyncLogger>
         <AsyncLogger name="org.springframework.webflow" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
@@ -90,6 +93,14 @@
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.web" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.orm.jpa" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.scheduling" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -129,6 +140,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
+        <AsyncLogger name="org.springframework.context.annotation" level="off" additivity="false" />
         <AsyncLogger name="org.jasig.spring" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>

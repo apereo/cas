@@ -69,4 +69,11 @@ public interface ServicesManager {
      * @return true if it exists, false otherwise.
      */
     boolean matchesExistingService(Service service);
+
+    /**
+     * Inform the ServicesManager to reload its list of services if its cached
+     * them. Note that this is a suggestion and that ServicesManagers are free
+     * to reload whenever they want.
+     */
+    void load();
 }

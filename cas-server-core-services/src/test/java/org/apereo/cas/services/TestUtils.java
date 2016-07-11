@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -81,7 +82,7 @@ public final class TestUtils {
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
-        final Map<String, Set<String>>  attributes = new HashMap<>();
+        final Map<String, Set<String>> attributes = new HashMap<>();
         Set<String> attributeValues = new HashSet<>();
         attributeValues.add("uid");
 
@@ -102,7 +103,7 @@ public final class TestUtils {
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        try  {
+        try {
             final RegexRegisteredService s = new RegexRegisteredService();
             s.setServiceId(id);
             s.setEvaluationOrder(1);
@@ -129,7 +130,7 @@ public final class TestUtils {
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
             final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(TimeUnit.SECONDS, 10);
+                    new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
             repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
@@ -138,7 +139,7 @@ public final class TestUtils {
 
             return s;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

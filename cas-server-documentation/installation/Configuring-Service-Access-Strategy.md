@@ -73,7 +73,8 @@ The following properties are available:
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`.
 
-You will also need to ensure `grouper.client.properties` is available on the classpath:
+You will also need to ensure `grouper.client.properties` is available on the classpath
+with the following configured properties:
 
 ```properties
 grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
@@ -250,7 +251,7 @@ also must not have an attribute "role" whose value matches the pattern "deny.+"
     "requireAllAttributes" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
+      "grouperAttributes" : [ "java.util.HashSet", [ "faculty" ] ]
     },
     "groupField" : "DISPLAY_EXTENSION"
   }

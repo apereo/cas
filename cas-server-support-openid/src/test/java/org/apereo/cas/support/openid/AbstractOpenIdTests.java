@@ -1,28 +1,61 @@
 package org.apereo.cas.support.openid;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.OpenIdConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
+import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.runner.RunWith;
-import org.openid4java.server.ServerAssociationStore;
+import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Bootstrap context for openid tests.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/META-INF/spring/openid-config.xml")
+@SpringApplicationConfiguration(locations = "classpath:/openid-config.xml",
+        classes = {OpenIdConfiguration.class, 
+                CasProtocolViewsConfiguration.class,
+                CasCookieConfiguration.class, 
+                CasValidationConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreConfiguration.class,
+                RefreshAutoConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreValidationConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreUtilConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class AbstractOpenIdTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    @Qualifier("serverManager")
+    protected ServerManager serverManager;
+    
     @Autowired
     @Qualifier("openIdServiceFactory")
     protected OpenIdServiceFactory openIdServiceFactory;
@@ -34,11 +67,7 @@ public class AbstractOpenIdTests {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("serverAssociations")
-    protected ServerAssociationStore sharedAssociations;
-
+    
     public OpenIdServiceFactory getOpenIdServiceFactory() {
         return openIdServiceFactory;
     }
@@ -50,10 +79,7 @@ public class AbstractOpenIdTests {
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return authenticationSystemSupport;
     }
-
-    public ServerAssociationStore getSharedAssociations() {
-        return sharedAssociations;
-    }
+    
 }
 
 

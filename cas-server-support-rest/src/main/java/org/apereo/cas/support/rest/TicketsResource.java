@@ -1,29 +1,24 @@
 package org.apereo.cas.support.rest;
 
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,9 +41,9 @@ import java.util.stream.Collectors;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
- *
+ * <p>
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- *
+ * </p>
  * <ul>
  * <li>{@code POST /v1/tickets}</li>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
@@ -62,28 +57,16 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
+    
     private CentralAuthenticationService centralAuthenticationService;
 
-    
-    @Autowired(required = false)
-    @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    @Autowired(required = false)
     private CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
 
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
+    private TicketRegistrySupport ticketRegistrySupport;
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
@@ -92,15 +75,13 @@ public class TicketsResource {
      * Create new ticket granting ticket.
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
-     * @param request raw HttpServletRequest used to call this method
-     *
+     * @param request     raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
-     *
      * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                                   final HttpServletRequest request) throws JsonProcessingException {
+                                                             final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
@@ -119,8 +100,7 @@ public class TicketsResource {
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
 
-        }
-        catch (final AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
                     .map(handlerErrorEntry -> handlerErrorEntry.getValue().getSimpleName())
                     .collect(Collectors.toCollection(LinkedList::new));
@@ -145,13 +125,12 @@ public class TicketsResource {
      * Create new service ticket.
      *
      * @param requestBody service application/x-www-form-urlencoded value
-     * @param tgtId ticket granting ticket id URI path param
-     *
+     * @param tgtId       ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                            @PathVariable("tgtId") final String tgtId) {
+                                                      @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
@@ -177,7 +156,6 @@ public class TicketsResource {
      * Destroy ticket granting ticket.
      *
      * @param tgtId ticket granting ticket id URI path param
-     *
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
@@ -223,34 +201,9 @@ public class TicketsResource {
         return this.ticketRegistrySupport;
     }
 
-    /**
-     * Default implementation of CredentialFactory.
-     */
-    private static class DefaultCredentialFactory implements CredentialFactory {
-        @Override
-        public Credential fromRequestBody(final MultiValueMap<String, String> requestBody) {
-            final String username = requestBody.getFirst(USERNAME);
-            final String password = requestBody.getFirst(PASSWORD);
-            if (username == null || password == null) {
-                throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
-            }
-            return new UsernamePasswordCredential(requestBody.getFirst(USERNAME), requestBody.getFirst(PASSWORD));
-        }
+    public void setCredentialFactory(final CredentialFactory credentialFactory) {
+        this.credentialFactory = credentialFactory;
     }
 
-    /**
-     * Exception to indicate bad payload.
-     */
-    private static class BadRequestException extends IllegalArgumentException {
-        private static final long serialVersionUID = 6852720596988243487L;
 
-        /**
-         * Ctor.
-         *
-         * @param msg error message
-         */
-        BadRequestException(final String msg) {
-            super(msg);
-        }
-    }
 }

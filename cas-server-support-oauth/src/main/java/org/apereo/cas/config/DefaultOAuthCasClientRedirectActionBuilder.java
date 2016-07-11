@@ -7,7 +7,6 @@ import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.context.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * This is {@link DefaultOAuthCasClientRedirectActionBuilder}.
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Component("defaultOAuthCasClientRedirectActionBuilder")
 public class DefaultOAuthCasClientRedirectActionBuilder implements OAuthCasClientRedirectActionBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultOAuthCasClientRedirectActionBuilder.class);
     

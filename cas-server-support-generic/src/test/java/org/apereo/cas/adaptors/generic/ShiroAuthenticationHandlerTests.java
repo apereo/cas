@@ -20,7 +20,7 @@ public class ShiroAuthenticationHandlerTests {
     @Test
     public void checkAuthenticationSuccessful() throws Exception {
         final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler();
-        shiro.setShiroConfiguration(new ClassPathResource("shiro.ini"));
+        shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
         final RememberMeUsernamePasswordCredential creds =
                 new RememberMeUsernamePasswordCredential();
@@ -35,7 +35,7 @@ public class ShiroAuthenticationHandlerTests {
     @Test
     public void checkAuthenticationSuccessfulRolesAndPermissions() throws Exception {
         final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler();
-        shiro.setShiroConfiguration(new ClassPathResource("shiro.ini"));
+        shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
         shiro.setRequiredRoles(Collections.singleton("admin"));
         shiro.setRequiredPermissions(Collections.singleton("superuser:deleteAll"));
 
@@ -52,7 +52,7 @@ public class ShiroAuthenticationHandlerTests {
     @Test(expected=FailedLoginException.class)
     public void checkAuthenticationSuccessfulMissingRole() throws Exception {
         final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler();
-        shiro.setShiroConfiguration(new ClassPathResource("shiro.ini"));
+        shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
         shiro.setRequiredRoles(Collections.singleton("student"));
 
         final RememberMeUsernamePasswordCredential creds =
@@ -66,7 +66,7 @@ public class ShiroAuthenticationHandlerTests {
     @Test(expected=FailedLoginException.class)
     public void checkAuthenticationSuccessfulMissingPermission() throws Exception {
         final ShiroAuthenticationHandler shiro = new ShiroAuthenticationHandler();
-        shiro.setShiroConfiguration(new ClassPathResource("shiro.ini"));
+        shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
         shiro.setRequiredPermissions(Collections.singleton("dosomething"));
 
         final RememberMeUsernamePasswordCredential creds =

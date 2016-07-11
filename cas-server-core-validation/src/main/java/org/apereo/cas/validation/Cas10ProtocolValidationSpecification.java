@@ -1,9 +1,5 @@
 package org.apereo.cas.validation;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 /**
  * Validation specification for the CAS 1.0 protocol. This specification checks
  * for the presence of renew=true and if requested, succeeds only if ticket
@@ -14,9 +10,6 @@ import org.springframework.stereotype.Component;
  * @author Drew Mazurek
  * @since 3.0.0
  */
-@RefreshScope
-@Component("cas10ProtocolValidationSpecification")
-@Scope(value = "prototype")
 public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**

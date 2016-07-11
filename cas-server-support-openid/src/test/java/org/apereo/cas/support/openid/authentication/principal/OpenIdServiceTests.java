@@ -31,7 +31,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "http://openid.ja-sig.org/battags");
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.ja-sig.org/?service=fa");
         request.addParameter(OpenIdProtocolConstants.OPENID_MODE, "checkid_setup");
-        association = sharedAssociations.generate(Association.TYPE_HMAC_SHA1, 2);
+        association = this.serverManager.getSharedAssociations().generate(Association.TYPE_HMAC_SHA1, 2);
     }
 
     @Test

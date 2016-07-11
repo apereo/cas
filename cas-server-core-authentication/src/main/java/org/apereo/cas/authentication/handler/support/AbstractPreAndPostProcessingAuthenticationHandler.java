@@ -20,7 +20,6 @@ import java.util.List;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.1
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
@@ -39,8 +38,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * Template method to perform arbitrary post-authentication actions.
      *
      * @param credential the supplied credential
-     * @param result the result of the authentication attempt.
-     *
+     * @param result     the result of the authentication attempt.
      * @return An authentication handler result that MAY be different or modified from that provided.
      */
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
@@ -64,14 +62,11 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     /**
      * Performs the details of authentication and returns an authentication handler result on success.
      *
-     *
      * @param credential Credential to authenticate.
-     *
      * @return Authentication handler result on success.
-     *
      * @throws GeneralSecurityException On authentication failure that is thrown out to the caller of
-     * {@link #authenticate(Credential)}.
-     * @throws PreventedException On the indeterminate case when authentication is prevented.
+     *                                  {@link #authenticate(Credential)}.
+     * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
     protected abstract HandlerResult doAuthentication(Credential credential)
             throws GeneralSecurityException, PreventedException;
@@ -81,14 +76,14 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * on successful authentication events.
      *
      * @param credential the credential on which the authentication was successfully performed.
-     * Note that this credential instance may be different from what was originally provided
-     * as transformation of the username may have occurred, if one is in fact defined.
-     * @param principal the resolved principal
-     * @param warnings the warnings
+     *                   Note that this credential instance may be different from what was originally provided
+     *                   as transformation of the username may have occurred, if one is in fact defined.
+     * @param principal  the resolved principal
+     * @param warnings   the warnings
      * @return the constructed handler result
      */
     protected HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-                                                      final List<MessageDescriptor> warnings) {
+                                                final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }

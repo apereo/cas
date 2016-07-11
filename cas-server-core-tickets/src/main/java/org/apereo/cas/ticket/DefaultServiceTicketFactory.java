@@ -5,11 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -19,29 +15,19 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("defaultServiceTicketFactory")
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
     protected UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-
-
+    
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
-    
-    @Resource(name="uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
-    /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.track.recent.session:true}")
-    protected boolean onlyTrackMostRecentSession = true;
-
-    /** ExpirationPolicy for Service Tickets. */
     
-    @Resource(name="serviceTicketExpirationPolicy")
+    /** ExpirationPolicy for Service Tickets. */
     protected ExpirationPolicy serviceTicketExpirationPolicy;
+    
+    private boolean trackMostRecentSession = true;
 
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
@@ -66,7 +52,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication,
-                this.onlyTrackMostRecentSession);
+                trackMostRecentSession);
         return (T) serviceTicket;
     }
 
@@ -74,15 +60,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
     }
-
-    public boolean isOnlyTrackMostRecentSession() {
-        return this.onlyTrackMostRecentSession;
-    }
-
-    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
-    }
-
+    
     public void setUniqueTicketIdGeneratorsForService(final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
@@ -93,5 +71,9 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     public void setDefaultServiceTicketIdGenerator(final UniqueTicketIdGenerator defaultServiceTicketIdGenerator) {
         this.defaultServiceTicketIdGenerator = defaultServiceTicketIdGenerator;
+    }
+
+    public void setTrackMostRecentSession(final boolean trackMostRecentSession) {
+        this.trackMostRecentSession = trackMostRecentSession;
     }
 }

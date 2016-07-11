@@ -4,12 +4,9 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -22,24 +19,15 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAccountRegistrationAction")
 public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
-    @Value("${cas.mfa.gauth.issuer:CAS}")
-    private String issuer;
-
-    @Value("${cas.mfa.gauth.label:CAS}")
-    private String label;
-    
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    private CasConfigurationProperties casProperties;
+    
     private GoogleAuthenticatorAccountRegistry accountRegistry;
     
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final RequestContext context = RequestContextHolder.getRequestContext();
@@ -47,19 +35,26 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
 
         if (!this.accountRegistry.contains(uid)) {
             final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
-            
+
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
-            
-            final String keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" 
-                    + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
+
+            final String keyUri = "otpauth://totp/" + casProperties.getAuthn().getMfa().getGauth().getLabel() + ':' + uid + "?secret="
+                    + keyAccount.getSecretKey() + "&issuer=" + casProperties.getAuthn().getMfa().getGauth().getIssuer();
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
-            
+
             return new EventFactorySupport().event(this, "register");
         }
 
         return success();
+    }
 
+    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
+        this.accountRegistry = accountRegistry;
+    }
+
+    public void setGoogleAuthenticatorInstance(final GoogleAuthenticatorInstance googleAuthenticatorInstance) {
+        this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

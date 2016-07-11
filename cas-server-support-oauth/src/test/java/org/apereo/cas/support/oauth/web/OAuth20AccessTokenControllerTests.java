@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -13,7 +14,6 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -24,12 +24,9 @@ import org.apereo.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +34,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -57,10 +50,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
-@DirtiesContext
-public class OAuth20AccessTokenControllerTests {
+public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -106,13 +96,6 @@ public class OAuth20AccessTokenControllerTests {
     @Qualifier("accessTokenController")
     private OAuth20AccessTokenController oAuth20AccessTokenController;
 
-    @Autowired
-    @Qualifier("oAuthValidator")
-    private OAuthValidator validator;
-
-    @Autowired
-    @Qualifier("oauthSecConfig")
-    private Config oauthSecConfig;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -132,7 +115,6 @@ public class OAuth20AccessTokenControllerTests {
     // authorization code grant type tests
     //
     //
-
     @Test
     public void verifyClientNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -239,7 +221,7 @@ public class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         final Principal principal = createPrincipal();
         final RegisteredService service = addRegisteredService();
-        
+
         addCode(principal, service);
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -320,7 +302,7 @@ public class OAuth20AccessTokenControllerTests {
 
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -576,10 +558,8 @@ public class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyUserAuthWithRefreshToken() throws Exception {
-
         final OAuthRegisteredService registeredService = addRegisteredService();
         registeredService.setGenerateRefreshToken(true);
-
         internalVerifyUserAuth(true, false);
     }
 
@@ -760,7 +740,7 @@ public class OAuth20AccessTokenControllerTests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         oAuth20AccessTokenController.handleRequestInternal(mockRequest, mockResponse);
         //This assert fails because deep down inside Oauth2 access token ctrl the refresh token gets deleted
-        //assertNotNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((refreshToken.getId())));
+        //assertNotNull(oAuth20AccessTokenController.getRegistry().getTicket((refreshToken.getId())));
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
@@ -789,7 +769,7 @@ public class OAuth20AccessTokenControllerTests {
     private static Principal createPrincipal() {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         return org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -829,12 +809,10 @@ public class OAuth20AccessTokenControllerTests {
 
     private void clearAllServices() {
         final Collection<RegisteredService> col = servicesManager.getAllServices();
-
         for (final RegisteredService r : col) {
             servicesManager.delete(r.getId());
         }
-
-        ((ReloadableServicesManager) servicesManager).reload();
+        servicesManager.load();
     }
 
     private static Authentication getAuthentication(final Principal principal) {

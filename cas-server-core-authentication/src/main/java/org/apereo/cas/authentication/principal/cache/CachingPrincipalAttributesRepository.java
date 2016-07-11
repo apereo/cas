@@ -37,7 +37,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private CachingPrincipalAttributesRepository() {
         super();
         this.cache = CacheBuilder.newBuilder().maximumSize(this.maxCacheSize)
-                .expireAfterWrite(this.expiration, this.timeUnit).build(this.cacheLoader);
+                .expireAfterWrite(getExpiration(), TimeUnit.valueOf(getTimeUnit())).build(this.cacheLoader);
     }
 
     /**
@@ -46,7 +46,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @param timeUnit the time unit
      * @param expiryDuration the expiry duration
      */
-    public CachingPrincipalAttributesRepository(final TimeUnit timeUnit,
+    public CachingPrincipalAttributesRepository(final String timeUnit,
                                                 final long expiryDuration) {
         this(DEFAULT_MAXIMUM_CACHE_SIZE, timeUnit, expiryDuration);
     }
@@ -58,13 +58,13 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @param expiryDuration the expiry duration
      */
     public CachingPrincipalAttributesRepository(final long maxCacheSize,
-                                                final TimeUnit timeUnit,
+                                                final String timeUnit,
                                                 final long expiryDuration) {
         super(expiryDuration, timeUnit);
         this.maxCacheSize = maxCacheSize;
 
         this.cache = CacheBuilder.newBuilder().maximumSize(maxCacheSize)
-                .expireAfterWrite(expiryDuration, timeUnit).build(this.cacheLoader);
+                .expireAfterWrite(getExpiration(), TimeUnit.valueOf(getTimeUnit())).build(this.cacheLoader);
     }
 
     @Override

@@ -3,10 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -15,8 +11,6 @@ import javax.annotation.Resource;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("defaultTicketGrantingTicketFactory")
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -25,13 +19,11 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** Expiration policy for ticket granting tickets. */
-    
-    @Resource(name="grantingTicketExpirationPolicy")
+    /**
+     * Expiration policy for ticket granting tickets.
+     */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     @Override

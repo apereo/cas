@@ -4,11 +4,6 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
-import org.apereo.cas.config.HazelcastProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,20 +14,15 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("hazelcastMonitor")
 public class HazelcastMonitor extends AbstractCacheMonitor {
-
-    @Autowired
-    @Qualifier("hazelcastProperties")
-    private HazelcastProperties hazelcastProperties;
-
+    
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
 
-        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(this.hazelcastProperties.getInstanceName());
-        final IMap map = instance.getMap(this.hazelcastProperties.getMapName());
+        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(
+                casProperties.getTicket().getRegistry().getHazelcast().getCluster().getInstanceName());
+        final IMap map = instance.getMap(casProperties.getTicket().getRegistry().getHazelcast().getMapName());
         statsList.add(new HazelcastStatistics(map));
 
         return statsList.toArray(new CacheStatistics[statsList.size()]);

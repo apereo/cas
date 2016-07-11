@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ResourceUtils;
 
-import java.io.Serializable;
 import java.security.PublicKey;
 
 /**
@@ -19,10 +19,10 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredServicePublicKey {
+public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePublicKeyImpl.class);
 
     private String location;
 
@@ -87,8 +87,8 @@ public class RegisteredServicePublicKeyImpl implements Serializable, RegisteredS
             factory.setSingleton(false);
             return factory.getObject();
         } catch (final Exception e) {
-            logger.warn(e.getMessage(), e);
-            throw new RuntimeException(e);
+            LOGGER.warn(e.getMessage(), e);
+            throw Throwables.propagate(e);
         }
     }
 
