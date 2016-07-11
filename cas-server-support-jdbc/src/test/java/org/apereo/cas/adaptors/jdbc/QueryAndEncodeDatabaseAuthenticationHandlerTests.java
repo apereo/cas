@@ -92,7 +92,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -102,7 +102,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql("makesNoSenseInSql"));
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -112,7 +112,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(
+        q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
     }
@@ -128,7 +128,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSaltFieldName("salt");
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
+        final HandlerResult r = q.authenticate(c);
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
@@ -152,12 +152,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
             @Override
             public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-                return false;
+                return true;
             }
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(
+        final HandlerResult r = q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
