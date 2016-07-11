@@ -2,7 +2,6 @@ description = "Apereo Central Authentication Service $version"
 
 defaultTasks "clean", "build"
 
-
 ext {
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
@@ -33,26 +32,27 @@ def projectMavenDeployer = {
     }
 
     pom.project {
-        url "http://www.apereo.org/cas"
-        inceptionYear 2004
+        url "$projectUrl"
+        inceptionYear project.projectInceptionYear
         name project.name
         description project.name
+        
         issueManagement {
-            system "Github"
-            url "https://github.com/apereo/cas/issues"
+            system project.projectIssueSystem
+            url project.projectIssueUrl
         }
 
         scm {
-            url "scm:git@github.com:apereo/cas.git"
-            connection "scm:git@github.com:apereo/cas.git"
-            developerConnection "scm:git@github.com:apereo/cas.git"
+            url project.projectScmUrl
+            connection project.projectScmUrl
+            developerConnection project.projectScmUrl
         }
 
         licenses {
             license {
-                name "The Apache Software License, Version 2.0"
-                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                distribution "repo"
+                name project.projectLicenseName
+                url project.projectLicenseUrl
+                distribution project.projectLicenseDistribution
             }
         }
 

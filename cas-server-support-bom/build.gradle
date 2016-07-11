@@ -10,27 +10,61 @@ install {
         pom.whenConfigured {
             packaging = "pom"
             withXml {
+                def deps = asNode().get("dependencies")
+                asNode().remove(deps)
+
+                asNode().children().last() + {
+                    delegate.description(project.description)
+                    delegate.name(project.name)
+                    delegate.url(project.projectUrl)
+                    delegate.inceptionYear(project.projectInceptionYear)
+                    
+                    delegate.issueManagement {
+                        delegate.system(project.projectIssueSystem)
+                        delegate.url(project.projectIssueUrl)
+                    }
+                    
+                    delegate.scm {
+                        delegate.url(project.projectScmUrl)
+                        delegate.connection(project.projectScmUrl)
+                        delegate.developerConnection(project.projectScmUrl)
+                    }
+                    
+                    delegate.licenses {
+                        delegate.license {
+                            delegate.name(project.projectLicenseName)
+                            delegate.url(project.projectLicenseUrl)
+                            delegate.distribution(project.projectLicenseDistribution)
+                        }
+                    }
+                }
+                
                 asNode().children().last() + {
                     delegate.dependencyManagement {
-                        println "here3"
                         delegate.dependencies {
-                            parent.subprojects.sort { "$it.name" }.each { p ->
-                                println "now at $p.name via $parent.name"
-                                println delegate.toString()
-                                if (p.hasProperty("merge") && p.merge.into == null && p != project) {
-                                    println "************"
+                            libraries.each {
+                                if (it.value instanceof List) {
+                                    it.value.each { d ->
+                                        delegate.dependency {
+                                            delegate.groupId(d.group)
+                                            delegate.artifactId(d.name)
+                                            delegate.version(d.version)
+                                        }
+                                    }    
+                                } else {
+                                    ExternalModuleDependency d = it.value
                                     delegate.dependency {
-                                        delegate.groupId(p.group)
-                                        delegate.artifactId(p.name)
-                                        delegate.version(p.version)
+                                        delegate.groupId(d.group)
+                                        delegate.artifactId(d.name)
+                                        delegate.version(d.version)
                                     }
                                 }
                             }
                         }
                     }
                 }
+                
             }
         }
     }
 }
-
