@@ -61,7 +61,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             final RememberMeUsernamePasswordCredential credential =
                     (RememberMeUsernamePasswordCredential) transformedCredential;
             final UsernamePasswordToken token = new UsernamePasswordToken(credential.getUsername(),
-                    this.getPasswordEncoder().encode(credential.getPassword()));
+                    credential.getPassword());
             token.setRememberMe(credential.isRememberMe());
 
             final Subject currentUser = getCurrentExecutingSubject();

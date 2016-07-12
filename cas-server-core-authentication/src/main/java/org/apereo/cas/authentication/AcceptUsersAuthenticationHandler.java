@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -62,7 +63,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
-        if (!this.getPasswordEncoder().matches(credential.getPassword(), cachedPassword)) {
+        if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         final List<MessageDescriptor> list = new ArrayList<>();

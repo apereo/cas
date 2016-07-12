@@ -322,7 +322,7 @@ public class X509AuthenticationConfiguration {
                 case SUBJECT_ALT_NAME:
                     resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
                     break;
-                case SUBJECT_DN:
+                default:
                     resolver = x509SubjectDNPrincipalResolver();
                     break;
             }
