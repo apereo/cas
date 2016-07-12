@@ -63,6 +63,7 @@
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
+    
     <mongo:mongo-client host="${mongodb.host:localhost}" port="${mongodb.port:27017}" id="mongo">
         <mongo:client-options write-concern="${mongodb.writeconcern:NORMAL}"
                               heartbeat-connect-timeout="${mongodb.timeout:5000}"
@@ -74,12 +75,11 @@
                               socket-timeout="${mongodb.timeout:5000}"
                               connect-timeout="${mongodb.timeout:5000}"  />
     </mongo:mongo-client>
+    
+    <bean id="clientUri" class="com.mongodb.MongoClientURI"
+          c:uri="mongodb://${mongodb.userId}:${mongodb.userPassword}@${mongodb.host}:${mongodb.port}/${cas.service.registry.mongo.db}" />
 
-
-    <mongo:db-factory id="mongoDbFactory"
-                      mongo-ref="mongo"
-                      dbname="${cas.service.registry.mongo.db:cas-service-registry}"
-                      username="${mongodb.userId:}"
-                      password="${mongodb.userPassword:}"/>
+    <bean id="mongoDbFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory"
+          c:uri-ref="clientUri" />
 
 </beans>
