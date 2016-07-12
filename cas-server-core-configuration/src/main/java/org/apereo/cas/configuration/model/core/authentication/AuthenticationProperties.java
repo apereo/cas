@@ -60,10 +60,7 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy =
             new AuthenticationPolicyProperties();
-
-    @NestedConfigurationProperty
-    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
+    
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
@@ -142,15 +139,7 @@ public class AuthenticationProperties {
     public void setPolicy(final AuthenticationPolicyProperties policy) {
         this.policy = policy;
     }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
+        
     public PasswordPolicyProperties getPasswordPolicy() {
         return passwordPolicy;
     }
