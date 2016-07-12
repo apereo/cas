@@ -4,6 +4,8 @@ dependencies {
     compile project(":cas-server-core-util")
     compile project(":cas-server-core-authentication")
     compile project(":cas-server-support-ldap-core")
+    compile project(":cas-server-core-configuration")
+
     compile libraries.spring
     compile libraries.springcloud
     compile libraries.jackson

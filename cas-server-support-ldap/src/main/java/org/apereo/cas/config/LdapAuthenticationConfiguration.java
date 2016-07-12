@@ -21,8 +21,6 @@ import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.pac4j.core.authorization.AuthorizationGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,8 +42,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration("ldapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapAuthenticationConfiguration {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationConfiguration.class);
 
     @Autowired(required = false)
     @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
