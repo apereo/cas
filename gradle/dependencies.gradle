@@ -125,6 +125,7 @@ ext.libraries = [
                     exclude(group: "jini", module: "reggie")
                     exclude(group: "jini", module: "start")
                     exclude(group: "jini", module: "webster")
+                    exclude(group: "ehcache", module: "ehcache")
                     exclude(group: "gigaspaces", module: "gigaspaces-ce")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.springframework", module: "spring")
