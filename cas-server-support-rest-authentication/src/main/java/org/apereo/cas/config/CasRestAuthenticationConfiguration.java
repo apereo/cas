@@ -14,6 +14,7 @@ import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,6 +79,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationHandler r = new RestAuthenticationHandler();
         r.setApi(restAuthenticationApi());
+        r.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRest().getPasswordEncoder()));
         return r;
     }
 

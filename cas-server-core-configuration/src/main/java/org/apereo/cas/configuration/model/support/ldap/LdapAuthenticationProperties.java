@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import com.google.common.collect.Lists;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.List;
 
@@ -74,6 +76,17 @@ public class LdapAuthenticationProperties {
     private String bindDn;
     private String bindCredential;
 
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+    
     public boolean isUsePasswordPolicy() {
         return usePasswordPolicy;
     }

@@ -1,16 +1,29 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link JaasAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class JaasAuthenticationProperties {
     private String realm;
     private String kerberosRealmSystemProperty;
     private String kerberosKdcSystemProperty;
+
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String getRealm() {
         return realm;

@@ -162,9 +162,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final AuthenticationResponse response;
         try {
             logger.debug("Attempting LDAP authentication for {}", upc);
-            final String password = getPasswordEncoder().encode(upc.getPassword());
+            
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
-                    new org.ldaptive.Credential(password),
+                    new org.ldaptive.Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
         } catch (final LdapException e) {

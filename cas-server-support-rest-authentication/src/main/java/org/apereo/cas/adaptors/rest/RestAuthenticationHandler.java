@@ -35,7 +35,9 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throws GeneralSecurityException, PreventedException {
 
         try {
-            final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(c);
+            final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
+            
+            final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode().value() == HttpStatus.OK.value()) {
                 final SimplePrincipal principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {

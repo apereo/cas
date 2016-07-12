@@ -81,12 +81,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
         }
 
-        final String username = getPrincipalNameTransformer().transform(transformedCredential.getUsername());
-        final String encodedPsw = this.getPasswordEncoder().encode(transformedCredential.getPassword());
-
+        final String username = transformedCredential.getUsername();
         try {
             final Map<String, Object> values = getJdbcTemplate().queryForMap(this.sql, username);
-            final String digestedPassword = digestEncodedPassword(encodedPsw, values);
+            final String digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");

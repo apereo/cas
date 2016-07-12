@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link AcceptAuthenticationProperties}.
  *
@@ -9,6 +12,17 @@ package org.apereo.cas.configuration.model.support.generic;
 public class AcceptAuthenticationProperties {
     
     private String users = "";
+
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String getUsers() {
         return users;

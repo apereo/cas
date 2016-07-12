@@ -4,13 +4,13 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
@@ -34,13 +34,11 @@ public class UsernamePasswordWrapperAuthenticationHandler
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    
-    private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
+    private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
     /**
