@@ -118,7 +118,7 @@ public class LdapAuthenticationConfiguration {
 
                 final Map<String, String> attributes = new HashMap<>();
                 l.getPrincipalAttributeList().forEach(a -> attributes.put(a.toString(), a.toString()));
-                attributes.putAll(casProperties.getAuthn().getAttributes());
+                attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
                 handler.setPrincipalAttributeMap(attributes);
 
                 handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
@@ -161,7 +161,7 @@ public class LdapAuthenticationConfiguration {
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
-        resolver.setConnectionFactory(getPooledConnectionFactory(l));
+        resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
         return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
     }
@@ -185,70 +185,9 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(getPooledConnectionFactory(l));
+        final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(Beans.newPooledConnectionFactory(l));
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
-    }
-
-    private static PooledConnectionFactory getPooledConnectionFactory(
-            final LdapAuthenticationProperties l) {
-        final PoolConfig pc = new PoolConfig();
-        pc.setMinPoolSize(l.getMinPoolSize());
-        pc.setMaxPoolSize(l.getMaxPoolSize());
-        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
-        pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(l.getValidatePeriod());
-
-        final ConnectionConfig cc = new ConnectionConfig();
-        cc.setLdapUrl(l.getLdapUrl());
-        cc.setUseSSL(l.isUseSsl());
-        cc.setUseStartTLS(l.isUseStartTls());
-        cc.setConnectTimeout(l.getConnectTimeout());
-
-        if (l.getTrustCertificates() != null) {
-            final X509CredentialConfig cfg = new X509CredentialConfig();
-            cfg.setTrustCertificates(l.getTrustCertificates());
-            cc.setSslConfig(new SslConfig());
-        } else if (l.getKeystore() != null) {
-            final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
-            cfg.setKeyStore(l.getKeystore());
-            cfg.setKeyStorePassword(l.getKeystorePassword());
-            cfg.setKeyStoreType(l.getKeystoreType());
-            cc.setSslConfig(new SslConfig(cfg));
-        } else {
-            cc.setSslConfig(new SslConfig());
-        }
-
-        if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
-            cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
-        } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
-                    new Credential(l.getBindCredential())));
-        }
-
-        final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
-
-        if (l.getProviderClass() != null) {
-            try {
-                final Class clazz = ClassUtils.getClass(l.getProviderClass());
-                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
-
-        cp.setBlockWaitTime(l.getBlockWaitTime());
-        cp.setPoolConfig(pc);
-
-        final IdlePruneStrategy strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(l.getIdleTime());
-        strategy.setPrunePeriod(l.getPrunePeriod());
-
-        cp.setPruneStrategy(strategy);
-        cp.setValidator(new SearchValidator());
-        cp.setFailFastInitialize(l.isFailFast());
-        return new PooledConnectionFactory(cp);
     }
 }
 

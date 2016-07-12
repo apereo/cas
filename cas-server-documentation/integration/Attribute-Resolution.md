@@ -21,10 +21,17 @@ as long as the SSO session exists.</p></div>
 
 
 ## Components
-A Person Directory `IPersonAttributeDao` attribute source is defined and configured to 
-describe the global set of attributes to be fetched 
+
+A Person Directory `IPersonAttributeDao` attribute source noted by an `attributeRepository` bean 
+is defined and configured to describe the global set of attributes to be fetched 
 for each authenticated principal. That global set of attributes is then filtered by the 
 service manager according to service-specific attribute release rules. 
+
+Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP and JDBC sources.
+If you need something more, you will need to resort to more elaborate measures of defining the bean configuration directly
+on your own. 
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Person Directory
 
@@ -47,105 +54,24 @@ service manager according to service-specific attribute release rules.
 
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
-<div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases, CAS authentication is able to retrieve and resolve attributes from the authentication source, which would eliminate the need for configuring a separate DAO specially if both the authentication and the attribute source are the same. DAOs listed here should only be used when sources are different, or when there is a need to tackle more advanced attribute resolution use cases such as those that involve merging, cascading and elaborate caching techniques. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
+<div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases, 
+CAS authentication is able to retrieve and resolve attributes from the authentication source, which would 
+eliminate the need for configuring a separate DAO specially if both the authentication and the attribute source are the same. 
+DAOs listed here should only be used when sources are different, or when there is a need to tackle more advanced attribute 
+resolution use cases such as those that involve merging, cascading and elaborate 
+caching techniques. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
 
 ### CAS
+
 The CAS project provides the following additional implementations:
 
 | Component         					| Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `ShibbolethPersonAttributeDao` | Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
 
-### Sample Usage
-
-
-#### LDAP
-The following snippet assumes that connection information beans are already defined.
-
-```xml
-<bean id="ldapPersonAttributeDao"
-      class="org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao"
-      p:connectionFactory-ref="pooledLdapConnectionFactory"
-      p:baseDN="${ldap.baseDn}"
-      p:searchControls-ref="searchControls"
-      p:searchFilter="mail={0}">
-    <property name="resultAttributeMapping">
-        <map>
-            <!--
-               | Key is LDAP attribute name, value is principal attribute name.
-               -->
-            <entry key="member" value="member" />
-            <entry key="mail" value="mail" />
-            <entry key="displayName" value="displayName" />
-        </map>
-    </property>
-</bean>
-```
-
-
-#### JDBC
-The following snippet assumes that connection information beans are already defined.
-
-```xml
-<bean id="singleRowJdbcPersonAttributeDao"
-    class="org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-    <constructor-arg index="0" ref="dataSource" />
-    <constructor-arg index="1" value="SELECT * FROM USER_DATA WHERE {0}" />
-    <property name="queryAttributeMapping">
-        <map>
-            <entry key="username" value="uid" />
-        </map>
-    </property>
-    <property name="resultAttributeMapping">
-        <map>
-            <entry key="uid" value="username" />
-            <entry key="first_name" value="first_name" />
-            <entry key="last_name" value="last_name" />
-            <entry key="email" value="email" />
-        </map>
-    </property>
-</bean>
-```
-
-
-#### Caching, Merging and Cascading
-Note that this snippet below strictly uses the Person Directory components for resolving attributes.
-
-```xml
-<bean id="mergedPersonAttributeDao"
-        class="org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl">
-    <property name="cacheNullResults" value="true" />
-    <property name="userInfoCache">
-        <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
-            <property name="cacheFactory" ref="cacheFactory" />
-            <property name="cacheName" value="org.apereo.services.persondir.USER_INFO.merged" />
-        </bean>
-    </property>
-    <property name="cachedPersonAttributesDao" >
-        <bean id="mergedPersonAttributeDao"                 
-                class="org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl">
-            <property name="merger">
-                <bean class="org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder" />
-            </property>
-            <property name="personAttributeDaos">
-                <list>
-                    <bean class="org.apereo.services.persondir.support.CascadingPersonAttributeDao">
-                        <property name="personAttributeDaos">
-                            <list>
-                                <ref bean="anotherDao" />
-                            </list>
-                        </property>
-                    </bean>
-                </list>
-            </property>
-        </bean>
-    </property>
-</bean>
-```
-
-
 #### Shibboleth
+
 Note that this module is *EXPERIMENTAL*.
 
 Support is enabled by including the following dependency in the WAR overlay:

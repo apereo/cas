@@ -177,15 +177,76 @@ server.contextParameters.isLog4jAutoInitializationDisabled=true
 ## Authentication Attributes
 
 Set of authentication attributes that are retrieved by the principal resolution process,
-typically via some component of Person Directory
-unless noted otherwise by the specific authentication scheme. 
+typically via some component of [Person Directory](..\Attribute-Resolution.html)
+from a number of attribute sources unless noted otherwise by the specific authentication scheme. 
 
 ```properties
-# cas.authn.attributes.uid=uid
-# cas.authn.attributes.displayName=displayName
-# cas.authn.attributes.cn=commonName
-# cas.authn.attributes.affiliation=groupMembership
+# cas.authn.attributeRepository.attributes.uid=uid
+# cas.authn.attributeRepository.attributes.displayName=displayName
+# cas.authn.attributeRepository.attributes.cn=commonName
+# cas.authn.attributeRepository.attributes.affiliation=groupMembership
 ```
+
+If you wish to directly and separately retrieve attributes from an LDAP source,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap.useSsl=true
+# cas.authn.attributeRepository.ldap.useStartTls=false
+# cas.authn.attributeRepository.ldap.connectTimeout=5000
+# cas.authn.attributeRepository.ldap.baseDn=dc=example,dc=org
+# cas.authn.attributeRepository.ldap.userFilter=cn={user}
+# cas.authn.attributeRepository.ldap.subtreeSearch=true
+# cas.authn.attributeRepository.ldap.usePasswordPolicy=true
+# cas.authn.attributeRepository.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.attributeRepository.ldap.bindCredential=Password
+# cas.authn.attributeRepository.ldap.trustCertificates=
+# cas.authn.attributeRepository.ldap.keystore=
+# cas.authn.attributeRepository.ldap.keystorePassword=
+# cas.authn.attributeRepository.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.attributeRepository.ldap.minPoolSize=3
+# cas.authn.attributeRepository.ldap.maxPoolSize=10
+# cas.authn.attributeRepository.ldap.validateOnCheckout=true
+# cas.authn.attributeRepository.ldap.validatePeriodically=true
+# cas.authn.attributeRepository.ldap.validatePeriod=600
+# cas.authn.attributeRepository.ldap.failFast=true
+# cas.authn.attributeRepository.ldap.idleTime=500
+# cas.authn.attributeRepository.ldap.prunePeriod=600
+# cas.authn.attributeRepository.ldap.blockWaitTime=5000
+# cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+```
+
+If you wish to directly and separately retrieve attributes from an LDAP source,
+the following settings are then relevant:
+
+
+
+```properties
+# cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
+# cas.authn.attributeRepository.jdbc.username=uid_field
+# cas.authn.attributeRepository.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.attributeRepository.jdbc.isolateInternalQueries=false
+# cas.authn.attributeRepository.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.attributeRepository.jdbc.failFast=true
+# cas.authn.attributeRepository.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.attributeRepository.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.attributeRepository.jdbc.leakThreshold=10
+# cas.authn.attributeRepository.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.attributeRepository.jdbc.batchSize=1
+# cas.authn.attributeRepository.jdbc.user=sa
+# cas.authn.attributeRepository.jdbc.ddlAuto=create-drop
+# cas.authn.attributeRepository.jdbc.password=
+# cas.authn.attributeRepository.jdbc.autocommit=false
+# cas.authn.attributeRepository.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.attributeRepository.jdbc.idleTimeout=5000
+# cas.authn.attributeRepository.jdbc.pool.suspension=false
+# cas.authn.attributeRepository.jdbc.pool.minSize=6
+# cas.authn.attributeRepository.jdbc.pool.maxSize=18
+# cas.authn.attributeRepository.jdbc.pool.maxIdleTime=1000
+# cas.authn.attributeRepository.jdbc.pool.maxWait=2000
+```
+
 
 ## Principal Resolution
 
