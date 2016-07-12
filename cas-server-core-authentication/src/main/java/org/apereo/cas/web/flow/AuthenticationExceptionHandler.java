@@ -14,11 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,15 +55,24 @@ public class AuthenticationExceptionHandler {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Order is important here; We want the account policy exceptions to be handled
+     * first before moving onto more generic errors. In the event that multiple handlers
+     * are defined, where one failed due to account policy restriction and one fails
+     * due to a bad password, we want the error associated with the account policy
+     * to be processed first, rather than presenting a more generic error associated
+     * with latter handlers.
+     */
     static {
-        DEFAULT_ERROR_LIST.add(AccountLockedException.class);
-        DEFAULT_ERROR_LIST.add(FailedLoginException.class);
-        DEFAULT_ERROR_LIST.add(CredentialExpiredException.class);
-        DEFAULT_ERROR_LIST.add(AccountNotFoundException.class);
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountLockedException.class);
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.CredentialExpiredException.class);
         DEFAULT_ERROR_LIST.add(AccountDisabledException.class);
         DEFAULT_ERROR_LIST.add(InvalidLoginLocationException.class);
         DEFAULT_ERROR_LIST.add(AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(InvalidLoginTimeException.class);
+
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
         DEFAULT_ERROR_LIST.add(UnauthorizedServiceForPrincipalException.class);
         DEFAULT_ERROR_LIST.add(UnsatisfiedAuthenticationPolicyException.class);
     }
@@ -86,13 +90,13 @@ public class AuthenticationExceptionHandler {
 
     /**
      * Sets the list of custom exceptions that this class knows how to handle.
-     * 
+     *
      * <p>This implementation adds the provided list of exceptions to the default list
      * or just returns if the provided list is empty.
-     * 
+     *
      * <p>This implementation relies on Spring's property source configurer, SpEL, and conversion service
      * infrastructure facilities to convert and inject the collection from cas.properties.
-     * 
+     *
      * <p>This method is thread-safe. It should only be called by the Spring container during
      * application context bootstrap
      * or unit tests.
@@ -101,20 +105,20 @@ public class AuthenticationExceptionHandler {
      */
     public void setErrors(final List<Class<? extends Exception>> errors) {
         /*
-            The specifics of the default empty value: this results in the list with one null element. 
+            The specifics of the default empty value: this results in the list with one null element.
             So just get rid of null and have an empty list as a result.
          */
         final List<Class<? extends Exception>> nonNullErrors = errors.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        
+
         if (nonNullErrors.isEmpty()) {
             //Nothing custom provided, so just leave the default list of exceptions alone.
             return;
         }
         /*
             Add the custom exceptions to the tail end of the default list of exceptions.
-            Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically, 
+            Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically,
             so not to mutate it.
          */
         this.errors = new ArrayList<>(this.errors);
@@ -155,8 +159,8 @@ public class AuthenticationExceptionHandler {
     public String handle(final Exception e, final MessageContext messageContext) {
         if (e instanceof AuthenticationException) {
             return handleAuthenticationException((AuthenticationException) e, messageContext);
-        } 
-        
+        }
+
         if (e instanceof AbstractTicketException) {
             return handleAbstractTicketException((AbstractTicketException) e, messageContext);
         }
@@ -171,9 +175,9 @@ public class AuthenticationExceptionHandler {
 
     /**
      * Maps an authentication exception onto a state name equal to the simple class name of the {@link
-     * AuthenticationException#getHandlerErrors()} 
+     * AuthenticationException#getHandlerErrors()}
      * with highest precedence. Also sets an ERROR severity message in the
-     * message context of the form {@code [messageBundlePrefix][exceptionClassSimpleName]} 
+     * message context of the form {@code [messageBundlePrefix][exceptionClassSimpleName]}
      * for for the first handler
      * error that is configured. If no match is found, {@value #UNKNOWN} is returned.
      *
@@ -181,7 +185,7 @@ public class AuthenticationExceptionHandler {
      * @param messageContext the spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    protected String handleAuthenticationException(final AuthenticationException e, 
+    protected String handleAuthenticationException(final AuthenticationException e,
                                                    final MessageContext messageContext) {
         // find the first error in the error list that matches the handlerErrors
         final String handlerErrorName = this.errors.stream().filter(e.getHandlerErrors().values()::contains)
@@ -212,7 +216,7 @@ public class AuthenticationExceptionHandler {
         final Optional<String> match = this.errors.stream()
                 .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
                 .findFirst();
-        
+
         if (match.isPresent()) {
             messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build());
         }
