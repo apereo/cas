@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class JdbcAuthenticationProperties {
     private List<Search> search = new ArrayList();
     private List<Encode> encode = new ArrayList();
@@ -49,9 +50,20 @@ public class JdbcAuthenticationProperties {
     public void setBind(final List<Bind> bind) {
         this.bind = bind;
     }
-
+    
     public static class Query extends AbstractJpaProperties {
         private String sql;
+
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
 
         public String getSql() {
             return sql;
@@ -62,7 +74,19 @@ public class JdbcAuthenticationProperties {
         }
     }
     
-    public static class Bind extends AbstractJpaProperties {}
+    public static class Bind extends AbstractJpaProperties {
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
+
+    }
     
     public static class Search extends AbstractJpaProperties {
         private String fieldUser;
@@ -71,6 +95,17 @@ public class JdbcAuthenticationProperties {
 
         private String tableUsers;
 
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
+        
         public String getFieldUser() {
             return fieldUser;
         }
@@ -104,6 +139,17 @@ public class JdbcAuthenticationProperties {
         private String numberOfIterationsFieldName = "numIterations";
         private long numberOfIterations;
         private String staticSalt;
+
+        @NestedConfigurationProperty
+        private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        public PasswordEncoderProperties getPasswordEncoder() {
+            return passwordEncoder;
+        }
+
+        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
 
         public String getAlgorithmName() {
             return algorithmName;

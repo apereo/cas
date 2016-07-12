@@ -220,4 +220,4 @@ on the CAS login screen to provide an interstitial notification page that is dis
 By default the notification page offers the user an option to proceed with CAS authentication or abort by
 navigating away from the target service.
 
-[cas-sec-filter]: https://github.com/Jasig/cas-server-security-filter
+[cas-sec-filter]: https://github.com/apereo/cas-server-security-filter

@@ -35,7 +35,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         Connection connection = null;
         try {
             final String username = credential.getUsername();
-            final String password = getPasswordEncoder().encode(credential.getPassword());
+            final String password = credential.getPassword();
             connection = this.getDataSource().getConnection(username, password);
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
         } catch (final SQLException e) {

@@ -8,8 +8,54 @@ package org.apereo.cas.configuration.model.core.authentication;
  */
 
 public class PasswordEncoderProperties {
+    public enum PasswordEncoderTypes {
+        /**
+         * No password encoding will take place.
+         */
+        NONE,
+        /**
+         * Uses an encoding algorithm and a char encoding algorithm.
+         */
+        DEFAULT,
+        /**
+         * Uses {@link org.springframework.security.crypto.password.StandardPasswordEncoder}.
+         */
+        STANDARD,
+        /**
+         * Uses {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
+         */
+        BCRYPT
+    }
+    private PasswordEncoderTypes type = PasswordEncoderTypes.NONE;
+    
     private String encodingAlgorithm;
     private String characterEncoding;
+    private String secret;
+    private int strength = 16;
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(final int strength) {
+        this.strength = strength;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(final String secret) {
+        this.secret = secret;
+    }
+
+    public PasswordEncoderTypes getType() {
+        return type;
+    }
+
+    public void setType(final PasswordEncoderTypes type) {
+        this.type = type;
+    }
 
     public String getCharacterEncoding() {
         return characterEncoding;

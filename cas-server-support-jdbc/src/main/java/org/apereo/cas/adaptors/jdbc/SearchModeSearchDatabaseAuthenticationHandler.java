@@ -39,14 +39,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
+                    + "No SQL statement or JDBC template found");
         }
 
         final String username = credential.getUsername();
-        final String encyptedPassword = getPasswordEncoder().encode(credential.getPassword());
         final int count;
         try {
-            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, encyptedPassword);
+            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, credential.getPassword());
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }

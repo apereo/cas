@@ -27,10 +27,7 @@ import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.DefaultPasswordEncoder;
 import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
@@ -78,11 +75,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired(required = false)
-    @Qualifier("acceptPasswordEncoder")
-    private PasswordEncoder acceptPasswordEncoder;
-
+    
     @Autowired(required = false)
     @Qualifier("acceptPrincipalNameTransformer")
     private PrincipalNameTransformer acceptPrincipalNameTransformer;
@@ -90,11 +83,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("jaasPasswordEncoder")
-    private PasswordEncoder passwordEncoder;
-
+    
     @Autowired(required = false)
     @Qualifier("jaasPrincipalNameTransformer")
     private PrincipalNameTransformer principalNameTransformer;
@@ -161,9 +150,7 @@ public class CasCoreAuthenticationConfiguration {
             });
             h.setUsers(parsedUsers);
         }
-        if (acceptPasswordEncoder != null) {
-            h.setPasswordEncoder(acceptPasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getAccept().getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
@@ -321,10 +308,8 @@ public class CasCoreAuthenticationConfiguration {
         h.setKerberosKdcSystemProperty(casProperties.getAuthn().getJaas().getKerberosKdcSystemProperty());
         h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
         h.setRealm(casProperties.getAuthn().getJaas().getRealm());
-
-        if (passwordEncoder != null) {
-            h.setPasswordEncoder(passwordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getJaas().getPasswordEncoder()));
+        
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
         }
@@ -358,26 +343,12 @@ public class CasCoreAuthenticationConfiguration {
 
         return p;
     }
-
-    @Bean
-    public PasswordEncoder plainTextPasswordEncoder() {
-        return new PlainTextPasswordEncoder();
-    }
-
+    
     @Bean
     public PrincipalNameTransformer noOpPrincipalNameTransformer() {
         return new NoOpPrincipalNameTransformer();
     }
-
-    @RefreshScope
-    @Bean
-    public PasswordEncoder defaultPasswordEncoder() {
-        final DefaultPasswordEncoder e = new DefaultPasswordEncoder();
-        e.setCharacterEncoding(casProperties.getAuthn().getPasswordEncoder().getCharacterEncoding());
-        e.setEncodingAlgorithm(casProperties.getAuthn().getPasswordEncoder().getEncodingAlgorithm());
-        return e;
-    }
-
+        
     @Bean
     @RefreshScope
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
