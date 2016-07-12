@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.support.AbstractConfigProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.HashSet;
@@ -19,10 +21,21 @@ public class ShiroAuthenticationProperties extends AbstractConfigProperties {
 
     private Set<String> requiredPermissions = new HashSet<>();
 
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+    
     public ShiroAuthenticationProperties() {
         super.getConfig().setLocation(new ClassPathResource("shiro.ini"));
     }
 
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+    
     public Set<String> getRequiredRoles() {
         return requiredRoles;
     }

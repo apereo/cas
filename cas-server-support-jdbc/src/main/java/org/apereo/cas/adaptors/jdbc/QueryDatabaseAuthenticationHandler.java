@@ -33,22 +33,22 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+            throw new GeneralSecurityException("Authentication handler is not configured correctly. "  
+                + "No SQL statement or JDBC template is found.");
         }
 
         final String username = credential.getUsername();
         final String password = credential.getPassword();
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
-            if (!getPasswordEncoder().matches(password, dbPassword)) {
+            if (!StringUtils.equals(password, dbPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
-            } else {
-                throw new FailedLoginException("Multiple records found for " + username);
-            }
+            } 
+            throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }

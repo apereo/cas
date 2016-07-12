@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
@@ -130,6 +131,8 @@ public class LdapAuthenticationConfiguration {
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }
                 handler.setAuthenticator(authenticator);
+                handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
+                
                 this.authenticationHandlersResolvers.put(handler, null);
             }
         });

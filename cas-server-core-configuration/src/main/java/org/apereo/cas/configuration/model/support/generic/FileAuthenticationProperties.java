@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 /**
@@ -14,6 +16,17 @@ public class FileAuthenticationProperties {
     private Resource filename;
     private String separator = "::";
 
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+    
     public Resource getFilename() {
         return filename;
     }

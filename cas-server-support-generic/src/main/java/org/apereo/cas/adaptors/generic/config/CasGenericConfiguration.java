@@ -9,13 +9,13 @@ import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +56,7 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-
-    @Autowired(required = false)
-    @Qualifier("shiroPasswordEncoder")
-    private PasswordEncoder shiroPasswordEncoder;
-
+    
     @Autowired(required = false)
     @Qualifier("shiroPrincipalNameTransformer")
     private PrincipalNameTransformer shiroPrincipalNameTransformer;
@@ -70,21 +66,13 @@ public class CasGenericConfiguration {
     private PasswordPolicyConfiguration shiroPasswordPolicyConfiguration;
 
     @Autowired(required = false)
-    @Qualifier("rejectPasswordEncoder")
-    private PasswordEncoder rejectPasswordEncoder;
-
-    @Autowired(required = false)
     @Qualifier("rejectPrincipalNameTransformer")
     private PrincipalNameTransformer rejectPrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("rejectPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration rejectPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("filePasswordEncoder")
-    private PasswordEncoder filePasswordEncoder;
-
+    
     @Autowired(required = false)
     @Qualifier("filePrincipalNameTransformer")
     private PrincipalNameTransformer filePrincipalNameTransformer;
@@ -136,9 +124,7 @@ public class CasGenericConfiguration {
         h.setPrincipalFactory(filePrincipalFactory());
         h.setServicesManager(servicesManager);
 
-        if (filePasswordEncoder != null) {
-            h.setPasswordEncoder(filePasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getFile().getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
@@ -175,10 +161,7 @@ public class CasGenericConfiguration {
             h.setUsers(org.springframework.util.StringUtils.commaDelimitedListToSet(
                     casProperties.getAuthn().getReject().getUsers()));
         }
-
-        if (rejectPasswordEncoder != null) {
-            h.setPasswordEncoder(rejectPasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getReject().getPasswordEncoder()));
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
@@ -199,10 +182,8 @@ public class CasGenericConfiguration {
         h.setRequiredRoles(casProperties.getAuthn().getShiro().getRequiredRoles());
         h.setRequiredPermissions(casProperties.getAuthn().getShiro().getRequiredPermissions());
         h.loadShiroConfiguration(casProperties.getAuthn().getShiro().getConfig().getLocation());
-
-        if (shiroPasswordEncoder != null) {
-            h.setPasswordEncoder(shiroPasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getShiro().getPasswordEncoder()));
+        
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
