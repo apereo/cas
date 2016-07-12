@@ -18,6 +18,7 @@ The following shell commands may be used to build the source:
 
 ```bash
 cd cas-server
+git checkout master
 ./gradlew build --parallel -x test -x javadoc -DskipCheckstyle=true -DskipAspectJ=true -DskipFindbugs=true
 ```
 
