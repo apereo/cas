@@ -11,8 +11,6 @@ import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,9 +50,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
         impl.setUserInfoCache(graphs.asMap());
 
         final MergingPersonAttributeDaoImpl dao = new MergingPersonAttributeDaoImpl();
-        dao.setMerger(new NoncollidingAttributeAdder());
         dao.setMerger(new ReplacingAttributeAdder());
-        dao.setMerger(new MultivaluedAttributeMerger());
 
         final List list = new ArrayList<>();
 
@@ -62,7 +58,9 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             list.add(Beans.newAttributeRepository(casProperties.getAuthn().getAttributeRepository().getAttributes()));
         }
 
-        if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty()) {
+        if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty()
+            && StringUtils.isNotBlank(casProperties.getAuthn().getAttributeRepository().getLdap().getBaseDn())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getAttributeRepository().getLdap().getLdapUrl())) {
 
             final LdaptivePersonAttributeDao ldap = new LdaptivePersonAttributeDao();
             ldap.setConnectionFactory(Beans.newPooledConnectionFactory(casProperties.getAuthn().getAttributeRepository().getLdap()));
@@ -71,8 +69,10 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             ldap.setResultAttributeMapping(casProperties.getAuthn().getAttributeRepository().getAttributes());
 
             final SearchControls constraints = new SearchControls();
-            constraints.setReturningAttributes((String[]) casProperties.getAuthn()
-                    .getAttributeRepository().getAttributes().keySet().toArray());
+
+            final String[] attributes = casProperties.getAuthn().getAttributeRepository().getAttributes().keySet()
+                    .toArray(new String[casProperties.getAuthn().getAttributeRepository().getAttributes().keySet().size()]);
+            constraints.setReturningAttributes(attributes);
 
             if (casProperties.getAuthn().getAttributeRepository().getLdap().isSubtreeSearch()) {
                 constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
@@ -94,7 +94,6 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             jdbc.setResultAttributeMapping(casProperties.getAuthn().getAttributeRepository().getAttributes());
             list.add(jdbc);
         }
-
         dao.setPersonAttributeDaos(list);
 
         return dao;
