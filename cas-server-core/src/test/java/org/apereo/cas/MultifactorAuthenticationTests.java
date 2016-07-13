@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -50,10 +51,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"/mfa-test-context.xml"},
-        classes = {CasCoreAuthenticationConfiguration.class, CasCoreServicesConfiguration.class,
-                CasCoreUtilConfiguration.class, CasCoreConfiguration.class,
-                CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
-                CasCoreTicketsConfiguration.class, CasCoreValidationConfiguration.class},
+        classes = {CasCoreAuthenticationConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasCoreUtilConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasCoreConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                RefreshAutoConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreValidationConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 @TestPropertySource(properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
@@ -63,7 +69,7 @@ public class MultifactorAuthenticationTests {
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
-    
+
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -81,7 +87,7 @@ public class MultifactorAuthenticationTests {
                 ImmutableMap.of("alice", "31415", "bob", "62831", "mallory", "14142")
         ), null);
     }
-    
+
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
