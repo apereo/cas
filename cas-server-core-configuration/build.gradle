@@ -5,4 +5,5 @@ dependencies {
     compile libraries.hibernate
     compile libraries.springsecurity
     compile libraries.persondirectory
+    compile libraries.ldaptive
 }

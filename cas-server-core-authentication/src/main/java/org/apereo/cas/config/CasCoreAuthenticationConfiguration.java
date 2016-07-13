@@ -75,7 +75,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired(required = false)
     @Qualifier("acceptPrincipalNameTransformer")
     private PrincipalNameTransformer acceptPrincipalNameTransformer;
@@ -83,7 +83,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-    
+
     @Autowired(required = false)
     @Qualifier("jaasPrincipalNameTransformer")
     private PrincipalNameTransformer principalNameTransformer;
@@ -95,10 +95,14 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("delegateTransformer")
     private PrincipalNameTransformer delegateTransformer;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
 
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
@@ -111,7 +115,6 @@ public class CasCoreAuthenticationConfiguration {
         h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
         return h;
     }
-
 
     @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
     public AuthenticationPolicy defaultAuthenticationPolicy() {
@@ -274,7 +277,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(stubAttributeRepository());
+        bean.setAttributeRepository(this.attributeRepository);
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
         bean.setPrincipalFactory(defaultPrincipalFactory());
@@ -309,7 +312,7 @@ public class CasCoreAuthenticationConfiguration {
         h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
         h.setRealm(casProperties.getAuthn().getJaas().getRealm());
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getJaas().getPasswordEncoder()));
-        
+
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
         }
@@ -343,12 +346,12 @@ public class CasCoreAuthenticationConfiguration {
 
         return p;
     }
-    
+
     @Bean
     public PrincipalNameTransformer noOpPrincipalNameTransformer() {
         return new NoOpPrincipalNameTransformer();
     }
-        
+
     @Bean
     @RefreshScope
     public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
@@ -356,13 +359,6 @@ public class CasCoreAuthenticationConfiguration {
                 new ConvertCasePrincipalNameTransformer(this.delegateTransformer);
         t.setToUpperCase(casProperties.getPrincipalTransformation().isUppercase());
         return t;
-    }
-
-
-    @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
-        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
