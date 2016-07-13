@@ -5,22 +5,22 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MixedPrincipalException;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
-import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.services.UnauthorizedSsoServiceException;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -141,7 +141,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
 
-        final AuthenticationResult ctx2 = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), 
+        final AuthenticationResult ctx2 = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
                 org.apereo.cas.services.TestUtils.getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), ctx2);
@@ -331,7 +331,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
     }
-    
+
     @Test
     public void verifyValidateServiceTicketNoAttributesReturned() throws Exception {
         final Service service = getService();
@@ -364,7 +364,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyValidateServiceTicketReturnOnlyAllowedAttribute() throws Exception {
         final Service service = getService("eduPersonTestInvalid");
-        final UsernamePasswordCredential cred = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
