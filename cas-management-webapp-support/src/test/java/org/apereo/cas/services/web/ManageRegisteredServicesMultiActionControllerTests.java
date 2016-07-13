@@ -1,26 +1,24 @@
 package org.apereo.cas.services.web;
 
 import com.google.common.collect.ImmutableMap;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
+import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
-import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
+import org.apereo.cas.services.RegisteredService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -38,13 +36,12 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
-        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
         this.registeredServiceFactory.initializeDefaults();
 
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
-                .registeredServiceFactory, "foo");
+                .registeredServiceFactory, "https://cas.example.org");
     }
 
     @Test
@@ -74,7 +71,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertFalse(response.getContentAsString().contains("serviceName"));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void updateEvaluationOrderInvalidServiceId() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
@@ -87,7 +84,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     @Test
-    public void verifyManage() throws Exception{
+    public void verifyManage() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");

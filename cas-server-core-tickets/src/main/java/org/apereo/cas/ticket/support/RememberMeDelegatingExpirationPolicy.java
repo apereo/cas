@@ -5,12 +5,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 
 /**
@@ -21,8 +16,6 @@ import javax.annotation.PostConstruct;
  * @since 3.2.1
  *
  */
-@RefreshScope
-@Component("rememberMeDelegatingExpirationPolicy")
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -33,16 +26,9 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
      * deserialization the field is null.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeDelegatingExpirationPolicy.class);
-
-
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("rememberMeExpirationPolicy")
+    
     private ExpirationPolicy rememberMeExpirationPolicy;
 
-    @Nullable
-    @Autowired(required=false)
-    @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
 
     /**

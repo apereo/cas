@@ -4,18 +4,27 @@ title: CAS - Attribute Resolution
 ---
 
 # Attribute Resolution
-Attribute resolution strategies are controlled by the [Person Directory project](https://github.com/Jasig/person-directory). 
-The Person Directory dependency is automatically bundled with the CAS server. Therefor, declaring an additional dependency will not be required. 
-This Person Directory project supports both LDAP and JDBC attribute resolution, caching, attribute aggregation from multiple attribute sources, etc.
 
-<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, attributes are cached to the length of the SSO session. 
-This means that while the underlying component provided by Person Directory may have a different caching model, attributes by default and from 
-a CAS perspective will not be refreshed and retrieved again on subsequent requests as long as the SSO session exists.</p></div>
+Attribute resolution strategies are controlled by 
+the [Person Directory project](https://github.com/apereo/person-directory). 
+The Person Directory dependency is automatically bundled with the CAS server. Therefor, 
+declaring an additional dependency will not be required. 
+This Person Directory project supports both LDAP and JDBC attribute resolution, 
+caching, attribute aggregation from multiple attribute sources, etc.
+
+<div class="alert alert-info"><strong>Default Caching Policy</strong><p>By default, 
+attributes are cached to the length of the SSO session. 
+This means that while the underlying component provided by Person Directory may have 
+a different caching model, attributes by default and from 
+a CAS perspective will not be refreshed and retrieved again on subsequent requests 
+as long as the SSO session exists.</p></div>
 
 
 ## Components
-A Person Directory `IPersonAttributeDao` attribute source is defined and configured to describe the global set of attributes to be fetched 
-for each authenticated principal. That global set of attributes is then filtered by the service manager according to service-specific attribute release rules. 
+A Person Directory `IPersonAttributeDao` attribute source is defined and configured to 
+describe the global set of attributes to be fetched 
+for each authenticated principal. That global set of attributes is then filtered by the 
+service manager according to service-specific attribute release rules. 
 
 ### Person Directory
 
@@ -36,17 +45,9 @@ for each authenticated principal. That global set of attributes is then filtered
 | `JsonBackedComplexStubPersonAttributeDao`| Resolve person attributes that are specified in an external JSON file.
 | `LdaptivePersonAttributeDao`| Queries an LDAP directory to populate person attributes using the Ldaptive library.
 
-Note that the Person Directory project requires the following configuration in CAS overlays:
+More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
-```xml
-<dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.1</version>
-</dependency>
-```
-
-More about the Person Directory and its configurable sources [can be found here](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual).
+<div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases, CAS authentication is able to retrieve and resolve attributes from the authentication source, which would eliminate the need for configuring a separate DAO specially if both the authentication and the attribute source are the same. DAOs listed here should only be used when sources are different, or when there is a need to tackle more advanced attribute resolution use cases such as those that involve merging, cascading and elaborate caching techniques. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
 
 ### CAS
@@ -54,7 +55,7 @@ The CAS project provides the following additional implementations:
 
 | Component         					| Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `ShibbolethPersonAttributeDao` | *EXPERIMENTAL* Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
+| `ShibbolethPersonAttributeDao` | Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes
 
 ### Sample Usage
 
@@ -157,7 +158,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in your CAS Overlay to be able to resolve dependencies:
+You may also need to declare the following Maven repository in your 
+CAS Overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>
@@ -170,7 +172,8 @@ You may also need to declare the following Maven repository in your CAS Overlay 
 </repositories>
 ```
 
-The module provides a `shibbolethPersonAttributeDao` that uses the property `shibboleth.attributeResolver.resources`
+The module provides a `shibbolethPersonAttributeDao` that uses
+the property `shibboleth.attributeResolver.resources`
 for configuration.
 
 - Alias bean:
@@ -179,7 +182,8 @@ for configuration.
 <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 ```
 
-- Modify either `application.properties` or the runtime environment to add `shibboleth.attributeResolver.resources`. This is a
+- Modify either `application.properties` or the runtime environment 
+to add `shibboleth.attributeResolver.resources`. This is a
 comma seperated list of resources to use for the configuration:
 
 ```shell

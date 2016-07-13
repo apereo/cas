@@ -9,17 +9,11 @@ import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -38,46 +32,35 @@ import java.util.Map;
  * to specify alternative methods of encoding and digestion of the encoded password.
  * </p>
  * @author Misagh Moayyed
- * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
+ * @author Charles Hasegawa
  * @since 4.1.0
  */
-@RefreshScope
-@Component("queryAndEncodeDatabaseAuthenticationHandler")
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-    private static final String DEFAULT_PASSWORD_FIELD = "password";
-    private static final String DEFAULT_SALT_FIELD = "salt";
-    private static final String DEFAULT_NUM_ITERATIONS_FIELD = "numIterations";
-
+    
     /**
      * The Algorithm name.
      */
-    
     protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
-    
     protected String sql;
 
     /**
      * The Password field name.
      */
-    
-    protected String passwordFieldName = DEFAULT_PASSWORD_FIELD;
+    protected String passwordFieldName = "password";
 
     /**
      * The Salt field name.
      */
-    
-    protected String saltFieldName = DEFAULT_SALT_FIELD;
+    protected String saltFieldName = "salt";
 
     /**
      * The Number of iterations field name.
      */
-    
-    protected String numberOfIterationsFieldName = DEFAULT_NUM_ITERATIONS_FIELD;
+    protected String numberOfIterationsFieldName;
 
     /**
      * The number of iterations. Defaults to 0.
@@ -98,12 +81,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
         }
 
-        final String username = getPrincipalNameTransformer().transform(transformedCredential.getUsername());
-        final String encodedPsw = this.getPasswordEncoder().encode(transformedCredential.getPassword());
-
+        final String username = transformedCredential.getUsername();
         try {
             final Map<String, Object> values = getJdbcTemplate().queryForMap(this.sql, username);
-            final String digestedPassword = digestEncodedPassword(encodedPsw, values);
+            final String digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
@@ -156,14 +137,12 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                     .build();
         return hashService.computeHash(request).toHex();
     }
-
-    @Autowired
-    public void setAlgorithmName(@Value("${cas.jdbc.authn.query.encode.alg:}") final String algorithmName) {
+    
+    public void setAlgorithmName(final String algorithmName) {
         this.algorithmName = algorithmName;
     }
-
-    @Autowired
-    public void setSql(@Value("${cas.jdbc.authn.query.encode.sql:}") final String sql) {
+    
+    public void setSql(final String sql) {
         this.sql = sql;
     }
 
@@ -184,60 +163,24 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
      * @param staticSalt the static salt
      */
-    @Autowired
-    public void setStaticSalt(@Value("${cas.jdbc.authn.query.encode.salt.static:}")
-                                    final String staticSalt) {
+    public void setStaticSalt(final String staticSalt) {
         this.staticSalt = staticSalt;
     }
-
-    /**
-     * Sets password field name. Default is {@link #DEFAULT_PASSWORD_FIELD}.
-     *
-     * @param passwordFieldName the password field name
-     */
-    @Autowired
-    public void setPasswordFieldName(@Value("${cas.jdbc.authn.query.encode.password:" + DEFAULT_PASSWORD_FIELD + '}')
-                                               final String passwordFieldName) {
+    
+    public void setPasswordFieldName(final String passwordFieldName) {
         this.passwordFieldName = passwordFieldName;
     }
-
-    /**
-     * Sets salt field name. Default is {@link #DEFAULT_SALT_FIELD}.
-     *
-     * @param saltFieldName the password field name
-     */
-    @Autowired
-    public void setSaltFieldName(@Value("${cas.jdbc.authn.query.encode.salt:" + DEFAULT_SALT_FIELD + '}')
-                                       final String saltFieldName) {
+    
+    public void setSaltFieldName(final String saltFieldName) {
         this.saltFieldName = saltFieldName;
     }
-
-    /**
-     * Sets number of iterations field name. Default is {@link #DEFAULT_NUM_ITERATIONS_FIELD}.
-     *
-     * @param numberOfIterationsFieldName the password field name
-     */
-    @Autowired
-    public void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:"
-                                                            + DEFAULT_NUM_ITERATIONS_FIELD + '}')
-                                                         final String numberOfIterationsFieldName) {
+    
+    public void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
     }
-
-    /**
-     * Sets number of iterations. Default is 0.
-     *
-     * @param numberOfIterations the number of iterations
-     */
-    @Autowired
-    public void setNumberOfIterations(@Value("${cas.jdbc.authn.query.encode.iterations:0}")
-                                                final long numberOfIterations) {
+    
+    public void setNumberOfIterations(final long numberOfIterations) {
         this.numberOfIterations = numberOfIterations;
     }
-
-    @Autowired(required=false)
-    @Override
-    public void setDataSource(@Qualifier("queryEncodeDatabaseDataSource") final DataSource dataSource) {
-        super.setDataSource(dataSource);
-    }
+    
 }

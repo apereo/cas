@@ -5,19 +5,28 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
-## Authentication
+## Not Receiving Attributes
+If your client application is not receiving attributes, you will need to make sure:
 
-### Application Not Authorized
+1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
+2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
+3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
+4. The CAS server is authorize to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
+
+Please [review this guide](Service-Management.html) to better understand the CAS service registry.
+
+## Application Not Authorized
 You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
-### Invalid/Expired CAS Tickets
+## Invalid/Expired CAS Tickets
 You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticet whose expiration policy dictates that the ticket has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
 
-### Out of Heap Memory Error
+## Out of Heap Memory Error
+
 ```bash
 java.lang.OutOfMemoryError: GC overhead limit exceeded
         at java.util.Arrays.copyOfRange(Arrays.java:3658)
@@ -45,9 +54,7 @@ You might also consider taking periodic heap dumps using the JMap tool or [YourK
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
 
-## SSL
-
-### PKIX Path Building Failed
+## PKIX Path Building Failed
 
 ```bash
 
@@ -77,7 +84,7 @@ keytool -import -keystore $JAVA_HOME/jre/lib/security/cacerts -file tmp/cert.der
 If you have multiple java editions installed on your machine, make sure that the app / web server is pointing to the correct JDK/JRE version (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
 
-### No subject alternative names
+## No subject alternative names
 
 ```bash
 javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No subject alternative names present
@@ -85,8 +92,7 @@ javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No
 
 This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu, will not work in most cases where the client making the connection is Java.
 
-
-### HTTPS hostname wrong
+## HTTPS hostname wrong
 ```bash
 java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should be <eiger.iad.vt.edu>
     org.apereo.cas.client.validation.Saml11TicketValidator.retrieveResponseFromServer(Saml11TicketValidator.java:203)
@@ -103,16 +109,17 @@ The above error occurs most commonly when the CAS client ticket validator attemp
 It is also worth checking that the certificate your CAS server is using for SSL encryption matches the one the client is checking against. 
 
 
-### Wildcard Certificates
+## Wildcard Certificates
+
 Java support for wildcard certificates is limited to hosts strictly in the same domain as the wildcard. For example, a certificate with `CN=.vt.edu` matches hosts **`a.vt.edu`** and **`b.vt.edu`**, but *not* **`a.b.vt.edu`**.
 
+## `unrecognized_name` Error
 
-###unrecognized_name Error
 ```bash
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
 ```
 
-The above error occurs mainly in Oracle JDK 7 CAS Server installations. In JDK7, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
+The above error occurs mainly in Oracle JDK CAS Server installations. In JDK, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
 
 You must ensure your HTTPD Server is sending back the correct hostname. E.g. in Apache HTTPD, you must set the ServerAlias in the SSL vhost:
 
@@ -121,13 +128,12 @@ ServerName your.ssl-server.name
 ServerAlias your.ssl-server.name
 ```
 
-Alternatively, you can disable the SNI detection in JDK7, by adding this flag to the Java options of your CAS Servers' application server configuration:
+Alternatively, you can disable the SNI detection in JDK, by adding this flag to the Java options of your CAS Servers' application server configuration:
 ```bash
 -Djsse.enableSNIExtension=false
 ```
 
-
-### When All Else Fails
+## When All Else Fails
 If you have read, understood, and tried all the troubleshooting tips on this page and continue to have problems, 
 please perform an SSL trace and attach it to a posting to the 
 CAS mailing lists. An SSL trace is written to 

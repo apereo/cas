@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuring Principal Resolution
 ---
 
-# Configuring Principal Resolution
+# Overview
 Principal resolution converts information in the authentication credential into a security principal
 that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
@@ -23,33 +23,22 @@ arises with X.509 authentication. It is common to store certificates in an LDAP 
 resolve the principal ID and attributes from directory attributes. The `X509CertificateAuthenticationHandler` may
 be be combined with an LDAP-based principal resolver to accommodate this case.
 
-## Principal Resolution Components
+## Configuration
 
-### `PersonDirectoryPrincipalResolver`
-Uses the Person Directory library to provide a flexible principal resolution services against a number of data
+CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
-The [Person Directory documentation](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual) provides
+The [Person Directory documentation](https://github.com/apereo/person-directory) provides
 configuration for two common examples:
 
 * [Database (JDBC)](https://wiki.jasig.org/x/bBjP)
 * [LDAP](https://wiki.jasig.org/x/iBjP)
 
-Configuration consists of:
-
-```properties
-# cas.principal.resolver.persondir.principal.attribute=cn
-# cas.principal.resolver.persondir.return.null=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## PrincipalResolver vs. AuthenticationHandler
+
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
 `PrincipalResolver` in any situation where the former provides adequate functionality.
 If the principal that is resolved by the authentication handler
-suffices, then a `null` value may be passed in place of the resolver bean id:
+suffices, then a `null` value may be passed in place of the resolver bean id in the final map.
 
-```xml
-<util:map id="authenticationHandlersResolvers">
-    ...
-    <entry key-ref="primaryAuthenticationHandler" value="#{null}" />
-</util:map>
-```

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.CallbackController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,27 +21,38 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("callbackAuthorizeController")
 public class OAuth20CallbackAuthorizeController extends AbstractController {
 
-    
-    @Autowired
-    @Qualifier("oauthSecConfig")
     private Config config;
 
-    
-    @Autowired
     private CallbackController callbackController;
+
+    private OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
 
     @PostConstruct
     private void postConstruct() {
         this.callbackController.setConfig(this.config);
     }
 
-    @RequestMapping(path= OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
+    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return new ModelAndView(this.callbackController.callback(request, response));
+        final String url = StringUtils.remove(this.callbackController.callback(request, response), "redirect:");
+        final J2EContext ctx = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(ctx);
+        return oAuth20CallbackAuthorizeViewResolver.resolve(ctx, manager, url);
+    }
+
+    public void setConfig(final Config config) {
+        this.config = config;
+    }
+
+    public void setCallbackController(final CallbackController callbackController) {
+        this.callbackController = callbackController;
+    }
+
+    public void setAuth20CallbackAuthorizeViewResolver(final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver) {
+        this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
     }
 }

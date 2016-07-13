@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
@@ -13,8 +10,6 @@ import java.security.cert.X509Certificate;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@RefreshScope
-@Component("noOpRevocationChecker")
 public class NoOpRevocationChecker implements RevocationChecker {
 
     /**

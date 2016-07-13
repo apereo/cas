@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
@@ -30,12 +31,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.AbstractResource;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -55,34 +51,25 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("chainingMetadataResolverCacheLoader")
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Config bean.
      */
-    @Autowired
     protected OpenSamlConfigBean configBean;
 
     /**
      * The Http client.
      */
-    
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
     protected HttpClient httpClient;
-
-    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
+    
     private long metadataCacheExpirationMinutes;
 
     private transient Object lock = new Object();
 
-    @Value("${cas.samlidp.metadata.failfast.init:true}")
     private boolean failFastInitialization = true;
-
-    @Value("${cas.samlidp.metadata.require.valid:true}")
+    
     private boolean requireValidMetadata = true;
 
     /**
@@ -174,7 +161,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             buildSingleMetadataResolver(metadataProvider, service);
             metadataResolvers.add(metadataProvider);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -292,6 +279,26 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             logger.debug("No metadata maximum validity criteria is defined for {}, so RequiredValidUntilFilter will not be invoked",
                     service.getMetadataLocation());
         }
+    }
+
+    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
+    }
+
+    public void setFailFastInitialization(final boolean failFastInitialization) {
+        this.failFastInitialization = failFastInitialization;
+    }
+
+    public void setRequireValidMetadata(final boolean requireValidMetadata) {
+        this.requireValidMetadata = requireValidMetadata;
+    }
+
+    public void setConfigBean(final OpenSamlConfigBean configBean) {
+        this.configBean = configBean;
+    }
+
+    public void setHttpClient(final HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }
 

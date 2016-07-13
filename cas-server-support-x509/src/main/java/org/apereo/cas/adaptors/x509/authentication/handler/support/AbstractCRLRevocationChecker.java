@@ -4,8 +4,6 @@ import org.apereo.cas.adaptors.x509.util.CertUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.security.GeneralSecurityException;
@@ -134,9 +132,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      *
      * @param checkAll the check all
      */
-    @Autowired
-    public void setCheckAll(@Value("${cas.x509.authn.crl.checkAll:false}")
-                                final boolean checkAll) {
+    public void setCheckAll(final boolean checkAll) {
         this.checkAll = checkAll;
     }
 

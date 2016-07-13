@@ -5,83 +5,14 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <context:component-scan base-package="org.apereo.cas"/>
-    <context:annotation-config/>
-
-
-    <context:property-placeholder properties-ref="casProperties"/>
-    <util:properties id="casProperties" location="classpath:cas.properties"/>
-
-
-    <util:map id="authenticationHandlersResolvers">
-        <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
-    </util:map>
-    <util:list id="authenticationMetadataPopulators">
-        <ref bean="cacheCredentialsMetaDataPopulator" />
-    </util:list>
-
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"
-          p:backingMap-ref="attrRepoBackingMap"/>
-
-    <alias name="simpleTestUsernamePasswordAuthenticationHandler" alias="primaryAuthenticationHandler"/>
-
-    <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid"/>
-        <entry key="eduPersonAffiliation" value="developer"/>
-        <entry key="groupMembership" value="adopters"/>
-    </util:map>
-
-
-    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
-
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
-
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
-
-
-    <bean id="auditTrailManager"
-          class="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
-          p:entrySeparator="${cas.audit.singleline.separator:|}"
-          p:useSingleLine="${cas.audit.singleline:false}"/>
-
-    <util:list id="monitorsList" value-type="org.apereo.cas.monitor.Monitor">
-        <ref bean="memoryMonitor"/>
-        <ref bean="sessionMonitor"/>
-    </util:list>
-
-    <util:list id="serviceFactoryList">
-        <ref bean="webApplicationServiceFactory" />
-    </util:list>
-
-    <util:list id="argumentExtractors">
-        <ref bean="defaultArgumentExtractor"/>
-    </util:list>
-
-    <util:map id="uniqueIdGeneratorsMap">
-        <entry
-            key="org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-            value-ref="serviceTicketUniqueIdGenerator" />
-    </util:map>
-
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
-
+   
     <util:list id="inMemoryRegisteredServices">
         <bean class="org.apereo.cas.services.RegexRegisteredService">
             <property name="id" value="0"/>
@@ -221,7 +152,7 @@
             <property name="serviceId" value="testAnonymous"/>
             <property name="evaluationOrder" value="9"/>
             <property name="usernameAttributeProvider">
-                <bean class="org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+                <bean class="org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider"/>
             </property>
         </bean>
 
@@ -243,7 +174,8 @@
             <property name="serviceId" value="usernameAttributeProviderService"/>
             <property name="evaluationOrder" value="11"/>
             <property name="usernameAttributeProvider">
-                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+                <bean class="org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+                      c:usernameAttribute="cn"/>
             </property>
         </bean>
 
@@ -266,30 +198,13 @@
             <property name="evaluationOrder" value="100"/>
         </bean>
     </util:list>
-
-
-    <util:map id="serviceThemeResolverSupportedBrowsers">
-        <entry key=".*iPhone.*" value="iphone"/>
-        <entry key=".*Android.*" value="android"/>
-        <entry key=".*Safari.*Pre.*" value="safari"/>
-        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
-    </util:map>
     
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor" />
-
     <bean id="cachingPrincipalAttributeRepository"
           class="org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-            c:timeUnit="SECONDS"
-            c:expiryDuration="20"/>
-
-    <bean id="persistentIdGenerator" class="org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          c:salt="casrox"  />
-
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
-    </util:list>
+          c:timeUnit="SECONDS"
+          c:expiryDuration="20"/>
+    
+    
+    <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>
+    <bean class="org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties"/>
 </beans>

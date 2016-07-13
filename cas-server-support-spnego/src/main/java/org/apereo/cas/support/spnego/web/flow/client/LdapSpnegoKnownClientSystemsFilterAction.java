@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.web.flow.client;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -12,11 +13,6 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
@@ -25,39 +21,15 @@ import org.springframework.stereotype.Component;
  * @author Sean Baker
  * @since 4.1
  */
-@RefreshScope
-@Component("ldapSpnegoClientAction")
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-    /** Attribute name in LDAP to indicate spnego invocation. **/
-    public static final String DEFAULT_SPNEGO_ATTRIBUTE = "distinguishedName";
-
     /** The must-have attribute name.*/
-    @Value("${cas.spnego.ldap.attribute:spnegoAttribute}")
-    protected String spnegoAttributeName;
+    private String spnegoAttributeName;
 
-    /** The connection configuration to ldap.*/
-    @Autowired(required=false)
-    @Qualifier("spnegoClientActionConnectionFactory")
-    protected ConnectionFactory connectionFactory;
-
-    /** The search request. */
-    @Autowired(required=false)
-    @Qualifier("spnegoClientActionSearchRequest")
-    protected SearchRequest searchRequest;
-
-    private LdapSpnegoKnownClientSystemsFilterAction() {}
-
-    /**
-     * Instantiates new action. Initializes the default attribute
-     * to be {@link #DEFAULT_SPNEGO_ATTRIBUTE}.
-     * @param connectionFactory the connection factory
-     * @param searchRequest the search request
-     */
-    public LdapSpnegoKnownClientSystemsFilterAction(final ConnectionFactory connectionFactory,
-                                                     final SearchRequest searchRequest) {
-        this(connectionFactory, searchRequest, DEFAULT_SPNEGO_ATTRIBUTE);
-    }
-
+    private ConnectionFactory connectionFactory;
+    private SearchRequest searchRequest;
+    
+    public LdapSpnegoKnownClientSystemsFilterAction() {}
+    
     /**
      * Instantiates a new action.
      *
@@ -144,7 +116,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         } finally {
             if (connection != null) {
                 connection.close();

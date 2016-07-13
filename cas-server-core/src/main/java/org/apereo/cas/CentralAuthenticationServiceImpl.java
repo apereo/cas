@@ -43,7 +43,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@Component("centralAuthenticationService")
+@Transactional(readOnly = false, transactionManager = "ticketTransactionManager")
 public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
@@ -71,7 +71,6 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
      * Instantiates a new Central authentication service impl.
      */
     public CentralAuthenticationServiceImpl() {
-
     }
 
     /**
@@ -153,7 +152,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication != null);
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
@@ -165,7 +164,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         return serviceTicket;
     }
 
-    private Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;
@@ -313,7 +312,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             logger.debug("Located registered service definition {} from {} to handle validation request",
                     registeredService, selectedService);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
             final Authentication authentication = getAuthenticationSatisfiedByPolicy(

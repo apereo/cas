@@ -1,36 +1,25 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 /**
  * Monitors JVM memory usage.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RefreshScope
-@Component("memoryMonitor")
 public class MemoryMonitor implements Monitor<MemoryStatus> {
 
-    /** Default percent free memory warning threshold. */
-    public static final int DEFAULT_FREE_MEMORY_WARN_THRESHOLD = 10;
     private static final int PERCENTAGE_VALUE = 100;
 
+    
     /** Percent free memory warning threshold. */
-    private long freeMemoryWarnThreshold = DEFAULT_FREE_MEMORY_WARN_THRESHOLD;
-
+    private long freeMemoryWarnThreshold;
 
     /**
      * Sets the percent of free memory below which a warning is reported.
      *
      * @param threshold Percent free memory warning threshold.
      */
-    @Autowired
-    public void setFreeMemoryWarnThreshold(@Value("${cas.monitor.free.mem.threshold:10}")
-                                               final long threshold) {
+    public void setFreeMemoryWarnThreshold(final long threshold) {
         if (threshold < 0) {
             throw new IllegalArgumentException("Warning threshold must be non-negative.");
         }

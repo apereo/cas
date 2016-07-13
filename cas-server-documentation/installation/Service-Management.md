@@ -24,7 +24,7 @@ bean.
 ## Service Management Webapp
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
-to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com](https://jasigcasmgmt.herokuapp.com)
+to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
 
 The Services Management web application is a standalone application that helps one manage service registrations and 
 entries via a customizable user interface. The management web application *MUST* share the same registry configuration as
@@ -56,19 +56,19 @@ Registered services present the following metadata:
 | `multifactorPolicy`           	| The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
 
 
-### Configure Service Access Strategy
+### Service Access Strategy
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-### Configure Proxy Authentication Policy
+### Proxy Authentication Policy
 
 [See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
 
-### Configure Service Custom Properties
+### Service Custom Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
-## Persisting Registered Service Data
+## Persisting Services
 
 ### Memory
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
@@ -95,6 +95,10 @@ service registry data and the UI will not be used.
 ### JSON
 
 [See this guide](JSON-Service-Management.html) for more info please.
+
+### YAML
+
+[See this guide](YAML-Service-Management.html) for more info please.
 
 ### Mongo
 

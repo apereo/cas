@@ -1,9 +1,7 @@
-apply plugin: 'war'
-apply plugin: 'spring-boot'
+apply plugin: "war"
+apply plugin: "spring-boot"
 
-apply from: '../gradle/node.gradle'
-
-description = 'Apereo CAS Web Application'
+description = "Apereo CAS Web Application"
 
 sourceSets {
     main {
@@ -20,79 +18,67 @@ javadoc {
 war {
     manifest {
         attributes("Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": java.time.ZonedDateTime.now(),
-                "Implementation-Version": project.version)
+                   "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": java.time.ZonedDateTime.now(),
+                    "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
+    enabled = !rootProject.publishReleases
 }
 
+
 bootRun {
+    dependsOn pathingJar
+    doFirst {
+        classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+    }
+    
     addResources = true
     jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     systemProperties = System.properties
 }
 
 springBoot  {
-    mainClass = 'org.apereo.cas.web.CasWebApplication'
+    mainClass = "org.apereo.cas.web.CasWebApplication"
 }
 
 bootRepackage {
-    mainClass = 'org.apereo.cas.web.CasWebApplication'
+    mainClass = "org.apereo.cas.web.CasWebApplication"
+    enabled = !rootProject.publishReleases
 }
 
 dependencies {
-    compile project(':cas-server-core')
-    compile project(':cas-server-core-monitor')
-    compile project(':cas-server-core-authentication')
-    compile project(':cas-server-core-services')
-    compile project(':cas-server-core-logout')
-    compile project(':cas-server-core-audit')
-    compile project(':cas-server-core-logging')
-    compile project(':cas-server-core-tickets')
-    compile project(':cas-server-core-web')
-    compile project(':cas-server-core-validation')
-    compile project(':cas-server-core-util')
-    compile project(':cas-server-webapp-init')
-    compile project(':cas-server-webapp-throttle')
-    compile project(':cas-server-webapp-actions')
-    compile project(':cas-server-webapp-cookie')
-    compile project(':cas-server-webapp-reports')
-    compile project(':cas-server-webapp-themes')
-    compile project(':cas-server-webapp-config')
-    compile project(':cas-server-webapp-validation')
-
+    compile project(":cas-server-core")
+    compile project(":cas-server-core-monitor")
+    compile project(":cas-server-core-authentication")
+    compile project(":cas-server-core-services")
+    compile project(":cas-server-core-logout")
+    compile project(":cas-server-core-audit")
+    compile project(":cas-server-core-logging")
+    compile project(":cas-server-core-tickets")
+    compile project(":cas-server-core-web")
+    compile project(":cas-server-core-validation")
+    compile project(":cas-server-core-util")
+    compile project(":cas-server-webapp-init")
+    compile project(":cas-server-support-throttle")
+    compile project(":cas-server-support-actions")
+    compile project(":cas-server-support-cookie")
+    compile project(":cas-server-support-reports")
+    compile project(":cas-server-support-themes")
+    compile project(":cas-server-webapp-config")
+    compile project(":cas-server-support-validation")
+    compile project(":cas-server-support-json-service-registry")
+    
     providedRuntime libraries.springboottomcat
-    compile libraries.pac4j
-    compile libraries.springcloud
-    compile libraries.springboot
-    compile libraries.thmyeleaf
+    runtime libraries.pac4j
+    runtime libraries.springcloud
+    runtime libraries.springboot
+    runtime libraries.thmyeleaf
     runtime libraries.groovy
-    compile libraries.spring
+    runtime libraries.spring
     runtime libraries.cassecurityfilter
     runtime libraries.metrics
     runtime libraries.hibernate
     runtime libraries.bouncycastle
 }
-
-npm_run {
-    args = [
-            'gulp',
-            '--',
-            'sass',
-            "--gulpfile", "${project.file('gulpfile.js')}",
-            "--cwd", "${project.buildDir}",
-            "--sassPath", "${project.file('src/main/resources/static/sass')}",
-            "--npmPath", "${project.buildDir}/node_modules",
-            "--cssPath", "${project.buildDir}/generated-src/main/resources/static/css"
-    ]
-}
-
-tasks.npm_install.inputs.file(project.file('package.json'))
-
-tasks.npm_run.dependsOn 'npm_install'
-tasks.npm_run.inputs.dir(project.file('src/main/resources/static/sass'))
-tasks.npm_run.inputs.file(project.file('gulpfile.js'))
-tasks.npm_run.outputs.dir("${project.buildDir}/generated-src/main/resources/static/css")
-tasks.npm_run.outputs.upToDateWhen { false }

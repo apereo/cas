@@ -5,11 +5,7 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -33,8 +29,6 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RefreshScope
-@Component("fileAuthenticationHandler")
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
@@ -63,7 +57,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
             final String password = credential.getPassword();
-            if (this.getPasswordEncoder().matches(password, passwordOnRecord)) {
+            if (StringUtils.equals(password, passwordOnRecord)) {
                 return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
@@ -75,16 +69,15 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * @param fileName The fileName to set.
      */
-    @Autowired
-    public void setFileName(@Value("${file.authn.filename:}") final Resource fileName) {
+
+    public void setFileName(final Resource fileName) {
         this.fileName = fileName;
     }
 
     /**
      * @param separator The separator to set.
      */
-    @Autowired
-    public void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + '}') final String separator) {
+    public void setSeparator(final String separator) {
         this.separator = separator;
     }
 

@@ -3,7 +3,7 @@ package org.apereo.cas.util.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.AbstractJacksonBackedJsonSerializer;
+import org.apereo.cas.util.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 
@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSerializer<RegisteredService> {
+public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
     private static final long serialVersionUID = 7645698151115635245L;
 
     /**
@@ -73,7 +73,8 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedJsonSe
 
         @JsonIgnore
         @Override
-        public  boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
+        public boolean doPrincipalAttributesAllowServiceAccess(final String principal, 
+                                                               final Map<String, Object> principalAttributes) {
             return false;
         }
 

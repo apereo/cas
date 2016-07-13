@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import com.google.common.base.Throwables;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -21,10 +23,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,33 +38,24 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("samlProfileSamlResponseBuilder")
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
-
+    
     /**
      * The Saml object encoder.
      */
-    @Autowired
-    @Qualifier("samlObjectSigner")
     protected SamlObjectSigner samlObjectSigner;
 
     /**
      * The Velocity engine factory.
      */
-    @Autowired
     protected VelocityEngineFactory velocityEngineFactory;
 
-    @Value("${cas.samlidp.entityid:}")
-    private String entityId;
-
     @Autowired
-    @Qualifier("samlProfileSamlAssertionBuilder")
+    private CasConfigurationProperties casProperties;
+    
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
-
-    @Autowired
-    @Qualifier("samlObjectEncrypter")
+    
     private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override
@@ -97,7 +86,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request, final HttpServletResponse response)
             throws SamlException {
-        final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final String id = "_" + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
@@ -133,7 +122,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @return the issuer
      */
     protected Issuer buildEntityIssuer() {
-        final Issuer issuer = newIssuer(this.entityId);
+        final Issuer issuer = newIssuer(casProperties.getAuthn().getSamlIdp().getEntityId());
         issuer.setFormat(Issuer.ENTITY);
         return issuer;
     }
@@ -163,7 +152,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
             encoder.encode();
             return samlResponse;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -194,5 +183,21 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for encryption", e);
         }
+    }
+
+    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
+        this.samlObjectSigner = samlObjectSigner;
+    }
+
+    public void setVelocityEngineFactory(final VelocityEngineFactory velocityEngineFactory) {
+        this.velocityEngineFactory = velocityEngineFactory;
+    }
+
+    public void setSamlProfileSamlAssertionBuilder(final SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder) {
+        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
+    }
+
+    public void setSamlObjectEncrypter(final SamlObjectEncrypter samlObjectEncrypter) {
+        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 }

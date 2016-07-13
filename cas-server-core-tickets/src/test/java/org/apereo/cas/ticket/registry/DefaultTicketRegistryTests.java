@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -16,6 +18,7 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
         return new DefaultTicketRegistry();
     }
 
+    @Test
     public void verifyOtherConstructor() {
         assertNotNull(new DefaultTicketRegistry(10, 10F, 5));
     }

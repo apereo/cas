@@ -188,7 +188,7 @@ public final class WebUtils {
      * @param ticket  the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context,  final TicketGrantingTicket ticket) {
+            final RequestContext context, final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
     }
@@ -200,7 +200,7 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketInScopes(
-            final RequestContext context,  final String ticketValue) {
+            final RequestContext context, final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
     }
@@ -523,6 +523,17 @@ public final class WebUtils {
         context.getFlowScope().put("trackGeoLocation", value);
     }
 
+    /**
+     * Put static authentication into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putStaticAuthenticationIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("staticAuthentication", value);
+    }
+    
+    
     /**
      * Put tracking id into flow scope.
      *

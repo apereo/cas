@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Provides the most basic means of principal resolution by mapping
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Component;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("proxyPrincipalResolver")
 public class BasicPrincipalResolver implements PrincipalResolver {
 
     /** Factory to create the principal type. **/

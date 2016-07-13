@@ -9,13 +9,9 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.util.Pair;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Resource;
 import javax.security.auth.login.FailedLoginException;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
@@ -30,25 +26,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("radiusTokenAuthenticationHandler")
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
-    @Resource(name = "radiusTokenServers")
     private List<RadiusServer> servers;
-
-    /**
-     * Determines whether to fail over to the next configured RadiusServer if
-     * there was an exception.
-     */
-    @Value("${cas.radius.failover.authn:false}")
     private boolean failoverOnException;
-
-    /**
-     * Determines whether to fail over to the next configured RadiusServer if
-     * there was an authentication failure.
-     */
-    @Value("${cas.radius.failover.exception:false}")
     private boolean failoverOnAuthenticationFailure;
 
     /**
@@ -109,7 +90,29 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             return true;
         }
         return false;
+    }
 
+    public List<RadiusServer> getServers() {
+        return servers;
+    }
 
+    public void setServers(final List<RadiusServer> servers) {
+        this.servers = servers;
+    }
+
+    public boolean isFailoverOnException() {
+        return failoverOnException;
+    }
+
+    public void setFailoverOnException(final boolean failoverOnException) {
+        this.failoverOnException = failoverOnException;
+    }
+
+    public boolean isFailoverOnAuthenticationFailure() {
+        return failoverOnAuthenticationFailure;
+    }
+
+    public void setFailoverOnAuthenticationFailure(final boolean failoverOnAuthenticationFailure) {
+        this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
     }
 }

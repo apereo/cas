@@ -9,10 +9,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
@@ -23,13 +19,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultCasEventListener")
 public class DefaultCasEventListener {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired(required = false)
-    @Qualifier("casEventRepository")
+    
     private CasEventRepository casEventRepository;
 
     /**
@@ -58,5 +50,13 @@ public class DefaultCasEventListener {
 
             this.casEventRepository.save(dto);
         }
+    }
+
+    public CasEventRepository getCasEventRepository() {
+        return casEventRepository;
+    }
+
+    public void setCasEventRepository(final CasEventRepository casEventRepository) {
+        this.casEventRepository = casEventRepository;
     }
 }

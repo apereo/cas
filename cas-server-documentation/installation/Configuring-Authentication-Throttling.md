@@ -4,6 +4,7 @@ title: CAS - Configuring Authentication Throttling
 ---
 
 # Throttling Authentication Attempts
+
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
 A couple strategies are provided for tracking failed attempts:
 
@@ -22,6 +23,38 @@ A failure rate of more than 1 per 3 seconds is indicative of an automated authen
 reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
+## IP Address
+
+Uses a memory map to prevent successive failed login attempts from the same IP address.
+
+## IP Address and Username
+
+Uses a memory map to prevent successive failed login attempts for 
+a particular username from the same IP address.
+
+## Inspektr + JDBC
+
+Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
+username from the same IP address. This component requires that the
+[inspektr library](https://github.com/apereo/inspektr) used for CAS auditing be configured with
+`JdbcAuditTrailManager`, which writes audit data to a database.
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+For additional instructions on how to configure auditing via Inspektr,
+please [review the following guide](Logging.html).
+
+## Configuration
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## High Availability Considerations for Throttling
 
@@ -36,58 +69,7 @@ would be split across N systems. However, since the source varies, accurate acco
 throttling components themselves assume a constant source IP for tracking purposes. The login throttling components
 are simply not sufficient for detecting or preventing a distributed password brute force attack.
 
-For stateless CAS clusters where there is no session affinity, the in-memory components may afford some protection but
+For stateless CAS clusters where there is no session affinity, the in-memory 
+components may afford some protection but
 they cannot apply the rate strictly since requests to CAS hosts would be split across N systems.
 The _inspektr_ components, on the other hand, fully support stateless clusters.
-
-
-## Configuration
-
-### IP Address
-Uses a memory map to prevent successive failed login attempts from the same IP address. In `cas.propeties`:
-
-```properties
-#CAS components mappings
-authenticationThrottle=inMemoryIpAddressThrottle
-```
-
-
-### IP Address and Username
-Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address. In `application.properties`:
-
-```properties
-#CAS components mappings
-authenticationThrottle=inMemoryIpAddressUsernameThrottle
-```
-
-### Inspektr + JDBC
-Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
-username from the same IP address. This component requires that the
-[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
-`JdbcAuditTrailManager`, which writes audit data to a database.
-
-```properties
-#CAS components mappings
-authenticationThrottle=inspektrIpAddressUsernameThrottle
-```
-
-Import in local `deployerConfigContext.xml`:
-
-```xml
-<import resource="classpath:inspektr-throttle-jdbc-config.xml" />
-```
-
-For additional instructions on how to configure auditing via Inspektr,
-please [review the following guide](Logging.html).
-
-### Configuration
-Login throttling configuration consists of:
-
-```properties
-#cas.throttle.failure.threshold=
-#cas.throttle.failure.range.seconds=
-#cas.throttle.username.parameter=
-#cas.throttle.appcode=
-#cas.throttle.authn.failurecode=
-#cas.throttle.audit.query=
-```

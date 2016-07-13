@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -67,7 +67,7 @@ public class AuthenticationTransaction implements Serializable {
 
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
-            final Set<Credential> set = new HashSet<>(Arrays.asList(credentials));
+            final Set<Credential> set = new HashSet<>(Lists.newArrayList(credentials));
             final Iterator<Credential> it = set.iterator();
             while (it.hasNext()) {
                 if (it.next() == null) {

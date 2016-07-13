@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
@@ -7,7 +8,11 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +22,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(
+        classes = {SamlGoogleAppsConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Autowired

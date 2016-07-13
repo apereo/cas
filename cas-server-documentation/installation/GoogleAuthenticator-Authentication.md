@@ -22,14 +22,7 @@ Support is enabled by including the following module in the Overlay:
 
 ## Configuration
 
-```properties
-# cas.mfa.gauth.code.digits=
-# cas.mfa.gauth.time.step=
-# cas.mfa.gauth.window=
-# cas.mfa.gauth.label=
-# cas.mfa.gauth.issuer=
-# cas.mfa.gauth.rank=0
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Registration
 

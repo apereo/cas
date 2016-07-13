@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -20,7 +21,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -49,7 +49,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Parameterized.Parameters
     public static Collection getTestParameters() throws Exception {
-        return Arrays.asList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
+        return Lists.newArrayList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
     }
 
     @BeforeClass
@@ -112,11 +112,11 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
                 org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+                "ST1", service, new NeverExpiresExpirationPolicy(), null, false);
         final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), true, false);
+                "ST2", service, new NeverExpiresExpirationPolicy(), null, false);
         final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), true, false);
+                "ST3", service, new NeverExpiresExpirationPolicy(), null, false);
 
         this.registry.addTicket(st1);
         this.registry.addTicket(st2);

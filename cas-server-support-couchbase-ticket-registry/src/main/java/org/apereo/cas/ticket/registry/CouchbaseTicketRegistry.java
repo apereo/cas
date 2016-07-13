@@ -6,19 +6,18 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -34,42 +33,37 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("couchbaseTicketRegistry")
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final String END_TOKEN = "\u02ad";
 
     private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
-    
+
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[] {
+    private static final List<View> ALL_VIEWS = Lists.newArrayList(new View[]{
             ALL_TICKETS_VIEW
     });
     private static final String UTIL_DOCUMENT = "statistics";
 
-    
     @Autowired
-    @Qualifier("ticketRegistryCouchbaseClientFactory")
+    private CasConfigurationProperties casProperties;
+
     private CouchbaseClientFactory couchbase;
-
-
-    @Value("${ticketreg.couchbase.query.enabled:true}")
-    private boolean queryEnabled;
 
     /**
      * Default constructor.
      */
-    public CouchbaseTicketRegistry() {}
+    public CouchbaseTicketRegistry() {
+    }
 
     @Override
     public void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), 
+                    SerializableDocument.create(ticket.getId(),
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
@@ -83,7 +77,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), 
+                    SerializableDocument.create(ticket.getId(),
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
@@ -119,7 +113,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
+
+        System.setProperty("com.couchbase.queryEnabled",
+                Boolean.toString(casProperties.getTicket().getRegistry().getCouchbase().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }
@@ -133,7 +129,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             this.couchbase.shutdown();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -144,7 +140,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets() not supported.");
+        return new ArrayList<>();
     }
 
     @Override
@@ -178,17 +174,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
             return (Integer) res.value();
-        } else {
-            return 0;
         }
+
+        return 0;
     }
-    
-    @Override
-    protected boolean isCleanerSupported() {
-        logger.info("{} does not support automatic ticket clean up processes", this.getClass().getName());
-        return false;
-    }
-    
+
+
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
         this.couchbase = couchbase;
     }

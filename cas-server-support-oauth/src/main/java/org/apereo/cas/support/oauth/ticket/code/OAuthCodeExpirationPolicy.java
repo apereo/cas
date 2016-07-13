@@ -1,10 +1,6 @@
 package org.apereo.cas.support.oauth.ticket.code;
 
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,8 +10,6 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("oAuthCodeExpirationPolicy")
 public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
     private static final long serialVersionUID = -8383186621682727360L;
 
@@ -25,10 +19,7 @@ public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPo
      * @param numberOfUses             the number of uses
      * @param timeToKillInMilliSeconds the time to kill in milli seconds
      */
-    @Autowired
-    public OAuthCodeExpirationPolicy(@Value("${oauth.code.numberOfUses:1}")
-                                     final int numberOfUses,
-                                     @Value("#{${oauth.code.timeToKillInSeconds:30}*1000L}")
+    public OAuthCodeExpirationPolicy(final int numberOfUses,
                                      final long timeToKillInMilliSeconds) {
         super(numberOfUses, timeToKillInMilliSeconds);
     }

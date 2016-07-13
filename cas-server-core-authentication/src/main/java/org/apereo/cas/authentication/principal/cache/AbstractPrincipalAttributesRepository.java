@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.ApplicationContextProvider;
@@ -9,10 +12,6 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
     /** Default cache expiration time unit. */
-    private static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
+    private static final String DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS.name();
 
     /** Default expiration lifetime based on the default time unit. */
     private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
@@ -46,7 +45,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     protected long expiration;
 
     /** Expiration time unit. */
-    protected TimeUnit timeUnit;
+    protected String timeUnit;
 
     /**
      * The merging strategy that deals with existing principal attributes
@@ -106,7 +105,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param expiration the expiration
      * @param timeUnit the time unit
      */
-    public AbstractPrincipalAttributesRepository(final long expiration, final TimeUnit timeUnit) {
+    public AbstractPrincipalAttributesRepository(final long expiration, final String timeUnit) {
         this.expiration = expiration;
         this.timeUnit = timeUnit;
     }
@@ -224,7 +223,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return the map
      */
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p,
-                                                        final Map<String, List<Object>>  sourceAttributes) {
+                                                        final Map<String, List<Object>> sourceAttributes) {
         final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
@@ -275,10 +274,14 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         return this.expiration;
     }
 
-    public TimeUnit getTimeUnit() {
+    public String getTimeUnit() {
         return this.timeUnit;
     }
 
+    public void setTimeUnit(final String unit) {
+        this.timeUnit = unit;
+    }
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class SimpleHttpClientTests  {
+public class SimpleHttpClientTests {
 
     private SimpleHttpClient getHttpClient() throws Exception {
         final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();

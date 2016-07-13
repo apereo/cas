@@ -55,7 +55,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Performs LDAP authentication given username/password.
      **/
-    
     private Authenticator authenticator;
 
     /** Component name. */
@@ -70,6 +69,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
+
+    /**
+     * Default ctor.
+     */
+    public LdapAuthenticationHandler() {
+    }
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -147,15 +152,19 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         this.additionalAttributes = additionalAttributes;
     }
 
+    public void setAuthenticator(final Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc)
             throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
             logger.debug("Attempting LDAP authentication for {}", upc);
-            final String password = getPasswordEncoder().encode(upc.getPassword());
+            
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
-                    new org.ldaptive.Credential(password),
+                    new org.ldaptive.Credential(upc.getPassword()),
                     this.authenticatedEntryAttributes);
             response = this.authenticator.authenticate(request);
         } catch (final LdapException e) {

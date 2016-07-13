@@ -5,14 +5,9 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -24,16 +19,10 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("googleAuthenticatorAuthenticationHandler")
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
-    @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    
     private GoogleAuthenticatorAccountRegistry accountRegistry;
-
-    @Autowired
-    @Qualifier("googleAuthenticatorInstance")
+    
     private GoogleAuthenticatorInstance googleAuthenticatorInstance;
 
     /**
@@ -41,13 +30,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
      */
     public GoogleAuthenticatorAuthenticationHandler() {
     }
-
-    /**
-     * Init.
-     */
-    @PostConstruct
-    public void init() {
-    }
+    
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
@@ -74,5 +57,13 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     @Override
     public boolean supports(final Credential credential) {
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
+        this.accountRegistry = accountRegistry;
+    }
+
+    public void setGoogleAuthenticatorInstance(final GoogleAuthenticatorInstance googleAuthenticatorInstance) {
+        this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

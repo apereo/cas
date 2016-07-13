@@ -61,7 +61,13 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
         
     /**
-     * The action state 'initializeLoginForm'.
+     * The state 'initializeLoginForm'.
      */
     String STATE_ID_INIT_LOGIN_FORM = "initializeLoginForm";
+
+    /**
+     * The state 'viewLoginForm'.
+     */
+    String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+    
 }

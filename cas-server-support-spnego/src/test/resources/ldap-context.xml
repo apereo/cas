@@ -14,18 +14,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    <context:component-scan base-package="org.apereo.cas" />
-    <context:annotation-config />
+    
 
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
@@ -120,23 +109,8 @@
           class="org.ldaptive.auth.SearchEntryResolver"
             />
 
-    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <util:map id="authenticationHandlersResolvers"/>
-    <util:list id="authenticationMetadataPopulators" />
-    <util:list id="monitorsList" />
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
-    <util:map id="uniqueIdGeneratorsMap"/>
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-    <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy" />
-    </util:list>
-    <util:list id="serviceFactoryList" />
-    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
-    <alias name="tgcCipherExecutor" alias="defaultCookieCipherExecutor" />
+    
+    
+    
 
 </beans>

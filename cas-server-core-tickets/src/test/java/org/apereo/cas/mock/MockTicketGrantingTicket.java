@@ -79,7 +79,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, null, true);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             final String id,
             final Service service,
             final ExpirationPolicy expirationPolicy,
-            final boolean credentialsProvided,
+            final Authentication authentication,
             final boolean onlyTrackMostRecentSession) {
         usageCount++;
         return new MockServiceTicket(id, service, this);
@@ -171,5 +171,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 }

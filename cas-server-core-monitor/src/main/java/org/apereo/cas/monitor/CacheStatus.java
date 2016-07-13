@@ -23,7 +23,7 @@ public class CacheStatus extends Status {
      * @param description Optional status description.
      * @param statistics One or more sets of cache statistics.
      */
-    public CacheStatus(final StatusCode code, final String description,  final CacheStatistics... statistics) {
+    public CacheStatus(final StatusCode code, final String description, final CacheStatistics... statistics) {
         super(code, buildDescription(description, statistics));
         this.statistics = statistics;
     }

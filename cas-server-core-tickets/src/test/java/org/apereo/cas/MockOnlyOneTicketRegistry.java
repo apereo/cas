@@ -49,4 +49,14 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     public Collection<Ticket> getTickets() {
         throw new UnsupportedOperationException("Not implemented");
     }
+
+    @Override
+    public long sessionCount() {
+        return 1;
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return 1;
+    }
 }

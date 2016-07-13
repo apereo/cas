@@ -152,11 +152,5 @@ the higher the rank value is, the higher on the security scale it remains. A pro
 and override others with a lower value. 
 
 ## Settings
-The following general MFA settings are available for configuration in `application.properties`:
 
-```properties
-# cas.mfa.principal.attributes=memberOf,groupName,authnClass
-# cas.mfa.request.parameter=authn_method
-# cas.mfa.authn.ctx.attribute=authnContextClass
-# cas.mfa.failure.mode=CLOSED
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

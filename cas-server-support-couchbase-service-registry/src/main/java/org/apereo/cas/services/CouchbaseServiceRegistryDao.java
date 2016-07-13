@@ -6,22 +6,20 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.JsonSerializer;
+import org.apereo.cas.util.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,14 +35,12 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("couchbaseServiceRegistryDao")
 public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     private static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
 
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{
+    private static final List<View> ALL_VIEWS = Lists.newArrayList(new View[]{
             ALL_SERVICES_VIEW
     });
 
@@ -52,22 +48,20 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
 
-    
     @Autowired
-    @Qualifier("serviceRegistryCouchbaseClientFactory")
+    private CasConfigurationProperties casProperties;
+    
     private CouchbaseClientFactory couchbase;
 
-    @Value("${svcreg.couchbase.query.enabled:true}")
-    private boolean queryEnabled;
 
-    private JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
+    private StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
     /**
      * Default constructor.
      *
      * @param serviceJsonSerializer the JSON serializer to use.
      */
-    public CouchbaseServiceRegistryDao(final JsonSerializer<RegisteredService> serviceJsonSerializer) {
+    public CouchbaseServiceRegistryDao(final StringSerializer<RegisteredService> serviceJsonSerializer) {
         this.registeredServiceJsonSerializer = serviceJsonSerializer;
     }
 
@@ -87,7 +81,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
         }
 
         final StringWriter stringWriter = new StringWriter();
-        this.registeredServiceJsonSerializer.toJson(stringWriter, service);
+        this.registeredServiceJsonSerializer.to(stringWriter, service);
 
         this.couchbase.bucket().upsert(
                 RawJsonDocument.create(
@@ -118,7 +112,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
                     LOGGER.debug("Found service: {}", json);
 
                     final StringReader stringReader = new StringReader(json);
-                    services.add(this.registeredServiceJsonSerializer.fromJson(stringReader));
+                    services.add(this.registeredServiceJsonSerializer.from(stringReader));
                 }
             }
             return services;
@@ -140,7 +134,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
             if (document != null) {
                 final String json = document.content();
                 final StringReader stringReader = new StringReader(json);
-                return this.registeredServiceJsonSerializer.fromJson(stringReader);
+                return this.registeredServiceJsonSerializer.from(stringReader);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -153,7 +147,8 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
      */
     @PostConstruct
     public void initialize() {
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
+        System.setProperty("com.couchbase.queryEnabled", 
+                Boolean.toString(casProperties.getServiceRegistry().getCouchbase().isQueryEnabled()));
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.initialize();
     }
@@ -166,7 +161,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
         try {
             this.couchbase.shutdown();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

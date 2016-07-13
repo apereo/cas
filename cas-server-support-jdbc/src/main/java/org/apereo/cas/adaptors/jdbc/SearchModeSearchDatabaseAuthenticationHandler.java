@@ -4,16 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 
 /**
@@ -28,18 +22,13 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
-@RefreshScope
-@Component("searchModeSearchDatabaseAuthenticationHandler")
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
-
     
     private String fieldUser;
-
     
     private String fieldPassword;
-
     
     private String tableUsers;
 
@@ -50,14 +39,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
-            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+            throw new GeneralSecurityException("Authentication handler is not configured correctly. "
+                    + "No SQL statement or JDBC template found");
         }
 
         final String username = credential.getUsername();
-        final String encyptedPassword = getPasswordEncoder().encode(credential.getPassword());
         final int count;
         try {
-            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, encyptedPassword);
+            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, credential.getPassword());
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
@@ -82,30 +71,21 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     /**
      * @param fieldPassword The fieldPassword to set.
      */
-    @Autowired
-    public void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
+    public void setFieldPassword(final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 
     /**
      * @param fieldUser The fieldUser to set.
      */
-    @Autowired
-    public void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
+    public void setFieldUser(final String fieldUser) {
         this.fieldUser = fieldUser;
     }
 
     /**
      * @param tableUsers The tableUsers to set.
      */
-    @Autowired
-    public void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
+    public void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
-    }
-
-    @Autowired(required=false)
-    @Override
-    public void setDataSource(@Qualifier("searchModeDatabaseDataSource") final DataSource dataSource) {
-        super.setDataSource(dataSource);
     }
 }

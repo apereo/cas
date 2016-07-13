@@ -2,10 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
@@ -47,15 +44,13 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("authenticationManager")
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
 
     /**
      * Authentication security policy.
      */
     
-    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
+    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy(false);
 
     /**
      * Instantiates a new Policy based authentication manager.
@@ -156,7 +151,6 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
      *
      * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
      */
-    @Resource(name = "authenticationPolicy")
     public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
         this.authenticationPolicy = policy;
     }

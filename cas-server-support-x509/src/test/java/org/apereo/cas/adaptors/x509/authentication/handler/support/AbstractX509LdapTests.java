@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import com.google.common.base.Throwables;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -31,7 +32,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
             getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
             populateCertificateRevocationListAttribute();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

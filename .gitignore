@@ -26,9 +26,9 @@ nodejs
 .gradle/
 build/
 MANIFEST.MF
-*.css
 classes/
 *.bin
 
 **/tomcat/
 out
+ajcore.*

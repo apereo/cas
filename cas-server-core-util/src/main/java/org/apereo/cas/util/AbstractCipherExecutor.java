@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -52,7 +53,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             jws.setKey(this.signingKey);
             return jws.getCompactSerialization().getBytes();
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -78,9 +79,12 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             }
             return null;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
-
+    @Override
+    public boolean isEnabled() {
+        return this.signingKey != null;
+    }
 }

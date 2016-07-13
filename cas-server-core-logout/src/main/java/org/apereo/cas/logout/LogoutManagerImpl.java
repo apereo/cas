@@ -7,11 +7,6 @@ import org.apereo.cas.util.CompressionUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,25 +18,16 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@RefreshScope
-@Component("logoutManager")
 public class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
     
     /** Whether single sign out is disabled or not. */
-    @Value("${slo.callbacks.disabled:false}")
     private boolean singleLogoutCallbacksDisabled;
-
     
-    @Autowired
-    @Qualifier("logoutBuilder")
     private LogoutMessageCreator logoutMessageBuilder;
-
     
-    @Autowired
-    @Qualifier("defaultSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     /**

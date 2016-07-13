@@ -9,34 +9,21 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
+
 
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
-
-    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
-    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
-    <alias name="searchExecutorRole" alias="ldapAuthorizationGeneratorRoleSearchExecutor" />
-
+    
     <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
           p:baseDn="${ldap.baseDn}"
-          p:searchFilter="${ldap.user.searchFilter}"
-          p:returnAttributes-ref="userDetailsUserAttributes" />
-
-    <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
-          p:baseDn="${ldap.role.baseDn}"
-          p:searchFilter="${ldap.role.searchFilter}"
-          p:returnAttributes-ref="userDetailsRoleAttributes" />
-
-    <util:list id="userDetailsUserAttributes">
-        <value>mail</value>
-    </util:list>
-
-    <util:list id="userDetailsRoleAttributes">
-        <value>uugid</value>
-    </util:list>
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
+          p:searchFilter="${ldap.user.searchFilter}"/>
+    
+    
+    
+    
 
 </beans>

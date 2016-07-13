@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class InMemoryServiceRegistryDaoImplTests {
 
     @Test
-    public void verifySave()  {
+    public void verifySave() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -25,7 +25,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-     public void verifySaveAndLoad()  {
+     public void verifySaveAndLoad() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -33,7 +33,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void verifySaveAndFind()  {
+    public void verifySaveAndFind() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
@@ -41,7 +41,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     }
 
     @Test
-    public void verifySaveAndDelete()  {
+    public void verifySaveAndDelete() {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
         final RegisteredService svc = TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);

@@ -11,10 +11,12 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,21 +32,19 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casMetricsConfiguration")
 @EnableMetrics
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
-
-    @Value("${metrics.refresh.internal:30}")
-    private long perfStatsPeriod;
-
-    @Value("${metrics.logger.name:perfStatsLogger}")
-    private String perfStatsLoggerName;
-
+    
+    @Autowired
+    private CasConfigurationProperties casProperties;
+            
     /**
      * Metric registry metric registry.
      *
      * @return the metric registry
      */
-    @Bean(name = "metrics")
-    public MetricRegistry metricRegistry() {
+    @Bean
+    public MetricRegistry metrics() {
         final MetricRegistry metrics = new MetricRegistry();
         metrics.register("jvm.gc", new GarbageCollectorMetricSet());
         metrics.register("jvm.memory", new MemoryUsageGaugeSet());
@@ -57,7 +57,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the servlet registration bean
      */
-    @Bean(name="metricsServlet")
+    @Bean
     public ServletRegistrationBean metricsServlet() {
         final ServletRegistrationBean bean = new ServletRegistrationBean();
         bean.setEnabled(true);
@@ -73,14 +73,14 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
      *
      * @return the health check registry
      */
-    @Bean(name = "healthCheckMetrics")
+    @Bean
     public HealthCheckRegistry healthCheckMetrics() {
         return new HealthCheckRegistry();
     }
 
     @Override
     public MetricRegistry getMetricRegistry() {
-        return metricRegistry();
+        return metrics();
     }
 
     @Override
@@ -90,14 +90,14 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Override
     public void configureReporters(final MetricRegistry metricRegistry) {
-        final Logger perfStatsLogger = LoggerFactory.getLogger(this.perfStatsLoggerName);
+        final Logger perfStatsLogger = LoggerFactory.getLogger(casProperties.getMetrics().getLoggerName());
         registerReporter(Slf4jReporter
                 .forRegistry(metricRegistry)
                 .outputTo(perfStatsLogger)
                 .convertRatesTo(TimeUnit.MILLISECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build())
-                .start(this.perfStatsPeriod, TimeUnit.SECONDS);
+                .start(casProperties.getMetrics().getRefreshInterval(), TimeUnit.SECONDS);
 
         registerReporter(JmxReporter
                 .forRegistry(metricRegistry)

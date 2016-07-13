@@ -1,12 +1,12 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.pac4j.core.context.HttpConstants;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("profileController")
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
@@ -75,7 +74,8 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
 
         final Map<String, Object> map =
-                writeOutProfileResponse(accessTokenTicket.getAuthentication().getPrincipal());
+                writeOutProfileResponse(accessTokenTicket.getAuthentication(),
+                        accessTokenTicket.getAuthentication().getPrincipal());
         final String value = OAuthUtils.jsonify(map);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
@@ -83,11 +83,13 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
     /**
      * Write out profile response.
      *
-     * @param principal the principal
+     * @param authentication the authentication
+     * @param principal      the principal
      * @return the linked multi value map
      * @throws IOException the io exception
      */
-    protected Map<String, Object> writeOutProfileResponse(final Principal principal) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
+                                                          final Principal principal) throws IOException {
         final Map<String, Object> map = new HashMap<>();
         map.put(ID, principal.getId());
         map.put(ATTRIBUTES, principal.getAttributes());

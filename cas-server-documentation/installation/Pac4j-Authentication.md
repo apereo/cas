@@ -8,6 +8,7 @@ title: CAS - pac4j Authentication
 </p>
 
 ## Overview
+
 The [pac4j](https://github.com/pac4j/pac4j) project is a security engine with specific authentication mechanisms, 
 called authenticators, for MongoDB, LDAP, JWT, RDBMS...
 
@@ -26,15 +27,6 @@ Support is added by including the following dependency in the WAR overlay:
 ```
 
 ## Configuration
-You can use the first implementation for CAS username/password credentials: 
-`org.apereo.cas.support.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler`.
 
-For example, in the `deployerConfigContext.xml` file:
-
-```xml
-
-<bean id="primaryAuthenticationHandler" 
-    class="org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler" />
-```
-
-You may use a specific pac4j authenticator using the `setAuthenticator` method, the default one being the `SimpleTestUsernamePasswordAuthenticator`.
+You can use the implementation for CAS username/password credentials: 
+`UsernamePasswordWrapperAuthenticationHandler`.

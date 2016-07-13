@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,7 +38,7 @@ public final class CollectionUtils {
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
-            c.addAll(Arrays.asList((Object[]) obj));
+            c.addAll(Lists.newArrayList((Object[]) obj));
             LOGGER.debug("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);

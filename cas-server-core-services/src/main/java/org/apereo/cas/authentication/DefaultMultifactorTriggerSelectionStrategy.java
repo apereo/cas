@@ -2,14 +2,11 @@ package org.apereo.cas.authentication;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,24 +24,10 @@ import java.util.stream.StreamSupport;
  * @author Daniel Frett
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultMultifactorTriggerSelectionStrategy")
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
-
-    @Value("${cas.mfa.request.parameter:authn_method}")
     private String requestParameter;
-
-    @Value("${cas.mfa.principal.attributes:}")
-    private String principalAttribute;
-
-    public void setRequestParameter(final String parameter) {
-        this.requestParameter = parameter;
-    }
-
-    public void setPrincipalAttribute(final String attribute) {
-        this.principalAttribute = attribute;
-    }
+    private String globalPrincipalAttributeNameTriggers;
 
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
@@ -61,7 +44,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
         if (!provider.isPresent() && request != null) {
-            provider = Optional.ofNullable(request.getParameter(this.requestParameter)).filter(validProviderIds::contains);
+            provider = Optional.ofNullable(request.getParameter(requestParameter))
+                    .filter(validProviderIds::contains);
         }
 
         // check for a RegisteredService configured trigger
@@ -75,8 +59,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null && StringUtils.hasText(this.principalAttribute)) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(this.principalAttribute).spliterator(), false)
+        if (!provider.isPresent() && principal != null
+                && StringUtils.hasText(globalPrincipalAttributeNameTriggers)) {
+            provider = StreamSupport.stream(ATTR_NAMES.split(globalPrincipalAttributeNameTriggers).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
                     .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
@@ -89,8 +74,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return provider;
     }
 
-    private boolean shouldApplyRegisteredServiceMultifactorPolicy(final RegisteredServiceMultifactorPolicy policy,
-                                                                  final Principal principal) {
+    private static boolean shouldApplyRegisteredServiceMultifactorPolicy(
+            final RegisteredServiceMultifactorPolicy policy,
+            final Principal principal) {
         final String attrName = policy.getPrincipalAttributeNameTrigger();
         final String attrValue = policy.getPrincipalAttributeValueToMatch();
 
@@ -112,5 +98,13 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 // value =~ /attrValue/
                 .filter(String.class::isInstance).map(String.class::cast)
                 .anyMatch(Predicates.containsPattern(attrValue)::apply);
+    }
+
+    public void setRequestParameter(final String requestParameter) {
+        this.requestParameter = requestParameter;
+    }
+
+    public void setGlobalPrincipalAttributeNameTriggers(final String globalPrincipalAttributeNameTriggers) {
+        this.globalPrincipalAttributeNameTriggers = globalPrincipalAttributeNameTriggers;
     }
 }

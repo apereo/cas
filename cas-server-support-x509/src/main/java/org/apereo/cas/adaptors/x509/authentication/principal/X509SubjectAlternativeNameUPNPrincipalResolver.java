@@ -7,8 +7,6 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,8 +22,6 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RefreshScope
-@Component("x509SubjectAlternativeNameUPNPrincipalResolver")
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**

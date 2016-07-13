@@ -1,13 +1,12 @@
 package org.apereo.cas.util.services;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import java.security.PublicKey;
@@ -18,8 +17,6 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RefreshScope
-@Component("registeredServiceCipherExecutor")
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
     private static final String UTF8_ENCODING = "UTF-8";
 
@@ -67,7 +64,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                 return cipher.doFinal(data.getBytes(UTF8_ENCODING));
             }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
         return null;
     }
