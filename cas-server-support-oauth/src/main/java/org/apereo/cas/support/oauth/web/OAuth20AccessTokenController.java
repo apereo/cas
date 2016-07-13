@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller("oauth20AccessTokenController")
+@Controller("accessTokenController")
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
