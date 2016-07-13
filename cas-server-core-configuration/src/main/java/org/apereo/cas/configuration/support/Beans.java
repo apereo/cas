@@ -4,13 +4,29 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.Credential;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.PoolConfig;
+import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.provider.Provider;
+import org.ldaptive.ssl.KeyStoreCredentialConfig;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -35,6 +51,8 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public class Beans {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
     protected Beans() {
     }
@@ -163,13 +181,80 @@ public class Beans {
         }
     }
 
+
+    /**
+     * New pooled connection factory pooled connection factory.
+     *
+     * @param l the l
+     * @return the pooled connection factory
+     */
+    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
+        final PoolConfig pc = new PoolConfig();
+        pc.setMinPoolSize(l.getMinPoolSize());
+        pc.setMaxPoolSize(l.getMaxPoolSize());
+        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
+        pc.setValidatePeriodically(l.isValidatePeriodically());
+        pc.setValidatePeriod(l.getValidatePeriod());
+
+        final ConnectionConfig cc = new ConnectionConfig();
+        cc.setLdapUrl(l.getLdapUrl());
+        cc.setUseSSL(l.isUseSsl());
+        cc.setUseStartTLS(l.isUseStartTls());
+        cc.setConnectTimeout(l.getConnectTimeout());
+
+        if (l.getTrustCertificates() != null) {
+            final X509CredentialConfig cfg = new X509CredentialConfig();
+            cfg.setTrustCertificates(l.getTrustCertificates());
+            cc.setSslConfig(new SslConfig());
+        } else if (l.getKeystore() != null) {
+            final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
+            cfg.setKeyStore(l.getKeystore());
+            cfg.setKeyStorePassword(l.getKeystorePassword());
+            cfg.setKeyStoreType(l.getKeystoreType());
+            cc.setSslConfig(new SslConfig(cfg));
+        } else {
+            cc.setSslConfig(new SslConfig());
+        }
+
+        if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+            cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
+        } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
+            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
+                    new Credential(l.getBindCredential())));
+        }
+
+        final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
+
+        if (l.getProviderClass() != null) {
+            try {
+                final Class clazz = ClassUtils.getClass(l.getProviderClass());
+                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
+
+        cp.setBlockWaitTime(l.getBlockWaitTime());
+        cp.setPoolConfig(pc);
+
+        final IdlePruneStrategy strategy = new IdlePruneStrategy();
+        strategy.setIdleTime(l.getIdleTime());
+        strategy.setPrunePeriod(l.getPrunePeriod());
+
+        cp.setPruneStrategy(strategy);
+        cp.setValidator(new SearchValidator());
+        cp.setFailFastInitialize(l.isFailFast());
+        return new PooledConnectionFactory(cp);
+    }
+
     private static class DefaultPasswordEncoder implements PasswordEncoder {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
 
         private String encodingAlgorithm;
         private String characterEncoding;
-        
+
         /**
          * Instantiates a new default password encoder.
          *
@@ -191,7 +276,7 @@ public class Beans {
                 LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded; Returning null");
                 return null;
             }
-            
+
             final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
                     ? this.characterEncoding : Charset.defaultCharset().name();
 
@@ -206,5 +291,4 @@ public class Beans {
             return StringUtils.equals(encodedRawPassword, encodedPassword);
         }
     }
-
 }
