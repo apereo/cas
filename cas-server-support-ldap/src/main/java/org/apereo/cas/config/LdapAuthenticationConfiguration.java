@@ -34,7 +34,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link LdapAuthenticationConfiguration}.
+ * This is {@link LdapAuthenticationConfiguration}
+ * that attempts to create relevant authentication
+ * handlers for LDAP.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
