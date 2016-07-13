@@ -7,16 +7,16 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/lang 
+       http://www.springframework.org/schema/lang
        http://www.springframework.org/schema/lang/spring-lang.xsd
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
-    
+
     <!--
-    <util:map id="authenticationHandlersAndResolvers">
+    <util:map id="authenticationHandlersResolvers">
         <entry key-ref="authenticationHandlerId1" value-ref="principalResolverId" />
         <entry key-ref="authenticationHandlerId2" value="#{null}" />
     </util:map>
     -->
-    
+
 </beans>
