@@ -9,7 +9,6 @@ import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;

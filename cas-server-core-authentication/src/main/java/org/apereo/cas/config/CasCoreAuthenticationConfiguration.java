@@ -26,7 +26,6 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.BasicPrincipalResolver;
