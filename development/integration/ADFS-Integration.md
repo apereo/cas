@@ -39,7 +39,7 @@ CAS Overlay to be able to resolve dependencies:
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
 and made it available to CAS at a location that can be resolved at runtime.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Modifying ADFS Claims
 The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but 
