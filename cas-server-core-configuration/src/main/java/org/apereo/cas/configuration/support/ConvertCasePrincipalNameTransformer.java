@@ -1,4 +1,6 @@
-package org.apereo.cas.authentication.handler;
+package org.apereo.cas.configuration.support;
+
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
 import javax.annotation.PostConstruct;
 
@@ -15,12 +17,12 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
     private boolean toUpperCase;
 
     private PrincipalNameTransformer delegateTransformer;
-    
+
     /**
      * Instantiates a new transformer.
      */
     public ConvertCasePrincipalNameTransformer() {}
-    
+
     /**
      * Instantiates a new transformer, accepting an inner delegate.
      *
@@ -36,7 +38,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
     @PostConstruct
     public void init() {
         if (this.delegateTransformer == null) {
-            this.delegateTransformer = new NoOpPrincipalNameTransformer();
+            this.delegateTransformer = formUserId -> formUserId;
         }
     }
 

@@ -97,6 +97,8 @@ public class LdapAuthenticationConfiguration {
                 handler.setServicesManager(servicesManager);
                 handler.setAdditionalAttributes(l.getAdditionalAttributes());
                 handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
+                handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
+                handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                 final Map<String, String> attributes = new HashMap<>();
                 l.getPrincipalAttributeList().forEach(a -> attributes.put(a.toString(), a.toString()));

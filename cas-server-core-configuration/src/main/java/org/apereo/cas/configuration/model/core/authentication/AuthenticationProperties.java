@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
+import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
@@ -122,6 +123,17 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
+
+    @NestedConfigurationProperty
+    private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
+
+    public TokenAuthenticationProperties getToken() {
+        return token;
+    }
+
+    public void setToken(final TokenAuthenticationProperties token) {
+        this.token = token;
+    }
 
     public AuthenticationExceptionsProperties getExceptions() {
         return exceptions;

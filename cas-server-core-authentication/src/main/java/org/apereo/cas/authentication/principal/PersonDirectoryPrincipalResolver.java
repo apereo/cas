@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -32,7 +31,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Repository of principal attributes to be retrieved.
      */
-    
+
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
@@ -48,7 +47,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Transform principal name.
      */
-    protected PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+    protected PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
      * Optional principal attribute name.
@@ -100,7 +99,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         if (principalNameTransformer != null) {
             principalId = principalNameTransformer.transform(principalId);
         }
-        
+
         logger.debug("Creating SimplePrincipal for [{}]", principalId);
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
 
