@@ -19,6 +19,20 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+You may also need to declare the following Maven repository in your 
+CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
+
 
 ## WsFed Configuration
 
