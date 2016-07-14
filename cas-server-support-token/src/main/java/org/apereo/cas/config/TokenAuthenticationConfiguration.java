@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,11 @@ public class TokenAuthenticationConfiguration {
     private Map authenticationHandlersResolvers;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("tokenPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -63,9 +62,7 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
-        if (principalNameTransformer != null) {
-            h.setPrincipalNameTransformer(principalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getToken().getPrincipalTransformation()));
         h.setPrincipalFactory(tokenPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;

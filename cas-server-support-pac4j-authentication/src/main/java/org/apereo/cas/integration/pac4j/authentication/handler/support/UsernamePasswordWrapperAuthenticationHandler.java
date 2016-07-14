@@ -3,7 +3,6 @@ package org.apereo.cas.integration.pac4j.authentication.handler.support;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.Authenticator;
@@ -39,13 +38,13 @@ public class UsernamePasswordWrapperAuthenticationHandler
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
      * Default constructor.
      */
     public UsernamePasswordWrapperAuthenticationHandler() {
-       
+
     }
 
     @Override

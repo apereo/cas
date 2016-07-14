@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -31,8 +30,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * comparing against a resource.
      */
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
-    
-    private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+
+    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
@@ -40,13 +39,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     @Override
     protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
-        
+
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
-        
+
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
-        
+
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
@@ -55,15 +54,15 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         if (StringUtils.isBlank(userPass.getPassword())) {
             throw new FailedLoginException("Password is null.");
         }
-        
+
         final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
-        
+
         userPass.setUsername(transformedUsername);
         userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
-        
+
         return authenticateUsernamePasswordInternal(userPass);
     }
 
@@ -80,7 +79,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      */
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
-        
+
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
     }

@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
+import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        
+
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);

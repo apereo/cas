@@ -1,4 +1,6 @@
-package org.apereo.cas.authentication.handler;
+package org.apereo.cas.configuration.support;
+
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
 /**
  * Transform the user id by adding a prefix or suffix.
