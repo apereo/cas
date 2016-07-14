@@ -349,7 +349,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyValidateServiceTicketReturnAllAttributes() throws Exception {
         final Service service = getService("eduPersonTest");
-        final UsernamePasswordCredential cred = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(),
@@ -358,7 +357,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
             service);
         final Authentication auth = assertion.getPrimaryAuthentication();
-        assertEquals(3, auth.getPrincipal().getAttributes().size());
+        assertEquals(4, auth.getPrincipal().getAttributes().size());
     }
 
     @Test
