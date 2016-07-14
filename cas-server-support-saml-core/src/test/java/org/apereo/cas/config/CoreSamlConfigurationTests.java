@@ -15,12 +15,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(
-        classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
+        classes = {RefreshAutoConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
-                CoreSamlConfiguration.class, CasCoreServicesConfiguration.class},
+                CoreSamlConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasCoreServicesConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 public class CoreSamlConfigurationTests {
-    
+
     @Test
     public void verify() {}
 }

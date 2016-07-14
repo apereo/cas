@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -45,15 +46,16 @@ import static org.junit.Assert.*;
         CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
+        CasPersonDirectoryAttributeRepositoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-    
+
     @Autowired
     @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
-    
+
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
             throws Exception {

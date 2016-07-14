@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler;
 
+import org.apereo.cas.configuration.support.ConvertCasePrincipalNameTransformer;
+import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -21,7 +23,7 @@ public class ConvertCasePrincipalNameTransformerTests {
         final String result = transformer.transform("   uid  ");
         assertEquals(result, "AUIDZ");
     }
-    
+
     @Test
     public void verifyUpperCaseTranformerWithTrim() {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
@@ -30,7 +32,7 @@ public class ConvertCasePrincipalNameTransformerTests {
         final String result = transformer.transform("   uid  ");
         assertEquals(result, "UID");
     }
-    
+
     @Test
     public void verifyLowerCaseTranformerWithTrim() {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
