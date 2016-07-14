@@ -40,16 +40,25 @@ public class AuthenticationExceptionHandler {
             new ArrayList<>();
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
+    /**
+     * Order is important here; We want the account policy exceptions to be handled
+     * first before moving onto more generic errors. In the event that multiple handlers
+     * are defined, where one failed due to account policy restriction and one fails
+     * due to a bad password, we want the error associated with the account policy
+     * to be processed first, rather than presenting a more generic error associated
+     * with latter handlers.
+     */
     static {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountLockedException.class);
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.CredentialExpiredException.class);
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountDisabledException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginTimeException.class);
+
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
+        DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
@@ -71,7 +80,7 @@ public class AuthenticationExceptionHandler {
     public final List<Class<? extends Exception>> getErrors() {
         return Collections.unmodifiableList(this.errors);
     }
-    
+
     /**
      * Sets the message bundle prefix appended to exception class names to create a message bundle key for that
      * particular error.
