@@ -40,10 +40,6 @@ public class RadiusConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Autowired(required = false)
-    @Qualifier("radiusPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("radiusPasswordPolicyConfiguration")
@@ -111,11 +107,10 @@ public class RadiusConfiguration {
         h.setServers(radiusServers());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRadius().getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getRadius().getPrincipalTransformation()));
+
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
-        }
-        if (principalNameTransformer != null) {
-            h.setPrincipalNameTransformer(principalNameTransformer);
         }
 
         h.setPrincipalFactory(radiusPrincipalFactory());
@@ -129,4 +124,4 @@ public class RadiusConfiguration {
     }
 }
 
-  
+

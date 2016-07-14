@@ -74,24 +74,12 @@ public class CasCoreAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired(required = false)
-    @Qualifier("acceptPrincipalNameTransformer")
-    private PrincipalNameTransformer acceptPrincipalNameTransformer;
-
-    @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
 
     @Autowired(required = false)
-    @Qualifier("jaasPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
-
-    @Autowired(required = false)
     @Qualifier("jaasPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("delegateTransformer")
-    private PrincipalNameTransformer delegateTransformer;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -154,9 +142,7 @@ public class CasCoreAuthenticationConfiguration {
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        if (acceptPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(acceptPrincipalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
 
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -313,9 +299,7 @@ public class CasCoreAuthenticationConfiguration {
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
         }
-        if (principalNameTransformer != null) {
-            h.setPrincipalNameTransformer(principalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getJaas().getPrincipalTransformation()));
 
         h.setPrincipalFactory(jaasPrincipalFactory());
         h.setServicesManager(servicesManager);

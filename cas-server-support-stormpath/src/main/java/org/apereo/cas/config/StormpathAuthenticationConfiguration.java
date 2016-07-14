@@ -31,20 +31,16 @@ public class StormpathAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired(required = false)
     @Qualifier("stormpathPac4jPasswordEncoder")
     private org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder
             = new NopPasswordEncoder();
 
-    @Autowired(required = false)
-    @Qualifier("stormpathPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
@@ -52,7 +48,7 @@ public class StormpathAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-    
+
     @Bean
     public PrincipalFactory stormpathPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -67,9 +63,7 @@ public class StormpathAuthenticationConfiguration {
                         casProperties.getAuthn().getStormpath().getSecretkey());
 
         handler.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getStormpath().getPasswordEncoder()));
-        if (this.principalNameTransformer != null) {
-            handler.setPrincipalNameTransformer(this.principalNameTransformer);
-        }
+        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getStormpath().getPrincipalTransformation()));
 
         handler.setStormpathPasswordEncoder(this.stormpathPasswordEncoder);
 

@@ -56,26 +56,14 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
-    
-    @Autowired(required = false)
-    @Qualifier("shiroPrincipalNameTransformer")
-    private PrincipalNameTransformer shiroPrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("shiroPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration shiroPasswordPolicyConfiguration;
 
     @Autowired(required = false)
-    @Qualifier("rejectPrincipalNameTransformer")
-    private PrincipalNameTransformer rejectPrincipalNameTransformer;
-
-    @Autowired(required = false)
     @Qualifier("rejectPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration rejectPasswordPolicyConfiguration;
-    
-    @Autowired(required = false)
-    @Qualifier("filePrincipalNameTransformer")
-    private PrincipalNameTransformer filePrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("filePasswordPolicyConfiguration")
@@ -128,9 +116,7 @@ public class CasGenericConfiguration {
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
-        if (filePrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(filePrincipalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getFile().getPrincipalTransformation()));
 
 
         return h;
@@ -165,9 +151,7 @@ public class CasGenericConfiguration {
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
-        if (rejectPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(rejectPrincipalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getReject().getPrincipalTransformation()));
 
         return h;
     }
@@ -183,13 +167,11 @@ public class CasGenericConfiguration {
         h.setRequiredPermissions(casProperties.getAuthn().getShiro().getRequiredPermissions());
         h.loadShiroConfiguration(casProperties.getAuthn().getShiro().getConfig().getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getShiro().getPasswordEncoder()));
-        
+
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
-        if (shiroPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(shiroPrincipalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getShiro().getPrincipalTransformation()));
 
         return h;
     }
