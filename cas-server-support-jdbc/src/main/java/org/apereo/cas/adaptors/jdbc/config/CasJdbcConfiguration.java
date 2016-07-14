@@ -32,7 +32,7 @@ import java.util.Map;
 @Configuration("casJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcConfiguration {
-    
+
     @Autowired(required = false)
     @Qualifier("queryAndEncodePrincipalNameTransformer")
     private PrincipalNameTransformer queryAndEncodePrincipalNameTransformer;
@@ -40,7 +40,7 @@ public class CasJdbcConfiguration {
     @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
-    
+
     @Autowired(required = false)
     @Qualifier("searchModePrincipalNameTransformer")
     private PrincipalNameTransformer searchModePrincipalNameTransformer;
@@ -48,7 +48,7 @@ public class CasJdbcConfiguration {
     @Autowired(required = false)
     @Qualifier("searchModePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration searchModePasswordPolicyConfiguration;
-    
+
     @Autowired(required = false)
     @Qualifier("queryPrincipalNameTransformer")
     private PrincipalNameTransformer queryPrincipalNameTransformer;
@@ -56,7 +56,7 @@ public class CasJdbcConfiguration {
     @Autowired(required = false)
     @Qualifier("queryPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryPasswordPolicyConfiguration;
-    
+
     @Autowired(required = false)
     @Qualifier("bindSearchPrincipalNameTransformer")
     private PrincipalNameTransformer bindSearchPrincipalNameTransformer;
@@ -109,6 +109,8 @@ public class CasJdbcConfiguration {
 
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
@@ -134,7 +136,8 @@ public class CasJdbcConfiguration {
         h.setDataSource(Beans.newHickariDataSource(b));
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (queryAndEncodePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
         }
@@ -153,7 +156,8 @@ public class CasJdbcConfiguration {
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setSql(b.getSql());
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (queryPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
         }
@@ -166,7 +170,7 @@ public class CasJdbcConfiguration {
 
         return h;
     }
-    
+
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
@@ -176,6 +180,8 @@ public class CasJdbcConfiguration {
         h.setTableUsers(b.getTableUsers());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (searchModePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);
         }

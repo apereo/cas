@@ -255,16 +255,6 @@ the following settings are then relevant:
 # cas.personDirectory.returnNull=false
 ```
 
-## Principal Transformation
-
-Control how principal identifiers are transformed during the resolution phase. 
-
-```properties
-# cas.principalTransformation.suffix=
-# cas.principalTransformation.uppercase=false
-# cas.principalTransformation.prefix=
-```
-
 ## Authentication Policy
 
 Global authentication policy that is applied when

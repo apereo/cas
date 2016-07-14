@@ -26,9 +26,6 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
-import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
@@ -335,30 +332,6 @@ public class CasCoreAuthenticationConfiguration {
         h.setPrincipalFactory(proxyPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
-    }
-
-    @Bean
-    public PrincipalNameTransformer prefixSuffixPrincipalNameTransformer() {
-        final PrefixSuffixPrincipalNameTransformer p = new PrefixSuffixPrincipalNameTransformer();
-
-        p.setPrefix(casProperties.getPrincipalTransformation().getPrefix());
-        p.setSuffix(casProperties.getPrincipalTransformation().getSuffix());
-
-        return p;
-    }
-
-    @Bean
-    public PrincipalNameTransformer noOpPrincipalNameTransformer() {
-        return new NoOpPrincipalNameTransformer();
-    }
-
-    @Bean
-    @RefreshScope
-    public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
-        final ConvertCasePrincipalNameTransformer t =
-                new ConvertCasePrincipalNameTransformer(this.delegateTransformer);
-        t.setToUpperCase(casProperties.getPrincipalTransformation().isUppercase());
-        return t;
     }
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
