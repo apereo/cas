@@ -118,7 +118,6 @@ The following properties describe access controls and settings to the `/status`
 endpoint of CAS which provide administrative functionality and oversight into the CAS software.
 
 ```properties
-# cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
 # management.contextPath=/status
