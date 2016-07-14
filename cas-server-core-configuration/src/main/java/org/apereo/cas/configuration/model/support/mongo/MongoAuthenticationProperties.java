@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -20,6 +21,18 @@ public class MongoAuthenticationProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation =
+            new PrincipalTransformationProperties();
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
+
     public PasswordEncoderProperties getPasswordEncoder() {
         return passwordEncoder;
     }
@@ -35,7 +48,7 @@ public class MongoAuthenticationProperties {
     public void setCollectionName(final String collectionName) {
         this.collectionName = collectionName;
     }
-    
+
     public String getMongoHostUri() {
         return mongoHostUri;
     }

@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasFiltersConfiguration;
 import org.apereo.cas.config.CasMetricsConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasSecurityContextConfiguration;
 import org.apereo.cas.config.CasWebAppConfiguration;
@@ -62,6 +63,7 @@ import static org.junit.Assert.*;
                 CasCoreValidationConfiguration.class,
                 CasCoreConfiguration.class,
                 CasCoreAuditConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 ThymeleafAutoConfiguration.class,
                 AopAutoConfiguration.class,
                 RefreshAutoConfiguration.class
@@ -73,7 +75,7 @@ import static org.junit.Assert.*;
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Test
     public void verifyConfigurationClasses() {
         Assert.notNull(this.applicationContext);

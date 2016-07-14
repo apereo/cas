@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.config.HazelcastInstanceConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
         CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
+        CasPersonDirectoryAttributeRepositoryConfiguration.class,
         CasCoreLogoutConfiguration.class},
         locations="classpath:HazelcastInstanceConfigurationTests-config.xml",
         initializers = ConfigFileApplicationContextInitializer.class)

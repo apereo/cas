@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.List;
@@ -45,9 +46,20 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private AuthenticationTypes type;
 
 
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation =
+            new PrincipalTransformationProperties();
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
 
     public PasswordEncoderProperties getPasswordEncoder() {
         return passwordEncoder;
