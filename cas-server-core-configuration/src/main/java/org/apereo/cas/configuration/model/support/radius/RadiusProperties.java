@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.radius;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -19,6 +20,18 @@ public class RadiusProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation =
+            new PrincipalTransformationProperties();
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
+
     public PasswordEncoderProperties getPasswordEncoder() {
         return passwordEncoder;
     }
@@ -26,7 +39,7 @@ public class RadiusProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-    
+
     public boolean isFailoverOnException() {
         return failoverOnException;
     }

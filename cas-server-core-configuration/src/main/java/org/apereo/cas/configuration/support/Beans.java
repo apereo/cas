@@ -3,10 +3,11 @@ package org.apereo.cas.configuration.support;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -37,7 +38,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,6 +183,37 @@ public class Beans {
 
 
     /**
+     * New principal name transformer.
+     *
+     * @param p the p
+     * @return the principal name transformer
+     */
+    public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
+
+        PrincipalNameTransformer res = null;
+        if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
+            final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
+            t.setPrefix(p.getPrefix());
+            t.setSuffix(p.getSuffix());
+        } else {
+            res = formUserId -> formUserId;
+        }
+
+        switch (p.getCaseConversion()) {
+            case UPPERCASE:
+                final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer(res);
+                t.setToUpperCase(true);
+                return t;
+
+            case LOWERCASE:
+                final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
+                t1.setToUpperCase(true);
+                return t1;
+        }
+        return res;
+    }
+
+    /**
      * New pooled connection factory pooled connection factory.
      *
      * @param l the l
@@ -249,47 +280,4 @@ public class Beans {
         return new PooledConnectionFactory(cp);
     }
 
-    private static class DefaultPasswordEncoder implements PasswordEncoder {
-
-        private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
-
-        private String encodingAlgorithm;
-        private String characterEncoding;
-
-        /**
-         * Instantiates a new default password encoder.
-         *
-         * @param encodingAlgorithm the encoding algorithm
-         * @param characterEncoding the character encoding
-         */
-        DefaultPasswordEncoder(final String encodingAlgorithm, final String characterEncoding) {
-            this.encodingAlgorithm = encodingAlgorithm;
-            this.characterEncoding = characterEncoding;
-        }
-
-        @Override
-        public String encode(final CharSequence password) {
-            if (password == null) {
-                return null;
-            }
-
-            if (StringUtils.isBlank(this.encodingAlgorithm)) {
-                LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded; Returning null");
-                return null;
-            }
-
-            final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
-                    ? this.characterEncoding : Charset.defaultCharset().name();
-
-            LOGGER.warn("Using {} as the character encoding algorithm to update the digest", encodingCharToUse);
-            return new String(DigestUtils.getDigest(this.encodingAlgorithm).digest(password.toString().getBytes()));
-
-        }
-
-        @Override
-        public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-            final String encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
-            return StringUtils.equals(encodedRawPassword, encodedPassword);
-        }
-    }
 }

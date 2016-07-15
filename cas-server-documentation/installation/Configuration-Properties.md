@@ -118,7 +118,6 @@ The following properties describe access controls and settings to the `/status`
 endpoint of CAS which provide administrative functionality and oversight into the CAS software.
 
 ```properties
-# cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
 # management.contextPath=/status
@@ -221,7 +220,6 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 
-
 ```properties
 # cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
 # cas.authn.attributeRepository.jdbc.username=uid_field
@@ -253,16 +251,6 @@ the following settings are then relevant:
 ```properties
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
-```
-
-## Principal Transformation
-
-Control how principal identifiers are transformed during the resolution phase. 
-
-```properties
-# cas.principalTransformation.suffix=
-# cas.principalTransformation.uppercase=false
-# cas.principalTransformation.prefix=
 ```
 
 ## Authentication Policy
@@ -381,6 +369,10 @@ connections and queries.
 # cas.authn.radius.passwordEncoder.encodingAlgorithm=
 # cas.authn.radius.passwordEncoder.secret=
 # cas.authn.radius.passwordEncoder.strength=16
+
+# cas.authn.radius.principalTransformation.suffix=
+# cas.authn.radius.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.radius.principalTransformation.prefix=
 ```
 
 ## File Authentication
@@ -394,6 +386,10 @@ connections and queries.
 # cas.authn.file.passwordEncoder.encodingAlgorithm=
 # cas.authn.file.passwordEncoder.secret=
 # cas.authn.file.passwordEncoder.strength=16
+
+# cas.authn.file.principalTransformation.suffix=
+# cas.authn.file.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.file.principalTransformation.prefix=
 ```
 
 ## Reject Users Authentication
@@ -406,6 +402,10 @@ connections and queries.
 # cas.authn.reject.passwordEncoder.encodingAlgorithm=
 # cas.authn.reject.passwordEncoder.secret=
 # cas.authn.reject.passwordEncoder.strength=16
+
+# cas.authn.reject.principalTransformation.suffix=
+# cas.authn.reject.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.reject.principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Query
@@ -436,6 +436,10 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 # cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Search
@@ -468,6 +472,10 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Bind
@@ -497,6 +505,10 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
 # cas.authn.jdbc.bind[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Encode
@@ -539,6 +551,10 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## MongoDb Authentication
@@ -549,6 +565,16 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.mongo.attributes=
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
+
+# cas.authn.mongo.principalTransformation.suffix=
+# cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.mongo.principalTransformation.prefix=
+
+# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.mongo.passwordEncoder.characterEncoding=
+# cas.authn.mongo.passwordEncoder.encodingAlgorithm=
+# cas.authn.mongo.passwordEncoder.secret=
+# cas.authn.mongo.passwordEncoder.strength=16
 ```
 
 ## Ldap Authentication
@@ -611,6 +637,10 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
 # cas.authn.ldap[0].passwordEncoder.strength=16
+
+# cas.authn.ldap[0].principalTransformation.suffix=
+# cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.ldap[0].principalTransformation.prefix=
 ```
 
 ## REST Authentication
@@ -690,6 +720,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.jaas.passwordEncoder.encodingAlgorithm=
 # cas.authn.jaas.passwordEncoder.secret=
 # cas.authn.jaas.passwordEncoder.strength=16
+
+# cas.authn.jaas.principalTransformation.suffix=
+# cas.authn.jaas.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jaas.principalTransformation.prefix=
 ```
 
 ## Stormpath Authentication
@@ -698,6 +732,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.stormpath.apiKey=
 # cas.authn.stormpath.secretkey=
 # cas.authn.stormpath.applicationId=
+
+# cas.authn.stormpath.principalTransformation.suffix=
+# cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.stormpath.principalTransformation.prefix=
 ```
 
 ## Remote Address Authentication
@@ -717,6 +755,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.accept.passwordEncoder.encodingAlgorithm=
 # cas.authn.accept.passwordEncoder.secret=
 # cas.authn.accept.passwordEncoder.strength=16
+
+# cas.authn.accept.principalTransformation.suffix=
+# cas.authn.accept.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.accept.principalTransformation.prefix=
 ```
 
 ## X509 Authentication
@@ -754,6 +796,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.shiro.passwordEncoder.encodingAlgorithm=
 # cas.authn.shiro.passwordEncoder.secret=
 # cas.authn.shiro.passwordEncoder.strength=16
+
+# cas.authn.shiro.principalTransformation.suffix=
+# cas.authn.shiro.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.shiro.principalTransformation.prefix=
 ```
 
 ## NTLM Authentication
