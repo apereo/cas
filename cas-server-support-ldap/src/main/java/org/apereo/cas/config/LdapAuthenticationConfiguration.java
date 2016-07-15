@@ -36,9 +36,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link LdapAuthenticationConfiguration}
- * that attempts to create relevant authentication
- * handlers for LDAP.
+ * This is {@link LdapAuthenticationConfiguration} that attempts to create
+ * relevant authentication handlers for LDAP.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -78,8 +77,7 @@ public class LdapAuthenticationConfiguration {
     @RefreshScope
     public AuthorizationGenerator ldapAuthorizationGenerator() {
         if (connectionFactory != null) {
-            final LdapAuthorizationGenerator gen =
-                    new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
+            final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
             gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
             gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
             gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
@@ -113,11 +111,8 @@ public class LdapAuthenticationConfiguration {
                 if (l.isUsePasswordPolicy()) {
                     authenticator.setAuthenticationResponseHandlers(
                             new ActiveDirectoryAuthenticationResponseHandler(
-                                    TimeUnit.DAYS.convert(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays(),
-                                            TimeUnit.MILLISECONDS)
-                            ),
-                            new PasswordPolicyAuthenticationResponseHandler(),
-                            new PasswordExpirationAuthenticationResponseHandler());
+                                    TimeUnit.DAYS.convert(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays(), TimeUnit.MILLISECONDS)),
+                            new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler());
 
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }
@@ -178,9 +173,9 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledCompareCustomAttributeAuthenticationHandler handler = new PooledCompareCustomAttributeAuthenticationHandler(Beans.newPooledConnectionFactory(l));
+        final PooledCompareCustomAttributeAuthenticationHandler handler = new PooledCompareCustomAttributeAuthenticationHandler(
+                Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttributeName(l.getPrincipalAttributePassword());
         return handler;
     }
 }
-
