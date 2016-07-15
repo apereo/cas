@@ -122,6 +122,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }
                 handler.setAuthenticator(authenticator);
+                handler.initialize();
 
                 if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
                     this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);

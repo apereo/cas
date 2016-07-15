@@ -14,7 +14,6 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
@@ -284,7 +283,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Initialize the handler, setup the authentication entry attributes.
      */
-    @PostConstruct
     public void initialize() {
         /**
          * Use a set to ensure we ignore duplicates.
