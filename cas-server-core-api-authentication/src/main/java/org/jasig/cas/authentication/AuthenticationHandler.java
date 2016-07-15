@@ -40,15 +40,14 @@ public interface AuthenticationHandler {
      *     <li>User account expired: {@link javax.security.auth.login.AccountExpiredException}</li>
      *     <li>User account locked: {@link javax.security.auth.login.AccountLockedException}</li>
      *     <li>User account not found: {@link javax.security.auth.login.AccountNotFoundException}</li>
-     *     <li>Time of authentication not allowed: org.jasig.cas.authentication.InvalidLoginTimeException</li>
-     *     <li>Location of authentication not allowed: org.jasig.cas.authentication.InvalidLoginLocationException</li>
+     *     <li>Time of authentication not allowed: <code>org.jasig.cas.authentication.InvalidLoginTimeException</code></li>
+     *     <li>Location of authentication not allowed: <code>org.jasig.cas.authentication.InvalidLoginLocationException</code></li>
      *     <li>Expired X.509 certificate: {@link java.security.cert.CertificateExpiredException}</li>
      * </ul>
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD
      * take care to populate the cause, where applicable, with the error that prevented authentication.
      */
     HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
-
 
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,
@@ -60,7 +59,6 @@ public interface AuthenticationHandler {
      * @return True if the handler supports the Credential, false otherwise.
      */
     boolean supports(Credential credential);
-
 
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
