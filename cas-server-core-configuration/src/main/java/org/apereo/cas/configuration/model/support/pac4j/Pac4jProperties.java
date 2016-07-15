@@ -16,7 +16,62 @@ public class Pac4jProperties {
     private Saml saml = new Saml();
     private Oidc oidc = new Oidc();
     private Cas cas = new Cas();
-    
+
+    private Dropbox dropbox = new Dropbox();
+    private Github github = new Github();
+    private Google google = new Google();
+    private Yahoo yahoo = new Yahoo();
+    private Foursquare foursquare = new Foursquare();
+    private WindowsLive windowsLive = new WindowsLive();
+
+    public WindowsLive getWindowsLive() {
+        return windowsLive;
+    }
+
+    public void setWindowsLive(final WindowsLive windowsLive) {
+        this.windowsLive = windowsLive;
+    }
+
+    public Dropbox getDropbox() {
+        return dropbox;
+    }
+
+    public void setDropbox(final Dropbox dropbox) {
+        this.dropbox = dropbox;
+    }
+
+    public Github getGithub() {
+        return github;
+    }
+
+    public void setGithub(final Github github) {
+        this.github = github;
+    }
+
+    public Google getGoogle() {
+        return google;
+    }
+
+    public void setGoogle(final Google google) {
+        this.google = google;
+    }
+
+    public Yahoo getYahoo() {
+        return yahoo;
+    }
+
+    public void setYahoo(final Yahoo yahoo) {
+        this.yahoo = yahoo;
+    }
+
+    public Foursquare getFoursquare() {
+        return foursquare;
+    }
+
+    public void setFoursquare(final Foursquare foursquare) {
+        this.foursquare = foursquare;
+    }
+
     public boolean isTypedIdUsed() {
         return typedIdUsed;
     }
@@ -45,8 +100,6 @@ public class Pac4jProperties {
         this.cas = cas;
     }
 
-
-
     public Cas getCas() {
         return this.cas;
     }
@@ -66,7 +119,7 @@ public class Pac4jProperties {
     public Twitter getTwitter() {
         return this.twitter;
     }
-    
+
     public static class Facebook {
         private String id;
         private String secret;
@@ -105,7 +158,7 @@ public class Pac4jProperties {
             this.fields = fields;
         }
     }
-    
+
     public static class Twitter {
         private String id;
         private String secret;
@@ -126,7 +179,7 @@ public class Pac4jProperties {
             this.secret = secret;
         }
     }
-    
+
     public static class Saml {
         private String keystorePassword;
         private String privateKeyPassword;
@@ -183,7 +236,7 @@ public class Pac4jProperties {
             this.serviceProviderEntityId = serviceProviderEntityId;
         }
     }
-    
+
     public static class Cas {
         private String loginUrl;
         private String protocol;
@@ -204,7 +257,7 @@ public class Pac4jProperties {
             this.protocol = protocol;
         }
     }
-    
+
     public static class Oidc {
         private String id;
         private String secret;
@@ -298,5 +351,138 @@ public class Pac4jProperties {
         }
     }
 
+    public static class Github {
+        private String id;
+        private String secret;
 
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Yahoo {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Foursquare {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Dropbox {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class WindowsLive {
+        private String id;
+        private String secret;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
+
+    public static class Google {
+        private String id;
+        private String secret;
+        private String scope;
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+    }
 }

@@ -190,8 +190,8 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
-        mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILES, profile);
+        mockRequest.setSession(session);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();

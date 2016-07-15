@@ -1051,6 +1051,61 @@ Delegate authentication to an external SAML2 IdP.
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
+## Pac4j -> Yahoo
+
+Delegate authentication to Yahoo.
+
+```properties
+# cas.authn.pac4j.yahoo.id=
+# cas.authn.pac4j.yahoo.secret=
+```
+
+## Pac4j -> Dropbox
+
+Delegate authentication to Dropbox.
+
+```properties
+# cas.authn.pac4j.dropbox.id=
+# cas.authn.pac4j.dropbox.secret=
+```
+
+## Pac4j -> Github
+
+Delegate authentication to Github.
+
+```properties
+# cas.authn.pac4j.github.id=
+# cas.authn.pac4j.github.secret=
+```
+
+## Pac4j -> Foursquare
+
+Delegate authentication to Foursquare.
+
+```properties
+# cas.authn.pac4j.foursquare.id=
+# cas.authn.pac4j.foursquare.secret=
+```
+
+## Pac4j -> WindowsLive
+
+Delegate authentication to WindowsLive.
+
+```properties
+# cas.authn.pac4j.windowsLive.id=
+# cas.authn.pac4j.windowsLive.secret=
+```
+
+## Pac4j -> Google
+
+Delegate authentication to Google.
+
+```properties
+# cas.authn.pac4j.google.id=
+# cas.authn.pac4j.google.secret=
+# cas.authn.pac4j.google.scope=
+```
+
 ## OAuth2
 
 Allows CAS to act as an OAuth2 provider. Here you can control how
