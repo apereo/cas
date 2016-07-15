@@ -8,8 +8,8 @@ A CAS client is also a software package that can be integrated with various soft
 
 
 ## Official Clients
-* [.NET CAS Client](https://github.com/Jasig/dotnet-cas-client)
-* [Java CAS Client](https://github.com/Jasig/java-cas-client)
+* [.NET CAS Client](https://github.com/apereo/dotnet-cas-client)
+* [Java CAS Client](https://github.com/apereo/java-cas-client)
 * [PHP CAS Client](https://github.com/Jasig/phpCAS)
 * [Apache CAS Client](https://github.com/Jasig/mod_auth_cas)
 

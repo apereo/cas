@@ -1,3 +1,3 @@
 # Contributor Guidelines
 
-Please see the [Contributor Guidelines](http://jasig.github.io/cas/developer/Contributor-Guidelines.html) for more info.
+Please see the [Contributor Guidelines](http://apereo.github.io/cas/developer/Contributor-Guidelines.html) for more info.
