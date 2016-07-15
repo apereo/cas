@@ -21,7 +21,7 @@ public class PooledCompareCustomAttributeAuthenticationHandler extends PooledCom
 
     private String passwordAttributeName = DEFAULT_PASSWORD_ATTRIBUTE_NAME;
 
-    public PooledCompareCustomAttributeAuthenticationHandler(PooledConnectionFactory cf) {
+    public PooledCompareCustomAttributeAuthenticationHandler(final PooledConnectionFactory cf) {
 	super(cf);
     }
 
@@ -29,7 +29,7 @@ public class PooledCompareCustomAttributeAuthenticationHandler extends PooledCom
 	return passwordAttributeName;
     }
 
-    public void setPasswordAttributeName(String passwordAttributeName) {
+    public void setPasswordAttributeName(final String passwordAttributeName) {
 	this.passwordAttributeName = passwordAttributeName;
     }
 

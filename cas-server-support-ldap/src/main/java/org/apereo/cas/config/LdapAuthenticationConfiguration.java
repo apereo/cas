@@ -177,7 +177,7 @@ public class LdapAuthenticationConfiguration {
         return handler;
     }
 
-    private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(LdapAuthenticationProperties l) {
+    private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
         final PooledCompareCustomAttributeAuthenticationHandler handler = new PooledCompareCustomAttributeAuthenticationHandler(Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttributeName(l.getPrincipalAttributePassword());
         return handler;
