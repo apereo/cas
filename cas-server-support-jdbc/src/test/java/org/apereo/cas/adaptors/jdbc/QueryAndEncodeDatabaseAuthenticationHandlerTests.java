@@ -8,8 +8,7 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
+import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.Entity;
@@ -51,7 +51,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-        
+
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
@@ -92,7 +92,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -102,7 +102,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql("makesNoSenseInSql"));
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -112,7 +112,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(
+        q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
     }
@@ -128,7 +128,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSaltFieldName("salt");
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
+        final HandlerResult r = q.authenticate(c);
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
@@ -146,18 +146,18 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setPasswordFieldName("password");
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
-            public String encode(final String password) {
-                return password.concat("1");
+            public String encode(final CharSequence password) {
+                return password.toString().concat("1");
             }
 
             @Override
             public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-                return false;
+                return true;
             }
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(
+        final HandlerResult r = q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);

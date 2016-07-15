@@ -3,11 +3,11 @@ package org.apereo.cas.config;
 import com.google.common.collect.Lists;
 import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
@@ -57,10 +57,6 @@ public class SpnegoConfiguration {
     @Autowired(required = false)
     @Qualifier("spnegoClientActionSearchRequest")
     private SearchRequest searchRequest;
-
-    @Autowired(required = false)
-    @Qualifier("spnegoPrincipalNameTransformer")
-    private PrincipalNameTransformer transformer;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -134,9 +130,7 @@ public class SpnegoConfiguration {
     @RefreshScope
     public PrincipalResolver spnegoPrincipalResolver() {
         final SpnegoPrincipalResolver r = new SpnegoPrincipalResolver();
-        if (transformer != null) {
-            r.setPrincipalNameTransformer(transformer);
-        }
+        r.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getSpnego().getPrincipalTransformation()));
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(casProperties.getAuthn().getSpnego().getPrincipal().getPrincipalAttribute());
         r.setReturnNullIfNoAttributes(casProperties.getAuthn().getSpnego().getPrincipal().isReturnNull());

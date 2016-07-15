@@ -26,7 +26,7 @@ include "cas-server-core-authentication"
 include "cas-server-core"
 
 include "cas-server-documentation"
-
+include "cas-server-support-bom"
 include "cas-server-support-jdbc-drivers"
 include "cas-server-support-audit-jdbc"
 include "cas-server-support-events-mongo"

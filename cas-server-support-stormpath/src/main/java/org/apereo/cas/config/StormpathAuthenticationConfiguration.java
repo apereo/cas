@@ -2,12 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.StormpathAuthenticationHandler;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,21 +32,13 @@ public class StormpathAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired(required = false)
-    @Qualifier("stormpathPasswordEncoder")
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired(required = false)
     @Qualifier("stormpathPac4jPasswordEncoder")
     private org.pac4j.core.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
-
-    @Autowired(required = false)
-    @Qualifier("stormpathPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
@@ -55,7 +46,7 @@ public class StormpathAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-    
+
     @Bean
     public PrincipalFactory stormpathPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -69,12 +60,8 @@ public class StormpathAuthenticationConfiguration {
                         casProperties.getAuthn().getStormpath().getApplicationId(),
                         casProperties.getAuthn().getStormpath().getSecretkey());
 
-        if (this.passwordEncoder != null) {
-            handler.setPasswordEncoder(this.passwordEncoder);
-        }
-        if (this.principalNameTransformer != null) {
-            handler.setPrincipalNameTransformer(this.principalNameTransformer);
-        }
+        handler.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getStormpath().getPasswordEncoder()));
+        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getStormpath().getPrincipalTransformation()));
 
         handler.setStormpathPasswordEncoder(this.stormpathPasswordEncoder);
 

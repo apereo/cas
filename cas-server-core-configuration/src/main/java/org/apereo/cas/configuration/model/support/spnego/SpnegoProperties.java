@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -11,14 +12,14 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 
 public class SpnegoProperties {
-    
-    
+
+
     private boolean principalWithDomainName;
     private boolean ntlmAllowed = true;
     private boolean send401OnAuthenticationFailure = true;
 
     private String hostNameClientActionStrategy = "hostnameSpnegoClientAction";
-    
+
     private String jcifsPassword;
     private String jcifsServicePassword;
     private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
@@ -45,7 +46,20 @@ public class SpnegoProperties {
     private String supportedBrowsers = "MSIE,Trident,Firefox,AppleWebKit";
 
     @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation =
+            new PrincipalTransformationProperties();
+
+    @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
 
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
@@ -270,7 +284,7 @@ public class SpnegoProperties {
     public void setNtlmAllowed(final boolean ntlmAllowed) {
         this.ntlmAllowed = ntlmAllowed;
     }
-    
-    
+
+
 }
 

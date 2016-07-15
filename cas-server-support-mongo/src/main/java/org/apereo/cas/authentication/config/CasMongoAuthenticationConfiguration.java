@@ -2,12 +2,11 @@ package org.apereo.cas.authentication.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,14 +27,6 @@ import java.util.Map;
 @Configuration("casMongoAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMongoAuthenticationConfiguration {
-
-    @Autowired(required = false)
-    @Qualifier("mongoPasswordEncoder")
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired(required = false)
-    @Qualifier("mongoPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("mongoPac4jPasswordEncoder")
@@ -72,14 +63,10 @@ public class CasMongoAuthenticationConfiguration {
         mongo.setPasswordAttribute(casProperties.getAuthn().getMongo().getPasswordAttribute());
         mongo.setUsernameAttribute(casProperties.getAuthn().getMongo().getUsernameAttribute());
 
-        if (principalNameTransformer != null) {
-            mongo.setPrincipalNameTransformer(principalNameTransformer);
-        }
+        mongo.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(
+                casProperties.getAuthn().getMongo().getPrincipalTransformation()));
 
-        if (passwordEncoder != null) {
-            mongo.setPasswordEncoder(passwordEncoder);
-        }
-
+        mongo.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getMongo().getPasswordEncoder()));
         if (mongoPasswordEncoder != null) {
             mongo.setMongoPasswordEncoder(mongoPasswordEncoder);
         }

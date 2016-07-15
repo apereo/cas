@@ -5,8 +5,6 @@ import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -35,48 +33,16 @@ import java.util.Map;
 public class CasJdbcConfiguration {
 
     @Autowired(required = false)
-    @Qualifier("queryAndEncodePasswordEncoder")
-    private PasswordEncoder queryAndEncodePasswordEncoder;
-
-    @Autowired(required = false)
-    @Qualifier("queryAndEncodePrincipalNameTransformer")
-    private PrincipalNameTransformer queryAndEncodePrincipalNameTransformer;
-
-    @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("searchModePasswordEncoder")
-    private PasswordEncoder searchModePasswordEncoder;
-
-    @Autowired(required = false)
-    @Qualifier("searchModePrincipalNameTransformer")
-    private PrincipalNameTransformer searchModePrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("searchModePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration searchModePasswordPolicyConfiguration;
 
     @Autowired(required = false)
-    @Qualifier("queryPasswordEncoder")
-    private PasswordEncoder queryPasswordEncoder;
-
-    @Autowired(required = false)
-    @Qualifier("queryPrincipalNameTransformer")
-    private PrincipalNameTransformer queryPrincipalNameTransformer;
-
-    @Autowired(required = false)
     @Qualifier("queryPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("bindSearchPasswordEncoder")
-    private PasswordEncoder bindSearchPasswordEncoder;
-
-    @Autowired(required = false)
-    @Qualifier("bindSearchPrincipalNameTransformer")
-    private PrincipalNameTransformer bindSearchPrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("bindSearchPasswordPolicyConfiguration")
@@ -125,16 +91,14 @@ public class CasJdbcConfiguration {
                 new BindModeSearchDatabaseAuthenticationHandler();
 
         h.setDataSource(Beans.newHickariDataSource(b));
+        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
-        if (bindSearchPasswordEncoder != null) {
-            h.setPasswordEncoder(bindSearchPasswordEncoder);
-        }
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
-        if (bindSearchPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(bindSearchPrincipalNameTransformer);
-        }
+
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -153,15 +117,14 @@ public class CasJdbcConfiguration {
         h.setStaticSalt(b.getStaticSalt());
         h.setDataSource(Beans.newHickariDataSource(b));
 
-        if (queryAndEncodePasswordEncoder != null) {
-            h.setPasswordEncoder(queryAndEncodePasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (queryAndEncodePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
         }
-        if (queryAndEncodePrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(queryAndEncodePrincipalNameTransformer);
-        }
+
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -173,23 +136,21 @@ public class CasJdbcConfiguration {
                 new QueryDatabaseAuthenticationHandler();
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setSql(b.getSql());
+        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
-        if (queryPasswordEncoder != null) {
-            h.setPasswordEncoder(queryPasswordEncoder);
-        }
         if (queryPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
         }
-        if (queryPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(queryPrincipalNameTransformer);
-        }
+
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
 
         return h;
     }
-    
+
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
@@ -198,14 +159,12 @@ public class CasJdbcConfiguration {
         h.setFieldUser(b.getFieldUser());
         h.setTableUsers(b.getTableUsers());
 
-        if (searchModePasswordEncoder != null) {
-            h.setPasswordEncoder(searchModePasswordEncoder);
-        }
+        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+
         if (searchModePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);
-        }
-        if (searchModePrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(searchModePrincipalNameTransformer);
         }
 
         h.setPrincipalFactory(jdbcPrincipalFactory());

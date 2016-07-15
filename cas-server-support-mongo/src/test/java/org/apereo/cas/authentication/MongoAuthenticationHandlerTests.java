@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreServicesConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 RefreshAutoConfiguration.class})
 public class MongoAuthenticationHandlerTests {
 

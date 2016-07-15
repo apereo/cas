@@ -1,19 +1,45 @@
 package org.apereo.cas.configuration.model.support.radius;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link RadiusProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class RadiusProperties {
 
     private boolean failoverOnException;
     private boolean failoverOnAuthenticationFailure;
     private Server server = new Server();
     private Client client = new Client();
-    
+
+    @NestedConfigurationProperty
+    private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation =
+            new PrincipalTransformationProperties();
+
+    public PrincipalTransformationProperties getPrincipalTransformation() {
+        return principalTransformation;
+    }
+
+    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+        this.principalTransformation = principalTransformation;
+    }
+
+    public PasswordEncoderProperties getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
+    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public boolean isFailoverOnException() {
         return failoverOnException;
     }

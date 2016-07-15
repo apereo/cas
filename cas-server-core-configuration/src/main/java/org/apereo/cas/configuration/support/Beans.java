@@ -3,16 +3,42 @@ package org.apereo.cas.configuration.support;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.Credential;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.PoolConfig;
+import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.provider.Provider;
+import org.ldaptive.ssl.KeyStoreCredentialConfig;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.X509CredentialConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -25,6 +51,8 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public class Beans {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
     protected Beans() {
     }
@@ -86,7 +114,7 @@ public class Beans {
         bean.setKeepAliveSeconds(config.getMaxWait());
         return bean;
     }
-    
+
     /**
      * New entity manager factory bean.
      *
@@ -133,4 +161,122 @@ public class Beans {
             throw Throwables.propagate(e);
         }
     }
+
+    /**
+     * New password encoder password encoder.
+     *
+     * @param properties the properties
+     * @return the password encoder
+     */
+    public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
+        switch (properties.getType()) {
+            case NONE:
+                return NoOpPasswordEncoder.getInstance();
+            case DEFAULT:
+                return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
+            case STANDARD:
+                return new StandardPasswordEncoder(properties.getSecret());
+            default:
+                return new BCryptPasswordEncoder(properties.getStrength(), new SecureRandom(properties.getSecret().getBytes()));
+        }
+    }
+
+
+    /**
+     * New principal name transformer.
+     *
+     * @param p the p
+     * @return the principal name transformer
+     */
+    public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
+
+        PrincipalNameTransformer res = null;
+        if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
+            final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
+            t.setPrefix(p.getPrefix());
+            t.setSuffix(p.getSuffix());
+        } else {
+            res = formUserId -> formUserId;
+        }
+
+        switch (p.getCaseConversion()) {
+            case UPPERCASE:
+                final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer(res);
+                t.setToUpperCase(true);
+                return t;
+
+            case LOWERCASE:
+                final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
+                t1.setToUpperCase(true);
+                return t1;
+        }
+        return res;
+    }
+
+    /**
+     * New pooled connection factory pooled connection factory.
+     *
+     * @param l the l
+     * @return the pooled connection factory
+     */
+    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
+        final PoolConfig pc = new PoolConfig();
+        pc.setMinPoolSize(l.getMinPoolSize());
+        pc.setMaxPoolSize(l.getMaxPoolSize());
+        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
+        pc.setValidatePeriodically(l.isValidatePeriodically());
+        pc.setValidatePeriod(l.getValidatePeriod());
+
+        final ConnectionConfig cc = new ConnectionConfig();
+        cc.setLdapUrl(l.getLdapUrl());
+        cc.setUseSSL(l.isUseSsl());
+        cc.setUseStartTLS(l.isUseStartTls());
+        cc.setConnectTimeout(l.getConnectTimeout());
+
+        if (l.getTrustCertificates() != null) {
+            final X509CredentialConfig cfg = new X509CredentialConfig();
+            cfg.setTrustCertificates(l.getTrustCertificates());
+            cc.setSslConfig(new SslConfig());
+        } else if (l.getKeystore() != null) {
+            final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
+            cfg.setKeyStore(l.getKeystore());
+            cfg.setKeyStorePassword(l.getKeystorePassword());
+            cfg.setKeyStoreType(l.getKeystoreType());
+            cc.setSslConfig(new SslConfig(cfg));
+        } else {
+            cc.setSslConfig(new SslConfig());
+        }
+
+        if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+            cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
+        } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
+            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
+                    new Credential(l.getBindCredential())));
+        }
+
+        final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
+
+        if (l.getProviderClass() != null) {
+            try {
+                final Class clazz = ClassUtils.getClass(l.getProviderClass());
+                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
+
+        cp.setBlockWaitTime(l.getBlockWaitTime());
+        cp.setPoolConfig(pc);
+
+        final IdlePruneStrategy strategy = new IdlePruneStrategy();
+        strategy.setIdleTime(l.getIdleTime());
+        strategy.setPrunePeriod(l.getPrunePeriod());
+
+        cp.setPruneStrategy(strategy);
+        cp.setValidator(new SearchValidator());
+        cp.setFailFastInitialize(l.isFailFast());
+        return new PooledConnectionFactory(cp);
+    }
+
 }

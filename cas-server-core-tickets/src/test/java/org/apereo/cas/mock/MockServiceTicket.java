@@ -100,4 +100,9 @@ public class MockServiceTicket implements ServiceTicket {
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
     }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }

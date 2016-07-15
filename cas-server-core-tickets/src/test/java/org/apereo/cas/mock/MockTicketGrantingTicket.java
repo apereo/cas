@@ -172,4 +172,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
     }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }
