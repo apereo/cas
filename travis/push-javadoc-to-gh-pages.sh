@@ -9,7 +9,7 @@ branchVersion="4.2.x"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "4.2.x" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
-       *\.1) 
+       *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
         invokeJavadoc=true;
         invokeDoc=true;;
@@ -35,7 +35,7 @@ if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Invoking build to generate the project site...\n"
   ./gradlew javadoc -q
-  
+
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
 
@@ -49,7 +49,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
   echo -e "Cloning the gh-pages branch...\n"
-  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
+  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
 
   cd gh-pages
 
