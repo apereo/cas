@@ -36,9 +36,9 @@ before_install:
 install:
 - ./gradlew clean --parallel
 script:
-- travis_wait ./gradlew build -x javadoc -DskipAspectJ=true --full-stacktrace
+- ./gradlew build -x javadoc -DskipAspectJ=true --full-stacktrace
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
-- travis_wait ./travis/push-javadoc-to-gh-pages.sh
+- ./travis/push-javadoc-to-gh-pages.sh
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
-- travis_wait ./travis/deploy-to-sonatype.sh
+- ./travis/deploy-to-sonatype.sh
