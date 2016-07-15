@@ -245,6 +245,7 @@ public class Beans {
         cp.setPruneStrategy(strategy);
         cp.setValidator(new SearchValidator());
         cp.setFailFastInitialize(l.isFailFast());
+        cp.initialize();
         return new PooledConnectionFactory(cp);
     }
 
