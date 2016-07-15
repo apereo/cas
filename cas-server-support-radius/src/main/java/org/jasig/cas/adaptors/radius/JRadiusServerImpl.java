@@ -56,20 +56,20 @@ public final class JRadiusServerImpl implements RadiusServer {
     private int retries = DEFAULT_RETRY_COUNT;
 
     private String nasIpAddress;
-    
+
     private String nasIpv6Address;
-    
+
     private long nasPort = -1;
-    
+
     private long nasPortId = -1;
-    
-    private long nasIdentifier = -1;
-    
+
+    private String nasIdentifier;
+
     private long nasRealPort = -1;
-    
+
     private long nasPortType = -1;
-    
-    
+
+
     /** Load the dictionary implementation. */
     static {
         AttributeFactory
@@ -78,7 +78,7 @@ public final class JRadiusServerImpl implements RadiusServer {
 
     /**
      * Instantiates a new server implementation
-     * with the radius protocol and client factory specified. 
+     * with the radius protocol and client factory specified.
      *
      * @param protocol the protocol
      * @param clientFactory the client factory
@@ -92,7 +92,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     public RadiusResponse authenticate(final String username, final String password) throws PreventedException {
 
         final AttributeList attributeList = new AttributeList();
-        
+
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
 
@@ -102,6 +102,9 @@ public final class JRadiusServerImpl implements RadiusServer {
         if (StringUtils.isNotBlank(this.nasIpv6Address)) {
             attributeList.add(new Attr_NASIPv6Address(this.nasIpv6Address));
         }
+        if (StringUtils.isNotBlank(this.nasIdentifier)) {
+            attributeList.add(new Attr_NASIdentifier(this.nasIdentifier));
+        }
 
         if (this.nasPort != -1) {
             attributeList.add(new Attr_NASPort(this.nasPort));
@@ -109,16 +112,13 @@ public final class JRadiusServerImpl implements RadiusServer {
         if (this.nasPortId != -1) {
             attributeList.add(new Attr_NASPortId(this.nasPortId));
         }
-        if (this.nasIdentifier != -1) {
-            attributeList.add(new Attr_NASIdentifier(this.nasIdentifier));
-        }
         if (this.nasRealPort != -1) {
             attributeList.add(new Attr_NASRealPort(this.nasRealPort));
         }
         if (this.nasPortType != -1) {
             attributeList.add(new Attr_NASPortType(this.nasPortType));
         }
-        
+
         RadiusClient client = null;
         try {
             client = this.radiusClientFactory.newInstance();
@@ -134,13 +134,13 @@ public final class JRadiusServerImpl implements RadiusServer {
 
             if (response instanceof AccessAccept) {
                 final AccessAccept acceptedResponse = (AccessAccept) response;
-               
+
                 return new RadiusResponse(acceptedResponse.getCode(),
                         acceptedResponse.getIdentifier(),
                         acceptedResponse.getAttributes().getAttributeList());
             }
         } catch (final Exception e) {
-            throw new PreventedException(e);            
+            throw new PreventedException(e);
         } finally {
             if (client != null) {
                 client.close();
@@ -149,7 +149,7 @@ public final class JRadiusServerImpl implements RadiusServer {
         return null;
     }
 
-    
+
     /**
      * Sets the nas ip address.
      *
@@ -196,7 +196,7 @@ public final class JRadiusServerImpl implements RadiusServer {
      * @param nasIdentifier the new nas identifier
      * @since 4.1.0
      */
-    public void setNasIdentifier(final long nasIdentifier) {
+    public void setNasIdentifier(final String nasIdentifier) {
         this.nasIdentifier = nasIdentifier;
     }
 
@@ -229,5 +229,5 @@ public final class JRadiusServerImpl implements RadiusServer {
     public void setRetries(final int retries) {
         this.retries = retries;
     }
-   
+
 }
