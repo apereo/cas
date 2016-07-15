@@ -16,6 +16,6 @@ docker pull apereo/cas:v[A.B.C]
 
 Additional instructions on how to use CAS docker images for deployment
 and adoption will become available in the future. For now, [the following
-guide](https://github.com/Jasig/cas/tree/dockerized-caswebapp)
+guide](https://github.com/apereo/cas/tree/dockerized-caswebapp)
 may serve as a template on how to get started with a local deployment
 process.
