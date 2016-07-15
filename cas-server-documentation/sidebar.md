@@ -86,7 +86,7 @@
 
 * [Developer](#developer)
     *   [Javadocs](/$version/javadocs/index.html)
-    *   [Issue Tracker](https://github.com/Jasig/cas/issues)
+    *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
