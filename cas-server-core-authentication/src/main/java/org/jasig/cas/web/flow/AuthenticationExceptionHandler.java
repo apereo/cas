@@ -30,7 +30,7 @@ import java.util.List;
 public class AuthenticationExceptionHandler {
 
     /** State name when no matching exception is found. */
-    private static final String UNKNOWN = "UNKNOWN";
+    public static final String UNKNOWN = "UNKNOWN";
 
     /** Default message bundle prefix. */
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";

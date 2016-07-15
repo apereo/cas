@@ -74,12 +74,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("jsonServiceRegistryDao")
 public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
-
     /**
      * File extension of registered service JSON files.
      */
-    private static final String FILE_EXTENSION = "json";
+    public static final String FILE_EXTENSION = "json";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
 
     /**
      * Map of service ID to registered service.
@@ -205,7 +205,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
                     temp.put(service.getId(), service);
                 }
             }
-        }        
+        }
         if (errorCount == 0) {
             this.serviceMap = temp;
         } else {
