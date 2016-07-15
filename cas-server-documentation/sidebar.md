@@ -12,7 +12,8 @@
     *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
-    *   [Docker](/$version/installation/Docker-Installation.html)
+    *   [Docker Deployment](/$version/installation/Docker-Installation.html)
+    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
 * [Authentication](#authentication)
@@ -104,11 +105,8 @@
     *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
-    *   [Shibboleth](/$version/integration/Shibboleth.html)
+    *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
-
-* [Administration](#administration)
-    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)

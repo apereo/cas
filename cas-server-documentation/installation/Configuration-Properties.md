@@ -13,13 +13,18 @@ references to the underlying modules that consume them.
 This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings 
 into your CAS configuration; rather pick only the properties that you need.</p></div>
 
- Note that property names can be specified
+Note that property names can be specified
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
 and `CAS_SOME_PROPERTY` are all valid names.
 
 The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
 to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
-and deployment process. 
+and deployment process.
+ 
+<div class="alert alert-info"><strong>YAGNI</strong><p>Note that for nearly ALL use cases,
+simply declaring and configuring properties listed below is sufficient. You should NOT have to
+explicitly massage a CAS XML configuration file to design an authentication handler, 
+create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
 ## Embedded Tomcat
 
@@ -645,6 +650,8 @@ server, simply increment the index and specify the settings for the next LDAP se
 
 ## REST Authentication
 
+This allows the CAS server to reach to a remote REST endpoint via a `POST`.
+
 ```properties
 # cas.authn.rest.uri=https://...
 
@@ -656,6 +663,8 @@ server, simply increment the index and specify the settings for the next LDAP se
 ```
 
 ## Google Apps Authentication
+
+Authenticate via CAS into Google Apps services and applications.
 
 ```properties
 # cas.googleApps.publicKeyLocation=file:/etc/cas/public.key

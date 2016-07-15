@@ -17,6 +17,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 ## Generate Public/Private Keys
+
 The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions. 
 After keys are created, the public key needs to be registered with Google.
 
@@ -42,6 +43,7 @@ Also, ensure that Google Apps is registered in your Service Registry,
 by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
 
 ## Configure Username Attribute 
+
 As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
 can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
 for the registered Google Apps service.
