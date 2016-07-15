@@ -216,7 +216,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 ```
 
-If you wish to directly and separately retrieve attributes from an LDAP source,
+If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
 
 
