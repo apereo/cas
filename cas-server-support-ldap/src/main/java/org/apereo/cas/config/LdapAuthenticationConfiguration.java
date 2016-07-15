@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.PooledCompareCustomAttributeAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
@@ -14,6 +15,7 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -147,7 +149,7 @@ public class LdapAuthenticationConfiguration {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
@@ -171,6 +173,12 @@ public class LdapAuthenticationConfiguration {
     private static PooledBindAuthenticationHandler getPooledBindAuthenticationHandler(final LdapAuthenticationProperties l) {
         final PooledBindAuthenticationHandler handler = new PooledBindAuthenticationHandler(Beans.newPooledConnectionFactory(l));
         handler.setAuthenticationControls(new PasswordPolicyControl());
+        return handler;
+    }
+
+    private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(LdapAuthenticationProperties l) {
+        final PooledCompareCustomAttributeAuthenticationHandler handler = new PooledCompareCustomAttributeAuthenticationHandler(Beans.newPooledConnectionFactory(l));
+        handler.setPasswordAttributeName(l.getPrincipalAttributePassword());
         return handler;
     }
 }
