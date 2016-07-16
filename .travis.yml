@@ -31,11 +31,10 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
-- ./gradlew clean --parallel --stacktrace
 install:
-- ./gradlew clean build -DskipAspectJ=true --parallel -x test
+- ./gradlew clean install -DskipAspectJ=true --parallel -x test --stacktrace
 script:
-- ./gradlew test -DskipAspectJ=true --stacktrace
+- travis_wait ./gradlew test -DskipAspectJ=true --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh

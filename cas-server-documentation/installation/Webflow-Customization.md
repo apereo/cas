@@ -25,23 +25,21 @@ See [this guide](Webflow-Customization-Sessions.html) for more info.
 ## Webflow Autoconfiguration
 
 Most CAS modules, when declared as a dependency, attempt to autoconfigure the CAS webflow to suit their needs.
-This practically means thst the CAS adopter would no longer have to manually massage the CAS webflow configuration,
+This practically means that the CAS adopter would no longer have to manually massage the CAS webflow configuration,
 and the module automatically takes care of all required changes. While this is the default behavior, it is possible that
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS autoconfiguration
-of the webflow:
+of the webflow.
 
-```properties
-# webflow.autoconfigure=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 CAS by default is configured to hot reload changes to the Spring webflow configuration.
 The following setting switches on flow development mode. Development mode switches 
 on hot-reloading of flow definition changes, 
 including changes to dependent flow resources such as message bundles.
 
-```properties
-# webflow.refresh=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
@@ -53,16 +51,15 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-This behavior is controlled via `application.properties`:
+This behavior is controlled via `application.properties`. To see the relevant list of CAS properties,
+please [review this guide](Configuration-Properties.html).
 
-```properties
-# Indicates whether an SSO session can be created if no service is present.
-# create.sso.missing.service=false
-```
 
 ## Acceptable Usage Policy
+
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application.
 See [this guide](Webflow-Customization-AUP.html) for more info.
 
 ## Customizing errors
+
 See [this guide](Webflow-Customization-Exceptions.html) for more info.

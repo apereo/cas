@@ -30,36 +30,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 ## Configuration
 
-In `application.properties`:
-
-```properties
-#CAS components mappings
-ticketRegistry=jpaTicketRegistry
-```
-
-The following settings are expected:
-
-```properties
-# ticketreg.database.ddl.auto=create-drop
-# ticketreg.database.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
-# ticketreg.database.batchSize=10
-# ticketreg.database.driverClass=org.hsqldb.jdbcDriver
-# ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
-# ticketreg.database.user=sa
-# ticketreg.database.password=
-# ticketreg.database.pool.minSize=5
-# ticketreg.database.pool.maxSize=20
-# ticketreg.database.pool.maxIdleTime=10000
-# ticketreg.database.pool.maxWait=3000
-# ticketreg.database.idle.timeout=3000
-# ticketreg.database.leak.threshold=10
-# ticketreg.database.fail.fast=true
-# ticketreg.database.isolate.internal.queries=false
-# ticketreg.database.health.query=select 1
-# ticketreg.database.pool.suspension=false
-# ticketreg.database.autocommit=false
-# ticketreg.database.jpa.locking.tgt.enabled=true
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
 which may not be appropriate for use in production. Setting the value to
@@ -83,6 +54,4 @@ TGT.
 
 The following setting can disable this locking behavior:
 
-```properties
-# ticketreg.database.jpa.locking.tgt.enabled=false
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

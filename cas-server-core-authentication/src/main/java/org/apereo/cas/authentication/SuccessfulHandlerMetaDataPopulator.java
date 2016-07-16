@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,8 +13,6 @@ import java.util.Set;
  * @author Alaa Nassef
  * @since 4.0.0
  */
-@RefreshScope
-@Component("successfulHandlerMetaDataPopulator")
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Override

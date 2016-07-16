@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -46,7 +47,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -101,7 +101,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
-        when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
+        when(this.authentication.getCredentials()).thenReturn(Lists.newArrayList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
          
@@ -171,7 +171,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
-        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
+        when(ticketRegMock.getTickets()).thenReturn(Lists.newArrayList(tgtMock, tgtMock2, stMock, stMock2));
     }
 
     @Test(expected=InvalidTicketException.class)
@@ -216,7 +216,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         
         assertEquals(assertion.getService(), svc);
         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
-        assertTrue(assertion.getChainedAuthentications().size()  == 2);
+        assertTrue(assertion.getChainedAuthentications().size() == 2);
         IntStream.range(0, assertion.getChainedAuthentications().size())
                 .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }

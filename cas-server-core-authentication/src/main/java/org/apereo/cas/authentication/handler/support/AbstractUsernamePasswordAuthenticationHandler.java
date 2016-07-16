@@ -1,18 +1,17 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
 /**
@@ -30,29 +29,40 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
-    
-    private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+    private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
+
+    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
-    
-    /**
-     * {@inheritDoc}
-     **/
+
     @Override
     protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
+
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
-        if (userPass.getUsername() == null) {
+
+        if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
-        
-        final String transformedUsername= this.principalNameTransformer.transform(userPass.getUsername());
-        if (transformedUsername == null) {
+
+        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
+
+        if (StringUtils.isBlank(userPass.getPassword())) {
+            throw new FailedLoginException("Password is null.");
+        }
+
+        final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        if (StringUtils.isBlank(transformedPsw)) {
+            throw new AccountNotFoundException("Encoded password is null.");
+        }
+
         userPass.setUsername(transformedUsername);
+        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
+
         return authenticateUsernamePasswordInternal(userPass);
     }
 
@@ -70,44 +80,19 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
 
-    /**
-     * Method to return the PasswordEncoder to be used to encode passwords.
-     *
-     * @return the PasswordEncoder associated with this class.
-     */
-    protected PasswordEncoder getPasswordEncoder() {
-        return this.passwordEncoder;
-    }
-
-    protected PrincipalNameTransformer getPrincipalNameTransformer() {
-        return this.principalNameTransformer;
-    }
-    
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
     }
 
-    /**
-     * Sets the PasswordEncoder to be used with this class.
-     *
-     * @param passwordEncoder the PasswordEncoder to use when encoding
-     * passwords.
-     */
-    @Autowired(required=false)
-    public void setPasswordEncoder(@Qualifier("passwordEncoder")
-                                             final PasswordEncoder passwordEncoder) {
+    public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Autowired(required=false)
-    public void setPrincipalNameTransformer(@Qualifier("principalNameTransformer")
-                                                      final PrincipalNameTransformer principalNameTransformer) {
+    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
 
-    @Autowired(required=false)
-    public void setPasswordPolicyConfiguration(@Qualifier("passwordPolicyConfiguration")
-                                                         final PasswordPolicyConfiguration passwordPolicyConfiguration) {
+    public void setPasswordPolicyConfiguration(final PasswordPolicyConfiguration passwordPolicyConfiguration) {
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 

@@ -22,10 +22,4 @@
     
     <ldaptive:search-executor id="searchExecutorUser" baseDn="${ldap.baseDn}"
                               searchFilter="${ldap.user.searchFilter}" returnAttributes="*" />
-
-    
-    <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
-    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-
 </beans>

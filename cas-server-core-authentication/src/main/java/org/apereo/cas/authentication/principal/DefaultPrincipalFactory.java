@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Component("defaultPrincipalFactory")
 public class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 

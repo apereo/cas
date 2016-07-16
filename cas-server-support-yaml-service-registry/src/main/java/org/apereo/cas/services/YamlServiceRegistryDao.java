@@ -3,11 +3,7 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
@@ -33,8 +29,6 @@ accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrat
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("yamlServiceRegistryDao")
 public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(YamlServiceRegistryDao.class);
@@ -65,10 +59,7 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param enableWatcher   the enable watcher
      * @throws Exception the IO exception
      */
-    @Autowired
-    public YamlServiceRegistryDao(@Value("${service.registry.config.location:classpath:services}")
-                                  final Resource configDirectory,
-                                  @Value("${service.registry.watcher.enabled:true}")
+    public YamlServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher) throws Exception {
         super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher);
     }

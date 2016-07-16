@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -12,7 +11,6 @@ import org.springframework.webflow.engine.ViewState;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("acceptableUsagePolicyWebflowConfigurer")
 public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";

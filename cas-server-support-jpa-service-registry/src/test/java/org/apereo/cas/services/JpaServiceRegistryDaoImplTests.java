@@ -1,11 +1,18 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,19 +25,21 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link JpaServiceRegistryDaoImpl}
+ *
  * @author battags
  * @since 3.1.0
  */
-public class JpaServiceRegistryDaoImplTests  {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
+public class JpaServiceRegistryDaoImplTests {
 
-    private ServiceRegistryDao  dao;
+    @Autowired
+    @Qualifier("jpaServiceRegistryDao")
+    private ServiceRegistryDao dao;
 
     @Before
     public void setUp() {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
-        this.dao = ctx.getBean("serviceRegistryDao", ServiceRegistryDao.class);
-
         final List<RegisteredService> services = this.dao.load();
         for (final RegisteredService service : services) {
             this.dao.delete(service);
@@ -44,6 +53,7 @@ public class JpaServiceRegistryDaoImplTests  {
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
+        r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
 
         final RegisteredService r2 = this.dao.save(r);
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());

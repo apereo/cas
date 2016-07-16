@@ -16,7 +16,7 @@
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
 
-    <context:property-placeholder location="classpath:cas.properties"
+    <context:property-placeholder location="classpath:mongo.properties"
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="false"/>
 
@@ -70,9 +70,13 @@
           c:mongoDbFactory-ref="mongoDbFactory"
           c:mongoConverter-ref="mappingConverter"/>
 
-    <bean id="serviceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao" />
+    <bean id="mongoServiceRegistryDao" class="org.apereo.cas.services.MongoServiceRegistryDao"
+          c:collectionName="MongoServiceRegistryDao"
+          c:dropCollection="true"
+          c:mongoTemplate-ref="mongoTemplate" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" 
+          class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
     <!-- Fake inmemory mongo instance -->
@@ -81,14 +85,4 @@
 
     <bean id="mongo" factory-bean="fongo" factory-method="getMongo" />
     <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" />
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
 </beans>

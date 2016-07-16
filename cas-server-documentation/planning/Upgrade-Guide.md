@@ -21,7 +21,7 @@ This document attempts to describe, at a very high level, the scope and effort r
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
-Before attempting to upgrade, please review the [CAS change log](https://github.com/Jasig/cas/releases) to determine
+Before attempting to upgrade, please review the [CAS change log](https://github.com/apereo/cas/releases) to determine
 what changes/fixes are contained in the version you intend to upgrade to, and whether those are applicable to your environment
 and your CAS deployment. If you are working with an older CAS version and are experiencing what appears to be a bug, chances are
 by reviewing the change log, you will find a drop-in replacement for your overlay that takes care of the issue. 
@@ -63,8 +63,9 @@ the upgrade is, you want to make sure it is well tested in your environment befo
 the software dependencies and platform requirements of the new upgrade (i.e. Java, Maven, etc)
 and make sure you have everything installed and configured correctly before you attempt. 
 
-## Clean Maven Overlay
-We recommend that you first start out with a separate clean [CAS Maven overlay](../installation/Maven-Overlay-Installation.html) targeted
+## Sanitize Configuration
+
+We recommend that you first start out with a separate clean [CAS overlay](../installation/Maven-Overlay-Installation.html) targeted
 at the version to which you want to upgrade. This has the advantage of guaranteeing that your new CAS deployment 
 will be functional without any local changes. Build and deploy the clean CAS overlay once to make sure
 your build/deployment process is functional.
@@ -76,7 +77,7 @@ original version. You can find out the delta between two versions via the follow
 1. If you have built the clean CAS overlay once, you will automatically get the original version typically
 in the `target` directory of CAS overlay. Find the correct file at the correct path, and compare.
 
-2. Go directly to the [project source repository](https://github.com/Jasig/cas), find the appropriate branch
+2. Go directly to the [project source repository](https://github.com/apereo/cas), find the appropriate branch
 and compare files. 
 
 Needless to say, you are going to need:

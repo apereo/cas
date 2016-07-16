@@ -1,21 +1,28 @@
 package org.apereo.cas.ticket.registry.config;
 
+import com.google.common.collect.Lists;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.HazelcastInstanceConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -24,26 +31,31 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:HazelcastInstanceConfigurationTests-config.xml")
-@ActiveProfiles("provided_hz_config")
+@SpringApplicationConfiguration(classes = {
+        HazelcastInstanceConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasCoreLogoutConfiguration.class},
+        locations="classpath:HazelcastInstanceConfigurationTests-config.xml",
+        initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProvidedHazelcastInstanceConfigurationTests.class);
 
     @Autowired
+    @Qualifier("hazelcast")
     private HazelcastInstance hzInstance;
-
-    public HazelcastInstance getHzInstance() {
-        return hzInstance;
-    }
 
     @Test
     public void hazelcastInstanceIsCreatedNormally() throws Exception {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
         assertTrue(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-        assertEquals(Arrays.asList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
+        assertEquals(Lists.newArrayList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertFalse(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5801, config.getNetworkConfig().getPort());
 

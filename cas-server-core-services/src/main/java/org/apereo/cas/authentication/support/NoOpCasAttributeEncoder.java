@@ -3,8 +3,6 @@ package org.apereo.cas.authentication.support;
 import org.apereo.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +14,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("noOpCasAttributeEncoder")
 public class NoOpCasAttributeEncoder implements CasAttributeEncoder {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     

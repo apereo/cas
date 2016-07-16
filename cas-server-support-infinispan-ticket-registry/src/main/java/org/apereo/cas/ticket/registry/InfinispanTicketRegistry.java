@@ -1,12 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
-
 import org.infinispan.Cache;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -18,12 +14,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RefreshScope
-@Component("infinispanTicketRegistry")
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
-
-    @Resource(name="infinispanTicketsCache")
-    private Cache<String, Ticket> cache;
+    
+    private Cache cache;
 
     /**
      * Instantiates a new Infinispan ticket registry.
@@ -66,7 +59,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        final Ticket ticket = this.cache.get(encTicketId);
+        final Ticket ticket = Ticket.class.cast(cache.get(encTicketId));
         return ticket;
     }
 

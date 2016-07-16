@@ -3,8 +3,6 @@ package org.apereo.cas.web;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -29,8 +27,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-@RefreshScope
-@Component("errorHandlerResolver")
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
     /** Instance of a logger. */

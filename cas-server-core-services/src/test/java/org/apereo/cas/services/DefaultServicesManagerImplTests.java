@@ -5,14 +5,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  *
@@ -20,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  *
  */
-public class DefaultServicesManagerImplTests  {
+public class DefaultServicesManagerImplTests {
 
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
 
@@ -39,7 +37,7 @@ public class DefaultServicesManagerImplTests  {
 
         dao.setRegisteredServices(list);
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
-        this.defaultServicesManagerImpl.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+        this.defaultServicesManagerImpl.load();
     }
 
     @Test

@@ -3,14 +3,9 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,8 +22,6 @@ import java.sql.SQLException;
  *
  * @since 3.0.0
  */
-@RefreshScope
-@Component("bindModeSearchDatabaseAuthenticationHandler")
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @Override
@@ -42,7 +35,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         Connection connection = null;
         try {
             final String username = credential.getUsername();
-            final String password = getPasswordEncoder().encode(credential.getPassword());
+            final String password = credential.getPassword();
             connection = this.getDataSource().getConnection(username, password);
             return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
         } catch (final SQLException e) {
@@ -56,9 +49,5 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
         }
     }
 
-    @Autowired(required = false)
-    @Override
-    public void setDataSource(@Qualifier("bindSearchDatabaseDataSource") final DataSource dataSource) {
-        super.setDataSource(dataSource);
-    }
+
 }

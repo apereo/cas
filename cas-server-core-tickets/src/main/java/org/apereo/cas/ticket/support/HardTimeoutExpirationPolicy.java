@@ -2,10 +2,6 @@ package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.TicketState;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -19,19 +15,16 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Feller
  * @since 3.1.2
  */
-@RefreshScope
-@Component("hardTimeoutExpirationPolicy")
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.timeout.hard.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
-    private HardTimeoutExpirationPolicy() {}
+    public HardTimeoutExpirationPolicy() {}
 
 
     /**
@@ -64,7 +57,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return (ticketState == null) || ticketState.getCreationTime()
+        return ticketState == null || ticketState.getCreationTime()
           .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 

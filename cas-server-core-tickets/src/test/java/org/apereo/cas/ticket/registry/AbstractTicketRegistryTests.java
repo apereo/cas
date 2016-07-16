@@ -124,8 +124,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
         }
     }
 
@@ -137,7 +136,7 @@ public abstract class AbstractTicketRegistryTests {
                     new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
         }
     }
 
@@ -236,7 +235,7 @@ public abstract class AbstractTicketRegistryTests {
             assertNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
         } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
+            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
         }
     }
 

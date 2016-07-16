@@ -7,7 +7,6 @@ import org.apereo.cas.services.TestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -17,9 +16,9 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.*;
+        
 /**
  * @author Scott Battaglia
  * @since 3.1
@@ -33,7 +32,6 @@ public class ServiceThemeResolverTests {
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
-        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");

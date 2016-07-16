@@ -1,21 +1,17 @@
 package org.apereo.cas.authentication;
 
 
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,21 +25,14 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.3
  */
-@RefreshScope
-@Component("authenticationContextValidator")
 public class AuthenticationContextValidator {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Value("${cas.mfa.authn.ctx.attribute:authnContextClass}")
+    
     private String authenticationContextAttribute;
-
-    @Autowired
-    @Qualifier("servicesManager")
+    
     private ServicesManager servicesManager;
-
-
-    @Value("${cas.mfa.failure.mode:CLOSED}")
+    
     private String globalFailureMode;
 
     @Autowired
@@ -73,13 +62,13 @@ public class AuthenticationContextValidator {
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap = 
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
                 getAllMultifactorAuthenticationProvidersFromApplicationContext();
         if (providerMap == null) {
             logger.debug("No providers have been configured");
             return new Pair(false, Optional.empty());
         }
-        final Optional<MultifactorAuthenticationProvider> requestedProvider = 
+        final Optional<MultifactorAuthenticationProvider> requestedProvider =
                 locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
@@ -87,7 +76,7 @@ public class AuthenticationContextValidator {
             return new Pair(false, Optional.empty());
         }
 
-        if  (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
+        if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             logger.debug("Requested authentication context {} is satisfied", requestedContext);
             return new Pair(true, requestedProvider);
         }
@@ -99,7 +88,7 @@ public class AuthenticationContextValidator {
             logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return new Pair(false, requestedProvider);
         }
-        
+
         if (!satisfiedProviders.isEmpty()) {
             final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
@@ -136,7 +125,7 @@ public class AuthenticationContextValidator {
                 return new Pair(true, satisfiedProviders.stream().findFirst());
             }
         }
-        
+
         return new Pair(false, requestedProvider);
     }
 
@@ -154,19 +143,20 @@ public class AuthenticationContextValidator {
         return null;
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
-                                           final Collection<MultifactorAuthenticationProvider> providers) {
+    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
+            final Authentication authentication,
+            final Collection<MultifactorAuthenticationProvider> providers) {
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(
                 authentication.getAttributes().get(this.authenticationContextAttribute));
 
         if (contexts == null || contexts.isEmpty()) {
-            logger.debug("No authentication context could be determined based on authentication attribute {}", 
+            logger.debug("No authentication context could be determined based on authentication attribute {}",
                     this.authenticationContextAttribute);
             return null;
         }
 
-        contexts.stream().forEach(context -> 
-            providers.removeIf(provider -> !provider.getId().equals(context))
+        contexts.stream().forEach(context ->
+                providers.removeIf(provider -> !provider.getId().equals(context))
         );
 
         logger.debug("Found {} providers that may satisfy the context", providers.size());
@@ -190,4 +180,11 @@ public class AuthenticationContextValidator {
         return policy.getFailureMode();
     }
 
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setGlobalFailureMode(final String globalFailureMode) {
+        this.globalFailureMode = globalFailureMode;
+    }
 }

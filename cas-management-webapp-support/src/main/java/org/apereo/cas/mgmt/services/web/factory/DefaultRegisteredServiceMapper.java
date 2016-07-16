@@ -1,27 +1,32 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceOAuthTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServicePublicKeyEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSamlTypeEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
-import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
-import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Default mapper for converting {@link RegisteredService} to/from {@link RegisteredServiceEditBean.ServiceData}.
@@ -29,14 +34,7 @@ import java.net.URL;
  * @author Daniel Frett
  * @since 4.2
  */
-@RefreshScope
-@Component(DefaultRegisteredServiceMapper.BEAN_NAME)
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
-    /**
-     * Name of this bean within the Spring context.
-     */
-    public static final String BEAN_NAME = "defaultRegisteredServiceMapper";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceMapper.class);
 
     @Override
@@ -65,6 +63,19 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             oauthBean.setJsonFormat(oauth.isJsonFormat());
         }
 
+        if (svc instanceof SamlRegisteredService) {
+            bean.setType(RegisteredServiceTypeEditBean.SAML.toString());
+            final SamlRegisteredService saml = (SamlRegisteredService) svc;
+            final RegisteredServiceSamlTypeEditBean samlbean = bean.getSaml();
+            samlbean.setMdLoc(saml.getMetadataLocation());
+            samlbean.setMdMaxVal(saml.getMetadataMaxValidity());
+            samlbean.setMdSigLoc(saml.getMetadataSignatureLocation());
+            samlbean.setAuthCtxCls(saml.getRequiredAuthenticationContextClass());
+            samlbean.setEncAssert(saml.isEncryptAssertions());
+            samlbean.setSignResp(saml.isSignResponses());
+            samlbean.setSignAssert(saml.isSignAssertions());
+        }
+        
         bean.setTheme(svc.getTheme());
         bean.setEvalOrder(svc.getEvaluationOrder());
         final LogoutType logoutType = svc.getLogoutType();
@@ -90,6 +101,14 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             pBean.setAlgorithm(key.getAlgorithm());
             pBean.setLocation(key.getLocation());
         }
+        
+        final Map<String, RegisteredServiceProperty> props = svc.getProperties();
+        final Map<String, Set<String>> beanProps = bean.getProps();
+        for (final Map.Entry<String, RegisteredServiceProperty> stringRegisteredServicePropertyEntry : props.entrySet()) {
+            final Set<String> set = stringRegisteredServicePropertyEntry.getValue().getValues();
+            beanProps.put(stringRegisteredServicePropertyEntry.getKey(), set);
+        }
+        
     }
 
     @Override
@@ -123,6 +142,17 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 ((OAuthRegisteredService) regSvc).setGenerateRefreshToken(oauthBean.isRefreshToken());
                 ((OAuthRegisteredService) regSvc).setJsonFormat(oauthBean.isJsonFormat());
+            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
+                regSvc = new SamlRegisteredService();
+
+                final RegisteredServiceSamlTypeEditBean samlBean = data.getSaml();
+                ((SamlRegisteredService) regSvc).setEncryptAssertions(samlBean.isEncAssert());
+                ((SamlRegisteredService) regSvc).setSignAssertions(samlBean.isSignAssert());
+                ((SamlRegisteredService) regSvc).setSignResponses(samlBean.isSignResp());
+                ((SamlRegisteredService) regSvc).setMetadataLocation(samlBean.getMdLoc());
+                ((SamlRegisteredService) regSvc).setMetadataSignatureLocation(samlBean.getMdSigLoc());
+                ((SamlRegisteredService) regSvc).setMetadataMaxValidity(samlBean.getMdMaxVal());
+                ((SamlRegisteredService) regSvc).setRequiredAuthenticationContextClass(samlBean.getAuthCtxCls());
             } else {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();
@@ -163,10 +193,18 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 regSvc.setPublicKey(new RegisteredServicePublicKeyImpl(publicKey.getLocation(), publicKey
                         .getAlgorithm()));
             }
-
+            
+            final Map<String, Set<String>> props = data.getProps();
+            for (final Map.Entry<String, Set<String>> stringSetEntry : props.entrySet()) {
+                final DefaultRegisteredServiceProperty value = new DefaultRegisteredServiceProperty();
+                value.setValues(stringSetEntry.getValue());
+                regSvc.getProperties().put(stringSetEntry.getKey(), value);
+            }
+            
+            
             return regSvc;
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
     
@@ -175,7 +213,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
      *
      * @param logoutType the reg svc
      */
-    private LogoutType parseLogoutType(final String logoutType) {
+    private static LogoutType parseLogoutType(final String logoutType) {
         if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
             return LogoutType.BACK_CHANNEL;
         } else if (StringUtils.equalsIgnoreCase(logoutType, RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {

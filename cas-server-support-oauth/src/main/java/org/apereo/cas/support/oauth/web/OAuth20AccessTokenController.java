@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -19,8 +20,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,23 +30,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This controller returns an access token according to the given OAuth code and client credentials (authorization code grant type)
- * or according to the refresh token and client credentials (refresh token grant type) or according to the user identity
+ * This controller returns an access token according to the given
+ * OAuth code and client credentials (authorization code grant type)
+ * or according to the refresh token and client credentials
+ * (refresh token grant type) or according to the user identity
  * (resource owner password grant type).
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@RefreshScope
 @Controller("accessTokenController")
 public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
-    @Qualifier("defaultRefreshTokenFactory")
+    private CasConfigurationProperties casProperties;
+    
     private RefreshTokenFactory refreshTokenFactory;
 
-    @Autowired
-    @Qualifier("accessTokenResponseGenerator")
     private AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     /**
@@ -128,10 +127,12 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
             this.ticketRegistry.addTicket(refreshToken);
         }
 
-        logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken, this.timeout, refreshToken);
+        logger.debug("access token: {} / timeout: {} / refresh token: {}", accessToken,
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds(), refreshToken);
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
-                accessToken, refreshToken, this.timeout);
+                accessToken, refreshToken, 
+                casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
         response.setStatus(HttpServletResponse.SC_OK);
         return null;
@@ -255,4 +256,6 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
     public void setRefreshTokenFactory(final RefreshTokenFactory refreshTokenFactory) {
         this.refreshTokenFactory = refreshTokenFactory;
     }
+    
+    
 }

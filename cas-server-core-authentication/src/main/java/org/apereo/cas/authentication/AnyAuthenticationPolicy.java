@@ -1,22 +1,30 @@
 package org.apereo.cas.authentication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("anyAuthenticationPolicy")
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Flag to try all credentials before policy is satisfied. Defaults to {@code false}.*/
     private boolean tryAll;
+
+    /**
+     * Instantiates a new Any authentication policy.
+     */
+    public AnyAuthenticationPolicy() {
+    }
+
+    /**
+     * Instantiates a new Any authentication policy.
+     *
+     * @param tryAll the try all
+     */
+    public AnyAuthenticationPolicy(final boolean tryAll) {
+        this.tryAll = tryAll;
+    }
 
     /**
      * Sets the flag to try all credentials before the policy is satisfied.
@@ -25,8 +33,7 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
      *
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */
-    @Autowired
-    public void setTryAll(@Value("${cas.authn.policy.any.tryall:false}") final boolean tryAll) {
+    public void setTryAll(final boolean tryAll) {
         this.tryAll = tryAll;
     }
 

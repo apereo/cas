@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support.ldap;
 
-import java.security.cert.X509Certificate;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
@@ -12,20 +11,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.security.cert.X509Certificate;
 
 
 /**
  * Test cases for {@link PoolingLdaptiveResourceCRLFetcher}
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/x509-ldap-context.xml")
+@SpringApplicationConfiguration(locations = "/x509-ldap-context.xml", classes = {RefreshAutoConfiguration.class})
 public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
-
 
     @Autowired
     @Qualifier("poolingLdapCertFetcher")

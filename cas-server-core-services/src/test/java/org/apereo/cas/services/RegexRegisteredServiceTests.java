@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -40,7 +40,7 @@ public class RegexRegisteredServiceTests {
         final String domainCatchallHttp = "https*://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         final String domainCatchallHttpImap = "(https*|imaps*)://([A-Za-z0-9_-]+\\.)+vt\\.edu/.*";
         final String globalCatchallHttpImap = "(https*|imaps*)://.*";
-        return Arrays.asList(new Object[][]{
+        return Lists.newArrayList(new Object[][]{
                 // CAS-1071 domain-specific HTTP catch-all #1
                 {
                         newService(domainCatchallHttp),

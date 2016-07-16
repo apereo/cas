@@ -1,17 +1,13 @@
 package org.apereo.cas.adaptors.generic;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -27,26 +23,13 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RefreshScope
-@Component("rejectUsersAuthenticationHandler")
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    @Value("${reject.authn.users:}")
-    private String rejectedUsersConfig;
-
-    /** The collection of users to reject. */
-    private Set<String> users;
-
+    
     /**
-     * Initialize map of rejected users.
+     * The collection of users to reject.
      */
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(this.rejectedUsersConfig) && this.users == null) {
-            setUsers(org.springframework.util.StringUtils.commaDelimitedListToSet(this.rejectedUsersConfig));
-        }
-    }
-
+    private Set<String> users = new HashSet<>();
+    
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -68,4 +51,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         this.users = users;
     }
 
+    public Set<String> getUsers() {
+        return users;
+    }
 }

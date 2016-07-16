@@ -3,8 +3,6 @@ package org.apereo.cas.logout;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
@@ -15,8 +13,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultSingleLogoutServiceLogoutUrlBuilder")
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 

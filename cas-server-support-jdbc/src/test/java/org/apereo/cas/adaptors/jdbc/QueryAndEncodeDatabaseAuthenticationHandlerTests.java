@@ -1,19 +1,24 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.TestUtils;
-import org.apereo.cas.authentication.handler.PasswordEncoder;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-
+import com.google.common.base.Throwables;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,21 +36,22 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
+        classes = {RefreshAutoConfiguration.class})
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
 
+    @Autowired
+    @Qualifier("dataSource")
     private DataSource dataSource;
-
 
     @Before
     public void setUp() throws Exception {
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
 
-        this.dataSource = ctx.getBean("dataSource", DataSource.class);
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
@@ -86,7 +92,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -96,7 +102,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql("makesNoSenseInSql"));
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -106,7 +112,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticateUsernamePasswordInternal(
+        q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
     }
@@ -119,9 +125,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
+        q.setSaltFieldName("salt");
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
+        final HandlerResult r = q.authenticate(c);
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
@@ -135,20 +142,22 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setSql(buildSql());
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
+        q.setSaltFieldName("salt");
+        q.setPasswordFieldName("password");
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
-            public String encode(final String password) {
-                return password.concat("1");
+            public String encode(final CharSequence password) {
+                return password.toString().concat("1");
             }
 
             @Override
             public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-                return false;
+                return true;
             }
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final HandlerResult r = q.authenticateUsernamePasswordInternal(
+        final HandlerResult r = q.authenticate(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
@@ -179,10 +188,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             return pswEnc;
 
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
-    @Entity(name="users")
+
+    @Entity(name = "users")
     public static class UsersTable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

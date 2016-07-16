@@ -1,7 +1,7 @@
 package org.apereo.cas.mgmt.services.web;
 
-import org.apereo.cas.services.ReloadableServicesManager;
 import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +27,7 @@ public abstract class AbstractManagementController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Instance of ServicesManager. */
-    protected ReloadableServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     public AbstractManagementController() {
     }
@@ -37,7 +37,7 @@ public abstract class AbstractManagementController {
      *
      * @param servicesManager the services manager
      */
-    public AbstractManagementController(final ReloadableServicesManager servicesManager) {
+    public AbstractManagementController(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

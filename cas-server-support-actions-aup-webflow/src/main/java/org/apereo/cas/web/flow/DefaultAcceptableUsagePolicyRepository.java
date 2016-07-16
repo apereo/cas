@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("defaultAcceptableUsagePolicyRepository")
 public class DefaultAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = -3059445754626980894L;
 

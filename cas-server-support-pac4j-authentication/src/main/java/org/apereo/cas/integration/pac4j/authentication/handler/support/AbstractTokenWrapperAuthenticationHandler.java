@@ -2,7 +2,6 @@ package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.TokenCredentials;
 
@@ -22,16 +21,14 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    
-    private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
      * Default constructor.
      */
     public AbstractTokenWrapperAuthenticationHandler() {
-        setTypedIdUsed(false);
-    }
 
+    }
 
     @Override
     protected TokenCredentials convertToPac4jCredentials(final BasicIdentifiableCredential casCredential)

@@ -5,7 +5,12 @@ import org.apereo.cas.authentication.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,21 +30,19 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.0.0
  */
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
+        classes = {RefreshAutoConfiguration.class})
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT password FROM casusers where username=?";
 
-
+    @Autowired
+    @Qualifier("dataSource")
     private DataSource dataSource;
 
     @Before
     public void setUp() throws Exception {
-
-        final ClassPathXmlApplicationContext ctx = new
-            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
-
-        this.dataSource = ctx.getBean("dataSource", DataSource.class);
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);

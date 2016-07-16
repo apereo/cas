@@ -2,14 +2,21 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.ApplicationContextProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 
@@ -20,9 +27,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(
+        classes = {SamlGoogleAppsConfiguration.class},
+        initializers = ConfigFileApplicationContextInitializer.class)
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
-    private GoogleAccountsServiceFactory factory;
+    @Qualifier("googleAccountsServiceFactory")
+    private ServiceFactory factory;
 
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
@@ -47,7 +59,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
                 + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
-        final GoogleAccountsService service = this.factory.createService(request);
+        final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
         service.setPrincipal(TestUtils.getPrincipal());
         assertNotNull(service);
         final Response response = service.getResponse("SAMPLE_TICKET");

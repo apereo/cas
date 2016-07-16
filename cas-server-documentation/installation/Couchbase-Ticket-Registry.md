@@ -14,25 +14,15 @@ Couchbase integration is enabled by including the following dependency in the WA
 </dependency>
 ```
 
-Enable the registry in `application.properties` via:
-
-```properties
-#CAS components mappings
-ticketRegistry=couchbaseTicketRegistry
-```
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
-[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase 
+[Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this 
+registry is to leverage the capability of Couchbase 
 server to provide high availability to CAS.
 
 ## Configuration
-The following settings are available:
 
-```properties
-ticketreg.couchbase.nodes=
-ticketreg.couchbase.bucket=
-ticketreg.couchbase.password=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 The Couchbase integration currently assumes that the ticket registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup

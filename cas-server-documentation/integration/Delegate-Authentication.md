@@ -8,9 +8,11 @@ title: CAS - Delegate authentication
 </p>
 
 # Overview
-The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
+The CAS server implements the CAS protocol on server side and may even behave like an 
+OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
-But the CAS server can also act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
+But the CAS server can also act as a client using 
+the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
 * Another CAS server
 * An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
@@ -37,42 +39,17 @@ An identity provider is a server which can authenticate users (like Google, Yaho
 If you want to delegate the CAS authentication to Twitter for example, you have to add an 
 OAuth client for the provider: Twitter. For each delegated authentication mechanism, you must define the appropriate client.
 
-Clients can be defined via properties for the most common ones (in the `application.properties` file):
+Clients can be defined via properties for the most common ones (in the `application.properties` file).
 
-```properties
-# cas.pac4j.facebook.id=
-# cas.pac4j.facebook.secret=
-# cas.pac4j.facebook.scope=
-# cas.pac4j.facebook.fields=
-# cas.pac4j.twitter.id=
-# cas.pac4j.twitter.secret=
-# cas.pac4j.saml.keystorePassword=
-# cas.pac4j.saml.privateKeyPassword=
-# cas.pac4j.saml.keystorePath=
-# cas.pac4j.saml.identityProviderMetadataPath=
-# cas.pac4j.saml.maximumAuthenticationLifetime=
-# cas.pac4j.saml.serviceProviderEntityId=
-# cas.pac4j.saml.serviceProviderMetadataPath=
-# cas.pac4j.cas.loginUrl=
-# cas.pac4j.cas.protocol=
-# cas.pac4j.oidc.id=
-# cas.pac4j.oidc.secret=
-# cas.pac4j.oidc.discoveryUri=
-# cas.pac4j.oidc.useNonce=
-# cas.pac4j.oidc.preferredJwsAlgorithm=
-# cas.pac4j.oidc.maxClockSkew=
-# cas.pac4j.oidc.customParamKey1=
-# cas.pac4j.oidc.customParamValue1=
-# cas.pac4j.oidc.customParamKey2=
-# cas.pac4j.oidc.customParamValue2=
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as 
 an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has 
 to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server 
-which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
+which is using OAuth wrapping (i.e: `http://mycasserver2/oauth2.0`).
 
 ### User Interface
 
@@ -86,13 +63,10 @@ and the url for the redirection to the identity provider in the `pac4jUrls` obje
 
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: 
 this one can be created only from the technical identifier received from the external identity provider (like `1234`) 
-or as a "typed identifier" (like FacebookProfile#1234), which is the default.
+or as a "typed identifier" (like FacebookProfile#1234), which is the default. This can be defined in the `application.properties` file.
 
-This can be defined in the `application.properties` file:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-```properties
-cas.pac4j.client.authn.typedidused=true
-```
 
 ## Demo
 
@@ -112,8 +86,9 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* The attribute *`clientName`* set to the type of the provider used during authentication process.
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` 
+set to `org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`
+* The attribute `clientName` set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
 
@@ -171,4 +146,4 @@ final FacebookProfile rebuiltProfileOnCasClientSide =
     (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 ```
 
-and then use it in your application.
+...and then use it in your application.

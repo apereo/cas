@@ -52,7 +52,6 @@
            useStartTLS="${ldap.useStartTLS}"
            allowMultipleDns="${ldap.allowMultipleDns:false}"
            baseDn="${ldap.baseDn}"
-           usePasswordPolicy="true"
            subtreeSearch="${ldap.subtree.search:true}"
            userFilter="${ldap.authn.searchFilter}" />
 
@@ -71,7 +70,6 @@
             validatePeriod="${ldap.pool.validatePeriod}"
             prunePeriod="${ldap.pool.prunePeriod}"
             useSSL="${ldap.use.ssl:false}"
-            usePasswordPolicy="true"
             useStartTLS="${ldap.useStartTLS}" />
 
     <ldaptive:bind-search-authenticator id="authenticator"
@@ -92,7 +90,6 @@
             idleTime="${ldap.pool.idleTime}"
             prunePeriod="${ldap.pool.prunePeriod}"
             failFastInitialize="true"
-            usePasswordPolicy="true"                          
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             subtreeSearch="${ldap.subtree.search:true}"
             useSSL="${ldap.use.ssl:false}" />

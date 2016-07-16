@@ -8,11 +8,8 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,35 +19,19 @@ import java.util.Map;
 
 /**
  * Generates an association to an openid association request.
+ *
  * @author Frederic Esnault
  * @since 3.5
  */
-@RefreshScope
-@Component("smartOpenIdAssociationController")
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    /** View if association Fails. */
-    private static final String DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME = "casOpenIdAssociationFailureView";
-
-    /** View if association Succeeds. */
-    private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
-
     private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
-    @Autowired
-    @Qualifier("serverManager")
     private ServerManager serverManager;
 
-    /** The view to redirect to on a successful validation. */
-    
-    private String successView = DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME;
-
-    /** The view to redirect to on a validation failure. Not used for now,
-     *  the succes view may return failed association attemps. No need for another view. */
-    
-    private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
+    private View successView;
 
     /**
      * Gets the association response. Determines the mode first.
@@ -100,14 +81,10 @@ public class SmartOpenIdController extends AbstractDelegateController implements
         return false;
     }
 
-    public void setSuccessView(final String successView) {
+    public void setSuccessView(final View successView) {
         this.successView = successView;
     }
-
-    public void setFailureView(final String failureView) {
-        this.failureView = failureView;
-    }
-
+    
     public void setServerManager(final ServerManager serverManager) {
         this.serverManager = serverManager;
     }

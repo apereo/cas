@@ -9,10 +9,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * Default OAuth access token factory.
@@ -20,22 +16,14 @@ import org.springframework.stereotype.Component;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@RefreshScope
-@Component("defaultAccessTokenFactory")
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    
-    @Autowired(required = false)
-    @Qualifier("accessTokenIdGenerator")
     protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** ExpirationPolicy for access tokens. */
-    
-    @Autowired
-    @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override

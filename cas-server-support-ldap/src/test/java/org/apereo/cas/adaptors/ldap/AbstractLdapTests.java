@@ -56,11 +56,7 @@ public abstract class AbstractLdapTests implements ApplicationContextAware {
         final String unameAttr = this.context.getBean("usernameAttribute", String.class);
         return entry.getAttribute(unameAttr).getStringValue();
     }
-
-    protected <T> T getBean(final String id, final Class<T> clazz) {
-        return this.context.getBean(id, clazz);
-    }
-
+    
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         this.context = applicationContext;

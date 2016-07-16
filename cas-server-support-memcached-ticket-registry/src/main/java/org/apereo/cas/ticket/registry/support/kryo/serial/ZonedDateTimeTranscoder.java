@@ -24,6 +24,6 @@ public class ZonedDateTimeTranscoder extends Serializer<ZonedDateTime> {
     public ZonedDateTime read(final Kryo kryo, final Input input, final Class<ZonedDateTime> type) {
         final long time = kryo.readObject(input, Long.class);
         final ZoneId zone = ZoneId.of(input.readString());
-        return  DateTimeUtils.zonedDateTimeOf(time, zone);
+        return DateTimeUtils.zonedDateTimeOf(time, zone);
     }
 }

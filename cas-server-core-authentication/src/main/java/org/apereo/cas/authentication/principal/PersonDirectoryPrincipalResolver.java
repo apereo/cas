@@ -1,19 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +24,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RefreshScope
-@Component("personDirectoryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -38,29 +31,30 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Repository of principal attributes to be retrieved.
      */
-    
+
     protected IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<>());
 
     /**
      * Factory to create the principal type.
      **/
-    
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * return null if no attributes are found.
      */
-    @Value("${cas.principal.resolver.persondir.return.null:false}")
     protected boolean returnNullIfNoAttributes;
+
+    /**
+     * Transform principal name.
+     */
+    protected PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
     /**
      * Optional principal attribute name.
      */
     protected String principalAttributeName;
 
-    @Autowired
-    public void setAttributeRepository(@Qualifier("attributeRepository")
-                                             final IPersonAttributeDao attributeRepository) {
+    public void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }
 
@@ -73,9 +67,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param attribute Name of attribute containing principal ID.
      */
-    @Autowired
-    public void setPrincipalAttributeName(@Value("${cas.principal.resolver.persondir.principal.attribute:}")
-                                          final String attribute) {
+    public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
     }
 
@@ -84,8 +76,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param principalFactory the principal factory
      */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 
@@ -98,11 +89,15 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public Principal resolve(final Credential credential) {
         logger.debug("Attempting to resolve a principal...");
 
-        final String principalId = extractPrincipalId(credential);
+        String principalId = extractPrincipalId(credential);
 
         if (StringUtils.isBlank(principalId)) {
             logger.debug("Principal id [{}] could not be found", principalId);
             return null;
+        }
+
+        if (principalNameTransformer != null) {
+            principalId = principalNameTransformer.transform(principalId);
         }
 
         logger.debug("Creating SimplePrincipal for [{}]", principalId);
@@ -180,6 +175,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return attributes;
     }
 
+    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
+        this.principalNameTransformer = principalNameTransformer;
+    }
 
     /**
      * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to

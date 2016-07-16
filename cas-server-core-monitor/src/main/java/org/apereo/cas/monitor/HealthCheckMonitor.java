@@ -1,9 +1,5 @@
 package org.apereo.cas.monitor;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -16,22 +12,13 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RefreshScope
-@Component("healthCheckMonitor")
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
-    /** Individual monitors that comprise health check. */
-    
-
+    /**
+     * Individual monitors that comprise health check.
+     */
     private Collection<Monitor> monitors = Collections.emptySet();
 
-
-    /**
-     * Sets the monitors that comprise the health check.
-     *
-     * @param monitors Collection of monitors responsible for observing various aspects of CAS.
-     */
-    @Resource(name="monitorsList")
-    public void setMonitors(final Collection<Monitor> monitors) {
+    public void setMonitors(final Collection monitors) {
         this.monitors = monitors;
     }
 

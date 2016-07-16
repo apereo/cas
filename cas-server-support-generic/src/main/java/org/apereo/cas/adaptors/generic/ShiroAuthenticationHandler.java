@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.generic;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Throwables;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -16,19 +18,13 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.ResourceUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -43,31 +39,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RefreshScope
-@Component("shiroAuthenticationHandler")
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private Set<String> requiredRoles = new HashSet<>();
+
     private Set<String> requiredPermissions = new HashSet<>();
-
-    @Value("${shiro.authn.requiredRoles:}")
-    private String requiredRolesConfig;
-
-    @Value("${shiro.authn.requiredPermissions:}")
-    private String requiredPermissionsConfig;
-
-    /**
-     * Initialize roles and permissions.
-     */
-    @PostConstruct
-    public void init() {
-        if (StringUtils.isNotBlank(this.requiredPermissionsConfig)) {
-            setRequiredPermissions(org.springframework.util.StringUtils.commaDelimitedListToSet(this.requiredPermissionsConfig));
-        }
-        if (StringUtils.isNotBlank(this.requiredRolesConfig)) {
-            setRequiredRoles(org.springframework.util.StringUtils.commaDelimitedListToSet(this.requiredRolesConfig));
-        }
-    }
 
 
     public void setRequiredRoles(final Set<String> requiredRoles) {
@@ -77,33 +53,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     public void setRequiredPermissions(final Set<String> requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
     }
-
-    /**
-     * Sets shiro configuration to the path of the resource
-     * that points to the {@code shiro.ini} file.
-     *
-     * @param resource the resource
-     */
-    @Autowired
-    public void setShiroConfiguration(@Value("${shiro.authn.config.file:classpath:shiro.ini}") final Resource resource) {
-        try {
-            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
-            if (shiroResource.exists()) {
-                
-                final String location = shiroResource.getURI().toString();
-                logger.debug("Loading Shiro configuration from {}", location);
-
-                final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
-                final SecurityManager securityManager = factory.getInstance();
-                SecurityUtils.setSecurityManager(securityManager);
-            } else {
-                logger.debug("Shiro configuration is not defined");
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
@@ -111,7 +61,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             final RememberMeUsernamePasswordCredential credential =
                     (RememberMeUsernamePasswordCredential) transformedCredential;
             final UsernamePasswordToken token = new UsernamePasswordToken(credential.getUsername(),
-                    this.getPasswordEncoder().encode(credential.getPassword()));
+                    credential.getPassword());
             token.setRememberMe(credential.isRememberMe());
 
             final Subject currentUser = getCurrentExecutingSubject();
@@ -122,7 +72,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             return createAuthenticatedSubjectResult(credential, currentUser);
         } catch (final UnknownAccountException uae) {
             throw new AccountNotFoundException(uae.getMessage());
-        } catch (final IncorrectCredentialsException ice)  {
+        } catch (final IncorrectCredentialsException ice) {
             throw new FailedLoginException(ice.getMessage());
         } catch (final LockedAccountException lae) {
             throw new AccountLockedException(lae.getMessage());
@@ -186,6 +136,31 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof RememberMeUsernamePasswordCredential;
+    }
+
+    /**
+     * Sets shiro configuration to the path of the resource
+     * that points to the {@code shiro.ini} file.
+     *
+     * @param resource the resource
+     */
+    public void loadShiroConfiguration(final Resource resource) {
+        try {
+            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+            if (shiroResource.exists()) {
+
+                final String location = shiroResource.getURI().toString();
+                logger.debug("Loading Shiro configuration from {}", location);
+
+                final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
+                final SecurityManager securityManager = factory.getInstance();
+                SecurityUtils.setSecurityManager(securityManager);
+            } else {
+                logger.debug("Shiro configuration is not defined");
+            }
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 }
 

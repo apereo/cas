@@ -1,4 +1,4 @@
-description = 'Apereo CAS Couchbase Support Core'
+description = "Apereo CAS Couchbase Support Core"
 dependencies {
     compile libraries.spring
     compile libraries.hibernate

@@ -14,23 +14,7 @@
         http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/properties/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
-
-    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-        <property name="scopes">
-            <map>
-                <entry key="refresh">
-                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    <context:property-placeholder location="classpath:cloud.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="false"/>
-
-    <context:annotation-config/>
-    <context:component-scan base-package="org.apereo.cas.services" />
-
+    
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
     <bean id="mappingContext"
@@ -40,7 +24,9 @@
           c:mongoDbFactory-ref="mongoDbFactory"/>
 
     <bean id="mongoDbEventsRepository" class="org.apereo.cas.support.events.mongo.MongoDbCasEventRepository"
-        p:dropCollection="true"/>
+          c:collectionName="MongoDbCasEventRepository"
+          c:dropCollection="true"
+          c:mongoTemplate-ref="mongoEventsTemplate"/>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
@@ -51,6 +37,6 @@
     <bean id="clientUri" class="com.mongodb.MongoClientURI"
           c:uri="mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas" />
 
-    <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
+    
 
 </beans>

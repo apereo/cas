@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Throwables;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.springframework.beans.factory.annotation.Value;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -20,10 +23,11 @@ import java.net.URL;
  */
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastSessionConfiguration {
     
-    @Value("${webflow.session.hz.location:}")
-    private Resource configLocation;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
      * Hazelcast instance that is used by the spring session
@@ -32,18 +36,19 @@ public class HazelcastSessionConfiguration {
      *
      * @return the hazelcast instance
      */
-    @Bean(name="hazelcastInstance")
+    @Bean
     public HazelcastInstance hazelcastInstance() {
+        final Resource hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
         try {
-            final URL configUrl = this.configLocation.getURL();
-            final Config config = new XmlConfigBuilder(this.configLocation.getInputStream()).build();
+            final URL configUrl = hzConfigResource.getURL();
+            final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
             config.setConfigurationUrl(configUrl);
             config.setInstanceName(this.getClass().getSimpleName())
                     .setProperty("hazelcast.logging.type", "slf4j")
-                    .setProperty("hazelcast.max.no.heartbeat.seconds", "5");
+                    .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
             return Hazelcast.newHazelcastInstance(config);
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 }

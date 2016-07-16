@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class MongoServiceRegistryDaoCloudTests {
 
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("mongoServiceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
 

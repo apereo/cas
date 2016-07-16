@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 
@@ -11,7 +10,7 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("x509WebflowConfigurer")
+
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override

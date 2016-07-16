@@ -5,8 +5,6 @@ import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 
 /**
  * A builder that uses the saml standard's {@code LogoutRequest} template in order
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Component;
  * @see DefaultLogoutRequest
  * @since 4.0.0
  */
-@RefreshScope
-@Component("logoutBuilder")
 public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     /** The logger. */

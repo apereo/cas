@@ -4,6 +4,7 @@ title: CAS - Remote Address Authentication
 ---
 
 # Remote Address Authentication
+
 This handler uses the request's remote address to transparently authenticate a user, having verified
 the address against a range of configured IP addresses. The mechanics of this approach are very similar
 to X.509 certificate authentication, but trust is instead placed on the client internal network address.
@@ -24,7 +25,7 @@ of the proxy server and not the client. Given that this form of CAS authenticati
 be deployed within an internal network this is generally not a problem.
 
 
-## Authentication Components
+## Configuration 
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -35,20 +36,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-### Configuring Authentication
-
-In `application.properties`:
-
-```properties
-#CAS components mappings
-primaryAuthenticationHandler=remoteAddressAuthenticationHandler
-```
-
-The following settings are applicable:
-
-```properties
-# ip.address.range=192.168.1.0/255.255.255.0
-```
-
-You should appropriately evaluate your webflow configuration
-to route the flow to the state `startAuthenticate` where needed.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

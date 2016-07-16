@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
   <action-state id="terminateSession">
-    <evaluate expression="terminateSessionAction.terminate(flowRequestContext)" />
+    <evaluate expression="terminateSessionAction" />
     <transition to="doLogout" />
   </action-state>
 

@@ -36,11 +36,11 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     private static final String RS_ATTR_1 = "rs_attr1";
     private static final String RS_ATTR_2 = "rs_attr2";
     private static final String RS_ATTR_3 = "rs_attr3";
-    private static final String RS_ATTRS_12 = RS_ATTR_1 + "," + RS_ATTR_2;
+    private static final String RS_ATTRS_12 = RS_ATTR_1 + ',' + RS_ATTR_2;
     private static final String P_ATTR_1 = "principal_attr_1";
     private static final String P_ATTR_2 = "principal_attr_2";
     private static final String P_ATTR_3 = "principal_attr_3";
-    private static final String P_ATTRS_12 = P_ATTR_1 + "," + P_ATTR_2;
+    private static final String P_ATTRS_12 = P_ATTR_1 + ',' + P_ATTR_2;
 
     private static final String VALUE_1 = "enforce_1";
     private static final String VALUE_2 = "enforce_2";
@@ -54,8 +54,9 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
     @Before
     public void setUp() {
         strategy = new DefaultMultifactorTriggerSelectionStrategy();
+
+        strategy.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
         strategy.setRequestParameter(REQUEST_PARAM);
-        strategy.setPrincipalAttribute(P_ATTRS_12);
 
         when(MFA_PROVIDER_1.getId()).thenReturn(MFA_PROVIDER_ID_1);
         when(MFA_PROVIDER_2.getId()).thenReturn(MFA_PROVIDER_ID_2);
@@ -166,11 +167,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTest {
 
         return service;
     }
-
-    private Principal mockPrincipal() {
-        return principalFactory.createPrincipal("user");
-    }
-
+    
     private Principal mockPrincipal(final String attrName, final String... attrValues) {
         return principalFactory.createPrincipal("user",
                 ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Lists.newArrayList(attrValues)));

@@ -12,10 +12,7 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,8 +23,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@RefreshScope
-@Component("frontChannelLogoutAction")
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
     public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
@@ -39,16 +34,18 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
 
-    
+    @Qualifier("logoutManager")
     private LogoutManager logoutManager;
+
+    public FrontChannelLogoutAction() {
+    }
 
     /**
      * Build from the logout manager.
      *
      * @param logoutManager a logout manager.
      */
-    @Autowired
-    public FrontChannelLogoutAction(@Qualifier("logoutManager") final LogoutManager logoutManager) {
+    public FrontChannelLogoutAction(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
     }
 

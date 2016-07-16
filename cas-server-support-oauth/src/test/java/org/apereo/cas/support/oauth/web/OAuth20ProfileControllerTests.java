@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -16,19 +17,14 @@ import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +37,8 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/oauth-context.xml")
-@DirtiesContext
-public class OAuth20ProfileControllerTests {
+
+public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -70,7 +64,7 @@ public class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -84,7 +78,7 @@ public class OAuth20ProfileControllerTests {
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
 
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -105,7 +99,7 @@ public class OAuth20ProfileControllerTests {
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertTrue(entity.getBody().contains(OAuthConstants.EXPIRED_ACCESS_TOKEN));
@@ -115,7 +109,7 @@ public class OAuth20ProfileControllerTests {
     public void verifyOK() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -128,7 +122,7 @@ public class OAuth20ProfileControllerTests {
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
@@ -151,7 +145,7 @@ public class OAuth20ProfileControllerTests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
@@ -164,7 +158,7 @@ public class OAuth20ProfileControllerTests {
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
                 + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ResponseEntity<String> entity =  oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
