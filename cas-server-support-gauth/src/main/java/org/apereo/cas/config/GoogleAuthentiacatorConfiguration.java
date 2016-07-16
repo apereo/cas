@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.ICredentialRepository;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
@@ -28,6 +30,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +62,11 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-
+    
+    @Autowired
+    @Qualifier("googleAuthenticatorAccountRegistry")
+    private ICredentialRepository googleAuthenticatorAccountRegistry;
+            
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -117,7 +124,7 @@ public class GoogleAuthentiacatorConfiguration {
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
     }
-
+    
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
@@ -131,7 +138,7 @@ public class GoogleAuthentiacatorConfiguration {
     public PrincipalFactory googlePrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
+    
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
@@ -144,9 +151,16 @@ public class GoogleAuthentiacatorConfiguration {
         return g;
     }
 
+    @ConditionalOnMissingBean(name="googleAuthenticatorAccountRegistry")
     @Bean
     @RefreshScope
-    public GoogleAuthenticator googleAuthenticatorInstance() {
+    public ICredentialRepository googleAuthenticatorAccountRegistry() {
+        return new InMemoryGoogleAuthenticatorAccountRegistry();
+    }
+    
+    @Bean
+    @RefreshScope
+    public IGoogleAuthenticator googleAuthenticatorInstance() {
         final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
                 new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
 
@@ -156,7 +170,7 @@ public class GoogleAuthentiacatorConfiguration {
         bldr.setKeyRepresentation(KeyRepresentation.BASE32);
         
         final GoogleAuthenticator g = new GoogleAuthenticator(bldr.build());
-        g.setCredentialRepository(new InMemoryGoogleAuthenticatorAccountRegistry());
+        g.setCredentialRepository(googleAuthenticatorAccountRegistry);
         return g;
     }
 
@@ -177,7 +191,7 @@ public class GoogleAuthentiacatorConfiguration {
         r.setWarnCookieGenerator(warnCookieGenerator);
         return r;
     }
-
+    
     @Bean
     public Action saveAccountRegistrationAction() {
         final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
@@ -201,7 +215,7 @@ public class GoogleAuthentiacatorConfiguration {
         c.setFlowBuilderServices(flowBuilderServices);
         return c;
     }
-
+    
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {

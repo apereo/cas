@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,7 +24,7 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    private GoogleAuthenticator googleAuthenticatorInstance;
+    private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -48,7 +48,7 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         return success();
     }
 
-    public void setGoogleAuthenticatorInstance(final GoogleAuthenticator googleAuthenticatorInstance) {
+    public void setGoogleAuthenticatorInstance(final IGoogleAuthenticator googleAuthenticatorInstance) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

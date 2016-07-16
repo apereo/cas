@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class GoogleAccountSaveRegistrationAction extends AbstractAction {
-    private GoogleAuthenticator googleAuthenticator;
+    private IGoogleAuthenticator googleAuthenticator;
     
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -27,11 +27,11 @@ public class GoogleAccountSaveRegistrationAction extends AbstractAction {
         return success();
     }
 
-    public GoogleAuthenticator getGoogleAuthenticator() {
+    public IGoogleAuthenticator getGoogleAuthenticator() {
         return googleAuthenticator;
     }
 
-    public void setGoogleAuthenticator(final GoogleAuthenticator googleAuthenticator) {
+    public void setGoogleAuthenticator(final IGoogleAuthenticator googleAuthenticator) {
         this.googleAuthenticator = googleAuthenticator;
     }
 }

@@ -32,7 +32,6 @@ import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link LdapAuthenticationConfiguration}

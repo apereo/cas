@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -23,7 +24,7 @@ import java.security.GeneralSecurityException;
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
-    private GoogleAuthenticator googleAuthenticatorInstance;
+    private IGoogleAuthenticator googleAuthenticatorInstance;
 
     /**
      * Instantiates a new Google authenticator authentication handler.
@@ -36,13 +37,16 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
-        final int otp = tokenCredential.getToken();
+        if (!NumberUtils.isNumber(tokenCredential.getToken())) {
+            throw new PreventedException("Invalid non-numeric OTP format specified.", new IllegalArgumentException());
+        }
+        final int otp = Integer.parseInt(tokenCredential.getToken());
 
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
         final String secKey = this.googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
-        if (StringUtils.isNotBlank(secKey)) {
+        if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
         
@@ -59,11 +63,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    public GoogleAuthenticator getGoogleAuthenticatorInstance() {
+    public IGoogleAuthenticator getGoogleAuthenticatorInstance() {
         return googleAuthenticatorInstance;
     }
 
-    public void setGoogleAuthenticatorInstance(final GoogleAuthenticator googleAuthenticatorInstance) {
+    public void setGoogleAuthenticatorInstance(final IGoogleAuthenticator googleAuthenticatorInstance) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }
