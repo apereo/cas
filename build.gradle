@@ -9,6 +9,13 @@ ext {
     sonatypePassword = System.getProperty("sonatypePassword")
 }
 
+def isArtifactSigningRequired = {
+    if (publishReleases && sonatypeUsername != null && sonatypePassword != null) {
+        return true
+    }
+    return false
+}
+
 def projectMavenDeployer = {
     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
