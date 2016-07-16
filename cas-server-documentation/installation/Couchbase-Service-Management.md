@@ -31,6 +31,7 @@ The following settings are available:
 svcreg.couchbase.nodes=
 svcreg.couchbase.bucket=
 svcreg.couchbase.password=
+svcreg.couchbase.timeout=
 ```
 
 The Couchbase integration currently assumes that the service registries are stored
