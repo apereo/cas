@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -21,9 +23,7 @@ import java.security.GeneralSecurityException;
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
-    private GoogleAuthenticatorAccountRegistry accountRegistry;
-    
-    private GoogleAuthenticatorInstance googleAuthenticatorInstance;
+    private GoogleAuthenticator googleAuthenticatorInstance;
 
     /**
      * Instantiates a new Google authenticator authentication handler.
@@ -41,12 +41,12 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
-        if (!this.accountRegistry.contains(uid)) {
+        final String secKey = this.googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
+        if (StringUtils.isNotBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
-
-        final GoogleAuthenticatorAccount account = this.accountRegistry.get(uid);
-        final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(account.getSecretKey(), otp);
+        
+        final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(secKey, otp);
         if (isCodeValid) {
             return createHandlerResult(tokenCredential,
                     this.principalFactory.createPrincipal(uid), null);
@@ -59,11 +59,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
-        this.accountRegistry = accountRegistry;
+    public GoogleAuthenticator getGoogleAuthenticatorInstance() {
+        return googleAuthenticatorInstance;
     }
 
-    public void setGoogleAuthenticatorInstance(final GoogleAuthenticatorInstance googleAuthenticatorInstance) {
+    public void setGoogleAuthenticatorInstance(final GoogleAuthenticator googleAuthenticatorInstance) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

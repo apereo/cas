@@ -39,8 +39,7 @@
                                  useSSL="false"
                                  bindDn="${ldap.managerDn}"
                                  provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
-                                 bindCredential="${ldap.managerPassword}" >
-    </ldaptive:connection-factory>
+                                 bindCredential="${ldap.managerPassword}" />
 
     <ldaptive:connection-pool id="connectionPool"
                               provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
@@ -55,10 +54,5 @@
                               validateOnCheckOut="${ldap.pool.validateOnCheckout}"
                               validatePeriodically="${ldap.pool.validatePeriodically}"
                               validatePeriod="${ldap.pool.validatePeriod}" />
-
-
-    
-    
-    
 
 </beans>

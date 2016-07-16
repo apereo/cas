@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
@@ -41,6 +42,7 @@ import org.springframework.webflow.execution.Action;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthentiacatorConfiguration}.
@@ -101,7 +103,7 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-    
+
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -115,11 +117,10 @@ public class GoogleAuthentiacatorConfiguration {
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
     }
-    
+
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
-        h.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -145,9 +146,18 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Bean
     @RefreshScope
-    public GoogleAuthenticatorInstance googleAuthenticatorInstance() {
-        final GoogleAuthenticatorInstance i = new GoogleAuthenticatorInstance();
-        return i;
+    public GoogleAuthenticator googleAuthenticatorInstance() {
+        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
+                new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+
+        bldr.setCodeDigits(casProperties.getAuthn().getMfa().getGauth().getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()));
+        bldr.setWindowSize(casProperties.getAuthn().getMfa().getGauth().getWindowSize());
+        bldr.setKeyRepresentation(KeyRepresentation.BASE32);
+        
+        final GoogleAuthenticator g = new GoogleAuthenticator(bldr.build());
+        g.setCredentialRepository(new InMemoryGoogleAuthenticatorAccountRegistry());
+        return g;
     }
 
     @Bean
@@ -155,12 +165,7 @@ public class GoogleAuthentiacatorConfiguration {
     public AbstractMultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
         return new GoogleAuthenticatorMultifactorAuthenticationProvider();
     }
-
-    @Bean
-    public GoogleAuthenticatorAccountRegistry defaultGoogleAuthenticatorAccountRegistry() {
-        return new InMemoryGoogleAuthenticatorAccountRegistry();
-    }
-
+    
     @Bean
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
         final GoogleAuthenticatorAuthenticationWebflowEventResolver r = new GoogleAuthenticatorAuthenticationWebflowEventResolver();
@@ -176,7 +181,7 @@ public class GoogleAuthentiacatorConfiguration {
     @Bean
     public Action saveAccountRegistrationAction() {
         final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
-        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
+        a.setGoogleAuthenticator(googleAuthenticatorInstance());
         return a;
     }
 
@@ -201,7 +206,6 @@ public class GoogleAuthentiacatorConfiguration {
     @RefreshScope
     public Action googleAccountRegistrationAction() {
         final GoogleAccountCheckRegistrationAction a = new GoogleAccountCheckRegistrationAction();
-        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         a.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         return a;
     }

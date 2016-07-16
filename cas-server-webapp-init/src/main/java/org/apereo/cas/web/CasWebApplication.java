@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.cloud.stream.config.codec.kryo.KryoCodecAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportResource;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
+                KryoCodecAutoConfiguration.class,
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})

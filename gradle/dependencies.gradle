@@ -515,6 +515,7 @@ ext.libraries = [
         tests                   : [
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
+                    exclude(group: "org.objenesis", module: "objenesis")
                     force = true
                 },
                 dependencies.create("junit:junit:$junitVersion"),
@@ -545,6 +546,7 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework", module: "spring-test")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -1104,6 +1106,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
