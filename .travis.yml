@@ -3,7 +3,7 @@
 # Generate the OAUTH-TOKEN at https://github.com/settings/applications
 # Install travis: gem install travis
 # Login to travis: travis login
-# Encrypt the token: travis encrypt GH_TOKEN=[OAUTH-TOKEN] -r Jasig/cas --add env.global
+# Encrypt the token: travis encrypt VAR_NAME=[OAUTH-TOKEN] -r apereo/cas --add env.global
 #
 
 language: java
