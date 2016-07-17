@@ -30,7 +30,7 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
 
         if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
-            accessBean.setUnauthzUrl(accessStrategy.getUnauthorizedRedirectUrl().toString());
+            accessBean.setUnauthorizedRedirectUrl(accessStrategy.getUnauthorizedRedirectUrl().toString());
         }
         
         if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
@@ -103,9 +103,9 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         }
         accessStrategy.setRejectedAttributes(rejectedAttrs);
         
-        if (supportAccess.getUnauthzUrl() != null && !supportAccess.getUnauthzUrl().trim().isEmpty()) {
+        if (supportAccess.getUnauthorizedRedirectUrl() != null && !supportAccess.getUnauthorizedRedirectUrl().trim().isEmpty()) {
             try {
-                accessStrategy.setUnauthorizedRedirectUrl(new URI(supportAccess.getUnauthzUrl()));
+                accessStrategy.setUnauthorizedRedirectUrl(new URI(supportAccess.getUnauthorizedRedirectUrl()));
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }

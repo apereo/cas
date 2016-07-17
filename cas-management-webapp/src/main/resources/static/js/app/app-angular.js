@@ -282,7 +282,7 @@ if (array.length == 3) {
     function rejAttrController(NgTableParams) {
         var self = this;
 
-        var dataList = [{name: "reject.attribute.prop1", propValue: "foo"}, {name: "reject.attribute.list", propValue: "some, var, goes, here"}];
+        var dataList = [];
 
         var originalData = angular.copy(dataList);
 

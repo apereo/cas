@@ -34,7 +34,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     private boolean casEnabled;
     private boolean ssoEnabled;
     private boolean requireAll;
-    private String unauthzUrl;
+    private String unauthorizedRedirectUrl;
     private Types type;
     private String groupField;
     private String codes;
@@ -100,12 +100,12 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
         this.endingTime = endingTime;
     }
 
-    public String getUnauthzUrl() {
-        return unauthzUrl;
+    public String getUnauthorizedRedirectUrl() {
+        return unauthorizedRedirectUrl;
     }
 
-    public void setUnauthzUrl(final String unauthzUrl) {
-        this.unauthzUrl = unauthzUrl;
+    public void setUnauthorizedRedirectUrl(final String unauthorizedRedirectUrl) {
+        this.unauthorizedRedirectUrl = unauthorizedRedirectUrl;
     }
 
     public boolean isCaseSensitive() {

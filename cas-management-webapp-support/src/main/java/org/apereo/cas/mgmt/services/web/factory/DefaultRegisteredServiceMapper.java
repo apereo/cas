@@ -182,7 +182,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             regSvc.setRequiredHandlers(data.getRequiredHandlers());
 
             // process logout settings
-            parseLogoutType(data.getLogoutType());
+            regSvc.setLogoutType(parseLogoutType(data.getLogoutType()));
             if (StringUtils.isNotBlank(data.getLogoutUrl())) {
                 regSvc.setLogoutUrl(new URL(data.getLogoutUrl()));
             }
