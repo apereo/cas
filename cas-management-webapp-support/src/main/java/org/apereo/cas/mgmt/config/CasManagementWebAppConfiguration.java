@@ -3,10 +3,10 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
+import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
@@ -35,9 +35,11 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.authorization.Authorizer;
 import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
@@ -50,6 +52,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -67,6 +70,7 @@ import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -105,30 +109,30 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
      * @return the character encoding filter
      */
     @Bean
-    public CharacterEncodingFilter characterEncodingFilter() {
+    public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter("UTF-8", true);
     }
 
 
     @Bean
-    public RequireAnyRoleAuthorizer requireAnyRoleAuthorizer() {
+    public Authorizer requireAnyRoleAuthorizer() {
         return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository() {
         return Beans.newAttributeRepository(casProperties.getAuthn().getAttributeRepository().getAttributes());
     }
-
-
+    
     @Bean
-    public CasClient casClient() {
+    public Client casClient() {
         final CasClient client = new CasClient(casProperties.getServer().getLoginUrl());
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }
-
+    
     @Bean
     public Config config() {
         final Config cfg = new Config(getDefaultServiceUrl(), casClient());
@@ -182,22 +186,22 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ServiceManagementResourceResolver deleteServiceResourceResolver() {
+    public AuditResourceResolver deleteServiceResourceResolver() {
         return new ServiceManagementResourceResolver();
     }
 
     @Bean
-    public DefaultAuditActionResolver saveServiceActionResolver() {
+    public AuditActionResolver saveServiceActionResolver() {
         return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     @Bean
-    public ObjectCreationAuditActionResolver deleteServiceActionResolver() {
+    public AuditActionResolver deleteServiceActionResolver() {
         return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     @Bean
-    public Pac4jAuditablePrincipalResolver auditablePrincipalResolver() {
+    public PrincipalResolver auditablePrincipalResolver() {
         return new Pac4jAuditablePrincipalResolver();
     }
 
@@ -214,6 +218,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new Slf4jLoggingAuditTrailManager();
     }
 
+    @RefreshScope
     @Bean
     public Properties userProperties() {
         try {
