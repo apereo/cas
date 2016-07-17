@@ -173,6 +173,6 @@ CAS server logs are the best resource for determining the root cause of the prob
 </AsyncLogger>
 ```
 
-When changes are applied, restart the server environment and observe the log files to get a better understanding of CAS behavior. For more info, please [review the this guide](Logging.html) on how to configure logs with CAS.
+When changes are applied, restart the server environment and observe the log files to get a better understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
 
 
