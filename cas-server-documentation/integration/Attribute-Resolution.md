@@ -98,9 +98,7 @@ CAS Overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-The module provides a `shibbolethPersonAttributeDao` that uses
-the property `shibboleth.attributeResolver.resources`
-for configuration.
+The module provides a `shibbolethPersonAttributeDao` that the Shibboleth's `attribute-resolver` configuration file for attribute resolution.
 
 - Alias bean:
 
@@ -109,9 +107,9 @@ for configuration.
 ```
 
 - Modify either `application.properties` or the runtime environment 
-to add `shibboleth.attributeResolver.resources`. This is a
+to reference the `attribute-resolver.xml` resource via a property. This is a
 comma seperated list of resources to use for the configuration:
 
 ```shell
--Dshibboleth.attributeResolver.resources=classpath:attribute-resolver.xml
+-Dcas.shibAttributeResolver.resources=classpath:attribute-resolver.xml
 ```
