@@ -74,8 +74,13 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
     public RegisteredServiceAccessStrategy toAccessStrategy(final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceSupportAccessEditBean supportAccess = bean.getSupportAccess();
 
-        final DefaultRegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-
+        final DefaultRegisteredServiceAccessStrategy accessStrategy;
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
+            accessStrategy = new RemoteEndpointServiceAccessStrategy();    
+        } else {
+            accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        }
+        
         accessStrategy.setEnabled(supportAccess.isCasEnabled());
         accessStrategy.setSsoEnabled(supportAccess.isSsoEnabled());
         accessStrategy.setRequireAllAttributes(supportAccess.isRequireAll());

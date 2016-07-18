@@ -481,7 +481,7 @@ if (array.length == 3) {
                     {name: 'SAML Client',               value: 'saml'}
                 ],
                 logoutTypeList: [
-                    {name: 'None',          value: ''},
+                    {name: 'None',          value: 'none'},
                     {name: 'Back Channel',  value: 'back'},
                     {name: 'Front Channel', value: 'front'}
                 ],
@@ -493,30 +493,31 @@ if (array.length == 3) {
                     {name: 'DAYS',          value: 'DAYS'}
                 ],
                 mergeStrategyList: [
-                    {name: 'DEFAULT',       value: 'default'},
-                    {name: 'ADD',           value: 'add'},
-                    {name: 'MULTI-VALUED',  value: 'multi-valued'},
-                    {name: 'REPLACE',       value: 'replace'}
+                    {name: 'DEFAULT',       value: 'DEFAULT'},
+                    {name: 'ADD',           value: 'ADD'},
+                    {name: 'MULTIVALUED',  value: 'MULTIVALUED'},
+                    {name: 'REPLACE',       value: 'REPLACE'}
                 ],
                 selectType: [
-                    {name: 'DEFAULT',       value: 'default'},
-                    {name: 'TIME',          value: 'time'},
-                    {name: 'GROUPER',       value: 'grouper'}
+                    {name: 'DEFAULT',       value: 'DEFAULT'},
+                    {name: 'TIME',          value: 'TIME'},
+                    {name: 'GROUPER',       value: 'GROUPER'},
+                    {name: 'REMOTE',        value: 'REMOTE'}
                 ],
                 groupField: [
-                    {name: 'NAME',              value: 'name'},
-                    {name: 'DISPLAY_NAME',      value: 'display_name'},
-                    {name: 'EXTENSION',         value: 'extension'},
-                    {name: 'DISPLAY_EXTENSION', value: 'display_extension'}
+                    {name: 'NAME',              value: 'NAME'},
+                    {name: 'DISPLAY_NAME',      value: 'DISPLAY_NAME'},
+                    {name: 'EXTENSION',         value: 'EXTENSION'},
+                    {name: 'DISPLAY_EXTENSION', value: 'DISPLAY_EXTENSION'}
                 ],
                 failureMode: [
-                    {name: 'NONE',          value: 'none'},
-                    {name: 'OPEN',          value:'open'},
-                    {name: 'CLOSED',        value: 'closed'},
-                    {name: 'PHANTOM',       value: 'phantom'}
+                    {name: 'NONE',          value: 'NONE'},
+                    {name: 'OPEN',          value: 'OPEN'},
+                    {name: 'CLOSED',        value: 'CLOSED'},
+                    {name: 'PHANTOM',       value: 'PHANTOM'}
                 ]
             };
-
+                        
             this.isSelected = function(option, selected) {
                 if(!angular.isArray(selected)) {
                     return option == selected;

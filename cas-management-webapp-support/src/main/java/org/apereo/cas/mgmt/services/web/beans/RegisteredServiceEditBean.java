@@ -109,6 +109,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private int evalOrder = Integer.MIN_VALUE;
         private Set<String> requiredHandlers = new HashSet<>();
         private String logoutUrl;
+        private RegisteredServiceMultifactorAuthenticationEditBean multiAuth = new RegisteredServiceMultifactorAuthenticationEditBean();
         private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
@@ -122,6 +123,14 @@ public class RegisteredServiceEditBean implements Serializable {
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
         private Map<String, Set<String>> properties = new HashMap<>();
+
+        public RegisteredServiceMultifactorAuthenticationEditBean getMultiAuth() {
+            return multiAuth;
+        }
+
+        public void setMultiAuth(final RegisteredServiceMultifactorAuthenticationEditBean multiAuth) {
+            this.multiAuth = multiAuth;
+        }
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return this.attrRelease;
