@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +24,14 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    private GoogleAuthenticatorAccountRegistry accountRegistry;
-    
-    private GoogleAuthenticatorInstance googleAuthenticatorInstance;
+    private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
-        if (!this.accountRegistry.contains(uid)) {
+        if (StringUtils.isNotBlank(googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid))) {
             final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
 
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
@@ -50,11 +48,7 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         return success();
     }
 
-    public void setAccountRegistry(final GoogleAuthenticatorAccountRegistry accountRegistry) {
-        this.accountRegistry = accountRegistry;
-    }
-
-    public void setGoogleAuthenticatorInstance(final GoogleAuthenticatorInstance googleAuthenticatorInstance) {
+    public void setGoogleAuthenticatorInstance(final IGoogleAuthenticator googleAuthenticatorInstance) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

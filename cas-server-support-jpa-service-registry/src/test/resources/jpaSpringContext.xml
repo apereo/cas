@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="refresh">
+                    <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <context:property-placeholder properties-ref="casProperties"/>
+    <util:properties id="casProperties"/>
+
+
+    <context:component-scan base-package="org.apereo.cas"/>
+    <context:annotation-config/>
+
+    <import resource="classpath:META-INF/spring/jpa-svc-reg-context.xml"/>
+    
+    <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao"/>
+
+    <!-- CAS Context Core -->
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators"/>
+    <util:list id="monitorsList"/>
+    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
+
+    <util:list id="serviceFactoryList"/>
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
+    <bean id="attributeRepository" class="org.apereo.services.persondir.support.NamedStubPersonAttributeDao"/>
+    <alias name="defaultPrincipalFactory" alias="principalFactory"/>
+    <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager"/>
+    <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy"/>
+    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+
+</beans>

@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.ICredentialRepository;
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorInstance;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
@@ -27,6 +30,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +45,7 @@ import org.springframework.webflow.execution.Action;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthentiacatorConfiguration}.
@@ -57,7 +62,11 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-
+    
+    @Autowired
+    @Qualifier("googleAuthenticatorAccountRegistry")
+    private ICredentialRepository googleAuthenticatorAccountRegistry;
+            
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -101,7 +110,7 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-    
+
     /**
      * Yubikey flow registry flow definition registry.
      *
@@ -119,7 +128,6 @@ public class GoogleAuthentiacatorConfiguration {
     @Bean
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
-        h.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -130,7 +138,7 @@ public class GoogleAuthentiacatorConfiguration {
     public PrincipalFactory googlePrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
+    
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
@@ -143,11 +151,27 @@ public class GoogleAuthentiacatorConfiguration {
         return g;
     }
 
+    @ConditionalOnMissingBean(name="googleAuthenticatorAccountRegistry")
     @Bean
     @RefreshScope
-    public GoogleAuthenticatorInstance googleAuthenticatorInstance() {
-        final GoogleAuthenticatorInstance i = new GoogleAuthenticatorInstance();
-        return i;
+    public ICredentialRepository googleAuthenticatorAccountRegistry() {
+        return new InMemoryGoogleAuthenticatorAccountRegistry();
+    }
+    
+    @Bean
+    @RefreshScope
+    public IGoogleAuthenticator googleAuthenticatorInstance() {
+        final GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder bldr =
+                new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+
+        bldr.setCodeDigits(casProperties.getAuthn().getMfa().getGauth().getCodeDigits());
+        bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize()));
+        bldr.setWindowSize(casProperties.getAuthn().getMfa().getGauth().getWindowSize());
+        bldr.setKeyRepresentation(KeyRepresentation.BASE32);
+        
+        final GoogleAuthenticator g = new GoogleAuthenticator(bldr.build());
+        g.setCredentialRepository(googleAuthenticatorAccountRegistry);
+        return g;
     }
 
     @Bean
@@ -155,12 +179,7 @@ public class GoogleAuthentiacatorConfiguration {
     public AbstractMultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
         return new GoogleAuthenticatorMultifactorAuthenticationProvider();
     }
-
-    @Bean
-    public GoogleAuthenticatorAccountRegistry defaultGoogleAuthenticatorAccountRegistry() {
-        return new InMemoryGoogleAuthenticatorAccountRegistry();
-    }
-
+    
     @Bean
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
         final GoogleAuthenticatorAuthenticationWebflowEventResolver r = new GoogleAuthenticatorAuthenticationWebflowEventResolver();
@@ -172,11 +191,11 @@ public class GoogleAuthentiacatorConfiguration {
         r.setWarnCookieGenerator(warnCookieGenerator);
         return r;
     }
-
+    
     @Bean
     public Action saveAccountRegistrationAction() {
         final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
-        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
+        a.setGoogleAuthenticator(googleAuthenticatorInstance());
         return a;
     }
 
@@ -196,12 +215,11 @@ public class GoogleAuthentiacatorConfiguration {
         c.setFlowBuilderServices(flowBuilderServices);
         return c;
     }
-
+    
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
         final GoogleAccountCheckRegistrationAction a = new GoogleAccountCheckRegistrationAction();
-        a.setAccountRegistry(defaultGoogleAuthenticatorAccountRegistry());
         a.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         return a;
     }

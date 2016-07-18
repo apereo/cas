@@ -15,6 +15,16 @@
 
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+  <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+    <property name="scopes">
+      <map>
+        <entry key="refresh">
+          <bean class="org.springframework.cloud.context.scope.refresh.RefreshScope" />
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
   <context:property-placeholder properties-ref="casProperties"/>
   <util:properties id="casProperties"/>
 
@@ -41,6 +51,8 @@
     </property>
   </bean>
 
+  <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+        abstract="true"/>
 
   <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
         p:dataSource-ref="dataSource" />
