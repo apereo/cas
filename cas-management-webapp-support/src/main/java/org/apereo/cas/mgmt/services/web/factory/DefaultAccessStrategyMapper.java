@@ -122,7 +122,7 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             }
         }
         
-        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME 
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME
             || supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setEndingDateTime(supportAccess.getEndingTime());
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setStartingDateTime(supportAccess.getStartingTime());

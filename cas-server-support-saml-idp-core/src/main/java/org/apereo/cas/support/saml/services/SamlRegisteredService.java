@@ -25,9 +25,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private String metadataLocation;
     
     /**
-     * Defines a filter that requires the presence of a validUntil 
-     * attribute on the root element of the metadata document. 
-     * A maximum validity interval of less than 1 means that 
+     * Defines a filter that requires the presence of a validUntil
+     * attribute on the root element of the metadata document.
+     * A maximum validity interval of less than 1 means that
      * no restriction is placed on the metadata's validUntil attribute.
      */
     private long metadataMaxValidity;

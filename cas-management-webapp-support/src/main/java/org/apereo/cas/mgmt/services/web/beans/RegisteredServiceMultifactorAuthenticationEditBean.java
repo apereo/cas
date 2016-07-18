@@ -34,6 +34,11 @@ public class RegisteredServiceMultifactorAuthenticationEditBean {
         this.principalAttr = principalAttr;
     }
 
+    /**
+     * Represents principal attributes for mfa.
+     * @author Misagh Moayyed
+     * @since 5
+     */
     public static class PrincipalAttribute {
         private String valueMatch;
         private String nameTrigger;

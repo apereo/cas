@@ -112,6 +112,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceMultifactorAuthenticationEditBean multiAuth = new RegisteredServiceMultifactorAuthenticationEditBean();
         private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
+        private RegisteredServiceOidcTypeEditBean oidc = new RegisteredServiceOidcTypeEditBean();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
         private RegisteredServiceSamlTypeEditBean saml = new RegisteredServiceSamlTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
@@ -123,6 +124,22 @@ public class RegisteredServiceEditBean implements Serializable {
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
         private Map<String, Set<String>> properties = new HashMap<>();
+
+        public void setProperties(final Map<String, Set<String>> properties) {
+            this.properties = properties;
+        }
+
+        public void setOidc(final RegisteredServiceOidcTypeEditBean oidc) {
+            this.oidc = oidc;
+        }
+
+        public RegisteredServiceOidcTypeEditBean getOidc() {
+            return oidc;
+        }
+
+        public Map<String, Set<String>> getProperties() {
+            return properties;
+        }
 
         public RegisteredServiceMultifactorAuthenticationEditBean getMultiAuth() {
             return multiAuth;

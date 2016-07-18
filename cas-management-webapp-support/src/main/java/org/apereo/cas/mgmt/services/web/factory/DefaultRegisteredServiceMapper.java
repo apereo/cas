@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceLogoutTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceOAuthTypeEditBean;
+import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceOidcTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServicePublicKeyEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSamlTypeEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceTypeEditBean;
@@ -12,6 +13,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.LogoutType;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -61,6 +63,15 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             oauthBean.setClientSecret(oauth.getClientSecret());
             oauthBean.setRefreshToken(oauth.isGenerateRefreshToken());
             oauthBean.setJsonFormat(oauth.isJsonFormat());
+            
+            if (svc instanceof OidcRegisteredService) {
+                bean.setType(RegisteredServiceTypeEditBean.OIDC.toString());
+                final OidcRegisteredService oidc = (OidcRegisteredService) svc;
+                final RegisteredServiceOidcTypeEditBean oidcBean = bean.getOidc();
+                oidcBean.setJwks(oidc.getJwks());
+                oidcBean.setSignToken(oidc.isSignIdToken());
+            }
+            
         }
 
         if (svc instanceof SamlRegisteredService) {
@@ -133,8 +144,14 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             final String type = data.getType();
             if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
                 regSvc = new OAuthCallbackAuthorizeService();
-            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
-                regSvc = new OAuthRegisteredService();
+            } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
+                    || StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
+                
+                if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
+                    regSvc = new OAuthRegisteredService();
+                } else {
+                    regSvc = new OidcRegisteredService();
+                }
 
                 final RegisteredServiceOAuthTypeEditBean oauthBean = data.getOauth();
                 ((OAuthRegisteredService) regSvc).setClientId(oauthBean.getClientId());
@@ -142,6 +159,11 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 ((OAuthRegisteredService) regSvc).setGenerateRefreshToken(oauthBean.isRefreshToken());
                 ((OAuthRegisteredService) regSvc).setJsonFormat(oauthBean.isJsonFormat());
+
+                if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
+                    ((OidcRegisteredService) regSvc).setJwks(data.getOidc().getJwks());
+                    ((OidcRegisteredService) regSvc).setSignIdToken(data.getOidc().isSignToken());
+                }
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.SAML.toString())) {
                 regSvc = new SamlRegisteredService();
 

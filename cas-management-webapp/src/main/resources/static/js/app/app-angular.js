@@ -11,7 +11,7 @@ if (array.length == 3) {
         'ui.sortable',
         'ngTable'
     ]);
-   
+
 
     app.filter('checkmark', function () {
         return function (input) {
@@ -20,8 +20,12 @@ if (array.length == 3) {
     })
         .filter('wordCharTrunc', function () {
             return function (str, limit) {
-                if(typeof str != 'string') { return ''; }
-                if(!limit || str.length <= limit) { return str; }
+                if (typeof str != 'string') {
+                    return '';
+                }
+                if (!limit || str.length <= limit) {
+                    return str;
+                }
 
                 var newStr = str.substring(0, limit).replace(/\w+$/, '');
                 return (newStr || str.substring(0, limit)) + '...';
@@ -29,19 +33,23 @@ if (array.length == 3) {
         })
         .filter('serviceTableFilter', function () {
             return function (services, fields, regex) {
-                if(typeof fields == 'string') { fields = [fields]; }
+                if (typeof fields == 'string') {
+                    fields = [fields];
+                }
                 try {
                     regex = regex ? new RegExp(regex, 'i') : false;
-                } catch(e) {
+                } catch (e) {
                     // TODO: How do we want to tell the user their regex is bad? On error, return list or null?
                     regex = false;
                 }
-                if(!services || !fields || !regex) { return services; }
+                if (!services || !fields || !regex) {
+                    return services;
+                }
 
                 var matches = [];
                 angular.forEach(services, function (service, i) {
                     angular.forEach(fields, function (field, j) {
-                        if(regex.test(service[field]) && matches.indexOf(service) == -1) {
+                        if (regex.test(service[field]) && matches.indexOf(service) == -1) {
                             matches.push(service);
                         }
                     });
@@ -58,7 +66,7 @@ if (array.length == 3) {
             };
 
             factory.httpHeaders = {};
-            factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
+            factory.httpHeaders[$("meta[name='_csrf_header']").attr("content")] = $("meta[name='_csrf']").attr("content");
 
             factory.maxEvalOrder = 0;
 
@@ -78,7 +86,7 @@ if (array.length == 3) {
                 return factory.assignedId;
             };
 
-            factory.forceReload = function() {
+            factory.forceReload = function () {
                 $('#logoutUrlLink')[0].click();
             };
 
@@ -110,17 +118,23 @@ if (array.length == 3) {
 
             this.serviceAdd = function () {
                 sharedFactory.clearItem();
-                $timeout(function(){ action.selectAction('add'); }, 100);
+                $timeout(function () {
+                    action.selectAction('add');
+                }, 100);
             };
 
             this.serviceDuplicate = function (id) {
                 sharedFactory.duplicateItem(id);
-                $timeout(function(){ action.selectAction('add'); }, 100);
+                $timeout(function () {
+                    action.selectAction('add');
+                }, 100);
             }
 
             this.serviceEdit = function (id) {
                 sharedFactory.setItem(id);
-                $timeout(function(){ action.selectAction('edit'); }, 100);
+                $timeout(function () {
+                    action.selectAction('edit');
+                }, 100);
             };
         }
     ]);
@@ -134,16 +148,16 @@ if (array.length == 3) {
         function ($scope, $http, $timeout, sharedFactory) {
             var serviceData = this,
                 httpHeaders = sharedFactory.httpHeaders,
-                delayedAlert = function(n, t, d, skipScrollTop) {
+                delayedAlert = function (n, t, d, skipScrollTop) {
                     skipScrollTop = skipScrollTop || false;
                     $timeout(function () {
                         serviceData.alert = {
-                            name:   n,
-                            type:   t,
-                            data:   d
+                            name: n,
+                            type: t,
+                            data: d
                         };
                     }, 10);
-                    if(!skipScrollTop) {
+                    if (!skipScrollTop) {
                         $timeout(function () {
                             $('html, body').animate({
                                 scrollTop: $('.service-editor').offset().top
@@ -166,7 +180,7 @@ if (array.length == 3) {
                     ui.item.data('data_changed', true);
                 },
                 stop: function (e, ui) {
-                    if(ui.item.data('data_changed')) {
+                    if (ui.item.data('data_changed')) {
                         var myData = $(this).sortable('serialize', {key: 'id'});
 
                         $.ajax({
@@ -176,15 +190,15 @@ if (array.length == 3) {
                             headers: httpHeaders,
                             dataType: 'json',
                             success: function (data, status) {
-                                if(data.status != 200)
+                                if (data.status != 200)
                                     delayedAlert('notupdated', 'danger', data);
-                                else if(angular.isString(data))
+                                else if (angular.isString(data))
                                     sharedFactory.forceReload();
                                 else
                                     serviceData.getServices();
                             },
-                            error: function(xhr, status) {
-                                if(xhr.status == 403)
+                            error: function (xhr, status) {
+                                if (xhr.status == 403)
                                     sharedFactory.forceReload();
                                 else
                                     delayedAlert('notupdated', 'danger', xhr.responseJSON);
@@ -197,15 +211,15 @@ if (array.length == 3) {
             this.getServices = function () {
                 $http.get(appContext + '/getServices.html')
                     .then(function (response) {
-                        if(response.status != 200) {
+                        if (response.status != 200) {
                             delayedAlert('listfail', 'danger', response.data);
                         }
                         else {
-                            if(serviceData.alert && serviceData.alert.type != 'info')
+                            if (serviceData.alert && serviceData.alert.type != 'info')
                                 serviceData.alert = null;
                             serviceData.dataTable = response.data.services || [];
-                            angular.forEach(serviceData.dataTable, function(service) {
-                                if(service.evalOrder > sharedFactory.maxEvalOrder) {
+                            angular.forEach(serviceData.dataTable, function (service) {
+                                if (service.evalOrder > sharedFactory.maxEvalOrder) {
                                     sharedFactory.maxEvalOrder = service.evalOrder;
                                 }
                             });
@@ -222,7 +236,7 @@ if (array.length == 3) {
             this.closeModalDelete = function () {
                 serviceData.modalItem = null;
             };
-                   
+
 
             this.deleteService = function (item) {
                 var myData = {id: item.assignedId};
@@ -234,17 +248,17 @@ if (array.length == 3) {
                     data: myData,
                     headers: httpHeaders,
                     success: function (data, status) {
-                        if(data.status != 200)
+                        if (data.status != 200)
                             delayedAlert('notdeleted', 'danger', data);
-                        else if(angular.isString(data))
+                        else if (angular.isString(data))
                             sharedFactory.forceReload();
                         else {
                             serviceData.getServices();
                             delayedAlert('deleted', 'info', item, true);
                         }
                     },
-                    error: function(xhr, status) {
-                        if(xhr.status == 403)
+                    error: function (xhr, status) {
+                        if (xhr.status == 403)
                             sharedFactory.forceReload();
                         else
                             delayedAlert('notdeleted', 'danger', xhr.responseJSON);
@@ -261,9 +275,11 @@ if (array.length == 3) {
             };
 
             $scope.$watch(
-                function() { return sharedFactory.assignedId; },
+                function () {
+                    return sharedFactory.assignedId;
+                },
                 function (newAssignedId, oldAssignedId) {
-                    if(oldAssignedId && !newAssignedId)
+                    if (oldAssignedId && !newAssignedId)
                         serviceData.getServices();
                 }
             );
@@ -271,7 +287,6 @@ if (array.length == 3) {
             this.getServices();
         }
     ]);
-
 
 
     /**
@@ -308,10 +323,10 @@ if (array.length == 3) {
         }
 
         function del(row) {
-            _.remove(self.tableParams.settings().dataset, function(item) {
+            _.remove(self.tableParams.settings().dataset, function (item) {
                 return row === item;
             });
-            self.tableParams.reload().then(function(data) {
+            self.tableParams.reload().then(function (data) {
                 if (data.length === 0 && self.tableParams.total() > 0) {
                     self.tableParams.page(self.tableParams.page() - 1);
                     self.tableParams.reload();
@@ -319,11 +334,11 @@ if (array.length == 3) {
             });
         }
 
-        function resetRow(row, rowForm){
+        function resetRow(row, rowForm) {
             row.isEditing = false;
             // rowForm.$setPristine();
             // self.tableTracker.untrack(row);
-            return _.findWhere(originalData, function(r){
+            return _.findWhere(originalData, function (r) {
                 return r.id === row.id;
             });
         }
@@ -387,10 +402,10 @@ if (array.length == 3) {
         }
 
         function del(row) {
-            _.remove(self.tableParams.settings().dataset, function(item) {
+            _.remove(self.tableParams.settings().dataset, function (item) {
                 return row === item;
             });
-            self.tableParams.reload().then(function(data) {
+            self.tableParams.reload().then(function (data) {
                 if (data.length === 0 && self.tableParams.total() > 0) {
                     self.tableParams.page(self.tableParams.page() - 1);
                     self.tableParams.reload();
@@ -398,11 +413,11 @@ if (array.length == 3) {
             });
         }
 
-        function resetRow(row, rowForm){
+        function resetRow(row, rowForm) {
             row.isEditing = false;
             // rowForm.$setPristine();
             // self.tableTracker.untrack(row);
-            return _.findWhere(originalData, function(r){
+            return _.findWhere(originalData, function (r) {
                 return r.id === row.id;
             });
         }
@@ -425,16 +440,12 @@ if (array.length == 3) {
             // $scope.add = {};
 
         }
-        
+
         function cancelAdd() {
-            
+
         }
 
     }
-
-
-
-
 
 
 // Service Form: Add/Edit Service View
@@ -446,16 +457,16 @@ if (array.length == 3) {
         function ($scope, $http, $timeout, sharedFactory) {
             var serviceForm = this,
                 httpHeaders = sharedFactory.httpHeaders,
-                delayedAlert = function(n, t, d, skipScrollTop) {
+                delayedAlert = function (n, t, d, skipScrollTop) {
                     skipScrollTop = skipScrollTop || false;
                     $timeout(function () {
                         serviceForm.alert = {
-                            name:   n,
-                            type:   t,
-                            data:   d
+                            name: n,
+                            type: t,
+                            data: d
                         };
                     }, 10);
-                    if(!skipScrollTop) {
+                    if (!skipScrollTop) {
                         $timeout(function () {
                             $('html, body').animate({
                                 scrollTop: $('.service-editor').offset().top
@@ -475,63 +486,68 @@ if (array.length == 3) {
 
             this.selectOptions = {
                 serviceTypeList: [
-                    {name: 'CAS Client',                value: 'cas'},
-                    {name: 'OAuth Client',              value: 'oauth'},
-                    {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'},
-                    {name: 'SAML Client',               value: 'saml'}
+                    {name: 'CAS Client', value: 'cas'},
+                    {name: 'OAuth Client', value: 'oauth'},
+                    {name: 'OAuth Callback Authorize', value: 'oauth_callback_authz'},
+                    {name: 'SAML Client', value: 'saml'},
+                    {name: 'OIDC Client', value: 'oidc'}
                 ],
                 logoutTypeList: [
-                    {name: 'None',          value: 'none'},
-                    {name: 'Back Channel',  value: 'back'},
-                    {name: 'Front Channel', value: 'front'}
+                    {name: 'NONE', value: 'none'},
+                    {name: 'BACK_CHANNEL', value: 'back'},
+                    {name: 'FRONT_CHANNEL', value: 'front'}
                 ],
                 timeUnitsList: [
-                    {name: 'MILLISECONDS',  value: 'MILLISECONDS'},
-                    {name: 'SECONDS',       value: 'SECONDS'},
-                    {name: 'MINUTES',       value: 'MINUTES'},
-                    {name: 'HOURS',         value: 'HOURS'},
-                    {name: 'DAYS',          value: 'DAYS'}
+                    {name: 'MILLISECONDS', value: 'MILLISECONDS'},
+                    {name: 'SECONDS', value: 'SECONDS'},
+                    {name: 'MINUTES', value: 'MINUTES'},
+                    {name: 'HOURS', value: 'HOURS'},
+                    {name: 'DAYS', value: 'DAYS'}
                 ],
                 mergeStrategyList: [
-                    {name: 'DEFAULT',       value: 'DEFAULT'},
-                    {name: 'ADD',           value: 'ADD'},
-                    {name: 'MULTIVALUED',   value: 'MULTIVALUED'},
-                    {name: 'REPLACE',       value: 'REPLACE'}
+                    {name: 'DEFAULT', value: 'DEFAULT'},
+                    {name: 'ADD', value: 'ADD'},
+                    {name: 'MULTIVALUED', value: 'MULTIVALUED'},
+                    {name: 'REPLACE', value: 'REPLACE'}
                 ],
                 selectType: [
-                    {name: 'DEFAULT',       value: 'DEFAULT'},
-                    {name: 'TIME',          value: 'TIME'},
-                    {name: 'GROUPER',       value: 'GROUPER'},
-                    {name: 'REMOTE',        value: 'REMOTE'}
+                    {name: 'DEFAULT', value: 'DEFAULT'},
+                    {name: 'TIME', value: 'TIME'},
+                    {name: 'GROUPER', value: 'GROUPER'},
+                    {name: 'REMOTE', value: 'REMOTE'}
                 ],
                 groupField: [
-                    {name: 'NAME',              value: 'NAME'},
-                    {name: 'DISPLAY_NAME',      value: 'DISPLAY_NAME'},
-                    {name: 'EXTENSION',         value: 'EXTENSION'},
+                    {name: 'NAME', value: 'NAME'},
+                    {name: 'DISPLAY_NAME', value: 'DISPLAY_NAME'},
+                    {name: 'EXTENSION', value: 'EXTENSION'},
                     {name: 'DISPLAY_EXTENSION', value: 'DISPLAY_EXTENSION'}
                 ],
                 failureMode: [
-                    {name: 'NONE',          value: 'NONE'},
-                    {name: 'OPEN',          value: 'OPEN'},
-                    {name: 'CLOSED',        value: 'CLOSED'},
-                    {name: 'PHANTOM',       value: 'PHANTOM'}
+                    {name: 'NONE', value: 'NONE'},
+                    {name: 'OPEN', value: 'OPEN'},
+                    {name: 'CLOSED', value: 'CLOSED'},
+                    {name: 'PHANTOM', value: 'PHANTOM'}
                 ]
             };
-                        
-            this.isSelected = function(option, selected) {
-                if(!angular.isArray(selected)) {
+
+            this.isSelected = function (option, selected) {
+                if (!angular.isArray(selected)) {
                     return option == selected;
                 }
 
-                angular.forEach(selected, function(opt) {
-                    if(option == opt) return true;
+                angular.forEach(selected, function (opt) {
+                    if (option == opt) return true;
                 });
                 return false;
             };
 
-            this.isEmpty = function(thing) {
-                if(angular.isArray(thing)) { return  thing.length === 0; }
-                if(angular.isObject(thing)) { return jQuery.isEmptyObject(thing); }
+            this.isEmpty = function (thing) {
+                if (angular.isArray(thing)) {
+                    return thing.length === 0;
+                }
+                if (angular.isObject(thing)) {
+                    return jQuery.isEmptyObject(thing);
+                }
                 return !thing;
             };
 
@@ -542,10 +558,10 @@ if (array.length == 3) {
                 serviceDataTransformation('save');
                 formErrors = serviceForm.validateForm();
 
-                if(formErrors.length !== 0) {
+                if (formErrors.length !== 0) {
                     delayedAlert('notvalid', 'danger', formErrors);
-                    angular.forEach(formErrors, function(fieldId) {
-                        $('#'+fieldId).addClass('required-missing');
+                    angular.forEach(formErrors, function (fieldId) {
+                        $('#' + fieldId).addClass('required-missing');
                     });
                     return;
                 } else $('.required-missing').removeClass('required-missing');
@@ -558,10 +574,10 @@ if (array.length == 3) {
                     data: JSON.stringify(serviceForm.serviceData),
                     headers: httpHeaders,
                     success: function (data, status) {
-                        if(data.status != 200) {
+                        if (data.status != 200) {
                             delayedAlert('notsaved', 'danger', data);
                             serviceForm.newService();
-                        } else if(angular.isString(data)) {
+                        } else if (angular.isString(data)) {
                             sharedFactory.forceReload();
                         } else {
 
@@ -583,24 +599,23 @@ if (array.length == 3) {
                             }, 200);
 
 
-
                         }
                     },
-                    error: function(xhr, status) {
-                        if(xhr.status == 403)
+                    error: function (xhr, status) {
+                        if (xhr.status == 403)
                             sharedFactory.forceReload();
                         else
-                            delayedAlert('notsaved','danger', xhr.responseJSON);
+                            delayedAlert('notsaved', 'danger', xhr.responseJSON);
                     }
                 });
             };
 
-            this.validateRegex = function(pattern) {
+            this.validateRegex = function (pattern) {
                 try {
                     if (pattern == "")
                         return true;
                     var patt = new RegExp(pattern);
-		    return true;
+                    return true;
                 } catch (e) {
                     return false;
                 }
@@ -611,32 +626,32 @@ if (array.length == 3) {
                     data = serviceForm.serviceData;
 
                 // Service Basics
-                if(!data.serviceId) err.push('serviceId');
-                if(!data.name) err.push('serviceName');
-                if(!data.description) err.push('serviceDesc');
-                if(!data.type) err.push('serviceType');
+                if (!data.serviceId) err.push('serviceId');
+                if (!data.name) err.push('serviceName');
+                if (!data.description) err.push('serviceDesc');
+                if (!data.type) err.push('serviceType');
                 // OAuth Client Options Only
-                if(data.type == 'oauth') {
-                    if(!data.oauth.clientId) err.push('oauthClientId');
-                    if(!data.oauth.clientSecret) err.push('oauthClientSecret');
+                if (data.type == 'oauth') {
+                    if (!data.oauth.clientId) err.push('oauthClientId');
+                    if (!data.oauth.clientSecret) err.push('oauthClientSecret');
                 }
                 // Username Attribute Provider Options
-                if(!data.userAttrProvider.value) {
-                    if(data.userAttrProvider.type == 'attr') err.push('uapUsernameAttribute');
-                    if(data.userAttrProvider.type == 'anon') err.push('uapSaltSetting');
+                if (!data.userAttrProvider.value) {
+                    if (data.userAttrProvider.type == 'attr') err.push('uapUsernameAttribute');
+                    if (data.userAttrProvider.type == 'anon') err.push('uapSaltSetting');
                 }
                 // Proxy Policy Options
-                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value) err.push('proxyPolicyRegex');
+                if (data.proxyPolicy.type == 'REGEX' && !data.proxyPolicy.value) err.push('proxyPolicyRegex');
 
-                if(data.proxyPolicy.type == 'regex' && data.proxyPolicy.value != null) {
+                if (data.proxyPolicy.type == 'REGEX' && data.proxyPolicy.value != null) {
                     if (!this.validateRegex(data.proxyPolicy.value)) err.push('proxyPolicyRegex');
                 }
 
 
                 // Principle Attribute Repository Options
-                if(data.attrRelease.attrOption == 'cached') {
-                    if(!data.attrRelease.cachedTimeUnit) err.push('cachedTime');
-                    if(!data.attrRelease.mergingStrategy) err.push('mergingStrategy');
+                if (data.attrRelease.attrOption == 'CACHED') {
+                    if (!data.attrRelease.cachedTimeUnit) err.push('cachedTime');
+                    if (!data.attrRelease.mergingStrategy) err.push('mergingStrategy');
                 }
                 if (data.attrRelease.attrFilter != null) {
                     if (!this.validateRegex(data.attrRelease.attrFilter)) err.push('attFilter');
@@ -660,9 +675,9 @@ if (array.length == 3) {
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
                     },
                     supportAccess: {
-                        casEnabled: true, 
-                        ssoEnabled:true, 
-                        caseInsensitive: true, 
+                        casEnabled: true,
+                        ssoEnabled: true,
+                        caseInsensitive: true,
                         type: serviceForm.selectOptions.selectType[0].value
                     },
                     publicKey: {algorithm: 'RSA'},
@@ -677,9 +692,9 @@ if (array.length == 3) {
 
                 $http.get(appContext + '/getService.html?id=-1')
                     .then(function (response) {
-                        if(response.status != 200)
+                        if (response.status != 200)
                             delayedAlert('notloaded', 'danger', data);
-                        else if(angular.isString(response.data))
+                        else if (angular.isString(response.data))
                             sharedFactory.forceReload();
                         else
                             serviceForm.formData = response.data.formData;
@@ -694,18 +709,18 @@ if (array.length == 3) {
 
                 $http.get(appContext + '/getService.html?id=' + serviceId)
                     .then(function (response) {
-                        if(response.status != 200) {
+                        if (response.status != 200) {
                             delayedAlert('notloaded', 'danger', data);
                             serviceForm.newService();
                         }
-                        else if(angular.isString(response.data))
+                        else if (angular.isString(response.data))
                             sharedFactory.forceReload();
                         else {
                             serviceForm.showOAuthSecret = false;
-                            if(serviceForm.formData != response.data.formData)
+                            if (serviceForm.formData != response.data.formData)
                                 serviceForm.formData = response.data.formData;
                             serviceForm.serviceData = response.data.serviceData;
-                            if(duplicate) {
+                            if (duplicate) {
                                 serviceForm.serviceData.assignedId = 0;
                             }
                             serviceDataTransformation('load');
@@ -717,15 +732,15 @@ if (array.length == 3) {
             };
 
             // Parse the data for textareas to/from a(n) string/array from/to a(n) array/string
-            var textareaArrParse = function(dir, value) {
+            var textareaArrParse = function (dir, value) {
                 var newValue;
-                if(dir == 'load') {
+                if (dir == 'load') {
                     newValue = value ? value.join("\n") : '';
                 }
                 else {
                     if (value != undefined) {
                         newValue = value.split("\n");
-                        for (var i = newValue.length-1; i >= 0; i--) {
+                        for (var i = newValue.length - 1; i >= 0; i--) {
                             newValue[i] = newValue[i].trim();
                             if (!newValue[i]) newValue.splice(i, 1);
                         }
@@ -737,7 +752,7 @@ if (array.length == 3) {
             };
 
             // Transform the data so it is ready from/to the form to/from the server.
-            var serviceDataTransformation = function(dir) {
+            var serviceDataTransformation = function (dir) {
                 var data = serviceForm.serviceData;
 
                 // Logic safeties
@@ -745,8 +760,8 @@ if (array.length == 3) {
                 data.supportAccess.requiredAttr = data.supportAccess.requiredAttr || {};
                 data.supportAccess.requiredAttrStr = data.supportAccess.requiredAttrStr || {};
 
-                if(dir == 'load') {
-                    angular.forEach(serviceForm.formData.availableAttributes, function(item) {
+                if (dir == 'load') {
+                    angular.forEach(serviceForm.formData.availableAttributes, function (item) {
                         data.supportAccess.requiredAttrStr[item] = textareaArrParse(dir, data.supportAccess.requiredAttr[item]);
                     });
 
@@ -754,26 +769,26 @@ if (array.length == 3) {
                     data.userAttrProvider.valueAnon = (data.userAttrProvider.type == 'anon') ? data.userAttrProvider.value : '';
                     data.userAttrProvider.valueAttr = (data.userAttrProvider.type == 'attr') ? data.userAttrProvider.value : '';
                 } else {
-                    angular.forEach(serviceForm.formData.availableAttributes, function(item) {
+                    angular.forEach(serviceForm.formData.availableAttributes, function (item) {
                         data.supportAccess.requiredAttr[item] = textareaArrParse(dir, data.supportAccess.requiredAttrStr[item]);
                     });
 
                     data.requiredHandlers = textareaArrParse(dir, data.reqHandlersStr);
-                    if(data.userAttrProvider.type == 'anon')
+                    if (data.userAttrProvider.type == 'anon')
                         data.userAttrProvider.value = data.userAttrProvider.valueAnon;
-                    else if(data.userAttrProvider.type == 'attr')
+                    else if (data.userAttrProvider.type == 'attr')
                         data.userAttrProvider.value = data.userAttrProvider.valueAttr;
                 }
 
-                switch(data.attrRelease.attrPolicy.type) {
+                switch (data.attrRelease.attrPolicy.type) {
                     case 'mapped':
-                        if(dir == 'load')
+                        if (dir == 'load')
                             data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
                         else
                             data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
                         break;
                     case 'allowed':
-                        if(dir == 'load')
+                        if (dir == 'load')
                             data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
                         else
                             data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
@@ -787,18 +802,24 @@ if (array.length == 3) {
             };
 
             $scope.$watch(
-                function() {
+                function () {
                     return {
                         assignedId: sharedFactory.assignedId,
                         sourceId: sharedFactory.sourceId
                     };
                 },
                 function (registeredService) {
-                    if(serviceForm.alert && serviceForm.alert.type != 'info')
+                    if (serviceForm.alert && serviceForm.alert.type != 'info')
                         serviceForm.alert = null;
-                    if(registeredService.assignedId) { serviceForm.loadService(registeredService.assignedId); }
-                    else if(registeredService.sourceId) { serviceForm.loadService(registeredService.sourceId, true); }
-                    else { serviceForm.newService(); }
+                    if (registeredService.assignedId) {
+                        serviceForm.loadService(registeredService.assignedId);
+                    }
+                    else if (registeredService.sourceId) {
+                        serviceForm.loadService(registeredService.sourceId, true);
+                    }
+                    else {
+                        serviceForm.newService();
+                    }
                 },
                 true
             );
