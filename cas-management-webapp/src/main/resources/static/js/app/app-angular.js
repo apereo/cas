@@ -376,7 +376,7 @@ if (array.length == 3) {
     function propertiesController(NgTableParams) {
         var self = this;
 
-        var dataList = [{name: "org.cas.jasig.prop1", propValue: 50}, {name: "org.cas.jasic.prop2", propValue: 25}];
+        var dataList = [];
 
         var originalData = angular.copy(dataList);
 

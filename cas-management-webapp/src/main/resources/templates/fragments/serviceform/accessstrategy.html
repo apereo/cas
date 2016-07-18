@@ -69,8 +69,8 @@ Todo: add field: Rejected Attributes: As a table,
                 <tbody>
                 <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
                     <td class="va-middle">{{ mappedValue }}</td>
-                    <td><textarea class="form-control noresize" rows="2"
-                                  ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]"></textarea>
+                    <td><input class="form-control noresize"
+                                  ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]"></input>
                     </td>
                 </tr>
                 </tbody>
