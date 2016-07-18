@@ -40,7 +40,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private boolean usePasswordPolicy = true;
     private String dnFormat;
     private String principalAttributeId = "uid";
-    private String principalAttributePassword = "userPassword";
+    private String principalAttributePassword;
     private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes;

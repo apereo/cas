@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.PooledCompareCustomAttributeAuthenticationHandler;
@@ -145,7 +146,11 @@ public class LdapAuthenticationConfiguration {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
+            return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        } else {
+            return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        }
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
