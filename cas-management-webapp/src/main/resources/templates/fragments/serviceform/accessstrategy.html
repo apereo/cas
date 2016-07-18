@@ -1,18 +1,3 @@
-<!--
-Under Service Access Strategy:
-
-
-For all access strategy types (default, time, grouper) the following new fields must be present:
-xTodo: add field: Unauthorized Redirect Url: Text
-xTodo: add field: Case Insensitive: true/false
-Todo: add field: Rejected Attributes: As a table,
-        - first column is the attribute name.
-        - second column should allow a list of attribute values. There can be more than one value, and user should be
-          able to CSV values.
-        - There needs to be a way to add additional rows or remove rows.
-
-
--->
 <div class="panel panel-success">
     <div class="panel-heading">
         <span th:remove="tag" th:text="#{services.form.header.sas}"/>
