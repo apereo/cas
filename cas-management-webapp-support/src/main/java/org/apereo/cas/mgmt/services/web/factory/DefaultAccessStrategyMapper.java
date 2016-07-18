@@ -1,6 +1,7 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
 import com.google.common.base.Throwables;
+import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSupportAccessEditBean;
@@ -77,9 +78,14 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         final DefaultRegisteredServiceAccessStrategy accessStrategy;
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
             accessStrategy = new RemoteEndpointServiceAccessStrategy();    
+        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) { 
+            accessStrategy = new GrouperRegisteredServiceAccessStrategy();
+        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) { 
+            accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
         } else {
             accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
+        
         
         accessStrategy.setEnabled(supportAccess.isCasEnabled());
         accessStrategy.setSsoEnabled(supportAccess.isSsoEnabled());
@@ -116,19 +122,25 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             }
         }
         
-        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) {
+        if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME 
+            || supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setEndingDateTime(supportAccess.getEndingTime());
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setStartingDateTime(supportAccess.getStartingTime());
         }
 
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
-            ((GrouperRegisteredServiceAccessStrategy) accessStrategy)
-                    .setGroupField(GrouperRegisteredServiceAccessStrategy.GrouperGroupField.valueOf(supportAccess.getGroupField()));
+            if (StringUtils.isNotBlank(supportAccess.getGroupField())) {
+                ((GrouperRegisteredServiceAccessStrategy) accessStrategy)
+                        .setGroupField(GrouperRegisteredServiceAccessStrategy.GrouperGroupField.valueOf(supportAccess.getGroupField()));
+            }
         }
 
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
-            ((RemoteEndpointServiceAccessStrategy) accessStrategy).setAcceptableResponseCodes(supportAccess.getCodes());
-            ((RemoteEndpointServiceAccessStrategy) accessStrategy).setEndpointUrl(supportAccess.getUrl());
+            
+            if (StringUtils.isNotBlank(supportAccess.getUrl())) {
+                ((RemoteEndpointServiceAccessStrategy) accessStrategy).setAcceptableResponseCodes(supportAccess.getCodes());
+                ((RemoteEndpointServiceAccessStrategy) accessStrategy).setEndpointUrl(supportAccess.getUrl());
+            }
         }
         
         return accessStrategy;

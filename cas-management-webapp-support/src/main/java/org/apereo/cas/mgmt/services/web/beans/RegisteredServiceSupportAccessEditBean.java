@@ -147,4 +147,6 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     public void setUrl(final String url) {
         this.url = url;
     }
+    
+    
 }

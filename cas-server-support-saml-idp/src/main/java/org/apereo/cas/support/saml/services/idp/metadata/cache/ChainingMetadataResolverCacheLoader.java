@@ -268,6 +268,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      *
      * @param service            the service
      * @param metadataFilterList the metadata filter list
+     * @see {@link RequiredValidUntilFilter}
      */
     protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter>
             metadataFilterList) {

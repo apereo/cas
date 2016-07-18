@@ -495,7 +495,7 @@ if (array.length == 3) {
                 mergeStrategyList: [
                     {name: 'DEFAULT',       value: 'DEFAULT'},
                     {name: 'ADD',           value: 'ADD'},
-                    {name: 'MULTIVALUED',  value: 'MULTIVALUED'},
+                    {name: 'MULTIVALUED',   value: 'MULTIVALUED'},
                     {name: 'REPLACE',       value: 'REPLACE'}
                 ],
                 selectType: [
@@ -659,14 +659,15 @@ if (array.length == 3) {
                         cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
                     },
-                    supportAccess: {casEnabled: true, ssoEnabled:true},
-                    publicKey: {algorithm: 'RSA'},
-                    userAttrProvider: {type: 'default'},
-                    proxyPolicy: {type: 'refuse'},
-                    accessStrategy: {
-                        caseInsensitive: true,
+                    supportAccess: {
+                        casEnabled: true, 
+                        ssoEnabled:true, 
+                        caseInsensitive: true, 
                         type: serviceForm.selectOptions.selectType[0].value
                     },
+                    publicKey: {algorithm: 'RSA'},
+                    userAttrProvider: {type: 'default'},
+                    proxyPolicy: {type: 'REFUSE'},
                     multiAuth: {
                         failureMode: serviceForm.selectOptions.failureMode[0].value
                     }

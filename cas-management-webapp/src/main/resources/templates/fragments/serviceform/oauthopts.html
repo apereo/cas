@@ -15,11 +15,12 @@
                        data-placement="top"
                        th:title="#{services.form.tooltip.oauthClientId}" />
                 </label>
+                <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </div>
                 <div class="col-sm-8">
                     <div class="input-group">
-                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
-                            <i class="fa fa-exclamation-triangle"></i>
-                        </div>
+                        
                         <input type="text" autocomplete="off" class="form-control" id="oauthClientId" ng-model="serviceFormCtrl.serviceData.oauth.clientId" />
                     </div>
                 </div>

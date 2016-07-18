@@ -188,7 +188,8 @@
                        th:title="#{services.form.tooltip.attrRelease.policies.returnAllowed}"></i>
                 </label>
                 <div class="col-sm-9">
-                    <select class="form-control" id="returnedAllowed" ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed">
+                    <select class="form-control" multiple="true" id="returnedAllowed" 
+                            ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed">
                         <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" ng-attr-value="{{ opt }}"
                                 ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.attrRelease.attrPolicy.allowed)">{{ opt }}</option>
                     </select>
