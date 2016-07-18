@@ -3,7 +3,7 @@
 # Generate the OAUTH-TOKEN at https://github.com/settings/applications
 # Install travis: gem install travis
 # Login to travis: travis login
-# Encrypt the token: travis encrypt GH_TOKEN=[OAUTH-TOKEN] -r Jasig/cas --add env.global
+# Encrypt the token: travis encrypt VAR_NAME=[OAUTH-TOKEN] -r apereo/cas --add env.global
 #
 
 language: java
@@ -31,9 +31,8 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
-- ./gradlew clean --parallel --stacktrace
 install:
-- ./gradlew build -DskipAspectJ=true --parallel -x test
+- ./gradlew clean install -DskipAspectJ=true --parallel -x test --stacktrace
 script:
 - travis_wait ./gradlew test -DskipAspectJ=true --stacktrace --parallel
 after_success:

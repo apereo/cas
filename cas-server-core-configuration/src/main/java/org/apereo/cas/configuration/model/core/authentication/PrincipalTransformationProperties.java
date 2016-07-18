@@ -8,17 +8,18 @@ package org.apereo.cas.configuration.model.core.authentication;
  */
 
 public class PrincipalTransformationProperties {
+
+    public enum CaseConversion {
+        /** No conversion. */
+        NONE,
+        /** Lowercase conversion. */
+        UPPERCASE,
+        /** Uppcase conversion. */
+        LOWERCASE,
+    }
     private String prefix;
     private String suffix;
-    private boolean uppercase;
-
-    public boolean isUppercase() {
-        return uppercase;
-    }
-
-    public void setUppercase(final boolean uppercase) {
-        this.uppercase = uppercase;
-    }
+    private CaseConversion caseConversion = CaseConversion.NONE;
 
     public String getPrefix() {
         return prefix;
@@ -34,5 +35,13 @@ public class PrincipalTransformationProperties {
 
     public void setSuffix(final String suffix) {
         this.suffix = suffix;
+    }
+
+    public CaseConversion getCaseConversion() {
+        return caseConversion;
+    }
+
+    public void setCaseConversion(final CaseConversion caseConversion) {
+        this.caseConversion = caseConversion;
     }
 }

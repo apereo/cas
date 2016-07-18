@@ -13,13 +13,18 @@ references to the underlying modules that consume them.
 This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings 
 into your CAS configuration; rather pick only the properties that you need.</p></div>
 
- Note that property names can be specified
+Note that property names can be specified
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
 and `CAS_SOME_PROPERTY` are all valid names.
 
 The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
 to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
-and deployment process. 
+and deployment process.
+ 
+<div class="alert alert-info"><strong>YAGNI</strong><p>Note that for nearly ALL use cases,
+simply declaring and configuring properties listed below is sufficient. You should NOT have to
+explicitly massage a CAS XML configuration file to design an authentication handler, 
+create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
 ## Embedded Tomcat
 
@@ -118,7 +123,6 @@ The following properties describe access controls and settings to the `/status`
 endpoint of CAS which provide administrative functionality and oversight into the CAS software.
 
 ```properties
-# cas.securityContext.adminpages.ip=.+
 # endpoints.enabled=true
 # endpoints.sensitive=true
 # management.contextPath=/status
@@ -177,31 +181,81 @@ server.contextParameters.isLog4jAutoInitializationDisabled=true
 ## Authentication Attributes
 
 Set of authentication attributes that are retrieved by the principal resolution process,
-typically via some component of Person Directory
-unless noted otherwise by the specific authentication scheme. 
+typically via some component of [Person Directory](..\Attribute-Resolution.html)
+from a number of attribute sources unless noted otherwise by the specific authentication scheme. 
 
 ```properties
-# cas.authn.attributes.uid=uid
-# cas.authn.attributes.displayName=displayName
-# cas.authn.attributes.cn=commonName
-# cas.authn.attributes.affiliation=groupMembership
+# cas.authn.attributeRepository.attributes.uid=uid
+# cas.authn.attributeRepository.attributes.displayName=displayName
+# cas.authn.attributeRepository.attributes.cn=commonName
+# cas.authn.attributeRepository.attributes.affiliation=groupMembership
 ```
+
+If you wish to directly and separately retrieve attributes from an LDAP source,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap.useSsl=true
+# cas.authn.attributeRepository.ldap.useStartTls=false
+# cas.authn.attributeRepository.ldap.connectTimeout=5000
+# cas.authn.attributeRepository.ldap.baseDn=dc=example,dc=org
+# cas.authn.attributeRepository.ldap.userFilter=cn={user}
+# cas.authn.attributeRepository.ldap.subtreeSearch=true
+# cas.authn.attributeRepository.ldap.usePasswordPolicy=true
+# cas.authn.attributeRepository.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.attributeRepository.ldap.bindCredential=Password
+# cas.authn.attributeRepository.ldap.trustCertificates=
+# cas.authn.attributeRepository.ldap.keystore=
+# cas.authn.attributeRepository.ldap.keystorePassword=
+# cas.authn.attributeRepository.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.attributeRepository.ldap.minPoolSize=3
+# cas.authn.attributeRepository.ldap.maxPoolSize=10
+# cas.authn.attributeRepository.ldap.validateOnCheckout=true
+# cas.authn.attributeRepository.ldap.validatePeriodically=true
+# cas.authn.attributeRepository.ldap.validatePeriod=600
+# cas.authn.attributeRepository.ldap.failFast=true
+# cas.authn.attributeRepository.ldap.idleTime=500
+# cas.authn.attributeRepository.ldap.prunePeriod=600
+# cas.authn.attributeRepository.ldap.blockWaitTime=5000
+# cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+```
+
+If you wish to directly and separately retrieve attributes from a JDBC source,
+the following settings are then relevant:
+
+
+```properties
+# cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
+# cas.authn.attributeRepository.jdbc.username=uid_field
+# cas.authn.attributeRepository.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.attributeRepository.jdbc.isolateInternalQueries=false
+# cas.authn.attributeRepository.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.attributeRepository.jdbc.failFast=true
+# cas.authn.attributeRepository.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.attributeRepository.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.attributeRepository.jdbc.leakThreshold=10
+# cas.authn.attributeRepository.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.attributeRepository.jdbc.batchSize=1
+# cas.authn.attributeRepository.jdbc.user=sa
+# cas.authn.attributeRepository.jdbc.ddlAuto=create-drop
+# cas.authn.attributeRepository.jdbc.password=
+# cas.authn.attributeRepository.jdbc.autocommit=false
+# cas.authn.attributeRepository.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.attributeRepository.jdbc.idleTimeout=5000
+# cas.authn.attributeRepository.jdbc.pool.suspension=false
+# cas.authn.attributeRepository.jdbc.pool.minSize=6
+# cas.authn.attributeRepository.jdbc.pool.maxSize=18
+# cas.authn.attributeRepository.jdbc.pool.maxIdleTime=1000
+# cas.authn.attributeRepository.jdbc.pool.maxWait=2000
+```
+
 
 ## Principal Resolution
 
 ```properties
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
-```
-
-## Principal Transformation
-
-Control how principal identifiers are transformed during the resolution phase. 
-
-```properties
-# cas.principalTransformation.suffix=
-# cas.principalTransformation.uppercase=false
-# cas.principalTransformation.prefix=
 ```
 
 ## Authentication Policy
@@ -320,6 +374,10 @@ connections and queries.
 # cas.authn.radius.passwordEncoder.encodingAlgorithm=
 # cas.authn.radius.passwordEncoder.secret=
 # cas.authn.radius.passwordEncoder.strength=16
+
+# cas.authn.radius.principalTransformation.suffix=
+# cas.authn.radius.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.radius.principalTransformation.prefix=
 ```
 
 ## File Authentication
@@ -333,6 +391,10 @@ connections and queries.
 # cas.authn.file.passwordEncoder.encodingAlgorithm=
 # cas.authn.file.passwordEncoder.secret=
 # cas.authn.file.passwordEncoder.strength=16
+
+# cas.authn.file.principalTransformation.suffix=
+# cas.authn.file.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.file.principalTransformation.prefix=
 ```
 
 ## Reject Users Authentication
@@ -345,6 +407,10 @@ connections and queries.
 # cas.authn.reject.passwordEncoder.encodingAlgorithm=
 # cas.authn.reject.passwordEncoder.secret=
 # cas.authn.reject.passwordEncoder.strength=16
+
+# cas.authn.reject.principalTransformation.suffix=
+# cas.authn.reject.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.reject.principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Query
@@ -375,6 +441,10 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 # cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Search
@@ -407,6 +477,10 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Bind
@@ -436,6 +510,10 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
 # cas.authn.jdbc.bind[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Encode
@@ -478,6 +556,10 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
+
+# cas.authn.jdbc.bind[0].principalTransformation.suffix=
+# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ## MongoDb Authentication
@@ -488,6 +570,16 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.mongo.attributes=
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
+
+# cas.authn.mongo.principalTransformation.suffix=
+# cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.mongo.principalTransformation.prefix=
+
+# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.mongo.passwordEncoder.characterEncoding=
+# cas.authn.mongo.passwordEncoder.encodingAlgorithm=
+# cas.authn.mongo.passwordEncoder.secret=
+# cas.authn.mongo.passwordEncoder.strength=16
 ```
 
 ## Ldap Authentication
@@ -550,9 +642,15 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
 # cas.authn.ldap[0].passwordEncoder.strength=16
+
+# cas.authn.ldap[0].principalTransformation.suffix=
+# cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.ldap[0].principalTransformation.prefix=
 ```
 
 ## REST Authentication
+
+This allows the CAS server to reach to a remote REST endpoint via a `POST`.
 
 ```properties
 # cas.authn.rest.uri=https://...
@@ -565,6 +663,8 @@ server, simply increment the index and specify the settings for the next LDAP se
 ```
 
 ## Google Apps Authentication
+
+Authenticate via CAS into Google Apps services and applications.
 
 ```properties
 # cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
@@ -629,6 +729,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.jaas.passwordEncoder.encodingAlgorithm=
 # cas.authn.jaas.passwordEncoder.secret=
 # cas.authn.jaas.passwordEncoder.strength=16
+
+# cas.authn.jaas.principalTransformation.suffix=
+# cas.authn.jaas.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jaas.principalTransformation.prefix=
 ```
 
 ## Stormpath Authentication
@@ -637,6 +741,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.stormpath.apiKey=
 # cas.authn.stormpath.secretkey=
 # cas.authn.stormpath.applicationId=
+
+# cas.authn.stormpath.principalTransformation.suffix=
+# cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.stormpath.principalTransformation.prefix=
 ```
 
 ## Remote Address Authentication
@@ -656,6 +764,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.accept.passwordEncoder.encodingAlgorithm=
 # cas.authn.accept.passwordEncoder.secret=
 # cas.authn.accept.passwordEncoder.strength=16
+
+# cas.authn.accept.principalTransformation.suffix=
+# cas.authn.accept.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.accept.principalTransformation.prefix=
 ```
 
 ## X509 Authentication
@@ -693,6 +805,10 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.shiro.passwordEncoder.encodingAlgorithm=
 # cas.authn.shiro.passwordEncoder.secret=
 # cas.authn.shiro.passwordEncoder.strength=16
+
+# cas.authn.shiro.principalTransformation.suffix=
+# cas.authn.shiro.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.shiro.principalTransformation.prefix=
 ```
 
 ## NTLM Authentication

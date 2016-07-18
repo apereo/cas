@@ -21,15 +21,14 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
+import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AuthenticationProperties}.
@@ -39,20 +38,21 @@ import java.util.Map;
  */
 public class AuthenticationProperties {
 
-    private Map<String, String> attributes = new HashMap();
+    @NestedConfigurationProperty
+    private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
-    
+
     @NestedConfigurationProperty
     private ThrottleProperties throttle = new ThrottleProperties();
-    
+
     @NestedConfigurationProperty
     private SamlIdPProperties samlIdp = new SamlIdPProperties();
-    
+
     @NestedConfigurationProperty
     private AuthenticationExceptionsProperties exceptions =
             new AuthenticationExceptionsProperties();
@@ -60,7 +60,7 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy =
             new AuthenticationPolicyProperties();
-    
+
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
@@ -81,7 +81,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private TrustedAuthenticationProperties trusted = new TrustedAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private JaasAuthenticationProperties jaas = new JaasAuthenticationProperties();
 
@@ -90,7 +90,7 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private MultifactorAuthenticationProperties mfa = new MultifactorAuthenticationProperties();
-    
+
     @NestedConfigurationProperty
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
 
@@ -123,7 +123,18 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private X509Properties x509 = new X509Properties();
-    
+
+    @NestedConfigurationProperty
+    private TokenAuthenticationProperties token = new TokenAuthenticationProperties();
+
+    public TokenAuthenticationProperties getToken() {
+        return token;
+    }
+
+    public void setToken(final TokenAuthenticationProperties token) {
+        this.token = token;
+    }
+
     public AuthenticationExceptionsProperties getExceptions() {
         return exceptions;
     }
@@ -139,7 +150,7 @@ public class AuthenticationProperties {
     public void setPolicy(final AuthenticationPolicyProperties policy) {
         this.policy = policy;
     }
-        
+
     public PasswordPolicyProperties getPasswordPolicy() {
         return passwordPolicy;
     }
@@ -324,13 +335,6 @@ public class AuthenticationProperties {
         this.trusted = trusted;
     }
 
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(final Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
 
     public List<LdapAuthenticationProperties> getLdap() {
         return ldap;
@@ -346,5 +350,13 @@ public class AuthenticationProperties {
 
     public void setRest(final RestAuthenticationProperties rest) {
         this.rest = rest;
+    }
+
+    public PrincipalAttributesProperties getAttributeRepository() {
+        return attributeRepository;
+    }
+
+    public void setAttributeRepository(final PrincipalAttributesProperties attributeRepository) {
+        this.attributeRepository = attributeRepository;
     }
 }

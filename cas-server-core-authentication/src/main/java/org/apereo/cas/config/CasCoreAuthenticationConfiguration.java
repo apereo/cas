@@ -26,10 +26,6 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
-import org.apereo.cas.authentication.handler.ConvertCasePrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.NoOpPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.BasicPrincipalResolver;
@@ -75,30 +71,22 @@ public class CasCoreAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    @Autowired(required = false)
-    @Qualifier("acceptPrincipalNameTransformer")
-    private PrincipalNameTransformer acceptPrincipalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-    
-    @Autowired(required = false)
-    @Qualifier("jaasPrincipalNameTransformer")
-    private PrincipalNameTransformer principalNameTransformer;
 
     @Autowired(required = false)
     @Qualifier("jaasPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-    @Autowired(required = false)
-    @Qualifier("delegateTransformer")
-    private PrincipalNameTransformer delegateTransformer;
-    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("attributeRepository")
+    private IPersonAttributeDao attributeRepository;
 
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
@@ -111,7 +99,6 @@ public class CasCoreAuthenticationConfiguration {
         h.setErrors(casProperties.getAuthn().getExceptions().getExceptions());
         return h;
     }
-
 
     @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
     public AuthenticationPolicy defaultAuthenticationPolicy() {
@@ -154,9 +141,7 @@ public class CasCoreAuthenticationConfiguration {
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        if (acceptPrincipalNameTransformer != null) {
-            h.setPrincipalNameTransformer(acceptPrincipalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
 
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -274,7 +259,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         final PersonDirectoryPrincipalResolver bean = new PersonDirectoryPrincipalResolver();
-        bean.setAttributeRepository(stubAttributeRepository());
+        bean.setAttributeRepository(this.attributeRepository);
         bean.setPrincipalAttributeName(casProperties.getPersonDirectory().getPrincipalAttribute());
         bean.setReturnNullIfNoAttributes(casProperties.getPersonDirectory().isReturnNull());
         bean.setPrincipalFactory(defaultPrincipalFactory());
@@ -309,13 +294,11 @@ public class CasCoreAuthenticationConfiguration {
         h.setKerberosRealmSystemProperty(casProperties.getAuthn().getJaas().getKerberosRealmSystemProperty());
         h.setRealm(casProperties.getAuthn().getJaas().getRealm());
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getJaas().getPasswordEncoder()));
-        
+
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
         }
-        if (principalNameTransformer != null) {
-            h.setPrincipalNameTransformer(principalNameTransformer);
-        }
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getJaas().getPrincipalTransformation()));
 
         h.setPrincipalFactory(jaasPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -332,37 +315,6 @@ public class CasCoreAuthenticationConfiguration {
         h.setPrincipalFactory(proxyPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
-    }
-
-    @Bean
-    public PrincipalNameTransformer prefixSuffixPrincipalNameTransformer() {
-        final PrefixSuffixPrincipalNameTransformer p = new PrefixSuffixPrincipalNameTransformer();
-
-        p.setPrefix(casProperties.getPrincipalTransformation().getPrefix());
-        p.setSuffix(casProperties.getPrincipalTransformation().getSuffix());
-
-        return p;
-    }
-    
-    @Bean
-    public PrincipalNameTransformer noOpPrincipalNameTransformer() {
-        return new NoOpPrincipalNameTransformer();
-    }
-        
-    @Bean
-    @RefreshScope
-    public PrincipalNameTransformer convertCasePrincipalNameTransformer() {
-        final ConvertCasePrincipalNameTransformer t =
-                new ConvertCasePrincipalNameTransformer(this.delegateTransformer);
-        t.setToUpperCase(casProperties.getPrincipalTransformation().isUppercase());
-        return t;
-    }
-
-
-    @ConditionalOnMissingBean(name = "attributeRepository")
-    @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
-        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
     }
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")

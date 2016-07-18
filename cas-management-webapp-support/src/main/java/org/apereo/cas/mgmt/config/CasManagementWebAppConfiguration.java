@@ -118,7 +118,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository() {
-        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributes());
+        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributeRepository().getAttributes());
     }
 
 
@@ -361,7 +361,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public List serviceFactoryList() {
         return new ArrayList();
     }
-    
+
     @Bean
     public Map uniqueIdGeneratorsMap() {
         return new HashMap<>();
@@ -369,6 +369,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public List authenticationMetadataPopulators() {
-        return new ArrayList<>(); 
+        return new ArrayList<>();
     }
 }

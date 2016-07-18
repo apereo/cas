@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -50,9 +51,13 @@ public class JdbcAuthenticationProperties {
     public void setBind(final List<Bind> bind) {
         this.bind = bind;
     }
-    
+
     public static class Query extends AbstractJpaProperties {
         private String sql;
+
+        @NestedConfigurationProperty
+        private PrincipalTransformationProperties principalTransformation =
+                new PrincipalTransformationProperties();
 
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
@@ -72,11 +77,24 @@ public class JdbcAuthenticationProperties {
         public void setSql(final String sql) {
             this.sql = sql;
         }
+
+        public PrincipalTransformationProperties getPrincipalTransformation() {
+            return principalTransformation;
+        }
+
+        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+            this.principalTransformation = principalTransformation;
+        }
+
     }
-    
+
     public static class Bind extends AbstractJpaProperties {
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+        @NestedConfigurationProperty
+        private PrincipalTransformationProperties principalTransformation =
+                new PrincipalTransformationProperties();
 
         public PasswordEncoderProperties getPasswordEncoder() {
             return passwordEncoder;
@@ -86,8 +104,16 @@ public class JdbcAuthenticationProperties {
             this.passwordEncoder = passwordEncoder;
         }
 
+        public PrincipalTransformationProperties getPrincipalTransformation() {
+            return principalTransformation;
+        }
+
+        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+            this.principalTransformation = principalTransformation;
+        }
+
     }
-    
+
     public static class Search extends AbstractJpaProperties {
         private String fieldUser;
 
@@ -96,6 +122,10 @@ public class JdbcAuthenticationProperties {
         private String tableUsers;
 
         @NestedConfigurationProperty
+        private PrincipalTransformationProperties principalTransformation =
+                new PrincipalTransformationProperties();
+
+        @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
         public PasswordEncoderProperties getPasswordEncoder() {
@@ -105,7 +135,7 @@ public class JdbcAuthenticationProperties {
         public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
             this.passwordEncoder = passwordEncoder;
         }
-        
+
         public String getFieldUser() {
             return fieldUser;
         }
@@ -129,8 +159,17 @@ public class JdbcAuthenticationProperties {
         public void setTableUsers(final String tableUsers) {
             this.tableUsers = tableUsers;
         }
+
+        public PrincipalTransformationProperties getPrincipalTransformation() {
+            return principalTransformation;
+        }
+
+        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+            this.principalTransformation = principalTransformation;
+        }
+
     }
-    
+
     public static class Encode extends AbstractJpaProperties {
         private String algorithmName;
         private String sql;
@@ -139,6 +178,10 @@ public class JdbcAuthenticationProperties {
         private String numberOfIterationsFieldName = "numIterations";
         private long numberOfIterations;
         private String staticSalt;
+
+        @NestedConfigurationProperty
+        private PrincipalTransformationProperties principalTransformation =
+                new PrincipalTransformationProperties();
 
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
@@ -206,5 +249,14 @@ public class JdbcAuthenticationProperties {
         public void setStaticSalt(final String staticSalt) {
             this.staticSalt = staticSalt;
         }
+
+        public PrincipalTransformationProperties getPrincipalTransformation() {
+            return principalTransformation;
+        }
+
+        public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
+            this.principalTransformation = principalTransformation;
+        }
+
     }
 }

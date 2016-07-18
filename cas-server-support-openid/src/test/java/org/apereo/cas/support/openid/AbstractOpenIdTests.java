@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
@@ -34,11 +35,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = "classpath:/openid-config.xml",
-        classes = {OpenIdConfiguration.class, 
+        classes = {OpenIdConfiguration.class,
                 CasProtocolViewsConfiguration.class,
-                CasCookieConfiguration.class, 
+                CasCookieConfiguration.class,
                 CasValidationConfiguration.class,
                 CasCoreLogoutConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 CasCoreConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreWebConfiguration.class,
@@ -55,7 +57,7 @@ public class AbstractOpenIdTests {
     @Autowired
     @Qualifier("serverManager")
     protected ServerManager serverManager;
-    
+
     @Autowired
     @Qualifier("openIdServiceFactory")
     protected OpenIdServiceFactory openIdServiceFactory;
@@ -67,7 +69,7 @@ public class AbstractOpenIdTests {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     protected AuthenticationSystemSupport authenticationSystemSupport;
-    
+
     public OpenIdServiceFactory getOpenIdServiceFactory() {
         return openIdServiceFactory;
     }
@@ -79,7 +81,7 @@ public class AbstractOpenIdTests {
     public AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return authenticationSystemSupport;
     }
-    
+
 }
 
 

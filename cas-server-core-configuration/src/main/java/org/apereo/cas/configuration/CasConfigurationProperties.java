@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
@@ -62,10 +61,6 @@ public class CasConfigurationProperties {
             new PersonDirPrincipalResolverProperties();
 
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
-
-    @NestedConfigurationProperty
     private EventsProperties events = new EventsProperties();
 
     @NestedConfigurationProperty
@@ -82,7 +77,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private RestProperties rest = new RestProperties();
-    
+
     @NestedConfigurationProperty
     private ServerProperties server = new ServerProperties();
 
@@ -148,7 +143,7 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private ThemeProperties theme = new ThemeProperties();
-    
+
     @NestedConfigurationProperty
     private LocaleProperties locale = new LocaleProperties();
 
@@ -180,14 +175,6 @@ public class CasConfigurationProperties {
 
     public void setPersonDirectory(final PersonDirPrincipalResolverProperties personDirectory) {
         this.personDirectory = personDirectory;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
     }
 
     public RestProperties getRest() {
