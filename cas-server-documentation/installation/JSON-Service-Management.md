@@ -50,9 +50,7 @@ Please make sure all field values in the JSON blob are correctly escaped, specia
 The naming convention for new JSON files is recommended to be the following:
 
 ```bash
-
 JSON fileName = serviceName + "-" + serviceNumericId + ".json"
-
 ```
 
 
