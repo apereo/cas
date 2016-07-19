@@ -188,8 +188,15 @@ def projectMavenDeployer = {
             }
             repository {
                 id "spring-milestones"
-                url "http://repo.spring.io/milestone"
+                url "https://repo.spring.io/milestone"
                 releases {
+                    enabled true
+                }
+            }
+            repository {
+                id "spring-snapshots"
+                url "https://repo.spring.io/snapshot"
+                snapshots {
                     enabled true
                 }
             }
@@ -241,6 +248,8 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
@@ -307,7 +316,8 @@ subprojects {
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
     }
 
