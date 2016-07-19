@@ -10,6 +10,7 @@
 
             <!--Metadata Location: text-->
             <div class="form-group">
+
                 <label class="col-sm-4" for="samlMetadataLocation">
                     <span th:remove="tag" th:text="#{services.form.label.saml.metadata.location}"/>
                     <i class="fa fa-lg fa-question-circle form-tooltip-icon"
@@ -17,10 +18,18 @@
                        data-placement="top"
                        th:title="#{services.form.tooltip.saml.metadata.location}"/>
                 </label>
+
                 <div class="col-sm-8">
-                    <input type="text" autocomplete="off" class="form-control" id="samlMetadataLocation"
-                           ng-model="serviceFormCtrl.serviceData.saml.metadata.location"/>
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+
+                        <input type="text" autocomplete="off" class="form-control" id="samlMetadataLocation"
+                               ng-model="serviceFormCtrl.serviceData.saml.mdLoc"/>
+                    </div>
                 </div>
+
             </div>
 
             <!--Metadata Maximum Validity: integer-->
@@ -34,7 +43,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" autocomplete="off" class="form-control" id="samlMetadataMaxValidity"
-                           ng-model="serviceFormCtrl.serviceData.saml.metadata.maxValidity"/>
+                           ng-model="serviceFormCtrl.serviceData.saml.mdMaxVal"/>
                 </div>
             </div>
 
@@ -49,7 +58,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" autocomplete="off" class="form-control" id="samlAuthContextClass"
-                           ng-model="serviceFormCtrl.serviceData.saml.authContextClass"/>
+                           ng-model="serviceFormCtrl.serviceData.saml.authCtxCls"/>
                 </div>
             </div>
 
@@ -64,7 +73,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" autocomplete="off" class="form-control" id="samlmetadatapublickeylocation"
-                           ng-model="serviceFormCtrl.serviceData.saml.metadata.pubKeyLocation"/>
+                           ng-model="serviceFormCtrl.serviceData.saml.mdSigLoc"/>
                 </div>
             </div>
 
@@ -74,7 +83,7 @@
                     <div class="checkbox">
                         <label for="samlSignAssertions">
                             <input type="checkbox" id="samlSignAssertions"
-                                   ng-model="serviceFormCtrl.saml.signAssertions"/>
+                                   ng-model="serviceFormCtrl.saml.signAssert"/>
                             <span th:remove="tag" th:text="#{services.form.label.saml.signassertions}"/>
                             <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
                                data-toggle="tooltip"
@@ -86,7 +95,7 @@
                     <div class="checkbox">
                         <label for="samlSignResponses">
                             <input type="checkbox" id="samlSignResponses"
-                                   ng-model="serviceFormCtrl.serviceData.saml.signResponses"/>
+                                   ng-model="serviceFormCtrl.serviceData.saml.signResp"/>
                             <span th:remove="tag" th:text="#{services.form.label.saml.signresponses}"/>
                             <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
                                data-toggle="tooltip"
@@ -98,7 +107,7 @@
                     <div class="checkbox">
                         <label for="samlEncryptAssertions">
                             <input type="checkbox" id="samlEncryptAssertions"
-                                   ng-model="serviceFormCtrl.serviceData.saml.encryptAssertions"/>
+                                   ng-model="serviceFormCtrl.serviceData.saml.encAssert"/>
                             <span th:remove="tag" th:text="#{services.form.label.saml.encryptassertions}"/>
                             <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
                                data-toggle="tooltip"

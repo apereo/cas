@@ -50,7 +50,10 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
             ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
         }
 
-        this.registeredServices.remove(registeredService);
+        final RegisteredService svc = findServiceById(registeredService.getId());
+        if (svc != null) {
+            this.registeredServices.remove(svc);
+        }
         this.registeredServices.add(registeredService);
 
         return registeredService;

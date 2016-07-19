@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -85,5 +86,17 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append("jwks", jwks)
                 .append("signIdToken", signIdToken)
                 .toString();
+    }
+
+    @Override
+    public void copyFrom(final RegisteredService source) {
+        super.copyFrom(source);
+        try {
+            final OidcRegisteredService oidcService = (OidcRegisteredService) source;
+            setJwks(oidcService.getJwks());
+            setSignIdToken(oidcService.isSignIdToken());
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 }

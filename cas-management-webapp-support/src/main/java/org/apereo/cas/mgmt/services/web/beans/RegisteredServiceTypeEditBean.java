@@ -14,6 +14,11 @@ public enum RegisteredServiceTypeEditBean {
     CAS("cas"),
 
     /**
+     * CAS type.
+     */
+    OIDC("oidc"),
+    
+    /**
      * SAML type.
      */
     SAML("saml"),

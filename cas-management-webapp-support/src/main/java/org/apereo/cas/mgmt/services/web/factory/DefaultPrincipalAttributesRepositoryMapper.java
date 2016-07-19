@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
@@ -23,27 +22,27 @@ public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttr
     public void mapPrincipalRepository(final PrincipalAttributesRepository pr, final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
         if (pr instanceof DefaultPrincipalAttributesRepository) {
-            attrPolicyBean.setAttrOption(RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
+            attrPolicyBean.setAttrOption(RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT);
         } else if (pr instanceof AbstractPrincipalAttributesRepository) {
-            attrPolicyBean.setAttrOption(RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
+            attrPolicyBean.setAttrOption(RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED);
 
             final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
 
             attrPolicyBean.setCachedExpiration(cc.getExpiration());
             attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit());
 
-            final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
+            final IAttributeMerger merger = cc.getMergingStrategy() != null ? cc.getMergingStrategy().getAttributeMerger() : null;
 
             if (merger != null) {
                 if (merger instanceof NoncollidingAttributeAdder) {
                     attrPolicyBean.setMergingStrategy(RegisteredServiceAttributeReleasePolicyEditBean
-                            .AttributeMergerTypes.ADD.toString());
+                            .AttributeMergerTypes.ADD);
                 } else if (merger instanceof MultivaluedAttributeMerger) {
                     attrPolicyBean.setMergingStrategy(RegisteredServiceAttributeReleasePolicyEditBean
-                            .AttributeMergerTypes.MULTIVALUED.toString());
+                            .AttributeMergerTypes.MULTIVALUED);
                 } else if (merger instanceof ReplacingAttributeAdder) {
                     attrPolicyBean.setMergingStrategy(RegisteredServiceAttributeReleasePolicyEditBean
-                            .AttributeMergerTypes.REPLACE.toString());
+                            .AttributeMergerTypes.REPLACE);
                 }
             }
         }
@@ -52,14 +51,31 @@ public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttr
     @Override
     public PrincipalAttributesRepository toPrincipalRepository(final RegisteredServiceEditBean.ServiceData data) {
         final RegisteredServiceAttributeReleasePolicyEditBean attrRelease = data.getAttrRelease();
-        final String attrType = attrRelease.getAttrOption();
+        final RegisteredServiceAttributeReleasePolicyEditBean.Types attrType = attrRelease.getAttrOption();
 
-        if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED
-                .toString())) {
-            return new CachingPrincipalAttributesRepository(attrRelease.getCachedTimeUnit().toUpperCase(), 
+        if (attrType == RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED) {
+            final CachingPrincipalAttributesRepository r = new CachingPrincipalAttributesRepository(
+                    attrRelease.getCachedTimeUnit().toUpperCase(), 
                     attrRelease.getCachedExpiration());
-        } else if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types
-                .DEFAULT.toString())) {
+            
+            switch (attrRelease.getMergingStrategy()) {
+                case ADD:
+                    r.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+                    break;
+                case MULTIVALUED:
+                    r.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
+                    break;
+                case REPLACE:
+                    r.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
+                    break;
+                default:
+                    r.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.NONE);
+                    break;
+            }
+            return r;
+        } 
+        
+        if (attrType == RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT) {
             return new DefaultPrincipalAttributesRepository();
         }
 
