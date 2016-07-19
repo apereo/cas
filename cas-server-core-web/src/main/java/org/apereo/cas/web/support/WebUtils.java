@@ -103,10 +103,24 @@ public final class WebUtils {
         }
     }
 
+    /**
+     * Gets http servlet request from request attributes.
+     *
+     * @return the http servlet request from request attributes
+     */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
     }
 
+    /**
+     * Gets http servlet response from request attributes.
+     *
+     * @return the http servlet response from request attributes
+     */
+    public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+    }
+    
     /**
      * Gets the http servlet response from the context.
      *

@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.AbstractUsernamePasswordAuthenticator;
 import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -19,12 +21,12 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public class OAuthUserAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthUserAuthenticator extends AbstractUsernamePasswordAuthenticator {
     
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    public void validate(final UsernamePasswordCredentials credentials) {
+    public void validate(final UsernamePasswordCredentials credentials, final WebContext context) {
         final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(),
                 credentials.getPassword());
         try {

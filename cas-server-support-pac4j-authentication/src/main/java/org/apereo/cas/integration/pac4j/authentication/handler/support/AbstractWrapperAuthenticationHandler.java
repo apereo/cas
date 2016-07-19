@@ -5,12 +5,16 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.web.support.WebUtils;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
+
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -46,9 +50,14 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
         try {
             final Authenticator authenticator = getAuthenticator(credential);
             CommonHelper.assertNotNull("authenticator", authenticator);
-            authenticator.validate(credentials);
+            
+            final WebContext context = new J2EContext(
+                    WebUtils.getHttpServletRequestFromRequestAttributes(),
+                    WebUtils.getHttpServletResponseFromRequestAttributes());
+            
+            authenticator.validate(credentials, context);
 
-            final UserProfile profile = this.profileCreator.create(credentials);
+            final UserProfile profile = this.profileCreator.create(credentials, context);
             logger.debug("profile: {}", profile);
 
             return createResult(new ClientCredential(credentials), profile);

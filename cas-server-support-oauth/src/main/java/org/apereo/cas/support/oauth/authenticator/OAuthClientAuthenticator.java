@@ -5,7 +5,9 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.AbstractUsernamePasswordAuthenticator;
 import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.exception.CredentialsException;
 
@@ -15,14 +17,14 @@ import org.pac4j.core.exception.CredentialsException;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public class OAuthClientAuthenticator implements UsernamePasswordAuthenticator {
+public class OAuthClientAuthenticator extends AbstractUsernamePasswordAuthenticator {
     
     private OAuthValidator validator;
     
     private ServicesManager servicesManager;
 
     @Override
-    public void validate(final UsernamePasswordCredentials credentials) {
+    public void validate(final UsernamePasswordCredentials credentials, final WebContext context) {
         final String id = credentials.getUsername();
         final String secret = credentials.getPassword();
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, id);

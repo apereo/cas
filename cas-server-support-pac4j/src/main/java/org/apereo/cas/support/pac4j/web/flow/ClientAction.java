@@ -154,12 +154,16 @@ public class ClientAction extends AbstractAction {
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
-            final IndirectClient indirectClient = (IndirectClient) client;
-            // clean Client suffix for default names
-            final String name = client.getName().replace("Client", "");
-            final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
-            logger.debug("{} -> {}", name, redirectionUrl);
-            urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            try {
+                final IndirectClient indirectClient = (IndirectClient) client;
+                // clean Client suffix for default names
+                final String name = client.getName().replace("Client", "");
+                final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                logger.debug("{} -> {}", name, redirectionUrl);
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            } catch (final Exception e) {
+                logger.error("Cannot process client {}", client, e);
+            }
         }
         context.getFlowScope().put(PAC4J_URLS, urls);
     }
