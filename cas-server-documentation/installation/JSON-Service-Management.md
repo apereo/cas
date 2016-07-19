@@ -9,6 +9,16 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
+Support is enabled by adding the following module into the Maven overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-json-service-registry</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 A sample JSON file follows:
 
 ```json
