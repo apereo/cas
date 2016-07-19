@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.StormpathAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -72,7 +73,11 @@ public class StormpathAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getApiKey())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getSecretkey())) {
+            this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
+                    personDirectoryPrincipalResolver);
+        }
     }
 }

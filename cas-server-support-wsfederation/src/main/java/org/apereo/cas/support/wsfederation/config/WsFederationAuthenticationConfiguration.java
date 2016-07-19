@@ -24,8 +24,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.StringUtils;
+
 import org.springframework.webflow.execution.Action;
+
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -88,7 +90,7 @@ public class WsFederationAuthenticationConfiguration {
         config.setIdentityProviderUrl(casProperties.getAuthn().getWsfed().getIdentityProviderUrl());
         config.setTolerance(casProperties.getAuthn().getWsfed().getTolerance());
         config.setRelyingPartyIdentifier(casProperties.getAuthn().getWsfed().getRelyingPartyIdentifier());
-        StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
+        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
                 .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
         config.setAttributeMutator(this.attributeMutator);
         return config;
@@ -146,11 +148,15 @@ public class WsFederationAuthenticationConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        
-        if (!casProperties.getAuthn().getWsfed().isAttributeResolverEnabled()) {
-            authenticationHandlersResolvers.put(adfsAuthNHandler(), null);
-        } else {
-            authenticationHandlersResolvers.put(adfsAuthNHandler(), adfsPrincipalResolver());
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getWsfed().getIdentityProviderUrl()) 
+           && StringUtils.isNotBlank(casProperties.getAuthn().getWsfed().getIdentityProviderIdentifier())) {
+
+            if (!casProperties.getAuthn().getWsfed().isAttributeResolverEnabled()) {
+                authenticationHandlersResolvers.put(adfsAuthNHandler(), null);
+            } else {
+                authenticationHandlersResolvers.put(adfsAuthNHandler(), adfsPrincipalResolver());
+            }
         }
     }
 }

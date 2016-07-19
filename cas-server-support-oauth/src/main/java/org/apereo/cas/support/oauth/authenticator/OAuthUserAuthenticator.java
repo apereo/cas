@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.profile.OAuthUserProfile;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.AbstractUsernamePasswordAuthenticator;
-import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.exception.CredentialsException;
 
 import java.util.Map;
