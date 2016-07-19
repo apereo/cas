@@ -22,7 +22,6 @@ import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver;
 import org.jasig.cas.web.support.WebUtils;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
