@@ -9,7 +9,6 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class ManagementWebappProperties {
     private String adminRoles = "ROLE_ADMIN";
     private String serverName = "https://localhost:8443";

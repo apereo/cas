@@ -24,7 +24,8 @@ Providers: CSV list
                        th:title="#{services.form.tooltip.multiauth.providers}"></i>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="multiAuthProviders" ng-model="serviceFormCtrl.serviceData.multiauth.providers"/>
+                    <input type="text" class="form-control" id="multiAuthProviders" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.providers"/>
                 </div>
             </div>
 
@@ -35,17 +36,9 @@ Providers: CSV list
                     <i class="fa fa-lg fa-question-circle form-tooltip-icon"
                        data-toggle="tooltip"
                        data-placement="top"
-                       th:title="#{services.form.tooltip.multiauth.failuremode}"></i>
+                       th:title="#{services.form.tooltip.multiAuth.failureMode}"></i>
                 </label>
                 <div class="col-sm-8">
-<!--
-                    <select class="form-control" id="multiAuthFailureMode" ng-model="serviceFormCtrl.serviceData.multiAuth.failureMode">
-                        <option value="open" ng-selected="true">OPEN</option>
-                        <option value="closed">CLOSED</option>
-                        <option value="phantom">PHANTOM</option>
-                        <option value="none">NONE</option>
-                    </select>
--->
 
                     <select class="form-control" id="multiAuthFailureMode" ng-model="serviceFormCtrl.serviceData.multiAuth.failureMode">
                         <option
@@ -67,7 +60,8 @@ Providers: CSV list
                        th:title="#{services.form.tooltip.multiauth.principalattribute.nametrigger}"></i>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="multiAuthAttrNameTrigger" ng-model="serviceFormCtrl.serviceData.multiauth.principalAttr.nameTrigger"/>
+                    <input type="text" class="form-control" id="multiAuthAttrNameTrigger" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.principalAttr.nameTrigger"/>
                 </div>
             </div>
 
@@ -81,7 +75,8 @@ Providers: CSV list
                        th:title="#{services.form.tooltip.multiauth.principalattribute.valuetomatch}"></i>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="multiAuthAttrValueMatch" ng-model="serviceFormCtrl.serviceData.multiauth.principalAttr.valueMatch"/>
+                    <input type="text" class="form-control" id="multiAuthAttrValueMatch" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.principalAttr.valueMatch"/>
                 </div>
             </div>
 
