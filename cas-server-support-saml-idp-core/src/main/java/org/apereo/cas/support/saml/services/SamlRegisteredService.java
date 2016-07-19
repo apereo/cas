@@ -23,7 +23,15 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     private String metadataLocation;
+    
+    /**
+     * Defines a filter that requires the presence of a validUntil
+     * attribute on the root element of the metadata document.
+     * A maximum validity interval of less than 1 means that
+     * no restriction is placed on the metadata's validUntil attribute.
+     */
     private long metadataMaxValidity;
+    
     private String requiredAuthenticationContextClass;
     private String metadataSignatureLocation;
     private boolean signAssertions;
@@ -98,13 +106,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
         super.copyFrom(source);
         try {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
-            samlRegisteredService.setMetadataLocation(this.metadataLocation);
-            samlRegisteredService.setSignAssertions(this.signAssertions);
-            samlRegisteredService.setSignResponses(this.signResponses);
-            samlRegisteredService.setRequiredAuthenticationContextClass(this.requiredAuthenticationContextClass);
-            samlRegisteredService.setMetadataMaxValidity(this.metadataMaxValidity);
-            samlRegisteredService.setMetadataSignatureLocation(this.metadataSignatureLocation);
-            samlRegisteredService.setEncryptAssertions(this.encryptAssertions);
+            setMetadataLocation(samlRegisteredService.getMetadataLocation());
+            setSignAssertions(samlRegisteredService.isSignAssertions());
+            setSignResponses(samlRegisteredService.isSignResponses());
+            setRequiredAuthenticationContextClass(samlRegisteredService.getRequiredAuthenticationContextClass());
+            setMetadataMaxValidity(samlRegisteredService.getMetadataMaxValidity());
+            setMetadataSignatureLocation(samlRegisteredService.getMetadataSignatureLocation());
+            setEncryptAssertions(samlRegisteredService.isEncryptAssertions());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

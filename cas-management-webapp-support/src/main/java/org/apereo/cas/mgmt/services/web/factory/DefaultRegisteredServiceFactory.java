@@ -7,6 +7,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 
@@ -22,6 +23,8 @@ import java.util.List;
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
 
+    private MultifactorAuthenticationMapper multifactorAuthenticationMapper = new DefaultMultifactorAuthenticationMapper();
+    
     private AccessStrategyMapper accessStrategyMapper = new DefaultAccessStrategyMapper();
 
     private AttributeReleasePolicyMapper attributeReleasePolicyMapper =
@@ -37,6 +40,9 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
 
     private List<? extends FormDataPopulator> formDataPopulators = new ArrayList<>();
 
+    public void setMultifactorAuthenticationMapper(final MultifactorAuthenticationMapper multifactorAuthenticationMapper) {
+        this.multifactorAuthenticationMapper = multifactorAuthenticationMapper;
+    }
 
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;
@@ -86,7 +92,8 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
         this.usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
         this.proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
         this.attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
-
+        this.multifactorAuthenticationMapper.mapMultifactorPolicy(svc.getMultifactorPolicy(), bean);
+        
         return bean;
     }
 
@@ -130,6 +137,11 @@ public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory
                     .toAttributeReleasePolicy(data);
             if (attrPolicy != null) {
                 absSvc.setAttributeReleasePolicy(attrPolicy);
+            }
+            
+            final RegisteredServiceMultifactorPolicy mfaPolicy = this.multifactorAuthenticationMapper.toMultifactorPolicy(data);
+            if (mfaPolicy != null) {
+                absSvc.setMultifactorPolicy(mfaPolicy);
             }
         }
 
