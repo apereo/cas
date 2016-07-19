@@ -207,7 +207,7 @@ public class Beans {
 
             case LOWERCASE:
                 final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
-                t1.setToUpperCase(true);
+                t1.setToUpperCase(false);
                 return t1;
         }
         return res;

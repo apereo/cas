@@ -54,7 +54,7 @@ policy is determined through pre-configured Ldap attributes with default values 
 about password management. If you are looking for that sort of capability integrating with CAS, you might be interested in:
 
 <ul>
-    <li><a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></li>‎
+    <li><a href="https://github.com/pwm-project/pwm">PWM Project</a></li>‎
 </ul></p></div>
 
 ## Troubleshooting
