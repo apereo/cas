@@ -27,10 +27,9 @@ import java.util.Collection;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- *
  */
 @Component("auditablePrincipalResolver")
-public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
+public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
