@@ -19,8 +19,12 @@
 package org.jasig.cas.services.audit;
 
 import org.aspectj.lang.JoinPoint;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver;
 import org.jasig.cas.web.support.WebUtils;
-import org.jasig.inspektr.common.spi.PrincipalResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Principal resolver for inspektr based on pac4j.
@@ -28,7 +32,19 @@ import org.jasig.inspektr.common.spi.PrincipalResolver;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-public class Pac4jAuditablePrincipalResolver  implements PrincipalResolver {
+@Component("pac4jAuditablePrincipalResolver")
+public class Pac4jAuditablePrincipalResolver extends TicketOrCredentialPrincipalResolver {
+    
+    /**
+     * Instantiates a new Pac4j auditable principal resolver.
+     *
+     * @param centralAuthenticationService the central authentication service
+     */
+    @Autowired
+    public Pac4jAuditablePrincipalResolver(@Qualifier("centralAuthenticationService") 
+                                           final CentralAuthenticationService centralAuthenticationService) {
+        super(centralAuthenticationService);
+    }
 
     @Override
     public String resolveFrom(final JoinPoint auditableTarget, final Object retval) {

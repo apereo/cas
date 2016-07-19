@@ -30,6 +30,15 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
+
+    idea {
+        module {
+            downloadSources = false
+            downloadJavadoc = false
+            jdkName = "1.7"
+        }
+    }
+
 }
 
 subprojects {
