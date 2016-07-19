@@ -35,7 +35,6 @@ war {
 dependencies {
     compile libraries.springboot
     runtime project(":cas-management-webapp-support")
-    runtime project(":cas-server-support-json-service-registry")
     providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
     runtime libraries.groovy
