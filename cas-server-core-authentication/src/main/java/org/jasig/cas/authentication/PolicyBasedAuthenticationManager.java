@@ -275,7 +275,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                  final PrincipalResolver resolver, final AuthenticationHandler handler)
             throws GeneralSecurityException, PreventedException {
 
-        final Principal principal;
+        Principal principal;
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         logger.info("{} successfully authenticated {}", handler.getName(), credential);
@@ -287,12 +287,21 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                     principal);
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential);
+            
+            if (principal == null) {
+                logger.warn("Principal resolution handled by {} produced a null principal. "
+                           + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                           + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
+                principal = result.getPrincipal();
+            }
         }
         // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
         // require principal to be non-null
         if (principal != null) {
             builder.setPrincipal(principal);
         }
+        
+        logger.debug("Final principal resolved for this authentication event is {}", principal);
     }
 
 
