@@ -8,11 +8,13 @@ title: CAS - Architecture
 ![CAS Architecture Diagram](../images/cas_architecture.png "CAS Architecture Diagram")
 
 ## System Components
+
 The CAS server and clients comprise the two physical components of the CAS system architecture that communicate
 by means of various protocols.
 
 
 ### CAS Server
+
 The CAS server is Java servlet built on the Spring Framework whose primary responsibility is to authenticate users
 and grant access to CAS-enabled services, commonly called CAS clients, by issuing and validating tickets.
 An SSO session is created when the server issues a ticket-granting ticket (TGT) to the user upon successful login.
@@ -22,6 +24,7 @@ These interactions are described in great detail in the CAS Protocol document.
 
 
 ### CAS Clients
+
 The term "CAS client" has two distinct meanings in its common use. A CAS client is any CAS-enabled application that
 can communicate with the server via a supported protocol. A CAS client is also a software package that can be
 integrated with various software platforms and applications in order to communicate with the CAS server via some
@@ -51,19 +54,22 @@ When the term "CAS client" appears in this manual without further qualification,
 components such as the Java CAS Client rather than to the application relying upon (a client of) the CAS server.
 
 
-## Protocols
+## Supported Protocols
+
 Clients communicate with the server by any of several supported protocols.  All the supported protocols are
 conceptually similar, yet some have features or characteristics that make them desirable for particular applications or use cases. For example, the CAS protocol supports delegated (proxy) authentication, and the SAML protocol supports attribute release and single sign-out.
 
 Supported protocols:
 
 * [CAS (versions 1, 2, and 3)](../protocol/CAS-Protocol.html)
-* [SAML 1.1](../protocol/SAML-Protocol.html)
+* [SAML 1.1 and 2](../protocol/SAML-Protocol.html)
+* [OpenID Connect](../protocol/OIDC-Protocol.html)
 * [OpenID](../protocol/OpenID-Protocol.html)
-* [OAuth (1.0, 2.0)](../protocol/OAuth-Protocol.html)
+* [OAuth 2.0](../protocol/OAuth-Protocol.html)
 
 
 ## Software Components
+
 It is helpful to describe the CAS server in terms of three layered subsystems:
 
 * Web (Spring MVC/Spring Webflow)
@@ -75,6 +81,7 @@ Almost all deployment considerations and component configuration involve those t
 The authentication system is typically only processing requests at the start of the SSO session, though there are other cases when it can be invoked (e.g. forced authentication).
 
 ### Spring Framework
+
 CAS uses the many aspects of the Spring Framework; most notably,
 [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) and
 [Spring Webflow](http://www.springsource.org/spring-web-flow). Spring provides a complete and extensible framework for
