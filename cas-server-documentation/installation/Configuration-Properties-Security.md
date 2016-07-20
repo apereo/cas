@@ -5,6 +5,12 @@ title: CAS - Securing Configuration Properties
 
 # Configuration Encryption
 
+The CAS configuration server exposes the `/encrypt` and `/decrypt` endpoints to allow for encrypting and decrypting values.
+You can send a `POST` message to these endpoints to secure keys. CAS will auto-decrypt at the appropriate moment.
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
+Securing CAS settings and decrypting them is entirely handled by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project.
+
 <div class="alert alert-warning"><strong>JCE Requirements</strong><p>to use the encryption and decryption 
 features you need the full-strength "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files" 
 installed in your JVM version (if it’s not there by default).</p></div>
@@ -45,12 +51,3 @@ cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 ```
 
 You can safely push this plain text to a shared git repository and the secret password is protected.
-
-The CAS configuration server exposes the following endpoints to allow for encrypting and decrypting values.
-You can send a `POST` message to these endpoints to secure keys. CAS will auto-decrypt at the appropriate moment.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-Securing CAS settings and decrypting them is entirely handled by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) 
-project.
-
-
