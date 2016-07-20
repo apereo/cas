@@ -30,7 +30,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="ClassFanOutComplexity">
-            <property name="max" value="50"/>
+            <property name="max" value="60"/>
             <property name="severity" value="error"/>
         </module>
         <module name="CommentsIndentation">
