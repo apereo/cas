@@ -53,7 +53,7 @@ from manually massaging the application context via XML configuration files.
 The idea is twofold:
 
 - Declare your intention for a given CAS feature by declaring the appropriate module in your overlay.
-- Optionally, configure the appropiate properties and settings.
+- Optionally, configure the appropriate properties and settings.
 
 CAS will automatically take care of injecting appropriate beans and other components into the runtime application context,
 Depending on the presence of a module and/or its settings configured by the deployer.
@@ -117,6 +117,10 @@ an adopter is encouraged to only keep and maintain properties needed for their p
 unnecessary to grab a copy of all CAS settings and move them to an external location. Settings that are
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
+
+## Securing Settings
+
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ## Reloading Changes
 
