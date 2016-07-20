@@ -84,6 +84,15 @@ public final class WsFederationConfiguration implements Serializable {
 
     private List<Credential> signingWallet;
 
+    @Value("#{'${cas.wsfed.idp.enc.privateKey:classpath:private.key}'.split(',')}")
+    private Resource encryptionPrivateKey;
+
+    @Value("#{'${cas.wsfed.idp.enc.cert:classpath:certificate.crt}'.split(',')}")
+    private Resource encryptionCertificate;
+
+    @Value("${cas.wsfed.idp.enc.privateKeyPassword:NONE}")
+    private String encryptionPrivateKeyPassword;
+    
     @PostConstruct
     private void initCertificates() {
         createSigningWallet(this.signingCertificateFiles);
@@ -239,6 +248,30 @@ public final class WsFederationConfiguration implements Serializable {
 
     public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
         this.attributesType = attributesType;
+    }
+
+    public Resource getEncryptionPrivateKey() {
+        return encryptionPrivateKey;
+    }
+
+    public void setEncryptionPrivateKey(final Resource encryptionPrivateKey) {
+        this.encryptionPrivateKey = encryptionPrivateKey;
+    }
+
+    public Resource getEncryptionCertificate() {
+        return encryptionCertificate;
+    }
+
+    public void setEncryptionCertificate(final Resource encryptionCertificate) {
+        this.encryptionCertificate = encryptionCertificate;
+    }
+
+    public String getEncryptionPrivateKeyPassword() {
+        return encryptionPrivateKeyPassword;
+    }
+
+    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
+        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
     }
 
     /**
