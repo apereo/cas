@@ -59,8 +59,30 @@ cas.wsfed.idp.signingcerts=classpath:adfs-signing.crt
 
 # cas.wsfed.idp.attribute.resolver.enabled=true
 # cas.wsfed.idp.attribute.resolver.type=WSFED
+
+# Private/Public keypair used to decrypt assertions, if any.
+# cas.wsfed.idp.enc.privateKey=classpath:private.key
+# cas.wsfed.idp.enc.cert=classpath:certificate.crt
+# cas.wsfed.idp.enc.privateKeyPassword=NONE
 ```
 
+## Encrypted Assertions
+
+CAS is able to automatically decrypt SAML assertions that are issued by ADFS. To do this, 
+you will first need to generate a private/public keypair:
+
+```bash
+openssl genrsa -out private.key 1024
+openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
+openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl req -new -x509 -key private.key -out x509.pem -days 365
+
+# convert the X509 certificate to DER format
+openssl x509 -outform der -in x509.pem -out certificate.crt
+```
+
+Configure CAS to reference the keypair, and configure the relying party trust settings
+in ADFS use the `certificate.crt` file for encryption.
 
 ## Modifying ADFS Claims
 
