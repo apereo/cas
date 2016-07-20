@@ -32,7 +32,7 @@ If you wish to manually encrypt and decrypt settings to ensure the functionality
 ```bash
 export ENCRYPTED=`curl https://sso.example.org/cas/configserver/encrypt -d sensitiveValue | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'`
 echo $ENCRYPTED
-curl https://sso.exampple.org/cas/configserver/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
+curl https//sso.exampple.org/cas/configserver/decrypt -d $ENCRYPTED | python -c 'import sys,urllib;print urllib.quote(sys.stdin.read().strip())'
 ```
 
 Properties that are prefixed with `{cipher}` are automatically decrypted by the CAS configuration server at runtime, such as:
