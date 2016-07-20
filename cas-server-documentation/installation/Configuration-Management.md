@@ -61,7 +61,7 @@ Depending on the presence of a module and/or its settings configured by the depl
 <div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of 
 the auto-configuration strategy is ensure deployers aren't swimming in a sea of XML files
 configuring beans and such. CAS should take care of it all. If you find an instance where
-this claim does not hold, consider that a "bug" and file a feature request.</a></p></div>
+this claim does not hold, consider that a "bug" and file a feature request.</p></div>
 
 ## Embedded
 
@@ -140,6 +140,10 @@ for reloads. CAS should be smart enough to reload the appropriate configuration,
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings is completely and utterly reloadable. </p></div>
 
+Any changes you make to the externally-defined `application.properties` file must be refreshed manually on the UI. 
+If you are using the CAS admin screens to update and edit properties, the configuration state of the CAS server
+is refreshed seamlessly and automatically without your resorting to manual and forceful refresh. 
+
 ## Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
@@ -166,3 +170,4 @@ The following properties need to be adjusted, in order to turn on the bus config
 # spring.activemq.password=
 ```
 
+If CAS nodes are not sharing a central location for configuration properties such that each node contains a copy of the settings, any changes you make to one node must be replicated and synced across all nodes so they are persisted on disk. The broadcast mechanism noted above only applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps) where you make a change in one place and it's broadcasted to all nodes. This model removes the need for synchornizing changes across disks and CAS nodes.  
