@@ -24,10 +24,10 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
     public void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final RegisteredServiceEditBean.ServiceData bean) {
         final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
         if (policy == null || policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE);
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy regex = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX);
             cBean.setValue(regex.getPattern().toString());
         }
     }
@@ -37,10 +37,10 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
         final RegisteredServiceProxyPolicyBean proxyPolicyBean = bean.getProxyPolicy();
 
         if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE);
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX);
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
     }
@@ -49,15 +49,15 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
     public RegisteredServiceProxyPolicy toProxyPolicy(final RegisteredServiceEditBean.ServiceData data) {
         final RegisteredServiceProxyPolicyBean proxyPolicy = data.getProxyPolicy();
 
-        final String type = proxyPolicy.getType();
-        if (StringUtils.equalsIgnoreCase(type, RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
+        final RegisteredServiceProxyPolicyBean.Types type = proxyPolicy.getType();
+        if (type == RegisteredServiceProxyPolicyBean.Types.REGEX) {
             final String value = proxyPolicy.getValue();
             if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                 return new RegexMatchingRegisteredServiceProxyPolicy(value);
             } else {
                 throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
             }
-        } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
+        } else if (type == RegisteredServiceProxyPolicyBean.Types.REFUSE) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
 
