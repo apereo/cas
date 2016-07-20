@@ -56,7 +56,9 @@ public final class WsFederationCredentialsToPrincipalResolver extends PersonDire
             return principalId;
         }
 
-        logger.warn("Credential attributes do not include an attribute for {}", idAttribute);
+        logger.warn("Credential attributes do not include an attribute for {}. "
+                + "This will prohibit CAS to construct a meaningful authenticated principal. "
+                + "Examine the released claims and ensure {} is allowed", idAttribute, idAttribute);
         return null;
     }
 

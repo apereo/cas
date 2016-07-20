@@ -106,7 +106,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         logger.debug("Creating SimplePrincipal for [{}]", principalId);
 
         final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
-        logger.debug("Principal id [{}] could not be found", principalId);
 
         if (attributes == null || attributes.isEmpty()) {
             logger.debug("Principal id [{}] did not specify any attributes", principalId);
