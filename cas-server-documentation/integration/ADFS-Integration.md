@@ -82,7 +82,7 @@ openssl x509 -outform der -in x509.pem -out certificate.crt
 ```
 
 Configure CAS to reference the keypair, and configure the relying party trust settings
-in ADFS use the `certificate.crt` file for encryption.
+in ADFS to use the `certificate.crt` file for encryption.
 
 ## Modifying ADFS Claims
 
