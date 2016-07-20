@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
-import org.apereo.cas.authentication.PooledCompareCustomAttributeAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
@@ -31,9 +31,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+
+import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -111,7 +112,7 @@ public class LdapAuthenticationConfiguration {
                 if (l.isUsePasswordPolicy()) {
                     authenticator.setAuthenticationResponseHandlers(
                             new ActiveDirectoryAuthenticationResponseHandler(
-                                    TimeUnit.DAYS.convert(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays(), TimeUnit.MILLISECONDS)),
+                                    Period.ofDays(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays())),
                             new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler());
 
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
@@ -145,7 +146,11 @@ public class LdapAuthenticationConfiguration {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
+            return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        } else {
+            return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        }
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
@@ -173,9 +178,9 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledCompareCustomAttributeAuthenticationHandler handler = new PooledCompareCustomAttributeAuthenticationHandler(
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
                 Beans.newPooledConnectionFactory(l));
-        handler.setPasswordAttributeName(l.getPrincipalAttributePassword());
+        handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }
 }

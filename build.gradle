@@ -221,6 +221,17 @@ def projectMavenDeployer = {
                     enabled true
                 }
             }
+
+            repository {
+                id "ldaptive"
+                url "https://raw.github.com/vt-middleware/maven-repo/master"
+                releases {
+                    enabled true
+                }
+                snapshots {
+                    enabled true
+                }
+            }
         }
     }
 }
@@ -241,6 +252,7 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
     }
 
     dependencies {
