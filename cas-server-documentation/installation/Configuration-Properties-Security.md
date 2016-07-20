@@ -3,7 +3,7 @@ layout: default
 title: CAS - Securing Configuration Properties
 ---
 
-# Configuration Encryption
+# Configuration Security
 
 The CAS configuration server exposes the `/encrypt` and `/decrypt` endpoints to allow for encrypting and decrypting values.
 You can send a `POST` message to these endpoints to secure keys. CAS will auto-decrypt at the appropriate moment.
