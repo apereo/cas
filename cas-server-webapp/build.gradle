@@ -33,7 +33,7 @@ bootRun {
     doFirst {
         classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
     }
-    
+
     addResources = true
     jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     systemProperties = System.properties
@@ -68,7 +68,6 @@ dependencies {
     compile project(":cas-server-support-themes")
     compile project(":cas-server-webapp-config")
     compile project(":cas-server-support-validation")
-    compile project(":cas-server-support-json-service-registry")
     
     providedRuntime libraries.springboottomcat
     runtime libraries.pac4j

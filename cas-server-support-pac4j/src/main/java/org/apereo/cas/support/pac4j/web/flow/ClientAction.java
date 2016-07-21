@@ -1,28 +1,24 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.client.ClientType;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.exception.RequiresHttpAction;
-import org.pac4j.core.exception.TechnicalException;
+import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -57,23 +53,13 @@ public class ClientAction extends AbstractAction {
      */
     public static final String PAC4J_URLS = "pac4jUrls";
 
-    /**
-     * Supported protocols.
-     */
-    private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
-            ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
-    
     private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
-    
-    private Clients clients;
-    
-    private AuthenticationSystemSupport authenticationSystemSupport;
-    
-    private CentralAuthenticationService centralAuthenticationService;
 
-    static {
-        ProfileHelper.setKeepRawData(true);
-    }
+    private Clients clients;
+
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    private CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Build the ClientAction.
@@ -99,20 +85,14 @@ public class ClientAction extends AbstractAction {
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
                     .findClient(clientName);
-            logger.debug("client: {}", client);
-
-            // Only supported protocols
-            final ClientType clientType = client.getClientType();
-            if (!SUPPORTED_PROTOCOLS.contains(clientType)) {
-                throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
-            }
+            logger.debug("Client: {}", client);
 
             // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
                 logger.debug("credentials: {}", credentials);
-            } catch (final RequiresHttpAction e) {
+            } catch (final Exception e) {
                 logger.debug("requires http action", e);
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
@@ -153,8 +133,9 @@ public class ClientAction extends AbstractAction {
      * Prepare the data for the login page.
      *
      * @param context The current webflow context
+     * @throws HttpAction the http action
      */
-    protected void prepareForLoginPage(final RequestContext context) {
+    protected void prepareForLoginPage(final RequestContext context) throws HttpAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
         final HttpSession session = request.getSession();
@@ -173,12 +154,16 @@ public class ClientAction extends AbstractAction {
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
-            final IndirectClient indirectClient = (IndirectClient) client;
-            // clean Client suffix for default names
-            final String name = client.getName().replace("Client", "");
-            final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
-            logger.debug("{} -> {}", name, redirectionUrl);
-            urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            try {
+                final IndirectClient indirectClient = (IndirectClient) client;
+                // clean Client suffix for default names
+                final String name = client.getName().replace("Client", "");
+                final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                logger.debug("{} -> {}", name, redirectionUrl);
+                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            } catch (final Exception e) {
+                logger.error("Cannot process client {}", client, e);
+            }
         }
         context.getFlowScope().put(PAC4J_URLS, urls);
     }
