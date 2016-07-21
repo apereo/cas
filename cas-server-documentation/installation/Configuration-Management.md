@@ -42,6 +42,19 @@ All CAS settings can be overridden via the above outlined strategies.
 the CAS configuration, you should configure access 
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Configuration Server
+
+CAS provides a built-in configuration server that is responsible for bootstrapping the configuration environment and loading of externalized settings in a distributed system. You may have a central place to manage external properties for CAS nodes across all environments. As your CAS deployment moves through the deployment pipeline from dev to test and into production you can manage the configuration between those environments and be certain that applications have everything they need to run when they migrate. The default implementation of the server storage backend uses git so it easily supports labelled versions of configuration environments, as well as being accessible to a wide range of tooling for managing the content. Note that CAS also is a client of its own configuration, because not only it has to manage and control CAS settings, it also needs to contact the configuration server to retrieve and use those settings. 
+
+The configuration server is controlled and defined by the `bootstrap.properties` file.
+
+The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
+
+| Parameter                         | Description
+|-----------------------------------+-----------------------------------------+
+| `/encrypt`           | Accepts a `POST` to encrypt CAS configuration settings.
+| `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
+
 ## Auto Configuration Strategy
 
 To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html).
