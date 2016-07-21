@@ -77,7 +77,7 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
-    
+
     @Bean
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
@@ -92,6 +92,14 @@ public class WsFederationAuthenticationConfiguration {
         config.setRelyingPartyIdentifier(casProperties.getAuthn().getWsfed().getRelyingPartyIdentifier());
         org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
                 .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getEncryptionPrivateKey())
+                .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getEncryptionCertificate())
+                .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
+
+        config.setEncryptionPrivateKeyPassword(casProperties.getAuthn().getWsfed().getEncryptionPrivateKeyPassword());
         config.setAttributeMutator(this.attributeMutator);
         return config;
     }
@@ -142,7 +150,7 @@ public class WsFederationAuthenticationConfiguration {
         a.setConfiguration(wsFedConfig());
         a.setWsFederationHelper(wsFederationHelper());
         a.setServicesManager(this.servicesManager);
-        
+
         return a;
     }
 

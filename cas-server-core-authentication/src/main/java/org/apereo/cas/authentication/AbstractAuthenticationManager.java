@@ -29,16 +29,22 @@ import java.util.Map;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     private static final String MESSAGE = "At least one authentication handler is required";
-    
-    /** Log instance for logging events, errors, warnings, etc. */
+
+    /**
+     * Log instance for logging events, errors, warnings, etc.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** An array of AuthenticationAttributesPopulators. */
-    
+    /**
+     * An array of AuthenticationAttributesPopulators.
+     */
+
     protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<>();
 
-    /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
+    /**
+     * Map of authentication handlers to resolvers to be used when handler does not resolve a principal.
+     */
     protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
     /**
@@ -50,7 +56,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Instantiates a new Policy based authentication manager.
      */
-    protected AbstractAuthenticationManager() {}
+    protected AbstractAuthenticationManager() {
+    }
 
     /**
      * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
@@ -59,7 +66,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      *
      * @param handlers One or more authentication handlers.
      */
-    protected AbstractAuthenticationManager(final AuthenticationHandler ... handlers) {
+    protected AbstractAuthenticationManager(final AuthenticationHandler... handlers) {
         this(Lists.newArrayList(handlers));
     }
 
@@ -95,10 +102,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Populate authentication metadata attributes.
      *
-     * @param builder the builder
+     * @param builder     the builder
      * @param credentials the credentials
      */
-    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, 
+    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
                                                             final Collection<Credential> credentials) {
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
@@ -108,10 +115,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Add authentication method attribute.
      *
-     * @param builder the builder
+     * @param builder        the builder
      * @param authentication the authentication
      */
-    protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder, 
+    protected void addAuthenticationMethodAttribute(final AuthenticationBuilder builder,
                                                     final Authentication authentication) {
         for (final HandlerResult result : authentication.getSuccesses().values()) {
             builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
@@ -122,8 +129,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * Resolve principal.
      *
      * @param handlerName the handler name
-     * @param resolver the resolver
-     * @param credential the credential
+     * @param resolver    the resolver
+     * @param credential  the credential
      * @return the principal
      */
     protected Principal resolvePrincipal(
@@ -148,12 +155,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
     @Override
     @Audit(
-            action="AUTHENTICATION",
-            actionResolverName="AUTHENTICATION_RESOLVER",
-            resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
-    @Timed(name="AUTHENTICATE_TIMER")
-    @Metered(name="AUTHENTICATE_METER")
-    @Counted(name="AUTHENTICATE_COUNT", monotonic=true)
+            action = "AUTHENTICATION",
+            actionResolverName = "AUTHENTICATION_RESOLVER",
+            resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
+    @Timed(name = "AUTHENTICATE_TIMER")
+    @Metered(name = "AUTHENTICATE_METER")
+    @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
@@ -175,18 +182,18 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * Authenticate and resolve principal.
      *
-     * @param builder the builder
+     * @param builder    the builder
      * @param credential the credential
-     * @param resolver the resolver
-     * @param handler the handler
+     * @param resolver   the resolver
+     * @param handler    the handler
      * @throws GeneralSecurityException the general security exception
-     * @throws PreventedException the prevented exception
+     * @throws PreventedException       the prevented exception
      */
     protected void authenticateAndResolvePrincipal(final AuthenticationBuilder builder, final Credential credential,
-                                                 final PrincipalResolver resolver, final AuthenticationHandler handler)
+                                                   final PrincipalResolver resolver, final AuthenticationHandler handler)
             throws GeneralSecurityException, PreventedException {
 
-        final Principal principal;
+        Principal principal;
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         logger.info("{} successfully authenticated {}", handler.getName(), credential);
@@ -198,10 +205,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                     principal);
         } else {
             principal = resolvePrincipal(handler.getName(), resolver, credential);
+            if (principal == null) {
+                logger.warn("Principal resolution handled by {} produced a null principal. "
+                        + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                        + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
+                principal = result.getPrincipal();
+            }
         }
         if (principal != null) {
             builder.setPrincipal(principal);
         }
+        logger.debug("Final principal resolved for this authentication event is {}", principal);
     }
 
     /**

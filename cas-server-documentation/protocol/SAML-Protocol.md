@@ -126,7 +126,7 @@ Content-Type: text/xml
 ## Configuration
 
 SAML configuration in CAS is contained within the `application.properties` file.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 You may also need to declare the following Maven repository in 
 your CAS Overlay to be able to resolve dependencies:

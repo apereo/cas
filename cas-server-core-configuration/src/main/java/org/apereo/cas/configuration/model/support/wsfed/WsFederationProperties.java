@@ -22,6 +22,10 @@ public class WsFederationProperties {
     private boolean attributeResolverEnabled = true;
     private boolean autoRedirect = true;
 
+    private String encryptionPrivateKey = "classpath:private.key";
+    private String encryptionCertificate = "classpath:certificate.crt";
+    private String encryptionPrivateKeyPassword = "NONE";
+
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
 
@@ -32,7 +36,7 @@ public class WsFederationProperties {
     public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
         this.principal = principal;
     }
-    
+
     public boolean isAttributeResolverEnabled() {
         return attributeResolverEnabled;
     }
@@ -103,5 +107,29 @@ public class WsFederationProperties {
 
     public void setAutoRedirect(final boolean autoRedirect) {
         this.autoRedirect = autoRedirect;
+    }
+
+    public String getEncryptionPrivateKey() {
+        return encryptionPrivateKey;
+    }
+
+    public void setEncryptionPrivateKey(final String encryptionPrivateKey) {
+        this.encryptionPrivateKey = encryptionPrivateKey;
+    }
+
+    public String getEncryptionCertificate() {
+        return encryptionCertificate;
+    }
+
+    public void setEncryptionCertificate(final String encryptionCertificate) {
+        this.encryptionCertificate = encryptionCertificate;
+    }
+
+    public String getEncryptionPrivateKeyPassword() {
+        return encryptionPrivateKeyPassword;
+    }
+
+    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
+        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
     }
 }

@@ -26,6 +26,22 @@ simply declaring and configuring properties listed below is sufficient. You shou
 explicitly massage a CAS XML configuration file to design an authentication handler, 
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
+## Encryption/Decryption
+
+The following settings are to be loaded by the CAS configuration server, which bootstraps
+the entire CAS running context. They are to be put inside the `bootstrap.properties`.
+
+```properties
+# spring.cloud.config.server.encrypt.enabled=true
+# encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
+# encrypt.keyStore.password=keystorePassword
+# encrypt.keyStore.alias =DaKey
+# encrypt.keyStore.secret=changeme
+```
+
+To learn more about how sensitive CAS settings can be 
+secured, [please review this guide](Configuration-Properties-Security.html).
+
 ## Embedded Tomcat
 
 The following properties are related to the embedded Tomcat container that ships with CAS. 
@@ -841,6 +857,11 @@ Allow CAS to become am OpenID authentication provider.
 
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
+
+# Private/Public keypair used to decrypt assertions, if any.
+# cas.authn.wsfed.encryptionPrivateKey=classpath:private.key
+# cas.authn.wsfed.encryptionCertificate=classpath:certificate.crt
+# cas.authn.wsfed.encryptionPrivateKeyPassword=NONE
 ```
 
 
