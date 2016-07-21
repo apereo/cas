@@ -252,7 +252,6 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repo.spring.io/plugins-release" }
-        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
     }
 
     dependencies {
@@ -313,6 +312,7 @@ subprojects {
         mavenCentral()
         jcenter()
 
+        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
