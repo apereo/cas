@@ -12,7 +12,7 @@
     *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
-    *   [Securing Configuration](/$version/installation/Configuration-Properties.html)
+    *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
