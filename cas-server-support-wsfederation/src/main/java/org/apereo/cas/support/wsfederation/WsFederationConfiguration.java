@@ -46,6 +46,12 @@ public class WsFederationConfiguration implements Serializable {
          */
         BOTH
     }
+
+    private Resource encryptionPrivateKey;
+    
+    private Resource encryptionCertificate;
+    
+    private String encryptionPrivateKeyPassword;
     
     private String identityAttribute;
     
@@ -220,6 +226,30 @@ public class WsFederationConfiguration implements Serializable {
     
     public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
         this.signingCertificateResources = signingCertificateResources;
+    }
+
+    public Resource getEncryptionPrivateKey() {
+        return encryptionPrivateKey;
+    }
+
+    public void setEncryptionPrivateKey(final Resource encryptionPrivateKey) {
+        this.encryptionPrivateKey = encryptionPrivateKey;
+    }
+
+    public Resource getEncryptionCertificate() {
+        return encryptionCertificate;
+    }
+
+    public void setEncryptionCertificate(final Resource encryptionCertificate) {
+        this.encryptionCertificate = encryptionCertificate;
+    }
+
+    public String getEncryptionPrivateKeyPassword() {
+        return encryptionPrivateKeyPassword;
+    }
+
+    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
+        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
     }
 
     /**
