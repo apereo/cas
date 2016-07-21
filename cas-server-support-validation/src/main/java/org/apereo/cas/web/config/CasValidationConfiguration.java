@@ -152,6 +152,7 @@ public class CasValidationConfiguration {
         s.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
         s.setCasAttributeEncoder(casAttributeEncoder);
         s.setView(cas3SuccessView);
+        s.setServicesManager(servicesManager);
         return s;
     }
 
