@@ -5,9 +5,10 @@ title: CAS - Digest Authentication
 
 # Digest Authentication
 
-Digest authentication is one of the agreed-upon methods CAS can use to negotiate credentials, such as username or password, with a user's 
-web browser. This can be used to confirm the identity of a user before sending sensitive information, such as online banking transaction history. 
-It applies a hash function to the username and password before sending them over the network. Technically, digest authentication is an application of MD5 cryptographic 
+Digest authentication is one of the agreed-upon methods CAS can use to negotiate credentials with a user's 
+web browser. This can be used to confirm the identity of a user before sending sensitive information. 
+It applies a hash function to the username and password before sending them over the network. 
+Technically, digest authentication is an application of MD5 cryptographic 
 hashing with usage of nonce values to prevent replay attacks. It uses the HTTP protocol.
 
 Support is enabled by including the following dependency in the WAR overlay:
@@ -20,23 +21,23 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-For additional information on how Digest authentication works, 
+For additional information on how digest authentication works, 
 please [review this guide](https://en.wikipedia.org/wiki/Digest_access_authentication).
 
-# Configuration
+## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-# Credential Management
+## Credential Management
 
 By default, CAS attempts to cross-check computed hash values against what the client reports in the authentication request.
-In order for this to succeed, CAS will need access to data store where MD5 representations of credentials are kept. The store
+In order for this to succeed, CAS will need access to the data store where MD5 representations of credentials are kept. The store
 needs to keep the hash value at a minimum of course. 
 
 By default, CAS uses the `application.properties` file to house the hashed credentials. Real production-level deployments
 of this module will need to provide their own data store that provides a collection of hashed values as authenticating accounts.
 
-# Client Requests
+## Client Requests
 
 The following snippets demonstrate how a given Java client may use CAS digest authentication, 
 via Apache's HttpClient library:
