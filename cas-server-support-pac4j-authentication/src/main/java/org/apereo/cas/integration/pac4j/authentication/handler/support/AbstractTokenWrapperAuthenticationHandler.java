@@ -3,7 +3,7 @@ package org.apereo.cas.integration.pac4j.authentication.handler.support;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.pac4j.http.credentials.TokenCredentials;
+import org.pac4j.core.credentials.TokenCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
