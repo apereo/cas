@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Common utilities for the web tier.
@@ -102,10 +103,24 @@ public final class WebUtils {
         }
     }
 
+    /**
+     * Gets http servlet request from request attributes.
+     *
+     * @return the http servlet request from request attributes
+     */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
     }
 
+    /**
+     * Gets http servlet response from request attributes.
+     *
+     * @return the http servlet response from request attributes
+     */
+    public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+    }
+    
     /**
      * Gets the http servlet response from the context.
      *
@@ -348,9 +363,9 @@ public final class WebUtils {
         if (request != null && response != null) {
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
-            final UserProfile profile = manager.get(true);
-            if (profile != null) {
-                final String id = profile.getId();
+            final Optional<UserProfile> profile = manager.get(true);
+            if (profile != null && profile.isPresent()) {
+                final String id = profile.get().getId();
                 if (id != null) {
                     return id;
                 }

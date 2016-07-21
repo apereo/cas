@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
@@ -186,7 +187,10 @@ public class YubiKeyConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
-        authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
+        if (casProperties.getAuthn().getMfa().getYubikey().getClientId() > 0 
+            && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+            this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
+            authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
+        }
     }
 }

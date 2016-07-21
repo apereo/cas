@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This controller is in charge of responding to the authorize call in OAuth v2 protocol.
@@ -89,14 +90,14 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                                                        final OAuthRegisteredService registeredService,
                                                        final J2EContext context,
                                                        final String clientId) throws Exception {
-        final UserProfile profile = manager.get(true);
-        if (profile == null) {
-            logger.error("Unexpected null profile");
+        final Optional<UserProfile> profile = manager.get(true);
+        if (profile == null || !profile.isPresent()) {
+            logger.error("Unexpected null profile from profile manager");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final Service service = createService(registeredService);
-        final Authentication authentication = createAuthentication(profile, registeredService, context);
+        final Authentication authentication = createAuthentication(profile.get(), registeredService, context);
 
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
@@ -40,6 +41,9 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
+
+    @NestedConfigurationProperty
+    private DigestProperties digest = new DigestProperties();
 
     @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
@@ -352,6 +356,14 @@ public class AuthenticationProperties {
         this.rest = rest;
     }
 
+    public DigestProperties getDigest() {
+        return digest;
+    }
+
+    public void setDigest(final DigestProperties digest) {
+        this.digest = digest;
+    }
+    
     public PrincipalAttributesProperties getAttributeRepository() {
         return attributeRepository;
     }

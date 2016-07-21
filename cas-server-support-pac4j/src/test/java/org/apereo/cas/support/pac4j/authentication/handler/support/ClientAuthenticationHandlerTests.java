@@ -1,12 +1,5 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.security.GeneralSecurityException;
-
-import javax.security.auth.login.FailedLoginException;
-
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -17,12 +10,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.oauth.credentials.OAuthCredentials;
+import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+
+import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link ClientAuthenticationHandler}.
@@ -51,8 +50,8 @@ public class ClientAuthenticationHandlerTests {
         this.handler.setClients(clients);
         this.handler.setServicesManager(mock(ServicesManager.class));
         this.handler.setTypedIdUsed(true);
-        
-        final Credentials credentials = new OAuthCredentials(null, MockFacebookClient.CLIENT_NAME);
+
+        final Credentials credentials = new OAuth20Credentials(null, MockFacebookClient.CLIENT_NAME);
         this.clientCredential = new ClientCredential(credentials);
         ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
     }
@@ -64,13 +63,13 @@ public class ClientAuthenticationHandlerTests {
         this.fbClient.setFacebookProfile(facebookProfile);
         final HandlerResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
-        assertEquals(FacebookProfile.class.getSimpleName() + '#' + ID, principal.getId());
+        assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
     @Test
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
         this.handler.setTypedIdUsed(false);
-        
+
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);

@@ -28,7 +28,7 @@ import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -103,7 +103,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-    private RequiresAuthenticationInterceptor requiresAuthenticationInterceptor;
+    private SecurityInterceptor requiresAuthenticationInterceptor;
 
     @Before
     public void setUp() {
