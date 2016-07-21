@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation;
 import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
@@ -142,8 +143,9 @@ public class WsFederationHelper {
      * @return an assertion
      */
     public Assertion parseTokenFromString(final String wresult, final WsFederationConfiguration config) {
+        LOGGER.debug("Result token received from ADFS is {}", wresult);
+        
         try (final InputStream in = new ByteArrayInputStream(wresult.getBytes("UTF-8"))) {
-
             final Document document = configBean.getParserPool().parse(in);
             final Element metadataRoot = document.getDocumentElement();
             final UnmarshallerFactory unmarshallerFactory = configBean.getUnmarshallerFactory();
@@ -203,7 +205,7 @@ public class WsFederationHelper {
             LOGGER.warn("No assertion was provided to validate signatures");
             return false;
         }
-
+                
         boolean valid = false;
         if (assertion.getSignature() != null) {
             final SignaturePrevalidator validator = new SAMLSignatureProfileValidator();
@@ -231,6 +233,7 @@ public class WsFederationHelper {
                 LOGGER.warn("Failed to validate assertion signature", e);
             }
         }
+        SamlUtils.logSamlObject(this.configBean, assertion);
         return valid;
     }
 
@@ -299,5 +302,9 @@ public class WsFederationHelper {
         final Decrypter decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
         decrypter.setRootInNewDocument(true);
         return decrypter;
+    }
+
+    public OpenSamlConfigBean getConfigBean() {
+        return configBean;
     }
 }
