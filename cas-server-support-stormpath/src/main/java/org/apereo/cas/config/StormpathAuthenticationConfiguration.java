@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.StormpathAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -8,7 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.pac4j.http.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,8 +34,7 @@ public class StormpathAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("stormpathPac4jPasswordEncoder")
-    private org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder
-            = new NopPasswordEncoder();
+    private org.pac4j.core.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
 
     @Autowired
     @Qualifier("servicesManager")
@@ -73,7 +73,11 @@ public class StormpathAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getApiKey())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getSecretkey())) {
+            this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
+                    personDirectoryPrincipalResolver);
+        }
     }
 }

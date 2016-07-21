@@ -42,12 +42,12 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.CallbackController;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -174,8 +174,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
      */
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
+    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
+        return new SecurityInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
 
     /**
@@ -207,8 +207,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
+    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+        return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 
 

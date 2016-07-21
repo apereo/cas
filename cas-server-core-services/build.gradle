@@ -8,7 +8,7 @@ dependencies {
     compile libraries.httpclient
     compile libraries.inspektr
     
-    compile project(":cas-server-core-util")
+    compileOnly project(":cas-server-core-util")
     compile project(":cas-server-core-events")
     compile project(":cas-server-core-web")
     compile project(":cas-server-core-configuration")

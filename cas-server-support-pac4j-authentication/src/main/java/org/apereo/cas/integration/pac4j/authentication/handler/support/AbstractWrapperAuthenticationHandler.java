@@ -5,13 +5,18 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.web.support.WebUtils;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.exception.CredentialsException;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
+import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.profile.creator.AuthenticatorProfileCreator;
-import org.pac4j.http.profile.creator.ProfileCreator;
+import org.pac4j.core.util.InitializableObject;
+import org.pac4j.core.util.InitializableWebObject;
+
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -46,17 +51,36 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
         try {
             final Authenticator authenticator = getAuthenticator(credential);
+     
+            if (authenticator instanceof InitializableObject) {
+                ((InitializableObject) authenticator).init();
+            }
+            if (authenticator instanceof InitializableWebObject) {
+                ((InitializableWebObject) authenticator).init(getWebContext());
+            }
+            
             CommonHelper.assertNotNull("authenticator", authenticator);
-            authenticator.validate(credentials);
-        } catch (final CredentialsException e) {
+            authenticator.validate(credentials, getWebContext());
+
+            final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
+            logger.debug("profile: {}", profile);
+
+            return createResult(new ClientCredential(credentials), profile);
+        } catch (final Exception e) {
             logger.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
+    }
 
-        final UserProfile profile = this.profileCreator.create(credentials);
-        logger.debug("profile: {}", profile);
-
-        return createResult(new ClientCredential(credentials), profile);
+    /**
+     * Gets the web context from the current thread-bound object.
+     *
+     * @return the web context
+     */
+    protected final WebContext getWebContext() {
+        return new J2EContext(
+                        WebUtils.getHttpServletRequestFromRequestAttributes(),
+                        WebUtils.getHttpServletResponseFromRequestAttributes());
     }
 
     /**

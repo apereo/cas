@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
@@ -208,7 +209,9 @@ public class GoogleAuthentiacatorConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
-        authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+            authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
+            authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
+        }
     }
 }
