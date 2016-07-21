@@ -35,7 +35,7 @@ the entire CAS running context. They are to be put inside the `bootstrap.propert
 # spring.cloud.config.server.encrypt.enabled=true
 # encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
 # encrypt.keyStore.password=keystorePassword
-# encrypt.keyStore.alias =DaKey
+# encrypt.keyStore.alias=DaKey
 # encrypt.keyStore.secret=changeme
 ```
 
