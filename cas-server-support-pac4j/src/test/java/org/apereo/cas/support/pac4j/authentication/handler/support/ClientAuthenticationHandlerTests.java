@@ -63,7 +63,7 @@ public class ClientAuthenticationHandlerTests {
         this.fbClient.setFacebookProfile(facebookProfile);
         final HandlerResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
-        assertEquals(FacebookProfile.class.getSimpleName() + '#' + ID, principal.getId());
+        assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
     @Test
