@@ -5,8 +5,8 @@ title: CAS - Securing Configuration Properties
 
 # Configuration Security
 
-The CAS configuration server exposes the `/encrypt` and `/decrypt` endpoints to allow for encrypting and decrypting values.
-You can send a `POST` message to these endpoints to secure keys. CAS will auto-decrypt at the appropriate moment.
+The CAS configuration server exposes `/encrypt` and `/decrypt` endpoints to support encrypting and decrypting values.
+Both endpoints accept a `POST` payload; you can use `/encrypt` to secure and encrypt settings and place them inside your CAS configuration. CAS will auto-decrypt at the appropriate moment.
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
 Securing CAS settings and decrypting them is entirely handled by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project.
@@ -50,4 +50,3 @@ Or:
 cas.something.sensitive={cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
 ```
 
-You can safely push this plain text to a shared git repository and the secret password is protected.
