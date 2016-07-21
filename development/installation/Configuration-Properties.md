@@ -857,6 +857,11 @@ Allow CAS to become am OpenID authentication provider.
 
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
+
+# Private/Public keypair used to decrypt assertions, if any.
+# cas.authn.wsfed.encryptionPrivateKey=classpath:private.key
+# cas.authn.wsfed.encryptionCertificate=classpath:certificate.crt
+# cas.authn.wsfed.encryptionPrivateKeyPassword=NONE
 ```
 
 
