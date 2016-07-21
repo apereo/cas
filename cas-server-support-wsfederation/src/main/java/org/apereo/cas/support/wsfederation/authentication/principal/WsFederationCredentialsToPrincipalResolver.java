@@ -19,7 +19,7 @@ import java.util.Map;
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
-    
+
     private WsFederationConfiguration configuration;
 
     /**
@@ -48,7 +48,9 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
             return principalId;
         }
 
-        logger.warn("Credential attributes do not include an attribute for {}", idAttribute);
+        logger.warn("Credential attributes do not include an attribute for {}. "
+                + "This will prohibit CAS to construct a meaningful authenticated principal. "
+                + "Examine the released claims and ensure {} is allowed", idAttribute, idAttribute);
         return null;
     }
 

@@ -81,7 +81,7 @@ public class WsFederationAction extends AbstractAction {
                 }
 
                 // create credentials
-                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult);
+                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult, configuration);
 
                 if (assertion == null) {
                     LOGGER.error("Could not validate assertion via parsing the token from {}", WRESULT);
