@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -87,7 +88,7 @@ public class WsFederationAction extends AbstractAction {
                     LOGGER.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
-
+                               
                 if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
                     LOGGER.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
@@ -149,14 +150,13 @@ public class WsFederationAction extends AbstractAction {
                 saveRequestParameter(request, session, METHOD);
 
                 final String relyingPartyIdentifier = getRelyingPartyIdentifier(service);
-
-                final String key = PROVIDERURL;
+                
                 final String authorizationUrl = this.configuration.getIdentityProviderUrl()
                         + QUERYSTRING
                         + relyingPartyIdentifier;
 
                 LOGGER.info("Preparing to redirect to the IdP {}", authorizationUrl);
-                context.getFlowScope().put(key, authorizationUrl);
+                context.getFlowScope().put(PROVIDERURL, authorizationUrl);
             }
 
             LOGGER.debug("Redirecting to the IdP");
