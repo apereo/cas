@@ -41,6 +41,24 @@ and made it available to CAS at a location that can be resolved at runtime.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
+## Encrypted Assertions
+
+CAS is able to automatically decrypt SAML assertions that are issued by ADFS. To do this, 
+you will first need to generate a private/public keypair:
+
+```bash
+openssl genrsa -out private.key 1024
+openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
+openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
+openssl req -new -x509 -key private.key -out x509.pem -days 365
+
+# convert the X509 certificate to DER format
+openssl x509 -outform der -in x509.pem -out certificate.crt
+```
+
+Configure CAS to reference the keypair, and configure the relying party trust settings
+in ADFS to use the `certificate.crt` file for encryption.
+ 
 ## Modifying ADFS Claims
 The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but 
 before they are inserted into the CAS user principal. For this to happen, you need
