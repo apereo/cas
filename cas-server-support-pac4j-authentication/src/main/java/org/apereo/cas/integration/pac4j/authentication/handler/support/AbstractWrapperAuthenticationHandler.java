@@ -14,6 +14,8 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
+import org.pac4j.core.util.InitializableObject;
+import org.pac4j.core.util.InitializableWebObject;
 
 
 import javax.security.auth.login.FailedLoginException;
@@ -49,15 +51,18 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
         try {
             final Authenticator authenticator = getAuthenticator(credential);
+     
+            if (authenticator instanceof InitializableObject) {
+                ((InitializableObject) authenticator).init();
+            }
+            if (authenticator instanceof InitializableWebObject) {
+                ((InitializableWebObject) authenticator).init(getWebContext());
+            }
+            
             CommonHelper.assertNotNull("authenticator", authenticator);
-            
-            final WebContext context = new J2EContext(
-                    WebUtils.getHttpServletRequestFromRequestAttributes(),
-                    WebUtils.getHttpServletResponseFromRequestAttributes());
-            
-            authenticator.validate(credentials, context);
+            authenticator.validate(credentials, getWebContext());
 
-            final UserProfile profile = this.profileCreator.create(credentials, context);
+            final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
             logger.debug("profile: {}", profile);
 
             return createResult(new ClientCredential(credentials), profile);
@@ -65,6 +70,17 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             logger.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
+    }
+
+    /**
+     * Gets the web context from the current thread-bound object.
+     *
+     * @return the web context
+     */
+    protected final WebContext getWebContext() {
+        return new J2EContext(
+                        WebUtils.getHttpServletRequestFromRequestAttributes(),
+                        WebUtils.getHttpServletResponseFromRequestAttributes());
     }
 
     /**
