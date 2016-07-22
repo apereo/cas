@@ -1,5 +1,6 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
+import com.google.common.base.Throwables;
 import jcifs.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -66,7 +69,9 @@ public final class JcifsConfig implements InitializingBean {
 
     private String loginConf;
 
-
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
     /**
      * Instantiates a new jCIFS config.
      */
@@ -77,24 +82,33 @@ public final class JcifsConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
-        if (propValue != null) {
-            logger.warn("found login config in system property, may override : {}", propValue);
-        }
-
-        URL url = getClass().getResource(StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
-        if (url != null) {
-            this.loginConf = url.toExternalForm();
-        }
-        if (StringUtils.isNotBlank(this.loginConf)) {
-            System.setProperty(SYS_PROP_LOGIN_CONF, this.loginConf);
-        } else {
-            url = getClass().getResource("/jcifs/http/login.conf");
-            if (url != null) {
-                System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
+        try {
+            final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+            if (StringUtils.isNotBlank(propValue)) {
+                logger.info("Found login config in system property {}", SYS_PROP_LOGIN_CONF);
+                if (StringUtils.isNotBlank(this.loginConf)) {
+                    logger.warn("Configured login config for CAS under {} will be ignored", this.loginConf);
+                }
+            } else {
+                final String loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
+                logger.debug("Attempting to load login config from {}", loginConf);
+                
+                final Resource res = this.resourceLoader.getResource(loginConf);
+                if (res != null && res.exists()) {
+                    logger.debug("Located login config {} and configured it under {}", loginConf, SYS_PROP_LOGIN_CONF);
+                    System.setProperty(SYS_PROP_LOGIN_CONF, res.getURL().toExternalForm());
+                } else {
+                    final URL url = getClass().getResource("/jcifs/http/login.conf");
+                    if (url != null) {
+                        logger.debug("Falling back unto default login config {} under {}", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
+                        System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
+                    }
+                }
+                logger.debug("configured login configuration path : {}", propValue);
             }
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        logger.debug("configured login configuration path : {}", propValue);
     }
 
 
@@ -135,7 +149,6 @@ public final class JcifsConfig implements InitializingBean {
     @Autowired
     public void setKerberosConf(@Value("${cas.spnego.kerb.conf:}") final String kerberosConf) {
         if (StringUtils.isNotBlank(kerberosConf)) {
-
             logger.debug("kerberosConf is set to :{}", kerberosConf);
             System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
         }
@@ -231,7 +244,7 @@ public final class JcifsConfig implements InitializingBean {
      */
     @Autowired
     public void setJcifsPassword(@Value("${cas.spnego.jcifs.password:}")
-                                     final String jcifsPassword) {
+                                 final String jcifsPassword) {
         if (StringUtils.isNotBlank(jcifsPassword)) {
             Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
             logger.debug("jcifsPassword is set to *****");
@@ -282,7 +295,7 @@ public final class JcifsConfig implements InitializingBean {
      */
     @Autowired
     public void setJcifsSocketTimeout(@Value("${cas.spnego.jcifs.socket.timeout:300000}")
-                                          final String timeout) {
+                                      final String timeout) {
         if (StringUtils.isNotBlank(timeout)) {
             logger.debug("jcifsSocketTimeout is set to {}", timeout);
             Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, timeout);
