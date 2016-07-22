@@ -9,7 +9,16 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-        
+
+    <bean id="conversionService"
+          class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="org.ldaptive.beans.spring.convert.StringToDurationConverter" />
+            </set>
+        </property>
+    </bean>
+    
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <bean id="ldapCertFetcher"
