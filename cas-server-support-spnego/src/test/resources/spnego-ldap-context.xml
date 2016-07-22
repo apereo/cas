@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+
+    <context:property-placeholder location="classpath:/ldap.properties"/>
+
+    <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
+
+    <bean id="searchRequest" class="org.ldaptive.SearchRequest"
+          p:baseDn-ref="baseDn"
+          p:searchFilter-ref="searchFilter"/>
+
+    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
+          c:filter="host={0}" />
+
+    <bean id="baseDn" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+    </bean>
+
+    <ldaptive:connection-factory id="provisioningConnectionFactory"
+                                 ldapUrl="${ldap.url}"
+                                 connectTimeout="${ldap.connectTimeout}"
+                                 useStartTLS="${ldap.useStartTLS:false}"
+                                 useSSL="false"
+                                 bindDn="${ldap.managerDn}"
+                                 provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+                                 bindCredential="${ldap.managerPassword}" />
+
+    <ldaptive:connection-pool id="connectionPool"
+                              provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+                              blockWaitTime="${ldap.pool.blockWaitTime}"
+                              minPoolSize="${ldap.pool.minSize}"
+                              maxPoolSize="${ldap.pool.maxSize}"
+                              prunePeriod="${ldap.pool.prunePeriod}"
+                              idleTime="${ldap.pool.idleTime}"
+                              ldapUrl="${ldap.url}"
+                              useStartTLS="${ldap.useStartTLS:false}"
+                              useSSL="false"
+                              validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+                              validatePeriodically="${ldap.pool.validatePeriodically}"
+                              validatePeriod="${ldap.pool.validatePeriod}" />
+
+</beans>
