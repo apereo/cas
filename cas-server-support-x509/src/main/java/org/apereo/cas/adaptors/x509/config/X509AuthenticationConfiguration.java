@@ -237,8 +237,7 @@ public class X509AuthenticationConfiguration {
         a.setWarnCookieGenerator(warnCookieGenerator);
         return a;
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
@@ -250,8 +249,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
@@ -262,8 +260,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
@@ -275,8 +272,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
@@ -307,6 +303,7 @@ public class X509AuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
+        
         PrincipalResolver resolver = personDirectoryPrincipalResolver;
         if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
             switch (casProperties.getAuthn().getX509().getPrincipalType()) {

@@ -16,5 +16,4 @@ dependencies {
     compile project(":cas-server-support-saml-idp-core")
     compile project(":cas-server-support-oidc-core")
     compile project(":cas-server-support-grouper")
-    compile project(":cas-server-support-json-service-registry")
 }

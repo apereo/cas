@@ -11,6 +11,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
+import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,27 +38,30 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final ClientCredential clientCredentials = (ClientCredential) credential;
-        logger.debug("clientCredentials  {}", clientCredentials);
+        try {
+            final ClientCredential clientCredentials = (ClientCredential) credential;
+            logger.debug("clientCredentials  {}", clientCredentials);
 
-        final Credentials credentials = clientCredentials.getCredentials();
-        final String clientName = credentials.getClientName();
-        logger.debug("clientName:  {}", clientName);
+            final Credentials credentials = clientCredentials.getCredentials();
+            final String clientName = credentials.getClientName();
+            logger.debug("clientName:  {}", clientName);
 
-        // get client
-        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
-        logger.debug("client: {}", client);
+            // get client
+            final Client client = this.clients.findClient(clientName);
+            logger.debug("client: {}", client);
 
-        // web context
-        final HttpServletRequest request = WebUtils.getHttpServletRequest();
-        final HttpServletResponse response = WebUtils.getHttpServletResponse();
-        final WebContext webContext = new J2EContext(request, response);
+            // web context
+            final HttpServletRequest request = WebUtils.getHttpServletRequest();
+            final HttpServletResponse response = WebUtils.getHttpServletResponse();
+            final WebContext webContext = new J2EContext(request, response);
 
-        // get user profile
-        final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-        logger.debug("userProfile: {}", userProfile);
-
-        return createResult(clientCredentials, userProfile);
+            // get user profile
+            final UserProfile userProfile = client.getUserProfile(credentials, webContext);
+            logger.debug("userProfile: {}", userProfile);
+            return createResult(clientCredentials, userProfile);
+        } catch (final HttpAction e) {
+            throw new PreventedException(e);
+        }
     }
 
     public Clients getClients() {

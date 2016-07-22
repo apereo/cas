@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @ImportResource(locations = {
         "classpath:/managementConfigContext.xml"})
-@SpringBootApplication(scanBasePackages = {"org.pac4j.springframework"},
+@SpringBootApplication(scanBasePackages = {"org.pac4j.springframework", "org.apereo.cas"},
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
