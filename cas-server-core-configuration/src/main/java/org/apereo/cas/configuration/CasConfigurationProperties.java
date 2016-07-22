@@ -224,8 +224,7 @@ public class CasConfigurationProperties {
     public void setMonitor(final MonitorProperties monitor) {
         this.monitor = monitor;
     }
-
-
+    
     public ServerProperties getServer() {
         return server;
     }
