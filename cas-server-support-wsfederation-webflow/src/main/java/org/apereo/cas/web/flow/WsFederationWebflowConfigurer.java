@@ -4,9 +4,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 
 /**

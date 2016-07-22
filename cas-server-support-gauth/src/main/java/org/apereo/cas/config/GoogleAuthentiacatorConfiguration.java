@@ -111,12 +111,7 @@ public class GoogleAuthentiacatorConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-
-    /**
-     * Yubikey flow registry flow definition registry.
-     *
-     * @return the flow definition registry
-     */
+    
     @RefreshScope
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {

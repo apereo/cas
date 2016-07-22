@@ -134,12 +134,13 @@ public class WsFederationHelper {
         LOGGER.debug("Credential: {}", credential);
         return credential;
     }
-    
+
 
     /**
      * parseTokenFromString converts a raw wresult and extracts it into an assertion.
      *
      * @param wresult the raw token returned by the IdP
+     * @param config  the config
      * @return an assertion
      */
     public Assertion parseTokenFromString(final String wresult, final WsFederationConfiguration config) {

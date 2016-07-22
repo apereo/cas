@@ -3,7 +3,7 @@ package org.apereo.cas.mgmt.services.web.beans;
 /**
  * Defines service type for oidc, etc.
  * @author Misagh Moayyed
- * @since 5
+ * @since 5.0
  */
 public class RegisteredServiceOidcTypeEditBean extends RegisteredServiceOAuthTypeEditBean {
     private boolean signToken;
