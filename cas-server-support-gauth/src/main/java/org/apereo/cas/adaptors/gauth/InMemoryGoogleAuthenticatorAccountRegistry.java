@@ -49,11 +49,19 @@ public class InMemoryGoogleAuthenticatorAccountRegistry implements ICredentialRe
     private boolean contains(final String username) {
         return this.accounts.containsKey(username);
     }
-    
-    private void remove(final String username) {
+
+    /**
+     * Remove.
+     *
+     * @param username the username
+     */
+    public void remove(final String username) {
         this.accounts.remove(username);
     }
 
+    /**
+     * Clear.
+     */
     private void clear() {
         this.accounts.clear();
     }

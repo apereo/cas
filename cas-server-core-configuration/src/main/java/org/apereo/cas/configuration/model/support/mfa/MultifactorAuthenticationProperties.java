@@ -18,6 +18,15 @@ public class MultifactorAuthenticationProperties {
     private Radius radius = new Radius();
     private GAuth gauth = new GAuth();
     private Duo duo = new Duo();
+    private Authy authy = new Authy();
+
+    public Authy getAuthy() {
+        return authy;
+    }
+
+    public void setAuthy(final Authy authy) {
+        this.authy = authy;
+    }
 
     public String getRequestParameter() {
         return requestParameter;
@@ -346,6 +355,53 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
+    public static class Authy {
+        private String apiKey;
+        private String apiUrl;
+        private String phoneAttribute = "phone";
+        private String mailAttribute = "mail";
+        private boolean forceVerification = true;
+
+        public String getPhoneAttribute() {
+            return phoneAttribute;
+        }
+
+        public void setPhoneAttribute(final String phoneAttribute) {
+            this.phoneAttribute = phoneAttribute;
+        }
+
+        public String getMailAttribute() {
+            return mailAttribute;
+        }
+
+        public void setMailAttribute(final String mailAttribute) {
+            this.mailAttribute = mailAttribute;
+        }
+
+        public boolean isForceVerification() {
+            return forceVerification;
+        }
+
+        public void setForceVerification(final boolean forceVerification) {
+            this.forceVerification = forceVerification;
+        }
+
+        public String getApiKey() {
+            return apiKey;
+        }
+
+        public void setApiKey(final String apiKey) {
+            this.apiKey = apiKey;
+        }
+
+        public String getApiUrl() {
+            return apiUrl;
+        }
+
+        public void setApiUrl(final String apiUrl) {
+            this.apiUrl = apiUrl;
+        }
+    }
     public static class GAuth {
         private String issuer;
         private String label;

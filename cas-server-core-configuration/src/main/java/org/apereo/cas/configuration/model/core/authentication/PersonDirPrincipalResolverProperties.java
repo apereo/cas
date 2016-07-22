@@ -6,7 +6,6 @@ package org.apereo.cas.configuration.model.core.authentication;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 public class PersonDirPrincipalResolverProperties {
 
     private String principalAttribute;

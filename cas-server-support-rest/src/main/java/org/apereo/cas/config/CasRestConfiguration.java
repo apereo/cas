@@ -24,14 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link RestConfiguration}.
+ * This is {@link CasRestConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("casRestConfiguration")
-@EnableConfigurationProperties(CasCoreAuthenticationConfiguration.class)
-public class RestConfiguration extends WebMvcConfigurerAdapter {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class CasRestConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     @Qualifier("centralAuthenticationService")

@@ -6,7 +6,6 @@ package org.apereo.cas.configuration.model.core.rest;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class RestProperties {
     private String attributeName;
     private String attributeValue;
