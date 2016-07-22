@@ -1,0 +1,240 @@
+/* --------------- CUSTOM STYLES */
+@import "components/variables";
+@import "partials/fonts";
+@import "partials/reset";
+@import "partials/base";
+
+/**
+ * SSO Sessions Styles
+ */
+
+#cas-sessions, #no-cas-sessions {
+  display: none;
+}
+
+#no-cas-sessions div {
+  margin-top: 2em;
+}
+
+.ssoSessions {
+  #content {
+    border-radius: 4px;
+    padding: 20px;
+  }
+
+  .btn-success {
+    background: #70ba61;
+    border: 0;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+
+  .sorting_desc, .sorting_asc {
+    background-color: rgba(239, 239, 239, 0.8);
+  }
+
+  #removeAllSessionsButton.btn .badge {
+    color: #000;
+    padding-right: 9px;
+  }
+
+  .adminPanels {
+    border-bottom: 1px solid #efefef;
+    margin-bottom: 2em;
+    margin-top: 1em;
+    padding-bottom: 1em;
+
+    .adminPanels .panel-default > .panel-heading {
+      background-color: #fff;
+      border-bottom: none;
+
+      h3 {
+        font-family: 'Lato', sans-serif;
+        font-weight: 300;
+        font-size: 20pt;
+      }
+
+      &::after {
+        position: absolute;
+        font-family: FontAwesome;
+        top: -5px;
+        right: 30px;
+        font-size: 70pt;
+        color: #153e50;
+        opacity: 0.1;
+      }
+    }
+  }
+
+  td.details-control {
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 10pt;
+    color: #337ab7;
+
+    &::after {
+      content: "\f067";
+      /*content: "\002B"; - thinner plus sign */
+    }
+
+  }
+
+  tr.shown td.details-control::after {
+    content: "\f068";
+    /*content: "\002D"; - thinner minus sign */
+  }
+
+}
+
+// End .ssoSessions
+
+.row-detail-wrapper {
+  background-color: #d9edf7;
+}
+
+.ssoSessions .row-detail {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  thead {
+    display: none;
+  }
+}
+
+table.principal_attributes {
+  td:first-child {
+    width: 30%;
+  }
+
+  > tbody > tr > td {
+    border-top-color: #E6E6E6;
+  }
+}
+
+/* Session container --*/
+
+#cas-sessions,
+#container-stable,
+.ui-widget {
+  font-family: 'Lato', sans-serif !important;
+  font-size: 14px;
+}
+
+#container-stable {
+  margin: 20px 0 20px;
+}
+
+#container-stable {
+  margin: 40px 0 20px;
+
+  table th {
+    text-align: left;
+  }
+}
+
+/* Navigation -- */
+.navbar-default .navbar-brand,
+.navbar-default .navbar-toggle {
+  color: #ffffff;
+}
+
+.navbar-default {
+  border-bottom: 1px solid #dadada;
+  background-color: #346288;
+
+  .navbar-brand {
+    font-family: 'Open Sans', sans-serif;
+    color: #ffffff;
+    line-height: 32px;
+    font-size: 20px;
+    padding: 0;
+    position: relative;
+    top: 8px;
+    left: 5px;
+
+    img {
+      margin-right: 8px;
+      width: 32px;
+    }
+
+    .logo {
+      text-transform: uppercase;
+      font-size: 26px;
+    }
+
+    .logo .heavy {
+      font-weight: 700;
+    }
+
+    &:hover {
+      color: #ffffff;
+    }
+
+  }
+}
+
+#navbar > .navbar-nav > li > a {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.navbar-default .navbar-header a {
+  color: #ffffff;
+
+  &.toggle-sidebar {
+    padding: 15px 20px;
+    float: left;
+  }
+}
+
+#top-navbar .nav > li .navbar-text {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+}
+
+#top-navbar .nav > li > a {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+
+  &:hover,
+  &:focus {
+    background-color: #36a9e1;
+  }
+}
+
+/* Tables */
+#table-monitor-hdr {
+  font-weight: bold;
+  margin-left: 16px;
+  text-align: center
+}
+
+/* UI controls */
+.ui-accordion .ui-accordion-header {
+  margin: 15px 0 0;
+}
+
+.btn.active, .btn:active {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+@media (min-width: 768px) {
+  .navbar-brand {
+    display: block;
+    padding: 6px 15px 0;
+    box-sizing: border-box;
+    top: auto;
+    left: auto;
+  }
+  .navbar-brand img {
+    display: inline-block;
+    width: 32px;
+  }
+}

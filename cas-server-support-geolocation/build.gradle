@@ -1,0 +1,10 @@
+description = "Apereo CAS GeoLocation Tracking Support"
+
+dependencies {
+    compile project(":cas-server-core-configuration")
+    
+    compile libraries.maxmind
+    compile libraries.spring
+    compile libraries.springcloud
+}
+

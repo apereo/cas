@@ -12,24 +12,22 @@ attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-ldap-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 ## Configuration
 
-{% highlight xml %}
-...
-<alias name="ldapServiceRegistryDao" alias="serviceRegistryDao" />
-<alias name="mySearchRequest" alias="ldapServiceRegistrySearchRequest" />
+In local `deployerConfigContext.xml`:
+
+```xml
 <alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
-...
-{% endhighlight %}
+```
 
 The default mapper has support for the following optional items:
 
@@ -42,3 +40,13 @@ The default mapper has support for the following optional items:
 Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html).
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Auto Initialization
+
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

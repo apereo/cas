@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-sm-6">
+        <!-- Logout Type -->
+        <div class="form-group">
+            <label class="col-sm-6" for="logoutType">
+                <span th:remove="tag" th:text="#{services.form.label.logoutType}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.logoutType}"></i>
+            </label>
+            <div class="col-sm-6">
+                <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.serviceData.logoutType">
+                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.logoutTypeList" ng-attr-value="{{ opt.value }}"
+                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.logoutType)">{{ opt.name }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <!-- Assigned ID -->
+        <div class="form-group">
+            <label class="col-sm-5" for="evalOrder">
+                <span th:remove="tag" th:text="#{services.form.label.evalOrder}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.evalOrder}"></i>
+            </label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.evalOrder" />
+            </div>
+        </div>
+    </div>
+</div>

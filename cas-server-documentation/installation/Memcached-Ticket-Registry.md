@@ -4,15 +4,15 @@ title: CAS - Memcached Ticket Registry
 ---
 
 # Memcached Ticket Registry
-Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
+Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-memcached</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-memcached-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 `MemCacheTicketRegistry` stores tickets in one or more [memcached](http://memcached.org/) instances. The
 [spymemcached](https://code.google.com/p/spymemcached/) library used by this component presents memcached as a
 key/value store that accepts `String` keys and Java `Object` values.
@@ -27,13 +27,8 @@ where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
-Enable the registry via:
-
-{% highlight xml %}
-<alias name="memcachedTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
-
 ## Configuration Considerations
+
 There are three core configuration concerns with memcached:
 
 1. Hash Algorithm
@@ -78,13 +73,8 @@ compact data, which benefits both storage requirements and throughput.
 
 
 ## Configuration
-{% highlight properties %}
-# memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
-# memcached.hashAlgorithm=FNV1_64_HASH
-# memcached.protocol=BINARY
-# memcached.locatorType=ARRAY_MOD
-# memcached.failureMode=Redistribute
-{% endhighlight %}
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with
