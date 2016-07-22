@@ -92,7 +92,7 @@ public final class JcifsConfig implements InitializingBean {
         try {
             final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(propValue)) {
-                logger.info("Found login config in system property {}", SYS_PROP_LOGIN_CONF);
+                logger.info("Found login config {} in system property {}", propValue, SYS_PROP_LOGIN_CONF);
                 if (StringUtils.isNotBlank(this.loginConf)) {
                     logger.warn("Configured login config for CAS under {} will be ignored", this.loginConf);
                 }
