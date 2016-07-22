@@ -21,29 +21,32 @@ ticket expires.
 
 
 ## SPNEGO Requirements
+
 * Client is logged in to a Windows Active Directory domain.
 * Supported browser and JDK.
 * CAS is running MIT kerberos against the AD domain controller.
 
 
 ## SPNEGO Components
-SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+SPNEGO support is enabled by including the following dependency in the WAR overlay:
+
+```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-spnego</artifactId>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-spnego-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## SPNEGO Configuration
 
 ### Create SPN Account
-Create an Active Directory account for the Service Principal Name (SPN) and record the username and password, which
-will be used subsequently to configure the `JCIFSConfig` component.
+
+Create an Active Directory account for the Service Principal Name (SPN) and record the username and password.
 
 ### Create Keytab File
+
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
 domain controller serves the role of KDC in this context.
 The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is used to generate the keytab file,
@@ -52,6 +55,7 @@ administrator.
 
 
 ### Test SPN Account
+
 Install and configure MIT Kerberos V on the CAS server host(s). The following sample `krb5.conf` file may be used
 as a reference.
 
@@ -89,44 +93,17 @@ Then verify that your are able to read the keytab file:
 
 
 ### Browser Configuration
+
 * Internet Explorer - Enable _Integrated Windows Authentication_ and add the CAS server URL to the _Local Intranet_
 zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
 URL, e.g. `https://cas.example.com`.
 
+### Webflow Configuration
 
-### Configuration
+Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
-####Webflow Configuration
-Define two new action states in `login-webflow.xml` before the `viewLoginForm` state:
-
-{% highlight xml %}
-<action-state id="startAuthenticate">
-  <evaluate expression="negociateSpnego" />
-  <transition on="success" to="spnego" />
-</action-state>
-
-<action-state id="spnego">
-  <evaluate expression="spnego" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="viewLoginForm" />
-</action-state>
-{% endhighlight %}
-
-Additionally, find action `generateLoginTicket` - replace `viewLoginForm` with `startAuthenticate`.
-
-Insert the appropriate action before SPNEGO initiation, assigning a `yes` response route to SPNEGO,
- and a `no` response to route to viewing the login form.
-
-{% highlight xml %}
-<action-state id="eveluateClientRequest">
-  <evaluate expression="hostnameSpnegoClientAction" />
-  <transition on="yes" to="startAuthenticate" />
-  <transition on="no" to="generateLoginTicket" />
-</action-state>
-{% endhighlight %}
-
-####Authentication Configuration
+### Authentication Configuration
 
 Provide a JAAS `login.conf` file:
 
@@ -137,74 +114,41 @@ Provide a JAAS `login.conf` file:
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
 
-You may use the following configuration in `cas.properties`:
-
-{% highlight properties %}
-# cas.spnego.ldap.attribute=spnegoattribute
-# cas.spnego.ldap.filter=host={0}
-# cas.spnego.ldap.basedn=
-# cas.spnego.hostname.pattern=.+
-# cas.spnego.ip.pattern=
-# cas.spnego.alt.remote.host.attribute
-# cas.spengo.use.principal.domain=false
-# cas.spnego.ntlm.allowed=true
-# cas.spnego.kerb.debug=false
-# cas.spnego.kerb.realm=EXAMPLE.COM
-# cas.spnego.kerb.kdc=172.10.1.10
-# cas.spnego.login.conf.file=/path/to/login
-# cas.spnego.jcifs.domain=
-# cas.spnego.jcifs.domaincontroller=
-# cas.spnego.jcifs.netbios.cache.policy:600
-# cas.spnego.jcifs.netbios.wins=
-# cas.spnego.jcifs.password=
-# cas.spnego.jcifs.service.password=
-# cas.spnego.jcifs.socket.timeout:300000
-# cas.spnego.jcifs.username=
-# cas.spnego.kerb.conf=
-# cas.spnego.ntlm=false
-# cas.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.spnego.mixed.mode.authn=false
-# cas.spnego.send.401.authn.failure=false
-# cas.spnego.principal.resolver.transform=NONE
-# cas.spnego.service.principal=HTTP/cas.example.com@EXAMPLE.COM
-{% endhighlight %}
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Client Selection Strategy
+
 CAS provides a set of components that attempt to activate the SPNEGO flow conditionally,
 in case deployers need a configurable way to decide whether SPNEGO should be applied to the
-current authentication/browser request.
+current authentication/browser request. The state that is available to the webflow
+is `evaluateClientRequest` which will attempt to start SPNEGO authentication
+or resume normally, depending on the client action strategy chosen below.
 
 ### By Remote IP
+
 Checks to see if the request's remote ip address matches a predefine pattern.
-
-{% highlight xml %}
-...
-<evaluate expression="baseSpnegoClientAction" />
-...
-{% endhighlight %}
-
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### By Hostname
-Checks to see if the request's remote hostname matches a predefine pattern.
 
-{% highlight xml %}
-...
-<evaluate expression="hostnameSpnegoClientAction" />
-...
-{% endhighlight %}
+Checks to see if the request's remote hostname matches a predefine pattern.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ### By LDAP Attribute
+
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-{% highlight xml %}
-<bean id="ldapSpnegoClientAction"
-      class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
-      c:connectionFactory-ref="connectionFactory"
-      c:searchRequest-ref="searchRequest"
-      c:spnegoAttributeName="${cas.spnego.ldap.attribute:spnegoAttribute}" />
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-<bean id="searchRequest" class="org.ldaptive.SearchRequest"
+
+...and the LDAP configuration:
+
+```xml
+<bean id="spnegoClientActionConnectionFactory" class="..." />
+
+<bean id="spnegoClientActionSearchRequest" class="org.ldaptive.SearchRequest"
       p:baseDn-ref="baseDn"
       p:searchFilter-ref="searchFilter"/>
 
@@ -214,4 +158,4 @@ would allow the webflow to resume to SPNEGO.
 <bean id="baseDn" class="java.lang.String">
     <constructor-arg type="java.lang.String" value="${cas.spnego.ldap.basedn:}" />
 </bean>
-{% endhighlight %}
+```

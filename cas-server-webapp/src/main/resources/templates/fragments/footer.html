@@ -1,0 +1,10 @@
+<footer>
+    <div id="copyright" class="container">
+        <p th:utext="#{copyright}"></p>
+        <p>Powered by <a href="http://www.apereo.org/cas">
+            Apereo Central Authentication Service
+            <span th:text="${T(org.apereo.cas.util.CasVersion).getVersion()}"></span>
+            <span th:text="${T(org.apereo.cas.util.CasVersion).getDateTime()}"></span> </a>
+        </p>
+    </div>
+</footer>

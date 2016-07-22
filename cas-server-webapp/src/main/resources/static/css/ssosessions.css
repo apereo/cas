@@ -1,0 +1,462 @@
+/* --------------- CUSTOM STYLES */
+/*
+Modals
+*/
+@import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100);
+.huge {
+  font-size: 30pt;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+}
+
+.semi-huge {
+  font-size: 18pt;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr,
+address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var,
+b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot,
+thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header,
+hgroup, menu, nav, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+body {
+  font-size: 14px;
+  font-family: Verdana, sans-serif;
+  background-color: #153e50;
+}
+
+nav ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote::before, blockquote::after, q::before, q::after {
+  content: '';
+  content: none;
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+a:link, a:visited {
+  color: #257bb2;
+}
+
+a:hover {
+  color: #a0b757;
+}
+
+a.btn-success:link, a.btn-success:visited, a.btn-success:hover {
+  color: white;
+}
+
+p {
+  margin-bottom: 1.4em;
+}
+
+header {
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+header h1 {
+  float: right;
+  width: 119px;
+  height: 60px;
+  background: url(../images/cas-logo.png) no-repeat;
+  text-indent: -999em;
+  color: white;
+}
+
+ins {
+  background-color: #ff9;
+  color: #000;
+  text-decoration: none;
+}
+
+mark {
+  background-color: #ff9;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+del {
+  text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #cccccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+#container {
+  width: 960px;
+  margin: 0 auto;
+}
+
+#logo {
+  display: block;
+  background: url(../images/apereo-logo.png) no-repeat;
+  text-indent: -999em;
+  float: left;
+  height: 100px;
+  width: 80%;
+  margin-right: 40px;
+  border: 0px;
+  color: white;
+}
+
+#content {
+  overflow: hidden;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#loadingMessage {
+  font-size: 1.4rem;
+}
+
+#serviceui.serviceinfo {
+  border: 1px dotted #0066FF;
+  color: black;
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+#servicedesc {
+  vertical-align: middle;
+  padding-left: 30px;
+  width: 90%;
+}
+
+.modal {
+  display: none;
+}
+
+@media screen and (min-width: 960px) {
+  #container {
+    width: 960px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  #ssosessions-page #container {
+    width: 1280px;
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  header {
+    padding: 20px;
+  }
+  #container {
+    width: 100%;
+  }
+  #content {
+    border-radius: 0px;
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 855px) {
+  #logo {
+    display: none;
+  }
+  header h1 {
+    font-size: 1em;
+    width: 70px;
+    height: 40px;
+    background-size: 70px 40px;
+  }
+  #login {
+    float: none;
+    width: 100%;
+  }
+  #fm1 .row input[type=text],
+  #fm1 .row input[type=password] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  #fm1 .row .btn-submit {
+    outline: none;
+    border: 0;
+    background: #70ba61;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 3px;
+  }
+  #fm1 .row .btn-reset {
+    display: none;
+  }
+  #sidebar {
+    margin-top: 20px;
+  }
+  #sidebar .sidebar-content {
+    padding: 0;
+  }
+}
+
+/**
+ * SSO Sessions Styles
+ */
+#cas-sessions, #no-cas-sessions {
+  display: none;
+}
+
+#no-cas-sessions div {
+  margin-top: 2em;
+}
+
+.ssoSessions #content {
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.ssoSessions .btn-success {
+  background: #70ba61;
+  border: 0;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+}
+
+.ssoSessions .sorting_desc, .ssoSessions .sorting_asc {
+  background-color: rgba(239, 239, 239, 0.8);
+}
+
+.ssoSessions #removeAllSessionsButton.btn .badge {
+  color: #000;
+  padding-right: 9px;
+}
+
+.ssoSessions .adminPanels {
+  border-bottom: 1px solid #efefef;
+  margin-bottom: 2em;
+  margin-top: 1em;
+  padding-bottom: 1em;
+}
+
+.ssoSessions .adminPanels .adminPanels .panel-default > .panel-heading {
+  background-color: #fff;
+  border-bottom: none;
+}
+
+.ssoSessions .adminPanels .adminPanels .panel-default > .panel-heading h3 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 20pt;
+}
+
+.ssoSessions .adminPanels .adminPanels .panel-default > .panel-heading::after {
+  position: absolute;
+  font-family: FontAwesome;
+  top: -5px;
+  right: 30px;
+  font-size: 70pt;
+  color: #153e50;
+  opacity: 0.1;
+}
+
+.ssoSessions td.details-control {
+  cursor: pointer;
+  font-family: FontAwesome;
+  font-size: 10pt;
+  color: #337ab7;
+}
+
+.ssoSessions td.details-control::after {
+  content: "\f067";
+  /*content: "\002B"; - thinner plus sign */
+}
+
+.ssoSessions tr.shown td.details-control::after {
+  content: "\f068";
+  /*content: "\002D"; - thinner minus sign */
+}
+
+.row-detail-wrapper {
+  background-color: #d9edf7;
+}
+
+.ssoSessions .row-detail {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.ssoSessions .row-detail thead {
+  display: none;
+}
+
+table.principal_attributes td:first-child {
+  width: 30%;
+}
+
+table.principal_attributes > tbody > tr > td {
+  border-top-color: #E6E6E6;
+}
+
+/* Session container --*/
+#cas-sessions,
+#container-stable,
+.ui-widget {
+  font-family: 'Lato', sans-serif !important;
+  font-size: 14px;
+}
+
+#container-stable {
+  margin: 20px 0 20px;
+}
+
+#container-stable {
+  margin: 40px 0 20px;
+}
+
+#container-stable table th {
+  text-align: left;
+}
+
+/* Navigation -- */
+.navbar-default .navbar-brand,
+.navbar-default .navbar-toggle {
+  color: #ffffff;
+}
+
+.navbar-default {
+  border-bottom: 1px solid #dadada;
+  background-color: #346288;
+}
+
+.navbar-default .navbar-brand {
+  font-family: 'Open Sans', sans-serif;
+  color: #ffffff;
+  line-height: 32px;
+  font-size: 20px;
+  padding: 0;
+  position: relative;
+  top: 8px;
+  left: 5px;
+}
+
+.navbar-default .navbar-brand img {
+  margin-right: 8px;
+  width: 32px;
+}
+
+.navbar-default .navbar-brand .logo {
+  text-transform: uppercase;
+  font-size: 26px;
+}
+
+.navbar-default .navbar-brand .logo .heavy {
+  font-weight: 700;
+}
+
+.navbar-default .navbar-brand:hover {
+  color: #ffffff;
+}
+
+#navbar > .navbar-nav > li > a {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.navbar-default .navbar-header a {
+  color: #ffffff;
+}
+
+.navbar-default .navbar-header a.toggle-sidebar {
+  padding: 15px 20px;
+  float: left;
+}
+
+#top-navbar .nav > li .navbar-text {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+}
+
+#top-navbar .nav > li > a {
+  color: #ffffff;
+  padding: 15px 14px;
+  margin: 0;
+}
+
+#top-navbar .nav > li > a:hover, #top-navbar .nav > li > a:focus {
+  background-color: #36a9e1;
+}
+
+/* Tables */
+#table-monitor-hdr {
+  font-weight: bold;
+  margin-left: 16px;
+  text-align: center;
+}
+
+/* UI controls */
+.ui-accordion .ui-accordion-header {
+  margin: 15px 0 0;
+}
+
+.btn.active, .btn:active {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+
+@media (min-width: 768px) {
+  .navbar-brand {
+    display: block;
+    padding: 6px 15px 0;
+    box-sizing: border-box;
+    top: auto;
+    left: auto;
+  }
+  .navbar-brand img {
+    display: inline-block;
+    width: 32px;
+  }
+}

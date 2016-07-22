@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.badworkstation.heading}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.badworkstation.heading}"/>
+        <p th:utext="#{screen.badworkstation.message}"/>
+    </div>
+</div>
+</body>
+</html>

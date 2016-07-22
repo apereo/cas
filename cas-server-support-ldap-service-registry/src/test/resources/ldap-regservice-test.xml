@@ -10,15 +10,10 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="searchRequest"
-          class="org.ldaptive.SearchRequest"
-          p:baseDn="${ldap.service.baseDn}"/>
-
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>
 
     <alias name="provisioningConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
-    <alias name="searchRequest" alias="ldapServiceRegistrySearchRequest" />
-
+    
 </beans>

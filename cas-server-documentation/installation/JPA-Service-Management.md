@@ -8,42 +8,20 @@ Stores registered service data in a database.
 
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
+    <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-jpa-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
-The following settings are expected:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-{% highlight properties %}
-# svcreg.database.ddl.auto=create-drop
-# svcreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
-# svcreg.database.hibernate.batchSize=10
-# svcreg.database.driverClass=org.hsqldb.jdbcDriver
-# svcreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
-# svcreg.database.user=sa
-# svcreg.database.password=
-# svcreg.database.pool.minSize=6
-# svcreg.database.pool.maxSize=18
-# svcreg.database.pool.maxWait=10000
-# svcreg.database.pool.maxIdleTime=120
-# svcreg.database.pool.acquireIncrement=6
-# svcreg.database.pool.idleConnectionTestPeriod=30
-# svcreg.database.pool.connectionHealthQuery=select 1
-# svcreg.database.pool.acquireRetryAttempts=5
-# svcreg.database.pool.acquireRetryDelay=2000
-# svcreg.database.pool.connectionHealthQuery=select 1
-{% endhighlight %}
+## Auto Initialization
 
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. This behavior can be controlled via:
 
-## Configuration
-
-The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
-registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
-
-{% highlight xml %}
-<alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
-{% endhighlight %}
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

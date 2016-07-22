@@ -1,0 +1,163 @@
+@import "variables";
+@import "mixins";
+
+
+.viewDashboard {
+
+  h2 {
+    font-size: 2rem;
+    margin-left: 10px;
+    border-bottom: solid 1px #efefef;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+
+    i {
+      font-size: 2.3rem;
+    }
+  }
+
+  >div {
+    clear: both;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    clear: both;
+
+    li {
+      list-style: none;
+      position: relative;
+    }
+  }
+
+  .app-launcher {
+    clear: both;
+    overflow: auto;
+    margin-bottom: 2em;
+
+    ul {
+
+      li {
+        margin: 10px;
+        width: 140px;
+        height: 140px;
+        float: left;
+        border: 5px solid #ccc;
+        font-family: 'Lato', sans-serif;
+        font-weight: 400;
+        font-size: 1.7rem;
+        text-align: center;
+        background-color: #efefef;
+        border-radius: 50%;
+
+        transition: box-shadow 0.5s ease;
+        display: table;
+
+        &:hover, &:focus, &:active {
+          box-shadow: 0px 0px 20px rgba($secondary-color, 0.8);
+          border-color: white;
+        }
+
+        a {
+          text-decoration: none;
+          display: table-cell;
+          vertical-align: middle;
+          line-height: normal;
+          transition: font-weight .2s ease-out;
+          border-radius: 50%;
+          color: #045183;
+
+          &:hover, &:focus {
+            color: white;
+            background-color: #1490b3;
+          }
+        }
+      }
+    }
+  }
+
+  .server-config {
+  }
+
+  .server-functions {
+    ul li {
+      display: inline-block;
+      margin: 10px;
+    }
+  }
+
+  // TODO: Move this out to a higher level
+
+  .btn {
+    display: inline-block;
+    margin-bottom: 0; // For input.btn
+    font-weight: $btn-font-weight;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+    border: 1px solid transparent;
+    white-space: nowrap;
+    @include button-size($padding-base-vertical, $padding-base-horizontal, $font-size-base, $line-height-base, $btn-border-radius-base);
+    //@include user-select(none);
+
+    &,
+    &:active,
+    &.active {
+      &:focus,
+      &.focus {
+        @include tab-focus;
+      }
+    }
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $btn-default-color;
+      text-decoration: none;
+    }
+
+    &:active,
+    &.active {
+      outline: 0;
+      background-image: none;
+      @include box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+      cursor: $cursor-disabled;
+      @include opacity(.65);
+      @include box-shadow(none);
+    }
+
+    // [converter] extracted a& to a.btn
+  }
+
+  a.btn {
+    &.disabled,
+    fieldset[disabled] & {
+      pointer-events: none; // Future-proof disabling of clicks on `<a>` elements
+    }
+  }
+
+
+  // Success appears as green
+  .btn-restart {
+    @include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
+  }
+  // Warning appears as orange
+  .btn-refresh {
+    @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
+  }
+  // Danger and error appear as red
+  .btn-shutdown {
+    @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
+  }
+
+
+}
