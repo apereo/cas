@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public final class DuoWeb {
+public class DuoWeb {
     private static final String DUO_PREFIX = "TX";
     private static final String APP_PREFIX = "APP";
     private static final String AUTH_PREFIX = "AUTH";
@@ -49,11 +49,11 @@ public final class DuoWeb {
         try {
             duo_sig = signVals(skey, username, ikey, DUO_PREFIX, DUO_EXPIRE, time);
             app_sig = signVals(akey, username, ikey, APP_PREFIX, APP_EXPIRE, time);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return ERR_UNKNOWN;
         }
 
-        return duo_sig + ":" + app_sig;
+        return duo_sig + ':' + app_sig;
     }
 
     public static String verifyResponse(final String ikey, final String skey, final String akey, final String sig_response)
@@ -63,15 +63,13 @@ public final class DuoWeb {
 
     public static String verifyResponse(final String ikey, final String skey, final String akey, final String sig_response, final long time)
         throws DuoWebException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        String auth_user = null;
-        String app_user = null;
 
         final String[] sigs = sig_response.split(":");
         final String auth_sig = sigs[0];
         final String app_sig = sigs[1];
 
-        auth_user = parseVals(skey, auth_sig, AUTH_PREFIX, ikey, time);
-        app_user = parseVals(akey, app_sig, APP_PREFIX, ikey, time);
+        final String auth_user = parseVals(skey, auth_sig, AUTH_PREFIX, ikey, time);
+        final String app_user = parseVals(akey, app_sig, APP_PREFIX, ikey, time);
 
         if (!auth_user.equals(app_user)) {
             throw new DuoWebException("Authentication failed.");
@@ -85,11 +83,11 @@ public final class DuoWeb {
         final long expire_ts = time + expire;
         final String exp = Long.toString(expire_ts);
 
-        final String val = username + "|" + ikey + "|" + exp;
-        final String cookie = prefix + "|" + Base64.encodeBytes(val.getBytes());
+        final String val = username + '|' + ikey + '|' + exp;
+        final String cookie = prefix + '|' + Base64.encodeBytes(val.getBytes());
         final String sig = Util.hmacSign(key, cookie);
 
-        return cookie + "|" + sig;
+        return cookie + '|' + sig;
     }
 
     private static String parseVals(final String key, final String val, final String prefix, final String ikey, final long time)
@@ -104,7 +102,7 @@ public final class DuoWeb {
         final String u_b64 = parts[1];
         final String u_sig = parts[2];
 
-        final String sig = Util.hmacSign(key, u_prefix + "|" + u_b64);
+        final String sig = Util.hmacSign(key, u_prefix + '|' + u_b64);
         if (!Util.hmacSign(key, sig).equals(Util.hmacSign(key, u_sig))) {
             throw new DuoWebException("Invalid response");
         }

@@ -1,0 +1,117 @@
+/**
+ * Statistics View
+ */
+
+.statisticsView {
+  display: none;
+
+  .progress-meter {
+    .background {
+      fill: #DFEAFD;
+    }
+    .foreground {
+      fill: #2E7AF9;
+    }
+
+    text {
+      font-family: 'Lato', sans-serif;
+      font-size: 25pt;
+      font-weight: 300;
+    }
+
+    .text2 {
+      font-family: 'Georgia', sans-serif;
+      font-size: 10pt;
+    }
+  }
+
+  /**
+   * Runtime Statistics Gauge styles
+   */
+  .runtimeStatistics {
+
+    .background {
+      fill: #DFEAFD;
+    }
+
+    .foreground {
+      fill: #2E7AF9;
+    }
+
+    text {
+      font-family: 'Lato', sans-serif;
+      font-size: 25pt;
+      font-weight: 300;
+    }
+
+    .text2 {
+      font-family: 'Georgia', sans-serif;
+      font-size: 10pt;
+    }
+  }
+
+  .equal, .equal > div[class*='col-'] {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    flex: 1 1 auto;
+  }
+
+  .section {
+    margin-bottom: 25px;
+  }
+
+  .adminPanels.container-fluid {
+    padding-right: 0;
+  }
+
+}
+
+// end .statisticsView
+
+#uptime-panel {
+  display: none;
+}
+
+#uptime {
+  font-family: 'Lato', sans-serif;
+  font-size: 16pt;
+}
+
+.thread-dump-view {
+  height: 600px;
+  overflow-y: auto;
+}
+
+#metricsGauges {
+  strong {
+    display: block;
+  }
+  .panel {
+    width: 100%;
+  }
+
+  ul {
+    height: auto;
+    overflow: hidden;
+  }
+
+  li {
+    float: left;
+    width: 80px;
+    height: 80px;
+    margin: 0 0 10px 10px;
+    background: #d8d8d8;
+
+    &:nth-child(5n + 1) {
+      clear: left;
+    }
+  }
+
+}
+
+#viewSsoSessions {
+  color: white;
+}

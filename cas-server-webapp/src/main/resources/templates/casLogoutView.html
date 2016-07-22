@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.logout.header}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+      <div class="alert alert-success">
+          <h2 th:utext="#{screen.logout.header}"/>
+          <p th:utext="#{screen.logout.success}"/>
+          <p th:utext="#{screen.logout.security}" />
+      </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+/**
+ * Admin Panels
+ */
+.adminPanels {
+  .users-panel.panel-default > .panel-heading::after {
+    content: "\f0c0";
+  }
+  .usage-panel.panel-default > .panel-heading::after {
+    content: "\f201";
+  }
+  .tickets-panel.panel-default > .panel-heading::after {
+    content: "\f145";
+  }
+
+  .panel-body {
+    padding-top: 5px;
+
+    span {
+      font-family: 'Lato', sans-serif;
+      font-size: 30pt;
+      font-weight: 100;
+    }
+  }
+}
+
+
+
