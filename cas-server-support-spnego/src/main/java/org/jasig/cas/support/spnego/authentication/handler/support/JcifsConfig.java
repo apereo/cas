@@ -112,7 +112,7 @@ public final class JcifsConfig implements InitializingBean {
                         System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
                     }
                 }
-                logger.debug("configured login configuration path : {}", propValue);
+                logger.debug("Configured login config path at: {}", System.getProperty(SYS_PROP_LOGIN_CONF));
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);
