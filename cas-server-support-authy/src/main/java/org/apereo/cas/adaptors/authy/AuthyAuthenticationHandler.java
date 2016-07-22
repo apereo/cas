@@ -22,7 +22,7 @@ import java.util.Map;
  * Authy authentication handler for CAS.
  *
  * @author Misagh Moayyed
- * @since 5
+ * @since 5.0
  */
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private Boolean forceVerification = Boolean.FALSE;
