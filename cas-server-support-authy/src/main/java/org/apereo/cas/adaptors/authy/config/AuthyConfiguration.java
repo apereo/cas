@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.authy.InMemoryAuthyAccountRegistry;
+import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -34,6 +35,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -179,6 +181,13 @@ public class AuthyConfiguration {
         c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         c.setFlowBuilderServices(flowBuilderServices);
         return c;
+    }
+
+    @Bean
+    public Action authyAuthenticationWebflowAction() {
+        final AuthyAuthenticationWebflowAction a = new AuthyAuthenticationWebflowAction();
+        a.setCasWebflowEventResolver(authyAuthenticationWebflowEventResolver());
+        return a;
     }
     
     @PostConstruct

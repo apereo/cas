@@ -35,33 +35,38 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private final AuthyApiClient authyClient;
     private final Users authyUsers;
     private final Tokens authyTokens;
-
+    private final AuthyAccountRegistry registry;
+    
     private String mailAttribute = "mail";
     private String phoneAttribute = "phone";
     private Boolean forceVerification = Boolean.FALSE;
 
-    private AuthyAccountRegistry registry;
-
+    
     /**
      * Instantiates a new Authy authentication handler.
      *
-     * @param apiKey the api key
-     * @param apiUrl the api url
+     * @param apiKey   the api key
+     * @param apiUrl   the api url
+     * @param registry the registry
      * @throws MalformedURLException the malformed uRL exception
      */
     public AuthyAuthenticationHandler(final String apiKey, final String apiUrl,
                                       final AuthyAccountRegistry registry) throws MalformedURLException {
-        final URL url = new URL(apiUrl);
+        
+        final String authyUrl = StringUtils.isBlank(apiUrl) ? AuthyApiClient.DEFAULT_API_URI : apiUrl;
+        final URL url = new URL(authyUrl);
         final boolean testFlag = url.getProtocol().equals("http");
-
-        this.authyClient = new AuthyApiClient(apiKey, apiUrl, testFlag);
+        this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
         this.authyUsers = this.authyClient.getUsers();
         this.authyTokens = this.authyClient.getTokens();
         this.registry = registry;
     }
 
+    /**
+     * Initialize.
+     */
     @PostConstruct
-    public void afterPropertiesSet() {
+    public void init() {
         if (this.registry == null) {
             logger.warn("No Authy account registry is defined. All credentials are considered"
                             + "eligible for Authy authentication. Consider providing an account registry via [{}]",
