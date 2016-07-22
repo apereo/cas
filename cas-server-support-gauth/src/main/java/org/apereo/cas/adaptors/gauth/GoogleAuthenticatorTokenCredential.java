@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class GoogleAuthenticatorTokenCredential implements Credential, Serializable {
     private static final long serialVersionUID = -7570600701132111037L;
 
-    private Integer token;
+    private String token;
 
     /**
      * Instantiates a new Google authenticator token credential.
@@ -25,11 +25,11 @@ public class GoogleAuthenticatorTokenCredential implements Credential, Serializa
     }
 
     /**
-     * Instantiates a new Yubi key credential.
+     * Instantiates a new google auth credential.
      *
      * @param token the token
      */
-    public GoogleAuthenticatorTokenCredential(final Integer token) {
+    public GoogleAuthenticatorTokenCredential(final String token) {
         this.token = token;
     }
 
@@ -67,11 +67,11 @@ public class GoogleAuthenticatorTokenCredential implements Credential, Serializa
     }
 
 
-    public Integer getToken() {
+    public String getToken() {
         return this.token;
     }
 
-    public void setToken(final Integer token) {
+    public void setToken(final String token) {
         this.token = token;
     }
 

@@ -41,7 +41,8 @@ WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for signing is
 WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
 ```
 
-You should then grab each generated key for encryption and signing, and put them inside your cas.properties file for each now-enabled setting.
+You should then grab each generated key for encryption and signing, and put them inside your cas properties for each now-enabled 
+setting.
 
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
@@ -49,7 +50,6 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 
 If you wish to turn off cookie encryption, see the relevant list of CAS properties
 and [review this guide](Configuration-Properties.html).
-
 
 ## Cookie Generation for Renewed Authentications
 
@@ -71,7 +71,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 # SSO Warning Session Cookie
 
-A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. The cookie is used later to warn and prompt
+A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. 
+The cookie is used later to warn and prompt
 the user before a service ticket is generated and access to the service application is granted.
 The cookie is controlled via:
 

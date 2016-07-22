@@ -228,6 +228,17 @@ def projectMavenDeployer = {
                     enabled true
                 }
             }
+
+            repository {
+                id "ldaptive"
+                url "https://raw.github.com/vt-middleware/maven-repo/master"
+                releases {
+                    enabled true
+                }
+                snapshots {
+                    enabled true
+                }
+            }
         }
     }
 }
@@ -317,6 +328,7 @@ subprojects {
         mavenCentral()
         jcenter()
 
+        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
