@@ -1259,5 +1259,12 @@ ext.libraries = [
                     exclude(module: "slf4j-api")
                     force = true
                 }
+        ],
+        authyjava                 : [
+                dependencies.create("com.authy:authy-java:$authyVersion") {
+                    exclude(module: "slf4j-api")
+                    exclude(group: "org.json", module: "json")
+                    force = true
+                }
         ]
 ]

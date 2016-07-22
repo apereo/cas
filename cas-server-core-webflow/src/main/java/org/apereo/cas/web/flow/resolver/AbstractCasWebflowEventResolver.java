@@ -499,7 +499,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final String providerId) {
         try {
             logger.debug("Locating bean definition for {}", providerId);
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class).values().stream()
+            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
                     .filter(p -> p.getId().equals(providerId))
                     .findFirst();
         } catch (final Exception e) {
@@ -515,7 +515,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProvidersFromApplicationContext() {
         try {
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
+            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
             logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
         }
