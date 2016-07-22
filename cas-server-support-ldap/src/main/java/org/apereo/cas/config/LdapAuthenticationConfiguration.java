@@ -149,9 +149,8 @@ public class LdapAuthenticationConfiguration {
         resolver.setUserFilter(l.getUserFilter());
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-        } else {
-            return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
-        }
+        } 
+        return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
