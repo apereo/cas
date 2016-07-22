@@ -612,6 +612,26 @@
           <artifactId>hamcrest-core</artifactId>
           <groupId>org.hamcrest</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <version>2.4</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -653,7 +673,7 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-unboundid</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -749,6 +769,10 @@
           <groupId>org.skyscreamer</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>org.ow2.asm</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-core</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -795,6 +819,10 @@
         <exclusion>
           <artifactId>spring-context-support</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
         </exclusion>
       </exclusions>
     </dependency>
