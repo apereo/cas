@@ -11,9 +11,14 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="viewLoginForm"/>
+        <transition on="success" to="registerUserAction"/>
     </action-state>
         
+    <action-state id="registerUserAction">
+        <evaluate expression="authyAuthenticationRegistrationWebflowAction" />
+        <transition to="viewLoginForm"/>
+    </action-state>
+    
     <view-state id="viewLoginForm" view="casAuthyLoginView" model="credential">
         <binder>
             <binding property="token" required="true"/>
@@ -31,5 +36,4 @@
     </action-state>
 
     <end-state id="success" />
-
 </flow>

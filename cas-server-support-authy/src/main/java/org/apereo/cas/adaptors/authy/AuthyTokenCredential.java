@@ -65,8 +65,7 @@ public class AuthyTokenCredential implements Credential, Serializable {
     public String getId() {
         return this.token.toString();
     }
-
-
+    
     public String getToken() {
         return this.token;
     }
