@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import org.apache.commons.lang3.StringUtils;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -226,7 +227,9 @@ public class GoogleAuthentiacatorConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
-        authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
+            authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
+            authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
+        }
     }
 }

@@ -3,9 +3,10 @@ package org.apereo.cas.authentication;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.password.NopPasswordEncoder;
-import org.pac4j.http.credentials.password.PasswordEncoder;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.password.PasswordEncoder;
 import org.pac4j.mongo.credentials.authenticator.MongoAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     private PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
         final MongoClient client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
@@ -63,7 +64,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
         this.passwordAttribute = passwordAttribute;
     }
 
-    public void setMongoPasswordEncoder(final org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder) {
+    public void setMongoPasswordEncoder(final PasswordEncoder mongoPasswordEncoder) {
         this.mongoPasswordEncoder = mongoPasswordEncoder;
     }
 }

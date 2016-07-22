@@ -518,6 +518,9 @@ ext.libraries = [
                     exclude(group: "org.objenesis", module: "objenesis")
                     force = true
                 },
+                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
+                    force = true
+                },
                 dependencies.create("junit:junit:$junitVersion"),
                 dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -554,6 +557,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.skyscreamer", module: "jsonassert")
+                    exclude(group: "org.ow2.asm", module: "asm")
                     force = true
                 },
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
@@ -764,6 +769,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "net.minidev", module: "json-smart")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {

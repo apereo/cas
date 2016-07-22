@@ -15,18 +15,27 @@ CAS expects a `token` parameter to be passed along to the `/login` endpoint. The
 JWT. Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-import org.pac4j.http.profile.HttpProfile;
-import org.pac4j.jwt.profile.JwtGenerator;
-...
-JwtGenerator<HttpProfile> g = new JwtGenerator<>("<SIGNING_SECRET>", "<ENCRYPTION_SECRET>");
-HttpProfile profile = new HttpProfile();
+final String signingSecret = RandomStringUtils.randomAlphanumeric(256);
+final String encryptionSecret = RandomStringUtils.randomAlphanumeric(48);
+
+final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret, encryptionSecret);
+
+/*
+// Use the same key for signing and encryption
+final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret);
+
+// Do not execute encryption
+final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret, false);
+ */
+
+g.setEncryptionMethod(EncryptionMethod.A192CBC_HS384);
+
+final CommonProfile profile = new CommonProfile();
 profile.setId("<PRINCIPAL_ID>");
 final String token = g.generate(profile);
 System.out.println(token);
 ...
 ```
-
-...where `<SIGNING_SECRET>` and `<ENCRYPTION_SECRET>` are the secret keys used for signing and encryption.
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:
 
@@ -45,7 +54,6 @@ JWT authentication support is enabled by including the following dependency in t
      <version>${cas.version}</version>
 </dependency>
 ```
-
 
 Configure the appropriate service in your service registry to hold the secrets:
 

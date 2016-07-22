@@ -190,8 +190,8 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         profile.addAttributes(attributes);
 
         final MockHttpSession session = new MockHttpSession();
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -237,7 +237,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -284,7 +284,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -331,7 +331,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -379,7 +379,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -426,7 +426,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         final View view = modelAndView.getView();
@@ -472,7 +472,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
-        session.putValue(Pac4jConstants.USER_PROFILE, profile);
+        session.putValue(Pac4jConstants.USER_PROFILES, profile);
 
         final ModelAndView modelAndView = oAuth20AuthorizeController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());

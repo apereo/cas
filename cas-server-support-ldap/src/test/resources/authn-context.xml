@@ -53,8 +53,7 @@
            allowMultipleDns="${ldap.allowMultipleDns:false}"
            baseDn="${ldap.baseDn}"
            subtreeSearch="${ldap.subtree.search:true}"
-           userFilter="${ldap.authn.searchFilter}"
-           passwordAttribute="${ldap.authn.passwordAttribute}" />
+           userFilter="${ldap.authn.searchFilter}" />
 
     <ldaptive:direct-authenticator id="authenticator-direct"
             format="${ldap.authn.searchFilter}"

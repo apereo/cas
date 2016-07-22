@@ -22,7 +22,7 @@ import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
-import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-
 import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,8 +111,10 @@ public class LdapAuthenticationConfiguration {
                 if (l.isUsePasswordPolicy()) {
                     authenticator.setAuthenticationResponseHandlers(
                             new ActiveDirectoryAuthenticationResponseHandler(
-                                    Period.ofDays(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays())),
-                            new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler());
+                                    Period.ofDays(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays())
+                            ),
+                            new PasswordPolicyAuthenticationResponseHandler(),
+                            new PasswordExpirationAuthenticationResponseHandler());
 
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }

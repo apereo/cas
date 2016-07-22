@@ -2,7 +2,6 @@ package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -38,15 +37,16 @@ import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.authorization.AuthorizationGenerator;
-import org.pac4j.core.authorization.Authorizer;
-import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.authorizer.Authorizer;
+import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.core.engine.DefaultSecurityLogic;
+import org.pac4j.core.exception.HttpAction;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -79,7 +79,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-
 /**
  * This is {@link CasManagementWebAppConfiguration}.
  *
@@ -169,14 +168,15 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
-        final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(config(), "CasClient",
-                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
+        final SecurityInterceptor interceptor = new SecurityInterceptor(config(), "CasClient",
+                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
+
+        interceptor.setSecurityLogic(new DefaultSecurityLogic() {
             @Override
-            protected void forbidden(final WebContext context, final List<Client> currentClients, final UserProfile profile) {
-                context.setResponseStatus(HttpStatus.SC_MOVED_TEMPORARILY);
-                context.setResponseHeader("location", "authorizationFailure");
+            protected HttpAction unauthorized(final WebContext context, final List currentClients) {
+                return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
             }
-        };
+        });
         return interceptor;
     }
 

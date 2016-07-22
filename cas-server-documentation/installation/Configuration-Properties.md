@@ -35,7 +35,7 @@ the entire CAS running context. They are to be put inside the `bootstrap.propert
 # spring.cloud.config.server.encrypt.enabled=true
 # encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
 # encrypt.keyStore.password=keystorePassword
-# encrypt.keyStore.alias =DaKey
+# encrypt.keyStore.alias=DaKey
 # encrypt.keyStore.secret=changeme
 ```
 
@@ -862,6 +862,11 @@ Allow CAS to become am OpenID authentication provider.
 
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
+
+# Private/Public keypair used to decrypt assertions, if any.
+# cas.authn.wsfed.encryptionPrivateKey=classpath:private.key
+# cas.authn.wsfed.encryptionCertificate=classpath:certificate.crt
+# cas.authn.wsfed.encryptionPrivateKeyPassword=NONE
 ```
 
 
@@ -1072,6 +1077,61 @@ Delegate authentication to an external SAML2 IdP.
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
+## Pac4j -> Yahoo
+
+Delegate authentication to Yahoo.
+
+```properties
+# cas.authn.pac4j.yahoo.id=
+# cas.authn.pac4j.yahoo.secret=
+```
+
+## Pac4j -> Dropbox
+
+Delegate authentication to Dropbox.
+
+```properties
+# cas.authn.pac4j.dropbox.id=
+# cas.authn.pac4j.dropbox.secret=
+```
+
+## Pac4j -> Github
+
+Delegate authentication to Github.
+
+```properties
+# cas.authn.pac4j.github.id=
+# cas.authn.pac4j.github.secret=
+```
+
+## Pac4j -> Foursquare
+
+Delegate authentication to Foursquare.
+
+```properties
+# cas.authn.pac4j.foursquare.id=
+# cas.authn.pac4j.foursquare.secret=
+```
+
+## Pac4j -> WindowsLive
+
+Delegate authentication to WindowsLive.
+
+```properties
+# cas.authn.pac4j.windowsLive.id=
+# cas.authn.pac4j.windowsLive.secret=
+```
+
+## Pac4j -> Google
+
+Delegate authentication to Google.
+
+```properties
+# cas.authn.pac4j.google.id=
+# cas.authn.pac4j.google.secret=
+# cas.authn.pac4j.google.scope=
+```
+
 ## OAuth2
 
 Allows CAS to act as an OAuth2 provider. Here you can control how
@@ -1085,6 +1145,15 @@ long various tokens issued by CAS should last, etc.
 
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+```
+
+## Digest Authentication
+
+```properties
+# cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
+# cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
+# cas.authn.digest.realm=CAS
+# cas.authn.digest.authenticationMethod=auth
 ```
 
 

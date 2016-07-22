@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.DuoAuthenticationMetaDataPopulator;
@@ -183,7 +184,10 @@ public class DuoConfiguration {
 
     @PostConstruct
     protected void initializeServletApplicationContext() {
-        this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
-        authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
+        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getDuo().getDuoApiHost())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getDuo().getDuoSecretKey())) {
+            this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
+            authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
+        }
     }
 }

@@ -1,22 +1,21 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.authorization.RequireAnyRoleAuthorizer;
+import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.engine.DefaultSecurityLogic;
+import org.pac4j.core.exception.HttpAction;
 import org.pac4j.http.client.direct.IpClient;
 import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +77,8 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationStatusInterceptor() {
-        return new RequiresAuthenticationInterceptor(new
+    public SecurityInterceptor requiresAuthenticationStatusInterceptor() {
+        return new SecurityInterceptor(new
                 Config(new IpClient(new IpRegexpAuthenticator(casProperties.getAdminPagesSecurity().getIp()))),
                 "IpClient");
     }
@@ -114,21 +113,19 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
-
+    public SecurityInterceptor requiresAuthenticationStatusAdminEndpointsInterceptor() {
         final Config cfg = config();
         if (cfg.getClients() == null) {
             return requiresAuthenticationStatusInterceptor();
         }
-
-        final RequiresAuthenticationInterceptor interceptor = new RequiresAuthenticationInterceptor(cfg, "CasClient",
-                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer") {
+        final SecurityInterceptor interceptor = new SecurityInterceptor(cfg, "CasClient",
+                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
+        interceptor.setSecurityLogic(new DefaultSecurityLogic() {
             @Override
-            protected void forbidden(final WebContext context, final List<Client> currentClients,
-                                     final UserProfile profile) {
-                context.setResponseStatus(HttpStatus.SC_FORBIDDEN);
+            protected HttpAction unauthorized(final WebContext context, final List currentClients) {
+                return HttpAction.forbidden("Access Denied", context);
             }
-        };
+        });
         return interceptor;
     }
 

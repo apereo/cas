@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
-import org.pac4j.http.credentials.authenticator.Authenticator;
-import org.pac4j.http.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.password.NopPasswordEncoder;
+import org.pac4j.core.credentials.password.PasswordEncoder;
 import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
 
 /**
@@ -17,8 +19,7 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
     private String applicationId;
     private String secretkey;
 
-    private org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder = 
-            new NopPasswordEncoder();
+    private PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
     
     public StormpathAuthenticationHandler(final String apiKey, final String applicationId, 
                                           final String secretkey) {
@@ -28,18 +29,18 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
     }
 
     @Override
-    protected Authenticator getAuthenticator(final Credential credential) {
+    protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey, 
                 this.secretkey, this.applicationId);
         authenticator.setPasswordEncoder(this.stormpathPasswordEncoder);
         return authenticator;
     }
 
-    public org.pac4j.http.credentials.password.PasswordEncoder getStormpathPasswordEncoder() {
+    public PasswordEncoder getStormpathPasswordEncoder() {
         return stormpathPasswordEncoder;
     }
 
-    public void setStormpathPasswordEncoder(final org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder) {
+    public void setStormpathPasswordEncoder(final PasswordEncoder stormpathPasswordEncoder) {
         this.stormpathPasswordEncoder = stormpathPasswordEncoder;
     }
 }
