@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -14,6 +15,7 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
@@ -34,9 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link LdapAuthenticationConfiguration}
- * that attempts to create relevant authentication
- * handlers for LDAP.
+ * This is {@link LdapAuthenticationConfiguration} that attempts to create
+ * relevant authentication handlers for LDAP.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -76,8 +77,7 @@ public class LdapAuthenticationConfiguration {
     @RefreshScope
     public AuthorizationGenerator ldapAuthorizationGenerator() {
         if (connectionFactory != null) {
-            final LdapAuthorizationGenerator gen =
-                    new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
+            final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
             gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
             gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
             gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
@@ -119,6 +119,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
                 }
                 handler.setAuthenticator(authenticator);
+                handler.initialize();
 
                 if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
                     this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
@@ -146,7 +147,11 @@ public class LdapAuthenticationConfiguration {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
+            return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        } else {
+            return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        }
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
@@ -172,5 +177,11 @@ public class LdapAuthenticationConfiguration {
         handler.setAuthenticationControls(new PasswordPolicyControl());
         return handler;
     }
-}
 
+    private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
+                Beans.newPooledConnectionFactory(l));
+        handler.setPasswordAttribute(l.getPrincipalAttributePassword());
+        return handler;
+    }
+}
