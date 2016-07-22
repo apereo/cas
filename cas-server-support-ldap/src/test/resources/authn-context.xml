@@ -76,6 +76,7 @@
             ldapUrl="${ldap.url}"
             baseDn="${ldap.baseDn}"
             userFilter="${ldap.authn.searchFilter}"
+            passwordAttribute="${ldap.authn.passwordAttribute}"
             bindDn="${ldap.managerDn}"
             bindCredential="${ldap.managerPassword}"
             connectTimeout="${ldap.connectTimeout}"
