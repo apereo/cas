@@ -928,6 +928,16 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.mfa.duo.duoApiHost=
 ```
 
+## Multifactor Authentication -> Authy
+
+```properties
+# cas.authn.mfa.authy.apiKey=
+# cas.authn.mfa.authy.apiUrl=
+# cas.authn.mfa.authy.phoneAttribute=phone
+# cas.authn.mfa.authy.mailAttribute=mail
+# cas.authn.mfa.authy.forceVerification=true
+```
+        
 ## Authentication Exceptions
 
 Map custom authentication exceptions in the CAS webflow

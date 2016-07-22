@@ -187,7 +187,7 @@ public class YubiKeyConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        if (casProperties.getAuthn().getMfa().getYubikey().getClientId() > 0 
+        if (casProperties.getAuthn().getMfa().getYubikey().getClientId() > 0
             && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
             this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
