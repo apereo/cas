@@ -82,6 +82,13 @@ public final class JcifsConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        configureJaasLoginConfig();
+    }
+
+    /**
+     * Configure jaas login config location and set it as a system property.
+     */
+    protected void configureJaasLoginConfig() {
         try {
             final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
             if (StringUtils.isNotBlank(propValue)) {
@@ -95,8 +102,9 @@ public final class JcifsConfig implements InitializingBean {
                 
                 final Resource res = this.resourceLoader.getResource(loginConf);
                 if (res != null && res.exists()) {
-                    logger.debug("Located login config {} and configured it under {}", loginConf, SYS_PROP_LOGIN_CONF);
-                    System.setProperty(SYS_PROP_LOGIN_CONF, res.getURL().toExternalForm());
+                    final String urlPath = res.getURL().toExternalForm();
+                    logger.debug("Located login config {} and configured it under {}", urlPath, SYS_PROP_LOGIN_CONF);
+                    System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
                 } else {
                     final URL url = getClass().getResource("/jcifs/http/login.conf");
                     if (url != null) {
