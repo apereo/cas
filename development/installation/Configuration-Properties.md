@@ -604,8 +604,12 @@ CAS authenticates a username/password against an LDAP directory such as Active D
 There are numerous directory architectures and we provide configuration for four common cases.
 
 - Active Directory - Users authenticate with sAMAccountName.
-- Authenticated Search - Manager bind/search followed by user simple bind.
-- Anonymous Search - Anonymous search followed by user simple bind.
+- Authenticated Search - Manager bind/search
+  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+- Anonymous Search - Anonymous search 
+  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 - Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
@@ -629,6 +633,7 @@ server, simply increment the index and specify the settings for the next LDAP se
 
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
+# cas.authn.ldap[0].principalAttributePassword=userPassword
 # cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
@@ -928,6 +933,16 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.mfa.duo.duoApiHost=
 ```
 
+## Multifactor Authentication -> Authy
+
+```properties
+# cas.authn.mfa.authy.apiKey=
+# cas.authn.mfa.authy.apiUrl=
+# cas.authn.mfa.authy.phoneAttribute=phone
+# cas.authn.mfa.authy.mailAttribute=mail
+# cas.authn.mfa.authy.forceVerification=true
+```
+        
 ## Authentication Exceptions
 
 Map custom authentication exceptions in the CAS webflow
