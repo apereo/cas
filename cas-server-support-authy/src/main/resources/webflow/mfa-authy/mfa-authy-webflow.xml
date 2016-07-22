@@ -11,28 +11,10 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="accountRegistrationCheck"/>
-    </action-state>
-
-    <action-state id="accountRegistrationCheck">
-        <evaluate expression="googleAccountRegistrationAction" />
-        <transition on="register" to="viewRegistration"/>
         <transition on="success" to="viewLoginForm"/>
     </action-state>
-
-    <view-state id="viewRegistration" view="casGoogleAuthenticatorRegistrationView">
-        <on-entry>
-            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
-        </on-entry>
-        <transition on="submit" to="saveRegistration"/>
-    </view-state>
-    
-    <action-state id="saveRegistration">
-        <evaluate expression="saveAccountRegistrationAction" />
-        <transition on="success" to="viewLoginForm"/>
-    </action-state>
-    
-    <view-state id="viewLoginForm" view="casGoogleAuthenticatorLoginView" model="credential">
+        
+    <view-state id="viewLoginForm" view="casAuthyLoginView" model="credential">
         <binder>
             <binding property="token" required="true"/>
         </binder>
@@ -40,11 +22,10 @@
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
         <transition on="submit" bind="true" validate="false" to="realSubmit"/>
-
     </view-state>
 
     <action-state id="realSubmit">
-        <evaluate expression="googleAuthenticatorAuthenticationWebflowAction" />
+        <evaluate expression="authyAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="initializeLoginForm" />
     </action-state>
