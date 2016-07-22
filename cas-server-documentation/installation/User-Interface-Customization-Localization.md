@@ -10,12 +10,12 @@ The CAS Web application includes a number of localized message files:
 - Spanish
 - French
 - Russian
-- Netherlands (Nederlands)
+- Dutch (Nederlands)
 - Swedish (Svenskt)
 - Italian (Italiano)
 - Urdu
 - Chinese (Simplified)
-- Dutch (Deutsch)
+- German (Deutsch)
 - Japanese
 - Croatian
 - Czech
