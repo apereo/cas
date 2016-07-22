@@ -1,0 +1,5 @@
+
+description = "Apereo CAS Core Utility APIs"
+dependencies {
+    compile libraries.spring
+}

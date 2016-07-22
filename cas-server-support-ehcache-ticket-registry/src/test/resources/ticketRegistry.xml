@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+   
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache-replicated.xml"/>
+        <property name="shared" value="false"/>
+        <property name="cacheManagerName" value="ticketRegistryCacheManager"/>
+    </bean>
+    
+    <bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+          abstract="true">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="diskExpiryThreadIntervalSeconds" value="0"/>
+        <property name="diskPersistent" value="false"/>
+        <property name="eternal" value="false"/>
+        <property name="maxElementsInMemory" value="10000"/>
+        <property name="maxElementsOnDisk" value="0"/>
+        <property name="memoryStoreEvictionPolicy" value="LRU"/>
+        <property name="overflowToDisk" value="false"/>
+        <property name="bootstrapCacheLoader">
+            <ref bean="ticketCacheBootstrapCacheLoader"/>
+        </property>
+    </bean>
+
+    <bean id="ehcacheTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+          parent="abstractTicketCache">
+        <property name="cacheName" value="org.apereo.cas.ticket.TicketCache"/>
+
+        <property name="cacheEventListeners">
+            <ref bean="ticketRMISynchronousCacheReplicator"/>
+        </property>
+
+        <!-- The maximum number of seconds an element can exist in the cache without being accessed. The
+          element expires at this limit and will no longer be returned from the cache. The default value is 0,
+          which means no TTI eviction takes place (infinite lifetime). -->
+        <property name="timeToIdle" value="0"/>
+
+        <!-- The maximum number of seconds an element can exist in the cache regardless of use. The element
+          expires at this limit and will no longer be returned from the cache. The default value is 0, which means
+          no TTL eviction takes place (infinite lifetime). -->
+        <property name="timeToLive" value="9000"/>
+    </bean>
+
+
+    <bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
+        <constructor-arg name="replicatePuts" value="true"/>
+        <constructor-arg name="replicatePutsViaCopy" value="true"/>
+        <constructor-arg name="replicateUpdates" value="true"/>
+        <constructor-arg name="replicateUpdatesViaCopy" value="true"/>
+        <constructor-arg name="replicateRemovals" value="true"/>
+    </bean>
+
+
+    <bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+        <constructor-arg name="asynchronous" value="true"/>
+        <constructor-arg name="maximumChunkSize" value="5000000"/>
+    </bean>
+
+    <!-- CAS Context Core -->
+    
+    
+</beans>

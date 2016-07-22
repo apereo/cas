@@ -1,0 +1,53 @@
+<div class="proxy-policy-container">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:text="#{services.form.header.proxyPolicy}"/>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="radio-group">
+
+                <!-- Proxy Policy Radio Button - Refuse -->
+                <label class="radio-inline">
+                    <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="REFUSE"
+                           ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" ng-checked="true"/>
+                    <span th:text="#{services.form.label.proxyPolicy.refuse}"/>
+                </label>
+
+                <!-- Proxy Policy Radio Button - Regex -->
+                <label class="radio-inline">
+                    <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="REGEX"
+                           ng-model="serviceFormCtrl.serviceData.proxyPolicy.type"/>
+                    <span th:text="#{services.form.label.proxyPolicy.regex}"/>
+                </label>
+            </div>
+
+            <!-- Proxy Policy Refuse Options -->
+            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'REFUSE'">
+                <span th:text="#{management.services.service.noAction}"/>
+
+            </div>
+
+            <!-- Proxy Policy Regex Options -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'REGEX'">
+                <label class="col-sm-3" for="proxyPolicyRegex">
+                    <span th:text="#{services.form.label.proxyPolicy.regex}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.proxyPolicy.regex}"></i>
+                </label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input type="text" class="form-control" id="proxyPolicyRegex"
+                               ng-model="serviceFormCtrl.serviceData.proxyPolicy.value"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

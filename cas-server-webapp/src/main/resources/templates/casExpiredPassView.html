@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.expiredpass.heading}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.expiredpass.heading}"/>
+        <p th:utext="#{screen.expiredpass.message(${passwordPolicyUrl})}"/>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+  <title>[[#{screen.success.header}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+      <h2 th:utext="#{screen.success.header}"/>
+      <p th:utext="#{screen.success.success(${principal.id})}"/>
+      <p th:utext="#{screen.success.security}" />
+    </div>
+</div>
+</body>
+</html>

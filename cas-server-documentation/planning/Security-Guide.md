@@ -33,7 +33,7 @@ Practically, it means that all CAS urls must use HTTPS, but it **also** means th
 ### Connections to Dependent Systems
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
-be compensating controls that make secure transport uncessary. Private networks and corporate networks with strict
+be compensating controls that make secure transport unnecessary. Private networks and corporate networks with strict
 acces controls are common exceptions, but secure transport is recommended nonetheless.
 Client certification validation can be another good solution for LDAP to bring sufficient security.
 
@@ -88,32 +88,6 @@ In other words, the security model is decentralized rather than centralized. The
 some centralized control of proxy authentication by exposing a proxy authentication flag that can enabled or disabled
 on a per-service basis. By default registered services are not granted proxy authentication capability.
 
-
-### Multi-factor Authentication
-CAS provides support for multi-factor authentication in one of two modes: global and per-service. The global case
-where multiple credentials are invariably required on the login form is straightforward: the user interface is
-modified to accept multiple credentials and authentication components are configured to require successful
-authentication of all provided credentials.
-
-The per-service case is both more interesting and more complicated:
-
-* Levels of identity assurance (LOA) for credentials and groups of credentials must be established.
-* Security policy versus credential LOA must be established per service.
-* Service access policy must be configured via the [service management](#service-management) facility.
-
-The first two tasks are vital but outside the scope of this document. Application of service access policy via the
-service management facility is implemented by declaring the
-[authentication handlers](../installation/Configuring-Authentication-Components.html#authentication-handlers)
-that must successfully authenticate credentials in order to permit access; for example, an LDAP authentication
-handler and an RSA SecureID authentication handler.
-
-Since multi-factor authentication requires development of institutional security policy, advanced component
-configuration (and possibly custom component development), and UI design, it should be regarded more as a framework
-than a feature. See the
-[multi-factor configuration](../installation/Configuring-Authentication-Components.html#multifactor-authentication-mfa)
-section for detailed discussion of configuration concerns and implementation recommendations.
-
-
 ### Credential Caching and Replay
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
 and replay on demand as needed to access legacy services. While [proxy authentication](#proxy-authentication)
@@ -131,6 +105,7 @@ decentralized security policy model.) Some highlights of service management cont
 * Attribute release
 * Proxy authentication control
 * Theme control
+* Service authorization control
 * Multi-factor service access policy
 
 The service management facility is comprised of a service registry containing one or more registered services, each
@@ -145,7 +120,7 @@ open for all applications may create an opportunity for security attacks.
 </p></div>
 
 ### SSO Cookie Encryption
-A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. The cookie value is by default encrypted and signed via settings defined in `cas.properties`. While sample data is provided for initial deployments, these keys MUST be regenerated per your specific environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. The cookie value is by default encrypted and signed via settings defined in `application.properties`. While sample data is provided for initial deployments, these keys MUST be regenerated per your specific environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
 
 ### Ticket Expiration Policies
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
@@ -185,10 +160,9 @@ systems including CAS. See the
 section for further information.
 
 
-###Credential Encryption
-An open source product called [Java Simplified Encryption](http://www.jasypt.org/cli.html)  allows you to replace clear text passwords in files with encrypted strings that are decrypted at run time. Jasypt can be integrated into the Spring configuration framework so that property values are decrypted as the configuration file is loaded.  Jasypt's approach replaces the the property management technique with one that recognizes encrypted strings and decrypts them. This method uses password-based encryption, which means that the system still needs a secret password in order to decrypt our credentials. We don't want to simply move the secret from one file to another, and Jasypt avoids that by passing the key as an environment variable or even directly to the application through a web interface each time it is deployed.
+### Credential Encryption
 
-This ability is beneficial since it removes the need to embed plain-text credentials in configuration files, and allows the adopter to securely keep track of all encrypted settings in source control systems, safely sharing the build configuration with others. Sensitive pieces of data are only restricted to the deployment environment.
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
@@ -201,13 +175,13 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default, and may be enabled via the following settings:
 
-{% highlight xml %}
+```xml
 # httpresponse.header.cache=false
 # httpresponse.header.hsts=false
 # httpresponse.header.xframe=false
 # httpresponse.header.xcontent=false
 # httpresponse.header.xss=false
-{% endhighlight %}
+```
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
@@ -245,4 +219,4 @@ on the CAS login screen to provide an interstitial notification page that is dis
 By default the notification page offers the user an option to proceed with CAS authentication or abort by
 navigating away from the target service.
 
-[cas-sec-filter]: https://github.com/Jasig/cas-server-security-filter
+[cas-sec-filter]: https://github.com/apereo/cas-server-security-filter

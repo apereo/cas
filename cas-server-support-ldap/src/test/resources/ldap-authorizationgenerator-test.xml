@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
+
+
+    <bean id="usernameAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="mail" />
+    </bean>
+    
+    <ldaptive:search-executor id="searchExecutorUser" baseDn="${ldap.baseDn}"
+                              searchFilter="${ldap.user.searchFilter}" returnAttributes="*" />
+</beans>

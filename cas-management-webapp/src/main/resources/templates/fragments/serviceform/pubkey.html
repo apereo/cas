@@ -1,0 +1,40 @@
+<div class="public-key-container">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:text="#{services.form.header.pubKey}" />
+            </h3>
+        </div> <!-- end .panel-header div -->
+        <div class="panel-body">
+
+            <!-- Public Key Location -->
+            <div class="form-group">
+                <label class="col-sm-4" for="publicKeyLocation">
+                    <span th:text="#{services.form.label.pubKey.location}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.pubKey.location}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.serviceData.publicKey.location"/>
+                </div>
+            </div>
+            <!-- Public Key Algorithm -->
+            <div class="form-group">
+                <label class="col-sm-4" for="publicKeyAlgorithm">
+                    <span th:text="#{services.form.label.pubKey.algorithm}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.pubKey.algorithm}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.serviceData.publicKey.algorithm">
+                        <option value="RSA" ng-selected="true">RSA</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

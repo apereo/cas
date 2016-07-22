@@ -1,13 +1,10 @@
-
-description = 'Apereo CAS Generic Support'
+description = "Apereo CAS Generic Support"
 dependencies {
-	compile project(':cas-server-core-api')
-	compile project(':cas-server-core-authentication')
-	compile project(':cas-server-core-util')
-	compile project(':cas-server-core-web')
-	compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
-		exclude(module: 'slf4j-api')
-	}
-	testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    
+    compile project(":cas-server-core-authentication")
+    compile project(":cas-server-core-util")
+    compile project(":cas-server-core-web")
+    compile libraries.shiro
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
 }
 
