@@ -2,11 +2,11 @@ package org.apereo.cas.adaptors.authy.config;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.authy.AuthyAccountRegistry;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationMetaDataPopulator;
+import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.authy.InMemoryAuthyAccountRegistry;
+import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
@@ -25,7 +25,6 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -56,7 +55,7 @@ public class AuthyConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -100,7 +99,7 @@ public class AuthyConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-    
+
     @RefreshScope
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
@@ -109,19 +108,13 @@ public class AuthyConfiguration {
         builder.addFlowLocationPattern("/mfa-authy/*-webflow.xml");
         return builder.build();
     }
-    
+
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(
-                    casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
-                    casProperties.getAuthn().getMfa().getAuthy().getApiUrl(),
-                    authyAccountRegistry()
-            );
+            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance());
             h.setServicesManager(servicesManager);
-            h.setPhoneAttribute(casProperties.getAuthn().getMfa().getAuthy().getPhoneAttribute());
             h.setPrincipalFactory(authyPrincipalFactory());
-            h.setMailAttribute(casProperties.getAuthn().getMfa().getAuthy().getMailAttribute());
             h.setForceVerification(casProperties.getAuthn().getMfa().getAuthy().isForceVerification());
 
             return h;
@@ -134,7 +127,7 @@ public class AuthyConfiguration {
     public PrincipalFactory authyPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
@@ -147,20 +140,12 @@ public class AuthyConfiguration {
         return g;
     }
 
-    @ConditionalOnMissingBean(name="authyAccountRegistry")
-    @Bean
-    @RefreshScope
-    public AuthyAccountRegistry authyAccountRegistry() {
-        return new InMemoryAuthyAccountRegistry();
-    }
-    
-
     @Bean
     @RefreshScope
     public AbstractMultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
         return new AuthyMultifactorAuthenticationProvider();
     }
-    
+
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
         final AuthyAuthenticationWebflowEventResolver r = new AuthyAuthenticationWebflowEventResolver();
@@ -172,7 +157,7 @@ public class AuthyConfiguration {
         r.setWarnCookieGenerator(this.warnCookieGenerator);
         return r;
     }
-    
+
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         final AuthyMultifactorWebflowConfigurer c =
@@ -189,7 +174,24 @@ public class AuthyConfiguration {
         a.setCasWebflowEventResolver(authyAuthenticationWebflowEventResolver());
         return a;
     }
-    
+
+    @Bean
+    public AuthyClientInstance authyClientInstance() {
+        final AuthyClientInstance i = new AuthyClientInstance(
+                casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
+                casProperties.getAuthn().getMfa().getAuthy().getApiUrl()
+        );
+        i.setMailAttribute(casProperties.getAuthn().getMfa().getAuthy().getMailAttribute());
+        i.setPhoneAttribute(casProperties.getAuthn().getMfa().getAuthy().getPhoneAttribute());
+        return i;
+    }
+
+    @Bean
+    public Action authyAuthenticationRegistrationWebflowAction() {
+        final AuthyAuthenticationRegistrationWebflowAction a = new AuthyAuthenticationRegistrationWebflowAction(authyClientInstance());
+        return a;
+    }
+
     @PostConstruct
     protected void initializeRootApplicationContext() {
         authenticationHandlersResolvers.put(authyAuthenticationHandler(), null);
