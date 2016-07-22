@@ -39,6 +39,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -225,13 +226,13 @@ public class Beans {
         pc.setMaxPoolSize(l.getMaxPoolSize());
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
         pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(l.getValidatePeriod());
+        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
 
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
-        cc.setConnectTimeout(l.getConnectTimeout());
+        cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
@@ -266,12 +267,12 @@ public class Beans {
         }
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
-        cp.setBlockWaitTime(l.getBlockWaitTime());
+        cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
         cp.setPoolConfig(pc);
 
         final IdlePruneStrategy strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(l.getIdleTime());
-        strategy.setPrunePeriod(l.getPrunePeriod());
+        strategy.setIdleTime(newDuration(l.getIdleTime()));
+        strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
         cp.setValidator(new SearchValidator());
@@ -279,4 +280,13 @@ public class Beans {
         return new PooledConnectionFactory(cp);
     }
 
+    /**
+     * New duration.
+     *
+     * @param length the length in seconds.
+     * @return the duration
+     */
+    public static Duration newDuration(final long length) {
+        return Duration.ofSeconds(length);
+    }
 }

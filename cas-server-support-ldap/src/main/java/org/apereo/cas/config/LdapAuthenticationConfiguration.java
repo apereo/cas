@@ -29,9 +29,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link LdapAuthenticationConfiguration}
@@ -111,8 +111,7 @@ public class LdapAuthenticationConfiguration {
                 if (l.isUsePasswordPolicy()) {
                     authenticator.setAuthenticationResponseHandlers(
                             new ActiveDirectoryAuthenticationResponseHandler(
-                                    TimeUnit.DAYS.convert(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays(),
-                                            TimeUnit.MILLISECONDS)
+                                    Period.ofDays(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays())
                             ),
                             new PasswordPolicyAuthenticationResponseHandler(),
                             new PasswordExpirationAuthenticationResponseHandler());

@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations="/ldap-context.xml", classes = {RefreshAutoConfiguration.class})
+@SpringApplicationConfiguration(locations="classpath:/spnego-ldap-context.xml", classes = {RefreshAutoConfiguration.class})
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
     @Autowired
