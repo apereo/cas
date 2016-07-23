@@ -4,6 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
+import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,6 +22,8 @@ import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
@@ -68,11 +73,7 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("ldapPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration ldapPasswordPolicyConfiguration;
-
+    
     @Bean
     @RefreshScope
     public AuthorizationGenerator ldapAuthorizationGenerator() {
@@ -108,15 +109,39 @@ public class LdapAuthenticationConfiguration {
                 handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
 
                 final Authenticator authenticator = getAuthenticator(l);
-                if (l.isUsePasswordPolicy()) {
+                if (l.getPasswordPolicy().isEnabled()) {
+                    
+                    final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
+                    
                     authenticator.setAuthenticationResponseHandlers(
+                            new EDirectoryAuthenticationResponseHandler(
+                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())),
+                            
                             new ActiveDirectoryAuthenticationResponseHandler(
-                                    Period.ofDays(this.ldapPasswordPolicyConfiguration.getPasswordWarningNumberOfDays())
+                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())
+                            ),
+                            new FreeIPAAuthenticationResponseHandler(
+                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
+                                    cfg.getLoginFailures()
                             ),
                             new PasswordPolicyAuthenticationResponseHandler(),
                             new PasswordExpirationAuthenticationResponseHandler());
 
-                    handler.setPasswordPolicyConfiguration(this.ldapPasswordPolicyConfiguration);
+                    if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
+                        && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
+                        
+                        final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
+                        accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
+                        accountHandler.setWarnAttributeName(l.getPasswordPolicy().getWarningAttributeName());
+                        accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
+                        accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+                        cfg.setAccountStateHandler(accountHandler);
+                    } else {
+                        final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
+                        accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+                        cfg.setAccountStateHandler(accountHandler);
+                    }
+                    handler.setPasswordPolicyConfiguration(cfg);
                 }
                 handler.setAuthenticator(authenticator);
                 handler.initialize();

@@ -667,6 +667,16 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].principalTransformation.suffix=
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
+
+# cas.authn.ldap[0].passwordPolicy.enabled=true
+# cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
+# cas.authn.ldap[0].passwordPolicy.loginFailures=5
+# cas.authn.ldap[0].passwordPolicy.warningAttributeValue=
+# cas.authn.ldap[0].passwordPolicy.warningAttributeName=
+# cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
+# cas.authn.ldap[0].passwordPolicy.warnAll=true
+# cas.authn.ldap[0].passwordPolicy.warningDays=30
+# cas.authn.ldap[0].passwordPolicy.url=https://password.example.edu/change
 ```
 
 ## REST Authentication
