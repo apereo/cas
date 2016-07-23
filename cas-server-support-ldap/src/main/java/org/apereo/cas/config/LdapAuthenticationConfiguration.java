@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
-import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
