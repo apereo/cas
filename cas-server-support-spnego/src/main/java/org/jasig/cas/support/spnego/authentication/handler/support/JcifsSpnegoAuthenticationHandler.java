@@ -64,7 +64,7 @@ public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostPr
                 nextToken = this.authentication.getNextToken();
             }
         } catch (final jcifs.spnego.AuthenticationException e) {
-            throw new FailedLoginException(e.getMessage());
+            throw new PreventedException(e.getMessage(), e);
         }
 
         // evaluate jcifs response
