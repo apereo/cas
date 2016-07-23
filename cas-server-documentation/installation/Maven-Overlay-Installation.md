@@ -180,7 +180,7 @@ To configure your project to inherit from the BOM, simply set the parent:
 <!-- Inherit defaults from Spring Boot -->
 <parent>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-bom</artifactId>
+    <artifactId>cas-bom</artifactId>
     <version>${cas.version}</version>
 </parent>
 ```
@@ -206,7 +206,7 @@ by using a `scope=import` dependency:
              
         <dependency>
             <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-support-bom</artifactId>
+            <artifactId>cas-bom</artifactId>
             <version>${cas.version}</version>
             <type>pom</type>
             <scope>import</scope>
