@@ -163,9 +163,7 @@ in the Maven overlay must include a reference to the Maven Java compiler so clas
     </plugins>
     <finalName>cas</finalName>
 </build>
-
 ...
-
 ```
 
 ## Dependency Management
