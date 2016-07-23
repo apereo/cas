@@ -87,7 +87,6 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         this.errorMap.put(FreeIPAAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
     }
 
-
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
                                           final LdapPasswordPolicyConfiguration configuration)

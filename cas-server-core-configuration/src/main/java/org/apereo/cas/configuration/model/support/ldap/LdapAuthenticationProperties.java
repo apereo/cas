@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -36,8 +37,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
          */
         ANONYMOUS
     }
-
-    private boolean usePasswordPolicy = true;
+    
     private String dnFormat;
     private String principalAttributeId = "uid";
     private String principalAttributePassword;
@@ -46,6 +46,8 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private List additionalAttributes;
     private AuthenticationTypes type;
 
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation =
@@ -53,6 +55,14 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    public PasswordPolicyProperties getPasswordPolicy() {
+        return passwordPolicy;
+    }
+
+    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
+        this.passwordPolicy = passwordPolicy;
+    }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
@@ -69,15 +79,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
-    public boolean isUsePasswordPolicy() {
-        return usePasswordPolicy;
-    }
-
-    public void setUsePasswordPolicy(final boolean usePasswordPolicy) {
-        this.usePasswordPolicy = usePasswordPolicy;
-    }
-
+    
     public String getDnFormat() {
         return dnFormat;
     }

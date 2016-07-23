@@ -21,7 +21,9 @@ public class DigestCredential extends AbstractCredential {
     /**
      * Instantiates a new Basic identifiable credental.
      *
-     * @param uid the id
+     * @param uid   the id
+     * @param realm the realm
+     * @param hash  the hash
      */
     public DigestCredential(final String uid, final String realm, final String hash) {
         this.realm = realm;

@@ -64,10 +64,7 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy =
             new AuthenticationPolicyProperties();
-
-    @NestedConfigurationProperty
-    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
-
+    
     @NestedConfigurationProperty
     private AcceptAuthenticationProperties accept = new AcceptAuthenticationProperties();
 
@@ -150,19 +147,7 @@ public class AuthenticationProperties {
     public AuthenticationPolicyProperties getPolicy() {
         return policy;
     }
-
-    public void setPolicy(final AuthenticationPolicyProperties policy) {
-        this.policy = policy;
-    }
-
-    public PasswordPolicyProperties getPasswordPolicy() {
-        return passwordPolicy;
-    }
-
-    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
-        this.passwordPolicy = passwordPolicy;
-    }
-
+    
     public AcceptAuthenticationProperties getAccept() {
         return accept;
     }
