@@ -119,8 +119,7 @@ public class CasCoreAuthenticationConfiguration {
 
         return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
-
-    @Autowired
+    
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
@@ -152,8 +151,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-    @Autowired
+    
     @RefreshScope
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
@@ -225,8 +223,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
     }
-
-    @Autowired
+    
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         final RegisteredServiceAuthenticationHandlerResolver r =
@@ -244,12 +241,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
         return new SuccessfulHandlerMetaDataPopulator();
     }
-
-    @Bean
-    public PasswordPolicyConfiguration defaultPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration(casProperties.getAuthn().getPasswordPolicy());
-    }
-
+    
     @Bean
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
         return new RememberMeAuthenticationMetaDataPopulator();
@@ -283,8 +275,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setPrincipalFactory(proxyPrincipalFactory());
         return p;
     }
-
-    @Autowired
+    
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
