@@ -106,7 +106,7 @@ the authenticated principal that submits the request must be authorized with a
 preconfigured role name and value that is designated in the CAS configuration
 via the CAS properties.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 
 ### Sample Request 

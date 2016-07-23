@@ -41,7 +41,7 @@ OAuth client for the provider: Twitter. For each delegated authentication mechan
 
 Clients can be defined via properties for the most common ones (in the `application.properties` file).
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as 
@@ -65,7 +65,7 @@ After a successful delegated authentication, a user is created inside the CAS se
 this one can be created only from the technical identifier received from the external identity provider (like `1234`) 
 or as a "typed identifier" (like FacebookProfile#1234), which is the default. This can be defined in the `application.properties` file.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 
 ## Demo
