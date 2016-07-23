@@ -23,6 +23,7 @@
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
     *   [X.509](/$version/installation/X509-Authentication.html)
     *   [LDAP](/$version/installation/LDAP-Authentication.html)
+        *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
     *   [OAuth/OpenId](/$version/installation/OAuth-OpenId-Authentication.html)
     *   [RADIUS](/$version/installation/RADIUS-Authentication.html)
     *   [SPNEGO](/$version/installation/SPNEGO-Authentication.html)
@@ -44,6 +45,7 @@
         *   [YubiKey](/$version/installation/YubiKey-Authentication.html)
         *   [RSA/Radius](/$version/installation/RADIUS-Authentication.html)
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
+        *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [SSO Session Cookie](/$version/installation/Configuring-SSO-Session-Cookie.html)
@@ -105,10 +107,10 @@
 
 * [Integration](#integration)
     *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [ClearPass](/$version/integration/ClearPass.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
-    *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
 
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
