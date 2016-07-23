@@ -4,7 +4,8 @@ title: CAS - Google Apps Integration
 ---
 
 # Overview
-Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an integration point for external authentication services. 
+Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an 
+integration point for external authentication services. 
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -37,7 +38,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 The `public.key` and `private.p8` go into classpath. The `x509.pem` file should be 
 uploaded into Google Apps under Security/SSO.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 Also, ensure that Google Apps is registered in your Service Registry, 
 by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
@@ -61,4 +62,4 @@ Use the following URLs when you are configuring for Google Apps:
 ## Test
 
 Attempt to access a Google-hosted application, such as Google Calendar 
-with the url: `http://calendar.google.com/a/YourGoogleDomain`
+with the url: `https://calendar.google.com/a/YourGoogleDomain`
