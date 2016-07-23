@@ -24,11 +24,12 @@ org.gradle.daemon=false
 
 ## Preparing the Release
 
+- If necessary, create an appropriate brancg for the next release. (i.e. `4.2.x`)
 - In the project's `gradle.properties`, change the project version to the release version (i.e. `4.2.0-RC1`)
 - Build the project using the following command:
 
 ```bash
-./gradlew clean assemble -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
+./gradlew clean assemble install -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
 ```
 
 - Release the project using the following commands:
@@ -36,10 +37,6 @@ org.gradle.daemon=false
 ```bash
 ./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
 ```
-
-- In the project's `gradle.properties`, change the project version to the *next* release version (i.e. `4.2.0-RC2`) 
-- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v4.2.0-RC1`).
-- Switch to the `master` branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). Push your changes to the upstream repository. 
 
 ## Performing the Release
 
@@ -49,6 +46,11 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 - Find the staged repository for CAS artifacts
 - "Close" the repository.
 - "Release" the repository.  Both c and d should be accompanied by email confirmation.
+
+## Finalizing the Release
+
+- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v4.2.0-RC1`).
+- Switch to the `master` branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). Push your changes to the upstream repository. 
 
 ## Housekeeping
 
