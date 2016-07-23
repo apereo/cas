@@ -1,5 +1,6 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
@@ -7,8 +8,6 @@ import org.jasig.cas.support.spnego.MockJcifsAuthentication;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.security.GeneralSecurityException;
 
 import static org.junit.Assert.*;
 
@@ -51,8 +50,8 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         this.authenticationHandler.setAuthentication(new MockJcifsAuthentication(false));
         try {
             this.authenticationHandler.authenticate(credentials);
-            fail("An AbstractAuthenticationException should have been thrown");
-        } catch (final GeneralSecurityException e) {
+            fail("An exception should have been thrown");
+        } catch (final PreventedException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }
