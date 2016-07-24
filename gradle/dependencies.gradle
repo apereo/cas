@@ -574,10 +574,15 @@ ext.libraries = [
                 dependencies.create("net.spy:spymemcached:$spymemcachedVersion"),
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
                     exclude(group: "net.spy", module: "spymemcached")
+                    exclude(group: "org.objenesis", module: "objenesis")
                     force = true
                 },
                 dependencies.create("de.javakaffee:kryo-serializers:$kryoSerializersVersion") {
                     exclude(group: "com.esotericsoftware.kryo", module: "kryo")
+                    exclude(group: "org.objenesis", module: "objenesis")
+                    force = true
+                },
+                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     force = true
                 }
         ],
