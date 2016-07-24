@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("ssoPostProfileHandlerController")
 public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     /**
@@ -71,27 +70,19 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSsoPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final AuthnRequest authnRequest = decodeRequest(request, decoder, AuthnRequest.class);
-        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
-        
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                        registeredService, authnRequest);
-        
-        if (!authnRequest.isSigned()) {
-            if (adaptor.isAuthnRequestsSigned()) {
-                logger.error("Metadata for [{}] says authentication requests are signed, yet this authentication request is not",
-                        adaptor.getEntityId());
-                throw new SAMLException("AuthN request is not signed but should be");
-            }
-            logger.info("Authentication request is not signed, so there is no need to verify its signature.");
-        } else {
-            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, adaptor.getMetadataResolver());
-        }
-
-        SamlUtils.logSamlObject(this.configBean, authnRequest);
-        issueAuthenticationRequestRedirect(authnRequest, request, response);
+        final AuthnRequest authnRequest = retrieveAuthnRequest(request, decoder);
+        initiateAuthenticationRequest(authnRequest, response, request);
+    }
+    
+    /**
+     * Retrieve authn request.
+     *
+     * @param request the request
+     * @param decoder the decoder
+     * @return the authn request
+     */
+    protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request, final BaseHttpServletRequestXMLMessageDecoder decoder) {
+        return decodeRequest(request, decoder, AuthnRequest.class);
     }
 
 }
