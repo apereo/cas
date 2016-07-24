@@ -23,6 +23,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Controller
 public abstract class BaseOAuthWrapperController {
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 

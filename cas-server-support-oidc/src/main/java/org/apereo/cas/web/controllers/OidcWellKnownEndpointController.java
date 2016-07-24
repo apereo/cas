@@ -1,15 +1,14 @@
-package org.apereo.cas.web;
+package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.config.OidcServerDiscoverySettings;
-import org.apereo.cas.configuration.model.core.ServerProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 /**
  * This is {@link OidcWellKnownEndpointController}.
@@ -17,25 +16,22 @@ import javax.annotation.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RestController("wellknownController")
-public class OidcWellKnownEndpointController {
+public class OidcWellKnownEndpointController extends BaseOAuthWrapperController {
 
-    @Resource
-    private OidcProperties properties;
-
-    @Resource
-    private ServerProperties serverProperties;
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     /**
      * Gets well known discovery configuration.
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET)
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public OidcServerDiscoverySettings getWellKnownDiscoveryConfiguration() {
 
         final OidcServerDiscoverySettings discoveryProperties =
-                new OidcServerDiscoverySettings(this.serverProperties.getPrefix(), properties.getIssuer());
+                new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
 
         discoveryProperties.setSupportedClaims(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
@@ -58,7 +54,8 @@ public class OidcWellKnownEndpointController {
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", method = RequestMethod.GET)
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", 
+            method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public OidcServerDiscoverySettings getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
