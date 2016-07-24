@@ -13,6 +13,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegist
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileCallbackHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileHandlerController;
@@ -288,6 +290,11 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
         final SSOPostProfileHandlerController c = new SSOPostProfileHandlerController();
+        initControllerBean(c);
+        return c;
+    }
+
+    private void initControllerBean(final AbstractSamlProfileHandlerController c) {
         c.setConfigBean(openSamlConfigBean);
         c.setParserPool(parserPool);
         c.setResponseBuilder(samlProfileSamlResponseBuilder());
@@ -304,58 +311,31 @@ public class SamlIdPConfiguration {
         c.setServerName(casProperties.getServer().getName());
         c.setServerPrefix(casProperties.getServer().getPrefix());
         c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-        
+
         c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
-        return c;
     }
 
     @Bean
     @RefreshScope
     public SLOPostProfileHandlerController sloPostProfileHandlerController() {
         final SLOPostProfileHandlerController c = new SLOPostProfileHandlerController();
-        c.setConfigBean(openSamlConfigBean);
-        c.setParserPool(parserPool);
-        c.setResponseBuilder(samlProfileSamlResponseBuilder());
-        c.setSamlObjectSigner(samlObjectSigner());
-        c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
-        c.setServicesManager(servicesManager);
-        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
-
-        c.setLoginUrl(casProperties.getServer().getLoginUrl());
-        c.setServerName(casProperties.getServer().getName());
-        c.setServerPrefix(casProperties.getServer().getPrefix());
-        c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-
-        c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
-        c.setLogoutUrl(casProperties.getServer().getLogoutUrl());
-        c.setForceSignedLogoutRequests(casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests());
-        c.setSingleLogoutCallbacksDisabled(casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-
+        initControllerBean(c);
         return c;
     }
 
     @Bean
     @RefreshScope
+    public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
+        final IdPInitiatedProfileHandlerController c = new IdPInitiatedProfileHandlerController();
+        initControllerBean(c);
+        return c;
+    }
+    
+    @Bean
+    @RefreshScope
     public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
         final SSOPostProfileCallbackHandlerController c = new SSOPostProfileCallbackHandlerController();
-        c.setConfigBean(openSamlConfigBean);
-        c.setParserPool(parserPool);
-        c.setResponseBuilder(samlProfileSamlResponseBuilder());
-        c.setSamlObjectSigner(samlObjectSigner());
-        c.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
-        c.setServicesManager(servicesManager);
-        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
-
-        c.setAuthenticationContextClassMappings(this.authenticationContextClassMappings);
-        c.setLoginUrl(casProperties.getServer().getLoginUrl());
-        c.setServerName(casProperties.getServer().getName());
-        c.setServerPrefix(casProperties.getServer().getPrefix());
-        c.setAuthenticationContextRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-        
-        c.setLogoutUrl(casProperties.getServer().getLogoutUrl());
-        c.setForceSignedLogoutRequests(casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests());
-        c.setSingleLogoutCallbacksDisabled(casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-        
+        initControllerBean(c);
         return c;
     }
 }
