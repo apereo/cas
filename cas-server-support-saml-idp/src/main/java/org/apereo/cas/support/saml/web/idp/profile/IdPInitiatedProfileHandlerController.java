@@ -86,7 +86,6 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         final SAMLObjectBuilder pBuilder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         final NameIDPolicy nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
         nameIDPolicy.setAllowCreate(Boolean.valueOf(true));
-        nameIDPolicy.setFormat(NameID.UNSPECIFIED);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         final String id = "_" + String.valueOf(Math.abs(new SecureRandom().nextLong()));
