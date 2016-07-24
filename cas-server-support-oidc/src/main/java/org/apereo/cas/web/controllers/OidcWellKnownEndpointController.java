@@ -6,9 +6,12 @@ import org.apereo.cas.config.OidcServerDiscoverySettings;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * This is {@link OidcWellKnownEndpointController}.
@@ -28,7 +31,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public OidcServerDiscoverySettings getWellKnownDiscoveryConfiguration() {
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
 
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
@@ -46,7 +49,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
         discoveryProperties.setSupportedClaimTypes(ImmutableList.of("normal"));
 
         discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit"));
-        return discoveryProperties;
+        return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }
 
     /**
@@ -56,7 +59,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      */
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", 
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OidcServerDiscoverySettings getWellKnownOpenIdDiscoveryConfiguration() {
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
 }
