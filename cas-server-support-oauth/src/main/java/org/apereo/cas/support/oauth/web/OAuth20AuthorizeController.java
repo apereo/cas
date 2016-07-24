@@ -35,7 +35,6 @@ import java.util.Optional;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller("authorizeController")
 public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     /**
