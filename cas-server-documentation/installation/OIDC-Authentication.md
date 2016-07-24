@@ -20,12 +20,12 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 | Field                                     | Description
 |-------------------------------------------+------------------------------------------------------+
-| `/oidc/.well-known`                       | Discovery endpoint.
-| `/oidc/.well-known/openid-configuration`  | Discovery endpoint.
-| `/oidc/authorize`                         | Authorization requests are handled here.
-| `/oidc/profile`                           | User profile requests are handled here.
-| `/oidc/jwks`                              | Provides an aggregate of all keystores
-| `/oidc/accessToken`                       | Produces authorized access tokens.
+| `/cas/oidc/.well-known`                       | Discovery endpoint.
+| `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
+| `/cas/oidc/jwks`                              | Provides an aggregate of all keystores.
+| `/cas/oauth2.0/authorize`                     | Authorization requests are handled here.
+| `/cas/oauth2.0/profile`                       | User profile requests are handled here.
+| `/cas/oauth2.0/accessToken`                   | Produces authorized access tokens.
 
 ## Register Clients
 
