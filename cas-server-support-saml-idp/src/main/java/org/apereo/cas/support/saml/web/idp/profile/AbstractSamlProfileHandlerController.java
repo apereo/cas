@@ -331,7 +331,7 @@ public abstract class AbstractSamlProfileHandlerController {
             final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
             return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
         }
-
+        
         return initialUrl;
     }
 
