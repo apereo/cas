@@ -184,6 +184,7 @@ public class SamlIdPConfiguration {
         b.setSamlObjectEncrypter(samlObjectEncrypter());
         b.setSamlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder());
         b.setVelocityEngineFactory(velocityEngineFactory);
+        b.setSamlObjectSigner(samlObjectSigner());
         return b;
     }
 
