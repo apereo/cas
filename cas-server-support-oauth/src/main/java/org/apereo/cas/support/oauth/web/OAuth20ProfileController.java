@@ -27,7 +27,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller("profileController")
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";
