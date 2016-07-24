@@ -999,6 +999,9 @@ ext.libraries = [
                 }
         ],
         springcloud             : [
+                dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
+                    force = true
+                },
                 dependencies.create("org.springframework.cloud:spring-cloud-config-client:$springCloudConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
