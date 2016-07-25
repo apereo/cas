@@ -60,6 +60,8 @@ dependencies {
     compile project(":cas-server-core-web")
     compile project(":cas-server-core-validation")
     compile project(":cas-server-core-util")
+    compile project(":cas-server-core-configuration")
+    compile project(":cas-server-core-configuration-cloud-amqp")
     compile project(":cas-server-webapp-init")
     compile project(":cas-server-support-throttle")
     compile project(":cas-server-support-actions")
