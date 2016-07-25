@@ -40,8 +40,14 @@ public class DashboardController {
             throws Exception {
 
         final Map<String, String> model = new HashMap<>();
-        model.put("refreshEndpoint", busProperties.isEnabled() ? "/cas" + configServerProperties.getPrefix() 
-                + "/cas/bus/refresh" : "/cas/status/refresh");
+        
+        if (busProperties.isEnabled()) {
+            model.put("refreshEndpoint", "/cas" + configServerProperties.getPrefix() + "/cas/bus/refresh");
+            model.put("refreshMethod", "GET");
+        } else {
+            model.put("refreshEndpoint", "/cas/status/refresh");
+            model.put("refreshMethod", "POST");
+        }
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }
