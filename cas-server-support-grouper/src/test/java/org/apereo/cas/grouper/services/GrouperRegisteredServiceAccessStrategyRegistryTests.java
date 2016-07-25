@@ -6,6 +6,7 @@ import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.TestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.mockito.Mockito.*;
 
 /**
  * The {@link GrouperRegisteredServiceAccessStrategyRegistryTests} includes
@@ -42,7 +44,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false);
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
         dao.save(service);
         dao.load();
     }

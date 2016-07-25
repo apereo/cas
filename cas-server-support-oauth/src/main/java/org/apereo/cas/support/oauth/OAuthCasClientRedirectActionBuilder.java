@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.support.oauth;
 
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;

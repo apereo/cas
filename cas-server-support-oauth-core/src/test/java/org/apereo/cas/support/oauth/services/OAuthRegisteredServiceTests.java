@@ -7,9 +7,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -22,7 +24,7 @@ public class OAuthRegisteredServiceTests {
     private ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false);
+        this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
     }
 
     @BeforeClass

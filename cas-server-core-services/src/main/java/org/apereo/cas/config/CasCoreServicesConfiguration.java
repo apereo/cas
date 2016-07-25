@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -51,6 +52,9 @@ public class CasCoreServicesConfiguration {
     @Autowired
     private ApplicationContext context;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
@@ -112,20 +116,22 @@ public class CasCoreServicesConfiguration {
         return impl;
     }
 
+    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO)
                                                                  final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(),
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher),
                 serviceRegistryDao, servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
+    @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryDao embeddedJsonServiceRegistry() {
+    public ServiceRegistryDao embeddedJsonServiceRegistry(final ApplicationEventPublisher publisher) {
         try {
-            return new EmbeddedServiceRegistryDao();
+            return new EmbeddedServiceRegistryDao(publisher);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -143,8 +149,8 @@ public class CasCoreServicesConfiguration {
      * on the classpath.
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao() throws Exception {
-            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false);
+        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher) throws Exception {
+            super(new ClassPathResource("services"), new RegisteredServiceJsonSerializer(), false, publisher);
         }
 
         @Override
