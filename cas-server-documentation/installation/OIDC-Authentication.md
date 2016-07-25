@@ -56,7 +56,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Keystores
 
-Each registered application in CAS can contain its own keytore as a `jwks` resource. By default,
+Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
 a global keystore can be expected and defined via the above property configuration. The format of the keystore
 file is similar to the following:
 
@@ -73,3 +73,6 @@ file is similar to the following:
     "qi": "x3HwBVFfnR2wa3jKLQxlADcZw0I2Be6tqTrJ9erfWfsznCL6zH6beClyObVF9pdDXujZTUVYyhgHMZ15zRVQ2UgCa9k5x8KJn2y-OFz3m2gWu4UAvfM7UotpdMcZlDiFm8J1BWv8QKYjmFNBAE_gAf7k9YiSxJTAsChCks1Q5gk"
 }
 ```
+
+A JWKS can be generated using [this tool](https://mkjwk.org/) 
+or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
