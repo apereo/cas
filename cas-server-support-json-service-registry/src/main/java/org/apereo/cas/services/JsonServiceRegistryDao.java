@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
 import java.nio.file.Path;
@@ -63,8 +64,8 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param configDirectory the config directory where service registry files can be found.
      * @param enableWatcher   the enable watcher
      */
-    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher) {
-        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
+    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher) {
+        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher, eventPublisher);
     }
 
     /**
@@ -77,8 +78,9 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @throws Exception the IO exception
      */
     public JsonServiceRegistryDao(final Resource configDirectory,
-                                  final boolean enableWatcher) throws Exception {
-        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher);
+                                  final boolean enableWatcher,
+                                  final ApplicationEventPublisher eventPublisher) throws Exception {
+        super(configDirectory, new RegisteredServiceJsonSerializer(), enableWatcher, eventPublisher);
     }
     
     @Override

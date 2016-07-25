@@ -1031,6 +1031,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.zookeeper:zookeeper:3.4.8") {
                     exclude(group: "jline", module: "jline")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],

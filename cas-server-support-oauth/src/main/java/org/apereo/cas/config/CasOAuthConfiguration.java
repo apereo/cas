@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.DefaultOAuthCasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
@@ -32,11 +34,14 @@ import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
+import org.apereo.cas.support.oauth.web.flow.OAuth20LogoutAction;
+import org.apereo.cas.support.oauth.web.flow.OAuth20LogoutWebflowConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
@@ -46,6 +51,7 @@ import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
+import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.pac4j.springframework.web.CallbackController;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -59,6 +65,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +75,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.c;
 
 /**
  * This this {@link CasOAuthConfiguration}.
@@ -103,6 +113,17 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
+    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+    
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
@@ -166,34 +187,19 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             return url;
         };
     }
-
-    /**
-     * Requires authentication authorize interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
+    
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
-
-    /**
-     * Consent approval view resolver.
-     *
-     * @return the consent approval view resolver
-     */
+    
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver();
     }
 
-    /**
-     * Callback authorize view resolver.
-     *
-     * @return the oauth 20 callback authorize view resolver
-     */
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
@@ -201,22 +207,29 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    /**
-     * Requires authentication access token interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
+    @Bean
+    public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
+        final OAuth20LogoutWebflowConfigurer c = new OAuth20LogoutWebflowConfigurer();
+        c.setFlowBuilderServices(this.flowBuilderServices);
+        c.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
+        c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
+        return c;
+    }
+
+    @Bean
+    public OAuth20LogoutAction oauth20LogoutAction() {
+        final ApplicationLogoutController controller = new ApplicationLogoutController();
+        controller.setConfig(oauthSecConfig());
+        final OAuth20LogoutAction action = new OAuth20LogoutAction();
+        action.setApplicationLogoutController(controller);
+        return action;
+    }
+    
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
-
-
-    /**
-     * interceptor handler interceptor adapter.
-     *
-     * @return the handler interceptor adapter
-     */
+    
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
         return new HandlerInterceptorAdapter() {
@@ -400,7 +413,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setConfig(oauthSecConfig());
         return c;
     }
-
+    
+    
     @Bean
     public UniqueTicketIdGenerator accessTokenIdGenerator() {
         return new DefaultUniqueTicketIdGenerator();

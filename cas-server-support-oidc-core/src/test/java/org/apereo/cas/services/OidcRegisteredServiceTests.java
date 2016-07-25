@@ -3,9 +3,11 @@ package org.apereo.cas.services;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -18,7 +20,7 @@ public class OidcRegisteredServiceTests {
     private ServiceRegistryDao dao;
 
     public OidcRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false);
+        this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
     }
 
     @BeforeClass
