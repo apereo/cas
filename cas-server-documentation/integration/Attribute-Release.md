@@ -87,7 +87,8 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 
-
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think VERY CAREFULLY before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
+may produce an oppurunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 ### Return All
 
