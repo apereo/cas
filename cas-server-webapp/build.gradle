@@ -70,14 +70,14 @@ dependencies {
     compile project(":cas-server-support-validation")
     
     providedRuntime libraries.springboottomcat
-    runtime libraries.pac4j
-    runtime libraries.springcloud
-    runtime libraries.springboot
-    runtime libraries.thmyeleaf
-    runtime libraries.groovy
-    runtime libraries.spring
-    runtime libraries.cassecurityfilter
-    runtime libraries.metrics
-    runtime libraries.hibernate
-    runtime libraries.bouncycastle
+    compile libraries.pac4j
+    compile libraries.springcloud
+    compile libraries.springboot
+    compile libraries.thmyeleaf
+    compile libraries.groovy
+    compile libraries.spring
+    compile libraries.cassecurityfilter
+    compile libraries.metrics
+    compile libraries.hibernate
+    compile libraries.bouncycastle
 }
