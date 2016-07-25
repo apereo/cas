@@ -3,7 +3,7 @@
 <Configuration monitorInterval="10" packages="org.apereo.cas.logging">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c{1}] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
         
         <RollingFile name="file" fileName="cas.log" append="true"
@@ -65,7 +65,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.bus" level="info" additivity="false">
+        <AsyncLogger name="org.springframework.cloud.bus" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -92,7 +92,15 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.amqp" level="error" additivity="false">
+        <AsyncLogger name="org.springframework.amqp" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.integration" level="warn" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.messaging" level="warn" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
