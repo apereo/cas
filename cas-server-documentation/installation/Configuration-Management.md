@@ -221,17 +221,26 @@ Support is enabled by including the following dependency in the final overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-amqp</artifactId>
+     <artifactId>cas-server-core-configuration-cloud-amqp</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
 ### Kafka
 
+Apache Kafka is an open-source message broker project developed by the Apache Software Foundation. 
+The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. 
+It is, in its essence, a "massively scalable pub/sub message queue architected as a distributed transaction log",
+making it highly valuable for enterprise infrastructures to process streaming data.
+
 Support is enabled by including the following dependency in the final overlay:
 
 ```xml
-
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-kafka</artifactId>
+     <version>${cas.version}</version>
+</dependency>
 ```
 
 
