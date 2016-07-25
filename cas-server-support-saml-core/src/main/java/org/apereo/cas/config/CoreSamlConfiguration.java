@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class CoreSamlConfiguration {
      *
      * @return the velocity engine factory bean
      */
+    @Lazy
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngineFactoryBean velocityEngineFactoryBean() {
         final VelocityEngineFactoryBean bean = new VelocityEngineFactoryBean();

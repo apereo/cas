@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.SocketUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,7 +52,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @RefreshScope
+    @Lazy
     @Bean
     public LocalValidatorFactoryBean credentialsValidator() {
         final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
