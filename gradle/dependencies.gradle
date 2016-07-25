@@ -1013,6 +1013,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-config-monitor:$springCloudConfigVersion") {
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
@@ -1107,6 +1108,31 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                   
+                    force = true
+                },
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-config:$springCloudStarterVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.slf4j", module: "logj-over-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-config-client")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
@@ -1156,6 +1182,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework", module: "spring-messaging")
                     force = true
                 },
                 dependencies.create("org.springframework.integration:spring-integration-amqp:$springIntegrationVersion") {
@@ -1175,6 +1202,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
@@ -1237,6 +1265,10 @@ ext.libraries = [
                     exclude(group: "org.mongodb", module: "mongo-java-driver")
                     force = true
                 },
+                dependencies.create("org.springframework:spring-jms:$springVersion") {
+                    exclude(group: "org.springframework", module: "spring-messaging")
+                },
+                dependencies.create("org.springframework:spring-messaging:$springVersion"),
                 dependencies.create("org.springframework:spring-expression:$springVersion"),
                 dependencies.create("org.springframework:spring-jdbc:$springVersion"),
                 dependencies.create("org.springframework:spring-orm:$springVersion"),
