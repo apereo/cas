@@ -18,6 +18,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Nullable;
 
@@ -69,7 +70,7 @@ public class EhcacheTicketRegistryConfiguration {
      *
      * @return the eh cache manager factory bean
      */
-    @RefreshScope
+    @Lazy
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
@@ -87,7 +88,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @param manager the manager
      * @return the eh cache factory bean
      */
-    @RefreshScope
+    @Lazy
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager")
                                                   final CacheManager manager) {
