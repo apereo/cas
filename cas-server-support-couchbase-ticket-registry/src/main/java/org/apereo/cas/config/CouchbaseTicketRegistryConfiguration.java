@@ -63,6 +63,9 @@ public class CouchbaseTicketRegistryConfiguration {
         return new CouchbaseTicketRegistryCleaner();
     }
 
+    /**
+     * The type Couchbase ticket registry cleaner.
+     */
     public static class CouchbaseTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
         @Override
         protected boolean isCleanerSupported() {

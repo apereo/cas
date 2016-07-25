@@ -15,16 +15,10 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 
 /**
  * This is {@link MemcachedTicketRegistryConfiguration}.
@@ -84,7 +78,10 @@ public class MemcachedTicketRegistryConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return new MemcachedTicketRegistryCleaner();
     }
-    
+
+    /**
+     * The type Memcached ticket registry cleaner.
+     */
     public static class MemcachedTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
         @Override
         protected boolean isCleanerSupported() {

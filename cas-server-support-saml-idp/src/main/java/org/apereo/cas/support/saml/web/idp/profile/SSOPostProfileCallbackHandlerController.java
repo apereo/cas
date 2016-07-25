@@ -11,7 +11,6 @@ import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
