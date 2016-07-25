@@ -115,10 +115,10 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
-## Cloud Config AMQP Bus
+## Cloud Configuration Bus
 
 CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a 
-distributed system with a lightweight message broker
+distributed system with a lightweight message broker:
 
 ```properties
 spring.cloud.bus.enabled=false
@@ -126,11 +126,18 @@ spring.cloud.bus.refresh.enabled=true
 spring.cloud.bus.env.enabled=true
 spring.cloud.bus.destination=CasCloudBus
 spring.cloud.bus.ack.enabled=true
-# spring.activemq.broker-url=
-# spring.activemq.in-memory=
-# spring.activemq.pooled=
-# spring.activemq.user=
-# spring.activemq.password=
+```
+
+### Cloud Configuration Bus -> RabbitMQ
+
+```
+# spring.rabbitmq.host=
+# spring.rabbitmq.port=
+# spring.rabbitmq.username=
+# spring.rabbitmq.password=
+
+# Or all of the above in one line
+# spring.rabbitmq.addresses=
 ```
 
 ## Admin Status Endpoints
