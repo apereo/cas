@@ -14,8 +14,11 @@ import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
@@ -44,6 +47,8 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     
     private ConsentApprovalViewResolver consentApprovalViewResolver;
 
+    private TicketRegistrySupport ticketRegistrySupport;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
     
@@ -59,13 +64,14 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
                                               final HttpServletResponse response) throws Exception {
 
-        if (!verifyAuthorizeRequest(request)) {
+        final J2EContext context = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(context);
+        
+        if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
             logger.error("Authorize request verification fails");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-
-        final J2EContext context = new J2EContext(request, response);
-
+        
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
         final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         try {
@@ -80,9 +86,14 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
             return mv;
         }
 
-        final ProfileManager manager = new ProfileManager(context);
+        
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
+    }
+
+    private boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
+        final Optional<CommonProfile> opt = manager.get(true);
+        return opt.isPresent();
     }
 
     private ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
@@ -258,5 +269,9 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     public void setConsentApprovalViewResolver(final ConsentApprovalViewResolver consentApprovalViewResolver) {
         this.consentApprovalViewResolver = consentApprovalViewResolver;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 }

@@ -183,4 +183,8 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
     public void close() {
         IOUtils.closeQuietly(this.watcher);
     }
+
+    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 }

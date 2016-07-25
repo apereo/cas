@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.support.oauth.DefaultOAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
