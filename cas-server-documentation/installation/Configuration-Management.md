@@ -242,5 +242,3 @@ Support is enabled by including the following dependency in the final overlay:
      <version>${cas.version}</version>
 </dependency>
 ```
-
-
