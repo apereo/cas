@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.support.oauth;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.jasig.cas.client.util.CommonUtils;

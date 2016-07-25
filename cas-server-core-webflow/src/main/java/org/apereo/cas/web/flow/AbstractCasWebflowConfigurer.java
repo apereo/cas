@@ -65,6 +65,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * The logout flow definition registry.
+     */
+    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    
+    /**
      * The Login flow definition registry.
      */
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -107,9 +112,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     @Override
     public Flow getLoginFlow() {
-        return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
+        return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
     }
 
+    /**
+     * Gets login flow.
+     *
+     * @return the login flow
+     */
+    @Override
+    public Flow getLogoutFlow() {
+        return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+    }
+    
     /**
      * Gets start state.
      *
@@ -589,6 +604,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         createTransitionForState(state, subflowId, subflowId);
     }
 
+    public void setLogoutFlowDefinitionRegistry(final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
+        this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
+    }
 
     public void setLoginFlowDefinitionRegistry(final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;

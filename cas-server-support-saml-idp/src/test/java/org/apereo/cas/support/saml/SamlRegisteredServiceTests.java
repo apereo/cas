@@ -9,11 +9,14 @@ import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collections;
 
 import static org.junit.Assert.*;
+
+import static org.mockito.Mockito.*;
 
 /**
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
@@ -37,7 +40,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false);
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
         dao.save(service);
         dao.load();
     }

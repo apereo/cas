@@ -26,6 +26,11 @@ public interface CasWebflowConfigurer {
     String FLOW_ID_LOGIN = "login";
 
     /**
+     * Main logout flow id.
+     */
+    String FLOW_ID_LOGOUT = "logout";
+    
+    /**
      * Initialize.
      */
     void initialize();
@@ -37,6 +42,13 @@ public interface CasWebflowConfigurer {
      */
     Flow getLoginFlow();
 
+    /**
+     * Gets logout flow.
+     *
+     * @return the logout flow
+     */
+    Flow getLogoutFlow();
+    
     /**
      * Gets start state.
      *

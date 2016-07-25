@@ -55,9 +55,6 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     private Thread serviceRegistryWatcherThread;
 
     private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
     
     /**
      * Instantiates a new service registry dao.
@@ -68,8 +65,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) {
-        initializeRegistry(configDirectory, serializer, enableWatcher);
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) {
+        initializeRegistry(configDirectory, serializer, enableWatcher, eventPublisher);
     }
 
     /**
@@ -82,15 +80,17 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) throws Exception {
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
 
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
-        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher);
+        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher, eventPublisher);
     }
 
     private void initializeRegistry(final Path configDirectory,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
-                                    final boolean enableWatcher) {
+                                    final boolean enableWatcher,
+                                    final ApplicationEventPublisher eventPublisher) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
@@ -100,7 +100,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
             LOGGER.info("Watching service registry directory at {}", configDirectory);
             
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, this.eventPublisher);
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();
