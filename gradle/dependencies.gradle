@@ -570,21 +570,23 @@ ext.libraries = [
                 dependencies.create("org.spockframework:spock-spring:$spockVersion"),
                 dependencies.create("org.json:json:$jsonVersion")
         ],
-        memcached               : [
-                dependencies.create("net.spy:spymemcached:$spymemcachedVersion"),
+        kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
                     exclude(group: "net.spy", module: "spymemcached")
                     exclude(group: "org.objenesis", module: "objenesis")
                     force = true
                 },
                 dependencies.create("de.javakaffee:kryo-serializers:$kryoSerializersVersion") {
-                    exclude(group: "com.esotericsoftware.kryo", module: "kryo")
+                    exclude(group: "com.esotericsoftware", module: "kryo")
                     exclude(group: "org.objenesis", module: "objenesis")
                     force = true
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     force = true
                 }
+        ],
+        memcached               : [
+                dependencies.create("net.spy:spymemcached:$spymemcachedVersion")
         ],
         ldaptive                : [
                 dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {
@@ -1137,6 +1139,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "com.esotericsoftware", module: "kryo")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
