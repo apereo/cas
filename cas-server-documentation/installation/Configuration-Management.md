@@ -47,7 +47,7 @@ to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 CAS provides a built-in configuration server that is responsible for bootstrapping the configuration 
 environment and loading of externalized settings in a distributed system. You may have a central 
 place to manage external properties for CAS nodes across all environments. As your CAS deployment 
-oves through the deployment pipeline from dev to test and into production you can manage the configuration 
+moves through the deployment pipeline from dev to test and into production you can manage the configuration 
 between those environments and be certain that applications have everything they need to run when they migrate. 
 The default implementation of the server storage backend uses git so it easily supports labelled versions 
 of configuration environments, as well as being accessible to a wide range of tooling for managing the content. 
@@ -64,6 +64,8 @@ The following endpoints are secured and exposed by the configuration server's `/
 | `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
 | `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`        | Describes what the configuration server knows about the `native` settings profile.
+| `/bus/refresh`       | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.      | 
+| `/bus/env`           | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
 
 ## Auto Configuration Strategy
 
@@ -171,6 +173,8 @@ Any changes you make to the externally-defined `application.properties` file mus
 If you are using the CAS admin screens to update and edit properties, the configuration state of the CAS server
 is refreshed seamlessly and automatically without your resorting to manual and forceful refresh. 
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
@@ -182,19 +186,35 @@ The bus supports sending messages to all nodes listening.
 Broadcasted events will attempt to update, refresh and 
 reload each application’s configuration.
 
-The following properties need to be adjusted, in order to turn on the bus configuration:
+If CAS nodes are not sharing a central location for configuration properties such that each 
+node contains a copy of the settings, any changes you make to one node must be replicated and 
+synced across all nodes so they are persisted on disk. The broadcast mechanism noted above only 
+applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track 
+of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps) 
+where you make a change in one place and it's broadcasted to all nodes. This model removes the need for 
+synchronizing changes across disks and CAS nodes.  
 
-```properties
-# spring.cloud.bus.enabled=false
-# spring.cloud.bus.refresh.enabled=true
-# spring.cloud.bus.env.enabled=true
-# spring.cloud.bus.destination=CasCloudBus
-# spring.cloud.bus.ack.enabled=true
-# spring.activemq.broker-url=
-# spring.activemq.in-memory=
-# spring.activemq.pooled=
-# spring.activemq.user=
-# spring.activemq.password=
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+The transport mechanism for the bus to broadcast events is handled via one of the following components.
+
+### RabbitMQ
+
+[RabbitMQ](https://www.rabbitmq.com/) is open source message broker software (sometimes called message-oriented middleware) that implements 
+the Advanced Message Queuing Protocol (AMQP).
+
+Support is enabled by including the following dependency in the final overlay:
+
+```xml
+
 ```
 
-If CAS nodes are not sharing a central location for configuration properties such that each node contains a copy of the settings, any changes you make to one node must be replicated and synced across all nodes so they are persisted on disk. The broadcast mechanism noted above only applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps) where you make a change in one place and it's broadcasted to all nodes. This model removes the need for synchornizing changes across disks and CAS nodes.  
+### Kafka
+
+Support is enabled by including the following dependency in the final overlay:
+
+```xml
+
+```
+
+
