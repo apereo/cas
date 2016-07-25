@@ -1,16 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
-import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 

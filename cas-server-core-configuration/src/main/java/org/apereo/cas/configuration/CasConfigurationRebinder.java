@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
@@ -12,17 +14,18 @@ import java.util.Map;
 
 /**
  * This is {@link CasConfigurationRebinder}. Handles events issued by the configuration server
- * and rebinds {@link CasConfigurationProperties} back into the context. 
+ * and rebinds {@link CasConfigurationProperties} back into the context.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Component("casConfigurationRebinder")
 public class CasConfigurationRebinder {
-       
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationRebinder.class);
+
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
 
@@ -50,12 +53,14 @@ public class CasConfigurationRebinder {
      * Rebind cas configuration properties.
      */
     public void rebindCasConfigurationProperties() {
-        final Map<String, CasConfigurationProperties> map = 
+        final Map<String, CasConfigurationProperties> map =
                 this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        
+
         final String name = map.keySet().iterator().next();
-        Object e = this.applicationContext.getBean(name);
+        LOGGER.info("Reloading CAS configuration via {}", name);
+        final Object e = this.applicationContext.getBean(name);
         this.binder.postProcessBeforeInitialization(e, name);
         this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        LOGGER.info("Reloaded CAS configuration {}", name);
     }
 }

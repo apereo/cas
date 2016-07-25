@@ -210,6 +210,8 @@ public class Beans {
                 final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
                 t1.setToUpperCase(false);
                 return t1;
+            default:
+                //nothing
         }
         return res;
     }
