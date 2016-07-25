@@ -58,7 +58,7 @@
                         </form>
                     </li>
                     <li>
-                        <form method="post" action="/cas/status/refresh">
+                        <form method="post" th:action="${refreshEndpoint}">
                             <button class="btn btn-refresh"
                                 type="button"
                                 data-toggle="modal"
