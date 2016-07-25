@@ -131,8 +131,8 @@ Similar to above, this policy will return a collection of allowed attributes for
 service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
 
 For example, the following configuration will recognize the resolved
-attributes `uid`, `eduPersonAffiliation` and `groupMembership` and will then
-release `uid`, `affiliation` and `group` to the web application configured.
+attributes `eduPersonAffiliation` and `groupMembership` and will then
+release `affiliation` and `group` to the web application configured.
 
 ```json
 {
