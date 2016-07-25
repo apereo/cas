@@ -30,8 +30,7 @@ import javax.annotation.Nullable;
 @Configuration("memcachedConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MemcachedTicketRegistryConfiguration {
-
-    @Nullable
+    
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor cipherExecutor;
@@ -44,7 +43,6 @@ public class MemcachedTicketRegistryConfiguration {
      *
      * @return the memcached client factory bean
      */
-    @RefreshScope
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
 
@@ -62,23 +60,25 @@ public class MemcachedTicketRegistryConfiguration {
     public KryoTranscoder kryoTranscoder() {
         return new KryoTranscoder();
     }
-
     
+    @Autowired
     @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
-    public TicketRegistry memcachedTicketRegistry() throws Exception {
-        final MemCacheTicketRegistry registry =
-                new MemCacheTicketRegistry((MemcachedClientIF) memcachedClient().getObject());
+    public TicketRegistry memcachedTicketRegistry(
+            @Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
+        final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
         registry.setCipherExecutor(cipherExecutor);
         return registry;
     }
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new DefaultTicketRegistryCleaner() {
-            @Override
-            protected boolean isCleanerSupported() {
-                return false;
-            }
-        };
+        return new MemcachedTicketRegistryCleaner();
+    }
+    
+    public static class MemcachedTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
+        @Override
+        protected boolean isCleanerSupported() {
+            return false;
+        }
     }
 }

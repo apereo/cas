@@ -288,7 +288,8 @@ public class CasCoreTicketsConfiguration {
             }
         };
     }
-        
+     
+    @ConditionalOnMissingBean(name="ticketRegistryCleaner")
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
