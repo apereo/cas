@@ -15,6 +15,16 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/Redirect/SSO`
 - `/cas/idp/profile/SAML2/POST/SSO`
 - `/cas/idp/profile/SAML2/POST/SLO`
+- `/cas/idp/profile/SAML2/Unsolicited/SSO`
+
+SAML2 IdP Unsolicited/Initiated SSO profile supports the following parameters:
+
+| Parameter                         | Description
+|-----------------------------------+-----------------------------------------+
+| `providerId`                      | Required. Entity ID of the service provider.
+| `shire`                           | Optional. Response location (ACS URL) of the service provider.
+| `target`                          | Optional. Relay state.
+| `time`                            | Optional. Skew the authentication request.
 
 ### IdP Metadata
 The following CAS endpoints handle the generation of SAML2 metadata:
@@ -100,7 +110,6 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-
 ### SAML Services
 SAML relying parties and services must be registered within the CAS service registry similar to the following example:
 
@@ -133,6 +142,7 @@ The following fields are available for SAML services:
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request. 
 
 ### Dynamic Metadata
+
 CAS also supports the [Dynamic Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol)
 which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata
 from a Metadata query server, the metadata location must be configured to point to the query server instance. Here is an example:
