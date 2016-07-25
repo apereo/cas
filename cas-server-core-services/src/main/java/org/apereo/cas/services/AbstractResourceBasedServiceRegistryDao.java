@@ -54,13 +54,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     private Thread serviceRegistryWatcherThread;
 
     private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
-    
+
     /**
      * Instantiates a new service registry dao.
      *
      * @param configDirectory the config directory
      * @param serializer      the registered service json serializer
      * @param enableWatcher   enable watcher thread
+     * @param eventPublisher  the event publisher
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
@@ -75,6 +76,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      * @param configDirectory the config directory
      * @param serializer      the serializer
      * @param enableWatcher   the enable watcher
+     * @param eventPublisher  the event publisher
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
