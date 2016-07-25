@@ -4,6 +4,8 @@ dependencies {
     compile libraries.memcached
     compile libraries.hibernate
     compileOnly libraries.springcloud
+    compile libraries.kryo
+    
     compile project(":cas-server-core-logging")
     compile project(":cas-server-core-tickets")
     compile project(":cas-server-core-services")
