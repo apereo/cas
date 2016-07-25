@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Throwables;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -14,12 +15,16 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.cloud.CloudAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Nullable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 /**
  * This is {@link MemcachedTicketRegistryConfiguration}.
@@ -43,17 +48,22 @@ public class MemcachedTicketRegistryConfiguration {
      *
      * @return the memcached client factory bean
      */
+    @Lazy
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
 
-        final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
-        bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
-        bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(
-                casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
-        bean.setTranscoder(kryoTranscoder());
-        bean.setFailureMode(FailureMode.valueOf(casProperties.getTicket().getRegistry().getMemcached().getFailureMode()));
-        bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));
-        return bean;
+        try {
+            final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
+            bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
+            bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(
+                    casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
+            bean.setTranscoder(kryoTranscoder());
+            bean.setFailureMode(FailureMode.valueOf(casProperties.getTicket().getRegistry().getMemcached().getFailureMode()));
+            bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));
+            return bean;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     @Bean
