@@ -7,7 +7,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link OAuth20LogoutAction}.
+ * This is {@link OAuth20LogoutAction} that destroys the oauth session.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
