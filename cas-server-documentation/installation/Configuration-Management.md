@@ -198,15 +198,32 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 
+### Troubleshooting
+
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<AsyncLogger name="org.springframework.amqp" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+```
+
 ### RabbitMQ
 
-[RabbitMQ](https://www.rabbitmq.com/) is open source message broker software (sometimes called message-oriented middleware) that implements 
+This is the default option for broadcasting change events to CAS nodes. 
+[RabbitMQ](https://www.rabbitmq.com/) is open source message broker 
+software (sometimes called message-oriented middleware) that implements 
 the Advanced Message Queuing Protocol (AMQP).
 
 Support is enabled by including the following dependency in the final overlay:
 
 ```xml
-
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-amqp</artifactId>
+     <version>${cas.version}</version>
+</dependency>
 ```
 
 ### Kafka
