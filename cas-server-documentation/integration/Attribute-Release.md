@@ -87,9 +87,9 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 
-### Components
 
-#### Return All
+
+### Return All
 
 Return all resolved attributes to the service.
 
@@ -106,7 +106,7 @@ Return all resolved attributes to the service.
 }
 ```
 
-#### Return Allowed
+### Return Allowed
 
 Only return the attributes that are explicitly allowed by the configuration.
 
@@ -125,7 +125,7 @@ Only return the attributes that are explicitly allowed by the configuration.
 ```
 
 
-#### Return Mapped
+### Return Mapped
 
 Similar to above, this policy will return a collection of allowed attributes for the
 service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
@@ -198,8 +198,6 @@ By default, [resolved attributes](Attribute-Resolution.html) are cached to the
 length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
-
-### Components
 
 ### Default
 The default relationship between a CAS `Principal` and the underlying attribute
