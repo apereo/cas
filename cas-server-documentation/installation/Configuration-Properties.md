@@ -130,7 +130,7 @@ spring.cloud.bus.ack.enabled=true
 
 ### Cloud Configuration Bus -> RabbitMQ
 
-```
+```properties
 # spring.rabbitmq.host=
 # spring.rabbitmq.port=
 # spring.rabbitmq.username=
@@ -138,6 +138,15 @@ spring.cloud.bus.ack.enabled=true
 
 # Or all of the above in one line
 # spring.rabbitmq.addresses=
+```
+
+
+### Cloud Configuration Bus -> Kafka
+
+```
+# spring.cloud.stream.bindings.output.content-type=application/json
+# spring.cloud.stream.kafka.binder.zkNodes=...
+# spring.cloud.stream.kafka.binder.brokers=...
 ```
 
 ## Admin Status Endpoints
