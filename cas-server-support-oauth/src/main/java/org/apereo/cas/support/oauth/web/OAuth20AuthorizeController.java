@@ -16,14 +16,12 @@ import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
