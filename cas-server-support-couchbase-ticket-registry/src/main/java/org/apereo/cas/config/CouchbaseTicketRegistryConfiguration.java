@@ -60,12 +60,13 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner() {
-            @Override
-            protected boolean isCleanerSupported() {
-                return false;
-            }
-        };
-        return c;
+        return new CouchbaseTicketRegistryCleaner();
+    }
+
+    public static class CouchbaseTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
+        @Override
+        protected boolean isCleanerSupported() {
+            return false;
+        }
     }
 }

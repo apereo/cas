@@ -65,6 +65,7 @@ public class JpaServiceRegistryConfiguration {
                 casProperties.getServiceRegistry().getJpa());
     }
 
+    @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory")
                                                                    final EntityManagerFactory emf) {
