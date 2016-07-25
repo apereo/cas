@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
