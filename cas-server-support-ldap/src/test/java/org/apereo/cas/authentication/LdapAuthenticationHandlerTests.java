@@ -8,6 +8,7 @@ import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,7 +26,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/authn-context.xml"},
-        classes = {RefreshAutoConfiguration.class})
+        classes = {RefreshAutoConfiguration.class}, initializers = {ConfigFileApplicationContextInitializer.class})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired
