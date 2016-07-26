@@ -31,7 +31,7 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
 
     @RefreshScope
     @Bean
-    public AcceptableUsagePolicyRepository ldapAcceptableUsagePolicyRepository() {
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
 
         final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
                 casProperties.getAcceptableUsagePolicy().getLdap()
