@@ -1469,8 +1469,29 @@ Decide how CAS should attempt to determine whether AUP is accepted.
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
 ```properties
-# cas.acceptableUsagePolicy.ldap.searchFilter=cn={0}
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
+# cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.acceptableUsagePolicy.ldap.bindCredential=Password
+# cas.acceptableUsagePolicy.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.acceptableUsagePolicy.ldap.connectTimeout=5000
+# cas.acceptableUsagePolicy.ldap.trustCertificates=
+# cas.acceptableUsagePolicy.ldap.keystore=
+# cas.acceptableUsagePolicy.ldap.keystorePassword=
+# cas.acceptableUsagePolicy.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.acceptableUsagePolicy.ldap.minPoolSize=3
+# cas.acceptableUsagePolicy.ldap.maxPoolSize=10
+# cas.acceptableUsagePolicy.ldap.validateOnCheckout=true
+# cas.acceptableUsagePolicy.ldap.validatePeriodically=true
+# cas.acceptableUsagePolicy.ldap.validatePeriod=600
+# cas.acceptableUsagePolicy.ldap.failFast=true
+# cas.acceptableUsagePolicy.ldap.idleTime=500
+# cas.acceptableUsagePolicy.ldap.prunePeriod=600
+# cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
+# cas.acceptableUsagePolicy.ldap.subtreeSearch=true
+# cas.acceptableUsagePolicy.ldap.useSsl=true
+# cas.acceptableUsagePolicy.ldap.useStartTls=false
 ```
 
 ## Events -> Database
