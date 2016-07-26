@@ -1,13 +1,10 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ApplicationContextProvider;
-import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
@@ -40,25 +37,7 @@ public class CasCoreUtilConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Bean(name = {"defaultTicketCipherExecutor", "ticketCipherExecutor"})
-    public CipherExecutor defaultTicketCipherExecutor() {
-        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getEncryption().getKey())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getEncryption().getKey())) {
-            return new DefaultTicketCipherExecutor(
-                    casProperties.getTicket().getRegistry().getEncryption().getKey(),
-                    casProperties.getTicket().getRegistry().getSigning().getKey(),
-                    casProperties.getTicket().getRegistry().getAlg(),
-                    casProperties.getTicket().getRegistry().getSigning().getKeySize(),
-                    casProperties.getTicket().getRegistry().getEncryption().getKeySize());
-        }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
-                + "clustered production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket registry tickets.");
-        return new NoOpCipherExecutor();
-    }
-
+    
     @Bean
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         return new WebflowConversationStateCipherExecutor(

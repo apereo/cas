@@ -1603,21 +1603,6 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.pt.numberOfUses=1
 ```
 
-
-## Ticket Registry Signing & Encryption
-
-Decide whether the underlying ticket registry should
-encrypt and sign ticket objects in transition. This is mostly applicable
-to registry choices that are designed to share tickets across multiple CAS nodes.
-
-```properties
-# cas.ticket.registry.signing.key=
-# cas.ticket.registry.signing.keySize=512
-# cas.ticket.registry.encryption.key=
-# cas.ticket.registry.encryption.keySize=16
-# cas.ticket.registry.alg=AES
-```
-
 ## JPA Ticket Registry
 
 ```properties

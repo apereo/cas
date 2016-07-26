@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
@@ -16,8 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class TicketRegistryProperties extends CryptographyProperties {
+public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
