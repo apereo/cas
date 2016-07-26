@@ -4,6 +4,7 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
@@ -17,9 +18,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Default implmentation of {@link RegisteredServiceFactory}.
+ * Default implementation of {@link RegisteredServiceFactory}.
  *
  * @author Daniel Frett
  * @since 4.2
@@ -206,6 +208,10 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
                     .toAttributeReleasePolicy(data);
             if (attrPolicy != null) {
                 absSvc.setAttributeReleasePolicy(attrPolicy);
+            }
+
+            for (final Map.Entry<String, RegisteredServiceProperty> entry : data.getProperties().entrySet()) {
+                svc.getProperties().put(entry.getKey(), entry.getValue());
             }
         }
 
