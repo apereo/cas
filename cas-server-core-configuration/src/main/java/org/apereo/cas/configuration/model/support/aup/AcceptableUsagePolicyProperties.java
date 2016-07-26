@@ -30,6 +30,25 @@ public class AcceptableUsagePolicyProperties {
         this.ldap = ldap;
     }
 
-    public static class Ldap extends AbstractLdapProperties {}
+    public static class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String userFilter;
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getUserFilter() {
+            return userFilter;
+        }
+
+        public void setUserFilter(final String userFilter) {
+            this.userFilter = userFilter;
+        }
+    }
     
 }

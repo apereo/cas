@@ -1489,7 +1489,6 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.idleTime=500
 # cas.acceptableUsagePolicy.ldap.prunePeriod=600
 # cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
-# cas.acceptableUsagePolicy.ldap.subtreeSearch=true
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
 ```
@@ -1602,7 +1601,28 @@ Control how CAS services should be found inside an LDAP instance.
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
+
+# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
+# cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.serviceRegistry.ldap.bindCredential=Password
+# cas.serviceRegistry.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.serviceRegistry.ldap.connectTimeout=5000
+# cas.serviceRegistry.ldap.trustCertificates=
+# cas.serviceRegistry.ldap.keystore=
+# cas.serviceRegistry.ldap.keystorePassword=
+# cas.serviceRegistry.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.serviceRegistry.ldap.minPoolSize=3
+# cas.serviceRegistry.ldap.maxPoolSize=10
+# cas.serviceRegistry.ldap.validateOnCheckout=true
+# cas.serviceRegistry.ldap.validatePeriodically=true
+# cas.serviceRegistry.ldap.validatePeriod=600
+# cas.serviceRegistry.ldap.failFast=true
+# cas.serviceRegistry.ldap.idleTime=500
+# cas.serviceRegistry.ldap.prunePeriod=600
+# cas.serviceRegistry.ldap.blockWaitTime=5000
+# cas.serviceRegistry.ldap.useSsl=true
+# cas.serviceRegistry.ldap.useStartTls=false
 ```
 
 ## Couchbase Service Registry
