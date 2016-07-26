@@ -1,5 +1,7 @@
 package org.jasig.cas.services.web.beans;
 
+import org.jasig.cas.services.RegisteredServiceProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +122,8 @@ public final class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
+
+        private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return attrRelease;
@@ -297,6 +301,14 @@ public final class RegisteredServiceEditBean implements Serializable {
          */
         public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
             this.customComponent.put(componentName, properties);
+        }
+
+        public Map<String, RegisteredServiceProperty> getProperties() {
+            return properties;
+        }
+
+        public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+            this.properties = properties;
         }
     }
 }
