@@ -1406,12 +1406,39 @@ Decide how CAS should monitor the internal state of LDAP connections
 used for authentication, etc.
 
 ```properties
+# Define the thread pool that will ping on the LDAP connection pool.
 # cas.monitor.ldap.pool.suspension=false
 # cas.monitor.ldap.pool.minSize=6
 # cas.monitor.ldap.pool.maxSize=18
 # cas.monitor.ldap.pool.maxIdleTime=1000
 # cas.monitor.ldap.pool.maxWait=2000
+
 # cas.monitor.ldap.maxWait=5000
+
+# Define the LDAP connection pool settings for monitoring
+# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.monitor.ldap.baseDn=dc=example,dc=org
+# cas.monitor.ldap.userFilter=cn={user}
+# cas.monitor.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.monitor.ldap.bindCredential=Password
+# cas.monitor.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.monitor.ldap.connectTimeout=5000
+# cas.monitor.ldap.trustCertificates=
+# cas.monitor.ldap.keystore=
+# cas.monitor.ldap.keystorePassword=
+# cas.monitor.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.monitor.ldap.minPoolSize=3
+# cas.monitor.ldap.maxPoolSize=10
+# cas.monitor.ldap.validateOnCheckout=true
+# cas.monitor.ldap.validatePeriodically=true
+# cas.monitor.ldap.validatePeriod=600
+# cas.monitor.ldap.failFast=true
+# cas.monitor.ldap.idleTime=500
+# cas.monitor.ldap.prunePeriod=600
+# cas.monitor.ldap.blockWaitTime=5000
+# cas.monitor.ldap.subtreeSearch=true
+# cas.monitor.ldap.useSsl=true
+# cas.monitor.ldap.useStartTls=false
 ```
 
 ## Monitor Memory
