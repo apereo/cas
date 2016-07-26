@@ -17,6 +17,7 @@
 package io.spring.issuebot.github;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -27,16 +28,21 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestOperations;
@@ -89,9 +95,13 @@ public class GitHubTemplate implements GitHubOperations {
 				}
 			}
 		});
-		rest.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
+				new HttpComponentsClientHttpRequestFactory());
+		rest.setRequestFactory(bufferingClient);
 		rest.setInterceptors(Collections
 				.singletonList(new BasicAuthorizationInterceptor(username, password)));
+		rest.setMessageConverters(
+				Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
 		return rest;
 	}
 
@@ -127,9 +137,10 @@ public class GitHubTemplate implements GitHubOperations {
 
 	@Override
 	public Issue addLabel(Issue issue, String labelName) {
+		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
+		log.info("Adding label {} to {}", labelName, uri);
 		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST,
-						URI.create(issue.getLabelsUrl().replace("{/name}", ""))),
+				new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri),
 				Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: "
@@ -175,6 +186,34 @@ public class GitHubTemplate implements GitHubOperations {
 					+ response.getStatusCode());
 		}
 		return response.getBody();
+	}
+
+	private static final class ErrorLoggingMappingJackson2HttpMessageConverter
+			extends MappingJackson2HttpMessageConverter {
+
+		private static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
+
+		@Override
+		public Object read(Type type, Class<?> contextClass,
+				HttpInputMessage inputMessage)
+						throws IOException, HttpMessageNotReadableException {
+			try {
+				return super.read(type, contextClass, inputMessage);
+			}
+			catch (IOException ex) {
+				throw ex;
+			}
+			catch (HttpMessageNotReadableException ex) {
+				log.error("Failed to create {} from {}", type.getTypeName(),
+						read(inputMessage), ex);
+				throw ex;
+			}
+		}
+
+		private String read(HttpInputMessage inputMessage) throws IOException {
+			return StreamUtils.copyToString(inputMessage.getBody(), CHARSET_UTF_8);
+		}
+
 	}
 
 	private static class BasicAuthorizationInterceptor
