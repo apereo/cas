@@ -6,7 +6,6 @@ import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;

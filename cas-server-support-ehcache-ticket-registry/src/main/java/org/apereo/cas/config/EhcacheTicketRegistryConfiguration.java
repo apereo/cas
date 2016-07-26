@@ -5,7 +5,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
@@ -20,8 +19,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-
-import javax.annotation.Nullable;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.

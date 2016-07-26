@@ -8,13 +8,10 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Nullable;
 
 /**
  * This is {@link LdapServiceRegistryConfiguration}.

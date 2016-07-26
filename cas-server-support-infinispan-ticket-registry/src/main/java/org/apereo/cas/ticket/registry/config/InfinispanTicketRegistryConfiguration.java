@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.registry.config;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
@@ -10,12 +9,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Nullable;
 
 /**
  * This is {@link InfinispanTicketRegistryConfiguration}.
