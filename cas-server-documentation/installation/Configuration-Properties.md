@@ -1595,7 +1595,6 @@ Control how CAS services should be found inside a database instance
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-
 ## Proxy Tickets
 
 ```properties
@@ -1627,6 +1626,12 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.jpa.pool.maxSize=18
 # cas.ticket.registry.jpa.pool.maxIdleTime=1000
 # cas.ticket.registry.jpa.pool.maxWait=2000
+
+# cas.ticket.registry.jpa.crypto.signing.key=
+# cas.ticket.registry.jpa.crypto.signing.keySize=512
+# cas.ticket.registry.jpa.crypto.encryption.key=
+# cas.ticket.registry.jpa.crypto.encryption.keySize=16
+# cas.ticket.registry.jpa.crypto.alg=AES
 ```
 
 ## Couchbase Ticket Registry
@@ -1637,6 +1642,12 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.couchbase.password=
 # cas.ticket.registry.couchbase.queryEnabled=true
 # cas.ticket.registry.couchbase.bucket=default
+
+# cas.ticket.registry.couchbase.crypto.signing.key=
+# cas.ticket.registry.couchbase.crypto.signing.keySize=512
+# cas.ticket.registry.couchbase.crypto.encryption.key=
+# cas.ticket.registry.couchbase.crypto.encryption.keySize=16
+# cas.ticket.registry.couchbase.crypto.alg=AES
 ```
 
 ## Hazelcast Ticket Registry
@@ -1658,6 +1669,12 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.hazelcast.cluster.portAutoIncrement=true
 # cas.ticket.registry.hazelcast.cluster.maxHeapSizePercentage=85
 # cas.ticket.registry.hazelcast.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+
+# cas.ticket.registry.hazelcast.crypto.signing.key=
+# cas.ticket.registry.hazelcast.crypto.signing.keySize=512
+# cas.ticket.registry.hazelcast.crypto.encryption.key=
+# cas.ticket.registry.hazelcast.crypto.encryption.keySize=16
+# cas.ticket.registry.hazelcast.crypto.alg=AES
 ```
 
 ## Infinispan Ticket Registry
@@ -1665,6 +1682,12 @@ Control how CAS services should be found inside a database instance
 ```properties
 # cas.ticket.registry.infinispan.cacheName=
 # cas.ticket.registry.infinispan.configLocation=/infinispan.xml
+
+# cas.ticket.registry.infinispan.crypto.signing.key=
+# cas.ticket.registry.infinispan.crypto.signing.keySize=512
+# cas.ticket.registry.infinispan.crypto.encryption.key=
+# cas.ticket.registry.infinispan.crypto.encryption.keySize=16
+# cas.ticket.registry.infinispan.crypto.alg=AES
 ```
 
 ## Ticket Registry -> InMemory
@@ -1676,6 +1699,12 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.loadFactor=1
 # cas.ticket.registry.inMemory.concurrency=20
 # cas.ticket.registry.inMemory.initialCapacity=1000
+
+# cas.ticket.registry.inMemory.crypto.signing.key=
+# cas.ticket.registry.inMemory.crypto.signing.keySize=512
+# cas.ticket.registry.inMemory.crypto.encryption.key=
+# cas.ticket.registry.inMemory.crypto.encryption.keySize=16
+# cas.ticket.registry.inMemory.crypto.alg=AES
 ```
 
 ## Ticket Registry -> Cleaner
@@ -1715,6 +1744,12 @@ This section controls how that process should behave.
 # cas.ticket.registry.ehcache.replicatePutsViaCopy=true
 # cas.ticket.registry.ehcache.cacheTimeToIdle=0
 # cas.ticket.registry.ehcache.diskPersistent=false
+
+# cas.ticket.registry.ehcache.crypto.signing.key=
+# cas.ticket.registry.ehcache.crypto.signing.keySize=512
+# cas.ticket.registry.ehcache.crypto.encryption.key=
+# cas.ticket.registry.ehcache.crypto.encryption.keySize=16
+# cas.ticket.registry.ehcache.crypto.alg=AES
 ```
 
 ## Ignite Ticket Registry
@@ -1734,6 +1769,12 @@ This section controls how that process should behave.
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
 # cas.ticket.registry.ignite.ticketsCache.cacheName=TicketsCache
 # cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED
+
+# cas.ticket.registry.ignite.crypto.signing.key=
+# cas.ticket.registry.ignite.crypto.signing.keySize=512
+# cas.ticket.registry.ignite.crypto.encryption.key=
+# cas.ticket.registry.ignite.crypto.encryption.keySize=16
+# cas.ticket.registry.ignite.crypto.alg=AES
 ```
 
 ## Memcached Ticket Registry
@@ -1743,6 +1784,12 @@ This section controls how that process should behave.
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
 # cas.ticket.registry.memcached.failureMode=Redistribute
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
+
+# cas.ticket.registry.memcached.crypto.signing.key=
+# cas.ticket.registry.memcached.crypto.signing.keySize=512
+# cas.ticket.registry.memcached.crypto.encryption.key=
+# cas.ticket.registry.memcached.crypto.encryption.keySize=16
+# cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
 ## Service Ticket Expiration Policy

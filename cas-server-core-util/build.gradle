@@ -5,11 +5,11 @@ dependencies {
     compileOnly libraries.spring
     compileOnly libraries.springcloud
     compileOnly libraries.springboot
-    compileOnly libraries.shiro
-    compileOnly libraries.quartz
-    compileOnly libraries.jackson
-    compileOnly libraries.jose4j
+    compile libraries.shiro
+    compile libraries.quartz
+    compile libraries.jackson
+    compile libraries.jose4j
     compile libraries.httpclient
-    compileOnly libraries.bouncycastle
+    compile libraries.bouncycastle
 }
 
