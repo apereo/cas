@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+
 /**
  * This is {@link LdapServiceRegistryProperties}.
  *
@@ -7,12 +9,13 @@ package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
  * @since 5.0.0
  */
 
-public class LdapServiceRegistryProperties {
+public class LdapServiceRegistryProperties extends AbstractLdapProperties {
     
-    private String baseDn = "dc=example,dc=org";
     private String objectClass = "casRegisteredService";
     private String idAttribute = "uid";
     private String serviceDefinitionAttribute = "description";
+    
+    private String baseDn;
 
     public String getBaseDn() {
         return baseDn;
@@ -21,7 +24,7 @@ public class LdapServiceRegistryProperties {
     public void setBaseDn(final String baseDn) {
         this.baseDn = baseDn;
     }
-
+        
     public String getObjectClass() {
         return objectClass;
     }

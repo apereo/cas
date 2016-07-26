@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow.resolver;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import org.apache.shiro.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -186,7 +186,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         boolean issueTicketGrantingTicket = true;
         final Authentication authentication = authenticationResult.getAuthentication();
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
-        if (StringUtils.hasText(ticketGrantingTicket)) {
+        if (StringUtils.isNotBlank(ticketGrantingTicket)) {
             logger.debug("Located ticket-granting ticket in the context. Retrieving associated authentication");
             final Authentication authenticationFromTgt = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {

@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
 import com.google.common.collect.Lists;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
@@ -29,6 +31,17 @@ public class HazelcastProperties {
     private Resource configLocation;
     
     private Cluster cluster = new Cluster();
+
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
+
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public int getPageSize() {
         return pageSize;

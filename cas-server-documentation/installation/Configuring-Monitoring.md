@@ -68,24 +68,4 @@ To see the relevant list of CAS properties, please [review this guide](Configura
     <artifactId>cas-server-support-ldap-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
-...
-
-<ldaptive:pooled-connection-factory
-        id="pooledConnectionFactoryMonitorConnectionFactory"
-        ldapUrl="${ldap.url}"
-        blockWaitTime="${ldap.pool.blockWaitTime}"
-        failFastInitialize="true"
-        connectTimeout="${ldap.connectTimeout}"
-        useStartTLS="${ldap.useStartTLS}"
-        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-        validatePeriodically="${ldap.pool.validatePeriodically}"
-        validatePeriod="${ldap.pool.validatePeriod}"
-        idleTime="${ldap.pool.idleTime}"
-        maxPoolSize="${ldap.pool.maxSize}"
-        minPoolSize="${ldap.pool.minSize}"
-        useSSL="${ldap.use.ssl:false}"
-        prunePeriod="${ldap.pool.prunePeriod}"
-        provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
-/>
-
 ```

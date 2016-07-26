@@ -4,13 +4,13 @@ dependencies {
     compile project(":cas-server-core-authentication")
     compile libraries.spring
     compile libraries.quartz
-    compile libraries.hibernate    
+    compile libraries.hibernate
+    compile libraries.shiro
     runtime libraries.javaximpl
     runtime project(":cas-server-support-jdbc-drivers")
     
     testCompile libraries.tests
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
-    
     testCompile project(":cas-server-core-util")
     testCompile project(":cas-server-core-services")
 }

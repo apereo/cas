@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.DefaultAcceptableUsagePolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,11 +35,13 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
+    @Autowired
     @Bean
-    public Action acceptableUsagePolicyFormAction() {
+    public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository")
+                                                  final AcceptableUsagePolicyRepository repository) {
         final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
-        a.setRepository(defaultAcceptableUsagePolicyRepository());
+        a.setRepository(repository);
         return a;
     }
 
@@ -50,8 +53,9 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
     @Bean
-    public AcceptableUsagePolicyRepository defaultAcceptableUsagePolicyRepository() {
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         return new DefaultAcceptableUsagePolicyRepository();
     }
 }

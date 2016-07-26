@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-poolmonitor-test.xml"},
+@SpringApplicationConfiguration(locations = {"/ldap-context.xml"},
         classes = {LdapMonitorConfiguration.class, RefreshAutoConfiguration.class})
 public class PooledConnectionFactoryMonitorTests extends AbstractLdapTests {
 
