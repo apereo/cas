@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.registry.CouchbaseTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
@@ -28,13 +29,7 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
-
+    
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
@@ -54,7 +49,9 @@ public class CouchbaseTicketRegistryConfiguration {
     public CouchbaseTicketRegistry couchbaseTicketRegistry() {
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry();
         c.setCouchbaseClientFactory(ticketRegistryCouchbaseClientFactory());
-        c.setCipherExecutor(cipherExecutor);
+        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                casProperties.getTicket().getRegistry().getCouchbase().getCrypto()
+        ));
         return c;
     }
 

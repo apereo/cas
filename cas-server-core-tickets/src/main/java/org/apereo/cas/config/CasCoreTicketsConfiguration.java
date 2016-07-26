@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.DefaultProxyTicketFactory;
@@ -69,12 +70,7 @@ public class CasCoreTicketsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
-
+    
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
@@ -151,7 +147,10 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),
                 casProperties.getTicket().getRegistry().getInMemory().getLoadFactor(),
                 casProperties.getTicket().getRegistry().getInMemory().getConcurrency());
-        r.setCipherExecutor(cipherExecutor);
+        r.setCipherExecutor(
+                Beans.newTicketRegistryCipherExecutor(
+                        casProperties.getTicket().getRegistry().getInMemory().getCrypto())
+        );
         return r;
     }
 

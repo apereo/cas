@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
@@ -119,6 +120,17 @@ public class TicketRegistryProperties {
         private int loadFactor = 1;
         private int concurrency = 20;
 
+        @NestedConfigurationProperty
+        private CryptographyProperties crypto = new CryptographyProperties();
+
+        public CryptographyProperties getCrypto() {
+            return crypto;
+        }
+
+        public void setCrypto(final CryptographyProperties crypto) {
+            this.crypto = crypto;
+        }
+        
         public int getInitialCapacity() {
             return initialCapacity;
         }
