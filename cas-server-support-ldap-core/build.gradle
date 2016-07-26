@@ -5,6 +5,7 @@ dependencies {
     compile project(":cas-server-core-authentication")
     compile libraries.ldaptive
     compile libraries.spring
+    compile libraries.shiro
     compile libraries.springcloud
     testCompile libraries.tests
 }
