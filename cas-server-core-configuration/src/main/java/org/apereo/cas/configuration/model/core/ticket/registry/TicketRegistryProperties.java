@@ -16,8 +16,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
-public class TicketRegistryProperties extends CryptographyProperties {
+public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
@@ -121,6 +120,17 @@ public class TicketRegistryProperties extends CryptographyProperties {
         private int loadFactor = 1;
         private int concurrency = 20;
 
+        @NestedConfigurationProperty
+        private CryptographyProperties crypto = new CryptographyProperties();
+
+        public CryptographyProperties getCrypto() {
+            return crypto;
+        }
+
+        public void setCrypto(final CryptographyProperties crypto) {
+            this.crypto = crypto;
+        }
+        
         public int getInitialCapacity() {
             return initialCapacity;
         }

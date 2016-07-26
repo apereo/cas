@@ -25,11 +25,7 @@ import java.util.concurrent.ExecutorService;
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-
-    @Autowired
-    @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
-    private PooledConnectionFactory connectionFactory;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -43,8 +39,12 @@ public class LdapMonitorConfiguration {
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor(
             @Qualifier("pooledConnectionFactoryMonitorExecutorService")
-            final ExecutorService executor
-    ) {
+            final ExecutorService executor) {
+
+        final PooledConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
+                casProperties.getMonitor().getLdap()
+        );
+        
         final PooledLdapConnectionFactoryMonitor m =
                 new PooledLdapConnectionFactoryMonitor(connectionFactory,
                         new SearchValidator());

@@ -37,14 +37,6 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
          */
         ANONYMOUS
     }
-    
-    private String dnFormat;
-    private String principalAttributeId = "uid";
-    private String principalAttributePassword;
-    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
-    private boolean allowMultiplePrincipalAttributeValues;
-    private List additionalAttributes;
-    private AuthenticationTypes type;
 
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
@@ -56,6 +48,42 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    private String dnFormat;
+    private String principalAttributeId = "uid";
+    private String principalAttributePassword;
+    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
+    private boolean allowMultiplePrincipalAttributeValues;
+    private List additionalAttributes;
+    private AuthenticationTypes type;
+
+    private boolean subtreeSearch = true;
+    private String baseDn;
+    private String userFilter;
+
+    public String getBaseDn() {
+        return baseDn;
+    }
+
+    public void setBaseDn(final String baseDn) {
+        this.baseDn = baseDn;
+    }
+
+    public String getUserFilter() {
+        return userFilter;
+    }
+
+    public void setUserFilter(final String userFilter) {
+        this.userFilter = userFilter;
+    }
+
+    public boolean isSubtreeSearch() {
+        return subtreeSearch;
+    }
+
+    public void setSubtreeSearch(final boolean subtreeSearch) {
+        this.subtreeSearch = subtreeSearch;
+    }
+    
     public PasswordPolicyProperties getPasswordPolicy() {
         return passwordPolicy;
     }

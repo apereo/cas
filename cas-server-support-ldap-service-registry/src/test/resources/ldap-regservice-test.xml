@@ -13,7 +13,5 @@
     <bean id="usernameAttribute" class="java.lang.String">
         <constructor-arg type="java.lang.String" value="sAMAccountName" />
     </bean>
-
-    <alias name="provisioningConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
     
 </beans>

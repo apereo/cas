@@ -12,19 +12,17 @@ import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -49,12 +47,7 @@ public class HazelcastInstanceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
-
+    
     
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
@@ -62,7 +55,8 @@ public class HazelcastInstanceConfiguration {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
                 casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
                 casProperties.getTicket().getRegistry().getHazelcast().getPageSize());
-        r.setCipherExecutor(cipherExecutor);
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                casProperties.getTicket().getRegistry().getHazelcast().getCrypto()));
         return r;
     }
     

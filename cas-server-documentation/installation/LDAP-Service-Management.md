@@ -4,6 +4,7 @@ title: CAS - LDAP Service Registry
 ---
 
 # LDAP Service Registry
+
 Service registry implementation which stores the services in a LDAP Directory.
 Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper`
 in order to configure settings for retrieval, search and persistence of service definitions.
@@ -20,14 +21,7 @@ Support is enabled by adding the following module into the Maven overlay:
 </dependency>
 ```
 
-
 ## Configuration
-
-In local `deployerConfigContext.xml`:
-
-```xml
-<alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
-```
 
 The default mapper has support for the following optional items:
 
