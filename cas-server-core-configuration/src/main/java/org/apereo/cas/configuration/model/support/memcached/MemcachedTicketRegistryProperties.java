@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.memcached;
 
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 /**
  * This is {@link MemcachedTicketRegistryProperties}.
  *
@@ -13,6 +16,17 @@ public class MemcachedTicketRegistryProperties {
     private String locatorType = "ARRAY_MOD";
     private String hashAlgorithm = "FNV1_64_HASH";
 
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
+
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
+    
     public String getServers() {
         return servers;
     }

@@ -5,13 +5,17 @@ import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
@@ -291,5 +295,28 @@ public class Beans {
      */
     public static Duration newDuration(final long length) {
         return Duration.ofSeconds(length);
+    }
+
+    /**
+     * New ticket registry cipher executor cipher executor.
+     *
+     * @param registry the registry
+     * @return the cipher executor
+     */
+    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
+        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey())) {
+            return new DefaultTicketCipherExecutor(
+                    registry.getEncryption().getKey(),
+                    registry.getSigning().getKey(),
+                    registry.getAlg(),
+                    registry.getSigning().getKeySize(),
+                    registry.getEncryption().getKeySize());
+        }
+        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
+                + "clustered production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "ticket registry tickets.");
+        return new NoOpCipherExecutor();
     }
 }

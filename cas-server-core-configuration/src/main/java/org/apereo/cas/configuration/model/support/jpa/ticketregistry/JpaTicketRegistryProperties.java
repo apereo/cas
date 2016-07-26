@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class for ticketreg.database.
@@ -17,9 +19,20 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     private boolean jpaLockingTgtEnabled = true;
     
     private int jpaLockingTimeout = DEFAULT_LOCK_TIMEOUT;
-    
+
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
+
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+    }
+    
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
     }
     
     public boolean isJpaLockingTgtEnabled() {

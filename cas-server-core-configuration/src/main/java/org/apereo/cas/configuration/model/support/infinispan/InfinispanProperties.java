@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -9,11 +11,22 @@ import org.springframework.core.io.Resource;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-public class InfinispanProperties {
+public class InfinispanProperties extends CryptographyProperties {
     
     private Resource configLocation = new ClassPathResource("infinispan.xml");
     private String cacheName;
 
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
+
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
+    
     public String getCacheName() {
         return cacheName;
     }

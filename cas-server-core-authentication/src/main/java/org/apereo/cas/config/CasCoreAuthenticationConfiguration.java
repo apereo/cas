@@ -39,6 +39,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -321,5 +322,35 @@ public class CasCoreAuthenticationConfiguration {
         }
 
         return map;
+    }
+
+    @Bean
+    public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        return c;
+    }
+
+    @Bean
+    public HttpClient noRedirectHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setRedirectsEnabled(false);
+        c.setCircularRedirectsAllowed(false);
+        c.setSslSocketFactory(trustStoreSslSocketFactory());
+        return c.getObject();
+    }
+
+    @Bean
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setSslSocketFactory(trustStoreSslSocketFactory());
+        return c.getObject();
     }
 }

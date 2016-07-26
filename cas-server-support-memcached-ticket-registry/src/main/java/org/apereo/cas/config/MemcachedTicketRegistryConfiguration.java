@@ -6,8 +6,8 @@ import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -29,10 +29,6 @@ import org.springframework.context.annotation.Lazy;
 @Configuration("memcachedConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MemcachedTicketRegistryConfiguration {
-    
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -70,7 +66,8 @@ public class MemcachedTicketRegistryConfiguration {
     public TicketRegistry memcachedTicketRegistry(
             @Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
-        registry.setCipherExecutor(cipherExecutor);
+        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
         return registry;
     }
 

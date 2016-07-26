@@ -23,9 +23,7 @@ public abstract class AbstractLdapProperties {
     private long idleTime = 600;
     private long prunePeriod = 10000;
     private long blockWaitTime = 6000;
-
-    private boolean subtreeSearch = true;
-
+    
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
     private boolean useStartTls;
@@ -36,10 +34,7 @@ public abstract class AbstractLdapProperties {
 
     private String bindDn;
     private String bindCredential;
-
-    private String baseDn;
-    private String userFilter;
-
+    
     public String getBindDn() {
         return bindDn;
     }
@@ -207,31 +202,4 @@ public abstract class AbstractLdapProperties {
     public void setConnectTimeout(final long connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public String getUserFilter() {
-        return userFilter;
-    }
-
-    public void setUserFilter(final String userFilter) {
-        this.userFilter = userFilter;
-    }
-
-    public boolean isSubtreeSearch() {
-        return subtreeSearch;
-    }
-
-    public void setSubtreeSearch(final boolean subtreeSearch) {
-        this.subtreeSearch = subtreeSearch;
-    }
-
-
-
 }
