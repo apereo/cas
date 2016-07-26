@@ -9,7 +9,7 @@ dependencies {
     compileOnly libraries.quartz
     compileOnly libraries.jackson
     compileOnly libraries.jose4j
-    compileOnly libraries.httpclient
+    compile libraries.httpclient
     compileOnly libraries.bouncycastle
 }
 
