@@ -1,6 +1,8 @@
 package org.jasig.cas.services.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.cas.services.web.factory.RegisteredServiceFactory;
@@ -65,6 +67,16 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                             final BindingResult result) {
         try {
 
+            if (StringUtils.isNotBlank(service.getAssignedId())) {
+                final RegisteredService svc = this.servicesManager.findServiceBy(Long.valueOf(service.getAssignedId()));
+                if (svc != null) {
+                    for (final Map.Entry<String, RegisteredServiceProperty> entry : svc.getProperties().entrySet()) {
+                        service.getProperties().put(entry.getKey(), entry.getValue());
+                    }
+                    this.servicesManager.delete(svc.getId());
+                }
+                
+            }
             final RegisteredService svcToUse = registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
