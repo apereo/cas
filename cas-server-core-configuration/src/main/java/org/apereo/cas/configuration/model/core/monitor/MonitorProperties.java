@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -128,9 +129,10 @@ public class MonitorProperties {
         }
     }
 
-    public static class Ldap {
+    public static class Ldap extends AbstractLdapProperties {
         private int maxWait = 5000;
         
+        @NestedConfigurationProperty
         private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
         public ConnectionPoolingProperties getPool() {

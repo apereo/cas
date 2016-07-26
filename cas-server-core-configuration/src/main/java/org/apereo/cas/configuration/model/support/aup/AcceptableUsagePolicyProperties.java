@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
  *
@@ -28,18 +30,9 @@ public class AcceptableUsagePolicyProperties {
         this.ldap = ldap;
     }
 
-    public static class Ldap {
-        private String searchFilter = "cn={0}";
-
-        private String baseDn = "dc=example,dc=org";
-
-        public String getSearchFilter() {
-            return searchFilter;
-        }
-
-        public void setSearchFilter(final String searchFilter) {
-            this.searchFilter = searchFilter;
-        }
+    public static class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String userFilter;
 
         public String getBaseDn() {
             return baseDn;
@@ -47,6 +40,14 @@ public class AcceptableUsagePolicyProperties {
 
         public void setBaseDn(final String baseDn) {
             this.baseDn = baseDn;
+        }
+
+        public String getUserFilter() {
+            return userFilter;
+        }
+
+        public void setUserFilter(final String userFilter) {
+            this.userFilter = userFilter;
         }
     }
     

@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link IgniteProperties}.
@@ -21,6 +23,17 @@ public class IgniteProperties {
     private String keyAlgorithm;
     private String trustStoreFilePath;
     private String trustStorePassword;
+
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
+
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
     
     public String getKeyStoreType() {
         return keyStoreType;

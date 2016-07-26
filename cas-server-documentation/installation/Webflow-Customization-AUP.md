@@ -39,13 +39,8 @@ Customize the policy by modifying `casAcceptableUsagePolicyView.html`.
 By default the task of remembering the user's choice is kept in memory by default and will be lost upon 
 container restarts and/or in clustered deployments.   
 
-In the `deployerConfigContext.xml` file, enable the repository:
-
-```xml
-<alias name="defaultAcceptableUsagePolicyRepository" alias="acceptableUsagePolicyRepository" />
-```
-
 ### LDAP
+
 Alternatively, CAS can be configured to use LDAP as the storage mechanism. This option allows the deployer
 to detect the current user's policy choice via a CAS single-valued `boolean` attribute. 
 The attribute must be resolved using
@@ -63,34 +58,6 @@ Support is enabled by including the following dependency in the WAR overlay:
   <version>${cas.version}</version>
 </dependency>
 ```
-
-In the `deployerConfigContext.xml` file, enable the repository:
-
-```xml
-<alias name="ldapAcceptableUsagePolicyRepository" alias="acceptableUsagePolicyRepository" />
-```
-
-Then, enable the LDAP connection settings in the same file:
-
-```xml
-<ldaptive:connection-factory id="ldapUsagePolicyConnectionFactory"
-                             ldapUrl="${cas.aup.ldap.url}"
-                             useSSL="${cas.aup.ldap.ssl:false}"
-                             useStartTLS="${cas.aup.ldap.startTLS:false}" />
-```
-
-You will need to make sure, prior to using the `ldaptive` namespace, that it is declared:
-
-```xml
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xsi:schemaLocation="
-       http://www.ldaptive.org/schema/spring-ext
-       http://www.ldaptive.org/schema/spring-ext.xsd">
-```
-
-See the [ldaptive documentation](http://www.ldaptive.org/) for more information or 
-to accommodate other situations.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
