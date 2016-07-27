@@ -188,7 +188,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
     }
-    
+
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
@@ -254,6 +254,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @RefreshScope
     public AccessTokenFactory defaultAccessTokenFactory() {
         final DefaultAccessTokenFactory f = new DefaultAccessTokenFactory();
         f.setAccessTokenIdGenerator(accessTokenIdGenerator());
@@ -261,8 +262,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return f;
     }
 
-    @Bean
-    @RefreshScope
     public ExpirationPolicy accessTokenExpirationPolicy() {
         return new OAuthAccessTokenExpirationPolicy(
                 casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
@@ -271,8 +270,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         );
     }
 
-    @Bean
-    @RefreshScope
     public ExpirationPolicy oAuthCodeExpirationPolicy() {
         return new OAuthCodeExpirationPolicy(casProperties.getAuthn().getOauth().getCode().getNumberOfUses(),
                 TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds()));
@@ -289,6 +286,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @RefreshScope
     public OAuthCodeFactory defaultOAuthCodeFactory() {
         final DefaultOAuthCodeFactory f = new DefaultOAuthCodeFactory();
         f.setExpirationPolicy(oAuthCodeExpirationPolicy());
@@ -348,6 +346,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @RefreshScope
     public RefreshTokenFactory defaultRefreshTokenFactory() {
         final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();
         f.setExpirationPolicy(refreshTokenExpirationPolicy());
@@ -355,8 +354,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return f;
     }
 
-    @Bean
-    @RefreshScope
     public ExpirationPolicy refreshTokenExpirationPolicy() {
         return new OAuthRefreshTokenExpirationPolicy(
                 TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds())
