@@ -34,9 +34,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Securing Access and Authorization
 
-Access to the management webapp is controlled via pac4j. Rules are defined in 
+Access to the management webapp is controlled via [Pac4j](https://github.com/pac4j/pac4j). Rules are defined in 
 the `src/main/resources/managementConfigContext.xml` file.
-
 
 ### Static List of Users
 
