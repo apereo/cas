@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -10,7 +11,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +57,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         final Credential credential = constructCredentialsFromRequest(context);
 
         if (credential == null) {
+            logger.warn("No credentials detected. Navigating to error...");
             return error();
         }
 
@@ -64,7 +65,6 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         final Service service = WebUtils.getService(context);
 
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
-
             try {
                 final AuthenticationResult authenticationResult =
                         this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
