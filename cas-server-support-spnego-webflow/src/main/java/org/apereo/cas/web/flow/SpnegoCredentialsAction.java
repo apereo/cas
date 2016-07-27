@@ -1,4 +1,4 @@
-package org.apereo.cas.support.spnego.web.flow;
+package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
  * @since 3.1
  */
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
-    
+
     private boolean ntlm;
 
     private String messageBeginPrefix = constructMessagePrefix();
@@ -41,12 +41,10 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
     private boolean send401OnAuthenticationFailure = true;
 
     @Override
-    protected Credential constructCredentialsFromRequest(
-            final RequestContext context) {
+    protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        final String authorizationHeader = request
-                .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
 
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
@@ -57,7 +55,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
 
             final byte[] token = EncodingUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
             if (token == null) {
-                logger.warn("Could not compress authorization header in base64");
+                logger.warn("Could not decode authorization header in Base64");
                 return null;
             }
             logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
@@ -73,36 +71,33 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      * @return the string
      */
     protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + ' ';
+        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
     }
 
     @Override
-    protected void onError(final RequestContext context,
-            final Credential credential) {
+    protected void onError(final RequestContext context, final Credential credential) {
         setResponseHeader(context, credential);
     }
 
     @Override
-    protected void onSuccess(final RequestContext context,
-            final Credential credential) {
+    protected void onSuccess(final RequestContext context, final Credential credential) {
         setResponseHeader(context, credential);
     }
 
     /**
-     * Sets the response header based on the retrieved tocken.
+     * Sets the response header based on the retrieved token.
      *
-     * @param context the context
+     * @param context    the context
      * @param credential the credential
      */
     private void setResponseHeader(final RequestContext context,
-            final Credential credential) {
+                                   final Credential credential) {
         if (credential == null) {
+            logger.debug("No credential was provided. No response header set.");
             return;
         }
 
-        final HttpServletResponse response = WebUtils
-                .getHttpServletResponse(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {

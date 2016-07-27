@@ -19,9 +19,10 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState actionState = createActionState(flow, START_SPNEGO_AUTHENTICATE,
-                createEvaluateAction("negociateSpnego"));
+        final ActionState actionState = createActionState(flow, START_SPNEGO_AUTHENTICATE, createEvaluateAction("negociateSpnego"));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, SPNEGO));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, 
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
 
         final ActionState spnego = createActionState(flow, SPNEGO, createEvaluateAction(SPNEGO));
         spnego.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
