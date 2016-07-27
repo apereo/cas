@@ -13,7 +13,9 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
-    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
+    <webflow:flow-builder-services id="builder"
+                                   development="true"
+                                   view-factory-creator="viewFactoryCreator"
                                    expression-parser="expressionParser"/>
 
     <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
