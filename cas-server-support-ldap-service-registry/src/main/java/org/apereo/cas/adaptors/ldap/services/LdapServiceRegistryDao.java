@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.util.LdapUtils;
@@ -158,7 +159,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
         return LdapUtils.executeSearchOperation(this.connectionFactory,
-                        this.baseDn, new SearchFilter(this.loadFilter));
+                        this.baseDn, Beans.newSearchFilter(this.loadFilter));
     }
 
     @Override
@@ -183,10 +184,9 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    private Response<SearchResult> searchForServiceById(final long id)
+    private Response<SearchResult> searchForServiceById(final Long id)
             throws LdapException {
-        final SearchFilter filter = new SearchFilter(this.searchFilter);
-        filter.setParameter(0, id);
+        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter, id.toString());
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 

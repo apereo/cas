@@ -1,4 +1,4 @@
-package org.apereo.cas.support.spnego.web.flow.client;
+package org.apereo.cas.web.flow.client;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;

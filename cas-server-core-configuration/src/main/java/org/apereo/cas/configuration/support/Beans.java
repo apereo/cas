@@ -22,6 +22,11 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.ReturnAttributes;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -318,5 +323,61 @@ public class Beans {
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets.");
         return new NoOpCipherExecutor();
+    }
+
+    /**
+     * Builds a new request.
+     *
+     * @param baseDn the base dn
+     * @param filter the filter
+     * @return the search request
+     */
+    public static SearchRequest newSearchRequest(final String baseDn, final SearchFilter filter) {
+        final SearchRequest sr = new SearchRequest(baseDn, filter);
+        sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
+        sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
+        sr.setSearchScope(SearchScope.SUBTREE);
+        return sr;
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
+     * @param params the username
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
+        final SearchFilter filter = new SearchFilter();
+        filter.setFilter(filterQuery);
+        if (params != null) {
+            for (int i = 0; i < params.length; i++) {
+                if (filter.getFilter().contains("{" + i + "}")) {
+                    filter.setParameter(i, params[i]);
+                } else {
+                    filter.setParameter("user", params[i]);
+                }
+            }
+        }
+        LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
+        return filter;
+    }
+
+    /**
+     * New search executor search executor.
+     *
+     * @param baseDn      the base dn
+     * @param filterQuery the filter query
+     * @param params      the params
+     * @return the search executor
+     */
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final String... params) {
+        final SearchExecutor executor = new SearchExecutor();
+        executor.setBaseDn(baseDn);
+        executor.setSearchFilter(newSearchFilter(filterQuery, params));
+        executor.setReturnAttributes(ReturnAttributes.ALL.value());
+        executor.setSearchScope(SearchScope.SUBTREE);
+        return executor;
     }
 }
