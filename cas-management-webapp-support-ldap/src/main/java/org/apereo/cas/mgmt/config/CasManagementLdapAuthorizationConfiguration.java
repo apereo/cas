@@ -31,12 +31,12 @@ public class CasManagementLdapAuthorizationConfiguration {
     @RefreshScope
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getLdapAuthz());
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getMgmt().getLdapAuthz());
         final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(connectionFactory,
                 ldapAuthorizationGeneratorUserSearchExecutor());
-        gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
-        gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
-        gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
+        gen.setAllowMultipleResults(casProperties.getMgmt().getLdapAuthz().isAllowMultipleResults());
+        gen.setRoleAttribute(casProperties.getMgmt().getLdapAuthz().getRoleAttribute());
+        gen.setRolePrefix(casProperties.getMgmt().getLdapAuthz().getRolePrefix());
         return gen;
     }
     
@@ -44,8 +44,8 @@ public class CasManagementLdapAuthorizationConfiguration {
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
         final SearchExecutor executor = new SearchExecutor();
-        executor.setBaseDn(casProperties.getLdapAuthz().getBaseDn());
-        executor.setSearchFilter(new SearchFilter(casProperties.getLdapAuthz().getSearchFilter()));
+        executor.setBaseDn(casProperties.getMgmt().getLdapAuthz().getBaseDn());
+        executor.setSearchFilter(new SearchFilter(casProperties.getMgmt().getLdapAuthz().getSearchFilter()));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
