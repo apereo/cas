@@ -108,7 +108,7 @@ The module provides a `shibbolethPersonAttributeDao` that the Shibboleth's `attr
 
 - Modify either `application.properties` or the runtime environment 
 to reference the `attribute-resolver.xml` resource via a property. This is a
-comma seperated list of resources to use for the configuration:
+comma separated list of resources to use for the configuration:
 
 ```shell
 -Dcas.shibAttributeResolver.resources=classpath:attribute-resolver.xml
