@@ -4,8 +4,6 @@ package org.apereo.cas.support.spnego;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandlerTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests;
-import org.apereo.cas.support.spnego.web.flow.client.AllSpnegoKnownClientSystemsFilterActionTest;
-import org.apereo.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterActionTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -19,8 +17,6 @@ import org.junit.runners.Suite;
         JcifsSpnegoAuthenticationHandlerTests.class,
         SpnegoCredentialsTests.class,
         SpnegoCredentialsToPrincipalResolverTests.class,
-        AllSpnegoKnownClientSystemsFilterActionTest.class,
-        LdapSpnegoKnownClientSystemsFilterActionTests.class
 })
 public class AllTestsSuite {
 }

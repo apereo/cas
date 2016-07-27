@@ -1,4 +1,4 @@
-package org.apereo.cas.support.spnego.web.flow;
+package org.apereo.cas.web.flow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,14 +79,14 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
 
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
-            LOGGER.debug("User Agent header [{}] is empty, or no browsers are supported", userAgent);
-            return success();
+            LOGGER.warn("User Agent header [{}] is empty, or no browsers are supported", userAgent);
+            return new Event(this, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         }
 
         if (!isSupportedBrowser(userAgent)) {
-            LOGGER.debug("User Agent header [{}] is not supported in the list of supported browsers [{}]",
+            LOGGER.warn("User Agent header [{}] is not supported in the list of supported browsers [{}]",
                     userAgent, this.supportedBrowser);
-            return success();
+            return new Event(this, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         }
 
         if (!StringUtils.hasText(authorizationHeader)

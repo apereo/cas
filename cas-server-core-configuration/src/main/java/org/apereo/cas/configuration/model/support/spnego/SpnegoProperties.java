@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.spnego;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -12,14 +13,15 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 
 public class SpnegoProperties {
-
-
+    
     private boolean principalWithDomainName;
     private boolean ntlmAllowed = true;
     private boolean send401OnAuthenticationFailure = true;
 
     private String hostNameClientActionStrategy = "hostnameSpnegoClientAction";
 
+    private Ldap ldap = new Ldap();
+    
     private String jcifsPassword;
     private String jcifsServicePassword;
     private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
@@ -285,6 +287,33 @@ public class SpnegoProperties {
         this.ntlmAllowed = ntlmAllowed;
     }
 
+    public Ldap getLdap() {
+        return ldap;
+    }
 
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public static class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String searchFilter;
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
+    }
 }
 

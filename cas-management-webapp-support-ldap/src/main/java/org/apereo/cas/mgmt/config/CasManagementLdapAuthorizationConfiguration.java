@@ -43,11 +43,7 @@ public class CasManagementLdapAuthorizationConfiguration {
     @RefreshScope
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
-        final SearchExecutor executor = new SearchExecutor();
-        executor.setBaseDn(casProperties.getMgmt().getLdapAuthz().getBaseDn());
-        executor.setSearchFilter(new SearchFilter(casProperties.getMgmt().getLdapAuthz().getSearchFilter()));
-        executor.setReturnAttributes(ReturnAttributes.ALL.value());
-        executor.setSearchScope(SearchScope.SUBTREE);
-        return executor;
+        return Beans.newSearchExecutor(casProperties.getMgmt().getLdapAuthz().getBaseDn(),
+                casProperties.getMgmt().getLdapAuthz().getSearchFilter());
     }
 }

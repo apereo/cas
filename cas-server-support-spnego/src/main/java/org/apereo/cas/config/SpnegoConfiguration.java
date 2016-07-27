@@ -13,11 +13,6 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
-import org.apereo.cas.support.spnego.web.flow.SpnegoCredentialsAction;
-import org.apereo.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction;
-import org.apereo.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
-import org.apereo.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
-import org.apereo.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchRequest;
@@ -49,15 +44,7 @@ public class SpnegoConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired(required = false)
-    @Qualifier("spnegoClientActionConnectionFactory")
-    private ConnectionFactory connectionFactory;
-
-    @Autowired(required = false)
-    @Qualifier("spnegoClientActionSearchRequest")
-    private SearchRequest searchRequest;
-
+    
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
@@ -142,63 +129,7 @@ public class SpnegoConfiguration {
     public PrincipalFactory spnegoPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-    @Bean
-    @RefreshScope
-    public SpnegoCredentialsAction spnego() {
-        final SpnegoCredentialsAction a = new SpnegoCredentialsAction();
-        a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        a.setSend401OnAuthenticationFailure(casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
-        return a;
-    }
-
-    @Bean
-    @RefreshScope
-    public Action negociateSpnego() {
-        final SpnegoNegociateCredentialsAction a =
-                new SpnegoNegociateCredentialsAction();
-        a.setMixedModeAuthentication(casProperties.getAuthn().getSpnego().isMixedModeAuthentication());
-        a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        a.setSupportedBrowsers(Lists.newArrayList(casProperties.getAuthn().getSpnego().getSupportedBrowsers()));
-        return a;
-    }
-
-    @Bean
-    @RefreshScope
-    public Action baseSpnegoClientAction() {
-        final BaseSpnegoKnownClientSystemsFilterAction a =
-                new BaseSpnegoKnownClientSystemsFilterAction();
-
-        a.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
-        return a;
-    }
-
-    @Bean
-    @RefreshScope
-    public Action hostnameSpnegoClientAction() {
-        final HostNameSpnegoKnownClientSystemsFilterAction a =
-                new HostNameSpnegoKnownClientSystemsFilterAction(casProperties.getAuthn().getSpnego().getHostNamePatternString());
-        a.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
-        return a;
-    }
-
-    @Bean
-    @RefreshScope
-    public Action ldapSpnegoClientAction() {
-        final LdapSpnegoKnownClientSystemsFilterAction l =
-                new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
-                        this.searchRequest, casProperties.getAuthn().getSpnego().getSpnegoAttributeName());
-
-        l.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        l.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        l.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
-        return l;
-    }
-
+    
     @PostConstruct
     protected void initializeRootApplicationContext() {
         authenticationHandlersResolvers.put(spnegoHandler(), spnegoPrincipalResolver());
