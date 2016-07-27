@@ -1,4 +1,4 @@
-package org.apereo.cas.authorization.generator;
+package org.apereo.cas.authorization;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;

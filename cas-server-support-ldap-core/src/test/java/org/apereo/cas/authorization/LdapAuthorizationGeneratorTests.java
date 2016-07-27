@@ -1,4 +1,4 @@
-package org.apereo.cas.authorization.generator;
+package org.apereo.cas.authorization;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {LdapAuthenticationConfiguration.class,
+@SpringApplicationConfiguration(classes = {
         LdapCoreConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
@@ -48,7 +48,7 @@ public class LdapAuthorizationGeneratorTests extends AbstractLdapTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        AbstractLdapTests.initDirectoryServer();
     }
 
     @Test

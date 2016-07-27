@@ -1,6 +1,10 @@
 package org.apereo.cas.mgmt.config;
 
+import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
+import org.apereo.cas.authorization.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
@@ -23,30 +27,25 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = {"org.apereo.cas.authorization"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementLdapAuthorizationConfiguration {
-
-    @Autowired
-    @Qualifier("ldapAuthorizationGenerator")
-    private AuthorizationGenerator authorizationGenerator;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Authorization generator for ldap access.
-     *
-     * @return the authorization generator
-     */
     @RefreshScope
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
-        return this.authorizationGenerator;
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
+                casProperties.getLdapAuthz()
+        );
+        
+        final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(connectionFactory,
+                ldapAuthorizationGeneratorUserSearchExecutor());
+        gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
+        gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
+        gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
+        return gen;
     }
-
-    /**
-     * Ldap authorization search executor.
-     *
-     * @return the search executor
-     */
+    
     @RefreshScope
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {

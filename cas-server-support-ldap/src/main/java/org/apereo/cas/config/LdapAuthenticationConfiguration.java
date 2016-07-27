@@ -1,19 +1,15 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
-import org.apereo.cas.authorization.generator.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
@@ -26,12 +22,9 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
-import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -49,15 +42,7 @@ import java.util.Map;
 @Configuration("ldapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapAuthenticationConfiguration {
-
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
-    private ConnectionFactory connectionFactory;
-
-    @Autowired(required = false)
-    @Qualifier("ldapAuthorizationGeneratorUserSearchExecutor")
-    private SearchExecutor userSearchExecutor;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -73,22 +58,6 @@ public class LdapAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
     
-    @Bean
-    @RefreshScope
-    public AuthorizationGenerator ldapAuthorizationGenerator() {
-        if (connectionFactory != null) {
-            final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(this.connectionFactory, this.userSearchExecutor);
-            gen.setAllowMultipleResults(casProperties.getLdapAuthz().isAllowMultipleResults());
-            gen.setRoleAttribute(casProperties.getLdapAuthz().getRoleAttribute());
-            gen.setRolePrefix(casProperties.getLdapAuthz().getRolePrefix());
-            return gen;
-        }
-
-        return commonProfile -> {
-            throw new UnsupportedAuthenticationMechanismException("Authorization generator not specified");
-        };
-    }
-
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
         casProperties.getAuthn().getLdap().forEach(l -> {
