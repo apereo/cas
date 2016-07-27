@@ -15,7 +15,7 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
@@ -77,6 +77,8 @@ public class LdapAuthenticationConfiguration {
                 handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
 
                 final Authenticator authenticator = getAuthenticator(l);
+                authenticator.setReturnAttributes(attributes.keySet().toString());
+                
                 if (l.getPasswordPolicy().isEnabled()) {
                     
                     final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
@@ -143,7 +145,7 @@ public class LdapAuthenticationConfiguration {
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
         } 
-        return new Authenticator(resolver, getPooledCustomCompareAuthenticationHandler(l));
+        return new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
@@ -154,11 +156,11 @@ public class LdapAuthenticationConfiguration {
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-
-        final SearchEntryResolver entryResolver = new SearchEntryResolver();
+        final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
+        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         authn.setEntryResolver(entryResolver);
 
         return authn;
@@ -170,7 +172,7 @@ public class LdapAuthenticationConfiguration {
         return handler;
     }
 
-    private static PooledCompareAuthenticationHandler getPooledCustomCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
+    private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
         final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
                 Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
