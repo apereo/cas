@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -18,12 +19,10 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.SearchScope;
 import org.ldaptive.referral.DeleteReferralHandler;
 import org.ldaptive.referral.ModifyReferralHandler;
 import org.ldaptive.referral.SearchReferralHandler;
@@ -172,26 +171,12 @@ public final class LdapUtils {
             throws LdapException {
         try (final Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
-            final SearchRequest request = createSearchRequest(baseDn, filter);
+            final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
     }
-
-    /**
-     * Builds a new request.
-     *
-     * @param baseDn the base dn
-     * @param filter the filter
-     * @return the search request
-     */
-    public static SearchRequest createSearchRequest(final String baseDn, final SearchFilter filter) {
-        final SearchRequest sr = new SearchRequest(baseDn, filter);
-        sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
-        sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
-        sr.setSearchScope(SearchScope.SUBTREE);
-        return sr;
-    }
+    
 
     /**
      * Checks to see if response has a result.

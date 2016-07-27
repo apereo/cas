@@ -1,11 +1,11 @@
 package org.apereo.cas.authorization;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.exception.AccountNotFoundException;
@@ -97,7 +97,8 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             logger.debug("Attempting to get details for user {}.", username);
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
-                    createSearchFilter(this.userSearchExecutor, username));
+                    Beans.newSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(), username));
+            
             logger.debug("LDAP user search response: {}", response);
             userResult = response.getResult();
 
@@ -137,28 +138,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             profile.addAttribute(ldapAttribute.getName(), value);
         });
     }
-
-    /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
-     * the username as a parameter.
-     *
-     * @param executor the executor
-     * @param username the username
-     * @return Search filter with parameters applied.
-     */
-    private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {
-        final SearchFilter filter = new SearchFilter();
-        filter.setFilter(executor.getSearchFilter().getFilter());
-        if (filter.getFilter().contains("{0}")) {
-            filter.setParameter(0, username);
-        } else {
-            filter.setParameter("user", username);
-        }
-
-        logger.debug("Constructed LDAP search filter [{}]", filter.format());
-        return filter;
-    }
-
+    
     public void setConnectionFactory(@Nullable final ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }

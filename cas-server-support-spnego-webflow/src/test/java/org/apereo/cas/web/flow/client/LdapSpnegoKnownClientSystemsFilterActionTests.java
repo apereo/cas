@@ -1,4 +1,4 @@
-package org.apereo.cas.support.spnego.web.flow.client;
+package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.BeforeClass;
