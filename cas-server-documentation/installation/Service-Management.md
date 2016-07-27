@@ -72,26 +72,8 @@ Registered services present the following metadata:
 ## Persisting Services
 
 ### Memory
-This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
-```xml
-<bean id="serviceRegistryDao"
-      class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl"
-      p:registeredServices-ref="registeredServicesList" />
-
-<util:list id="registeredServicesList">
-    <bean class="org.apereo.cas.services.RegexRegisteredService"
-          p:id="1"
-          p:name="HTTPS and IMAPS services on example.com"
-          p:serviceId="^(https|imaps)://([A-Za-z0-9_-]+\.)*example\.com/.*"
-          p:evaluationOrder="0" />
-</util:list>
-
-```
-
-This component is _NOT_ suitable for use with the service management webapp since it does not persist data.
-On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
-service registry data and the UI will not be used.
+[See this guide](InMemory-Service-Management.html) for more info please.
 
 ### JSON
 
