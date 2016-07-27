@@ -59,8 +59,14 @@ public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostPr
             // proceed authentication using jcifs
             synchronized (this) {
                 this.authentication.reset();
+
+                logger.debug("Processing SPNEGO authentication");
                 this.authentication.process(spnegoCredential.getInitToken());
+
                 principal = this.authentication.getPrincipal();
+                logger.debug("Authenticated SPNEGO principal {}", principal.getName());
+
+                logger.debug("Retrieving the next token for authentication");
                 nextToken = this.authentication.getNextToken();
             }
         } catch (final jcifs.spnego.AuthenticationException e) {

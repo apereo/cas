@@ -87,13 +87,13 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
             LOGGER.debug("User Agent header [{}] is empty, or no browsers are supported", userAgent);
-            return success();
+            return error();
         }
 
         if (!isSupportedBrowser(userAgent)) {
             LOGGER.debug("User Agent header [{}] is not supported in the list of supported browsers [{}]",
                     userAgent, this.supportedBrowser);
-            return success();
+            return error();
         }
 
         if (!StringUtils.hasText(authorizationHeader)

@@ -73,6 +73,11 @@ public abstract class AbstractCasWebflowConfigurer {
     protected static final String TRANSITION_ID_SUCCESS = "success";
 
     /**
+     * The transition state 'viewLoginForm'.
+     */
+    protected static final String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+    
+    /**
      * The transition state 'yes'.
      */
     protected static final String TRANSITION_ID_YES = "yes";

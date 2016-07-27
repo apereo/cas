@@ -47,13 +47,12 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
     private boolean send401OnAuthenticationFailure = true;
 
     @Override
-    protected Credential constructCredentialsFromRequest(
-            final RequestContext context) {
+    protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        final String authorizationHeader = request
-                .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-
+        final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        logger.debug("SPNEGO Authorization header located as {}", authorizationHeader);
+        
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
@@ -70,6 +69,8 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             return new SpnegoCredential(token);
         }
 
+        logger.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
+                SpnegoConstants.HEADER_AUTHORIZATION, this.messageBeginPrefix);
         return null;
     }
 

@@ -24,11 +24,12 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState actionState = createActionState(flow, "startSpnegoAuthenticate",
                 createEvaluateAction("negociateSpnego"));
         actionState.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, "spnego"));
+        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, STATE_ID_VIEW_LOGIN_FORM));
 
-        final ActionState spnego = createActionState(flow, "spnego",
-                createEvaluateAction("spnego"));
+        final ActionState spnego = createActionState(flow, "spnego", createEvaluateAction("spnego"));
         spnego.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        spnego.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow)));
+        spnego.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR,
+                STATE_ID_VIEW_LOGIN_FORM));
 
         final ActionState evaluateClientRequest = createActionState(flow, "evaluateClientRequest",
                 createEvaluateAction(hostNameClientActionStrategy));
