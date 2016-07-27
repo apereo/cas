@@ -673,7 +673,7 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-unboundid</artifactId>
-      <version>1.2.0-SNAPSHOT</version>
+      <version>1.2.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

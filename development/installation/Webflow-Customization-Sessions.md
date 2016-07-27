@@ -39,7 +39,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Doing so will likely require you to also enable sticky sessions and/or session replication in a clustered deployment of CAS.
 
-### Hazelast Session Replication
+### Hazelcast Session Replication
 
 If you don't wish to use the native container's strategy for session replication, 
 you can use CAS's support for Hazelcast session replication.
