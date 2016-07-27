@@ -19,6 +19,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -63,11 +65,11 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action negociateSpnego() {
-        final SpnegoNegociateCredentialsAction a =
-                new SpnegoNegociateCredentialsAction();
+        final SpnegoNegociateCredentialsAction a = new SpnegoNegociateCredentialsAction();
         a.setMixedModeAuthentication(casProperties.getAuthn().getSpnego().isMixedModeAuthentication());
         a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        a.setSupportedBrowsers(Lists.newArrayList(casProperties.getAuthn().getSpnego().getSupportedBrowsers()));
+        final String[] browsers = StringUtils.commaDelimitedListToStringArray(casProperties.getAuthn().getSpnego().getSupportedBrowsers());
+        a.setSupportedBrowsers(Lists.newArrayList(browsers));
         return a;
     }
 
@@ -94,6 +96,7 @@ public class SpnegoWebflowConfiguration {
         return a;
     }
 
+    @Lazy
     @Bean
     @RefreshScope
     public Action ldapSpnegoClientAction() {

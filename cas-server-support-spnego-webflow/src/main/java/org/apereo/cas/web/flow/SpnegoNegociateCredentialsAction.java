@@ -80,13 +80,13 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
 
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
             LOGGER.warn("User Agent header [{}] is empty, or no browsers are supported", userAgent);
-            return new Event(this, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            return error();
         }
 
         if (!isSupportedBrowser(userAgent)) {
             LOGGER.warn("User Agent header [{}] is not supported in the list of supported browsers [{}]",
                     userAgent, this.supportedBrowser);
-            return new Event(this, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            return error();
         }
 
         if (!StringUtils.hasText(authorizationHeader)
