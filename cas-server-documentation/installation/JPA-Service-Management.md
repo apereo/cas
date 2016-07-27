@@ -22,6 +22,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Upon startup and if the services registry database is blank, 
 the registry is able to auto initialize itself from default 
-JSON service definitions available to CAS. This behavior can be controlled via:
+JSON service definitions available to CAS. 
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
