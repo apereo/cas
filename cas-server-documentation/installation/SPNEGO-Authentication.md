@@ -140,23 +140,9 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 Checks to see if the request's remote hostname matches a predefine pattern.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-
 ### By LDAP Attribute
 
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-...and the LDAP configuration:
-
-```xml
-<bean id="spnegoClientActionConnectionFactory" class="..." />
-
-<bean id="spnegoClientActionSearchRequest" class="org.ldaptive.SearchRequest"
-      p:baseDn="${cas.spnego.ldap.basedn:}"
-      p:searchFilter-ref="searchFilter"/>
-
-<bean id="searchFilter" class="org.ldaptive.SearchFilter"
-      c:filter="${cas.spnego.ldap.filter:host={0}}" />
-```
