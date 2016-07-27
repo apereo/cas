@@ -40,6 +40,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.authorization.authorizer.Authorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.FromAttributesAuthorizationGenerator;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
@@ -168,7 +169,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
         interceptor.setSecurityLogic(new DefaultSecurityLogic() {
             @Override
-            protected HttpAction unauthorized(final WebContext context, final List currentClients) {
+            protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
                 return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
             }
         });
@@ -228,6 +229,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "authorizationGenerator")
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
+        if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
+            
+            if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
+                return commonProfile -> commonProfile.addRoles(
+                        StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
+                );
+            }
+            return new FromAttributesAuthorizationGenerator(
+                    StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
+                    StringUtils.commaDelimitedListToStringArray(new String())
+            );
+        }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
