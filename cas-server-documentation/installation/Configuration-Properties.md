@@ -1942,11 +1942,36 @@ Used to geo-profile authentication events and such.
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 # cas.mgmt.serverName=https://localhost:8443
 
-# cas.ldapAuthz.rolePrefix=ROLE_
-# cas.ldapAuthz.allowMultipleResults=false
-# cas.ldapAuthz.searchFilter=
-# cas.ldapAuthz.baseDn=
-# cas.ldapAuthz.roleAttribute=uugid
+# cas.mgmt.authzAttributes=memberOf,groupMembership
+
+# cas.mgmt.ldapAuthz.rolePrefix=ROLE_
+# cas.mgmt.ldapAuthz.allowMultipleResults=false
+# cas.mgmt.ldapAuthz.searchFilter=cn={user}
+# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
+# cas.mgmt.ldapAuthz.roleAttribute=uugid
+# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
+# cas.mgmt.ldapAuthz.userFilter=cn={user}
+# cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.mgmt.ldapAuthz.bindCredential=Password
+# cas.mgmt.ldapAuthz.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.mgmt.ldapAuthz.connectTimeout=5000
+# cas.mgmt.ldapAuthz.trustCertificates=
+# cas.mgmt.ldapAuthz.keystore=
+# cas.mgmt.ldapAuthz.keystorePassword=
+# cas.mgmt.ldapAuthz.keystoreType=JKS|JCEKS|PKCS12
+# cas.mgmt.ldapAuthz.minPoolSize=3
+# cas.mgmt.ldapAuthz.maxPoolSize=10
+# cas.mgmt.ldapAuthz.validateOnCheckout=true
+# cas.mgmt.ldapAuthz.validatePeriodically=true
+# cas.mgmt.ldapAuthz.validatePeriod=600
+# cas.mgmt.ldapAuthz.failFast=true
+# cas.mgmt.ldapAuthz.idleTime=500
+# cas.mgmt.ldapAuthz.prunePeriod=600
+# cas.mgmt.ldapAuthz.blockWaitTime=5000
+# cas.mgmt.ldapAuthz.subtreeSearch=true
+# cas.mgmt.ldapAuthz.useSsl=true
+# cas.mgmt.ldapAuthz.useStartTls=false
 ```
 
 ## Google Analytics Integration
