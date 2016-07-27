@@ -7,7 +7,7 @@ package org.apereo.cas.configuration.model.support.ldap;
  * @since 5.0.0
  */
 
-public class LdapAuthorizationProperties {
+public class LdapAuthorizationProperties extends AbstractLdapProperties {
     /** Default role prefix. */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
     
