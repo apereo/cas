@@ -101,12 +101,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    /**
-     * A character encoding filter.
-     *
-     * @return the character encoding filter
-     */
+    
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter("UTF-8", true);
@@ -293,7 +288,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         f.setFormDataPopulators(this.formDataPopulators);
         return f;
     }
-
 
     @Bean
     public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
