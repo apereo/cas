@@ -1,5 +1,6 @@
 rootProject.name = 'cas-server'
 
+include 'cas-server-documentation'
 include 'cas-server-core-api-util'
 include 'cas-server-core-api-authentication'
 include 'cas-server-core-api-logout'
