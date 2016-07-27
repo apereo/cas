@@ -23,7 +23,7 @@ ticket expires.
 ## Requirements
 
 * Client is logged in to a Windows Active Directory domain.
-* Supported browser and JDK.
+* Supported browser.
 * CAS is running MIT kerberos against the AD domain controller.
 
 ## Components

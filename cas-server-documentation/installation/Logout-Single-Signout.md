@@ -16,7 +16,7 @@ Note that the logout action in each case has no effect on the other in the simpl
 does not end the CAS session and ending the CAS session does not affect application sessions. This is a common cause of
 confusion for new users and deployers of an SSO system.
 
-The single logout support in CAS attempts to reconcile the dispartity between CAS logout and application logout. When
+The single logout support in CAS attempts to reconcile the disparity between CAS logout and application logout. When
 CAS is configured for SLO, it attempts to send logout messages to every application that requested authentication to
 CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
 user experience by creating symmetry between login and logout.
@@ -80,7 +80,11 @@ To disable single logout, adjust the following setting in `application.propertie
 ```
 
 ### Single Logout Per Service
-Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
+
+Registered applications with CAS have the option to control single logout behavior individually via
+the [Service Management](Service-Management.html) component. Each registered service in the service registry will include configuration 
+that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property 
+which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 
@@ -112,8 +116,9 @@ To configure a service specific endpoint, try the following example:
 }
 ```
 
-### Aynchronous SLO Messages
-By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `application.properties`:
+### Asynchronous SLO Messages
+By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, 
+modify the following setting in `application.properties`:
 
 ```bash
 # To send callbacks to endpoints synchronously, set this to false
