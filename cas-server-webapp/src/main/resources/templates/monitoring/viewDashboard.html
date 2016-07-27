@@ -44,7 +44,7 @@
             <div class="server-functions">
                 <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
                 <ul>
-                    <li>
+                    <li th:if="${restartEndpointEnabled}">
                         <form method="post" action="/cas/status/restart">
                             <button class="btn btn-restart"
                                 type="button"
@@ -70,7 +70,7 @@
                             </button>
                         </form>
                     </li>
-                    <li>
+                    <li th:if="${shutdownEndpointEnabled}">
                         <form method="post" action="/cas/status/shutdown">
                             <button type="button" class="btn btn-shutdown"
                                 data-toggle="modal"
