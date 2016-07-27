@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
-import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;

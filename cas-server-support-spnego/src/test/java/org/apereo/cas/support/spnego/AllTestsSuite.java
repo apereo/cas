@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         JcifsSpnegoAuthenticationHandlerTests.class,
         SpnegoCredentialsTests.class,
-        SpnegoCredentialsToPrincipalResolverTests.class,
+        SpnegoCredentialsToPrincipalResolverTests.class
 })
 public class AllTestsSuite {
 }
