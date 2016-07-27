@@ -45,7 +45,8 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-
+        logger.debug("SPNEGO Authorization header located as {}", authorizationHeader);
+                
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
@@ -58,10 +59,12 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
                 logger.warn("Could not decode authorization header in Base64");
                 return null;
             }
-            logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
+            logger.debug("Obtained token: {}. Creating SPNEGO credential...", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
+        logger.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
+                SpnegoConstants.HEADER_AUTHORIZATION, this.messageBeginPrefix);
         return null;
     }
 
