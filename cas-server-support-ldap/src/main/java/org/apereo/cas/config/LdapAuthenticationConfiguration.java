@@ -190,7 +190,7 @@ public class LdapAuthenticationConfiguration {
         entryResolver.setBaseDn(l.getBaseDn());
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        authn.setEntryResolver(new SearchEntryResolver());
+        authn.setEntryResolver(entryResolver);
 
         return authn;
     }
