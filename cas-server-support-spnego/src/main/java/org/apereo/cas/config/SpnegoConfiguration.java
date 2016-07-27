@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import jcifs.spnego.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -14,15 +13,12 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoA
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.SearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
