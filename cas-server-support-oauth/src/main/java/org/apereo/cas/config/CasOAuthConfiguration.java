@@ -285,7 +285,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultUniqueTicketIdGenerator();
     }
 
-    @Bean
+    @Bean(name = "defaultOAuthCodeFactory")
     @RefreshScope
     public OAuthCodeFactory defaultOAuthCodeFactory() {
         final DefaultOAuthCodeFactory f = new DefaultOAuthCodeFactory();
