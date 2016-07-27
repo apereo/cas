@@ -149,7 +149,11 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(executor.getSearchFilter().getFilter());
-        filter.setParameter(0, username);
+        if (filter.getFilter().contains("{0}")) {
+            filter.setParameter(0, username);
+        } else {
+            filter.setParameter("user", username);
+        }
 
         logger.debug("Constructed LDAP search filter [{}]", filter.format());
         return filter;

@@ -1,12 +1,10 @@
 package org.apereo.cas.authorization;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
-
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
-import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.LdapCoreConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
