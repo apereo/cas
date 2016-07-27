@@ -762,6 +762,32 @@ Allow CAS to become am OpenID authentication provider.
 
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
+
+# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.spnego.ldap.baseDn=dc=example,dc=org
+# cas.authn.spnego.ldap.userFilter=cn={user}
+# cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.spnego.ldap.bindCredential=Password
+# cas.authn.spnego.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.spnego.ldap.connectTimeout=5000
+# cas.authn.spnego.ldap.trustCertificates=
+# cas.authn.spnego.ldap.keystore=
+# cas.authn.spnego.ldap.keystorePassword=
+# cas.authn.spnego.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.spnego.ldap.minPoolSize=3
+# cas.authn.spnego.ldap.maxPoolSize=10
+# cas.authn.spnego.ldap.validateOnCheckout=true
+# cas.authn.spnego.ldap.validatePeriodically=true
+# cas.authn.spnego.ldap.validatePeriod=600
+# cas.authn.spnego.ldap.failFast=true
+# cas.authn.spnego.ldap.idleTime=500
+# cas.authn.spnego.ldap.prunePeriod=600
+# cas.authn.spnego.ldap.blockWaitTime=5000
+# cas.authn.spnego.ldap.subtreeSearch=true
+# cas.authn.spnego.ldap.useSsl=true
+# cas.authn.spnego.ldap.useStartTls=false
+# cas.authn.spnego.ldap.baseDn=false
+# cas.authn.spnego.ldap.searchFilter=host={0}
 ```
 
 ## JAAS Authentication
