@@ -20,8 +20,10 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.DefaultRefreshTokenFactory;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
@@ -86,11 +88,11 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
-    private DefaultOAuthCodeFactory oAuthCodeFactory;
+    private OAuthCodeFactory oAuthCodeFactory;
 
     @Autowired
     @Qualifier("defaultRefreshTokenFactory")
-    private DefaultRefreshTokenFactory oAuthRefreshTokenFactory;
+    private RefreshTokenFactory oAuthRefreshTokenFactory;
 
     @Autowired
     @Qualifier("accessTokenController")

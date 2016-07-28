@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
+import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     private static final String CONTENT_TYPE = "application/json";
 
     @Autowired
-    private DefaultAccessTokenFactory accessTokenFactory;
+    private AccessTokenFactory accessTokenFactory;
 
     @Autowired
     private OAuth20ProfileController oAuth20ProfileController;
