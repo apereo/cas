@@ -100,12 +100,27 @@ Replace transition instances of `viewLoginForm` with `startSpnegoAuthenticate`, 
 
 Provide a JAAS `login.conf` file:
 
-    jcifs.spnego.initiate {
-       com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
+    com.sun.security.jgss.krb5.initiate {
+       com.sun.security.auth.module.Krb5LoginModule
+        required
+        storeKey=true
+        useKeyTab=true
+        keyTab="/home/cas/kerberos/myspnaccount.keytab"
+        principal="HTTP/cas.your.realm.here@YOUR.REALM.HERE";
     };
-    jcifs.spnego.accept {
-       com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
+    com.sun.security.jgss.krb5.accept {
+       com.sun.security.auth.module.Krb5LoginModule
+        required
+        storeKey=true
+        useKeyTab=true
+        keyTab="/home/cas/kerberos/myspnaccount.keytab"
+        principal="HTTP/cas.your.realm.here@YOUR.REALM.HERE";
     };
+
+Report your JAAS file to JAVA_OPTS environment variable
+
+    -Djava.security.auth.login.config=/path/to/jaas/file
+    
 
 You may use the following configuration in `cas.properties`:
 
