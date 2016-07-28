@@ -26,8 +26,7 @@ public class TerminateSessionAction extends AbstractAction {
 
     /** Webflow event helper component. */
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-
-
+    
     private CentralAuthenticationService centralAuthenticationService;
     
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -35,7 +34,7 @@ public class TerminateSessionAction extends AbstractAction {
     private CookieRetrievingCookieGenerator warnCookieGenerator;
     
     private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     /**
      * Creates a new instance with the given parameters.
      */
@@ -63,6 +62,7 @@ public class TerminateSessionAction extends AbstractAction {
                 tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             }
             if (tgtId != null) {
+                
                 final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
                 WebUtils.putLogoutRequests(context, logoutRequests);
             }

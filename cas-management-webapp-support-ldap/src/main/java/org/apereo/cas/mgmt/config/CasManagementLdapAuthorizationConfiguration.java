@@ -1,16 +1,15 @@
 package org.apereo.cas.mgmt.config;
 
+import org.apereo.cas.authorization.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.ldaptive.ReturnAttributes;
+import org.apereo.cas.configuration.support.Beans;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
-import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -20,40 +19,28 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.0.0
  */
 @Configuration("casManagementLdapAuthorizationConfiguration")
-@ComponentScan(basePackages = {"org.apereo.cas.authorization"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementLdapAuthorizationConfiguration {
-
-    @Autowired
-    @Qualifier("ldapAuthorizationGenerator")
-    private AuthorizationGenerator authorizationGenerator;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Authorization generator for ldap access.
-     *
-     * @return the authorization generator
-     */
     @RefreshScope
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
-        return this.authorizationGenerator;
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getMgmt().getLdapAuthz());
+        final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(connectionFactory,
+                ldapAuthorizationGeneratorUserSearchExecutor());
+        gen.setAllowMultipleResults(casProperties.getMgmt().getLdapAuthz().isAllowMultipleResults());
+        gen.setRoleAttribute(casProperties.getMgmt().getLdapAuthz().getRoleAttribute());
+        gen.setRolePrefix(casProperties.getMgmt().getLdapAuthz().getRolePrefix());
+        return gen;
     }
-
-    /**
-     * Ldap authorization search executor.
-     *
-     * @return the search executor
-     */
+    
     @RefreshScope
     @Bean
     public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
-        final SearchExecutor executor = new SearchExecutor();
-        executor.setBaseDn(casProperties.getLdapAuthz().getBaseDn());
-        executor.setSearchFilter(new SearchFilter(casProperties.getLdapAuthz().getSearchFilter()));
-        executor.setReturnAttributes(ReturnAttributes.ALL.value());
-        return executor;
+        return Beans.newSearchExecutor(casProperties.getMgmt().getLdapAuthz().getBaseDn(),
+                casProperties.getMgmt().getLdapAuthz().getSearchFilter());
     }
 }

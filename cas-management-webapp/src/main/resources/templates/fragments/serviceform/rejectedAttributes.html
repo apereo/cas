@@ -36,8 +36,8 @@
                     <div class="controls"
                          ng-class="name.$invalid &amp;&amp; name.$dirty ? 'has-error' : ''"
                          ng-switch-when="true">
-                            <textarea class="form-control noresize editable-text" rows="2"
-                                      ng-model="row.name"></textarea>
+                            <input class="form-control noresize editable-text"
+                                      ng-model="row.name"></input>
                     </div>
                 </td>
                 <td th:title="#{services.form.label.sas.rejectedattributes.value}"
@@ -48,8 +48,8 @@
                     <div class="controls"
                          ng-class="propValue.$invalid &amp;&amp; propValue.$dirty ? 'has-error' : ''"
                          ng-switch-when="true">
-                            <textarea class="form-control noresize editable-text" rows="2"
-                                      ng-model="row.propValue"></textarea>
+                            <input class="form-control noresize editable-text"
+                                      ng-model="row.propValue"></input>
                     </div>
                 </td>
                 <td>
@@ -65,10 +65,10 @@
                 </td>
             </tr>
             <tr ng-show="row.isAdding">
-                <td><textarea class="form-control noresize editable-text" rows="2" placeholder="New property name"
-                              ng-model="row.propValue"></textarea></td>
-                <td><textarea class="form-control noresize editable-text" rows="2" placeholder="New property value"
-                              ng-model="row.propValue"></textarea></td>
+                <td><input class="form-control noresize editable-text" placeholder="New property name"
+                              ng-model="row.propValue"></input></td>
+                <td><input class="form-control noresize editable-text" placeholder="New property value"
+                              ng-model="row.propValue"></input></td>
                 <td>
                     <button class="btn btn-success btn-sm"
                             ng-click=""

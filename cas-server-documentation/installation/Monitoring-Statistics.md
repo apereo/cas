@@ -29,8 +29,6 @@ The following endpoints are secured and available:
 | `/status/refresh`                 | Refresh the application configuration via a `POST`.
 | `/status/dashboard`               | Control panel to CAS server functionality and management.
 | `/status/ssosessions`             | Report of active SSO sessions and authentications.
-| `/status/bus/refresh`             | Reload CAS node’s configuration if the cloud bus is turned on.
-| `/status/bus/env`        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
 
 ## Security
 

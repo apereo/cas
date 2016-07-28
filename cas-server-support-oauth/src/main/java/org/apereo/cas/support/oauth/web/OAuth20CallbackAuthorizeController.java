@@ -6,10 +6,8 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.CallbackController;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller("callbackAuthorizeController")
-public class OAuth20CallbackAuthorizeController extends AbstractController {
+public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperController {
 
     private Config config;
 
@@ -35,10 +32,18 @@ public class OAuth20CallbackAuthorizeController extends AbstractController {
         this.callbackController.setConfig(this.config);
     }
 
+    /**
+     * Handle request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
-    @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String url = StringUtils.remove(this.callbackController.callback(request, response), "redirect:");
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        this.callbackController.callback(request, response);
+        final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
         final J2EContext ctx = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(ctx);
         return oAuth20CallbackAuthorizeViewResolver.resolve(ctx, manager, url);

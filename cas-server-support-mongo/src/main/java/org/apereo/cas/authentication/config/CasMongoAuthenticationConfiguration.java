@@ -30,7 +30,7 @@ public class CasMongoAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("mongoPac4jPasswordEncoder")
-    private org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder;
+    private org.pac4j.core.credentials.password.PasswordEncoder mongoPasswordEncoder;
 
     @Autowired
     private CasConfigurationProperties casProperties;

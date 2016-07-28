@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
@@ -42,6 +43,9 @@ public class AuthenticationProperties {
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
     @NestedConfigurationProperty
+    private DigestProperties digest = new DigestProperties();
+
+    @NestedConfigurationProperty
     private RestAuthenticationProperties rest = new RestAuthenticationProperties();
 
     @NestedConfigurationProperty
@@ -60,10 +64,7 @@ public class AuthenticationProperties {
     @NestedConfigurationProperty
     private AuthenticationPolicyProperties policy =
             new AuthenticationPolicyProperties();
-
-    @NestedConfigurationProperty
-    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
-
+    
     @NestedConfigurationProperty
     private AcceptAuthenticationProperties accept = new AcceptAuthenticationProperties();
 
@@ -146,19 +147,7 @@ public class AuthenticationProperties {
     public AuthenticationPolicyProperties getPolicy() {
         return policy;
     }
-
-    public void setPolicy(final AuthenticationPolicyProperties policy) {
-        this.policy = policy;
-    }
-
-    public PasswordPolicyProperties getPasswordPolicy() {
-        return passwordPolicy;
-    }
-
-    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
-        this.passwordPolicy = passwordPolicy;
-    }
-
+    
     public AcceptAuthenticationProperties getAccept() {
         return accept;
     }
@@ -352,6 +341,14 @@ public class AuthenticationProperties {
         this.rest = rest;
     }
 
+    public DigestProperties getDigest() {
+        return digest;
+    }
+
+    public void setDigest(final DigestProperties digest) {
+        this.digest = digest;
+    }
+    
     public PrincipalAttributesProperties getAttributeRepository() {
         return attributeRepository;
     }

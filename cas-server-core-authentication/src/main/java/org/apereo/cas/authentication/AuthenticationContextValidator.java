@@ -136,7 +136,7 @@ public class AuthenticationContextValidator {
      */
     private Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProvidersFromApplicationContext() {
         try {
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
+            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
             logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
         }

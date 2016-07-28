@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
 import java.nio.file.Path;
@@ -45,9 +46,10 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      *
      * @param configDirectory the config directory where service registry files can be found.
      * @param enableWatcher   the enable watcher
+     * @param eventPublisher  the event publisher
      */
-    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher);
+    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher) {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher);
     }
 
     /**
@@ -57,11 +59,13 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      *
      * @param configDirectory the config directory where service registry files can be found.
      * @param enableWatcher   the enable watcher
+     * @param eventPublisher  the event publisher
      * @throws Exception the IO exception
      */
     public YamlServiceRegistryDao(final Resource configDirectory,
-                                  final boolean enableWatcher) throws Exception {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher);
+                                  final boolean enableWatcher,
+                                  final ApplicationEventPublisher eventPublisher) throws Exception {
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher);
     }
 
 

@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.DefaultOAuthCasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
@@ -42,12 +44,12 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
-import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.springframework.web.CallbackController;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,6 +104,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
+
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     @Bean(autowire = Autowire.BY_NAME)
@@ -167,56 +170,30 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    /**
-     * Requires authentication authorize interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
+    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
+        return new SecurityInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
 
-    /**
-     * Consent approval view resolver.
-     *
-     * @return the consent approval view resolver
-     */
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver();
     }
 
-    /**
-     * Callback authorize view resolver.
-     *
-     * @return the oauth 20 callback authorize view resolver
-     */
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
     }
-
-    /**
-     * Requires authentication access token interceptor requires authentication interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
+    
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        return new RequiresAuthenticationInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
+    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+        return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 
-
-    /**
-     * interceptor handler interceptor adapter.
-     *
-     * @return the handler interceptor adapter
-     */
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
         return new HandlerInterceptorAdapter() {
@@ -400,6 +377,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         c.setConfig(oauthSecConfig());
         return c;
     }
+
 
     @Bean
     public UniqueTicketIdGenerator accessTokenIdGenerator() {

@@ -9,6 +9,8 @@ install {
     repositories.mavenInstaller {
         pom.whenConfigured {
             packaging = "pom"
+            artifactId = project.name
+            
             withXml {
                 def deps = asNode().get("dependencies")
                 asNode().remove(deps)

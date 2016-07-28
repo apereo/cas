@@ -4,31 +4,34 @@ import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.web.OidcAccessTokenController;
+import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
-import org.apereo.cas.web.OidcAuthorizeController;
+import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
-import org.apereo.cas.web.OidcProfileController;
+import org.apereo.cas.web.controllers.OidcJwksEndpointController;
+import org.apereo.cas.web.controllers.OidcProfileEndpointController;
+import org.apereo.cas.web.controllers.OidcWellKnownEndpointController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.pac4j.springframework.web.RequiresAuthenticationInterceptor;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +46,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -61,8 +63,8 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
-    @Resource
-    private OidcProperties properties;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("oauthInterceptor")
@@ -174,9 +176,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
      * @return the requires authentication interceptor
      */
     @Bean
-    public RequiresAuthenticationInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
-        return new RequiresAuthenticationInterceptor(oauthSecConfig, name) {
+        return new SecurityInterceptor(oauthSecConfig, name) {
 
             @Override
             public boolean preHandle(final HttpServletRequest request,
@@ -222,9 +224,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
         final OidcAccessTokenResponseGenerator gen = new OidcAccessTokenResponseGenerator();
 
-        gen.setIssuer(properties.getIssuer());
-        gen.setJwksFile(properties.getJwksFile());
-        gen.setSkew(properties.getSkew());
+        gen.setIssuer(casProperties.getAuthn().getOidc().getIssuer());
+        gen.setJwksFile(casProperties.getAuthn().getOidc().getJwksFile());
+        gen.setSkew(casProperties.getAuthn().getOidc().getSkew());
 
         return gen;
     }
@@ -242,9 +244,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultPrincipalFactory();
     }
 
+    @RefreshScope
     @Bean
-    public OidcAccessTokenController oidcAccessTokenController() {
-        final OidcAccessTokenController c = new OidcAccessTokenController();
+    public BaseOAuthWrapperController oidcAccessTokenController() {
+        final OidcAccessTokenEndpointController c = new OidcAccessTokenEndpointController();
         c.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setPrincipalFactory(oidcPrincipalFactory());
@@ -255,9 +258,36 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @RefreshScope
     @Bean
-    public OidcProfileController oidcProfileController() {
-        final OidcProfileController c = new OidcProfileController();
+    public OidcJwksEndpointController oidcJwksController() {
+        final OidcJwksEndpointController c = new OidcJwksEndpointController();
+        c.setJwksFile(casProperties.getAuthn().getOidc().getJwksFile());
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        
+        return c;
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcWellKnownEndpointController oidcWellKnownController() {
+        final OidcWellKnownEndpointController c = new OidcWellKnownEndpointController();
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        return c;
+    }
+    
+    @RefreshScope
+    @Bean
+    public BaseOAuthWrapperController oidcProfileController() {
+        final OidcProfileEndpointController c = new OidcProfileEndpointController();
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
@@ -266,9 +296,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @RefreshScope
     @Bean
-    public OidcAuthorizeController oidcAuthorizeController() {
-        final OidcAuthorizeController c = new OidcAuthorizeController();
+    public BaseOAuthWrapperController oidcAuthorizeController() {
+        final OidcAuthorizeEndpointController c = new OidcAuthorizeEndpointController();
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);

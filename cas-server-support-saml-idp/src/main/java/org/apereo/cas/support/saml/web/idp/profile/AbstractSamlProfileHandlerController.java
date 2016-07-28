@@ -32,11 +32,13 @@ import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +58,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Controller
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -142,6 +145,19 @@ public abstract class AbstractSamlProfileHandlerController {
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
 
+    /**
+     * Gets saml metadata adaptor for service.
+     *
+     * @param registeredService the registered service
+     * @param entityId          the entity id
+     * @return the saml metadata adaptor for service
+     */
+    protected SamlRegisteredServiceServiceProviderMetadataFacade getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
+                                                                                          final String entityId) {
+        return SamlRegisteredServiceServiceProviderMetadataFacade
+                .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
+    }
+    
     /**
      * Gets registered service and verify.
      *
@@ -315,7 +331,7 @@ public abstract class AbstractSamlProfileHandlerController {
             final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
             return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
         }
-
+        
         return initialUrl;
     }
 
@@ -349,6 +365,38 @@ public abstract class AbstractSamlProfileHandlerController {
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Initiate authentication request.
+     *
+     * @param authnRequest the authn request
+     * @param response     the response
+     * @param request      the request
+     * @throws Exception the exception
+     */
+    protected void initiateAuthenticationRequest(final AuthnRequest authnRequest, final HttpServletResponse response,
+                                                 final HttpServletRequest request) throws Exception {
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
+
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        registeredService, authnRequest);
+
+        if (!authnRequest.isSigned()) {
+            if (adaptor.isAuthnRequestsSigned()) {
+                logger.error("Metadata for [{}] says authentication requests are signed, yet this authentication request is not",
+                        adaptor.getEntityId());
+                throw new SAMLException("AuthN request is not signed but should be");
+            }
+            logger.info("Authentication request is not signed, so there is no need to verify its signature.");
+        } else {
+            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, adaptor.getMetadataResolver());
+        }
+
+        SamlUtils.logSamlObject(this.configBean, authnRequest);
+        issueAuthenticationRequestRedirect(authnRequest, request, response);
     }
 
     public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {

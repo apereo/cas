@@ -65,7 +65,7 @@ The `GrouperRegisteredServiceAccessStrategy` is enabled by including the followi
 ```
 
 This access strategy attempts to locate [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) groups for the CAS principal. The groups returned by Grouper
-are collected as CAS attribtues and examined against the list of required attributes for service access.
+are collected as CAS attributes and examined against the list of required attributes for service access.
 
 The following properties are available:
 

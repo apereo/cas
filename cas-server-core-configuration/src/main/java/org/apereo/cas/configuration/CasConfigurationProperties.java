@@ -26,7 +26,6 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCore;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
@@ -126,8 +125,6 @@ public class CasConfigurationProperties {
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
 
-    @NestedConfigurationProperty
-    private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
     @NestedConfigurationProperty
     private GoogleAppsProperties googleApps = new GoogleAppsProperties();
@@ -224,8 +221,7 @@ public class CasConfigurationProperties {
     public void setMonitor(final MonitorProperties monitor) {
         this.monitor = monitor;
     }
-
-
+    
     public ServerProperties getServer() {
         return server;
     }
@@ -353,15 +349,7 @@ public class CasConfigurationProperties {
     public void setJdbc(final DatabaseProperties jdbc) {
         this.jdbc = jdbc;
     }
-
-    public LdapAuthorizationProperties getLdapAuthz() {
-        return ldapAuthz;
-    }
-
-    public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
-        this.ldapAuthz = ldapAuthz;
-    }
-
+    
     public GoogleAppsProperties getGoogleApps() {
         return googleApps;
     }

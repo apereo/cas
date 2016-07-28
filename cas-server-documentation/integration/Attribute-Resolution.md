@@ -31,7 +31,7 @@ Note that by default, CAS auto-creates attribute repository sources that are app
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration directly
 on your own. 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 ### Person Directory
 
@@ -108,7 +108,7 @@ The module provides a `shibbolethPersonAttributeDao` that the Shibboleth's `attr
 
 - Modify either `application.properties` or the runtime environment 
 to reference the `attribute-resolver.xml` resource via a property. This is a
-comma seperated list of resources to use for the configuration:
+comma separated list of resources to use for the configuration:
 
 ```shell
 -Dcas.shibAttributeResolver.resources=classpath:attribute-resolver.xml

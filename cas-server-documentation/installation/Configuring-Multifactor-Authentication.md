@@ -26,6 +26,14 @@ Configure authentication per instructions [here](DuoSecurity-Authentication.html
 |----------------------+---------------------------------+
 | `id`                 | `mfa-duo`
 
+### Authy Authenticator
+
+Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
+
+| Field                | Description
+|----------------------+---------------------------------+
+| `id`                 | `mfa-authy`
+
 ### YubiKey
 
 Configure authentication per instructions [here](YubiKey-Authentication.html). 

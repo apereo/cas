@@ -16,35 +16,19 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
      */
     public enum Types {
         /** Refuse type. */
-        REFUSE("refuse"),
+        REFUSE,
 
         /** Allow type. */
-        REGEX("regex");
-
-        private String value;
-
-        /**
-         * Instantiates a new AlgorithmTypes.
-         *
-         * @param value the value
-         */
-        Types(final String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return this.value;
-        }
+        REGEX
     }
-    private String type;
+    private Types type;
     private String value;
 
-    public String getType() {
+    public Types getType() {
         return this.type;
     }
 
-    public void setType(final String type) {
+    public void setType(final Types type) {
         this.type = type;
     }
 

@@ -5,8 +5,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.ResourceUtils;
@@ -18,8 +18,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Nullable;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
@@ -33,12 +32,7 @@ public class EhcacheTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
-
+    
     @RefreshScope
     @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
@@ -69,7 +63,7 @@ public class EhcacheTicketRegistryConfiguration {
      *
      * @return the eh cache manager factory bean
      */
-    @RefreshScope
+    @Lazy
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
@@ -87,7 +81,7 @@ public class EhcacheTicketRegistryConfiguration {
      * @param manager the manager
      * @return the eh cache factory bean
      */
-    @RefreshScope
+    @Lazy
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager")
                                                   final CacheManager manager) {
@@ -117,7 +111,9 @@ public class EhcacheTicketRegistryConfiguration {
     public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache")
                                                 final Cache ehcacheTicketsCache) {
         final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);
-        r.setCipherExecutor(cipherExecutor);
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                casProperties.getTicket().getRegistry().getEhcache().getCrypto()
+        ));
         return r;
     }
 }

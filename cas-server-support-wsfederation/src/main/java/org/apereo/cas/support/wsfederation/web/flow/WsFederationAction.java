@@ -81,13 +81,13 @@ public class WsFederationAction extends AbstractAction {
                 }
 
                 // create credentials
-                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult);
+                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult, configuration);
 
                 if (assertion == null) {
                     LOGGER.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
-
+                               
                 if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
                     LOGGER.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
@@ -149,14 +149,13 @@ public class WsFederationAction extends AbstractAction {
                 saveRequestParameter(request, session, METHOD);
 
                 final String relyingPartyIdentifier = getRelyingPartyIdentifier(service);
-
-                final String key = PROVIDERURL;
+                
                 final String authorizationUrl = this.configuration.getIdentityProviderUrl()
                         + QUERYSTRING
                         + relyingPartyIdentifier;
 
                 LOGGER.info("Preparing to redirect to the IdP {}", authorizationUrl);
-                context.getFlowScope().put(key, authorizationUrl);
+                context.getFlowScope().put(PROVIDERURL, authorizationUrl);
             }
 
             LOGGER.debug("Redirecting to the IdP");

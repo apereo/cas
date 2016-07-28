@@ -14,6 +14,10 @@ import java.util.Map;
 public class PasswordPolicyProperties {
 
     private Map<String, Class<LoginException>> policyAttributes = new LinkedCaseInsensitiveMap<>();
+
+    private boolean enabled = true;
+    
+    private int loginFailures = 5;
     
     private String warningAttributeValue;
     private String warningAttributeName;
@@ -73,11 +77,27 @@ public class PasswordPolicyProperties {
         return warnAll;
     }
 
+    public int getLoginFailures() {
+        return loginFailures;
+    }
+
+    public void setLoginFailures(final int loginFailures) {
+        this.loginFailures = loginFailures;
+    }
+
     public Map<String, Class<LoginException>> getPolicyAttributes() {
         return policyAttributes;
     }
 
     public void setPolicyAttributes(final Map<String, Class<LoginException>> policyAttributes) {
         this.policyAttributes = policyAttributes;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -5,19 +5,28 @@ import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.ReturnAttributes;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -39,6 +48,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -209,6 +219,8 @@ public class Beans {
                 final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
                 t1.setToUpperCase(false);
                 return t1;
+            default:
+                //nothing
         }
         return res;
     }
@@ -225,13 +237,13 @@ public class Beans {
         pc.setMaxPoolSize(l.getMaxPoolSize());
         pc.setValidateOnCheckOut(l.isValidateOnCheckout());
         pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(l.getValidatePeriod());
+        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
 
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
-        cc.setConnectTimeout(l.getConnectTimeout());
+        cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
@@ -266,17 +278,106 @@ public class Beans {
         }
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
-        cp.setBlockWaitTime(l.getBlockWaitTime());
+        cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
         cp.setPoolConfig(pc);
 
         final IdlePruneStrategy strategy = new IdlePruneStrategy();
-        strategy.setIdleTime(l.getIdleTime());
-        strategy.setPrunePeriod(l.getPrunePeriod());
+        strategy.setIdleTime(newDuration(l.getIdleTime()));
+        strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
         cp.setValidator(new SearchValidator());
         cp.setFailFastInitialize(l.isFailFast());
+        cp.initialize();
         return new PooledConnectionFactory(cp);
     }
 
+    /**
+     * New duration.
+     *
+     * @param length the length in seconds.
+     * @return the duration
+     */
+    public static Duration newDuration(final long length) {
+        return Duration.ofSeconds(length);
+    }
+
+    /**
+     * New ticket registry cipher executor cipher executor.
+     *
+     * @param registry the registry
+     * @return the cipher executor
+     */
+    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
+        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey())) {
+            return new DefaultTicketCipherExecutor(
+                    registry.getEncryption().getKey(),
+                    registry.getSigning().getKey(),
+                    registry.getAlg(),
+                    registry.getSigning().getKeySize(),
+                    registry.getEncryption().getKeySize());
+        }
+        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
+                + "clustered production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "ticket registry tickets.");
+        return new NoOpCipherExecutor();
+    }
+
+    /**
+     * Builds a new request.
+     *
+     * @param baseDn the base dn
+     * @param filter the filter
+     * @return the search request
+     */
+    public static SearchRequest newSearchRequest(final String baseDn, final SearchFilter filter) {
+        final SearchRequest sr = new SearchRequest(baseDn, filter);
+        sr.setBinaryAttributes(ReturnAttributes.ALL_USER.value());
+        sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
+        sr.setSearchScope(SearchScope.SUBTREE);
+        return sr;
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
+     * @param params the username
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
+        final SearchFilter filter = new SearchFilter();
+        filter.setFilter(filterQuery);
+        if (params != null) {
+            for (int i = 0; i < params.length; i++) {
+                if (filter.getFilter().contains("{" + i + "}")) {
+                    filter.setParameter(i, params[i]);
+                } else {
+                    filter.setParameter("user", params[i]);
+                }
+            }
+        }
+        LOGGER.debug("Constructed LDAP search filter [{}]", filter.format());
+        return filter;
+    }
+
+    /**
+     * New search executor search executor.
+     *
+     * @param baseDn      the base dn
+     * @param filterQuery the filter query
+     * @param params      the params
+     * @return the search executor
+     */
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final String... params) {
+        final SearchExecutor executor = new SearchExecutor();
+        executor.setBaseDn(baseDn);
+        executor.setSearchFilter(newSearchFilter(filterQuery, params));
+        executor.setReturnAttributes(ReturnAttributes.ALL.value());
+        executor.setSearchScope(SearchScope.SUBTREE);
+        return executor;
+    }
 }

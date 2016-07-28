@@ -1,4 +1,4 @@
-task pathingJar(type: Jar) {
+task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
     dependsOn configurations.runtime
     appendix = "pathing"
  

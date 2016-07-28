@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyRepository;
 import org.apereo.cas.web.flow.LdapAcceptableUsagePolicyRepository;
@@ -21,11 +22,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casSupportActionsAcceptableUsagePolicyLdapConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
-
-    @Autowired
-    @Qualifier("ldapUsagePolicyConnectionFactory")
-    private ConnectionFactory connectionFactory;
-
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -35,12 +31,16 @@ public class CasSupportActionsAcceptableUsagePolicyLdapConfiguration {
 
     @RefreshScope
     @Bean
-    public AcceptableUsagePolicyRepository ldapAcceptableUsagePolicyRepository() {
+    public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
+
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
+                casProperties.getAcceptableUsagePolicy().getLdap()
+        );
         final LdapAcceptableUsagePolicyRepository r =
                 new LdapAcceptableUsagePolicyRepository();
         r.setBaseDn(casProperties.getAcceptableUsagePolicy().getLdap().getBaseDn());
-        r.setConnectionFactory(this.connectionFactory);
-        r.setSearchFilter(casProperties.getAcceptableUsagePolicy().getLdap().getSearchFilter());
+        r.setConnectionFactory(connectionFactory);
+        r.setSearchFilter(casProperties.getAcceptableUsagePolicy().getLdap().getUserFilter());
         r.setAupAttributeName(casProperties.getAcceptableUsagePolicy().getAupAttributeName());
         r.setTicketRegistrySupport(ticketRegistrySupport);
         return r;

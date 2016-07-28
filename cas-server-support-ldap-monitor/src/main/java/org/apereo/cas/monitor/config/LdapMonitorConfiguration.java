@@ -9,9 +9,9 @@ import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import java.util.concurrent.ExecutorService;
@@ -25,15 +25,11 @@ import java.util.concurrent.ExecutorService;
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-
-    @Autowired
-    @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
-    private PooledConnectionFactory connectionFactory;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @RefreshScope
+    @Lazy
     @Bean
     public ThreadPoolExecutorFactoryBean pooledConnectionFactoryMonitorExecutorService() {
         return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getLdap().getPool());
@@ -43,8 +39,12 @@ public class LdapMonitorConfiguration {
     @Bean
     public Monitor pooledLdapConnectionFactoryMonitor(
             @Qualifier("pooledConnectionFactoryMonitorExecutorService")
-            final ExecutorService executor
-    ) {
+            final ExecutorService executor) {
+
+        final PooledConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
+                casProperties.getMonitor().getLdap()
+        );
+        
         final PooledLdapConnectionFactoryMonitor m =
                 new PooledLdapConnectionFactoryMonitor(connectionFactory,
                         new SearchValidator());

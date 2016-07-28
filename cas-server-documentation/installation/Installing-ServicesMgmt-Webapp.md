@@ -12,11 +12,13 @@ is a standalone web application: `cas-management-webapp`.
 
 <div class="alert alert-warning"><strong>Synchronized Configuration</strong><p>
 You MUST keep in mind that both applications (the CAS server and the services management webapp)
-share the <strong>same</strong> configuration for the CAS services.
+share the <strong>same</strong> service registry configuration for CAS services.
 </p></div>
 
 A sample Maven overlay for the services management webapp is provided
  here: [https://github.com/Apereo/cas-services-management-overlay](https://github.com/Apereo/cas-services-management-overlay)
+ 
+ To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Services Registry
 
@@ -26,43 +28,22 @@ It should be the same configuration you already use in your CAS server in the `/
 
 ## Authentication Method
 
-By default, the `cas-management-webapp` is configured to authenticate against a CAS server. 
-
-## Configuration
+Access to the management webapp is controlled via [Pac4j](https://github.com/pac4j/pac4j).
+By default, the application is configured to authenticate against a CAS server. 
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-## Securing Access and Authorization
-
-Access to the management webapp is controlled via pac4j. Rules are defined in 
-the `src/main/resources/managementConfigContext.xml` file.
-
+## Authorization
 
 ### Static List of Users
 
 By default, access is limited to a static list of users whose credentials may be 
-specified in a `user-details.properties` 
-file that should be available on the runtime classpath. 
+specified in a `user-details.properties` file that should be available on the runtime classpath. 
 
-### CAS ABAC
+### Attribute
 
-The following authorization generator examines the CAS response for attributes
+Alternatively, the authorization generator examines the CAS validation response and principal for attributes
 and will grant access if an attribute name matches the value of `adminRoles` defined in the configuration.
- 
-```xml
-<bean id="authorizationGenerator" class="org.pac4j.core.authorization.FromAttributesAuthorizationGenerator"
-    c:roleAttributes="ROLE_ADMIN,ROLE_CUSTOM" c:permissionAttributes="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
-```
-
-### Custom ABAC
-
-Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`
-defined in the configuration.
- 
-```xml
-<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator"
-    c:defaultRoles="ROLE_ADMIN,ROLE_CUSTOM" c:defaultPermissions="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
-```
 
 ### LDAP
 
@@ -75,6 +56,5 @@ Support is enabled by including the following dependency in the WAR overlay:
   <version>${cas.version}</version>
 </dependency>
 ```
-
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

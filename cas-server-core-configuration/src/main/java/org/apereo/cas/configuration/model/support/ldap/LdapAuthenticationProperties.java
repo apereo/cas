@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -37,14 +38,8 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
         ANONYMOUS
     }
 
-    private boolean usePasswordPolicy = true;
-    private String dnFormat;
-    private String principalAttributeId = "uid";
-    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
-    private boolean allowMultiplePrincipalAttributeValues;
-    private List additionalAttributes;
-    private AuthenticationTypes type;
-
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation =
@@ -52,6 +47,50 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+
+    private String dnFormat;
+    private String principalAttributeId = "uid";
+    private String principalAttributePassword;
+    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
+    private boolean allowMultiplePrincipalAttributeValues;
+    private List additionalAttributes;
+    private AuthenticationTypes type;
+
+    private boolean subtreeSearch = true;
+    private String baseDn;
+    private String userFilter;
+
+    public String getBaseDn() {
+        return baseDn;
+    }
+
+    public void setBaseDn(final String baseDn) {
+        this.baseDn = baseDn;
+    }
+
+    public String getUserFilter() {
+        return userFilter;
+    }
+
+    public void setUserFilter(final String userFilter) {
+        this.userFilter = userFilter;
+    }
+
+    public boolean isSubtreeSearch() {
+        return subtreeSearch;
+    }
+
+    public void setSubtreeSearch(final boolean subtreeSearch) {
+        this.subtreeSearch = subtreeSearch;
+    }
+    
+    public PasswordPolicyProperties getPasswordPolicy() {
+        return passwordPolicy;
+    }
+
+    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
+        this.passwordPolicy = passwordPolicy;
+    }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
@@ -68,15 +107,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
-    public boolean isUsePasswordPolicy() {
-        return usePasswordPolicy;
-    }
-
-    public void setUsePasswordPolicy(final boolean usePasswordPolicy) {
-        this.usePasswordPolicy = usePasswordPolicy;
-    }
-
+    
     public String getDnFormat() {
         return dnFormat;
     }
@@ -99,6 +130,14 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     public void setPrincipalAttributeId(final String principalAttributeId) {
         this.principalAttributeId = principalAttributeId;
+    }
+
+    public String getPrincipalAttributePassword() {
+        return principalAttributePassword;
+    }
+
+    public void setPrincipalAttributePassword(final String principalAttributePassword) {
+        this.principalAttributePassword = principalAttributePassword;
     }
 
     public List getPrincipalAttributeList() {

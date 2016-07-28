@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.webapp.mgmt;
 
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -9,11 +11,15 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class ManagementWebappProperties {
     private String adminRoles = "ROLE_ADMIN";
     private String serverName = "https://localhost:8443";
     
+    private String authzAttributes;
+    
+    @NestedConfigurationProperty
+    private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
+
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
     
     public String getAdminRoles() {
@@ -38,6 +44,22 @@ public class ManagementWebappProperties {
 
     public void setServerName(final String serverName) {
         this.serverName = serverName;
+    }
+
+    public LdapAuthorizationProperties getLdapAuthz() {
+        return ldapAuthz;
+    }
+
+    public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
+        this.ldapAuthz = ldapAuthz;
+    }
+
+    public String getAuthzAttributes() {
+        return authzAttributes;
+    }
+
+    public void setAuthzAttributes(final String authzAttributes) {
+        this.authzAttributes = authzAttributes;
     }
 }
 

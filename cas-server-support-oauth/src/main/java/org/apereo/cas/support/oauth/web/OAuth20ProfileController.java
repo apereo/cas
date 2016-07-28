@@ -10,7 +10,6 @@ import org.pac4j.core.context.HttpConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -27,7 +26,6 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller("profileController")
 public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";

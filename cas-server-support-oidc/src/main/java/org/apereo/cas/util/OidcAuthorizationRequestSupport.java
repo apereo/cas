@@ -92,11 +92,7 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
         final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
-        if (profile != null) {
-            return Optional.of(profile);
-        }
-        return Optional.empty();
+        return manager.get(true);
     }
 
     /**

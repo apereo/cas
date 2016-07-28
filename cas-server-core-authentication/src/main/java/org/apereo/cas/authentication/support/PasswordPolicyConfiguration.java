@@ -32,4 +32,8 @@ public class PasswordPolicyConfiguration {
     public int getPasswordWarningNumberOfDays() {
         return this.passwordPolicyProperties.getWarningDays();
     }
+    
+    public int getLoginFailures() {
+        return this.passwordPolicyProperties.getLoginFailures();
+    }
 }

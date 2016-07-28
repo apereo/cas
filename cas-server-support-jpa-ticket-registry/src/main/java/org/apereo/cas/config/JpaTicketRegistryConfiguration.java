@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategy;
@@ -15,18 +15,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.Nullable;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
-import static org.apereo.cas.configuration.support.Beans.newEntityManagerFactoryBean;
-import static org.apereo.cas.configuration.support.Beans.newHibernateJpaVendorAdapter;
-import static org.apereo.cas.configuration.support.Beans.newHickariDataSource;
 
 /**
  * This this {@link JpaTicketRegistryConfiguration}.
@@ -41,12 +37,7 @@ public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketCipherExecutor")
-    private CipherExecutor cipherExecutor;
-    
+        
     /**
      * Jpa packages to scan string [].
      *
@@ -65,11 +56,12 @@ public class JpaTicketRegistryConfiguration {
      *
      * @return the local container entity manager factory bean
      */
+    @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
-        return newEntityManagerFactoryBean(
+        return Beans.newEntityManagerFactoryBean(
                 new JpaConfigDataHolder(
-                        newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                        Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                         "jpaTicketRegistryContext",
                         ticketPackagesToScan(),
                         dataSourceTicket()),
@@ -101,7 +93,7 @@ public class JpaTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
-        return newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
+        return Beans.newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
     
@@ -110,7 +102,8 @@ public class JpaTicketRegistryConfiguration {
     public TicketRegistry jpaTicketRegistry() {
         final JpaTicketRegistry bean = new JpaTicketRegistry();
         bean.setLockTgt(casProperties.getTicket().getRegistry().getJpa().isJpaLockingTgtEnabled());
-        bean.setCipherExecutor(this.cipherExecutor);
+        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                casProperties.getTicket().getRegistry().getJpa().getCrypto()));
         return bean;
     }
 

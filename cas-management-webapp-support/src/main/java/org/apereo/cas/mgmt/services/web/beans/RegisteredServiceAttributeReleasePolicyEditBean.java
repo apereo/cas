@@ -16,26 +16,10 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
      */
     public enum Types {
         /** default type. */
-        DEFAULT("default"),
+        DEFAULT,
 
         /** Mapped type. */
-        CACHED("cached");
-
-        private String value;
-
-        /**
-         * Instantiates a new AlgorithmTypes.
-         *
-         * @param value the value
-         */
-        Types(final String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return this.value;
-        }
+        CACHED;
     }
 
     /**
@@ -43,32 +27,16 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
      */
     public enum AttributeMergerTypes {
         /** default type. */
-        DEFAULT("default"),
+        DEFAULT,
 
         /** replace type. */
-        REPLACE("replace"),
+        REPLACE,
 
         /** multivalued type. */
-        MULTIVALUED("multivalued"),
+        MULTIVALUED,
 
         /** add type. */
-        ADD("add");
-
-        private String value;
-
-        /**
-         * Instantiates a new AttributeMergerTypes.
-         *
-         * @param value the value
-         */
-        AttributeMergerTypes(final String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return this.value;
-        }
+        ADD;
     }
 
     private String attrFilter;
@@ -76,8 +44,8 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     private long cachedExpiration;
     private RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy =
             new RegisteredServiceAttributeReleasePolicyStrategyEditBean();
-    private String attrOption = Types.DEFAULT.value;
-    private String mergingStrategy = AttributeMergerTypes.DEFAULT.value;
+    private Types attrOption = Types.DEFAULT;
+    private AttributeMergerTypes mergingStrategy = AttributeMergerTypes.DEFAULT;
 
     public String getAttrFilter() {
         return this.attrFilter;
@@ -111,19 +79,19 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         this.attrPolicy = attrPolicy;
     }
 
-    public String getAttrOption() {
+    public Types getAttrOption() {
         return this.attrOption;
     }
 
-    public void setAttrOption(final String attrOption) {
+    public void setAttrOption(final Types attrOption) {
         this.attrOption = attrOption;
     }
 
-    public String getMergingStrategy() {
+    public AttributeMergerTypes getMergingStrategy() {
         return this.mergingStrategy;
     }
 
-    public void setMergingStrategy(final String mergingStrategy) {
+    public void setMergingStrategy(final AttributeMergerTypes mergingStrategy) {
         this.mergingStrategy = mergingStrategy;
     }
 }

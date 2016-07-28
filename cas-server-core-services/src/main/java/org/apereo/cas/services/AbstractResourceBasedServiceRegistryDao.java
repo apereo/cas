@@ -7,7 +7,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
@@ -56,20 +55,19 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
     private ServiceRegistryConfigWatcher serviceRegistryConfigWatcher;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-    
     /**
      * Instantiates a new service registry dao.
      *
      * @param configDirectory the config directory
      * @param serializer      the registered service json serializer
      * @param enableWatcher   enable watcher thread
+     * @param eventPublisher  the event publisher
      */
     public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) {
-        initializeRegistry(configDirectory, serializer, enableWatcher);
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) {
+        initializeRegistry(configDirectory, serializer, enableWatcher, eventPublisher);
     }
 
     /**
@@ -78,19 +76,22 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      * @param configDirectory the config directory
      * @param serializer      the serializer
      * @param enableWatcher   the enable watcher
+     * @param eventPublisher  the event publisher
      * @throws Exception the exception
      */
     public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
                                                    final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher) throws Exception {
+                                                   final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
 
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
-        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher);
+        initializeRegistry(Paths.get(servicesDirectory.getFile().getCanonicalPath()), serializer, enableWatcher, eventPublisher);
     }
 
     private void initializeRegistry(final Path configDirectory,
                                     final StringSerializer<RegisteredService> registeredServiceJsonSerializer,
-                                    final boolean enableWatcher) {
+                                    final boolean enableWatcher,
+                                    final ApplicationEventPublisher eventPublisher) {
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
@@ -100,7 +101,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
 
             LOGGER.info("Watching service registry directory at {}", configDirectory);
             
-            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, this.eventPublisher);
+            this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
             this.serviceRegistryWatcherThread.start();

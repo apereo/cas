@@ -34,7 +34,7 @@ Practically, it means that all CAS urls must use HTTPS, but it **also** means th
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
 be compensating controls that make secure transport unnecessary. Private networks and corporate networks with strict
-acces controls are common exceptions, but secure transport is recommended nonetheless.
+access controls are common exceptions, but secure transport is recommended nonetheless.
 Client certification validation can be another good solution for LDAP to bring sufficient security.
 
 As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes, the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
@@ -49,7 +49,7 @@ are available out of the box, while others require explicit setup.
 
 ### Forced Authentication
 Many CAS clients and supported protocols support the concept of forced authentication whereby a user must
-reauthenticate to access a particular service. The CAS protocols support forced authentication via the _renew_
+re-authenticate to access a particular service. The CAS protocols support forced authentication via the _renew_
 parameter. Forced authentication provides additional assurance in the identity of
 the principal of an SSO session since the user must verify his or her credentials prior to access.
 Forced authentication is suitable for services where higher security is desired or mandated. Typically forced
@@ -161,9 +161,8 @@ section for further information.
 
 
 ### Credential Encryption
-An open source product called [Java Simplified Encryption](http://www.jasypt.org/cli.html)  allows you to replace clear text passwords in files with encrypted strings that are decrypted at run time. Jasypt can be integrated into the Spring configuration framework so that property values are decrypted as the configuration file is loaded.  Jasypt's approach replaces the the property management technique with one that recognizes encrypted strings and decrypts them. This method uses password-based encryption, which means that the system still needs a secret password in order to decrypt our credentials. We don't want to simply move the secret from one file to another, and Jasypt avoids that by passing the key as an environment variable or even directly to the application through a web interface each time it is deployed.
 
-This ability is beneficial since it removes the need to embed plain-text credentials in configuration files, and allows the adopter to securely keep track of all encrypted settings in source control systems, safely sharing the build configuration with others. Sensitive pieces of data are only restricted to the deployment environment.
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.

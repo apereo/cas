@@ -17,16 +17,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 /**
- * Default implementation of the {@link ServicesManager} interface. If there are
- * no services registered with the server, it considers the ServicecsManager
- * disabled and will not prevent any service from using CAS.
+ * Default implementation of the {@link ServicesManager} interface. 
  *
  * @author Scott Battaglia
  * @since 3.1
@@ -40,7 +37,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     public DefaultServicesManagerImpl() {
     }
@@ -83,13 +80,10 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
-        final Collection<RegisteredService> c = convertToTreeSet();
-        final Iterator<RegisteredService> it = c.iterator();
-        while (it.hasNext()) {
-            if (!predicate.apply(it.next())) {
-                it.remove();
-            }
-        }
+        final Collection<RegisteredService> c = convertToTreeSet()
+                .stream()
+                .filter(s -> predicate.apply(s))
+                .collect(Collectors.toSet());
         return c;
     }
 
@@ -137,7 +131,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
      * Load services that are provided by the DAO.
      */
     @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
-            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+               fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
     @Override
     @PostConstruct
     public void load() {
@@ -149,7 +143,6 @@ public class DefaultServicesManagerImpl implements ServicesManager {
                 }, r -> r, (r, s) -> s == null ? r : s == null ? r : s));
         LOGGER.info("Loaded {} services from {}.", this.services.size(),
                 this.serviceRegistryDao);
-
     }
     
     /**

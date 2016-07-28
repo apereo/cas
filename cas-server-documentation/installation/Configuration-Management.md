@@ -42,6 +42,31 @@ All CAS settings can be overridden via the above outlined strategies.
 the CAS configuration, you should configure access 
 to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
+## Configuration Server
+
+CAS provides a built-in configuration server that is responsible for bootstrapping the configuration 
+environment and loading of externalized settings in a distributed system. You may have a central 
+place to manage external properties for CAS nodes across all environments. As your CAS deployment 
+moves through the deployment pipeline from dev to test and into production you can manage the configuration 
+between those environments and be certain that applications have everything they need to run when they migrate. 
+The default implementation of the server storage backend uses git so it easily supports labelled versions 
+of configuration environments, as well as being accessible to a wide range of tooling for managing the content. 
+Note that CAS also is a client of its own configuration, because not only it has to manage and control 
+CAS settings, it also needs to contact the configuration server to retrieve and use those settings. 
+
+The configuration server is controlled and defined by the `bootstrap.properties` file.
+
+The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
+
+| Parameter                         | Description
+|-----------------------------------+-----------------------------------------+
+| `/encrypt`           | Accepts a `POST` to encrypt CAS configuration settings.
+| `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
+| `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
+| `/cas/native`        | Describes what the configuration server knows about the `native` settings profile.
+| `/bus/refresh`       | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.      | 
+| `/bus/env`           | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+
 ## Auto Configuration Strategy
 
 To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html).
@@ -53,7 +78,7 @@ from manually massaging the application context via XML configuration files.
 The idea is twofold:
 
 - Declare your intention for a given CAS feature by declaring the appropriate module in your overlay.
-- Optionally, configure the appropiate properties and settings.
+- Optionally, configure the appropriate properties and settings.
 
 CAS will automatically take care of injecting appropriate beans and other components into the runtime application context,
 Depending on the presence of a module and/or its settings configured by the deployer.
@@ -61,7 +86,7 @@ Depending on the presence of a module and/or its settings configured by the depl
 <div class="alert alert-info"><strong>No XML</strong><p>Again, the entire point of 
 the auto-configuration strategy is ensure deployers aren't swimming in a sea of XML files
 configuring beans and such. CAS should take care of it all. If you find an instance where
-this claim does not hold, consider that a "bug" and file a feature request.</a></p></div>
+this claim does not hold, consider that a "bug" and file a feature request.</p></div>
 
 ## Embedded
 
@@ -118,6 +143,10 @@ unnecessary to grab a copy of all CAS settings and move them to an external loca
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
 
+## Securing Settings
+
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
+
 ## Reloading Changes
 
 CAS contains an embedded configuration server that is able to consume properties and settings
@@ -140,6 +169,12 @@ for reloads. CAS should be smart enough to reload the appropriate configuration,
 ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
 relevant settings is completely and utterly reloadable. </p></div>
 
+Any changes you make to the externally-defined `application.properties` file must be refreshed manually on the UI. 
+If you are using the CAS admin screens to update and edit properties, the configuration state of the CAS server
+is refreshed seamlessly and automatically without your resorting to manual and forceful refresh. 
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
@@ -151,18 +186,59 @@ The bus supports sending messages to all nodes listening.
 Broadcasted events will attempt to update, refresh and 
 reload each application’s configuration.
 
-The following properties need to be adjusted, in order to turn on the bus configuration:
+If CAS nodes are not sharing a central location for configuration properties such that each 
+node contains a copy of the settings, any changes you make to one node must be replicated and 
+synced across all nodes so they are persisted on disk. The broadcast mechanism noted above only 
+applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track 
+of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps) 
+where you make a change in one place and it's broadcasted to all nodes. This model removes the need for 
+synchronizing changes across disks and CAS nodes.  
 
-```properties
-# spring.cloud.bus.enabled=false
-# spring.cloud.bus.refresh.enabled=true
-# spring.cloud.bus.env.enabled=true
-# spring.cloud.bus.destination=CasCloudBus
-# spring.cloud.bus.ack.enabled=true
-# spring.activemq.broker-url=
-# spring.activemq.in-memory=
-# spring.activemq.pooled=
-# spring.activemq.user=
-# spring.activemq.password=
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+The transport mechanism for the bus to broadcast events is handled via one of the following components.
+
+### Troubleshooting
+
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<AsyncLogger name="org.springframework.amqp" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
 ```
 
+### RabbitMQ
+
+This is the default option for broadcasting change events to CAS nodes. 
+[RabbitMQ](https://www.rabbitmq.com/) is open source message broker 
+software (sometimes called message-oriented middleware) that implements 
+the Advanced Message Queuing Protocol (AMQP).
+
+Support is enabled by including the following dependency in the final overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-amqp</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+### Kafka
+
+Apache Kafka is an open-source message broker project developed by the Apache Software Foundation. 
+The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. 
+It is, in its essence, a "massively scalable pub/sub message queue architected as a distributed transaction log",
+making it highly valuable for enterprise infrastructures to process streaming data.
+
+Support is enabled by including the following dependency in the final overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-kafka</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```

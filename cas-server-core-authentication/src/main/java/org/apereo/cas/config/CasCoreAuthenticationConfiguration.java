@@ -39,6 +39,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,8 +120,7 @@ public class CasCoreAuthenticationConfiguration {
 
         return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
-
-    @Autowired
+    
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
@@ -152,8 +152,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-    @Autowired
+    
     @RefreshScope
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
@@ -225,8 +224,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
     }
-
-    @Autowired
+    
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         final RegisteredServiceAuthenticationHandlerResolver r =
@@ -244,12 +242,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
         return new SuccessfulHandlerMetaDataPopulator();
     }
-
-    @Bean
-    public PasswordPolicyConfiguration defaultPasswordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration(casProperties.getAuthn().getPasswordPolicy());
-    }
-
+    
     @Bean
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
         return new RememberMeAuthenticationMetaDataPopulator();
@@ -283,8 +276,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setPrincipalFactory(proxyPrincipalFactory());
         return p;
     }
-
-    @Autowired
+    
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
@@ -330,5 +322,35 @@ public class CasCoreAuthenticationConfiguration {
         }
 
         return map;
+    }
+
+    @Bean
+    public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        return c;
+    }
+
+    @Bean
+    public HttpClient noRedirectHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
+                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setRedirectsEnabled(false);
+        c.setCircularRedirectsAllowed(false);
+        c.setSslSocketFactory(trustStoreSslSocketFactory());
+        return c.getObject();
+    }
+
+    @Bean
+    public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
+        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setSslSocketFactory(trustStoreSslSocketFactory());
+        return c.getObject();
     }
 }

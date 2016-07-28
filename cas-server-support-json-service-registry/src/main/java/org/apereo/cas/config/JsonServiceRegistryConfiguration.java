@@ -6,6 +6,7 @@ import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 public class JsonServiceRegistryConfiguration {
 
     @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean(name = {"jsonServiceRegistryDao", "serviceRegistryDao"})
@@ -28,7 +32,8 @@ public class JsonServiceRegistryConfiguration {
             final JsonServiceRegistryDao dao =
                     new JsonServiceRegistryDao(
                             casProperties.getServiceRegistry().getConfig().getLocation(),
-                            casProperties.getServiceRegistry().isWatcherEnabled());
+                            casProperties.getServiceRegistry().isWatcherEnabled(),
+                            eventPublisher);
             return dao;
         } catch (final Throwable e) {
             throw Throwables.propagate(e);

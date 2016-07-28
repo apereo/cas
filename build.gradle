@@ -188,8 +188,15 @@ def projectMavenDeployer = {
             }
             repository {
                 id "spring-milestones"
-                url "http://repo.spring.io/milestone"
+                url "https://repo.spring.io/milestone"
                 releases {
+                    enabled true
+                }
+            }
+            repository {
+                id "spring-snapshots"
+                url "https://repo.spring.io/snapshot"
+                snapshots {
                     enabled true
                 }
             }
@@ -221,6 +228,17 @@ def projectMavenDeployer = {
                     enabled true
                 }
             }
+
+            repository {
+                id "ldaptive"
+                url "https://raw.github.com/vt-middleware/maven-repo/master"
+                releases {
+                    enabled true
+                }
+                snapshots {
+                    enabled true
+                }
+            }
         }
     }
 }
@@ -241,6 +259,8 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
@@ -268,6 +288,13 @@ allprojects {
         sign configurations.archives
     }
 
+    idea {
+        module {
+            downloadSources = false
+            downloadJavadoc = false
+        }
+    }
+    
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -278,8 +305,8 @@ allprojects {
 }
 
 subprojects {
-    task allDepInsight(type: DependencyInsightReportTask) << {}
-    task allDeps(type: DependencyReportTask) {}
+    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
+    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {}
 
     apply plugin: "java"
     apply plugin: "checkstyle"
@@ -301,13 +328,15 @@ subprojects {
         mavenCentral()
         jcenter()
 
+        maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
-        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/milestone" }
+        maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
     }
 

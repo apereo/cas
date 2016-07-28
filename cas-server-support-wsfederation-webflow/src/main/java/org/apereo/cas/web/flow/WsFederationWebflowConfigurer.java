@@ -4,9 +4,6 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 
 /**
@@ -35,17 +32,10 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         final ActionState actionState = createActionState(flow, WS_FEDERATION_ACTION, createEvaluateAction(WS_FEDERATION_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
-        setStartState(flow, actionState);
-
-        final TransitionableState initLoginState = flow.getTransitionableState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
-        for (final Transition transition : initLoginState.getTransitionSet()) {
-            if (transition.getId().equals(CasWebflowConstants.TRANSITION_ID_GENERATED)) {
-                final TargetStateResolver targetStateResolver = (TargetStateResolver) convertClassToTargetType(TargetStateResolver.class)
-                        .execute(WS_FEDERATION_REDIRECT);
-                transition.setTargetStateResolver(targetStateResolver);
-                break;
-            }
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, WS_FEDERATION_REDIRECT));
+        
+        if (this.autoRedirect) {
+            setStartState(flow, actionState);
         }
     }
 

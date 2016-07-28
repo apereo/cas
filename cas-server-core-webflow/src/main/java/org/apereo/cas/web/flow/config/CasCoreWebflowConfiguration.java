@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -65,6 +67,9 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Bean
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
@@ -157,6 +162,16 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
+    @Bean
+    public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
+        return new WebflowConversationStateCipherExecutor(
+                casProperties.getWebflow().getEncryption().getKey(),
+                casProperties.getWebflow().getSigning().getKey(),
+                casProperties.getWebflow().getAlg(),
+                casProperties.getWebflow().getSigning().getKeySize(),
+                casProperties.getWebflow().getEncryption().getKeySize());
+    }
+    
     private void configureResolver(final AbstractCasWebflowEventResolver r) {
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
         r.setCentralAuthenticationService(centralAuthenticationService);

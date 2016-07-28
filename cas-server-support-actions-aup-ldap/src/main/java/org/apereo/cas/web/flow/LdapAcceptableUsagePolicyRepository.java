@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
@@ -34,8 +34,8 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     public boolean submit(final RequestContext requestContext, final Credential credential) {
 
         String currentDn = null;
-        try (final Connection searchConnection = LdapUtils.createConnection(this.connectionFactory)) {
-            final Response<SearchResult> response = searchForId(searchConnection, credential.getId());
+        try {
+            final Response<SearchResult> response = searchForId(credential.getId());
             if (LdapUtils.containsResultEntry(response)) {
                 currentDn = response.getResult().getEntry().getDn();
             }
@@ -55,16 +55,14 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     /**
      * Search for service by id.
      *
-     * @param connection the connection
      * @param id         the id
      * @return the response
      * @throws LdapException the ldap exception
      */
-    private Response<SearchResult> searchForId(final Connection connection, final String id)
+    private Response<SearchResult> searchForId(final String id)
             throws LdapException {
 
-        final SearchFilter filter = new SearchFilter(this.searchFilter);
-        filter.setParameter(0, id);
+        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter, id);
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 
