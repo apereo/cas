@@ -4,6 +4,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.nio.charset.Charset;
@@ -47,7 +48,8 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
                 ? this.characterEncoding : Charset.defaultCharset().name();
 
         LOGGER.warn("Using {} as the character encoding algorithm to update the digest", encodingCharToUse);
-        return new String(DigestUtils.getDigest(this.encodingAlgorithm).digest(password.toString().getBytes()));
+        //TODO create flag for Hex, Base64, or none
+        return new String(Hex.encode(DigestUtils.getDigest(this.encodingAlgorithm).digest(password.toString().getBytes())));
 
     }
 
