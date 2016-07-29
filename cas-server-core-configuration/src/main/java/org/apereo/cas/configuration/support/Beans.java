@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.util.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
@@ -28,6 +29,8 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.ad.extended.FastBindOperation;
+import org.ldaptive.auth.EntryResolver;
+import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -225,6 +228,21 @@ public class Beans {
         return res;
     }
 
+    /**
+     * New dn resolver entry resolver.
+     *
+     * @param l the ldap settings
+     * @return the entry resolver
+     */
+    public static EntryResolver newSearchEntryResolver(final LdapAuthenticationProperties l) {
+        final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
+        entryResolver.setBaseDn(l.getBaseDn());
+        entryResolver.setUserFilter(l.getUserFilter());
+        entryResolver.setSubtreeSearch(l.isSubtreeSearch());
+        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        return entryResolver;
+    }
+    
     /**
      * New pooled connection factory pooled connection factory.
      *
