@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Implementation-Title: cas-server-documentation
 Implementation-Vendor: org.jasig.cas
 Created-By: org.jasig.cas
-Implementation-Version: 4.2.4
+Implementation-Version: 4.2.5-SNAPSHOT
 
