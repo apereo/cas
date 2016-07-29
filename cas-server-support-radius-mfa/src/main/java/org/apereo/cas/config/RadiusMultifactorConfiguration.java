@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
@@ -42,6 +43,7 @@ import java.util.Map;
  * This is {@link RadiusMultifactorConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Nagai Takayuki
  * @since 5.0.0
  */
 @Configuration("radiusMfaConfiguration")
@@ -57,6 +59,10 @@ public class RadiusMultifactorConfiguration {
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
+
+    @Autowired
+    @Qualifier("authenticationMetadataPopulators")
+    private List authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("builder")
@@ -150,6 +156,18 @@ public class RadiusMultifactorConfiguration {
         return p;
     }
 
+    @Bean
+    @RefreshScope
+    public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
+        final RadiusAuthenticationMetaDataPopulator pop =
+                new RadiusAuthenticationMetaDataPopulator();
+
+        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
+        pop.setAuthenticationHandler(radiusTokenAuthenticationHandler());
+        pop.setProvider(radiusAuthenticationProvider());
+        return pop;
+    }
+
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
@@ -204,5 +222,6 @@ public class RadiusMultifactorConfiguration {
     @PostConstruct
     protected void initializeRootApplicationContext() {
         authenticationHandlersResolvers.put(radiusTokenAuthenticationHandler(), null);
+        authenticationMetadataPopulators.add(0, radiusAuthenticationMetaDataPopulator());
     }
 }
