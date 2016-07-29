@@ -10,7 +10,7 @@ This page documents the steps that a CAS developer should take for building a CA
 The following shell commands may be used to grab the source from the repository:
 
 ```bash
-git clone git@github.com:Jasig/cas.git cas-server
+git clone git@github.com:apereo/cas.git cas-server
 ```
 
 ## Build
@@ -92,14 +92,13 @@ Execute the following command:
 ```bash
 CD cas-server-webapp
 gradle build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipAspectJ=true -DskipFindbugs=true 
-
 ```
 
 The response will look something like this:
 
 ```bash
 INFO [org.apache.catalina.core.StandardService] - <Starting service Tomcat>
-INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/8.0.32>
+INFO [org.apache.catalina.core.StandardEngine] - <Starting Servlet Engine: Apache Tomcat/x.y.z>
 INFO [org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/cas]] - <Initializing Spring embedded WebApplicationContext>
 INFO [org.jasig.cas.web.CasWebApplication] - <Started CasWebApplication in 21.485 seconds (JVM running for 22.895)>
 ```
@@ -108,11 +107,13 @@ CAS will be available at `https://mymachine.domain.edu:8443/cas`
 
 ### Remote Debugging
 
-The Tomcat instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger configuration in your IDE that connects to this port and you will be able to step into the code.
+The Tomcat instance is pre-configured to listen to debugger requests on port `5000`. Create a remote debugger 
+configuration in your IDE that connects to this port and you will be able to step into the code.
 
 ### Dependency Updates
 
-CAS integrates with [VersionEye](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) to report back the version of dependencies used and those that may be outdated.
+CAS integrates with [VersionEye](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) to 
+report back the version of dependencies used and those that may be outdated.
 
 In order to get a full report on dependencies, adjust the following:
 
