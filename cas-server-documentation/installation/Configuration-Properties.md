@@ -166,6 +166,7 @@ endpoint of CAS which provide administrative functionality and oversight into th
 # cas.adminPagesSecurity.loginUrl=
 # cas.adminPagesSecurity.service=
 # cas.adminPagesSecurity.users=
+# cas.adminPagesSecurity.actuatorEndpointsEnabled=true
 ```
 
 ## Web Application Session
