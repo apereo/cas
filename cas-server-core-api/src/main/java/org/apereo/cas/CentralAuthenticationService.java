@@ -65,6 +65,21 @@ public interface CentralAuthenticationService {
     Ticket updateTicket(final Ticket ticket);
 
     /**
+     * Obtains the given ticket by its id
+     * and returns the CAS-representative object. Implementations
+     * need to check for the validity of the ticket by making sure
+     * it exists and has not expired yet, etc. This method is specifically
+     * designed to remove the need to access the ticket registry.
+     *
+     * @param <T>      the generic ticket type to return that extends {@link Ticket}
+     * @param ticketId the ticket granting ticket id
+     * @return the ticket object
+     * @throws InvalidTicketException the invalid ticket exception
+     * @since 5.0.0
+     */
+    <T extends Ticket> T getTicket(String ticketId) throws InvalidTicketException;
+    
+    /**
      * Obtains the given ticket by its id and type
      * and returns the CAS-representative object. Implementations
      * need to check for the validity of the ticket by making sure

@@ -12,10 +12,12 @@ import org.apereo.cas.support.rest.TicketsResource;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -75,12 +77,12 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
     @Bean(name = {"defaultRestAuthenticationThrottle", "restAuthenticationThrottle"})
-    public HandlerInterceptorAdapter defaultRestAuthenticationThrottle() {
-        if (StringUtils.isNotBlank(casProperties.getRest().getThrottler())
-                && this.applicationContext.containsBean(casProperties.getRest().getThrottler())) {
-            return this.applicationContext.getBean(casProperties.getRest().getThrottler(),
-                    HandlerInterceptorAdapter.class);
+    public HandlerInterceptor defaultRestAuthenticationThrottle() {
+        final String throttler = casProperties.getRest().getThrottler();
+        if (StringUtils.isNotBlank(throttler) && this.applicationContext.containsBean(throttler)) {
+            return this.applicationContext.getBean(throttler, HandlerInterceptor.class);
         }
         return new HandlerInterceptorAdapter() {
             @Override

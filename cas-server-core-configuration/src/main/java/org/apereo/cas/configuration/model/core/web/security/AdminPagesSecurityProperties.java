@@ -16,6 +16,15 @@ public class AdminPagesSecurityProperties {
     private String loginUrl;
     private String service;
     private Resource users;
+    private boolean actuatorEndpointsEnabled;
+
+    public boolean isActuatorEndpointsEnabled() {
+        return actuatorEndpointsEnabled;
+    }
+
+    public void setActuatorEndpointsEnabled(final boolean actuatorEndpointsEnabled) {
+        this.actuatorEndpointsEnabled = actuatorEndpointsEnabled;
+    }
 
     public String getIp() {
         return ip;
