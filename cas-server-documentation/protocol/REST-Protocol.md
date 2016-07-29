@@ -35,23 +35,20 @@ the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
 ## Request a Ticket Granting Ticket
 
-### Sample Request
-
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
-### Sample Response
+### Successful Response
 
-#### Successful Response
 ```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
-#### Unsuccessful Response
+### Unsuccessful Response
 
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
 (will also respond for missing parameters, etc.). If you send a media type
@@ -59,32 +56,52 @@ it does not understand, it will send the 415 Unsupported Media Type.
 
 ## Request a Service Ticket
 
-### Sample Request
-
 ```bash
 POST /cas/v1/tickets/{TGT id} HTTP/1.0
 
 service={form encoded parameter for the service url}
 ```
 
-### Sample Response
 
-#### Successful Response
+### Successful Response
+
 ```bash
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
 
-#### Unsuccessful Response
+### Unsuccessful Response
 
 CAS will send a 400 Bad Request. If an incorrect media type is
 sent, it will send the 415 Unsupported Media Type.
 
 ## Logout
+
 Destroy the SSO session by removing the issued ticket: 
 
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
+```
+
+## Ticket Status
+
+Verify the status of an obtained ticket to make sure it still is valid
+and has not yet expired.
+
+```bash
+GET /cas/v1/tickets/status/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
+```
+
+### Successful Response
+
+```bash
+200 OK
+```
+
+### Unsuccessful Response
+
+```bash
+404 NOT FOUND
 ```
 
 ## Add Service
@@ -103,20 +120,18 @@ Support is enabled by including the following in your maven overlay:
 Invoke CAS to register applications into its own service registry. The REST
 call must be authenticated as it requires a TGT from the CAS server, and furthermore,
 the authenticated principal that submits the request must be authorized with a
-preconfigured role name and value that is designated in the CAS configuration
+pre-configured role name and value that is designated in the CAS configuration
 via the CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
-
-
-### Sample Request 
 
 ```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
 serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
 ```
 
-#### Successful Response
+### Successful Response
+
 If the request is successful, the returned value in the response would be
 the generated identifier of the new service.
 

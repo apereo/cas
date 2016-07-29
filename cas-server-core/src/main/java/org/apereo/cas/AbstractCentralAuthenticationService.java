@@ -154,7 +154,19 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.applicationEventPublisher.publishEvent(e);
     }
 
-
+    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
+            noRollbackFor = InvalidTicketException.class)
+    @Timed(name = "GET_TICKET_TIMER")
+    @Metered(name = "GET_TICKET_METER")
+    @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
+    @Override
+    public <T extends Ticket> T getTicket(final String ticketId) throws InvalidTicketException {
+        Assert.notNull(ticketId, "ticketId cannot be null");
+        final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
+        verifyTicketState(ticket, ticketId, null);
+        return (T) ticket;
+    }
+    
     /**
      * {@inheritDoc}
      * <p>
@@ -173,21 +185,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
-
-        if (ticket == null) {
-            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", ticketId, clazz.getSimpleName());
-            throw new InvalidTicketException(ticketId);
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            synchronized (ticket) {
-                if (ticket.isExpired()) {
-                    this.ticketRegistry.deleteTicket(ticketId);
-                    logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticketId);
-                    throw new InvalidTicketException(ticketId);
-                }
-            }
-        }
+        verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;
     }
 
@@ -260,6 +258,29 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
+    /**
+     * Validate ticket expiration policy and throws exception if ticket is no longer valid.
+     * Expired tickets are also deleted from the registry immediately on demand.
+     *
+     * @param ticket the ticket
+     * @param id     the original id
+     * @param clazz  the clazz
+     */
+    protected void verifyTicketState(final Ticket ticket, final String id, final Class clazz) {
+        if (ticket == null) {
+            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
+                    clazz != null ? clazz.getSimpleName() : "unspecified");
+            throw new InvalidTicketException(id);
+        }
+        synchronized (ticket) {
+            if (ticket.isExpired()) {
+                this.ticketRegistry.deleteTicket(id);
+                logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
+                throw new InvalidTicketException(id);
+            }
+        }
+    }
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         this.ticketRegistry.updateTicket(ticket);
@@ -271,6 +292,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -286,4 +308,5 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public void setValidationServiceSelectionStrategies(final List list) {
         this.validationServiceSelectionStrategies = list;
     }
+    
 }
