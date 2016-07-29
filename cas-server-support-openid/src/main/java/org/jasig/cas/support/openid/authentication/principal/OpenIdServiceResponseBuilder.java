@@ -15,6 +15,8 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,8 @@ import java.util.Map;
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4581238964007702423L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdServiceResponseBuilder.class);
+    
     private final ParameterList parameterList;
     private final String openIdPrefixUrl;
 
@@ -81,13 +84,13 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         try {
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
-                logger.debug("Validated openid ticket {} for {}", ticketId, service);
+                LOGGER.debug("Validated openid ticket {} for {}", ticketId, service);
             } else {
-                logger.warn("Association does not exist or is not valid");
+                LOGGER.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
             }
         } catch (final AbstractTicketException te) {
-            logger.error("Could not validate ticket : {}", te.getMessage(), te);
+            LOGGER.error("Could not validate ticket : {}", te.getMessage(), te);
             successFullAuthentication = false;
         }
 
@@ -160,7 +163,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 }
             }
         } catch (final MessageException me) {
-            logger.error("Message exception : {}", me.getMessage(), me);
+            LOGGER.error("Message exception : {}", me.getMessage(), me);
         }
         return null;
     }
