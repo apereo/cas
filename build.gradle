@@ -330,6 +330,7 @@ subprojects {
 
         maven { url "https://raw.github.com/vt-middleware/maven-repo/master" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }

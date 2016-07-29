@@ -14,20 +14,21 @@
                 <h2 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h2>
                 <ul>
                     <li><a href="/cas/status">Status</a></li>
-                    <li>
+                    
+                    <li th:if="${actuatorEndpointsEnabled}">
                         <a href="/cas/status/autoconfig" class="casTooltip">
                             Auto Configuration
                             <span class="tooltiptext" th:text="#{cas.dashboard.tooltip.autoconfiguration}"></span>
                         </a>
                     </li>
-                    <li><a href="/cas/status/beans">Beans</a></li>
-                    <li><a href="/cas/status/mappings">Endpoint Mappings</a></li>
-                    <li><a href="/cas/status/configprops">Configuration Properties</a></li>
-                    <li><a href="/cas/status/dump">Thread Dump</a></li>
-                    <li><a href="/cas/status/env">Environment</a></li>
-                    <li><a href="/cas/status/health">Health</a></li>
-                    <li><a href="/cas/status/info">Info</a></li>
-                    <li><a href="/cas/status/metrics">Metrics</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/beans">Beans</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/mappings">Endpoint Mappings</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/configprops">Configuration Properties</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/dump">Thread Dump</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/env">Environment</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/health">Health</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/info">Info</a></li>
+                    <li th:if="${actuatorEndpointsEnabled}"><a href="/cas/status/metrics">Metrics</a></li>
                     <li><a href="/cas/status/stats">Statistics Panel</a></li>
                     <li><a href="/cas/status/config">Configuration Panel</a></li>
                     <li><a href="/cas/status/ssosessions">SSO Sessions</a></li>
@@ -36,8 +37,8 @@
             <div class="app-launcher server-config">
                 <h2 th:inline="text"><i class="fa fa-cogs"></i>[[#{cas.dashboard.section.configuration.title}]]</h2>
                 <ul class="configserver">
-                    <li><a href="/cas/configserver/cas/default">Default Profile</a></li>
-                    <li><a href="/cas/configserver/cas/native">Native Profile</a></li>
+                    <li th:if="${isDefaultProfile}"><a href="/cas/configserver/cas/default">Default Profile</a></li>
+                    <li th:if="${isNativeProfile}"><a href="/cas/configserver/cas/native">Native Profile</a></li>
                 </ul>
             </div>
 
