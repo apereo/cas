@@ -10,12 +10,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
@@ -30,7 +30,9 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -42,7 +44,7 @@ import java.util.Map;
 @Configuration("ldapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapAuthenticationConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -57,7 +59,7 @@ public class LdapAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
         casProperties.getAuthn().getLdap().forEach(l -> {
@@ -78,41 +80,11 @@ public class LdapAuthenticationConfiguration {
 
                 final Authenticator authenticator = getAuthenticator(l);
                 authenticator.setReturnAttributes(attributes.keySet().toString());
-                
-                if (l.getPasswordPolicy().isEnabled()) {
-                    
-                    final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
-                    
-                    authenticator.setAuthenticationResponseHandlers(
-                            new EDirectoryAuthenticationResponseHandler(
-                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())),
-                            
-                            new ActiveDirectoryAuthenticationResponseHandler(
-                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())
-                            ),
-                            new FreeIPAAuthenticationResponseHandler(
-                                    Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
-                                    cfg.getLoginFailures()
-                            ),
-                            new PasswordPolicyAuthenticationResponseHandler(),
-                            new PasswordExpirationAuthenticationResponseHandler());
 
-                    if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
-                        && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
-                        
-                        final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
-                        accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
-                        accountHandler.setWarnAttributeName(l.getPasswordPolicy().getWarningAttributeName());
-                        accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
-                        accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
-                        cfg.setAccountStateHandler(accountHandler);
-                    } else {
-                        final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
-                        accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
-                        cfg.setAccountStateHandler(accountHandler);
-                    }
-                    handler.setPasswordPolicyConfiguration(cfg);
+                if (l.getPasswordPolicy().isEnabled()) {
+                    handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator));
                 }
+
                 handler.setAuthenticator(authenticator);
                 handler.initialize();
 
@@ -123,6 +95,42 @@ public class LdapAuthenticationConfiguration {
                 }
             }
         });
+    }
+
+    private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(
+            final LdapAuthenticationProperties l, final Authenticator authenticator) {
+
+        final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
+
+        final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
+        if (cfg.getPasswordWarningNumberOfDays() > 0) {
+            handlers.add(new EDirectoryAuthenticationResponseHandler(
+                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+            handlers.add(new ActiveDirectoryAuthenticationResponseHandler(
+                    Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
+            handlers.add(new FreeIPAAuthenticationResponseHandler(
+                    Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
+                    cfg.getLoginFailures()));
+        }
+        handlers.add(new PasswordPolicyAuthenticationResponseHandler());
+        handlers.add(new PasswordExpirationAuthenticationResponseHandler());
+        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray());
+
+        if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
+                && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
+
+            final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
+            accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
+            accountHandler.setWarnAttributeName(l.getPasswordPolicy().getWarningAttributeName());
+            accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
+            accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+            cfg.setAccountStateHandler(accountHandler);
+        } else {
+            final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
+            accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
+            cfg.setAccountStateHandler(accountHandler);
+        }
+        return cfg;
     }
 
     private static Authenticator getAuthenticator(final LdapAuthenticationProperties l) {
@@ -142,10 +150,16 @@ public class LdapAuthenticationConfiguration {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         resolver.setUserFilter(l.getUserFilter());
+
+        final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
-            return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-        } 
-        return new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
+            auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        } else {
+            auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
+        }
+        auth.setEntryResolver(Beans.newSearchEntryResolver(l));
+
+        return auth;
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
@@ -156,13 +170,7 @@ public class LdapAuthenticationConfiguration {
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-        final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
-        entryResolver.setBaseDn(l.getBaseDn());
-        entryResolver.setUserFilter(l.getUserFilter());
-        entryResolver.setSubtreeSearch(l.isSubtreeSearch());
-        entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
-        authn.setEntryResolver(entryResolver);
-
+        authn.setEntryResolver(Beans.newSearchEntryResolver(l));
         return authn;
     }
 
