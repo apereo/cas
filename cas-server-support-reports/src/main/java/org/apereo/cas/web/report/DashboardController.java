@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Arrays.stream;
-
 /**
  * This is {@link DashboardController}.
  *
@@ -32,7 +30,7 @@ public class DashboardController {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
+    @Autowired(required = false)
     private BusProperties busProperties;
 
     @Autowired
@@ -65,7 +63,7 @@ public class DashboardController {
         final Map<String, Object> model = new HashMap<>();
 
         final String path = request.getContextPath();
-        if (busProperties.isEnabled()) {
+        if (busProperties != null && busProperties.isEnabled()) {
             model.put("refreshEndpoint", path + configServerProperties.getPrefix() + "/cas/bus/refresh");
             model.put("refreshMethod", "GET");
         } else {
@@ -81,7 +79,7 @@ public class DashboardController {
                 .filter(s -> s.equalsIgnoreCase("native"))
                 .findAny()
                 .isPresent();
-        
+
         final boolean isDefaultProfile = Arrays.stream(environment.getActiveProfiles())
                 .filter(s -> s.equalsIgnoreCase("default"))
                 .findAny()
@@ -89,7 +87,7 @@ public class DashboardController {
 
         model.put("isNativeProfile", isNativeProfile);
         model.put("isDefaultProfile", isDefaultProfile);
-        
+
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }
