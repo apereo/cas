@@ -89,7 +89,7 @@ Verify the status of an obtained ticket to make sure it still is valid
 and has not yet expired.
 
 ```bash
-GET /cas/v1/tickets/status/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
+GET /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 ```
 
 ### Successful Response
