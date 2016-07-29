@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
-    
+
     private CentralAuthenticationService centralAuthenticationService;
 
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -83,7 +83,6 @@ public class TicketsResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
-
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
@@ -116,6 +115,25 @@ public class TicketsResource {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
+     *
+     * @param id ticket id
+     * @return {@link ResponseEntity} representing RESTful response
+     */
+    @RequestMapping(value = "/v1/tickets/{id:.+}", method = RequestMethod.GET)
+    public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
+        try {
+            this.centralAuthenticationService.getTicket(id);
+            return new ResponseEntity<>(id, HttpStatus.OK);
+        } catch (final InvalidTicketException e) {
+            return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
