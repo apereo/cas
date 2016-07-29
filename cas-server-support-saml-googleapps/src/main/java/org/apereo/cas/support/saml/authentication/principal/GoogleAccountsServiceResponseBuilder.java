@@ -17,6 +17,8 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
@@ -36,7 +38,8 @@ import java.util.Map;
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
+    
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
@@ -123,7 +126,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.samlObjectBuilder.marshalSamlXmlObject(response, writer);
 
         final String result = writer.toString();
-        logger.debug("Generated Google SAML response: {}", result);
+        LOGGER.debug("Generated Google SAML response: {}", result);
         return result;
     }
 
@@ -137,7 +140,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param skewAllowance Number of seconds to allow for variance.
      */
     public void setSkewAllowance(final int skewAllowance) {
-        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        LOGGER.debug("Using {} seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
     }
 }

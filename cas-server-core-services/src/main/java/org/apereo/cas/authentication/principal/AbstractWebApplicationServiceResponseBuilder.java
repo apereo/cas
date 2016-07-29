@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 
 /**
@@ -13,9 +10,7 @@ import java.util.Map;
  */
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     private static final long serialVersionUID = -4584738964007702423L;
-
-    protected transient Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     /**
      * Build redirect.
      *
