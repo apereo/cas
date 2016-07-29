@@ -1,19 +1,24 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
 import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.context.restart.RestartEndpoint;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Arrays.stream;
 
 /**
  * This is {@link DashboardController}.
@@ -23,22 +28,28 @@ import java.util.Map;
  */
 @Controller("dashboardController")
 public class DashboardController {
-    
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Autowired
     private BusProperties busProperties;
-    
+
     @Autowired
     private ConfigServerProperties configServerProperties;
-    
+
     @Autowired
     private RestartEndpoint restartEndpoint;
-    
+
     @Autowired
     private ShutdownEndpoint shutdownEndpoint;
-    
+
     @Autowired
     private EndpointProperties endpointProperties;
-    
+
+    @Autowired
+    private Environment environment;
+
     /**
      * Handle request internal model and view.
      *
@@ -52,7 +63,7 @@ public class DashboardController {
             throws Exception {
 
         final Map<String, Object> model = new HashMap<>();
-        
+
         final String path = request.getContextPath();
         if (busProperties.isEnabled()) {
             model.put("refreshEndpoint", path + configServerProperties.getPrefix() + "/cas/bus/refresh");
@@ -63,6 +74,22 @@ public class DashboardController {
         }
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
+
+        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
+
+        final boolean isNativeProfile = Arrays.stream(environment.getActiveProfiles())
+                .filter(s -> s.equalsIgnoreCase("native"))
+                .findAny()
+                .isPresent();
+        
+        final boolean isDefaultProfile = Arrays.stream(environment.getActiveProfiles())
+                .filter(s -> s.equalsIgnoreCase("default"))
+                .findAny()
+                .isPresent();
+
+        model.put("isNativeProfile", isNativeProfile);
+        model.put("isDefaultProfile", isDefaultProfile);
+        
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }

@@ -138,17 +138,13 @@ function removeSession( ticketId ) {
     if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
         factory.url = '/cas/status/ssosessions/destroySsoSessions';
         factory.data = { type: ticketId };
-        factory.messages.success = '#{cas.sessions.alert.removal.success.multi.partone}'
-            + ticketId + '#{cas.sessions.alert.removal.success.multi.parttwo}';
-        factory.messages.error = '#{cas.sessions.alert.removal.error.multi.partone}'
-            + ticketId + '#{cas.sessions.alert.removal.error.multi.parttwo}.';
+        factory.messages.success = 'Removed <strong>' + ticketId + '</strong> tickets successfully.';
+        factory.messages.error = 'Could not remove <strong>' + ticketId + '</strong> tickets.';
     } else {
         factory.url = '/cas/status/ssosessions/destroySsoSession';
         factory.data = { ticketGrantingTicket: factory.ticketId };
-        factory.messages.success = '#{cas.sessions.alert.removal.success.single.partone}'
-            + ticketId + '#{cas.sessions.alert.removal.success.single.parttwo}';
-        factory.messages.error = '#{cas.sessions.alert.removal.error.single.partone}'
-            + ticketId + '#{cas.sessions.alert.removal.error.single.parttwo}.';
+        factory.messages.success = 'Ticket is removed successfully.';
+        factory.messages.error = 'Ticket is not removed successfully.';
     }
 
     $.ajax({
@@ -161,8 +157,6 @@ function removeSession( ticketId ) {
         success: function (data, status) {
             // Reinitialize the table data
             $('#ssoSessions').DataTable().ajax.reload();
-
-
 
             if ( data.status != 200 ) {
                 alertUser(factory.messages.error, 'danger');
