@@ -30,10 +30,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-
-## Configuration
-
-### Register Providers
+## Register Providers
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. 
 If you want to delegate the CAS authentication to Twitter for example, you have to add an 
@@ -51,7 +48,7 @@ to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values fo
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server 
 which is using OAuth wrapping (i.e: `http://mycasserver2/oauth2.0`).
 
-### User Interface
+## User Interface
 
 All available clients are automatically displayed on the login page as clickable buttons under the "Or login with:" label.
 
@@ -59,7 +56,7 @@ If you customize the login page, you can access the text to display (which is mo
 and the url for the redirection to the identity provider in the `pac4jUrls` object (which is a map of names to urls).
 
 
-### Authenticated User Id
+## Authenticated User Id
 
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: 
 this one can be created only from the technical identifier received from the external identity provider (like `1234`) 
@@ -74,9 +71,8 @@ Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-p
 to see this authentication delegation mechanism in action.
 
 
-## Client Integration
 
-### Returned Payload
+## Returned Payload
 
 Once you have configured (see information above) your CAS server to act as an OAuth, 
 CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML 
@@ -95,7 +91,7 @@ The `Principal` object of the `Authentication` object has:
 * An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
 * Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
-### Profile Attributes
+## Profile Attributes
 
 In CAS-protected applications, through service ticket validation, user information 
 are pushed to the CAS client and therefore to the application itself.
@@ -122,7 +118,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 
 validation, that is the `/p3/serviceValidate` url.
 
-### Recreate Profiles
+## Recreate Profiles
 
 In the CAS server, the complete user profile is known but when attributes are sent back to the CAS client applications, 
 there is some kind of "CAS serialization" which makes data uneasy to be restored at their original state.
