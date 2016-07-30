@@ -1,6 +1,6 @@
 {
   "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
-  "serviceId" : "http://accounts.wavity.(com|net)/auth/oauth2.0/callbackAuthorize",
+  "serviceId" : "(http|https)://accounts.wavity.(com|net)/auth/oauth2.0/callbackAuthorize",
   "name" : "wavity oauth webapp",
   "id" : 101,
   "description" : "Oauth server for wavity app",
