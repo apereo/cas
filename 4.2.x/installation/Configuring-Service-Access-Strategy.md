@@ -53,7 +53,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by Grouper
-are collected as CAS attribtues and examined against the list of required attributes for service access.
+are collected as CAS attribtues and examines against the list of required attributes for service access.
 
 The following properties are available:
 
@@ -72,8 +72,7 @@ grouperClient.webService.password = password
 
 
 ## Configuration of Access Control
-
-Some examples of RBAC configuration follow.
+Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:
 
