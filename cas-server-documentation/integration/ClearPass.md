@@ -12,7 +12,8 @@ applications with CAS.
 No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the
 below configuration.</p></div>
 
-## Architecture
+## Overview
+
 CAS is able to issue the credential password directly in the CAS validation response. This previously was handled
 via a proxy authentication sequence and obtaining a proxy-granting ticket for the ClearPass service and was necessary
 in order to establish trust between the client application and the CAS server. This document describes the configuration 
@@ -27,15 +28,14 @@ Note that the return of the credential is only carried out by the CAS validation
 application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/proxyValidate`). Other means of
 returning attributes to CAS, such as SAML1 will **not** support the additional returning of this value.
 
-## Configuration
+## Cache Credential
 
-### Cache Credential
 Enable the caching and capturing of the credential in `application.properties`.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 
-### Create Keys
+## Create Keys
 
 ```bash
 openssl genrsa -out private.key 1024
@@ -44,7 +44,7 @@ openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out priv
 openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 
-### Register Service
+## Register Service
 Once you have received the public key from the client application owner, it must be first
 registered inside the CAS server's service registry. The service that holds the public key above must also
 be authorized to receive the password
@@ -66,7 +66,7 @@ as an attribute for the given attribute release policy of choice.
 }
 ```
 
-### Decrypt the Password
+## Decrypt the Password
 
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt
 it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
