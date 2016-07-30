@@ -1,9 +1,9 @@
 ---
 layout: default
-title: CAS - Authy Authenticator Authentication
+title: CAS - Authy Authentication
 ---
 
-# Authy Authenticator Authentication
+# Authy Authentication
 
 CAS provides support for Authy's [TOTP API](http://docs.authy.com/totp.html). This is done
 via Authy's simple REST API that does all the heavy lifting.
