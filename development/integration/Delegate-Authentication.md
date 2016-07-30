@@ -7,7 +7,7 @@ title: CAS - Delegate authentication
   <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
 </p>
 
-# Overview
+# Delegate authentication
 The CAS server implements the CAS protocol on server side and may even behave like an 
 OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
