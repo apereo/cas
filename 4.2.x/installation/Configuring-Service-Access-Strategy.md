@@ -11,9 +11,8 @@ attributes that must exist before access can be granted to the service. This beh
 various attributes in terms of access roles for the application and define rules that would be enacted and
 validated when an authentication request from the application arrives.
 
-## Components
+## Default
 
-### Default
 The default access manager allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -31,7 +30,8 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-### Time-Based
+## Time-Based
+
 This access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -40,7 +40,8 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-### Grouper
+## Grouper
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -52,7 +53,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by Grouper
-are collected as CAS attribtues and examines against the list of required attributes for service access.
+are collected as CAS attribtues and examined against the list of required attributes for service access.
 
 The following properties are available:
 
@@ -71,7 +72,8 @@ grouperClient.webService.password = password
 
 
 ## Configuration of Access Control
-Some examples of RBAC configuration follow:
+
+Some examples of RBAC configuration follow.
 
 * Service is not allowed to use CAS:
 
