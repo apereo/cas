@@ -11,6 +11,7 @@ dependencies {
     compileOnly project(":cas-server-core-util")
     compile project(":cas-server-core-events")
     compile project(":cas-server-core-web")
+    compile project(":cas-server-core-authentication")
     compile project(":cas-server-core-configuration")
     
     testCompile project(path: ":cas-server-core-util", configuration: "tests")
