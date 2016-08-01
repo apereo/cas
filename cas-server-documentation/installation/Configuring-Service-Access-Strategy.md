@@ -80,7 +80,6 @@ with the following configured properties:
 grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
 grouperClient.webService.login = banderson
 grouperClient.webService.password = password
-
 ```
 
 
