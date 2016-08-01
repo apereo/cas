@@ -108,7 +108,7 @@ To configure a service specific endpoint, try the following example:
   "name" : "testId",
   "id" : 1,
   "logoutType" : "BACK_CHANNEL",
-  "logoutUrl" : "https://web.application.net/logout"
+  "logoutUrl" : "https://web.application.net/logout",
 }
 ```
 
