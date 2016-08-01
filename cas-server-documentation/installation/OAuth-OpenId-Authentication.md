@@ -22,14 +22,14 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 After enabling OAuth support, three new urls will be available:
 
-* **/oauth2.0/authorize**  
+* **/cas/oauth2.0/authorize**  
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
 
-* **/oauth2.0/accessToken**  
+* **/cas/oauth2.0/accessToken**  
 It's the url to call to get an access token. The returned format will be plain text by default, but it can be JSON 
 if set so in the management webapp per OAuth client.
 
-* **/oauth2.0/profile**  
+* **/cas/oauth2.0/profile**  
 It's the url to call to get the profile of the authorized user. The response is in JSON format with all attributes of the user.
 
 
@@ -93,20 +93,9 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 }
 ```
 
-## OAuth Code Expiration Policy
+## OAuth Expiration Policy
 
-The expiration policy for OAuth codes is controlled by the `application.properties` file:
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-
-## OAuth Access Token Expiration Policy
-
-The expiration policy for OAuth access tokens is controlled by the `application.properties` file:
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-## OAuth Refresh Token Expiration Policy
-
-The expiration policy for OAuth refresh tokens is controlled by the `application.properties` file.
+The expiration policy for OAuth tokens is controlled by the `application.properties` file.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 # OpenID Authentication
