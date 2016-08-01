@@ -40,21 +40,13 @@ Clients can be defined via properties for the most common ones (in the `applicat
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
-
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as 
 an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has 
 to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
 
-For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server 
-which is using OAuth wrapping (i.e: `http://mycasserver2/oauth2.0`).
-
 ## User Interface
 
-All available clients are automatically displayed on the login page as clickable buttons under the "Or login with:" label.
-
-If you customize the login page, you can access the text to display (which is mostly the name of the client) 
-and the url for the redirection to the identity provider in the `pac4jUrls` object (which is a map of names to urls).
-
+All available clients are automatically displayed on the login page as clickable buttons.
 
 ## Authenticated User Id
 
@@ -69,8 +61,6 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) 
 to see this authentication delegation mechanism in action.
-
-
 
 ## Returned Payload
 
@@ -138,8 +128,7 @@ As the identifier stores the kind of profile in its own definition (`*clientName
 you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
 
 ```java
-final FacebookProfile rebuiltProfileOnCasClientSide =
-    (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
+final FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 ```
 
 ...and then use it in your application.
