@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -61,7 +62,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
-    private final HashMap<String, Service> services = new HashMap<>();
+    private final ConcurrentHashMap<String, Service> services = new ConcurrentHashMap<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
