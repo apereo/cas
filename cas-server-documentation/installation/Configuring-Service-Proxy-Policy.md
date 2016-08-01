@@ -9,9 +9,8 @@ Each registered application in the registry may be assigned a proxy policy to de
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-## Components
 
-### Refuse
+## Refuse
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
 ```json
@@ -26,7 +25,7 @@ Disallows proxy authentication for a service. This is default policy and need no
 }
 ```
 
-### Regex
+## Regex
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
 ```json
