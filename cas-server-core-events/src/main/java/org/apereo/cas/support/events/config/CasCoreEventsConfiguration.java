@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.events.listener.DefaultCasEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class CasCoreEventsConfiguration {
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
     
+    @ConditionalOnBean(name = "casEventRepository")
     @Bean
     public DefaultCasEventListener defaultCasEventListener() {
         final DefaultCasEventListener l = new DefaultCasEventListener();
