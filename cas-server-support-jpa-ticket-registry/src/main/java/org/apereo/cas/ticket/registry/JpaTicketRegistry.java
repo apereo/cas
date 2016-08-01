@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.ticket.OAuthToken;
 import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
 import org.apereo.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
@@ -36,9 +37,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final String TABLE_OAUTH_TICKETS = OAuthCodeImpl.class.getSimpleName();
     private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
     private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
-    
+
     private boolean lockTgt = true;
-    
+
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
@@ -94,7 +95,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
-            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)) {
+            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
+                    || ticketId.startsWith(RefreshToken.PREFIX)) {
                 return this.entityManager.find(OAuthCodeImpl.class, ticketId);
             }
 
@@ -108,7 +110,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = this.entityManager
-                .createQuery("select t from " + TABLE_TICKET_GRANTING_TICKETS + " t", 
+                .createQuery("select t from " + TABLE_TICKET_GRANTING_TICKETS + " t",
                         TicketGrantingTicketImpl.class)
                 .getResultList();
         final List<ServiceTicketImpl> sts = this.entityManager
@@ -134,7 +136,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long serviceTicketCount() {
-        return countToLong(this.entityManager.createQuery("select count(t) from " 
+        return countToLong(this.entityManager.createQuery("select count(t) from "
                 + TABLE_SERVICE_TICKETS + " t").getSingleResult());
     }
 
@@ -144,7 +146,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         if (ticket == null) {
             return true;
         }
-        
+
         final int failureCount;
 
         if (ticket instanceof OAuthToken) {
@@ -168,7 +170,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param clazz    the clazz
      * @return the ticket query result list
      */
-    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, 
+    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query,
                                                                final Class<T> clazz) {
         return this.entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
@@ -225,7 +227,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         int failureCount = 0;
 
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
-                "select s from " 
+                "select s from "
                 + TABLE_SERVICE_TICKETS
                 + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
         failureCount += deleteTicketsFromResultList(serviceTicketImpls);
@@ -252,5 +254,5 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }
-    
+
 }
