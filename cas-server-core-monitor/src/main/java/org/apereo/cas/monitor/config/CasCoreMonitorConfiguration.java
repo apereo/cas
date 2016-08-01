@@ -63,7 +63,6 @@ public class CasCoreMonitorConfiguration {
 
     @RefreshScope
     @Bean
-    @Autowired
     public Monitor sessionMonitor() {
         final SessionMonitor bean = new SessionMonitor();
         bean.setTicketRegistry(ticketRegistry);

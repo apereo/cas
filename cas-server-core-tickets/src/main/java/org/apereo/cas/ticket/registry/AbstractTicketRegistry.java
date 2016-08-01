@@ -144,14 +144,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the boolean
      */
     public abstract boolean deleteSingleTicket(final String ticketId);
-
-    /**
-     * Whether or not a callback to the TGT is required when checking for expiration.
-     *
-     * @return true, if successful
-     */
-    protected abstract boolean needsCallback();
-
+    
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }

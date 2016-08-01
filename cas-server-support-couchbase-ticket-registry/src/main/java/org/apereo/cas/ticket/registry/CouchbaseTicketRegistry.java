@@ -132,12 +132,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             throw Throwables.propagate(e);
         }
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return true;
-    }
-
+    
     @Override
     public Collection<Ticket> getTickets() {
         return new ArrayList<>();

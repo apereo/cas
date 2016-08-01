@@ -39,8 +39,7 @@ public class CasCookieConfiguration {
         return configureCookieGenerator(new WarningCookieRetrievingCookieGenerator(),
                 casProperties.getWarningCookie());
     }
-
-    @Autowired
+    
     @Bean(name = {"defaultCookieValueManager", "cookieValueManager"})
     public CookieValueManager defaultCookieValueManager() {
         if (casProperties.getTgc().isCipherEnabled()) {
@@ -64,8 +63,7 @@ public class CasCookieConfiguration {
                 + "ticket-granting cookies.");
         return new NoOpCipherExecutor();
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {

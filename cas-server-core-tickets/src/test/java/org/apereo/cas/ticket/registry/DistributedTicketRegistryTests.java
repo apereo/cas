@@ -130,12 +130,7 @@ public class DistributedTicketRegistryTests {
         public Collection<Ticket> getTickets() {
             return this.tickets.values();
         }
-
-        @Override
-        protected boolean needsCallback() {
-            return true;
-        }
-
+        
         @Override
         public boolean deleteSingleTicket(final String ticketId) {
             return this.tickets.remove(ticketId) != null;
