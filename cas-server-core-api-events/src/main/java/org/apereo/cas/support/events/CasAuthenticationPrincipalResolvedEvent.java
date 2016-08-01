@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Principal;
 public class CasAuthenticationPrincipalResolvedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1862937393594313844L;
-
     
     private Principal principal;
 
@@ -20,6 +19,7 @@ public class CasAuthenticationPrincipalResolvedEvent extends AbstractCasEvent {
      * Instantiates a new Abstract cas sso event.
      *
      * @param source the source
+     * @param p      the principal
      */
     public CasAuthenticationPrincipalResolvedEvent(final Object source, final Principal p) {
         super(source);
