@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.CasAuthenticationTransactionCompletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -36,7 +37,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             
-            eventPublisher.publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
+            publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             
             authenticationResult.collect(authentication);
         } else {
@@ -55,4 +56,9 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
         this.authenticationManager = authenticationManager;
     }
 
+    private void publishEvent(final ApplicationEvent event) {
+        if (this.eventPublisher != null) {
+            this.eventPublisher.publishEvent(event);
+        }
+    }
 }
