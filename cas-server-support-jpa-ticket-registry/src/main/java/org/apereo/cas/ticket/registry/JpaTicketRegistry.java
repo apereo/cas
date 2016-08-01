@@ -96,7 +96,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
             } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
-                    || ticketId.startsWith(RefreshToken.PREFIX))) {
+                    || ticketId.startsWith(RefreshToken.PREFIX)) {
                 return this.entityManager.find(OAuthCodeImpl.class, ticketId);
             }
 
