@@ -7,15 +7,12 @@ title: CAS - Delegate authentication
   <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
 </p>
 
-# Delegate authentication
-The CAS server implements the CAS protocol on server side and may even behave like an 
-OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
+# Delegate Authentication
 
-But the CAS server can also act as a client using 
-the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
+CAS can act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
 
 * Another CAS server
-* An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
+* An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers.
 * An OpenID provider: myopenid.com
 * A SAML identity provider
 * An OpenID Connect identity provider.
@@ -55,7 +52,6 @@ this one can be created only from the technical identifier received from the ext
 or as a "typed identifier" (like FacebookProfile#1234), which is the default. This can be defined in the `application.properties` file.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
-
 
 ## Demo
 
