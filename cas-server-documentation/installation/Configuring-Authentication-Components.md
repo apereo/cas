@@ -5,33 +5,11 @@ title: CAS - Configuring Authentication Components
 
 # Configuration
 
-The CAS authentication process is performed by several related components:
+The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
 
-## `PrincipalNameTransformer`
-Transforms the user id string that is typed into the login form into a tentative Principal Name to be
-validated by a specific type of Authentication Handler.
-
-## `AuthenticationManager`
-Entry point into authentication subsystem. It accepts one or more credentials and delegates authentication to
-configured `AuthenticationHandler` components. It collects the results of each attempt and determines effective
-security policy.
-
-## `AuthenticationHandler`
-Authenticates a single credential and reports one of three possible results: success, failure, not attempted.
-
-## `PrincipalResolver`
-Converts information in the authentication credential into a security principal that commonly contains additional
-metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
-
-## `AuthenticationMetaDataPopulator`
-Strategy component for setting arbitrary metadata about a successful authentication event; these are commonly used
-to set protocol-specific data.
-
-Unless otherwise noted, the configuration for all authentication components is handled in `deployerConfigContext.xml`.
 
 ## Authentication Manager
-CAS ships with a single yet flexible authentication manager, `PolicyBasedAuthenticationManager`, that should be
-sufficient for most needs. It performs authentication according to the following contract.
+CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
 For each given credential do the following:
 
@@ -53,42 +31,11 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Authentication Handlers
 
-CAS ships with support for authenticating against many common kinds of authentication systems.
-The following list provides a complete list of supported authentication technologies; jump to the section(s) of
-interest.
-
-* [Database](Database-Authentication.html)
-* [JAAS](JAAS-Authentication.html)
-* [LDAP](LDAP-Authentication.html)
-* [OAuth 1.0/2.0, OpenID](OAuth-OpenId-Authentication.html)
-* [RADIUS](RADIUS-Authentication.html)
-* [SPNEGO](SPNEGO-Authentication.html) (Windows)
-* [Trusted](Trusted-Authentication.html) (REMOTE_USER)
-* [X.509](X509-Authentication.html) (client SSL certificate)
-* [Remote Address](Remote-Address-Authentication.html)
-* [YubiKey](YubiKey-Authentication.html)
-* [Apache Shiro](Shiro-Authentication.html)
-* [pac4j](Pac4j-Authentication.html)
-
-There are some additional handlers for small deployments and special cases:
-
-* [Whilelist](Whitelist-Authentication.html)
-* [Blacklist](Blacklist-Authentication.html)
+There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose. 
 
 <div class="alert alert-info"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively.</p></div>
 
-## Password Encoding
-
-Password encoders are responsible during the authentication event to convert and encode
-the credential password to a form that is acceptable by the authentication source.
-
-
-## Argument Extractors
-Extractors are responsible to examine the http request received for parameters that describe the
-authentication request such as the requesting `service`, etc. Extractors exist for a number of 
-supported authentication protocols and each create appropriate 
-instances of `WebApplicationService` that contains the results of the extraction.
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
@@ -98,20 +45,7 @@ Please [see this guide](Configuring-Principal-Resolution.html) more full details
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence.
 
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-## Authentication Metadata
-`AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the
-authentication subsystem for consumption by other subsystems or external components. Some notable uses of metadata
-populators:
-
-* Supports the long term authentication feature
-* SAML protocol support
-* OAuth and OpenID protocol support.
-
-The default authentication metadata populators should be sufficient for most deployments. Where the components are
-required to support optional CAS features, they will be explicitly identified and configuration will be provided.
 
 ## Long Term Authentication
 
