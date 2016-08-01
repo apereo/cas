@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.support.events.CasAuthenticationPrincipalResolvedEvent;
+import org.apereo.cas.support.events.CasAuthenticationTransactionStartedEvent;
+import org.apereo.cas.support.events.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import com.codahale.metrics.annotation.Counted;
@@ -11,6 +14,8 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
 import java.security.GeneralSecurityException;
@@ -29,7 +34,7 @@ import java.util.Map;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     private static final String MESSAGE = "At least one authentication handler is required";
-
+    
     /**
      * Log instance for logging events, errors, warnings, etc.
      */
@@ -38,7 +43,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * An array of AuthenticationAttributesPopulators.
      */
-
     protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<>();
 
@@ -52,6 +56,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected AuthenticationHandlerResolver authenticationHandlerResolver =
             new RegisteredServiceAuthenticationHandlerResolver();
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * Instantiates a new Policy based authentication manager.
@@ -79,8 +86,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      */
     protected AbstractAuthenticationManager(final List<AuthenticationHandler> handlers) {
         Assert.notEmpty(handlers, MESSAGE);
-        this.handlerResolverMap = new LinkedHashMap<>(
-                handlers.size());
+        this.handlerResolverMap = new LinkedHashMap<>(handlers.size());
         for (final AuthenticationHandler handler : handlers) {
             this.handlerResolverMap.put(handler, null);
         }
@@ -194,9 +200,15 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             throws GeneralSecurityException, PreventedException {
 
         Principal principal;
+        
+        this.eventPublisher.publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
+        
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         logger.info("{} successfully authenticated {}", handler.getName(), credential);
+
+        this.eventPublisher.publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
+        
         if (resolver == null) {
             principal = result.getPrincipal();
             logger.debug(
@@ -216,6 +228,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             builder.setPrincipal(principal);
         }
         logger.debug("Final principal resolved for this authentication event is {}", principal);
+        this.eventPublisher.publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
     /**
