@@ -41,7 +41,8 @@ where all the configuration options for `HazelcastInstance` exposed by Hazelcast
 there are two basic steps required:
 
 * Place native `hazelcast.xml` file containing the custom configuration for Hazelcast Instance into an external filesystem location
-  of choice (`/etc/cas/hazelcast.xml` by convention) and configure the location in the list of CAS properties.
+  of choice (`/etc/cas/hazelcast.xml` by convention)
+* Configure the location in the list of CAS properties.
 
 Here's a simple example of `hazelcast.xml` that configures AWS cluster join strategy instead of a default TCP/IP one:
 
