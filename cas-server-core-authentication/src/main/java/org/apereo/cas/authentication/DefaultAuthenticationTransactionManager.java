@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.support.events.CasAuthenticationTransactionCompletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * This is {@link DefaultAuthenticationTransactionManager}.
@@ -12,6 +15,9 @@ import org.slf4j.LoggerFactory;
 public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
     
     private AuthenticationManager authenticationManager;
 
@@ -29,6 +35,9 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
+            
+            eventPublisher.publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
+            
             authenticationResult.collect(authentication);
         } else {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
