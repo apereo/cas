@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Unit tests for {@link Cas20ResponseView}.
+ * Unit tests for {@link Cas30ResponseView}.
  * @author Misagh Moayyed
  * @since 4.0.0
  */
