@@ -18,6 +18,8 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builds responses to Openid authN requests.
@@ -26,7 +28,8 @@ import org.openid4java.server.ServerManager;
  * @since 4.2
  */
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdServiceResponseBuilder.class);
+    
     private static final long serialVersionUID = -4581238964007702423L;
 
     private ParameterList parameterList;
@@ -81,15 +84,15 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         try {
             if (associated && associationValid) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
-                logger.debug("Validated openid ticket {} for {}", ticketId, service);
+                LOGGER.debug("Validated openid ticket {} for {}", ticketId, service);
             } else if (!associated) {
-                logger.debug("Responding to non-associated mode. Service ticket {} must be validated by the RP", ticketId);
+                LOGGER.debug("Responding to non-associated mode. Service ticket {} must be validated by the RP", ticketId);
             } else {
-                logger.warn("Association does not exist or is not valid");
+                LOGGER.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
             }
         } catch (final AbstractTicketException e) {
-            logger.error("Could not validate ticket : {}", e.getMessage(), e);
+            LOGGER.error("Could not validate ticket : {}", e.getMessage(), e);
             successFullAuthentication = false;
         }
 
@@ -141,7 +144,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
         final Message response = serverManager.authResponse(this.parameterList, id, id,
                 successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
-        logger.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
+        LOGGER.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
         return buildRedirect(service, parameters);
     }
 
@@ -163,7 +166,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 }
             }
         } catch (final MessageException e) {
-            logger.error("Message exception : {}", e.getMessage(), e);
+            LOGGER.error("Message exception : {}", e.getMessage(), e);
         }
         return null;
     }
