@@ -24,33 +24,28 @@ user experience by creating symmetry between login and logout.
 
 ## CAS Logout
 
-Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter.
-
-The redirect behavior is turned off by default, and is activated via the following setting in `application.properties`:
-
-```bash
-# Specify whether CAS should redirect to the specified service parameter on /logout requests
-# cas.logout.followServiceRedirects=false
-```
-
-The specified url must be registered in the service registry of CAS and enabled.
+Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and CAS must be allowed to follow service redirects.
 
 ## Single Logout (SLO)
+
 CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
-When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties need to invalidate their own session.
+When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties need to invalidate their own session. Remember that the callback submitted to each CAS-protected application is simply a notification; nothing more. It is the **responsibility of the application** to intercept that notification and properly destroy the user authentication session, either manually, via a specific endpoint or more commonly via a CAS client library that supports SLO. 
+
+Also note that since SLO is a global event, all applications that have an authentication record with CAS will by default be contacted, and this may disrupt user experience negatively if those applications are individually distinct from each other. As an example, if user has logged into a portal application and an email application, logging out of one through SLO will also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
 This can happen in two ways:
 
 1. CAS sends an HTTP POST message directly to the service ( _back channel_ communication): this is the traditional way of performing notification to the service.
-2. CAS redirects (HTTP 302) to the service with a message and a _RelayState_ parameter (_front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and use session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the _RelayState_ parameter.
+2. CAS redirects (HTTP 302) to the service with a message and a `RelayState` parameter (_front channel_ communication): This feature is inspired by SAML SLO, and is needed if the client application is composed of several servers and uses session affinity. The expected behaviour of the CAS client is to invalidate the application web session and redirect back to the CAS server with the `RelayState` parameter.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Front-channel SLO at this point is still experimental.</p></div>
 
 ## SLO Requests
+
 The way the notification is done (_back_ or _front_ channel) is configured at a service level through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
 
 A sample SLO message:
@@ -99,7 +94,8 @@ Sample configuration follows:
 ```
 
 ### Service Endpoint for Logout Requests
-By default, logout requests are submitted to the original service id. CAS has the option to submit such requests to a specific service endpoint that is different
+
+By default, logout requests are submitted to the original service id collected at the time of authentication. CAS has the option to submit such requests to a specific service endpoint that is different
 from the original service id, and of course can be configured on a per-service level. This is useful in cases where the application that is integrated with CAS
 does not exactly use a CAS client that supports intercepting such requests and instead, exposes a different endpoint for its logout operations.
 
@@ -112,20 +108,16 @@ To configure a service specific endpoint, try the following example:
   "name" : "testId",
   "id" : 1,
   "logoutType" : "BACK_CHANNEL",
-  "logoutUrl" : "https://web.application.net/logout",
+  "logoutUrl" : "https://web.application.net/logout"
 }
 ```
 
 ### Asynchronous SLO Messages
-By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, 
-modify the following setting in `application.properties`:
 
-```bash
-# To send callbacks to endpoints synchronously, set this to false
-# slo.callbacks.asynchronous=true
-```
+By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, enable the behavior in `application.properties`. 
 
 ## SSO Session vs. Application Session
+
 In order to better understand the SSO session management of CAS and how it regards application sessions, one important note is to be first and foremost considered:
 
 <div class="alert alert-info"><strong>CAS is NOT a session manager</strong><p>Application session is the responsibility of the application.</p></div>
