@@ -11,7 +11,6 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.Assert.*;
