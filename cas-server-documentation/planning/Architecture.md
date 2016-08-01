@@ -87,9 +87,6 @@ CAS uses the many aspects of the Spring Framework; most notably,
 [Spring Webflow](http://www.springsource.org/spring-web-flow). Spring provides a complete and extensible framework for
 the core CAS codebase as well as for deployers; it's straightforward to customize or extend CAS behavior by hooking
 CAS and Spring API extension points. General knowledge of Spring is beneficial to understanding the interplay among
-some framework components, but it's not strictly required. The XML-based configuration used to configure CAS and Spring
-components, however, is a core concern for installation, customization, and extension. Competence with XML generally
-and the
-[Spring IOC Container](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html)
-in particular are prerequisites to CAS installation.
+some framework components, but it's not strictly required. 
 
+CAS is also heavily based on [Spring Boot](http://projects.spring.io/spring-boot/), which allows it to take an opinionated view of the Spring platform and third-party libraries to create a stand-alone web application without the hassle of XML configuration as much as possible. Spring Boot allows CAS to hide much of internal complexity of its components and their configuration and instead provides auto-configuration modules that simply and automatically configure the running application context without much ser inteference. 
