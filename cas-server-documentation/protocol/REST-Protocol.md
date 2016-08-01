@@ -31,8 +31,6 @@ Support is enabled by including the following to the overlay:
 REST support is currently provided internally by 
 the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
-## Protocol
-
 ## Request a Ticket Granting Ticket
 
 ```bash
