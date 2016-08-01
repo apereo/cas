@@ -50,7 +50,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
   echo -e "Cloning the gh-pages branch...\n"
-  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
+  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
 
   cd gh-pages
 
@@ -68,9 +68,9 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
     echo -e "Copied project documentation...\n"
   fi
 
-  echo -e "Staring to move project Javadocs over...\n"
-
   if [ "$invokeJavadoc" == true ]; then
+    echo -e "Staring to move project Javadocs over...\n"
+
     echo -e "Removing previous Javadocs from /$branchVersion/javadocs...\n"
     git rm -rf ./"$branchVersion"/javadocs > /dev/null
 
@@ -95,6 +95,6 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Successfully published documenetation to [gh-pages] branch.\n"
+  echo -e "Successfully published documentation to [gh-pages] branch.\n"
 
 fi
