@@ -318,7 +318,9 @@ public abstract class AbstractSamlProfileHandlerController {
     protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
                                                              final HttpServletRequest request) {
 
-        if (authnRequest.getRequestedAuthnContext() == null || this.authenticationContextClassMappings.isEmpty()) {
+        if (authnRequest.getRequestedAuthnContext() == null 
+                || authenticationContextClassMappings == null 
+                || this.authenticationContextClassMappings.isEmpty()) {
             return initialUrl;
         }
         final Optional<AuthnContextClassRef> p =
