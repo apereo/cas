@@ -95,7 +95,7 @@ public class HazelcastProperties {
     /**
      * Eviction policy.
      */
-    @Value("${hz.cluster.evition.policy:LRU}")
+    @Value("${hz.cluster.eviction.policy:LRU}")
     private EvictionPolicy evictionPolicy;
 
     /**
@@ -104,6 +104,12 @@ public class HazelcastProperties {
     @Value("${hz.cluster.eviction.percentage:10}")
     private int evictionPercentage;
 
+    @Value("${hz.cluster.backupCount:1}")
+    private int backupCount;
+
+    @Value("${hz.cluster.asyncBackupCount:0}")
+    private int asyncBackupCount;
+    
     /**
      * Max idle seconds.
      */
@@ -164,5 +170,13 @@ public class HazelcastProperties {
 
     public int getMaxIdleSeconds() {
         return maxIdleSeconds;
+    }
+
+    public int getBackupCount() {
+        return backupCount;
+    }
+
+    public int getAsyncBackupCount() {
+        return asyncBackupCount;
     }
 }
