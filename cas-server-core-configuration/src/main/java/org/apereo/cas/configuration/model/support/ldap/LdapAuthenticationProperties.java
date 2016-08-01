@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private String principalAttributePassword;
     private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
     private boolean allowMultiplePrincipalAttributeValues;
-    private List additionalAttributes;
+    private List additionalAttributes = new ArrayList();
     private AuthenticationTypes type;
 
     private boolean subtreeSearch = true;
