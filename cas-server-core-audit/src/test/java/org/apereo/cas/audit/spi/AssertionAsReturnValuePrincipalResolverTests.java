@@ -12,6 +12,7 @@ import org.apereo.cas.validation.ImmutableAssertion;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 4.1.9
  */
-@SpringApplicationConfiguration(classes = {CasCoreAuditConfiguration.class})
+@SpringBootTest(classes = {CasCoreAuditConfiguration.class})
 public class AssertionAsReturnValuePrincipalResolverTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
