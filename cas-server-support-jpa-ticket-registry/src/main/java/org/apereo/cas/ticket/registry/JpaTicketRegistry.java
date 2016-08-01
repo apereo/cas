@@ -122,12 +122,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         return tickets;
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return false;
-    }
-
+    
     @Override
     public long sessionCount() {
         return countToLong(this.entityManager.createQuery(

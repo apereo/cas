@@ -130,12 +130,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         }
         this.client.shutdown();
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return true;
-    }
-
+    
     /**
      * If not time out value is specified, expire the ticket immediately.
      *

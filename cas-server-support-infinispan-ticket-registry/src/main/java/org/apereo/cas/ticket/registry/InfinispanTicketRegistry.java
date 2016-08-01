@@ -28,12 +28,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     public void updateTicket(final Ticket ticket) {
         this.cache.put(ticket.getId(), ticket);
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return true;
-    }
-
+    
     /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
      *

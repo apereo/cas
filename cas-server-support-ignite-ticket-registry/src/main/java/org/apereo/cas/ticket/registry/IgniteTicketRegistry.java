@@ -133,12 +133,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return false;
-    }
-
+    
     /**
      * Flag to indicate whether this registry instance should participate in reporting its state with
      * default value set to {@code true}.
