@@ -72,12 +72,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
-
-    @Override
-    protected boolean needsCallback() {
-        return false;
-    }
-
+    
     @Override
     public void addTicket(final Ticket ticket) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ticket.getExpirationPolicy().getTimeToLive());

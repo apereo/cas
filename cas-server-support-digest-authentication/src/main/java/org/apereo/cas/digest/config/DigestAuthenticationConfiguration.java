@@ -112,8 +112,7 @@ public class DigestAuthenticationConfiguration {
                 r.getStore().put(k, casProperties.getAuthn().getDigest().getRealm(), v));
         return r;
     }
-
-    @Autowired
+    
     @Bean
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
