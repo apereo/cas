@@ -18,7 +18,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
 }
 
 war {
