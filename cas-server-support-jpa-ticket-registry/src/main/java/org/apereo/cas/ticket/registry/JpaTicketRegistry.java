@@ -95,7 +95,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
-            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX
+            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
                     || ticketId.startsWith(RefreshToken.PREFIX))) {
                 return this.entityManager.find(OAuthCodeImpl.class, ticketId);
             }
