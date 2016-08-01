@@ -15,6 +15,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
@@ -201,13 +202,13 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         Principal principal;
         
-        this.eventPublisher.publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
+        publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
         
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         logger.info("{} successfully authenticated {}", handler.getName(), credential);
 
-        this.eventPublisher.publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
+        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         
         if (resolver == null) {
             principal = result.getPrincipal();
@@ -228,7 +229,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             builder.setPrincipal(principal);
         }
         logger.debug("Final principal resolved for this authentication event is {}", principal);
-        this.eventPublisher.publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
+        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 
     /**
@@ -257,5 +258,11 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
     public void setHandlerResolverMap(final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
         this.handlerResolverMap = handlerResolverMap;
+    }
+    
+    private void publishEvent(final ApplicationEvent event) {
+        if (this.eventPublisher != null) {
+            this.eventPublisher.publishEvent(event);
+        }
     }
 }
