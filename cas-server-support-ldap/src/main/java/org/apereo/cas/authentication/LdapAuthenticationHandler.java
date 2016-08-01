@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -292,16 +293,16 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final Set<String> attributes = new HashSet<>();
 
         logger.debug("Initializing LDAP attribute configuration.");
-        if (this.principalIdAttribute != null) {
+        if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             logger.debug("Configured to retrieve principal id attribute {}", this.principalIdAttribute);
             attributes.add(this.principalIdAttribute);
         }
-        if (!this.principalAttributeMap.isEmpty()) {
+        if (this.principalAttributeMap != null && !this.principalAttributeMap.isEmpty()) {
             final Set<String> attrs = this.principalAttributeMap.keySet();
             attributes.addAll(attrs);
             logger.debug("Configured to retrieve principal attribute collection of {}", attrs);
         }
-        if (!this.additionalAttributes.isEmpty()) {
+        if (this.additionalAttributes != null && !this.additionalAttributes.isEmpty()) {
             attributes.addAll(this.additionalAttributes);
             logger.debug("Configured to retrieve additional attributes {}", this.additionalAttributes);
         }
@@ -311,6 +312,4 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         logger.debug("LDAP authentication entry attributes are {}", this.authenticatedEntryAttributes);
     }
-
-
 }
