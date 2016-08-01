@@ -49,12 +49,9 @@ A number of cache-based ticket registries support secure replication of ticket d
 so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
 [See this guide](Ticket-Registry-Replication-Encryption.html) for more info.
 
-### Ticket Generators
-
-CAS presents a pluggable architecture for generating unique ticket ids for each ticket type.
-
 
 ## Ticket Expiration Policies
+
 CAS supports a pluggable and extensible policy framework to control the expiration policy of 
 ticket-granting tickets (TGT) and service tickets (ST). 
 [See this guide](Configuring-Ticket-Expiration-Policy.html) for details on how to configure the expiration policies.
