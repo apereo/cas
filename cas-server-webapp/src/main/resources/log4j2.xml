@@ -92,7 +92,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.amqp" level="error" additivity="false">
+        <AsyncLogger name="org.springframework.amqp" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
