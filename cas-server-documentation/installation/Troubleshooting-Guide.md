@@ -5,7 +5,12 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
+## Application X "redirected you too many times" 
+
+"Too many redirect" errors are usually cause by service ticket validation failure events, generally caused by application misconfiguration. Ticket validation failure may be caused by expired or unrecognized tickets, SSL-related issues and such. Examine your CAS logs and you will find the cause.
+
 ## Not Receiving Attributes
+
 If your client application is not receiving attributes, you will need to make sure:
 
 1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
@@ -16,6 +21,7 @@ If your client application is not receiving attributes, you will need to make su
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
 ## Application Not Authorized
+
 You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
