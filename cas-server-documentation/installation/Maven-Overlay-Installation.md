@@ -12,8 +12,7 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed on a 
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 
 Once an overlay project has been created, the `cas.war` file must be built and subsequently deployed into a Java
-servlet container like Tomcat. The following set of commands, issued from the Maven WAR overlay project root
-directory, provides a sketch of how to accomplish this on a Unix platform.
+servlet container like Tomcat. 
 
 
 WAR overlay projects are provided for reference and study.
