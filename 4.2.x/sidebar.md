@@ -9,7 +9,7 @@
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
 
 * [Installation](#installation)
-    *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
+    *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Docker](/$version/installation/Docker-Installation.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 

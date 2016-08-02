@@ -11,10 +11,6 @@ customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed on a Java servlet container like
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 
-Once an overlay project has been created, the `cas.war` file must be built and subsequently deployed into a Java
-servlet container like Tomcat. 
-
-
 WAR overlay projects are provided for reference and study.
 
 ## Gradle
