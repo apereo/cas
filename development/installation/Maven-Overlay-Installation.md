@@ -126,7 +126,6 @@ Here is a *sample* Maven build configuration:
 
 
 ```xml
-
 ...
 
 <build>
@@ -145,7 +144,6 @@ Here is a *sample* Maven build configuration:
     </plugins>
     <finalName>cas</finalName>
 </build>
-...
 ```
 
 ## Dependency Management
