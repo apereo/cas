@@ -64,7 +64,6 @@ Finally, review the eviction policy of your ticket registry and ensure the value
 ## PKIX Path Building Failed
 
 ```bash
-
 Sep 28, 2009 4:13:26 PM org.apereo.cas.client.validation.AbstractCasProtocolUrlBasedTicketValidator retrieveResponseFromServer
 SEVERE: javax.net.ssl.SSLHandshakeException:
 sun.security.validator.ValidatorException: PKIX path building failed:
@@ -77,7 +76,6 @@ sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid
       at com.sun.net.ssl.internal.ssl.Handshaker.fatalSE(Unknown Source)
       at com.sun.net.ssl.internal.ssl.Handshaker.fatalSE(Unknown Source)
       at com.sun.net.ssl.internal.ssl.ClientHandshaker.serverCertificate(Unknown Source)
-
 ```
 
 PKIX path building errors are the most common SSL errors. The problem here is that the CAS client does not trust the certificate presented by the CAS server; most often this occurs because of using a *self-signed certificate* on the CAS server. To resolve this error, import the CAS server certificate into the system truststore of the CAS client. If the certificate is issued by your own PKI, it is better to import the root certificate of your PKI into the CAS client truststore. 
