@@ -13,7 +13,6 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-
 public class HazelcastProperties {
 
     /**
@@ -80,6 +79,24 @@ public class HazelcastProperties {
         private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
         private String evictionPolicy = "LRU";
         private int evictionPercentage = 10;
+        private int backupCount = 1;
+        private int asyncBackupCount;
+
+        public int getBackupCount() {
+            return backupCount;
+        }
+
+        public void setBackupCount(final int backupCount) {
+            this.backupCount = backupCount;
+        }
+
+        public int getAsyncBackupCount() {
+            return asyncBackupCount;
+        }
+
+        public void setAsyncBackupCount(final int asyncBackupCount) {
+            this.asyncBackupCount = asyncBackupCount;
+        }
 
         public String getLoggingType() {
             return loggingType;
