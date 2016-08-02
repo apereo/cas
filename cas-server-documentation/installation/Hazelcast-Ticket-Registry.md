@@ -47,6 +47,8 @@ an external `cas.properties` file (with sensible defaults for all the properties
 # hz.cluster.eviction.policy=LRU
 # hz.cluster.instance.name=${host.name}
 # hz.cluster.logging.type=slf4j
+# hz.cluster.backupCount=1
+# hz.cluster.asyncBackupCount=0
 ```
 
 Should the more fine-grained configuration need arise, there is an option to use a native Hazelcast configuration XML format

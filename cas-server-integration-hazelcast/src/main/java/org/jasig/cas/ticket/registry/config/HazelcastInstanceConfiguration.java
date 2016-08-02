@@ -105,6 +105,8 @@ public class HazelcastInstanceConfiguration {
                     .setMaxIdleSeconds(this.hazelcastProperties.getMaxIdleSeconds())
                     .setEvictionPolicy(this.hazelcastProperties.getEvictionPolicy())
                     .setEvictionPercentage(this.hazelcastProperties.getEvictionPercentage())
+                    .setBackupCount(this.hazelcastProperties.getBackupCount())
+                    .setAsyncBackupCount(this.hazelcastProperties.getAsyncBackupCount())
                     .setMaxSizeConfig(new MaxSizeConfig()
                             .setMaxSizePolicy(this.hazelcastProperties.getMaxSizePolicy())
                             .setSize(this.hazelcastProperties.getMaxHeapSizePercentage()));
