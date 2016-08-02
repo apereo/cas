@@ -101,8 +101,7 @@ public class HazelcastInstanceConfiguration {
             final JoinConfig joinConfig = new JoinConfig()
                     .setMulticastConfig(multicastConfig)
                     .setTcpIpConfig(tcpIpConfig);
-
-
+            
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
                     .setPort(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getPort())
@@ -113,17 +112,15 @@ public class HazelcastInstanceConfiguration {
             final MapConfig mapConfig = new MapConfig().setName(casProperties.getTicket()
                     .getRegistry().getHazelcast().getMapName())
                     .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
+                    .setBackupCount(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getBackupCount())
+                    .setAsyncBackupCount(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getAsyncBackupCount())
                     .setEvictionPolicy(EvictionPolicy.valueOf(
                             casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPolicy()))
-                    .setEvictionPercentage(
-                            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPercentage())
+                    .setEvictionPercentage(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getEvictionPercentage())
                     .setMaxSizeConfig(new MaxSizeConfig()
                             .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
-                                    casProperties.getTicket().getRegistry()
-                                            .getHazelcast().getCluster().getMaxSizePolicy()))
-                            .setSize(
-                                    casProperties.getTicket().getRegistry()
-                                            .getHazelcast().getCluster().getMaxHeapSizePercentage()));
+                                    casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMaxSizePolicy()))
+                            .setSize(casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
             mapConfigs.put(casProperties.getTicket().getRegistry().getHazelcast().getMapName(), mapConfig);
