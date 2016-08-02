@@ -5,6 +5,10 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
+## Application X "redirected you too many times" 
+
+"Too many redirect" errors are usually cause by service ticket validation failure events, generally caused by application misconfiguration. Ticket validation failure may be caused by expired or unrecognized tickets, SSL-related issues and such. Examine your CAS logs and you will find the cause.
+
 ## Not Receiving Attributes
 If your client application is not receiving attributes, you will need to make sure:
 
