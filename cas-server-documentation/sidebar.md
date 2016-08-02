@@ -9,7 +9,7 @@
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
 
 * [Installation](#installation)
-    *   [Maven Overlay](/$version/installation/Maven-Overlay-Installation.html)
+    *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
