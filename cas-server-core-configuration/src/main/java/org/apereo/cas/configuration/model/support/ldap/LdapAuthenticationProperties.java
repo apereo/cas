@@ -36,7 +36,11 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
         /**
          * Anonymous Search.
          */
-        ANONYMOUS
+        ANONYMOUS,
+        /**
+         * SASL bind search.
+         */
+        SASL
     }
 
     @NestedConfigurationProperty

@@ -654,7 +654,13 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
-# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+# cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# cas.authn.ldap[0].saslRealm=EXAMPLE.COM
+# cas.authn.ldap[0].saslAuthorizationId=
+# cas.authn.ldap[0].saslMutualAuth=
+# cas.authn.ldap[0].saslQualityOfProtection=
+# cas.authn.ldap[0].saslSecurityStrength=
 
 # cas.authn.ldap[0].trustCertificates=
 # cas.authn.ldap[0].keystore=

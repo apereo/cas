@@ -1,5 +1,9 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.ldaptive.sasl.Mechanism;
+import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SecurityStrength;
+
 /**
  * This is {@link AbstractLdapProperties}.
  *
@@ -34,7 +38,15 @@ public abstract class AbstractLdapProperties {
 
     private String bindDn;
     private String bindCredential;
-    
+
+    private String saslRealm;
+    private Mechanism saslMechanism;
+    private String saslAuthorizationId;
+
+    private SecurityStrength saslSecurityStrength;
+    private Boolean saslMutualAuth;
+    private QualityOfProtection saslQualityOfProtection;
+
     public String getBindDn() {
         return bindDn;
     }
@@ -201,5 +213,53 @@ public abstract class AbstractLdapProperties {
 
     public void setConnectTimeout(final long connectTimeout) {
         this.connectTimeout = connectTimeout;
+    }
+
+    public String getSaslRealm() {
+        return saslRealm;
+    }
+
+    public void setSaslRealm(final String saslRealm) {
+        this.saslRealm = saslRealm;
+    }
+
+    public Mechanism getSaslMechanism() {
+        return saslMechanism;
+    }
+
+    public void setSaslMechanism(final Mechanism saslMechanism) {
+        this.saslMechanism = saslMechanism;
+    }
+
+    public String getSaslAuthorizationId() {
+        return saslAuthorizationId;
+    }
+
+    public void setSaslAuthorizationId(final String saslAuthorizationId) {
+        this.saslAuthorizationId = saslAuthorizationId;
+    }
+
+    public SecurityStrength getSaslSecurityStrength() {
+        return saslSecurityStrength;
+    }
+
+    public void setSaslSecurityStrength(final SecurityStrength saslSecurityStrength) {
+        this.saslSecurityStrength = saslSecurityStrength;
+    }
+
+    public QualityOfProtection getSaslQualityOfProtection() {
+        return saslQualityOfProtection;
+    }
+
+    public void setSaslQualityOfProtection(final QualityOfProtection saslQualityOfProtection) {
+        this.saslQualityOfProtection = saslQualityOfProtection;
+    }
+
+    public void setSaslMutualAuth(final Boolean saslMutualAuth) {
+        this.saslMutualAuth = saslMutualAuth;
+    }
+
+    public Boolean getSaslMutualAuth() {
+        return saslMutualAuth;
     }
 }
