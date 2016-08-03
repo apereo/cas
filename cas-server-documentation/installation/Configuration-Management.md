@@ -90,8 +90,7 @@ this claim does not hold, consider that a "bug" and file a feature request.</p><
 
 ## Embedded
 
-By default, all CAS settings and configuration is controlled via the `application.properties` file. This file
-serves as a reference and a placeholder for all settings that are available to CAS.
+By default, all CAS settings and configuration is controlled via the embedded `application.properties` file. 
 
 ## Native
 

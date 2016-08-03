@@ -16,12 +16,6 @@ containing metadata that drives a number of CAS behaviors:
 * Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
 * Theme control - Define alternate CAS themes to be used for particular services.
 
-## Considerations
-It is not required to use the service management facility explicitly. CAS ships with a default configuration that is
-suitable for deployments that do not need or want to leverage the capabilities above. The default configuration allows
-any service contacting CAS over https/imaps to use CAS and receive any attribute configured by an `IPersonAttributeDao`
-bean.
-
 ## Service Management Webapp
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI

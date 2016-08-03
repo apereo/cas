@@ -18,7 +18,7 @@ deployers via relevant properties in `application.properties`
 
 ## File-based Audits
 
-a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
+File-based audit logs appear in a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
@@ -55,7 +55,5 @@ for auditing functionality, enable the following module in your configuration:
 </dependency>
 ```
 
-
-### Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
