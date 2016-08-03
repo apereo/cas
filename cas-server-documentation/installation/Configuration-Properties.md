@@ -1766,6 +1766,13 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.hazelcast.cluster.backupCount=1
 # cas.ticket.registry.hazelcast.cluster.asyncBackupCount=0
 # cas.ticket.registry.hazelcast.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# cas.ticket.registry.hazelcast.cluster.timeout=5
+
+# cas.ticket.registry.hazelcast.cluster.multicastTrustedInterfaces=
+# cas.ticket.registry.hazelcast.cluster.multicastPort=
+# cas.ticket.registry.hazelcast.cluster.multicastGroup=
+# cas.ticket.registry.hazelcast.cluster.multicastTimeout=2
+# cas.ticket.registry.hazelcast.cluster.multicastTimeToLive=32
 
 # cas.ticket.registry.hazelcast.crypto.signing.key=
 # cas.ticket.registry.hazelcast.crypto.signing.keySize=512

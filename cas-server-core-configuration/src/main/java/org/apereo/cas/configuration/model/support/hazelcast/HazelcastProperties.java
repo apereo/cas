@@ -81,7 +81,17 @@ public class HazelcastProperties {
         private int evictionPercentage = 10;
         private int backupCount = 1;
         private int asyncBackupCount;
-
+    
+        private int timeout = 5;
+        
+        private boolean ipv4Enabled = true;
+        
+        private String multicastTrustedInterfaces;
+        private String multicastGroup;
+        private int multicastPort;
+        private int multicastTimeout = 2;
+        private int multicastTimeToLive = 32;
+        
         public int getBackupCount() {
             return backupCount;
         }
@@ -192,6 +202,62 @@ public class HazelcastProperties {
 
         public void setEvictionPercentage(final int evictionPercentage) {
             this.evictionPercentage = evictionPercentage;
+        }
+
+        public String getMulticastTrustedInterfaces() {
+            return multicastTrustedInterfaces;
+        }
+
+        public void setMulticastTrustedInterfaces(final String multicastTrustedInterfaces) {
+            this.multicastTrustedInterfaces = multicastTrustedInterfaces;
+        }
+
+        public String getMulticastGroup() {
+            return multicastGroup;
+        }
+
+        public void setMulticastGroup(final String multicastGroup) {
+            this.multicastGroup = multicastGroup;
+        }
+
+        public int getMulticastPort() {
+            return multicastPort;
+        }
+
+        public void setMulticastPort(final int multicastPort) {
+            this.multicastPort = multicastPort;
+        }
+
+        public int getMulticastTimeout() {
+            return multicastTimeout;
+        }
+
+        public void setMulticastTimeout(final int multicastTimeout) {
+            this.multicastTimeout = multicastTimeout;
+        }
+
+        public int getMulticastTimeToLive() {
+            return multicastTimeToLive;
+        }
+
+        public void setMulticastTimeToLive(final int multicastTimeToLive) {
+            this.multicastTimeToLive = multicastTimeToLive;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(final int timeout) {
+            this.timeout = timeout;
+        }
+
+        public boolean isIpv4Enabled() {
+            return ipv4Enabled;
+        }
+
+        public void setIpv4Enabled(final boolean ipv4Enabled) {
+            this.ipv4Enabled = ipv4Enabled;
         }
     }
 
