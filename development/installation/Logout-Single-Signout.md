@@ -67,10 +67,12 @@ to CAS. The session identifier is used to correlate a CAS session with an applic
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
 
 ### Turning Off Single Logout
+To disable single logout, adjust the following setting in `application.properties` file:
 
-To disable single logout, adjust the following setting in `application.properties` file. 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
+```bash
+# To turn off all back channel SLO requests set slo.disabled to true
+# slo.callbacks.disabled=false
+```
 
 ### Single Logout Per Service
 
