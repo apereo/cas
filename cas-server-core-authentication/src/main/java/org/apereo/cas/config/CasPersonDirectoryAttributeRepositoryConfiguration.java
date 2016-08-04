@@ -58,7 +58,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
-    public IPersonAttributeDao stubAttributeRepository() {
+    public IPersonAttributeDao attributeRepository() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
 
         addLdapAttributeRepository(list);
@@ -80,9 +80,11 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     private void addGroovyAttributeRepository(final List<IPersonAttributeDao> list) {
         final PrincipalAttributesProperties.Groovy groovy = casProperties.getAuthn().getAttributeRepository().getGroovy();
-        final GroovyPersonAttributeDao dao = new GroovyPersonAttributeDao(new GroovyScriptDao(applicationContext, casProperties));
-        dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
-        list.add(dao);
+        if (groovy.getConfig().getLocation() != null) {
+            final GroovyPersonAttributeDao dao = new GroovyPersonAttributeDao(new GroovyScriptDao(applicationContext, casProperties));
+            dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
+            list.add(dao);
+        }
     }
 
     private IPersonAttributeDao composeMergedAndCachedAttributeRepositories(final List<IPersonAttributeDao> list) {
