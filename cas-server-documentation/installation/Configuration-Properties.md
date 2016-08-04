@@ -1288,6 +1288,18 @@ same IP address.
 # cas.sso.renewedAuthn=true
 ```
 
+## Warning Cookie
+
+Created by CAS if and when users are to be warned when accessing CAS protected services.
+
+```properties
+# cas.warningCookie.path=
+# cas.warningCookie.maxAge=-1
+# cas.warningCookie.domain=
+# cas.warningCookie.name=CASPRIVACY
+# cas.warningCookie.secure=true
+```
+
 ## Ticket Granting Cookie
 
 ```properties
@@ -1302,14 +1314,24 @@ same IP address.
 # cas.tgc.cipherEnabled=true
 ```
 
-
 ## Logout
+
+Control various settings related to CAS logout functionality. 
 
 ```properties
 # cas.logout.followServiceRedirects=false
 ```
 
+## Single Logout
+
+```properties
+# cas.slo.disabled=false
+# cas.slo.asynchronous=true
+```
+
 ## Clearpass
+
+Capture and cache user credentials and optionally release them to trusted applications.
 
 ```properties
 # cas.clearpass.cacheCredential=false
@@ -1332,6 +1354,8 @@ same IP address.
 ```
 
 ## Audit
+
+Control how audit messages are formatted. 
 
 ```properties
 # cas.audit.auditFormat=DEFAULT
@@ -1370,17 +1394,6 @@ Store audit logs inside a database.
 # cas.audit.jdbc.pool.maxWait=2000
 ```
 
-## Warning Cookie
-
-Created by CAS if and when users are to be warned when accessing CAS protected services.
-
-```properties
-# cas.warningCookie.path=
-# cas.warningCookie.maxAge=-1
-# cas.warningCookie.domain=
-# cas.warningCookie.name=CASPRIVACY
-# cas.warningCookie.secure=true
-```
 
 ## Monitor -> Ticket Granting Tickets
 
@@ -2083,14 +2096,8 @@ and all other webflow related settings.
 # cas.rest.throttler=neverThrottle
 ```
 
-## Single Logout
 
-```properties
-# cas.slo.disabled=false
-# cas.slo.asynchronous=true
-```
-
-## Metrics & Perf Stats
+## Metrics & Performance Stats
 
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
