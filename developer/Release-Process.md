@@ -16,4 +16,4 @@ The guidelines are [documented here](Release-Process-42X.html).
 
 ## CAS 5.0.x
 
-The guidelines are [documented here](Release-Process-50X.html)
+The guidelines are [documented here](Release-Process-50X.html).
