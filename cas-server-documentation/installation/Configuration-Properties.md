@@ -1932,8 +1932,9 @@ applicable to STs.
 Provides a hard-time out as well as a sliding window.
 
 ```properties
-# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 (Set to a negative value to never expire tickets)
-# cas.ticket.tgt.timeToKillInSeconds=7200 (Set to a negative value to never expire tickets)
+# Set to a negative value to never expire tickets
+# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 ()
+# cas.ticket.tgt.timeToKillInSeconds=7200
 ```
 
 ## TGT Expiration Policy -> Remember Me
