@@ -17,6 +17,7 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.springframework.util.Assert;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +55,9 @@ public class CasAppender extends AbstractAppender {
      */
     public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout());
+        Assert.notNull(config, "Log configuration cannot be null");
+        Assert.notNull(config, "Appender reference configuration cannot be null");
+        
         this.config = config;
         this.appenderRef = appenderRef;
     }
@@ -81,12 +85,21 @@ public class CasAppender extends AbstractAppender {
                 .setThrown(logEvent.getThrown())
                 .setTimeMillis(logEvent.getTimeMillis()).build();
         
-        final Appender appender = this.config.getAppender(this.appenderRef.getRef());
-        appender.append(newLogEvent);
+        final String refName = this.appenderRef.getRef();
+        if (StringUtils.isNotBlank(refName)) {
+            final Appender appender = this.config.getAppender(refName);
+            if (appender != null) {
+                appender.append(newLogEvent);
+            } else {
+                throw new IllegalArgumentException("No log appender could be found for " + refName);
+            }
+        } else {
+            throw new IllegalArgumentException("No log appender reference could be located in your logging configuration.");
+        }
     }
 
     /**
-     * Create appende cas appender.
+     * Create appender cas appender.
      *
      * @param name        the name
      * @param appenderRef the appender ref

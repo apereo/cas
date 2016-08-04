@@ -2,8 +2,12 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.services.persondir.support.QueryType;
+import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,8 +69,12 @@ public class PrincipalAttributesProperties {
 
     public static class Jdbc extends AbstractJpaProperties {
         private String sql;
-
-        private String username;
+        private boolean singleRow = true;
+        private boolean requireAllAttributes = true;
+        private CaseCanonicalizationMode caseCanonicalization = CaseCanonicalizationMode.NONE;
+        private QueryType queryType = QueryType.AND;
+        private Map<String, String> columnMappings = new HashMap<>();
+        private List<String> username = new ArrayList<>();
 
         public String getSql() {
             return sql;
@@ -76,12 +84,52 @@ public class PrincipalAttributesProperties {
             this.sql = sql;
         }
 
-        public String getUsername() {
+        public List<String> getUsername() {
             return username;
         }
 
-        public void setUsername(final String username) {
+        public void setUsername(final List<String> username) {
             this.username = username;
+        }
+
+        public boolean isSingleRow() {
+            return singleRow;
+        }
+
+        public void setSingleRow(final boolean singleRow) {
+            this.singleRow = singleRow;
+        }
+
+        public boolean isRequireAllAttributes() {
+            return requireAllAttributes;
+        }
+
+        public void setRequireAllAttributes(final boolean requireAllAttributes) {
+            this.requireAllAttributes = requireAllAttributes;
+        }
+
+        public CaseCanonicalizationMode getCaseCanonicalization() {
+            return caseCanonicalization;
+        }
+
+        public void setCaseCanonicalization(final CaseCanonicalizationMode caseCanonicalization) {
+            this.caseCanonicalization = caseCanonicalization;
+        }
+
+        public QueryType getQueryType() {
+            return queryType;
+        }
+
+        public void setQueryType(final QueryType queryType) {
+            this.queryType = queryType;
+        }
+
+        public Map<String, String> getColumnMappings() {
+            return columnMappings;
+        }
+
+        public void setColumnMappings(final Map<String, String> columnMappings) {
+            this.columnMappings = columnMappings;
         }
     }
 

@@ -9,6 +9,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultTicketCipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -163,14 +164,14 @@ public class Beans {
     /**
      * New attribute repository person attribute dao.
      *
-     * @param attributes the attributes
+     * @param p the properties
      * @return the person attribute dao
      */
-    public static IPersonAttributeDao newAttributeRepository(final Map<String, String> attributes) {
+    public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
             final Map pdirMap = new HashMap<>();
-            attributes.entrySet().forEach(entry -> {
+            p.getAttributes().entrySet().forEach(entry -> {
                 pdirMap.put(entry.getKey(), Lists.newArrayList(entry.getValue()));
             });
             dao.setBackingMap(pdirMap);
@@ -247,7 +248,7 @@ public class Beans {
         entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         return entryResolver;
     }
-    
+
     /**
      * New pooled connection factory pooled connection factory.
      *
@@ -285,10 +286,10 @@ public class Beans {
         if (l.getSaslMechanism() != null) {
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
-            switch(l.getSaslMechanism()) {
+            switch (l.getSaslMechanism()) {
                 case DIGEST_MD5:
                     sc = new DigestMd5Config();
-                    ((DigestMd5Config)sc).setRealm(l.getSaslRealm());
+                    ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
                     break;
 
                 case CRAM_MD5:
@@ -301,7 +302,7 @@ public class Beans {
 
                 case GSSAPI:
                     sc = new GssApiConfig();
-                    ((GssApiConfig)sc).setRealm(l.getSaslRealm());
+                    ((GssApiConfig) sc).setRealm(l.getSaslRealm());
                     break;
 
                 default:
@@ -401,7 +402,7 @@ public class Beans {
      * the username as a parameter.
      *
      * @param filterQuery the query filter
-     * @param params the username
+     * @param params      the username
      * @return Search filter with parameters applied.
      */
     public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
