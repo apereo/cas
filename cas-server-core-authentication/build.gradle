@@ -9,6 +9,7 @@ dependencies {
     compile libraries.persondirectory
     compile libraries.httpclient
     compile libraries.spring
+    compile libraries.groovy
     compile libraries.hibernate
     compile libraries.springcloud
     compile libraries.springboot

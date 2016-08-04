@@ -217,6 +217,9 @@ Set of authentication attributes that are retrieved by the principal resolution 
 typically via some component of [Person Directory](..\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
+If no other attribute source is defined, the below attributes are used to create
+a static/stub attribute repository.
+
 ```properties
 # cas.authn.attributeRepository.attributes.uid=uid
 # cas.authn.attributeRepository.attributes.displayName=displayName
@@ -252,6 +255,53 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap.prunePeriod=600
 # cas.authn.attributeRepository.ldap.blockWaitTime=5000
 # cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+```
+
+If you wish to directly and separately retrieve attributes from a Groovy script,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.groovy.config.location=file:/etc/cas/attributes.groovy
+# cas.authn.attributeRepository.groovy.caseInsensitive=false
+```
+
+The Groovy script may be designed as:
+
+```groovy
+import java.util.List;
+import java.util.Map;
+
+class SampleGroovyPersonAttributeDao {
+    def Map<String, List<Object>> run(final Object... args) {
+        def uid = args[0]
+        def logger = args[1];
+
+        logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
+        return[name:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+    }
+}
+```
+
+If you wish to directly and separately retrieve attributes from a static JSON source,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.json.config.location=file://etc/cas/attribute-repository.json
+```
+
+The format of the file may be:
+
+```json
+{
+    "user1": {
+        "firstName":["Json1"],
+        "lastName":["One"]
+    },
+    "user2": {
+        "firstName":["Json2"],
+        "eduPersonAffiliation":["employee", "student"]
+    }
+}
 ```
 
 If you wish to directly and separately retrieve attributes from a JDBC source,
