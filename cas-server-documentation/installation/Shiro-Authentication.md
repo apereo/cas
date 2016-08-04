@@ -5,10 +5,11 @@ title: CAS - Shiro Authentication
 
 
 # Shiro Authentication
-CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/). This is handled by an instance of `ShiroAuthenticationHandler`.
+CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/). 
 
 
-## Authentication Components
+## Components
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -19,7 +20,8 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-### Shiro Configuration
+## Shiro Configuration
+
 Apache Shiro supports retrieving and checking roles and permissions for an authenticated
 subject. CAS exposes a modest configuration to enforce roles and permissions as part
 of the authentication, so that in their absence, the authentication may fail.
