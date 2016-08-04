@@ -20,8 +20,8 @@ The following settings are expected:
 
 ```properties
 # svcreg.database.ddl.auto=create-drop
-# svcreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
-# svcreg.database.hibernate.batchSize=10
+# svcreg.database.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
+# svcreg.database.batchSize=10
 # svcreg.database.driverClass=org.hsqldb.jdbcDriver
 # svcreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
 # svcreg.database.user=sa
