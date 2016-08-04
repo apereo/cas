@@ -2008,7 +2008,7 @@ Provides a hard-time out as well as a sliding window.
 
 ```properties
 # Set to a negative value to never expire tickets
-# cas.ticket.tgt.maxTimeToLiveInSeconds=28800 ()
+# cas.ticket.tgt.maxTimeToLiveInSeconds=28800
 # cas.ticket.tgt.timeToKillInSeconds=7200
 ```
 
