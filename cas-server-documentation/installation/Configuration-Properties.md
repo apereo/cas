@@ -238,7 +238,6 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap.baseDn=dc=example,dc=org
 # cas.authn.attributeRepository.ldap.userFilter=cn={user}
 # cas.authn.attributeRepository.ldap.subtreeSearch=true
-# cas.authn.attributeRepository.ldap.usePasswordPolicy=true
 # cas.authn.attributeRepository.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.attributeRepository.ldap.bindCredential=Password
 # cas.authn.attributeRepository.ldap.trustCertificates=
