@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
-import org.apache.commons.lang3.StringUtils;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
@@ -22,7 +22,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -172,7 +172,7 @@ public class GoogleAuthentiacatorConfiguration {
 
     @Bean
     @RefreshScope
-    public AbstractMultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
         return new GoogleAuthenticatorMultifactorAuthenticationProvider();
     }
     

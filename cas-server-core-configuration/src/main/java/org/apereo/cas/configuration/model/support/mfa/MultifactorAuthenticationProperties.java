@@ -402,9 +402,10 @@ public class MultifactorAuthenticationProperties {
             this.apiUrl = apiUrl;
         }
     }
+    
     public static class GAuth {
-        private String issuer;
-        private String label;
+        private String issuer = "CASIssuer";
+        private String label = "CASLabel";
         private int rank;
 
         private int codeDigits = 6;
