@@ -84,10 +84,12 @@ John Smith
 
 ```
 
-## Update Maven Overlay
+## Update Overlays
+
 Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
 
-- [CAS WebApp Overlay](https://github.com/apereo/cas-overlay-template)
+- [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
+- [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
 - [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
 
 
