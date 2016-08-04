@@ -118,7 +118,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean(name = {"stubAttributeRepository", "attributeRepository"})
     public IPersonAttributeDao stubAttributeRepository() {
-        return Beans.newAttributeRepository(casProperties.getAuthn().getAttributeRepository().getAttributes());
+        return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
     
     @Bean

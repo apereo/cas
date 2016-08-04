@@ -257,10 +257,19 @@ the following settings are then relevant:
 If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
 
-
 ```properties
+# cas.authn.attributeRepository.jdbc.singleRow=true
+# cas.authn.attributeRepository.jdbc.requireAllAttributes=true
+# cas.authn.attributeRepository.jdbc.caseCanonicalization=NONE|LOWER|UPPER
+# cas.authn.attributeRepository.jdbc.queryType=OR|AND
+
+# Used only when there is a mapping of many rows to one user
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName1=columnAttrValue1
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName2=columnAttrValue2
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName3=columnAttrValue3
+
 # cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc.username=uid_field
+# cas.authn.attributeRepository.jdbc.username=uid
 # cas.authn.attributeRepository.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.authn.attributeRepository.jdbc.isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
@@ -282,7 +291,6 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc.pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc.pool.maxWait=2000
 ```
-
 
 ## Principal Resolution
 
