@@ -27,6 +27,7 @@ following are known to work well and should receive first-class support on the
 [Community Discussion Mailing List](../Mailing-Lists.html):
 
 * [JBoss](http://www.jboss.org/)
+* [Undertow](http://undertow.io/)
 * [Jetty](http://www.eclipse.org/jetty/)
 * [GlassFish](http://glassfish.java.net/)
 * [WebSphere](http://www.ibm.com/software/websphere/)
