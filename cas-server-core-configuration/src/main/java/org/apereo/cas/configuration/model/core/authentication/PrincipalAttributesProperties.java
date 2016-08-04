@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.AbstractConfigProperties;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
@@ -24,8 +25,25 @@ public class PrincipalAttributesProperties {
     private Map<String, String> attributes = new HashMap();
 
     private Jdbc jdbc = new Jdbc();
-
+    private Groovy groovy = new Groovy();
     private Ldap ldap = new Ldap();
+    private Json json = new Json();
+
+    public Groovy getGroovy() {
+        return groovy;
+    }
+
+    public void setGroovy(final Groovy groovy) {
+        this.groovy = groovy;
+    }
+
+    public Json getJson() {
+        return json;
+    }
+
+    public void setJson(final Json json) {
+        this.json = json;
+    }
 
     public Ldap getLdap() {
         return ldap;
@@ -133,6 +151,22 @@ public class PrincipalAttributesProperties {
         }
     }
 
+    public static class Json extends AbstractConfigProperties {
+        
+    }
+
+    public static class Groovy extends AbstractConfigProperties {
+        private boolean caseInsensitive;
+
+        public boolean isCaseInsensitive() {
+            return caseInsensitive;
+        }
+
+        public void setCaseInsensitive(final boolean caseInsensitive) {
+            this.caseInsensitive = caseInsensitive;
+        }
+    }
+    
     public static class Ldap extends AbstractLdapProperties {
         private boolean subtreeSearch = true;
         private String baseDn;
