@@ -19,37 +19,31 @@ a different caching model, attributes by default and from
 a CAS perspective will not be refreshed and retrieved again on subsequent requests 
 as long as the SSO session exists.</p></div>
 
+## Person Directory
 
-## Components
+A framework for resolving persons and attributes from a variety of underlying sources. 
+It consists of a collection of DAOs that retrieve, cache, resolve, aggregate, 
+merge person attributes from JDBC, LDAP and more.
 
-A Person Directory `IPersonAttributeDao` attribute source noted by an `attributeRepository` bean 
-is defined and configured to describe the global set of attributes to be fetched 
+Attributes sources noted by an `attributeRepository` bean 
+are defined and configured to describe the global set of attributes to be fetched 
 for each authenticated principal. That global set of attributes is then filtered by the 
 service manager according to service-specific attribute release rules. 
 
-Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP and JDBC sources.
+Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP and JDBC sources, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration directly
 on your own. 
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
-
-### Person Directory
-
-| Component         					| Description 
-|-----------------------------------+--------------------------------------------------------------------------------+
-| `MessageFormatPersonAttributeDao`| Provides the ability to create attributes based on other other attribute values as arguments.
-| `RegexGatewayPersonAttributeDao`| Conditionally execute an inner DAO if the data in the seed matches criteria set out by the configured patterns.
-
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
 <div class="alert alert-info"><strong>Principal Resolution</strong><p>Note that in most if not all cases, 
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would 
 eliminate the need for configuring a separate DAO specially if both the authentication and the attribute source are the same. 
-DAOs listed here should only be used when sources are different, or when there is a need to tackle more advanced attribute 
-resolution use cases such as those that involve merging, cascading and elaborate 
-caching techniques. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
+Using separate DAOs should only be required when sources are different, or when there is a need to tackle more advanced attribute 
+resolution use cases. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
-### Shibboleth
+## Shibboleth
 
 <div class="alert alert-warning"><strong>Tread Lightly!</strong><p>Note that this module is <strong>EXPERIMENTAL</strong>.</p></div>
 
@@ -66,7 +60,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 You may also need to declare the following Maven repository in your 
-CAS Overlay to be able to resolve dependencies:
+CAS overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>
