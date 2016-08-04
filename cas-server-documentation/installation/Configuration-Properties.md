@@ -654,7 +654,9 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
+
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+
 # cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
 # cas.authn.ldap[0].saslRealm=EXAMPLE.COM
 # cas.authn.ldap[0].saslAuthorizationId=
@@ -674,8 +676,8 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].validatePeriod=600
 
 # cas.authn.ldap[0].failFast=true
-# cas.authn.ldap[0].idleTime=500
-# cas.authn.ldap[0].prunePeriod=600
+# cas.authn.ldap[0].idleTime=5000
+# cas.authn.ldap[0].prunePeriod=5000
 # cas.authn.ldap[0].blockWaitTime=5000
 
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
