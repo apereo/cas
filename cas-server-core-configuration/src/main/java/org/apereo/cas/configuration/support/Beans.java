@@ -37,6 +37,11 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.sasl.CramMd5Config;
+import org.ldaptive.sasl.DigestMd5Config;
+import org.ldaptive.sasl.ExternalConfig;
+import org.ldaptive.sasl.GssApiConfig;
+import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -277,7 +282,40 @@ public class Beans {
             cc.setSslConfig(new SslConfig());
         }
 
-        if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
+        if (l.getSaslMechanism() != null) {
+            final BindConnectionInitializer bc = new BindConnectionInitializer();
+            final SaslConfig sc;
+            switch(l.getSaslMechanism()) {
+                case DIGEST_MD5:
+                    sc = new DigestMd5Config();
+                    ((DigestMd5Config)sc).setRealm(l.getSaslRealm());
+                    break;
+
+                case CRAM_MD5:
+                    sc = new CramMd5Config();
+                    break;
+
+                case EXTERNAL:
+                    sc = new ExternalConfig();
+                    break;
+
+                case GSSAPI:
+                    sc = new GssApiConfig();
+                    ((GssApiConfig)sc).setRealm(l.getSaslRealm());
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown SASL mechanism " + l.getSaslMechanism().name());
+
+            }
+
+            sc.setAuthorizationId(l.getSaslAuthorizationId());
+            sc.setMutualAuthentication(l.getSaslMutualAuth());
+            sc.setQualityOfProtection(l.getSaslQualityOfProtection());
+            sc.setSecurityStrength(l.getSaslSecurityStrength());
+            bc.setBindSaslConfig(sc);
+            cc.setConnectionInitializer(bc);
+        } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
             cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
