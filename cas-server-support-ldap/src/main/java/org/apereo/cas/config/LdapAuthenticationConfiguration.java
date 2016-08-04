@@ -27,12 +27,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.PostConstruct;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -141,7 +141,20 @@ public class LdapAuthenticationConfiguration {
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.DIRECT) {
             return getDirectBindAuthenticator(l);
         }
+        if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.SASL) {
+            return getSASLAuthenticator(l);
+        }
         return getAuthenticatedOrAnonSearchAuthenticator(l);
+    }
+
+    private static Authenticator getSASLAuthenticator(final LdapAuthenticationProperties l) {
+        final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
+        resolver.setBaseDn(l.getBaseDn());
+        resolver.setSubtreeSearch(l.isSubtreeSearch());
+        resolver.setAllowMultipleDns(l.isAllowMultipleDns());
+        resolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
+        resolver.setUserFilter(l.getUserFilter());
+        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
     }
 
     private static Authenticator getAuthenticatedOrAnonSearchAuthenticator(final LdapAuthenticationProperties l) {
