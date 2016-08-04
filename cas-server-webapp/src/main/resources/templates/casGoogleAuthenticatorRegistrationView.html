@@ -15,6 +15,12 @@
                 <img th:src="@{/gauth/qrgen(key=${keyUri})}"/>
                 <br/>
                 <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}"></p>
+
+                <p>Scratch Codes:
+                    <ul>
+                        <li th:each="code : ${key.getScratchCodes()}" th:text="${code}"/>
+                    </ul>
+                </p>
                 <input type="hidden" name="_eventId" value="submit"/>
                 <input class="btn-submit" name="submit" accesskey="l"
                        th:value="#{screen.welcome.button.register}" tabindex="4" type="submit"/>
