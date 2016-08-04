@@ -217,6 +217,9 @@ Set of authentication attributes that are retrieved by the principal resolution 
 typically via some component of [Person Directory](..\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
+If no other attribute source is defined, the below attributes are used to create
+a static/stub attribute repository.
+
 ```properties
 # cas.authn.attributeRepository.attributes.uid=uid
 # cas.authn.attributeRepository.attributes.displayName=displayName
@@ -254,13 +257,71 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 ```
 
+If you wish to directly and separately retrieve attributes from a Groovy script,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.groovy.config.location=file:/etc/cas/attributes.groovy
+# cas.authn.attributeRepository.groovy.caseInsensitive=false
+```
+
+The Groovy script may be designed as:
+
+```groovy
+import java.util.List
+import java.util.Map
+
+class SampleGroovyPersonAttributeDao {
+    def Map<String, List<Object>> run(final Object... args) {
+        def uid = args[0]
+        def logger = args[1];
+        def casProperties = args[2]
+        def casApplicationContext = args[3]
+
+        logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
+        return[name:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+    }
+}
+```
+
+If you wish to directly and separately retrieve attributes from a static JSON source,
+the following settings are then relevant:
+
+```properties
+# cas.authn.attributeRepository.json.config.location=file://etc/cas/attribute-repository.json
+```
+
+The format of the file may be:
+
+```json
+{
+    "user1": {
+        "firstName":["Json1"],
+        "lastName":["One"]
+    },
+    "user2": {
+        "firstName":["Json2"],
+        "eduPersonAffiliation":["employee", "student"]
+    }
+}
+```
+
 If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
 
-
 ```properties
+# cas.authn.attributeRepository.jdbc.singleRow=true
+# cas.authn.attributeRepository.jdbc.requireAllAttributes=true
+# cas.authn.attributeRepository.jdbc.caseCanonicalization=NONE|LOWER|UPPER
+# cas.authn.attributeRepository.jdbc.queryType=OR|AND
+
+# Used only when there is a mapping of many rows to one user
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName1=columnAttrValue1
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName2=columnAttrValue2
+# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName3=columnAttrValue3
+
 # cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc.username=uid_field
+# cas.authn.attributeRepository.jdbc.username=uid
 # cas.authn.attributeRepository.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.authn.attributeRepository.jdbc.isolateInternalQueries=false
 # cas.authn.attributeRepository.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
@@ -282,7 +343,6 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc.pool.maxIdleTime=1000
 # cas.authn.attributeRepository.jdbc.pool.maxWait=2000
 ```
-
 
 ## Principal Resolution
 
