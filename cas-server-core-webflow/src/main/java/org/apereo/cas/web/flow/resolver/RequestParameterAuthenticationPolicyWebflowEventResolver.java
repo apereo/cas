@@ -27,7 +27,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
@@ -45,7 +45,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     getAllMultifactorAuthenticationProvidersFromApplicationContext();
             if (providerMap == null || providerMap.isEmpty()) {
-                logger.warn("No multifactor authentication providers are available in the application context");
+                logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", values);
                 throw new AuthenticationException();
             }
 
@@ -67,7 +67,6 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
                 logger.warn("No multifactor provider could be found for request parameter {}", values);
                 throw new AuthenticationException();
             }
-
         }
         logger.debug("No value could be found for request parameter {}", casProperties.getAuthn().getMfa().getRequestParameter());
         return null;
