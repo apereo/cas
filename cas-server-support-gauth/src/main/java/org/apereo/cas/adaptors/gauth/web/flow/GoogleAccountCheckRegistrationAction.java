@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -20,7 +22,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * @since 5.0.0
  */
 public class GoogleAccountCheckRegistrationAction extends AbstractAction {
-
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private CasConfigurationProperties casProperties;
     
@@ -31,9 +34,9 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
-        if (StringUtils.isNotBlank(googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid))) {
+        final String secretKey = googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
+        if (StringUtils.isBlank(secretKey)) {
             final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
-
             final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
 
@@ -42,6 +45,8 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
             requestContext.getFlowScope().put("key", keyAccount);
             requestContext.getFlowScope().put("keyUri", keyUri);
 
+            logger.debug("Registration key URI is {}", keyUri);
+            
             return new EventFactorySupport().event(this, "register");
         }
 
