@@ -296,7 +296,7 @@ all case-sensitive.
 
 -   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   `lt` [REQUIRED] - a login ticket. This is provided as part of the login form
+-   `lt` [OPTIONAL] - a login ticket. This is provided as part of the login form
     discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
     in Section [3.5](#head3.5).
 
@@ -1170,7 +1170,7 @@ Section [2.5.4](<#head2.5.4>) for a full description of this process.
 **3.5. login ticket**
 ---------------------
 
-A login ticket is a string that is provided by `/login` as a credential requester
+A login ticket is an **optional** string that is provided by `/login` as a credential requester
 and passed to `/login` as a credential acceptor for username/password
 authentication. Its purpose is to prevent the replaying of credentials due to
 bugs in web browsers.
