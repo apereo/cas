@@ -296,7 +296,7 @@ all case-sensitive.
 
 -   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   `lt` [REQUIRED] - a login ticket. This is provided as part of the login form
+-   `lt` [OPTIONAL] - a login ticket. This is provided as part of the login form
     discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
     in Section [3.5](#head3.5).
 
@@ -560,9 +560,9 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 
 -   `format` [OPTIONAL] - if this parameter is set, ticket validation response
     MUST be produced based on the parameter value. Supported values are `XML`
-    and `JSON`. If this parameter is not set, the default `XML` format will be used. 
+    and `JSON`. If this parameter is not set, the default `XML` format will be used.
     If the parameter value is not supported by the CAS server, an error code
-    MUST be returned as is described in section [2.5.3](<#head2.5.3>). 
+    MUST be returned as is described in section [2.5.3](<#head2.5.3>).
 
 <a name="head2.5.2"/>
 
@@ -666,10 +666,10 @@ The proxy callback mechanism works as follows:
     "pgtUrl" to `/serviceValidate` (or `/proxyValidate`). This is a callback URL of
     the service to which CAS will connect to verify the service's identity. This
     URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust.
-    Building trust at a minimum involves utilizing PKIX and employing container trust to 
+    Building trust at a minimum involves utilizing PKIX and employing container trust to
     validate the signature, chain and the expiration window of the certificate of the
     callback url. The generation of the proxy-granting-ticket or the corresponding
-    proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum 
+    proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum
     security requirements such as failure to establishing trust between peers or unresponsiveness
     of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS
     service response as described in Section [2.5.2](#head2.5.2) MUST NOT contain a
@@ -680,7 +680,7 @@ The proxy callback mechanism works as follows:
 2.  CAS uses an HTTP GET request to pass the HTTP request parameters `pgtId` and
     `pgtIou` to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
     [3.4](#head3.4), respectively. If the proxy callback url specifies any parameters, those
-    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying 
+    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying
     the response HTTP status code from the GET request, as detailed in step #3. If the
     proxy service fails to authenticate or the endpoint responds with an unacceptable status
     code, proxy authentication MUST fail and CAS MUST respond with the appropriate error code
@@ -804,7 +804,7 @@ the XML schema in Appendix A. Below are example responses:
 Response on ticket validation success:
 
 ```xml
-  <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas"> 
+  <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
     <cas:authenticationSuccess>
       <cas:user>username</cas:user>
       <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
@@ -812,7 +812,7 @@ Response on ticket validation success:
         <cas:proxy>https://proxy2/pgtUrl</cas:proxy>
         <cas:proxy>https://proxy1/pgtUrl</cas:proxy>
       </cas:proxies>
-    </cas:authenticationSuccess> 
+    </cas:authenticationSuccess>
   </cas:serviceResponse>
 ```
 
@@ -1415,7 +1415,7 @@ SAML 1.0 or 1.1 request XML document of document type "text/xml".
 POST /cas/samlValidate?TARGET=
 Host: cas.example.com
 Content-Length: 491
-Content-Type: text/xml 
+Content-Type: text/xml
 ```
 
 ```xml
@@ -1758,7 +1758,7 @@ specific language governing permissions and limitations under the License.
 **Appendix F: YALE License**
 ===========================
 
-Copyright (c) 2000-2005 Yale University. 
+Copyright (c) 2000-2005 Yale University.
 
 THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
