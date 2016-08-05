@@ -72,7 +72,15 @@ public class LdapAuthenticationConfiguration {
                 handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
                 final Map<String, String> attributes = new HashMap<>();
-                l.getPrincipalAttributeList().forEach(a -> attributes.put(a.toString(), a.toString()));
+                l.getPrincipalAttributeList().forEach(a -> {
+                    final String attributeName = a.toString().trim();
+                    if (attributeName.contains(":")) {
+                        final String[] attrCombo = attributeName.split(":");
+                        attributes.put(attrCombo[0].trim(), attrCombo[1].trim());
+                    } else {
+                        attributes.put(attributeName, attributeName);
+                    }
+                });
                 attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
                 handler.setPrincipalAttributeMap(attributes);
 
