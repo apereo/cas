@@ -534,9 +534,9 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
 
-# cas.authn.jdbc.bind[0].principalTransformation.suffix=
-# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.bind[0].principalTransformation.prefix=
+# cas.authn.jdbc.query[0].principalTransformation.suffix=
+# cas.authn.jdbc.query[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.query[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Search
@@ -570,9 +570,9 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
 
-# cas.authn.jdbc.bind[0].principalTransformation.suffix=
-# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.bind[0].principalTransformation.prefix=
+# cas.authn.jdbc.search[0].principalTransformation.suffix=
+# cas.authn.jdbc.search[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.search[0].principalTransformation.prefix=
 ```
 
 ## Database Authentication -> Bind
@@ -649,9 +649,9 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
 
-# cas.authn.jdbc.bind[0].principalTransformation.suffix=
-# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.bind[0].principalTransformation.prefix=
+# cas.authn.jdbc.encode[0].principalTransformation.suffix=
+# cas.authn.jdbc.encode[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.jdbc.encode[0].principalTransformation.prefix=
 ```
 
 ## MongoDb Authentication
@@ -1375,7 +1375,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ## Logout
 
-Control various settings related to CAS logout functionality. 
+Control various settings related to CAS logout functionality.
 
 ```properties
 # cas.logout.followServiceRedirects=false
@@ -1414,7 +1414,7 @@ Capture and cache user credentials and optionally release them to trusted applic
 
 ## Audit
 
-Control how audit messages are formatted. 
+Control how audit messages are formatted.
 
 ```properties
 # cas.audit.auditFormat=DEFAULT
