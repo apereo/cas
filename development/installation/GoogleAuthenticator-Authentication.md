@@ -9,7 +9,7 @@ Google Authenticator generates 2-step verification codes on your phone. With 2-s
 
 Start by visiting the [Google documentation](https://accounts.google.com/SmsAuthConfig).
 
-Support is enabled by including the following module in the Overlay:
+Support is enabled by including the following module in the overlay:
 
 ```xml
 <dependency>
@@ -29,5 +29,16 @@ By defaults, an account registry implementation is included that collects user d
 This option should only be used for demo and testing purposes. Production deployments of this feature will require a separate
 implementation of the registry that is capable to register accounts into persistent storage. 
 
-To provide such an option, provide an implementation of `GoogleAuthenticatorAccountRegistry`. Make sure your implementation
-is named `googleAuthenticatorAccountRegistry` in the Spring configuration. 
+### JPA
+
+Registration records may be kept inside a database instance, via the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-gauth-jpa</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

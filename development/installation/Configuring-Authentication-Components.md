@@ -7,7 +7,6 @@ title: CAS - Configuring Authentication Components
 
 The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
 
-
 ## Authentication Manager
 CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
@@ -33,9 +32,10 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose. 
 
-<div class="alert alert-info"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
-use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively.</p></div>
-
+<div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
+use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
+configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration 
+prior to production rollouts.</p></div>
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
