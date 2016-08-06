@@ -1,8 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -16,12 +14,13 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.core.io.Resource;
 
@@ -58,18 +57,19 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
         try {
-            final RememberMeUsernamePasswordCredential credential =
-                    (RememberMeUsernamePasswordCredential) transformedCredential;
-            final UsernamePasswordToken token = new UsernamePasswordToken(credential.getUsername(),
-                    credential.getPassword());
-            token.setRememberMe(credential.isRememberMe());
+            final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
+                    transformedCredential.getPassword());
+
+            if (transformedCredential instanceof RememberMeUsernamePasswordCredential) {
+                token.setRememberMe(RememberMeUsernamePasswordCredential.class.cast(transformedCredential).isRememberMe());
+            }
 
             final Subject currentUser = getCurrentExecutingSubject();
             currentUser.login(token);
 
             checkSubjectRolesAndPermissions(currentUser);
 
-            return createAuthenticatedSubjectResult(credential, currentUser);
+            return createAuthenticatedSubjectResult(transformedCredential, currentUser);
         } catch (final UnknownAccountException uae) {
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final IncorrectCredentialsException ice) {
@@ -132,12 +132,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     protected Subject getCurrentExecutingSubject() {
         return SecurityUtils.getSubject();
     }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof RememberMeUsernamePasswordCredential;
-    }
-
+    
     /**
      * Sets shiro configuration to the path of the resource
      * that points to the {@code shiro.ini} file.

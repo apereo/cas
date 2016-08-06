@@ -1,6 +1,9 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
@@ -32,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 
 /**
@@ -70,6 +74,11 @@ public class LdapAuthenticationConfiguration {
                 handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                 handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
                 handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
+                
+                if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
+                    handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
+                            .apply(credential.getId()));
+                }
 
                 final Map<String, String> attributes = new HashMap<>();
                 l.getPrincipalAttributeList().forEach(a -> {
