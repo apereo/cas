@@ -1010,6 +1010,29 @@ Allow CAS to become am OpenID authentication provider.
 # cas.authn.mfa.gauth.rank=0
 ```
 
+## Multifactor Authentication -> Google Authenticator JPA
+
+```properties
+# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
+# cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
+# cas.authn.mfa.gauth.jpa.database.failFast=true
+# cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.gauth.jpa.database.leakThreshold=10
+# cas.authn.mfa.gauth.jpa.database.batchSize=1
+# cas.authn.mfa.gauth.jpa.database.user=sa
+# cas.authn.mfa.gauth.jpa.database.ddlAuto=create-drop
+# cas.authn.mfa.gauth.jpa.database.password=
+# cas.authn.mfa.gauth.jpa.database.autocommit=false
+# cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
+
+# cas.authn.mfa.gauth.jpa.database.pool.suspension=false
+# cas.authn.mfa.gauth.jpa.database.pool.minSize=6
+# cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
+# cas.authn.mfa.gauth.jpa.database.pool.maxIdleTime=1000
+# cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
+```
 
 ## Multifactor Authentication -> YubiKey
 
