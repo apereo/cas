@@ -150,12 +150,12 @@ public class LdapAuthenticationConfiguration {
             return getDirectBindAuthenticator(l);
         }
         if (l.getType() == LdapAuthenticationProperties.AuthenticationTypes.SASL) {
-            return getSASLAuthenticator(l);
+            return getSaslAuthenticator(l);
         }
         return getAuthenticatedOrAnonSearchAuthenticator(l);
     }
 
-    private static Authenticator getSASLAuthenticator(final LdapAuthenticationProperties l) {
+    private static Authenticator getSaslAuthenticator(final LdapAuthenticationProperties l) {
         final PooledSearchDnResolver resolver = new PooledSearchDnResolver();
         resolver.setBaseDn(l.getBaseDn());
         resolver.setSubtreeSearch(l.isSubtreeSearch());
