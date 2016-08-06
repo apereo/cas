@@ -198,25 +198,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         throw new FailedLoginException("Invalid credentials");
     }
-
-    /**
-     * Examine account state to see if any errors are present.
-     * If so, throws the relevant security exception.
-     *
-     * @param response the response
-     * @throws LoginException the login exception
-     */
-    /**
-     * Handle post authentication processing.
-     *
-     * @param credential the credential
-     * @return the handler result
-     */
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof UsernamePasswordCredential;
-    }
-
+    
     @Override
     public String getName() {
         return this.name;
