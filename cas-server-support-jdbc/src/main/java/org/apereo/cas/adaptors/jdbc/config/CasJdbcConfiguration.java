@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
+import com.google.common.base.Predicates;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
@@ -21,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.l;
 
 /**
  * This is {@link CasJdbcConfiguration}.
@@ -99,9 +103,14 @@ public class CasJdbcConfiguration {
         }
 
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
+
+        if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
+            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
+                    .apply(credential.getId()));
+        }
+        
         return h;
     }
 
@@ -128,6 +137,11 @@ public class CasJdbcConfiguration {
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
+
+        if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
+            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
+                    .apply(credential.getId()));
+        }
         return h;
     }
 
@@ -147,6 +161,11 @@ public class CasJdbcConfiguration {
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
+
+        if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
+            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
+                    .apply(credential.getId()));
+        }
 
         return h;
     }
@@ -169,6 +188,11 @@ public class CasJdbcConfiguration {
 
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
+
+        if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
+            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
+                    .apply(credential.getId()));
+        }
         return h;
     }
 

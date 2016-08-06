@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -22,23 +24,18 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler {
-
-    /**
-     * PasswordEncoder to be used by subclasses to encode passwords for
-     * comparing against a resource.
-     */
+public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
+    
+    private Predicate<Credential> credentialSelectionPredicate = Predicates.alwaysTrue();
 
-    /** The password policy configuration to be used by extensions. */
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
 
@@ -88,6 +85,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         this.passwordEncoder = passwordEncoder;
     }
 
+    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
+        this.credentialSelectionPredicate = credentialSelectionPredicate;
+    }
+
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
@@ -98,6 +99,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential instanceof UsernamePasswordCredential;
+        if (credential instanceof UsernamePasswordCredential) {
+            if (this.credentialSelectionPredicate != null) {
+                return this.credentialSelectionPredicate.apply(credential);
+            }
+            return true;
+        }
+        return false;
     }
 }

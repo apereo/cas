@@ -527,6 +527,7 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 # cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.query[0].idleTimeout=5000
 # cas.authn.jdbc.query[0].sql=
+# cas.authn.jdbc.query[0].credentialCriteria=
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -563,6 +564,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].autocommit=false
 # cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.search[0].idleTimeout=5000
+# cas.authn.jdbc.search[0].credentialCriteria=
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -596,6 +598,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].autocommit=false
 # cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.bind[0].idleTimeout=5000
+# cas.authn.jdbc.query[0].credentialCriteria=
 
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
@@ -642,6 +645,7 @@ is converted to Hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].autocommit=false
 # cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.encode[0].idleTimeout=5000
+# cas.authn.jdbc.query[0].credentialCriteria=
 
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
@@ -713,6 +717,7 @@ server, simply increment the index and specify the settings for the next LDAP se
 # cas.authn.ldap[0].principalAttributeList=sn,cn,givenName
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
+# cas.authn.ldap[0].credentialCriteria=
 
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 

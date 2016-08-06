@@ -54,7 +54,8 @@ public class JdbcAuthenticationProperties {
 
     public static class Query extends AbstractJpaProperties {
         private String sql;
-
+        private String credentialCriteria;
+        
         @NestedConfigurationProperty
         private PrincipalTransformationProperties principalTransformation =
                 new PrincipalTransformationProperties();
@@ -86,9 +87,18 @@ public class JdbcAuthenticationProperties {
             this.principalTransformation = principalTransformation;
         }
 
+        public String getCredentialCriteria() {
+            return credentialCriteria;
+        }
+
+        public void setCredentialCriteria(final String credentialCriteria) {
+            this.credentialCriteria = credentialCriteria;
+        }
     }
 
     public static class Bind extends AbstractJpaProperties {
+        private String credentialCriteria;
+        
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
@@ -111,16 +121,21 @@ public class JdbcAuthenticationProperties {
         public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
             this.principalTransformation = principalTransformation;
         }
+        public String getCredentialCriteria() {
+            return credentialCriteria;
+        }
 
+        public void setCredentialCriteria(final String credentialCriteria) {
+            this.credentialCriteria = credentialCriteria;
+        }
     }
 
     public static class Search extends AbstractJpaProperties {
         private String fieldUser;
-
         private String fieldPassword;
-
         private String tableUsers;
-
+        private String credentialCriteria;
+        
         @NestedConfigurationProperty
         private PrincipalTransformationProperties principalTransformation =
                 new PrincipalTransformationProperties();
@@ -167,10 +182,17 @@ public class JdbcAuthenticationProperties {
         public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
             this.principalTransformation = principalTransformation;
         }
+        public String getCredentialCriteria() {
+            return credentialCriteria;
+        }
 
+        public void setCredentialCriteria(final String credentialCriteria) {
+            this.credentialCriteria = credentialCriteria;
+        }
     }
 
     public static class Encode extends AbstractJpaProperties {
+        private String credentialCriteria;
         private String algorithmName;
         private String sql;
         private String passwordFieldName = "password";
@@ -257,6 +279,12 @@ public class JdbcAuthenticationProperties {
         public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
             this.principalTransformation = principalTransformation;
         }
+        public String getCredentialCriteria() {
+            return credentialCriteria;
+        }
 
+        public void setCredentialCriteria(final String credentialCriteria) {
+            this.credentialCriteria = credentialCriteria;
+        }
     }
 }
