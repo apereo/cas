@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.core.events.EventsProperties;
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+
 /**
  * Configuration properties class for cas.mfa.
  *
@@ -13,7 +16,7 @@ public class MultifactorAuthenticationProperties {
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
     private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
-    
+
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
     private GAuth gauth = new GAuth();
@@ -125,10 +128,10 @@ public class MultifactorAuthenticationProperties {
 
     public static class Radius {
         private int rank;
-        
+
         private boolean failoverOnException;
         private boolean failoverOnAuthenticationFailure;
-        
+
         private Server server = new Server();
         private Client client = new Client();
 
@@ -402,7 +405,7 @@ public class MultifactorAuthenticationProperties {
             this.apiUrl = apiUrl;
         }
     }
-    
+
     public static class GAuth {
         private String issuer = "CASIssuer";
         private String label = "CASLabel";
@@ -411,6 +414,16 @@ public class MultifactorAuthenticationProperties {
         private int codeDigits = 6;
         private long timeStepSize = 30;
         private int windowSize = 3;
+
+        private Jpa jpa = new Jpa();
+
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
+        }
 
         public int getRank() {
             return rank;
@@ -458,6 +471,24 @@ public class MultifactorAuthenticationProperties {
 
         public void setLabel(final String label) {
             this.label = label;
+        }
+
+        public static class Jpa {
+            private Database database = new Database();
+
+            public Database getDatabase() {
+                return database;
+            }
+
+            public void setDatabase(final Database database) {
+                this.database = database;
+            }
+
+            public static class Database extends AbstractJpaProperties {
+                public Database() {
+                    super.setUrl("jdbc:hsqldb:mem:cas-gauth");
+                }
+            }
         }
     }
 }

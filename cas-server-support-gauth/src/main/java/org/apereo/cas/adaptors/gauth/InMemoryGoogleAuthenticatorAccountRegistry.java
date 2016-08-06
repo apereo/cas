@@ -30,11 +30,7 @@ public class InMemoryGoogleAuthenticatorAccountRegistry implements ICredentialRe
         }
         return null;
     }
-
-    private void save(final String username, final GoogleAuthenticatorAccount account) {
-        saveUserCredentials(username, account.getSecretKey(), account.getValidationCode(), account.getScratchCodes());
-    }
-
+    
     @Override
     public void saveUserCredentials(final String userName, final String secretKey,
                                     final int validationCode,
