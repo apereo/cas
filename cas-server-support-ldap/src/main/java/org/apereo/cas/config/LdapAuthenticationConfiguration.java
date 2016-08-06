@@ -1,9 +1,7 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
@@ -30,13 +28,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
