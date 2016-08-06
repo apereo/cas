@@ -53,6 +53,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    private String credentialCriteria;
     private String dnFormat;
     private String principalAttributeId = "uid";
     private String principalAttributePassword;
@@ -167,5 +168,13 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     public void setAdditionalAttributes(final List additionalAttributes) {
         this.additionalAttributes = additionalAttributes;
+    }
+
+    public String getCredentialCriteria() {
+        return credentialCriteria;
+    }
+
+    public void setCredentialCriteria(final String credentialCriteria) {
+        this.credentialCriteria = credentialCriteria;
     }
 }
