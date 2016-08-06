@@ -24,8 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.l;
-
 /**
  * This is {@link CasJdbcConfiguration}.
  *
