@@ -151,8 +151,8 @@ distributed system with a lightweight message broker:
 
 ## Admin Status Endpoints
 
-The following properties describe access controls and settings to the `/status`
-endpoint of CAS which provide administrative functionality and oversight into the CAS software.
+The following properties describe access controls and settings for the `/status`
+endpoint of CAS which provides administrative functionality and oversight into the CAS software.
 
 ```properties
 # endpoints.enabled=true
