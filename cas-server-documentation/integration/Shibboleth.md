@@ -30,6 +30,7 @@ Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2)
 and [v3](https://github.com/Unicon/shib-cas-authn3).
 
 ### Relying Party EntityId
+
 The authentication plugin is able to pass the relying party's entity ID over 
 to the CAS server upon authentication requests. 
 The entity ID is passed in form of a url parameter to the CAS server as such:
@@ -39,6 +40,7 @@ https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<
 ```
 
 ## Displaying SAML MDUI
+
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party. 
 This means that CAS will also need to know
