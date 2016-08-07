@@ -39,9 +39,10 @@ Components for the following caching technologies are provided:
 ### NoSQL Ticket Registries
 
 CAS also provides support for a variety of other databases, including Redis, MongoDb and Apache 
-Cassandra, for ticket storage and persistence, via the Infinispan data grid platform.
+Cassandra, for ticket storage and persistence:
 
 * [Infinispan](Infinispan-Ticket-Registry.html)
+* [Couchbase](Couchbase-Ticket-Registry.html)
 
 ### Secure Cache Replication
 
