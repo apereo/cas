@@ -73,10 +73,7 @@ CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-The module provides a `shibbolethPersonAttributeDao` that the Shibboleth's `attribute-resolver.xml` 
-configuration file for attribute resolution.
-
-- Alias bean:
+Then add the following to your configuration:
 
 ```xml
 <alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
