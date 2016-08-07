@@ -35,8 +35,7 @@ openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out priv
 openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 
-The `public.key` and `private.p8` go into classpath. The `x509.pem` file should be 
-uploaded into Google Apps under Security/SSO.
+The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
