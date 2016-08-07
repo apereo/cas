@@ -50,6 +50,7 @@
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [SSO Session Cookie](/$version/installation/Configuring-SSO-Session-Cookie.html)
     *   [Logout & SLO](/$version/installation/Logout-Single-Signout.html)
+    *   [ClearPass](/$version/integration/ClearPass.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
 
@@ -109,7 +110,6 @@
     *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
-    *   [ClearPass](/$version/integration/ClearPass.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
