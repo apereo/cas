@@ -118,7 +118,7 @@ If none is specified, one is automatically detected and used by CAS.
 ## Cloud Configuration Bus
 
 CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
-distributed system with a lightweight message broker:
+distributed system with a lightweight message broker.
 
 ```properties
 # spring.cloud.bus.enabled=false
@@ -127,6 +127,8 @@ distributed system with a lightweight message broker:
 # spring.cloud.bus.destination=CasCloudBus
 # spring.cloud.bus.ack.enabled=true
 ```
+
+To learn more about this topic, [please review this guide](Configuration-Management.html).
 
 ### Cloud Configuration Bus -> RabbitMQ
 
@@ -139,7 +141,6 @@ distributed system with a lightweight message broker:
 # Or all of the above in one line
 # spring.rabbitmq.addresses=
 ```
-
 
 ### Cloud Configuration Bus -> Kafka
 
@@ -181,6 +182,10 @@ server.session.trackingModes=COOKIE
 
 ## Views
 
+Control how CAS should treat views and other UI elements.
+
+To learn more about this topic, [please review this guide](User-Interface-Customization-Views.html).
+
 ```properties
 spring.thymeleaf.encoding=UTF-8
 spring.thymeleaf.cache=false
@@ -198,6 +203,7 @@ spring.thymeleaf.cache=false
 ## Logging
 
 Control the location and other settings of the CAS logging configuration.
+To learn more about this topic, [please review this guide](Logging.html).
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
@@ -345,6 +351,9 @@ the following settings are then relevant:
 
 ## Principal Resolution
 
+In the event that a separate resolver is put into place, control
+how the final principal should be constructed by default.
+
 ```properties
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
@@ -399,6 +408,7 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 ## Groovy Shell
 
 Control access and configuration of the embedded Groovy shell in CAS.
+To learn more about this topic, [please review this guide](Configuring-Groovy-Console.html).
 
 ```properties
 # shell.commandRefreshInterval=15
@@ -417,6 +427,8 @@ Control access and configuration of the embedded Groovy shell in CAS.
 
 Control how SAML MDUI elements should be displayed on the main CAS login page
 in the event that CAS is handling authentication for an external SAML2 IdP.
+
+To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
 
 ```properties
 # cas.samlMetadataUi.requireValidMetadata=true
@@ -440,6 +452,8 @@ connections and queries.
 ```
 
 ## Radius Authentication
+
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
 
 ```properties
 # cas.authn.radius.server.nasPortId=-1
@@ -508,6 +522,7 @@ connections and queries.
 ## Database Authentication -> Query
 
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
+To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -543,6 +558,7 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 ## Database Authentication -> Search
 
 Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
+To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
@@ -580,6 +596,7 @@ Searches for a user record by querying against a username and password; the user
 ## Database Authentication -> Bind
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -621,6 +638,8 @@ This password encoding method, combines the private Salt and the public salt whi
 If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash
 is converted to Hex before comparing it to the database value.
 
+To learn more about this topic, [please review this guide](Database-Authentication.html).
+
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
 # cas.authn.jdbc.encode[0].numberOfIterationsFieldName=numIterations
@@ -660,6 +679,8 @@ is converted to Hex before comparing it to the database value.
 
 ## MongoDb Authentication
 
+To learn more about this topic, [please review this guide](MongoDb-Authentication.html).
+
 ```properties
 # cas.authn.mongo.mongoHostUri=mongodb://uri
 # cas.authn.mongo.usernameAttribute=username
@@ -698,6 +719,8 @@ no search is required to compute the DN needed for a bind operation. There are t
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
+
+To learn more about this topic, [please review this guide](LDAP-Authentication.html).
 
 ```properties
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
@@ -771,6 +794,7 @@ server, simply increment the index and specify the settings for the next LDAP se
 ## REST Authentication
 
 This allows the CAS server to reach to a remote REST endpoint via a `POST`.
+To learn more about this topic, [please review this guide](Rest-Authentication.html).
 
 ```properties
 # cas.authn.rest.uri=https://...
@@ -785,6 +809,7 @@ This allows the CAS server to reach to a remote REST endpoint via a `POST`.
 ## Google Apps Authentication
 
 Authenticate via CAS into Google Apps services and applications.
+To learn more about this topic, [please review this guide](../integration/Google-Apps-Integration.html).
 
 ```properties
 # cas.googleApps.publicKeyLocation=file:/etc/cas/public.key
@@ -803,6 +828,8 @@ Allow CAS to become am OpenID authentication provider.
 ```
 
 ## SPNEGO Authentication
+
+To learn more about this topic, [please review this guide](SPNEGO-Authentication.html).
 
 ```properties
 # cas.authn.spnego.kerberosConf=
@@ -865,6 +892,8 @@ Allow CAS to become am OpenID authentication provider.
 
 ## JAAS Authentication
 
+To learn more about this topic, [please review this guide](JAAS-Authentication.html).
+
 ```properties
 # cas.authn.jaas.realm=CAS
 # cas.authn.jaas.kerberosKdcSystemProperty=
@@ -882,6 +911,8 @@ Allow CAS to become am OpenID authentication provider.
 ```
 
 ## Stormpath Authentication
+
+To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
 
 ```properties
 # cas.authn.stormpath.apiKey=
@@ -902,6 +933,11 @@ Allow CAS to become am OpenID authentication provider.
 
 ## Accept Users Authentication
 
+<div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
+use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
+configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration 
+prior to production rollouts.</p></div>
+
 ```properties
 # cas.authn.accept.users=
 
@@ -917,6 +953,8 @@ Allow CAS to become am OpenID authentication provider.
 ```
 
 ## X509 Authentication
+
+To learn more about this topic, [please review this guide](X509-Authentication.html).
 
 ```properties
 # cas.authn.x509.checkKeyUsage=false
@@ -974,6 +1012,8 @@ Allow CAS to become am OpenID authentication provider.
 
 ## WS-Fed Authentication
 
+To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
+
 ```properties
 # cas.authn.wsfed.identityProviderUrl=https://adfs.example.org/adfs/ls/
 # cas.authn.wsfed.identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
@@ -996,6 +1036,8 @@ Allow CAS to become am OpenID authentication provider.
 
 
 ## Multifactor Authentication
+
+To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
 
 ```properties
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
