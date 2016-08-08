@@ -1857,6 +1857,9 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 
 ## Ticket Registry
 
+To learn more about this topic, [please review this guide](Configuring-Ticketing-Components.html).
+
+
 ### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
@@ -1871,7 +1874,7 @@ This section controls how that process should behave.
 
 ### JPA Ticket Registry
 
-To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
@@ -1905,7 +1908,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 
 ### Couchbase Ticket Registry
 
-To learn more about this topic, [please review this guide](Couchbase-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Couchbase-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.couchbase.timeout=10
@@ -1923,7 +1926,7 @@ To learn more about this topic, [please review this guide](Couchbase-Ticket-Regi
 
 ### Hazelcast Ticket Registry
 
-To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html).
 
 
 ```properties
@@ -1962,7 +1965,7 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 
 ### Infinispan Ticket Registry
 
-To learn more about this topic, [please review this guide](Infinispan-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Infinispan-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.infinispan.cacheName=
@@ -1994,7 +1997,7 @@ are kept inside the runtime environment memory.
 
 ### Ehcache Ticket Registry
 
-To learn more about this topic, [please review this guide](Ehcache-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Ehcache-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
@@ -2029,7 +2032,7 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 
 ### Ignite Ticket Registry
 
-To learn more about this topic, [please review this guide](Ignite-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Ignite-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ignite.keyAlgorithm=
@@ -2056,7 +2059,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 
 ### Memcached Ticket Registry
 
-To learn more about this topic, [please review this guide](Memcached-Ticket-Registry.html)
+To learn more about this topic, [please review this guide](Memcached-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.memcached.servers=localhost:11211
