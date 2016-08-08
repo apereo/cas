@@ -198,7 +198,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             final PrincipalAttributesProperties.Groovy groovy = casProperties.getAuthn().getAttributeRepository().getGroovy();
             
             final ClassLoader parent = getClass().getClassLoader();
-            try (final GroovyClassLoader loader = new GroovyClassLoader(parent)) {
+            try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {
                 if (groovy.getConfig().getLocation() != null) {
                     final File groovyFile = groovy.getConfig().getLocation().getFile();
                     if (groovyFile.exists()) {

@@ -57,6 +57,9 @@
 * [Attributes](#attributes)
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
+        *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
+        *   [Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Caching](/$version/integration/Attribute-Release-Caching.html)
 
 * [Ticketing](#ticketing)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)

@@ -79,7 +79,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
                 service.getId(), principalId, principal.getId());
-        return principalId;
+        return principalId.trim();
     }
     
     @Override
