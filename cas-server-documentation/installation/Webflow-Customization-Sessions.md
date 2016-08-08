@@ -5,9 +5,9 @@ title: CAS - Web Flow Customization
 
 # Webflow Session
 
-CAS uses [Spring Webflow](https://github.com/spring-projects/spring-webflow) to manage the 
+CAS uses [Spring Webflow](https://github.com/spring-projects/spring-webflow) to manage the
 authentication sequence. Spring Webflow provides a pluggable architecture whereby various actions, 
-decisions and operations throughout the primary authentication workflow can be easily controlled 
+decisions and operations throughout the primary authentication workflow can be easily controlled
 and navigated. In order for this navigation to work, some form of conversational session state must be maintained.
 
 ## Client-side Sessions
@@ -41,7 +41,7 @@ Doing so will likely require you to also enable sticky sessions and/or session r
 
 ### Hazelcast Session Replication
 
-If you don't wish to use the native container's strategy for session replication, 
+If you don't wish to use the native container's strategy for session replication,
 you can use CAS's support for Hazelcast session replication.
 
 This feature is enabled via the following module:
@@ -58,7 +58,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### Redis Session Replication
 
-If you don't wish to use the native container's strategy for session replication, 
+If you don't wish to use the native container's strategy for session replication,
 you can use CAS's support for Redis session replication.
 
 This feature is enabled via the following module:
@@ -71,13 +71,11 @@ This feature is enabled via the following module:
 </dependency>
 ```
 
-The following settings are applicable:
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### MongoDb Session Replication
 
-If you don't wish to use the native container's strategy for session replication, 
+If you don't wish to use the native container's strategy for session replication,
 you can use CAS's support for Mongo session replication.
 
 This feature is enabled via the following module:
@@ -91,4 +89,3 @@ This feature is enabled via the following module:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
