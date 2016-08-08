@@ -50,8 +50,9 @@
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
-
+    <alias name="memcachedTicketRegistry" alias="ticketRegistry" />
+    <alias name="shiroCipherExecutor" alias="ticketCipherExecutor" />
+    
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
 
