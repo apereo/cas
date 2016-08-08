@@ -24,12 +24,12 @@ See [this guide](Attribute-Release-PrincipalId.html) for more info.
 ## Attribute Release Policy
 
 Decide how CAS should release attributes to applications.
-See [this guide](Attribute-Release-PrincipalId.html) for more info.
+See [this guide](Attribute-Release-Policies.html) for more info.
 
-## Caching/Updating Attributes
+## Caching Attributes
 
 Control how resolved attributes by CAS should be cached.
-See [this guide](Attribute-Release-PrincipalId.html) for more info.
+See [this guide](Attribute-Release-Caching.html) for more info.
 
 ## Encrypting Attributes
 
