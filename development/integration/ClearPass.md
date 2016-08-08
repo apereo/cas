@@ -34,7 +34,6 @@ Enable the caching and capturing of the credential in `application.properties`.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
-
 ## Create Keys
 
 ```bash
