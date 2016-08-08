@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.support.oauth.ticket.OAuthToken;
-import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.apereo.cas.support.oauth.ticket.code.OAuthCode;
-import org.apereo.cas.support.oauth.ticket.code.OAuthCodeImpl;
-import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.OAuthToken;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.code.OAuthCodeImpl;
+import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;

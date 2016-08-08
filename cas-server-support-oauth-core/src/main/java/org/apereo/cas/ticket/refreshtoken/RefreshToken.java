@@ -1,6 +1,6 @@
-package org.apereo.cas.support.oauth.ticket.refreshtoken;
+package org.apereo.cas.ticket.refreshtoken;
 
-import org.apereo.cas.support.oauth.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuthToken;
 
 /**
  * A refresh token is an OAuth token which can be used multiple times and has a very long lifetime.

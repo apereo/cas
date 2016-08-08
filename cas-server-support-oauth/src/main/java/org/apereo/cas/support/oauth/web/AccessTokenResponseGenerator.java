@@ -2,8 +2,8 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
-import org.apereo.cas.support.oauth.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

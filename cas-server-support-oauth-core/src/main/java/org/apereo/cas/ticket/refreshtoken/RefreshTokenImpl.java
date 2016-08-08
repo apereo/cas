@@ -1,34 +1,34 @@
-package org.apereo.cas.support.oauth.ticket.accesstoken;
+package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.ExpirationPolicy;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * An OAuth access token implementation.
+ * An OAuth refresh token implementation.
  *
  * @author Jerome Leleu
  * @since 5.0.0
  */
 @Entity
-@DiscriminatorValue(AccessToken.PREFIX)
-public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
+@DiscriminatorValue(RefreshToken.PREFIX)
+public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
 
-    private static final long serialVersionUID = 2339545346159721563L;
+    private static final long serialVersionUID = -3544459978950667758L;
 
     /**
-     * Instantiates a new OAuth access token.
+     * Instantiates a new OAuth refresh token.
      */
-    public AccessTokenImpl() {
+    public RefreshTokenImpl() {
         // exists for JPA purposes
     }
 
     /**
-     * Constructs a new access token with unique id for a service and authentication.
+     * Constructs a new refresh token with unique id for a service and authentication.
      *
      * @param id the unique identifier for the ticket.
      * @param service the service this ticket is for.
@@ -36,8 +36,9 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public AccessTokenImpl(final String id, final Service service, final Authentication authentication,
-                           final ExpirationPolicy expirationPolicy) {
+    public RefreshTokenImpl(final String id,
+                            final Service service, final Authentication authentication,
+                            final ExpirationPolicy expirationPolicy) {
         super(id, service, authentication, expirationPolicy);
     }
 }

@@ -1,6 +1,6 @@
-package org.apereo.cas.support.oauth.ticket.code;
+package org.apereo.cas.ticket.code;
 
-import org.apereo.cas.support.oauth.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuthToken;
 
 /**
  * An OAuth code is an OAuth token which can be used only once and has a short lifetime.
