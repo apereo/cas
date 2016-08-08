@@ -405,50 +405,64 @@ Satisfied if an only if a specified handler successfully authenticates its crede
 # cas.authn.policy.req.enabled=true
 ```
 
-## Groovy Shell
+## Authentication Throttling
 
-Control access and configuration of the embedded Groovy shell in CAS.
-To learn more about this topic, [please review this guide](Configuring-Groovy-Console.html).
+CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
+To learn more about this topic, [please review this guide](Configuring-Authentication-Throttling.html).
+
 
 ```properties
-# shell.commandRefreshInterval=15
-# shell.commandPathPatterns=classpath*:/commands/**
-# shell.auth.simple.user.name=
-# shell.auth.simple.user.password=
-# shell.ssh.enabled=true
-# shell.ssh.port=2000
-# shell.telnet.enabled=false
-# shell.telnet.port=5000
-# shell.ssh.authTimeout=3000
-# shell.ssh.idleTimeout=30000
+# cas.authn.throttle.usernameParameter=username
+# cas.authn.throttle.startDelay=10000
+# cas.authn.throttle.repeatInterval=20000
+# cas.authn.throttle.appcode=CAS
+
+# cas.authn.throttle.failure.threshold=100
+# cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
+# cas.authn.throttle.failure.rangeSeconds=60
 ```
 
-## Saml Metadata UI
+### Database
 
-Control how SAML MDUI elements should be displayed on the main CAS login page
-in the event that CAS is handling authentication for an external SAML2 IdP.
-
-To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
+Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
+same IP address.
 
 ```properties
-# cas.samlMetadataUi.requireValidMetadata=true
-# cas.samlMetadataUi.repeatInterval=120000
-# cas.samlMetadataUi.startDelay=30000
-# cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
-# cas.samlMetadataUi.maxValidity=0
-# cas.samlMetadataUi.requireSignedRoot=false
-# cas.samlMetadataUi.parameter=entityId
+# cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
+# cas.authn.throttle.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.throttle.jdbc.isolateInternalQueries=false
+# cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.throttle.jdbc.failFast=true
+# cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.throttle.jdbc.leakThreshold=10
+# cas.authn.throttle.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.throttle.jdbc.batchSize=1
+# cas.authn.throttle.jdbc.user=sa
+# cas.authn.throttle.jdbc.ddlAuto=create-drop
+# cas.authn.throttle.jdbc.maxAgeDays=180
+# cas.authn.throttle.jdbc.password=
+# cas.authn.throttle.jdbc.autocommit=false
+# cas.authn.throttle.jdbc.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.throttle.jdbc.idleTimeout=5000
+
+# cas.authn.throttle.jdbc.pool.suspension=false
+# cas.authn.throttle.jdbc.pool.minSize=6
+# cas.authn.throttle.jdbc.pool.maxSize=18
+# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
+# cas.authn.throttle.jdbc.pool.maxWait=2000
 ```
 
-## Hibernate & JDBC
 
-Control global properties that are relevant to Hibernate,
-when CAS attempts to employ and utilize database resources,
-connections and queries.
+## Digest Authentication
+
+To learn more about this topic, [please review this guide](Digest-Authentication.html).
 
 ```properties
-# cas.jdbc.showSql=true
-# cas.jdbc.genDdl=true
+# cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
+# cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
+# cas.authn.digest.realm=CAS
+# cas.authn.digest.authenticationMethod=auth
 ```
 
 ## Radius Authentication
@@ -941,7 +955,7 @@ To learn more about this topic, [please review this guide](Remote-Address-Authen
 
 <div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
-configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration 
+configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
 ```properties
@@ -1154,7 +1168,7 @@ and link them to custom messages defined in message bundles.
 
 ## Saml Core
 
-Control core SAML functionality within CAS. 
+Control core SAML functionality within CAS.
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
@@ -1167,7 +1181,7 @@ Control core SAML functionality within CAS.
 
 ## Saml IdP
 
-Allow CAS to become a SAML2 identity provider. 
+Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
 
 
@@ -1343,65 +1357,6 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 ```
 
-## Digest Authentication
-
-To learn more about this topic, [please review this guide](Digest-Authentication.html).
-
-```properties
-# cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
-# cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
-# cas.authn.digest.realm=CAS
-# cas.authn.digest.authenticationMethod=auth
-```
-
-
-## Authentication Throttling
-
-CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
-To learn more about this topic, [please review this guide](Configuring-Authentication-Throttling.html).
-
-
-```properties
-# cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.startDelay=10000
-# cas.authn.throttle.repeatInterval=20000
-# cas.authn.throttle.appcode=CAS
-
-# cas.authn.throttle.failure.threshold=100
-# cas.authn.throttle.failure.code=AUTHENTICATION_FAILED
-# cas.authn.throttle.failure.rangeSeconds=60
-```
-
-### Database 
-
-Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address.
-
-```properties
-# cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
-# cas.authn.throttle.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.throttle.jdbc.isolateInternalQueries=false
-# cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.throttle.jdbc.failFast=true
-# cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.throttle.jdbc.leakThreshold=10
-# cas.authn.throttle.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.throttle.jdbc.batchSize=1
-# cas.authn.throttle.jdbc.user=sa
-# cas.authn.throttle.jdbc.ddlAuto=create-drop
-# cas.authn.throttle.jdbc.maxAgeDays=180
-# cas.authn.throttle.jdbc.password=
-# cas.authn.throttle.jdbc.autocommit=false
-# cas.authn.throttle.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.throttle.jdbc.idleTimeout=5000
-
-# cas.authn.throttle.jdbc.pool.suspension=false
-# cas.authn.throttle.jdbc.pool.minSize=6
-# cas.authn.throttle.jdbc.pool.maxSize=18
-# cas.authn.throttle.jdbc.pool.maxIdleTime=1000
-# cas.authn.throttle.jdbc.pool.maxWait=2000
-```
 
 ## Localization
 
@@ -1735,6 +1690,15 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
 
+## Maxmind GeoTracking
+
+Used to geo-profile authentication events and such.
+
+```properties
+# cas.maxmind.cityDatabase=
+# cas.maxmind.countryDatabase=
+```
+
 ## Http Web Requests
 
 Control how CAS should respond and validate incoming HTTP requests.
@@ -1892,7 +1856,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 ```
 
 ## Ticket Registry
- 
+
 ### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
@@ -2140,7 +2104,7 @@ applicable to STs.
 ```
 
 ## TGT Expiration Policy
- 
+
 ### Default
 
 Provides a hard-time out as well as a sliding window.
@@ -2183,14 +2147,7 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-## Maxmind GeoTracking
 
-Used to geo-profile authentication events and such.
-
-```properties
-# cas.maxmind.cityDatabase=
-# cas.maxmind.countryDatabase=
-```
 
 ## Management Webapp
 
@@ -2287,4 +2244,50 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
 # cas.metrics.refreshInterval=30
+```
+
+## Groovy Shell
+
+Control access and configuration of the embedded Groovy shell in CAS.
+To learn more about this topic, [please review this guide](Configuring-Groovy-Console.html).
+
+```properties
+# shell.commandRefreshInterval=15
+# shell.commandPathPatterns=classpath*:/commands/**
+# shell.auth.simple.user.name=
+# shell.auth.simple.user.password=
+# shell.ssh.enabled=true
+# shell.ssh.port=2000
+# shell.telnet.enabled=false
+# shell.telnet.port=5000
+# shell.ssh.authTimeout=3000
+# shell.ssh.idleTimeout=30000
+```
+
+## Saml Metadata UI
+
+Control how SAML MDUI elements should be displayed on the main CAS login page
+in the event that CAS is handling authentication for an external SAML2 IdP.
+
+To learn more about this topic, [please review this guide](../integration/Shibboleth.html).
+
+```properties
+# cas.samlMetadataUi.requireValidMetadata=true
+# cas.samlMetadataUi.repeatInterval=120000
+# cas.samlMetadataUi.startDelay=30000
+# cas.samlMetadataUi.resources=classpath:/sp-metadata::classpath:/pub.key,http://md.incommon.org/InCommon/InCommon-metadata.xml::classpath:/inc-md-pub.key
+# cas.samlMetadataUi.maxValidity=0
+# cas.samlMetadataUi.requireSignedRoot=false
+# cas.samlMetadataUi.parameter=entityId
+```
+
+## Hibernate & JDBC
+
+Control global properties that are relevant to Hibernate,
+when CAS attempts to employ and utilize database resources,
+connections and queries.
+
+```properties
+# cas.jdbc.showSql=true
+# cas.jdbc.genDdl=true
 ```
