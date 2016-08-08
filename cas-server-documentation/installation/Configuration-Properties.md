@@ -488,6 +488,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 
 ## File Authentication
 
+To learn more about this topic, [please review this guide](Whitelist-Authentication.html).
+
 ```properties
 # cas.authn.file.separator=::
 # cas.authn.file.filename=
@@ -504,6 +506,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 ```
 
 ## Reject Users Authentication
+
+To learn more about this topic, [please review this guide](Blacklist-Authentication.html).
 
 ```properties
 # cas.authn.reject.users=user1,user2
@@ -820,6 +824,7 @@ To learn more about this topic, [please review this guide](../integration/Google
 ## OpenID Authentication
 
 Allow CAS to become am OpenID authentication provider.
+To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
 ```properties
 # cas.authn.openid.enforceRpId=false
@@ -926,6 +931,8 @@ To learn more about this topic, [please review this guide](Stormpath-Authenticat
 
 ## Remote Address Authentication
 
+To learn more about this topic, [please review this guide](Remote-Address-Authentication.html).
+
 ```properties
 # cas.authn.remoteAddress.ipAddressRange=
 ```
@@ -979,6 +986,8 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 
 ## Shiro Authentication
 
+To learn more about this topic, [please review this guide](Shiro-Authentication.html).
+
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
@@ -1004,6 +1013,8 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 ```
 
 ## Trusted Authentication
+
+To learn more about this topic, [please review this guide](Trusted-Authentication.html).
 
 ```properties
 # cas.authn.trusted.principalAttribute=
@@ -1142,8 +1153,9 @@ and link them to custom messages defined in message bundles.
 # cas.authn.exceptions.exceptions=value1,value2,...
 ```
 
-
 ## Saml Core
+
+Control core SAML functionality within CAS. 
 
 ```properties
 # cas.samlCore.ticketidSaml2=false
@@ -1156,7 +1168,9 @@ and link them to custom messages defined in message bundles.
 
 ## Saml IdP
 
-Allow CAS to become a SAML2 identity provider.
+Allow CAS to become a SAML2 identity provider. 
+To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
+
 
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
@@ -1181,6 +1195,7 @@ Allow CAS to become a SAML2 identity provider.
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
+To learn more about this topic, [please review this guide](OIDC-Authentication.html).
 
 ```properties
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
@@ -1188,31 +1203,10 @@ Allow CAS to become am OpenID Connect provider (OP).
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
 ```
 
-## Password Policy
-
-Decide whether CAS should attempt to support password policy enforcement.
-This is most commonly used, but not limited to, LDAP authentication.
-
-In the event that the authentication source does not support standard policy
-configuration and rules, custom boolean attributes can be defined to design
-an ad-hoc policy.
-
-```properties
-# cas.authn.passwordPolicy.warnAll=false
-# cas.authn.passwordPolicy.url=https://password.example.edu/change
-# cas.authn.passwordPolicy.displayWarningOnMatch=true
-# cas.authn.passwordPolicy.warningDays=30
-# cas.authn.passwordPolicy.warningAttributeName=
-# cas.authn.passwordPolicy.warningAttributeValue=
-
-# cas.authn.passwordPolicy.policyAttributes.accountLocked=org.apereo.cas.authentication.AccountDisabledException
-# cas.authn.passwordPolicy.policyAttributes.mustUpdatePassword=org.apereo.cas.authentication.AccountPasswordMustChangeException
-```
-
-
 ## Pac4j
 
 Act as a proxy, and delegate authentication to external identity providers.
+To learn more about this topic, [please review this guide](Delegate-Authentication.html).
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
@@ -1337,6 +1331,9 @@ Delegate authentication to Google.
 Allows CAS to act as an OAuth2 provider. Here you can control how
 long various tokens issued by CAS should last, etc.
 
+To learn more about this topic, [please review this guide](OAuth-OpenId-Authentication.html).
+
+
 ```properties
 # cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
 
@@ -1348,6 +1345,8 @@ long various tokens issued by CAS should last, etc.
 ```
 
 ## Digest Authentication
+
+To learn more about this topic, [please review this guide](Digest-Authentication.html).
 
 ```properties
 # cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
@@ -1446,12 +1445,15 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 ## Logout
 
 Control various settings related to CAS logout functionality.
+To learn more about this topic, [please review this guide](Logout-Single-Signout.html).
 
 ```properties
 # cas.logout.followServiceRedirects=false
 ```
 
 ## Single Logout
+
+To learn more about this topic, [please review this guide](Logout-Single-Signout.html).
 
 ```properties
 # cas.slo.disabled=false
@@ -1461,12 +1463,15 @@ Control various settings related to CAS logout functionality.
 ## Clearpass
 
 Capture and cache user credentials and optionally release them to trusted applications.
+To learn more about this topic, [please review this guide](../integration/ClearPass.html).
 
 ```properties
 # cas.clearpass.cacheCredential=false
 ```
 
 ## Message Bundles
+
+To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
 
 ```properties
 # cas.messageBundle.encoding=UTF-8
@@ -1478,13 +1483,16 @@ Capture and cache user credentials and optionally release them to trusted applic
 
 ## Shibboleth Attribute Resolver
 
+To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
+
 ```properties
 # cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 ```
 
-## Audit
+## Audits
 
 Control how audit messages are formatted.
+To learn more about this topic, [please review this guide](Audits.html).
 
 ```properties
 # cas.audit.auditFormat=DEFAULT
@@ -1628,6 +1636,8 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 
 ## Themes
 
+To learn more about this topic, [please review this guide](User-Interface-Customization-Themes.html).
+
 ```properties
 # cas.theme.paramName=theme
 # cas.theme.defaultThemeName=cas-theme-default
@@ -1636,6 +1646,8 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 ## Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
+To learn more about this topic, [please review this guide](User-Interface-Customization-AUP.html).
+
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
@@ -1670,7 +1682,15 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
 ```
 
-## Events -> Database
+## Events
+
+Decide how CAS should track authentication events.
+
+```properties
+# cas.events.trackGeolocation=false
+```
+
+### Database
 
 Decide how CAS should store authentication events inside a database instance.
 
@@ -1696,7 +1716,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.database.pool.maxWait=2000
 ```
 
-## Events -> Mongodb
+### Mongodb
 
 Decide how CAS should store authentication events inside a MongoDb instance.
 
@@ -1704,14 +1724,6 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.clientUri=
 # cas.events.mongodb.dropCollection=false
 # cas.events.mongodb.collection=MongoDbCasEventRepository
-```
-
-## Events
-
-Decide how CAS should track authentication events.
-
-```properties
-# cas.events.trackGeolocation=false
 ```
 
 ## Http Client
@@ -1750,9 +1762,13 @@ to locate service definitions, decide how those resources should be found.
 # cas.serviceRegistry.config.location=classpath:/services
 ```
 
-## Mongo Service Registry
+To learn more about this topic, [please review this guide](JSON-Service-Management.html)
+or [this guide](YAML-Service-Management.html).
+
+### Mongo Service Registry
 
 Store CAS service definitions inside a MongoDb instance.
+To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
 
 ```properties
 # cas.serviceRegistry.mongo.idleTimeout=30000
@@ -1770,9 +1786,10 @@ Store CAS service definitions inside a MongoDb instance.
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
 
-## Ldap Service Registry
+### Ldap Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
+To learn more about this topic, [please review this guide](LDAP-Service-Management.html)
 
 ```properties
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
@@ -1802,9 +1819,10 @@ Control how CAS services should be found inside an LDAP instance.
 # cas.serviceRegistry.ldap.useStartTls=false
 ```
 
-## Couchbase Service Registry
+### Couchbase Service Registry
 
 Control how CAS services should be found inside a Couchbase instance.
+To learn more about this topic, [please review this guide](Couchbase-Service-Management.html)
 
 ```properties
 # cas.serviceRegistry.couchbase.nodeSet=localhost:8091
@@ -1814,9 +1832,10 @@ Control how CAS services should be found inside a Couchbase instance.
 # cas.serviceRegistry.couchbase.timeout=10
 ```
 
-## Database Service Registry
+### Database Service Registry
 
-Control how CAS services should be found inside a database instance
+Control how CAS services should be found inside a database instance.
+To learn more about this topic, [please review this guide](JPA-Service-Management.html)
 
 ```properties
 # cas.serviceRegistry.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1840,14 +1859,23 @@ Control how CAS services should be found inside a database instance
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## Proxy Tickets
+## Ticket Registry
+ 
+### Cleaner
+
+A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
+This section controls how that process should behave.
 
 ```properties
-# cas.ticket.pt.timeToKillInSeconds=10
-# cas.ticket.pt.numberOfUses=1
+# cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
+# cas.ticket.registry.cleaner.startDelay=10000
+# cas.ticket.registry.cleaner.repeatInterval=60000
+# cas.ticket.registry.cleaner.enabled=true
 ```
 
-## JPA Ticket Registry
+### JPA Ticket Registry
+
+To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
@@ -1879,7 +1907,9 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.jpa.crypto.alg=AES
 ```
 
-## Couchbase Ticket Registry
+### Couchbase Ticket Registry
+
+To learn more about this topic, [please review this guide](Couchbase-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.couchbase.timeout=10
@@ -1895,7 +1925,10 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.couchbase.crypto.alg=AES
 ```
 
-## Hazelcast Ticket Registry
+### Hazelcast Ticket Registry
+
+To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html)
+
 
 ```properties
 # cas.ticket.registry.hazelcast.pageSize=500
@@ -1931,7 +1964,9 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.hazelcast.crypto.alg=AES
 ```
 
-## Infinispan Ticket Registry
+### Infinispan Ticket Registry
+
+To learn more about this topic, [please review this guide](Infinispan-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.infinispan.cacheName=
@@ -1944,7 +1979,7 @@ Control how CAS services should be found inside a database instance
 # cas.ticket.registry.infinispan.crypto.alg=AES
 ```
 
-## Ticket Registry -> InMemory
+### InMemory Ticket Registry
 
 This is typically the default ticket registry instance where tickets
 are kept inside the runtime environment memory.
@@ -1961,19 +1996,9 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.crypto.alg=AES
 ```
 
-## Ticket Registry -> Cleaner
+### Ehcache Ticket Registry
 
-A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
-This section controls how that process should behave.
-
-```properties
-# cas.ticket.registry.cleaner.appId=cas-ticket-registry-cleaner
-# cas.ticket.registry.cleaner.startDelay=10000
-# cas.ticket.registry.cleaner.repeatInterval=60000
-# cas.ticket.registry.cleaner.enabled=true
-```
-
-## Ehcache Ticket Registry
+To learn more about this topic, [please review this guide](Ehcache-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
@@ -2006,7 +2031,9 @@ This section controls how that process should behave.
 # cas.ticket.registry.ehcache.crypto.alg=AES
 ```
 
-## Ignite Ticket Registry
+### Ignite Ticket Registry
+
+To learn more about this topic, [please review this guide](Ignite-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.ignite.keyAlgorithm=
@@ -2031,7 +2058,9 @@ This section controls how that process should behave.
 # cas.ticket.registry.ignite.crypto.alg=AES
 ```
 
-## Memcached Ticket Registry
+### Memcached Ticket Registry
+
+To learn more about this topic, [please review this guide](Memcached-Ticket-Registry.html)
 
 ```properties
 # cas.ticket.registry.memcached.servers=localhost:11211
@@ -2046,7 +2075,7 @@ This section controls how that process should behave.
 # cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
-## Service Ticket Expiration Policy
+## Service Ticket
 
 Controls the expiration policy of service tickets, as well as other properties
 applicable to STs.
@@ -2062,6 +2091,13 @@ applicable to STs.
 
 ```properties
 # cas.ticket.pgt.maxLength=50
+```
+
+## Proxy Tickets
+
+```properties
+# cas.ticket.pt.timeToKillInSeconds=10
+# cas.ticket.pt.numberOfUses=1
 ```
 
 ## Ticket Granting Ticket
@@ -2124,6 +2160,8 @@ Used to geo-profile authentication events and such.
 
 ## Management Webapp
 
+To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
+
 ```properties
 # cas.mgmt.adminRoles=ROLE_ADMIN
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
@@ -2163,6 +2201,8 @@ Used to geo-profile authentication events and such.
 
 ## Google Analytics Integration
 
+To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
+
 ```properties
 # cas.googleAnalytics.googleAnalyticsTrackingId=
 ```
@@ -2195,6 +2235,8 @@ spring.http.encoding.force=true
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
+To learn more about this topic, [please review this guide](Webflow-Customization.html).
+
 ```properties
 # cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
@@ -2219,6 +2261,8 @@ and all other webflow related settings.
 
 ## REST API
 
+To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
+
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
@@ -2227,6 +2271,8 @@ and all other webflow related settings.
 
 
 ## Metrics & Performance Stats
+
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
