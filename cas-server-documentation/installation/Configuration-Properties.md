@@ -2203,7 +2203,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](Webflow-Customization.html).
+To learn more about this topic, [please review this guide](Webflow-Customization.html) or [this guide](Webflow-Customization-Sessions.html).
 
 ```properties
 # cas.webflow.autoconfigure=true
@@ -2215,7 +2215,19 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.webflow.session.compress=false
 # cas.webflow.session.maxConversations=5
 # cas.webflow.session.storage=true
+
+# Manage session storage via Hazelcast
 # cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+
+# Manage session storage via Mongo
+# spring.data.mongodb.host=mongo-srv
+# spring.data.mongodb.port=27018
+# spring.data.mongodb.database=prod
+
+# Manage session storage via Redis
+# spring.redis.host=localhost
+# spring.redis.password=secret
+# spring.redis.port=6379
 
 # cas.webflow.signing.key=
 # cas.webflow.signing.keySize=512
