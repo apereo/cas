@@ -47,7 +47,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
         try {
-            if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
+            if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
                 logger.error("Failed to update {}", ticket);
             }
         } catch (final InterruptedException e) {
@@ -68,7 +68,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {}", ticket);
         try {
-            if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
+            if (!this.client.add(ticket.getId(), getTimeout(ticketToAdd), ticket).get()) {
                 logger.error("Failed to add {}", ticket);
             }
         } catch (final InterruptedException e) {
