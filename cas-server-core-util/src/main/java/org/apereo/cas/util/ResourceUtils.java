@@ -56,14 +56,14 @@ public final class ResourceUtils {
     /**
      * Gets resource from a String location.
      *
-     * @param metadataLocation the metadata location
+     * @param location the metadata location
      * @return the resource from
      * @throws IOException the exception
      */
-    public static AbstractResource getResourceFrom(final String metadataLocation) throws IOException {
-        final AbstractResource metadataLocationResource = getRawResourceFrom(metadataLocation);
+    public static AbstractResource getResourceFrom(final String location) throws IOException {
+        final AbstractResource metadataLocationResource = getRawResourceFrom(location);
         if (!metadataLocationResource.exists() || !metadataLocationResource.isReadable()) {
-            throw new FileNotFoundException("Resource " + metadataLocation + " does not exist or is unreadable");
+            throw new FileNotFoundException("Resource " + location + " does not exist or is unreadable");
         }
         return metadataLocationResource;
     }
