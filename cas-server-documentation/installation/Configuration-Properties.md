@@ -368,7 +368,7 @@ CAS attempts to vend and validate tickets.
 # cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
 ```
 
-## Authentication Policy -> Any
+### Any
 
 Satisfied if any handler succeeds. Supports a tryAll flag to avoid short circuiting
 and try every handler even if one prior succeeded.
@@ -377,7 +377,7 @@ and try every handler even if one prior succeeded.
 # cas.authn.policy.any.tryAll=false
 ```
 
-## Authentication Policy -> All
+### All
 
 Satisfied if and only if all given credentials are successfully authenticated.
 Support for multiple credentials is new in CAS and this handler
@@ -387,7 +387,7 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
-## Authentication Policy -> NotPrevented
+### NotPrevented
 
 Satisfied if an only if the authentication event is not blocked by a `PreventedException`.
 
@@ -395,7 +395,7 @@ Satisfied if an only if the authentication event is not blocked by a `PreventedE
 # cas.authn.policy.notPrevented.enabled=true
 ```
 
-## Authentication Policy -> Required
+### Required
 
 Satisfied if an only if a specified handler successfully authenticates its credential.
 
@@ -523,10 +523,13 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.principalTransformation.prefix=
 ```
 
-## Database Authentication -> Query
+## Database Authentication
+
+To learn more about this topic, [please review this guide](Database-Authentication.html).
+
+### Query
 
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
-To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -559,10 +562,9 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 # cas.authn.jdbc.query[0].principalTransformation.prefix=
 ```
 
-## Database Authentication -> Search
+### Search
 
 Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
-To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
@@ -597,10 +599,9 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 # cas.authn.jdbc.search[0].principalTransformation.prefix=
 ```
 
-## Database Authentication -> Bind
+### Bind
 
 Authenticates a user by attempting to create a database connection using the username and (hashed) password.
-To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.bind[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -632,7 +633,7 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 # cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
-## Database Authentication -> Encode
+### Encode
 
 A JDBC querying handler that will pull back the password and the private salt value for a user and validate the encoded
 password using the public salt value. Assumes everything is inside the same database table. Supports settings for
@@ -641,8 +642,6 @@ number of iterations as well as private salt.
 This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing.
 If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash
 is converted to Hex before comparing it to the database value.
-
-To learn more about this topic, [please review this guide](Database-Authentication.html).
 
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
@@ -1057,7 +1056,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
 ```
 
-## Multifactor Authentication -> Google Authenticator
+### Google Authenticator
 
 ```properties
 # cas.authn.mfa.gauth.windowSize=3
@@ -1068,7 +1067,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.gauth.rank=0
 ```
 
-## Multifactor Authentication -> Google Authenticator JPA
+#### Google Authenticator JPA
 
 ```properties
 # cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
@@ -1092,7 +1091,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
 ```
 
-## Multifactor Authentication -> YubiKey
+### YubiKey
 
 ```properties
 # cas.authn.mfa.yubikey.clientId=
@@ -1100,7 +1099,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.yubikey.rank=0
 ```
 
-## Multifactor Authentication -> Radius OTP
+### Radius OTP
 
 ```properties
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
@@ -1124,7 +1123,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.radius.server.nasIpv6Address=
 ```
 
-## Multifactor Authentication -> DuoSecurity
+### DuoSecurity
 
 ```properties
 # cas.authn.mfa.duo.duoSecretKey=
@@ -1134,7 +1133,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.duo.duoApiHost=
 ```
 
-## Multifactor Authentication -> Authy
+### Authy
 
 ```properties
 # cas.authn.mfa.authy.apiKey=
@@ -1212,7 +1211,7 @@ To learn more about this topic, [please review this guide](Delegate-Authenticati
 # cas.authn.pac4j.typedIdUsed=false
 ```
 
-## Pac4j -> CAS
+### CAS
 
 Delegate authentication to an external CAS server.
 
@@ -1221,7 +1220,7 @@ Delegate authentication to an external CAS server.
 # cas.authn.pac4j.cas.protocol=
 ```
 
-## Pac4j -> Facebook
+### Facebook
 
 Delegate authentication to Facebook.
 
@@ -1232,7 +1231,7 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.scope=
 ```
 
-## Pac4j -> Twitter
+### Twitter
 
 Delegate authentication to Twitter.
 
@@ -1241,7 +1240,7 @@ Delegate authentication to Twitter.
 # cas.authn.pac4j.twitter.secret=
 ```
 
-## Pac4j -> OpenID Connect
+### OpenID Connect
 
 Delegate authentication to an external OpenID Connect server.
 
@@ -1258,7 +1257,7 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc.preferredJwsAlgorithm=
 ```
 
-## Pac4j -> SAML
+### SAML
 
 Delegate authentication to an external SAML2 IdP.
 
@@ -1271,7 +1270,7 @@ Delegate authentication to an external SAML2 IdP.
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
 
-## Pac4j -> Yahoo
+### Yahoo
 
 Delegate authentication to Yahoo.
 
@@ -1280,7 +1279,7 @@ Delegate authentication to Yahoo.
 # cas.authn.pac4j.yahoo.secret=
 ```
 
-## Pac4j -> Dropbox
+### Dropbox
 
 Delegate authentication to Dropbox.
 
@@ -1289,7 +1288,7 @@ Delegate authentication to Dropbox.
 # cas.authn.pac4j.dropbox.secret=
 ```
 
-## Pac4j -> Github
+### Github
 
 Delegate authentication to Github.
 
@@ -1298,7 +1297,7 @@ Delegate authentication to Github.
 # cas.authn.pac4j.github.secret=
 ```
 
-## Pac4j -> Foursquare
+### Foursquare
 
 Delegate authentication to Foursquare.
 
@@ -1307,7 +1306,7 @@ Delegate authentication to Foursquare.
 # cas.authn.pac4j.foursquare.secret=
 ```
 
-## Pac4j -> WindowsLive
+### WindowsLive
 
 Delegate authentication to WindowsLive.
 
@@ -1316,7 +1315,7 @@ Delegate authentication to WindowsLive.
 # cas.authn.pac4j.windowsLive.secret=
 ```
 
-## Pac4j -> Google
+### Google
 
 Delegate authentication to Google.
 
@@ -1359,6 +1358,8 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 ## Authentication Throttling
 
 CAS provides a facility for limiting failed login attempts to support password guessing and related abuse scenarios.
+To learn more about this topic, [please review this guide](Configuring-Authentication-Throttling.html).
+
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
@@ -1371,7 +1372,7 @@ CAS provides a facility for limiting failed login attempts to support password g
 # cas.authn.throttle.failure.rangeSeconds=60
 ```
 
-## Database Authentication Throttling
+### Database 
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
 same IP address.
@@ -1403,6 +1404,8 @@ same IP address.
 ```
 
 ## Localization
+
+To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
 
 ```properties
 # cas.locale.paramName=locale
@@ -1502,7 +1505,7 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.appCode=CAS
 ```
 
-## Audit -> Database
+### Database
 
 Store audit logs inside a database.
 
@@ -1532,7 +1535,11 @@ Store audit logs inside a database.
 ```
 
 
-## Monitor -> Ticket Granting Tickets
+## Monitoring
+
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
+
+### Ticket Granting Tickets
 
 Decide how CAS should monitor the generation of TGTs.
 
@@ -1541,7 +1548,7 @@ Decide how CAS should monitor the generation of TGTs.
 # cas.monitor.tgt.warn.evictionThreshold=0
 ```
 
-## Monitor -> Service Tickets
+### Service Tickets
 
 Decide how CAS should monitor the generation of STs.
 
@@ -1550,7 +1557,7 @@ Decide how CAS should monitor the generation of STs.
 # cas.monitor.st.warn.evictionThreshold=0
 ```
 
-## Monitor -> Cache (Ehcache, Hazelcast, etc) Monitors
+### Cache Monitors
 
 Decide how CAS should monitor the internal state of various cache storage services.
 
@@ -1559,7 +1566,7 @@ Decide how CAS should monitor the internal state of various cache storage servic
 # cas.monitor.warn.evictionThreshold=0
 ```
 
-## Monitor -> JDBC DataSource
+### Database
 
 Decide how CAS should monitor the internal state of JDBC connections used
 for authentication or attribute retrieval.
@@ -1585,7 +1592,7 @@ for authentication or attribute retrieval.
 # cas.monitor.jdbc.idleTimeout=5000
 ```
 
-## Monitor -> LDAP Connection Pool
+### LDAP Connection Pool
 
 Decide how CAS should monitor the internal state of LDAP connections
 used for authentication, etc.
@@ -1626,7 +1633,7 @@ used for authentication, etc.
 # cas.monitor.ldap.useStartTls=false
 ```
 
-## Monitor Memory
+### Memory
 
 Decide how CAS should monitor the internal state of JVM memory available at runtime.
 
@@ -1653,7 +1660,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
 
-## Acceptable Usage Policy -> Ldap
+### Ldap
 
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
@@ -1685,6 +1692,8 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 ## Events
 
 Decide how CAS should track authentication events.
+To learn more about this topic, [please review this guide](Configuring-Authentication-Events.html).
+
 
 ```properties
 # cas.events.trackGeolocation=false
@@ -1726,6 +1735,29 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
 
+## Http Web Requests
+
+Control how CAS should respond and validate incoming HTTP requests.
+
+```properties
+# cas.httpWebRequest.header.xframe=false
+# cas.httpWebRequest.header.xss=false
+# cas.httpWebRequest.header.hsts=false
+# cas.httpWebRequest.header.xcontent=false
+# cas.httpWebRequest.header.cache=false
+
+# cas.httpWebRequest.web.forceEncoding=true
+# cas.httpWebRequest.web.encoding=UTF-8
+
+# cas.httpWebRequest.allowMultiValueParameters=false
+# cas.httpWebRequest.onlyPostParams=username,password
+# cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
+
+spring.http.encoding.charset=UTF-8
+spring.http.encoding.enabled=true
+spring.http.encoding.force=true
+```
+
 ## Http Client
 
 Control how CAS should attempt to contact resources on the web
@@ -1753,7 +1785,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.initFromJson=true
 ```
 
-## Resource-based Service Registry
+### Resource-based Service Registry
 
 If the underlying service registry is using local system resources
 to locate service definitions, decide how those resources should be found.
@@ -2107,7 +2139,9 @@ applicable to STs.
 # cas.ticket.tgt.maxLength=50
 ```
 
-## TGT Expiration Policy -> Default
+## TGT Expiration Policy
+ 
+### Default
 
 Provides a hard-time out as well as a sliding window.
 
@@ -2117,14 +2151,14 @@ Provides a hard-time out as well as a sliding window.
 # cas.ticket.tgt.timeToKillInSeconds=7200
 ```
 
-## TGT Expiration Policy -> Remember Me
+### Remember Me
 
 ```properties
 # cas.ticket.tgt.rememberMe.enabled=true
 # cas.ticket.tgt.rememberMe.timeToKillInSeconds=true
 ```
 
-## TGT Expiration Policy -> Timeout
+### Timeout
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
 
@@ -2132,7 +2166,7 @@ The expiration policy applied to TGTs provides for most-recently-used expiration
 # cas.ticket.tgt.timeout.maxTimeToLiveInSeconds=28800
 ```
 
-## TGT Expiration Policy -> Throttled Timeout
+### Throttled Timeout
 
 The throttled timeout policy extends the Timeout policy with the concept of throttling where a ticket may be used at most every N seconds.
 
@@ -2141,7 +2175,7 @@ The throttled timeout policy extends the Timeout policy with the concept of thro
 # cas.ticket.tgt.throttledTimeout.timeInBetweenUsesInSeconds=5
 ```
 
-## TGT Expiration Policy -> Hard Timeout
+### Hard Timeout
 
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation.
 
@@ -2207,29 +2241,6 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.googleAnalytics.googleAnalyticsTrackingId=
 ```
 
-## Http Web Requests
-
-Control how CAS should respond and validate incoming HTTP requests.
-
-```properties
-# cas.httpWebRequest.header.xframe=false
-# cas.httpWebRequest.header.xss=false
-# cas.httpWebRequest.header.hsts=false
-# cas.httpWebRequest.header.xcontent=false
-# cas.httpWebRequest.header.cache=false
-
-# cas.httpWebRequest.web.forceEncoding=true
-# cas.httpWebRequest.web.encoding=UTF-8
-
-# cas.httpWebRequest.allowMultiValueParameters=false
-# cas.httpWebRequest.onlyPostParams=username,password
-# cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
-
-spring.http.encoding.charset=UTF-8
-spring.http.encoding.enabled=true
-spring.http.encoding.force=true
-```
-
 ## Spring Webflow
 
 Control how Spring Webflow's conversational session state should be managed by CAS,
@@ -2268,7 +2279,6 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 # cas.rest.attributeValue=
 # cas.rest.throttler=neverThrottle
 ```
-
 
 ## Metrics & Performance Stats
 
