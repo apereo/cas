@@ -81,9 +81,10 @@ public class MyClass {
 ```
 
 [Parameterized log messages](http://www.slf4j.org/faq.html#logging_performance) are preferred:
+
 ```java
 final Object entry = new SomeObject();
-log.debug("The entry is {}.", entry);
+logger.debug("The entry is {}.", entry);
 ```
 
 This is the preferred method over checking for a particular logging level and concatenating parameters through String objects.
