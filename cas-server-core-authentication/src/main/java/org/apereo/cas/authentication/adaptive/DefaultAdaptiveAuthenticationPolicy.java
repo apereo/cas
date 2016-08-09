@@ -10,13 +10,15 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.regex.Pattern;
+
 /**
- * This is {@link DefaultAdaptiveAuthenticationTransactionPolicy}.
+ * This is {@link DefaultAdaptiveAuthenticationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultAdaptiveAuthenticationTransactionPolicy implements AdaptiveAuthenticationTransactionPolicy {
+public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private GeoLocationService geoLocationService;
@@ -37,10 +39,14 @@ public class DefaultAdaptiveAuthenticationTransactionPolicy implements AdaptiveA
             logger.warn("User agent {} is rejected for authentication", userAgent);
             return false;
         }
-
+        logger.debug("User agent {} is authorized to proceed", userAgent);
+        
         if (this.geoLocationService != null) {
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final String clientIp = clientInfo.getClientIpAddress();
+            
+            logger.debug("Located client IP address as {}", clientIp);
+            
             final GeoLocationResponse loc = getGeoLocation(clientIp, location);
             
             if (loc != null) {
@@ -73,18 +79,13 @@ public class DefaultAdaptiveAuthenticationTransactionPolicy implements AdaptiveA
     }
 
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
-        return this.adaptiveAuthenticationProperties.getRejectCountries()
-                .stream()
-                .filter(s -> finalLoc.getCountry().matches(s))
-                .findFirst()
-                .isPresent();
+        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
+                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.buildAddress()).find();
     }
     
     private boolean isUserAgentRejected(final String userAgent) {
-        return this.adaptiveAuthenticationProperties.getRejectBrowsers()
-                .stream()
-                .filter(s -> userAgent.matches(s))
-                .findFirst()
-                .isPresent();
+        
+        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectBrowsers())
+                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectBrowsers()).matcher(userAgent).find();
     }
 }
