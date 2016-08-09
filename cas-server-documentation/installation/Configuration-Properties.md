@@ -457,6 +457,9 @@ same IP address.
 
 ## Adaptive Authentication
 
+Control how CAS authentication should adapt itself to incoming client requests.
+To learn more about this topic, [please review this guide](Configuring-Adaptive-Authentication.html).
+
 ```properties
 # cas.authn.adaptive.rejectCountries=United.+
 # cas.authn.adaptive.rejectBrowsers=Gecko.+
@@ -476,7 +479,7 @@ Used to geo-profile authentication events.
 
 ## Maxmind GeoTracking
 
-Used to geo-profile authentication events and such.
+Used to geo-profile authentication events.
 
 ```properties
 # cas.maxmind.cityDatabase=file:/etc/cas/maxmind/GeoLite2-City.mmdb
