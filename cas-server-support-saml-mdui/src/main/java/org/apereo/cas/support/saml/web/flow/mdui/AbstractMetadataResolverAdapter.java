@@ -134,7 +134,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     private void loadMetadataFromResource(final MetadataFilter metadataFilter,
                                           final Resource resource, final String entityId) {
 
-        try (final InputStream in = getResourceInputStream(resource, entityId)) {
+        try (InputStream in = getResourceInputStream(resource, entityId)) {
             logger.debug("Parsing [{}]", resource.getFilename());
             
             if (in.available() > 0) {

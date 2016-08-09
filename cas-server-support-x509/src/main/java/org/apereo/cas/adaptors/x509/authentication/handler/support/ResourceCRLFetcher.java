@@ -40,7 +40,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
         final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
             logger.debug("Fetching CRL data from {}", r);
-            try (final InputStream ins = r.getInputStream()) {
+            try(InputStream ins = r.getInputStream()) {
                 final X509CRL crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
                 if (crl != null) {
                     results.add(crl);

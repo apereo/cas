@@ -46,7 +46,7 @@ public final class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try (final ObjectOutputStream out = new ObjectOutputStream(outputStream);) {
+        try(ObjectOutputStream out = new ObjectOutputStream(outputStream);) {
             out.writeObject(object);
         } catch (final IOException e) {
             throw Throwables.propagate(e);

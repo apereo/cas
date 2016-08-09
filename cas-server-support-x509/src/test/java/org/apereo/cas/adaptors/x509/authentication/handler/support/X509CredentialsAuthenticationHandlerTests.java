@@ -278,7 +278,7 @@ public class X509CredentialsAuthenticationHandlerTests {
 
     @Test
     public void verifyWiring() {
-        try (final ClassPathXmlApplicationContext context =
+        try(ClassPathXmlApplicationContext context =
                      new ClassPathXmlApplicationContext("x509-authn-context.xml")) {
             Assert.assertTrue(context.getBeanDefinitionCount() > 0);
         }

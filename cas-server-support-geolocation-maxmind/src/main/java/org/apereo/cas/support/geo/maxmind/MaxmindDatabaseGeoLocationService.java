@@ -9,6 +9,8 @@ import com.maxmind.geoip2.model.CountryResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +25,8 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaxmindDatabaseGeoLocationService.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,12 +67,12 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
                 final CountryResponse response = this.countryDatabaseReader.country(address);
                 location.addAddress(response.getCountry().getName());
             }
-            logger.debug("Geo location for {} is calculated as {}", address, location);
+            LOGGER.debug("Geo location for {} is calculated as {}", address, location);
             return location;
         } catch (final AddressNotFoundException e) {
-            logger.info(e.getMessage(), e);
+            LOGGER.info(e.getMessage(), e);
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -79,14 +82,14 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
         try {
             return locate(InetAddress.getByName(address));
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
 
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
-        logger.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
+        LOGGER.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
         return null;
     }
 }

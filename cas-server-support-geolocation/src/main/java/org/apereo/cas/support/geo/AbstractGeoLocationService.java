@@ -14,15 +14,15 @@ import org.slf4j.LoggerFactory;
  * @since 5.0.0
  */
 public abstract class AbstractGeoLocationService implements GeoLocationService {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGeoLocationService.class);
 
     @Override
     public GeoLocationResponse locate(final String clientIp, final GeoLocationRequest location) {
-        logger.debug("Attempting to find geolocation for {}", clientIp);
+        LOGGER.debug("Attempting to find geolocation for {}", clientIp);
         GeoLocationResponse loc = locate(clientIp);
 
         if (loc == null && location != null) {
-            logger.debug("Attempting to find geolocation for {}", location);
+            LOGGER.debug("Attempting to find geolocation for {}", location);
 
             if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
                 loc = locate(Double.valueOf(location.getLatitude()), Double.valueOf(location.getLongitude()));
