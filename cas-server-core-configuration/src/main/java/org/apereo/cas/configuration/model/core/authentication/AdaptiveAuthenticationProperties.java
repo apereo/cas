@@ -10,6 +10,15 @@ public class AdaptiveAuthenticationProperties {
     
     private String rejectCountries;
     private String rejectBrowsers;
+    private String rejectIpAddresses;
+
+    public String getRejectIpAddresses() {
+        return rejectIpAddresses;
+    }
+
+    public void setRejectIpAddresses(final String rejectIpAddresses) {
+        this.rejectIpAddresses = rejectIpAddresses;
+    }
 
     public String getRejectCountries() {
         return rejectCountries;
