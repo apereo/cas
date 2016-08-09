@@ -2,6 +2,7 @@ description = "Apereo CAS Core Logging"
 dependencies {
     compile project(":cas-server-core-api-ticket")
     compile project(":cas-server-core-web")
+    compile project(":cas-server-core-util")
     compileOnly project(":cas-server-support-cookie")
     compile libraries.spring
     compile libraries.log4j

@@ -1,6 +1,7 @@
 description = "Apereo CAS Core Utilities"
 dependencies {
     compile project(":cas-server-core-api-authentication")
+    compile project(":cas-server-core-api-ticket")
     compile project(":cas-server-core-api-util")
     compileOnly libraries.spring
     compileOnly libraries.springcloud
