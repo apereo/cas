@@ -6,9 +6,9 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.geo.GeoLocation;
-import org.apereo.cas.support.geo.GeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +56,9 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocation locate(final InetAddress address) {
+    public GeoLocationResponse locate(final InetAddress address) {
         try {
-            final GeoLocation location = new GeoLocation();
+            final GeoLocationResponse location = new GeoLocationResponse();
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
                 location.setCity(response.getCity().getName());
@@ -78,7 +78,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocation locate(final String address) {
+    public GeoLocationResponse locate(final String address) {
         try {
             return locate(InetAddress.getByName(address));
         } catch (final Exception e) {
@@ -88,7 +88,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocation locate(final double latitude, final double longitude) {
+    public GeoLocationResponse locate(final double latitude, final double longitude) {
         logger.warn("Geolocating an address by latitude/longitude is not supported");
         return null;
     }

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.WebUtils;
 
 /**
  * This is {@link DefaultAuthenticationTransactionManager}.
@@ -21,7 +23,7 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
     private ApplicationEventPublisher eventPublisher;
     
     private AuthenticationManager authenticationManager;
-
+    
     public DefaultAuthenticationTransactionManager() {
     }
 
@@ -36,26 +38,19 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
-            
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
-            
             authenticationResult.collect(authentication);
         } else {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         }
         return this;
     }
-
-    /**
-     * Sets authentication manager.
-     *
-     * @param authenticationManager the authentication manager
-     */
+    
     @Override
     public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
-
+    
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
