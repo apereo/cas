@@ -61,11 +61,11 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
             final GeoLocationResponse location = new GeoLocationResponse();
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
-                location.setCity(response.getCity().getName());
+                location.addAddress(response.getCity().getName());
             }
             if (this.countryDatabaseReader != null) {
                 final CountryResponse response = this.countryDatabaseReader.country(address);
-                location.setCountry(response.getCountry().getName());
+                location.addAddress(response.getCountry().getName());
             }
             logger.debug("Geo location for {} is calculated as {}", address, location);
             return location;

@@ -15,9 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 /**
  * This is {@link GoogleMapsGeoLocationService}.
@@ -31,10 +36,13 @@ public class GoogleMapsGeoLocationService implements GeoLocationService {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final GeoApiContext context;
-    
-    public GoogleMapsGeoLocationService() {
-        
+    private GeoApiContext context;
+
+    /**
+     * Init the google authn context.
+     */
+    @PostConstruct
+    public void init() {
         if (casProperties.getGoogleMaps().isGoogleAppsEngine()) {
             context = new GeoApiContext(new GaeRequestHandler());
         } else {
@@ -67,9 +75,11 @@ public class GoogleMapsGeoLocationService implements GeoLocationService {
         try {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
-                final GeocodingResult res = Arrays.stream(results).findFirst().get();
-                
-                return new GeoLocationResponse();
+                final GeoLocationResponse r = new GeoLocationResponse();
+                Arrays.stream(results)
+                      .map(result -> result.formattedAddress)
+                      .forEach(result -> r.addAddress(result));
+                return r;
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
