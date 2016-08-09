@@ -63,6 +63,7 @@ Configure authentication per instructions [here](GoogleAuthenticator-Authenticat
 Multifactor authentication can be activated based on the following triggers:
 
 ### Applications
+
 MFA can be triggered for a specific application registered inside the CAS service registry.
 
 ```json
@@ -78,11 +79,20 @@ MFA can be triggered for a specific application registered inside the CAS servic
 ```
 
 ### Principal Attribute
+
 MFA can be triggered for all users/subjects carrying a specific attribute that matches configured attribute value. The attribute
 value is a regex pattern and must match the provider
 id of an available MFA provider described above. See below to learn about how to configure MFA settings. 
 
+### Adaptive
+
+MFA can be triggered based on the specific nature of a request that may be considered suspicious. For instance,
+you may want all requests that are submitted from a specific IP pattern, or from a particular geographical location
+to be forced to go through MFA. CAS is able to adapt itself to various properties of the incoming request
+and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Authentication.html) for more info.
+
 ### Opt-In Request Parameter
+
 MFA can be triggered for a specific authentication request, provided
 the initial request to the CAS `/login` endpoint contains a parameter
 that indicates the required MFA authentication flow. The parameter name
@@ -94,6 +104,7 @@ https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
 
 ### Principal Attribute Per Application
+
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
 the authenticated principal carries an attribute that matches configured attribute value. The attribute
 value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
