@@ -13,7 +13,6 @@ public class AdaptiveAuthenticationProperties {
     
     private List<String> rejectCountries = new ArrayList<>();
     private List<String> rejectBrowsers = new ArrayList<>();
-    private List<String> rejectJavaVersions = new ArrayList<>();
 
     public List<String> getRejectCountries() {
         return rejectCountries;
@@ -29,13 +28,5 @@ public class AdaptiveAuthenticationProperties {
 
     public void setRejectBrowsers(final List<String> rejectBrowsers) {
         this.rejectBrowsers = rejectBrowsers;
-    }
-
-    public List<String> getRejectJavaVersions() {
-        return rejectJavaVersions;
-    }
-
-    public void setRejectJavaVersions(final List<String> rejectJavaVersions) {
-        this.rejectJavaVersions = rejectJavaVersions;
     }
 }

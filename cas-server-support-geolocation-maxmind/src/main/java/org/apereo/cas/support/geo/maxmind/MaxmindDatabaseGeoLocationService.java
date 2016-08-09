@@ -72,4 +72,20 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
         }
         return location;
     }
+
+    @Override
+    public GeoLocation locate(final String address) {
+        try {
+            return locate(InetAddress.getByName(address));
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return new GeoLocation();
+    }
+
+    @Override
+    public GeoLocation locate(final long latitude, final long longitude) {
+        logger.warn("Geolocating an address by latitude/longitude is not supported");
+        return new GeoLocation();
+    }
 }

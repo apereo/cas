@@ -17,4 +17,21 @@ public interface GeoLocationService {
      * @return the geo location
      */
     GeoLocation locate(InetAddress address);
+
+    /**
+     * Find a geo location based on an address.
+     *
+     * @param address the address
+     * @return the geo location
+     */
+    GeoLocation locate(String address);
+
+    /**
+     * Find a geo location based on an address.
+     *
+     * @param latitude  the latitude
+     * @param longitude the longitude
+     * @return the geo location
+     */
+    GeoLocation locate(long latitude, long longitude);
 }
