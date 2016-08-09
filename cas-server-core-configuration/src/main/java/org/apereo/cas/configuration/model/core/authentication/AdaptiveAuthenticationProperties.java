@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This is {@link AdaptiveAuthenticationProperties}.
  *
@@ -12,6 +15,8 @@ public class AdaptiveAuthenticationProperties {
     private String rejectBrowsers;
     private String rejectIpAddresses;
 
+    private Map requireMultifactor = new HashMap<>();
+    
     public String getRejectIpAddresses() {
         return rejectIpAddresses;
     }
@@ -34,5 +39,13 @@ public class AdaptiveAuthenticationProperties {
 
     public void setRejectBrowsers(final String rejectBrowsers) {
         this.rejectBrowsers = rejectBrowsers;
+    }
+
+    public Map getRequireMultifactor() {
+        return requireMultifactor;
+    }
+
+    public void setRequireMultifactor(final Map requireMultifactor) {
+        this.requireMultifactor = requireMultifactor;
     }
 }
