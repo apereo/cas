@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;

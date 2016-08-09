@@ -1,7 +1,8 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.EncodingUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.keys.AesKey;

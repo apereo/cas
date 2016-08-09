@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
