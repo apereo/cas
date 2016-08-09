@@ -41,7 +41,6 @@ public class InitialFlowSetupAction extends AbstractAction {
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     /** CookieGenerator for the TicketGrantingTickets. */
-    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Extractors for finding the service. */
@@ -50,8 +49,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     private boolean trackGeoLocation;
 
     private String googleAnalyticsTrackingId;
-
-
+    
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
@@ -61,36 +59,15 @@ public class InitialFlowSetupAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        final String contextPath = context.getExternalContext().getContextPath();
-        final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-        if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
-            logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
-            this.warnCookieGenerator.setCookiePath(cookiePath);
-        } else {
-            logger.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
-                    this.warnCookieGenerator.getCookiePath());
-        }
-        if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
-            logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
-            this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-        } else {
-            logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
-                    this.ticketGrantingTicketCookieGenerator.getCookiePath());
-        }
-
-        WebUtils.putTicketGrantingTicketInScopes(context,
-                this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, this.googleAnalyticsTrackingId);
-        WebUtils.putWarningCookie(context,
-                Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
-
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
-        WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
+        configureCookieGenerators(context);
+        configureWebflowContext(context, request);
+        configureWebflowContextForService(context);
         
+        return result("success");
+    }
+
+    private void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
-
-
         if (service != null) {
             logger.debug("Placing service in context scope: [{}]", service.getId());
 
@@ -116,9 +93,38 @@ public class InitialFlowSetupAction extends AbstractAction {
                     new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putService(context, service);
-        return result("success");
     }
-    
+
+    private void configureWebflowContext(final RequestContext context, final HttpServletRequest request) {
+        WebUtils.putTicketGrantingTicketInScopes(context,
+                this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, this.googleAnalyticsTrackingId);
+        WebUtils.putWarningCookie(context,
+                Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
+    }
+
+    private void configureCookieGenerators(final RequestContext context) {
+        final String contextPath = context.getExternalContext().getContextPath();
+        final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+        if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
+            this.warnCookieGenerator.setCookiePath(cookiePath);
+        } else {
+            logger.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
+                    this.warnCookieGenerator.getCookiePath());
+        }
+        if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
+            this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
+        } else {
+            logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+                    this.ticketGrantingTicketCookieGenerator.getCookiePath());
+        }
+    }
+
     public void setTicketGrantingTicketCookieGenerator(
             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
