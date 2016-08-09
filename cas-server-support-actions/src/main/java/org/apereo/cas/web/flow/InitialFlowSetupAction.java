@@ -27,6 +27,8 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static org.bouncycastle.crypto.tls.ConnectionEnd.client;
+
 /**
  * Class to automatically set the paths for the CookieGenerators.
  * <p>
@@ -44,52 +46,51 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    /** The services manager with access to the registry. **/
+
+    /**
+     * The services manager with access to the registry.
+     **/
     private ServicesManager servicesManager;
 
-    /** CookieGenerator for the Warnings. */
+    /**
+     * CookieGenerator for the Warnings.
+     */
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    /** CookieGenerator for the TicketGrantingTickets. */
+    /**
+     * CookieGenerator for the TicketGrantingTickets.
+     */
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    /** Extractors for finding the service. */
+    /**
+     * Extractors for finding the service.
+     */
     private List<ArgumentExtractor> argumentExtractors;
-    
+
     private boolean trackGeoLocation;
 
     private String googleAnalyticsTrackingId;
-    
-    /** If no authentication request from a service is present, halt and warn the user. */
+
+    /**
+     * If no authentication request from a service is present, halt and warn the user.
+     */
     private boolean enableFlowOnAbsentServiceRequest = true;
 
     private boolean staticAuthentication;
-    
+
     private GeoLocationService geoLocationService;
-    
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
         validateClientRequestContext(context);
-        
+
         return result("success");
     }
 
     private void validateClientRequestContext(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        
-        if (this.geoLocationService != null) {
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final String clientIp = clientInfo.getClientIpAddress();
-            final GeoLocation loc = this.geoLocationService.locate(clientIp);
-            
-            final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
-            
-        }
-        
         final String agent = WebUtils.getHttpServletRequestUserAgent();
         if (casProperties.getAuthn().getAdaptive().getRejectBrowsers()
                 .stream()
@@ -99,8 +100,34 @@ public class InitialFlowSetupAction extends AbstractAction {
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                     new UnauthorizedException("Browser agent " + agent + " is unauthorized to submit requests"));
         }
+        
+        if (this.geoLocationService != null) {
+            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+            final String clientIp = clientInfo.getClientIpAddress();
+
+            logger.debug("Attempting to find geolocation for {}", clientIp);
+            GeoLocation loc = this.geoLocationService.locate(clientIp);
+
+            if (loc == null) {
+                final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
+                logger.debug("Attempting to find geolocation for {}", location);
+
+                if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
+                    loc = this.geoLocationService.locate(Double.valueOf(location.getLatitude()),
+                            Double.valueOf(location.getLongitude()));
+                }
+            }
+
+            if (loc != null) {
+                logger.debug("Determined geolocation to be {}", loc);
+                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
+                        new UnauthorizedException("Client " + clientIp + " is unauthorized to submit requests"));
+            } else {
+                logger.info("Could not determine geolocation for {}", clientIp);
+            }
+        }
     }
-    
+
     private void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
@@ -165,19 +192,19 @@ public class InitialFlowSetupAction extends AbstractAction {
             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
-    
+
     public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
-    
+
     public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
-    
+
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
-    
+
     public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
