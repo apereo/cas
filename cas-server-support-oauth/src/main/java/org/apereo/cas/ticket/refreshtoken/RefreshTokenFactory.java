@@ -1,23 +1,23 @@
-package org.apereo.cas.support.oauth.ticket.accesstoken;
+package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
- * Factory to create OAuth access tokens.
+ * Factory to create OAuth refresh tokens.
  *
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public interface AccessTokenFactory extends TicketFactory {
+public interface RefreshTokenFactory extends TicketFactory {
 
     /**
-     * Create an access token.
+     * Create a refresh token.
      *
      * @param service the service
      * @param authentication the authentication
-     * @return the access token
+     * @return the refresh token
      */
-    AccessToken create(Service service, Authentication authentication);
+    RefreshToken create(Service service, Authentication authentication);
 }

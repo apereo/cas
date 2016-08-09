@@ -1,35 +1,35 @@
-package org.apereo.cas.support.oauth.ticket.refreshtoken;
+package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default OAuth refresh token factory.
+ * Default OAuth access token factory.
  *
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
+public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
-    protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected UniqueTicketIdGenerator accessTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /** ExpirationPolicy for refresh tokens. */
+    /** ExpirationPolicy for access tokens. */
     protected ExpirationPolicy expirationPolicy;
 
     @Override
-    public RefreshToken create(final Service service, final Authentication authentication) {
-        final String codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        return new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy);
+    public AccessToken create(final Service service, final Authentication authentication) {
+        final String codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
+        return new AccessTokenImpl(codeId, service, authentication, this.expirationPolicy);
     }
 
     @Override
@@ -37,12 +37,12 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
         return (T) this;
     }
 
-    public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
-        return this.refreshTokenIdGenerator;
+    public UniqueTicketIdGenerator getAccessTokenIdGenerator() {
+        return this.accessTokenIdGenerator;
     }
 
-    public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
-        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
+    public void setAccessTokenIdGenerator(final UniqueTicketIdGenerator accessTokenIdGenerator) {
+        this.accessTokenIdGenerator = accessTokenIdGenerator;
     }
 
     public ExpirationPolicy getExpirationPolicy() {

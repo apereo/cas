@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.ticket.refreshtoken;
+package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;

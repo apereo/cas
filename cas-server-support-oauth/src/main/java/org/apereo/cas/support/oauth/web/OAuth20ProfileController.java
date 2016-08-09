@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.http.HttpStatus;

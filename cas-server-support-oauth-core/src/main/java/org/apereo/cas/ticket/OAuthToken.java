@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.ticket;
+package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.ServiceTicket;
