@@ -61,7 +61,7 @@ public final class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(BASE_DN_PLACEHOLDER)) {
@@ -105,7 +105,7 @@ public final class LdapTestUtils {
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr) {
         try {
             final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try (final Connection conn = DefaultConnectionFactory.getConnection(address)) {
+            try(Connection conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
                     final ModifyOperation modify = new ModifyOperation(conn);

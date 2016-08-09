@@ -169,7 +169,7 @@ public final class LdapUtils {
                                                                 final String baseDn,
                                                                 final SearchFilter filter)
             throws LdapException {
-        try (final Connection connection = createConnection(connectionFactory)) {
+        try(Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
             final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
             request.setReferralHandler(new SearchReferralHandler());
@@ -219,7 +219,7 @@ public final class LdapUtils {
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
-        try (final Connection modifyConnection = createConnection(connectionFactory)) {
+        try(Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = attributes.entrySet()
                     .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
@@ -264,7 +264,7 @@ public final class LdapUtils {
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry)
             throws LdapException {
 
-        try (final Connection connection = createConnection(connectionFactory)) {
+        try(Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             return true;
@@ -286,7 +286,7 @@ public final class LdapUtils {
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,
                                                  final LdapEntry entry) throws LdapException {
 
-        try (final Connection connection = createConnection(connectionFactory)) {
+        try(Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
             request.setReferralHandler(new DeleteReferralHandler());

@@ -55,7 +55,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
             final File keystoreFile = File.createTempFile("key", "store");
-            try (final OutputStream outputStream = new FileOutputStream(keystoreFile)) {
+            try(OutputStream outputStream = new FileOutputStream(keystoreFile)) {
                 IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
             }
 
@@ -80,7 +80,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             config.setMaxConnections(-1);
          
             final File file = File.createTempFile("ldap", "schema");
-            try (final OutputStream outputStream = new FileOutputStream(file)) {
+            try(OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
             }
 
@@ -92,7 +92,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             LOGGER.debug("Populating directory...");
 
             final File ldif = File.createTempFile("ldiff", "file");
-            try (final OutputStream outputStream = new FileOutputStream(ldif)) {
+            try(OutputStream outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }
             this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());

@@ -118,14 +118,14 @@ public final class ResourceUtils {
             while (e.hasMoreElements()) {
                 final ZipEntry entry = (ZipEntry) e.nextElement();
                 if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                    try (final InputStream stream = jFile.getInputStream(entry)) {
+                    try(InputStream stream = jFile.getInputStream(entry)) {
                         File copyDestination = destination;
                         if (isDirectory) {
                             final File entryFileName = new File(entry.getName());
                             copyDestination = new File(destination, entryFileName.getName());
                         }
                         
-                        try (final FileWriter writer = new FileWriter(copyDestination)) {
+                        try(FileWriter writer = new FileWriter(copyDestination)) {
                             IOUtils.copy(stream, writer);
                         }
                     }

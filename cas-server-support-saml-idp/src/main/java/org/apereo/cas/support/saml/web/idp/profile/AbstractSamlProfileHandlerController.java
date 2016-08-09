@@ -350,7 +350,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                          final HttpServletResponse response,
                                          final AuthnRequest authnRequest)
             throws SamlException {
-        try (final StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
+        try (StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                     SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));

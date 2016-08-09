@@ -102,7 +102,7 @@ public class EhCacheStatistics implements CacheStatistics {
             builder.append(name).append(':');
         }
         final int free = getPercentFree();
-        try (final Formatter formatter = new Formatter(builder)) {
+        try (Formatter formatter = new Formatter(builder)) {
             if (this.useBytes) {
                 formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
                 builder.append("MB heap, ");
