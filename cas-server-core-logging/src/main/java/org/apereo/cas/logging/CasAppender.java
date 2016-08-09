@@ -15,13 +15,8 @@ import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.TicketIdSanitizationUtils;
 import org.springframework.util.Assert;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasAppender}.

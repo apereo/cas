@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -75,6 +76,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
         DEFAULT_ERROR_LIST.add(UnauthorizedServiceForPrincipalException.class);
         DEFAULT_ERROR_LIST.add(UnsatisfiedAuthenticationPolicyException.class);
+        DEFAULT_ERROR_LIST.add(UnauthorizedAuthenticationException.class);
     }
 
     /**
