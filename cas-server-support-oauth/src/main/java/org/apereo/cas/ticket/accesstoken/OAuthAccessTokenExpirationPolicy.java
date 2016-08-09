@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.ticket.accesstoken;
+package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
