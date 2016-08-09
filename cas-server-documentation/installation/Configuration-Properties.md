@@ -463,6 +463,7 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 ```properties
 # cas.authn.adaptive.rejectCountries=United.+
 # cas.authn.adaptive.rejectBrowsers=Gecko.+
+# cas.authn.adaptive.rejectIpAddresses=127.+
 ```
 
 ## GoogleMaps GeoTracking
