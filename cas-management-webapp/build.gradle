@@ -18,7 +18,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishReleases
 }
 
 war {
@@ -29,7 +29,7 @@ war {
                 "Implementation-Date": java.time.ZonedDateTime.now(),
                 "Implementation-Version": project.version)
     }
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
 }
 
 dependencies {
