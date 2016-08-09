@@ -94,6 +94,13 @@ ext.libraries = [
                     force = true
                 }
         ],
+        googlegeocoding         : [
+                dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         guava                   : [
                 dependencies.create("com.google.guava:guava:$guavaVersion"),
                 dependencies.create("org.reflections:reflections:$reflectionsVersion") {
@@ -1112,7 +1119,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
-                }      
+                }
         ],
         springcloud             : [
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
@@ -1239,10 +1246,10 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
-                   
+
                     force = true
                 },
-      
+
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
@@ -1324,7 +1331,7 @@ ext.libraries = [
                     exclude(group: "org.mongodb", module: "mongo-java-driver")
                     force = true
                 },
-                
+
                 dependencies.create("org.springframework:spring-jms:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-messaging")
                 },
@@ -1393,7 +1400,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        authyjava                 : [
+        authyjava               : [
                 dependencies.create("com.authy:authy-java:$authyVersion") {
                     exclude(module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
