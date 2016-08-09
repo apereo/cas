@@ -94,6 +94,14 @@ ext.libraries = [
                     force = true
                 }
         ],
+        userinfogeocoding       : [
+                dependencies.create("io.userinfo:userinfo-java:$userInfoVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                }
+        ],
         googlegeocoding         : [
                 dependencies.create("com.google.maps:google-maps-services:$googleMapsGeoCodingVersion") {
                     exclude(group: "com.google.guava", module: "guava")
