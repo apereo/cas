@@ -24,6 +24,7 @@ import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyPrope
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
+import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCore;
@@ -123,8 +124,10 @@ public class CasConfigurationProperties {
     private MaxmindProperties maxmind = new MaxmindProperties();
 
     @NestedConfigurationProperty
-    private DatabaseProperties jdbc = new DatabaseProperties();
+    private GoogleMapsProperties googleMaps = new GoogleMapsProperties();
 
+    @NestedConfigurationProperty
+    private DatabaseProperties jdbc = new DatabaseProperties();
 
     @NestedConfigurationProperty
     private GoogleAppsProperties googleApps = new GoogleAppsProperties();
@@ -221,7 +224,7 @@ public class CasConfigurationProperties {
     public void setMonitor(final MonitorProperties monitor) {
         this.monitor = monitor;
     }
-    
+
     public ServerProperties getServer() {
         return server;
     }
@@ -349,7 +352,7 @@ public class CasConfigurationProperties {
     public void setJdbc(final DatabaseProperties jdbc) {
         this.jdbc = jdbc;
     }
-    
+
     public GoogleAppsProperties getGoogleApps() {
         return googleApps;
     }
@@ -420,5 +423,13 @@ public class CasConfigurationProperties {
 
     public void setAuthn(final AuthenticationProperties authn) {
         this.authn = authn;
+    }
+
+    public GoogleMapsProperties getGoogleMaps() {
+        return googleMaps;
+    }
+
+    public void setGoogleMaps(final GoogleMapsProperties googleMaps) {
+        this.googleMaps = googleMaps;
     }
 }

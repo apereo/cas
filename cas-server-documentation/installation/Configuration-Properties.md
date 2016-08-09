@@ -455,6 +455,16 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.maxWait=2000
 ```
 
+## Adaptive Authentication
+
+## Maxmind GeoTracking
+
+Used to geo-profile authentication events and such.
+
+```properties
+# cas.maxmind.cityDatabase=
+# cas.maxmind.countryDatabase=
+```
 
 ## Digest Authentication
 
@@ -1692,14 +1702,6 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
 
-## Maxmind GeoTracking
-
-Used to geo-profile authentication events and such.
-
-```properties
-# cas.maxmind.cityDatabase=
-# cas.maxmind.countryDatabase=
-```
 
 ## Http Web Requests
 

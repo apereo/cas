@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.geo.GeoLocationService;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.AuthenticationViaFormAction;
@@ -89,6 +90,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
 
+    @Autowired(required = false)
+    @Qualifier("geoLocationService")
+    private GeoLocationService geolocationService;
+
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
@@ -145,8 +150,9 @@ public class CasSupportActionsConfiguration {
         bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
         bean.setStaticAuthentication(
-                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers()) 
-                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
+                        || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+        bean.setGeoLocationService(this.geolocationService);
         return bean;
     }
 
