@@ -40,6 +40,9 @@ import java.util.List;
 public class AuthenticationProperties {
 
     @NestedConfigurationProperty
+    private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
+    
+    @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
 
     @NestedConfigurationProperty
@@ -355,5 +358,17 @@ public class AuthenticationProperties {
 
     public void setAttributeRepository(final PrincipalAttributesProperties attributeRepository) {
         this.attributeRepository = attributeRepository;
+    }
+
+    public AdaptiveAuthenticationProperties getAdaptive() {
+        return adaptive;
+    }
+
+    public void setAdaptive(final AdaptiveAuthenticationProperties adaptive) {
+        this.adaptive = adaptive;
+    }
+
+    public void setPolicy(final AuthenticationPolicyProperties policy) {
+        this.policy = policy;
     }
 }

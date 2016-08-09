@@ -210,6 +210,8 @@ To learn more about this topic, [please review this guide](Logging.html).
 server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
 
+To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`. 
+
 ## AspectJ Configuration
 
 ```properties
