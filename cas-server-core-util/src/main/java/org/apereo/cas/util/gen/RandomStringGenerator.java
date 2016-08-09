@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.gen;
 
 /**
  * Interface to return a random String.

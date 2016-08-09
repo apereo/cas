@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.gen;
 
 import java.security.SecureRandom;
 import java.util.stream.IntStream;
@@ -14,11 +14,10 @@ import java.util.stream.IntStream;
 public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     /** The default maximum length. */
-    protected static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
+    public static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** The array of printable characters to be used in our random string. */
-    private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
-        .toCharArray();
+    public static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
     /** An instance of secure random to ensure randomness is secure. */
     private SecureRandom randomizer = new SecureRandom();

@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 /**
  * This is {@link TicketGrantingCookieCipherExecutor} that reads TGC keys from the CAS config
