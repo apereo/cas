@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.Set;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -12,56 +13,32 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @since 5.0.0
  */
 public class GeoLocationResponse {
-    private String city;
-    private String country;
+    private Set<String> addresses = Sets.newConcurrentHashSet();
 
-    public String getCity() {
-        return this.city;
+    /**
+     * Add address.
+     *
+     * @param address the address
+     */
+    public void addAddress(final String address) {
+        this.addresses.add(address);
     }
 
-    public void setCity(final String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return this.country;
-    }
-
-    public void setCountry(final String country) {
-        this.country = country;
-    }
-    
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GeoLocationResponse rhs = (GeoLocationResponse) obj;
-        return new EqualsBuilder()
-                .append(this.city, rhs.city)
-                .append(this.country, rhs.country)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.city)
-                .append(this.country)
-                .toHashCode();
+    /**
+     * Format the address into a long string.
+     *
+     * @return the string
+     */
+    public String buildAddress() {
+        final StringBuilder b = new StringBuilder();
+        this.addresses.forEach(s -> b.append(s.concat(",")));
+        return b.toString();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("city", this.city)
-                .append("country", this.country)
+                .append("addresses", this.addresses)
                 .toString();
     }
 }
