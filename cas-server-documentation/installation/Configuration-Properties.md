@@ -457,13 +457,24 @@ same IP address.
 
 ## Adaptive Authentication
 
+## GoogleMaps GeoTracking
+
+Used to geo-profile authentication events.
+
+```properties
+# cas.googleMaps.apiKey=
+# cas.googleMaps.clientId=
+# cas.googleMaps.clientSecret=
+# cas.googleMaps.connectTimeout=3000
+```
+
 ## Maxmind GeoTracking
 
 Used to geo-profile authentication events and such.
 
 ```properties
-# cas.maxmind.cityDatabase=
-# cas.maxmind.countryDatabase=
+# cas.maxmind.cityDatabase=file:/etc/cas/maxmind/GeoLite2-City.mmdb
+# cas.maxmind.countryDatabase=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
 ```
 
 ## Digest Authentication

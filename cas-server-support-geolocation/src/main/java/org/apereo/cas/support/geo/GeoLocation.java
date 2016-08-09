@@ -30,8 +30,7 @@ public class GeoLocation {
     public void setCountry(final String country) {
         this.country = country;
     }
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
