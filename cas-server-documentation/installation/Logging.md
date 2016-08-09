@@ -50,7 +50,6 @@ This will of course include messages that are routed to a log destination by the
  well as all audit messages. A sample follows below:
 
 ```bash
-=============================================================
 WHO: audit:unknown
 WHAT: TGT-****************************************************123456-cas01.example.org
 ACTION: TICKET_GRANTING_TICKET_DESTROYED
@@ -58,7 +57,6 @@ APPLICATION: CAS
 WHEN: Sat Jul 12 04:10:35 PDT 2014
 CLIENT IP ADDRESS: ...
 SERVER IP ADDRESS: ...
-=============================================================
 ```
 
 Certain number of characters are left at the trailing end of the ticket id to assist with
