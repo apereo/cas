@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -11,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.AbstractCasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.AdaptiveMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.InitialAuthenticationAttemptWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
@@ -38,6 +41,10 @@ import org.springframework.web.util.CookieGenerator;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebflowConfiguration {
 
+    @Autowired(required = false)
+    @Qualifier("geoLocationService")
+    private GeoLocationService geoLocationService;
+    
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -71,6 +78,15 @@ public class CasCoreWebflowConfiguration {
     private CasConfigurationProperties casProperties;
     
     @Bean
+    public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
+        final AdaptiveMultifactorAuthenticationWebflowEventResolver r =
+                new AdaptiveMultifactorAuthenticationWebflowEventResolver();
+        configureResolver(r);
+        r.setGeoLocationService(this.geoLocationService);
+        return r;
+    }
+    
+    @Bean
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
         final PrincipalAttributeAuthenticationPolicyWebflowEventResolver r =
@@ -89,6 +105,9 @@ public class CasCoreWebflowConfiguration {
         final InitialAuthenticationAttemptWebflowEventResolver r =
                 new InitialAuthenticationAttemptWebflowEventResolver();
 
+        r.setAdaptiveAuthenticationResolver(
+                adaptiveAuthenticationPolicyWebflowEventResolver());
+        
         r.setPrincipalAttributeResolver(
                 principalAttributeAuthenticationPolicyWebflowEventResolver());
         

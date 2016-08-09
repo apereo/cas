@@ -7,10 +7,8 @@ import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -24,8 +22,7 @@ import java.net.InetAddress;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -88,7 +85,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocationResponse locate(final double latitude, final double longitude) {
+    public GeoLocationResponse locate(final Double latitude, final Double longitude) {
         logger.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
         return null;
     }
