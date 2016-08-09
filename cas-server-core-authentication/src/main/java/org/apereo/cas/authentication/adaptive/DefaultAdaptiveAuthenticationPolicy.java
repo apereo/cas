@@ -35,18 +35,23 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
 
     @Override
     public boolean apply(final String userAgent, final GeoLocationRequest location) {
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final String clientIp = clientInfo.getClientIpAddress();
+        logger.debug("Located client IP address as {}", clientIp);
+
+        if (isClientIpAddressRejected(clientIp)) {
+            logger.warn("Client IP {} is rejected for authentication", clientIp);
+            return false;
+        }
+        
         if (isUserAgentRejected(userAgent)) {
             logger.warn("User agent {} is rejected for authentication", userAgent);
             return false;
         }
+        
         logger.debug("User agent {} is authorized to proceed", userAgent);
         
         if (this.geoLocationService != null) {
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final String clientIp = clientInfo.getClientIpAddress();
-            
-            logger.debug("Located client IP address as {}", clientIp);
-            
             final GeoLocationResponse loc = getGeoLocation(clientIp, location);
             
             if (loc != null) {
@@ -61,6 +66,11 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         }
         
         return true;
+    }
+
+    private boolean isClientIpAddressRejected(final String clientIp) {
+        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
+                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
     }
 
     private GeoLocationResponse getGeoLocation(final String clientIp, final GeoLocationRequest location) {
