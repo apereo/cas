@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;

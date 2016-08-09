@@ -31,21 +31,10 @@ import java.util.regex.Pattern;
 @Plugin(name="CasAppender", category="Core", elementType="appender", printObject=true)
 public class CasAppender extends AbstractAppender {
     private static final long serialVersionUID = 3744758323628847477L;
-
-    private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
-            + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
-            + ")(-)*(\\w)*(-)*(\\w)*");
-
-    /**
-     * Specifies the ending tail length of the ticket id that would still be visible in the output
-     * for troubleshooting purposes.
-     */
-    private static final int VISIBLE_ID_TAIL_LENGTH = 10;
-
+    
     private Configuration config;
     private AppenderRef appenderRef;
-
-
+    
     /**
      * Instantiates a new Cas appender.
      *
@@ -62,11 +51,9 @@ public class CasAppender extends AbstractAppender {
         this.appenderRef = appenderRef;
     }
     
-
     @Override
     public void append(final LogEvent logEvent) {
-
-        final String messageModified = manipulateLogMessage(logEvent.getMessage().getFormattedMessage());
+        final String messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
         final Message message = new SimpleMessage(messageModified);
         final LogEvent newLogEvent = Log4jLogEvent.newBuilder()
                 .setLevel(logEvent.getLevel())
@@ -112,39 +99,4 @@ public class CasAppender extends AbstractAppender {
                                     @PluginConfiguration final Configuration config) {
         return new CasAppender(name, config, appenderRef);
     }
-
-    /**
-     * Manipulate the log message. For now, removes ticket ids from the log.
-     *
-     * @param msg log message
-     * @return message to log
-     */
-    private String manipulateLogMessage(final String msg) {
-        return removeTicketId(msg);
-    }
-
-    /**
-     * Remove ticket id from the log message.
-     *
-     * @param msg the message
-     * @return the modified message with tgt id removed
-     */
-    private String removeTicketId(final String msg) {
-        String modifiedMessage = msg;
-
-        if (StringUtils.isNotBlank(msg)) {
-            final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
-            while (matcher.find()) {
-                final String match = matcher.group();
-                final String newId = matcher.group(1) + '-'
-                        + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
-                        + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
-
-                modifiedMessage = modifiedMessage.replaceAll(match, newId);
-            }
-        }
-        return modifiedMessage;
-    }
-
-
 }

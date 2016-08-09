@@ -1,10 +1,11 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.cipher;
 
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
+import org.apereo.cas.util.cipher.AbstractCipherExecutor;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;

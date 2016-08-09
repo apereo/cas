@@ -36,44 +36,22 @@ public class JpaEventsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Jpa event vendor adapter hibernate jpa vendor adapter.
-     *
-     * @return the hibernate jpa vendor adapter
-     */
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-
-    /**
-     * Data source event combo pooled data source.
-     *
-     * @return the combo pooled data source
-     */
+    
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
         return Beans.newHickariDataSource(casProperties.getEvents().getJpa().getDatabase());
     }
-
-    /**
-     * Jpa event packages to scan string [ ].
-     *
-     * @return the string [ ]
-     */
-
+    
     public String[] jpaEventPackagesToScan() {
         return new String[]{"org.apereo.cas.support.events.dao"};
     }
-
-    /**
-     * Events entity manager factory local container entity manager factory bean.
-     *
-     * @return the local container entity manager factory bean
-     */
+    
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
@@ -89,14 +67,7 @@ public class JpaEventsConfiguration {
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
-
-
-    /**
-     * Transaction manager events jpa transaction manager.
-     *
-     * @param emf the emf
-     * @return the jpa transaction manager
-     */
+    
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
@@ -105,8 +76,7 @@ public class JpaEventsConfiguration {
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-
-
+    
     @Bean
     public CasEventRepository casEventRepository() {
         return new JpaCasEventRepository();

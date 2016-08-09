@@ -2,7 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.NoOpCipherExecutor;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
