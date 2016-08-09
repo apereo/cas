@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * This is {@link GeoLocationRequest}.
@@ -49,5 +50,15 @@ public class GeoLocationRequest {
     public boolean isValid() {
         return StringUtils.isNotBlank(this.latitude) && StringUtils.isNotBlank(this.longitude)
                 && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("latitude", latitude)
+                .append("longitude", longitude)
+                .append("accuracy", accuracy)
+                .append("timestamp", timestamp)
+                .toString();
     }
 }

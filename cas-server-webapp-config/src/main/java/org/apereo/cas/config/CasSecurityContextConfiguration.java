@@ -165,10 +165,10 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
             final String header =
-                    "\nCAS is configured to accept a static list of credentials for authentication. "
-                    + "While this is generally useful for demo purposes, it is STRONGLY recommended "
-                    + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users' to a blank value "
-                    + "in your configuration) and switch to a mode that is more suitable for production. \n";
+                    "\nCAS is configured to accept a static list of credentials for authentication.\n"
+                    + "While this is generally useful for demo purposes, it is STRONGLY recommended\n"
+                    + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users'\n"
+                    + "to a blank value) and switch to a mode that is more suitable for production. \n";
             AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
             this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler,
                     personDirectoryPrincipalResolver);

@@ -26,6 +26,9 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.SuccessfulHandlerMetaDataPopulator;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.BasicPrincipalResolver;
@@ -74,6 +77,10 @@ public class CasCoreAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired(required = false)
+    @Qualifier("geoLocationService")
+    private GeoLocationService geoLocationService;
+            
+    @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
 
@@ -120,7 +127,7 @@ public class CasCoreAuthenticationConfiguration {
 
         return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
-    
+
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
@@ -152,7 +159,7 @@ public class CasCoreAuthenticationConfiguration {
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
@@ -175,8 +182,7 @@ public class CasCoreAuthenticationConfiguration {
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
     public AuthenticationTransactionManager defaultAuthenticationTransactionManager(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                                                     final HttpClient httpClient) {
-        final DefaultAuthenticationTransactionManager r =
-                new DefaultAuthenticationTransactionManager();
+        final DefaultAuthenticationTransactionManager r = new DefaultAuthenticationTransactionManager();
         r.setAuthenticationManager(authenticationManager(httpClient));
         return r;
     }
@@ -224,7 +230,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setAuthenticationPolicy(defaultAuthenticationPolicy());
         return p;
     }
-    
+
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
         final RegisteredServiceAuthenticationHandlerResolver r =
@@ -242,7 +248,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationMetaDataPopulator successfulHandlerMetaDataPopulator() {
         return new SuccessfulHandlerMetaDataPopulator();
     }
-    
+
     @Bean
     public AuthenticationMetaDataPopulator rememberMeAuthenticationMetaDataPopulator() {
         return new RememberMeAuthenticationMetaDataPopulator();
@@ -276,7 +282,7 @@ public class CasCoreAuthenticationConfiguration {
         p.setPrincipalFactory(proxyPrincipalFactory());
         return p;
     }
-    
+
     @RefreshScope
     @Bean
     public AuthenticationHandler jaasAuthenticationHandler() {
@@ -352,5 +358,14 @@ public class CasCoreAuthenticationConfiguration {
         c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         return c.getObject();
+    }
+
+
+    @Bean
+    public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
+        final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
+        p.setGeoLocationService(this.geoLocationService);
+        p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
+        return p;
     }
 }
