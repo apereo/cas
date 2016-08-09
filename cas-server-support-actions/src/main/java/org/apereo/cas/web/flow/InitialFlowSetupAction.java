@@ -1,21 +1,15 @@
 package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.geo.GeoLocation;
-import org.apereo.cas.support.geo.GeoLocationService;
-import org.apereo.cas.util.http.HttpRequestGeoLocation;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +20,6 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
-import static org.bouncycastle.crypto.tls.ConnectionEnd.client;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -77,57 +69,15 @@ public class InitialFlowSetupAction extends AbstractAction {
     private boolean enableFlowOnAbsentServiceRequest = true;
 
     private boolean staticAuthentication;
-
-    private GeoLocationService geoLocationService;
-
+    
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
-        validateClientRequestContext(context);
-
         return result("success");
     }
-
-    private void validateClientRequestContext(final RequestContext context) {
-        final String agent = WebUtils.getHttpServletRequestUserAgent();
-        if (casProperties.getAuthn().getAdaptive().getRejectBrowsers()
-                .stream()
-                .filter(s -> agent.matches(s))
-                .findFirst()
-                .isPresent()) {
-            throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                    new UnauthorizedException("Browser agent " + agent + " is unauthorized to submit requests"));
-        }
-        
-        if (this.geoLocationService != null) {
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final String clientIp = clientInfo.getClientIpAddress();
-
-            logger.debug("Attempting to find geolocation for {}", clientIp);
-            GeoLocation loc = this.geoLocationService.locate(clientIp);
-
-            if (loc == null) {
-                final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
-                logger.debug("Attempting to find geolocation for {}", location);
-
-                if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
-                    loc = this.geoLocationService.locate(Double.valueOf(location.getLatitude()),
-                            Double.valueOf(location.getLongitude()));
-                }
-            }
-
-            if (loc != null) {
-                logger.debug("Determined geolocation to be {}", loc);
-                throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
-                        new UnauthorizedException("Client " + clientIp + " is unauthorized to submit requests"));
-            } else {
-                logger.info("Could not determine geolocation for {}", clientIp);
-            }
-        }
-    }
-
+    
     private void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
@@ -216,11 +166,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
-
-    public void setGeoLocationService(final GeoLocationService geoLocationService) {
-        this.geoLocationService = geoLocationService;
-    }
-
+    
     public void setStaticAuthentication(final boolean staticAuthentication) {
         this.staticAuthentication = staticAuthentication;
     }

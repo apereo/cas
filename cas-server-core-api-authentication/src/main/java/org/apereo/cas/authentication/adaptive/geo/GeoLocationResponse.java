@@ -1,17 +1,17 @@
-package org.apereo.cas.support.geo;
+package org.apereo.cas.authentication.adaptive.geo;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * This is {@link GeoLocation} that represents a particular geo location
+ * This is {@link GeoLocationResponse} that represents a particular geo location
  * usually calculated from an ip address.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GeoLocation {
+public class GeoLocationResponse {
     private String city;
     private String country;
 
@@ -42,7 +42,7 @@ public class GeoLocation {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final GeoLocation rhs = (GeoLocation) obj;
+        final GeoLocationResponse rhs = (GeoLocationResponse) obj;
         return new EqualsBuilder()
                 .append(this.city, rhs.city)
                 .append(this.country, rhs.country)

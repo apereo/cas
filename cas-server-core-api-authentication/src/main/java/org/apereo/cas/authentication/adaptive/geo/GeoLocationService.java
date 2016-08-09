@@ -1,4 +1,4 @@
-package org.apereo.cas.support.geo;
+package org.apereo.cas.authentication.adaptive.geo;
 
 import java.net.InetAddress;
 
@@ -16,7 +16,7 @@ public interface GeoLocationService {
      * @param address the address
      * @return the geo location
      */
-    GeoLocation locate(InetAddress address);
+    GeoLocationResponse locate(InetAddress address);
 
     /**
      * Find a geo location based on an address.
@@ -24,7 +24,7 @@ public interface GeoLocationService {
      * @param ipAddress the address
      * @return the geo location
      */
-    GeoLocation locate(String ipAddress);
+    GeoLocationResponse locate(String ipAddress);
 
     /**
      * Find a geo location based on an address.
@@ -33,5 +33,5 @@ public interface GeoLocationService {
      * @param longitude the longitude
      * @return the geo location
      */
-    GeoLocation locate(double latitude, double longitude);
+    GeoLocationResponse locate(double latitude, double longitude);
 }
