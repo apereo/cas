@@ -1,6 +1,6 @@
-package org.apereo.cas.support.oauth.ticket.accesstoken;
+package org.apereo.cas.ticket.accesstoken;
 
-import org.apereo.cas.support.oauth.ticket.OAuthToken;
+import org.apereo.cas.ticket.OAuthToken;
 
 /**
  * An access token is an OAuth token which can be used multiple times and has a long lifetime.
