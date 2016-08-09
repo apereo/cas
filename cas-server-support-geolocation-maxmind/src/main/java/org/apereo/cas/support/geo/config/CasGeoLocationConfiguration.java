@@ -1,10 +1,8 @@
 package org.apereo.cas.support.geo.config;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.geo.GeoLocationService;
 import org.apereo.cas.support.geo.maxmind.MaxmindDatabaseGeoLocationService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;

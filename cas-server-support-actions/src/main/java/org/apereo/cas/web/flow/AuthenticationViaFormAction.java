@@ -14,11 +14,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 public class AuthenticationViaFormAction extends AbstractAction {
-    
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-    
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -30,13 +29,11 @@ public class AuthenticationViaFormAction extends AbstractAction {
         return this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
     }
 
-    public void setServiceTicketRequestWebflowEventResolver(
-            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver) {
-        this.serviceTicketRequestWebflowEventResolver = serviceTicketRequestWebflowEventResolver;
+    public void setServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolver r) {
+        this.serviceTicketRequestWebflowEventResolver = r;
     }
 
-    public void setInitialAuthenticationAttemptWebflowEventResolver(
-            final CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        this.initialAuthenticationAttemptWebflowEventResolver = initialAuthenticationAttemptWebflowEventResolver;
+    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasWebflowEventResolver r) {
+        this.initialAuthenticationAttemptWebflowEventResolver = r;
     }
 }

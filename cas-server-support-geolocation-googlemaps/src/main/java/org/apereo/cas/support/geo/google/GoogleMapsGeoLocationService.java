@@ -8,9 +8,9 @@ import com.google.maps.model.LatLng;
 import io.userinfo.client.UserInfo;
 import io.userinfo.client.model.Info;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.geo.GeoLocation;
-import org.apereo.cas.support.geo.GeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,25 +51,25 @@ public class GoogleMapsGeoLocationService implements GeoLocationService {
     }
 
     @Override
-    public GeoLocation locate(final InetAddress address) {
+    public GeoLocationResponse locate(final InetAddress address) {
         return locate(address.getHostAddress());
     }
 
     @Override
-    public GeoLocation locate(final String address) {
+    public GeoLocationResponse locate(final String address) {
         final Info info = UserInfo.getInfo(address);
         return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
     }
 
     @Override
-    public GeoLocation locate(final double latitude, final double longitude) {
+    public GeoLocationResponse locate(final double latitude, final double longitude) {
         final LatLng latlng = new LatLng(latitude, longitude);
         try {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 final GeocodingResult res = Arrays.stream(results).findFirst().get();
                 
-                return new GeoLocation();
+                return new GeoLocationResponse();
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);

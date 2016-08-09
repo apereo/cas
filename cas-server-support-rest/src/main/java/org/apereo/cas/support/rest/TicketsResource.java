@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
  * <ul>
  * <li>{@code POST /v1/tickets}</li>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
+ * <li>{@code GET /v1/tickets/{TGT-id}}</li>
  * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *

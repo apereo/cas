@@ -2,7 +2,7 @@ package org.apereo.cas.support.events.dao;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.util.http.HttpRequestGeoLocation;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -218,7 +218,7 @@ public class CasEvent {
      *
      * @param location the location
      */
-    public void putGeoLocation(final HttpRequestGeoLocation location) {
+    public void putGeoLocation(final GeoLocationRequest location) {
         putGeoAccuracy(location.getAccuracy());
         putGeoLatitude(location.getLatitude());
         putGeoLongitude(location.getLongitude());

@@ -11,7 +11,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.http.HttpRequestGeoLocation;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -507,14 +507,14 @@ public final class WebUtils {
      *
      * @return the http servlet request geo location
      */
-    public static HttpRequestGeoLocation getHttpServletRequestGeoLocation() {
+    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
         final int latIndex = 0;
         final int longIndex = 1;
         final int accuIndex = 2;
         final int timeIndex = 3;
 
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
-        final HttpRequestGeoLocation loc = new HttpRequestGeoLocation();
+        final GeoLocationRequest loc = new GeoLocationRequest();
         if (request != null) {
             final String geoLocationParam = request.getParameter("geolocation");
             if (StringUtils.isNotBlank(geoLocationParam)) {

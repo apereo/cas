@@ -4,7 +4,7 @@ import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.util.TicketIdSanitizationUtils;
-import org.apereo.cas.util.http.HttpRequestGeoLocation;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -46,7 +46,7 @@ public class DefaultCasEventListener {
             dto.putServerIpAddress(clientInfo.getServerIpAddress());
             dto.putAgent(WebUtils.getHttpServletRequestUserAgent());
 
-            final HttpRequestGeoLocation location = WebUtils.getHttpServletRequestGeoLocation();
+            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
             dto.putGeoLocation(location);
 
             this.casEventRepository.save(dto);

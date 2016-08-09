@@ -1,14 +1,14 @@
-package org.apereo.cas.util.http;
+package org.apereo.cas.authentication.adaptive.geo;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This is {@link HttpRequestGeoLocation}.
+ * This is {@link GeoLocationRequest}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class HttpRequestGeoLocation {
+public class GeoLocationRequest {
     private String latitude;
     private String longitude;
     private String accuracy;
