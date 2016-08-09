@@ -3,6 +3,7 @@ package org.apereo.cas.support.geo.maxmind;
 import com.google.common.base.Throwables;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,8 +57,8 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
 
     @Override
     public GeoLocation locate(final InetAddress address) {
-        final GeoLocation location = new GeoLocation();
         try {
+            final GeoLocation location = new GeoLocation();
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
                 location.setCity(response.getCity().getName());
@@ -67,10 +68,13 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
                 location.setCountry(response.getCountry().getName());
             }
             logger.debug("Geo location for {} is calculated as {}", address, location);
+            return location;
+        } catch (final AddressNotFoundException e) {
+            logger.info(e.getMessage(), e);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return location;
+        return null;
     }
 
     @Override
@@ -80,12 +84,12 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return new GeoLocation();
+        return null;
     }
 
     @Override
-    public GeoLocation locate(final long latitude, final long longitude) {
+    public GeoLocation locate(final double latitude, final double longitude) {
         logger.warn("Geolocating an address by latitude/longitude is not supported");
-        return new GeoLocation();
+        return null;
     }
 }

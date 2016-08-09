@@ -21,10 +21,10 @@ public interface GeoLocationService {
     /**
      * Find a geo location based on an address.
      *
-     * @param address the address
+     * @param ipAddress the address
      * @return the geo location
      */
-    GeoLocation locate(String address);
+    GeoLocation locate(String ipAddress);
 
     /**
      * Find a geo location based on an address.
@@ -33,5 +33,5 @@ public interface GeoLocationService {
      * @param longitude the longitude
      * @return the geo location
      */
-    GeoLocation locate(long latitude, long longitude);
+    GeoLocation locate(double latitude, double longitude);
 }
