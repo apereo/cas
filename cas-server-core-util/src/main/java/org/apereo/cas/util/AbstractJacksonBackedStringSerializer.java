@@ -123,7 +123,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final OutputStream out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             final String hjsonString = isJsonFormat() 
                     ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
@@ -137,7 +137,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final Writer out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             
             if (isJsonFormat()) {
@@ -152,7 +152,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final File out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             
             if (isJsonFormat()) {

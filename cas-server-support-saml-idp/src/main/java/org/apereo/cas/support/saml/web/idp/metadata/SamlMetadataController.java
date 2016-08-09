@@ -72,7 +72,7 @@ public class SamlMetadataController {
         final String x509Certificate = request.getParameter("x509Certificate");
         final String acsUrl = request.getParameter("acsUrl");
 
-        try (final PrintWriter writer = response.getWriter()) {
+        try(PrintWriter writer = response.getWriter()) {
             if (StringUtils.isBlank(entityID) || StringUtils.isBlank(acsUrl) || StringUtils.isBlank(x509Certificate)) {
                 final String warning = "Missing entityID, ACS url or X509 signing certificate";
                 logger.warn(warning);

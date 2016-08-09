@@ -90,7 +90,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String getPasswordOnRecord(final String username) throws IOException {
 
-        try (final BufferedReader bufferedReader =
+        try (BufferedReader bufferedReader =
                      new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
             String line = bufferedReader.readLine();
             while (line != null) {

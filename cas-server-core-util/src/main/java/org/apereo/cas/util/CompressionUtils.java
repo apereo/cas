@@ -112,7 +112,7 @@ public final class CompressionUtils {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final byte[] buf = new byte[bytes.length];
-        try (final InflaterInputStream iis = new InflaterInputStream(bais)) {
+        try (InflaterInputStream iis = new InflaterInputStream(bais)) {
             int count = iis.read(buf);
             while (count != -1) {
                 baos.write(buf, 0, count);

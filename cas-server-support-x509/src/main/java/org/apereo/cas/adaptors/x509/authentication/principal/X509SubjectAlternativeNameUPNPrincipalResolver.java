@@ -133,8 +133,8 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         ASN1Primitive oct = null;
-        try (final ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
-            try (final ASN1InputStream input = new ASN1InputStream(bInput)) {
+        try(ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
+            try(ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
             } catch (final IOException e) {
                 logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);

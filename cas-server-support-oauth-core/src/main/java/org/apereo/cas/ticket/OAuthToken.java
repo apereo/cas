@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.ServiceTicket;
 
 /**
  * OAuth tokens are mostly like service tickets: they deal with authentication and service.
