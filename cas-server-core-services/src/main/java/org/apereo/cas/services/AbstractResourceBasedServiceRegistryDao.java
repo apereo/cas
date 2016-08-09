@@ -203,7 +203,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             return null;
         }
 
-        try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceSerializer.from(in);
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file {}", file.getName(), e);
@@ -219,7 +219,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
         final File f = makeFile(service);
-        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
+        try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
             this.registeredServiceSerializer.to(out, service);
 
             if (this.serviceMap.containsKey(service.getId())) {

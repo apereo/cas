@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAdaptiveAuthenticationPolicy.class);
     
     private GeoLocationService geoLocationService;
     
@@ -37,19 +37,19 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     public boolean apply(final String userAgent, final GeoLocationRequest location) {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final String clientIp = clientInfo.getClientIpAddress();
-        logger.debug("Located client IP address as {}", clientIp);
+        LOGGER.debug("Located client IP address as {}", clientIp);
 
         if (isClientIpAddressRejected(clientIp)) {
-            logger.warn("Client IP {} is rejected for authentication", clientIp);
+            LOGGER.warn("Client IP {} is rejected for authentication", clientIp);
             return false;
         }
         
         if (isUserAgentRejected(userAgent)) {
-            logger.warn("User agent {} is rejected for authentication", userAgent);
+            LOGGER.warn("User agent {} is rejected for authentication", userAgent);
             return false;
         }
-        
-        logger.debug("User agent {} is authorized to proceed", userAgent);
+
+        LOGGER.debug("User agent {} is authorized to proceed", userAgent);
         
         if (this.geoLocationService != null
             && location != null
@@ -58,17 +58,17 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
             
             final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
-                logger.debug("Determined geolocation to be {}", loc);
+                LOGGER.debug("Determined geolocation to be {}", loc);
                 if (isGeoLocationCountryRejected(loc)) {
-                    logger.warn("Client {} is rejected for authentication", clientIp);
+                    LOGGER.warn("Client {} is rejected for authentication", clientIp);
                     return false;
                 }
             } else {
-                logger.info("Could not determine geolocation for {}", clientIp);
+                LOGGER.info("Could not determine geolocation for {}", clientIp);
             }
         }
 
-        logger.debug("Adaptive authentication policy has authorized client {} to proceed.", clientIp);
+        LOGGER.debug("Adaptive authentication policy has authorized client {} to proceed.", clientIp);
         return true;
     }
     

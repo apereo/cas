@@ -30,7 +30,7 @@ public class CasBanner implements Banner {
      */
     private static String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
-        try (final Formatter formatter = new Formatter()) {
+        try (Formatter formatter = new Formatter()) {
             formatter.format("CAS Version: %s\n", CasVersion.getVersion());
             formatter.format("Build Date/Time: %s\n", CasVersion.getDateTime());
             formatter.format("Java Home: %s\n", properties.get("java.home"));

@@ -9,7 +9,6 @@ import io.userinfo.client.UserInfo;
 import io.userinfo.client.model.Info;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import org.slf4j.Logger;
@@ -19,11 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.stream;
 
 /**
  * This is {@link GoogleMapsGeoLocationService}.
@@ -32,7 +27,8 @@ import static java.util.Arrays.stream;
  * @since 5.0.0
  */
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
- 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleMapsGeoLocationService.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -75,7 +71,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
         if (latitude == null || longitude == null) {
-            logger.debug("latitude/longitude must not be null in order for geolocation to proceed");    
+            LOGGER.debug("latitude/longitude must not be null in order for geolocation to proceed");    
             return null;
         }
         
@@ -90,7 +86,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
                 return r;
             }
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }

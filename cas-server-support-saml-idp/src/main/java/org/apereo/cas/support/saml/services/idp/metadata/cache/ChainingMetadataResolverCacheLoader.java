@@ -152,7 +152,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final String metadataLocation = service.getMetadataLocation();
         logger.info("Loading SAML metadata from [{}]", metadataLocation);
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-        try (final InputStream in = metadataResource.getInputStream()) {
+        try (InputStream in = metadataResource.getInputStream()) {
             logger.debug("Parsing metadata from [{}]", metadataLocation);
             final Document document = this.configBean.getParserPool().parse(in);
 
