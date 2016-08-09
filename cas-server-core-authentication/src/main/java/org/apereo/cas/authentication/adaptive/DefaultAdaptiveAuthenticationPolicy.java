@@ -51,9 +51,12 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         
         logger.debug("User agent {} is authorized to proceed", userAgent);
         
-        if (this.geoLocationService != null) {
-            final GeoLocationResponse loc = getGeoLocation(clientIp, location);
+        if (this.geoLocationService != null
+            && location != null
+            && StringUtils.isNotBlank(clientIp)
+            && StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())) {
             
+            final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 logger.debug("Determined geolocation to be {}", loc);
                 if (isGeoLocationCountryRejected(loc)) {
@@ -64,37 +67,24 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
                 logger.info("Could not determine geolocation for {}", clientIp);
             }
         }
-        
+
+        logger.debug("Adaptive authentication policy has authorized client {} to proceed.", clientIp);
         return true;
     }
+    
+
 
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
                 && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
     }
-
-    private GeoLocationResponse getGeoLocation(final String clientIp, final GeoLocationRequest location) {
-        logger.debug("Attempting to find geolocation for {}", clientIp);
-        GeoLocationResponse loc = this.geoLocationService.locate(clientIp);
-
-        if (loc == null && location != null) {
-            logger.debug("Attempting to find geolocation for {}", location);
-
-            if (StringUtils.isNotBlank(location.getLatitude()) && StringUtils.isNotBlank(location.getLongitude())) {
-                loc = this.geoLocationService.locate(Double.valueOf(location.getLatitude()),
-                        Double.valueOf(location.getLongitude()));
-            }
-        }
-        return loc;
-    }
-
+    
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
                 && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.buildAddress()).find();
     }
     
     private boolean isUserAgentRejected(final String userAgent) {
-        
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectBrowsers())
                 && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectBrowsers()).matcher(userAgent).find();
     }

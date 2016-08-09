@@ -33,5 +33,15 @@ public interface GeoLocationService {
      * @param longitude the longitude
      * @return the geo location
      */
-    GeoLocationResponse locate(double latitude, double longitude);
+    GeoLocationResponse locate(Double latitude, Double longitude);
+
+
+    /**
+     * Locate geo location response.
+     *
+     * @param ip      the ip
+     * @param request the request
+     * @return the geo location response
+     */
+    GeoLocationResponse locate(String ip, GeoLocationRequest request);
 }

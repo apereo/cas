@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,8 @@ import static java.util.Arrays.stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GoogleMapsGeoLocationService implements GeoLocationService {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
+ 
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -66,11 +66,19 @@ public class GoogleMapsGeoLocationService implements GeoLocationService {
     @Override
     public GeoLocationResponse locate(final String address) {
         final Info info = UserInfo.getInfo(address);
-        return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
+        if (info != null && info.getPosition() != null) {
+            return locate(info.getPosition().getLatitude(), info.getPosition().getLongitude());
+        }
+        return null;
     }
 
     @Override
-    public GeoLocationResponse locate(final double latitude, final double longitude) {
+    public GeoLocationResponse locate(final Double latitude, final Double longitude) {
+        if (latitude == null || longitude == null) {
+            logger.debug("latitude/longitude must not be null in order for geolocation to proceed");    
+            return null;
+        }
+        
         final LatLng latlng = new LatLng(latitude, longitude);
         try {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
