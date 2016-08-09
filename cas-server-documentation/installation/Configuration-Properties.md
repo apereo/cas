@@ -471,6 +471,7 @@ Used to geo-profile authentication events.
 # cas.googleMaps.clientId=
 # cas.googleMaps.clientSecret=
 # cas.googleMaps.connectTimeout=3000
+# cas.googleMaps.googleAppsEngine=false
 ```
 
 ## Maxmind GeoTracking
