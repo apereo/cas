@@ -6,6 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.Ticket;
 
 import com.google.common.io.ByteSource;
+import org.apereo.cas.util.cipher.BinaryCipherExecutor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

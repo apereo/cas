@@ -1,6 +1,4 @@
-package org.apereo.cas;
-
-import org.apereo.cas.util.BinaryCipherExecutor;
+package org.apereo.cas.util.cipher;
 
 /**
  * This is {@link WebflowConversationStateCipherExecutor}, that reads webflow keys

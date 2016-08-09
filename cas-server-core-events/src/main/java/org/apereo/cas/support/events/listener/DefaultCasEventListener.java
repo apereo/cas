@@ -37,7 +37,7 @@ public class DefaultCasEventListener {
             dto.setType(event.getClass().getCanonicalName());
             dto.putTimestamp(event.getTimestamp());
             dto.putCreationTime(event.getTicketGrantingTicket().getCreationTime());
-            dto.putId(event.getTicketGrantingTicket().getId());
+            dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();

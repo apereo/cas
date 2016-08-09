@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.cipher.BinaryCipherExecutor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

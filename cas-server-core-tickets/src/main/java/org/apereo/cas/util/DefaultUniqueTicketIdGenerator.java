@@ -2,6 +2,10 @@ package org.apereo.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.gen.NumericGenerator;
+import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

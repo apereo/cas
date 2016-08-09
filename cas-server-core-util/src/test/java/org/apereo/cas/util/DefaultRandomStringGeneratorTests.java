@@ -2,6 +2,8 @@ package org.apereo.cas.util;
 
 import static org.junit.Assert.*;
 
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.junit.Test;
 
 
