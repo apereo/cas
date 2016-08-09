@@ -457,6 +457,11 @@ same IP address.
 
 ## Adaptive Authentication
 
+```properties
+# cas.authn.adaptive.rejectCountries=United.+
+# cas.authn.adaptive.rejectBrowsers=Gecko.+
+```
+
 ## GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.

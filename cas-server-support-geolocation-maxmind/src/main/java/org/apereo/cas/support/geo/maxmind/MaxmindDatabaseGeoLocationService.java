@@ -89,7 +89,7 @@ public class MaxmindDatabaseGeoLocationService implements GeoLocationService {
 
     @Override
     public GeoLocationResponse locate(final double latitude, final double longitude) {
-        logger.warn("Geolocating an address by latitude/longitude is not supported");
+        logger.warn("Geolocating an address by latitude/longitude {}/{} is not supported", latitude, longitude);
         return null;
     }
 }

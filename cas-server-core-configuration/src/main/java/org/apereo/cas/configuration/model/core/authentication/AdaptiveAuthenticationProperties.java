@@ -1,8 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This is {@link AdaptiveAuthenticationProperties}.
  *
@@ -11,22 +8,22 @@ import java.util.List;
  */
 public class AdaptiveAuthenticationProperties {
     
-    private List<String> rejectCountries = new ArrayList<>();
-    private List<String> rejectBrowsers = new ArrayList<>();
+    private String rejectCountries;
+    private String rejectBrowsers;
 
-    public List<String> getRejectCountries() {
+    public String getRejectCountries() {
         return rejectCountries;
     }
 
-    public void setRejectCountries(final List<String> rejectCountries) {
+    public void setRejectCountries(final String rejectCountries) {
         this.rejectCountries = rejectCountries;
     }
 
-    public List<String> getRejectBrowsers() {
+    public String getRejectBrowsers() {
         return rejectBrowsers;
     }
 
-    public void setRejectBrowsers(final List<String> rejectBrowsers) {
+    public void setRejectBrowsers(final String rejectBrowsers) {
         this.rejectBrowsers = rejectBrowsers;
     }
 }

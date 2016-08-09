@@ -3,6 +3,7 @@ package org.apereo.cas.web.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -73,10 +74,13 @@ public class CasSupportActionsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    
+    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-
+    
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -99,6 +103,7 @@ public class CasSupportActionsConfiguration {
         final AuthenticationViaFormAction a = new AuthenticationViaFormAction();
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
+        a.setAdaptiveAuthenticationPolicy(this.adaptiveAuthenticationPolicy);
         return a;
     }
 

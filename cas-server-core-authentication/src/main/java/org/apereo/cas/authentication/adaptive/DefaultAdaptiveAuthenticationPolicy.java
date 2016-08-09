@@ -11,12 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is {@link DefaultAdaptiveAuthenticationStrategy}.
+ * This is {@link DefaultAdaptiveAuthenticationTransactionPolicy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultAdaptiveAuthenticationStrategy implements AdaptiveAuthenticationStrategy {
+public class DefaultAdaptiveAuthenticationTransactionPolicy implements AdaptiveAuthenticationTransactionPolicy {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private GeoLocationService geoLocationService;
