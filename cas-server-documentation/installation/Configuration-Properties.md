@@ -464,6 +464,8 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.rejectCountries=United.+
 # cas.authn.adaptive.rejectBrowsers=Gecko.+
 # cas.authn.adaptive.rejectIpAddresses=127.+
+
+# cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
 ## GoogleMaps GeoTracking

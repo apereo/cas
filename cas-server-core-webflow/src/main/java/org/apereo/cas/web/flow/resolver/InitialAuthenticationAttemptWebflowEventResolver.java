@@ -32,6 +32,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver requestParameterResolver;
 
+    private CasWebflowEventResolver adaptiveAuthenticationResolver;
+
     private CasWebflowEventResolver registeredServiceResolver;
 
     private CasWebflowEventResolver principalAttributeResolver;
@@ -47,6 +49,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      */
     @PostConstruct
     public void init() {
+        this.orderedResolvers.add(adaptiveAuthenticationResolver);
         this.orderedResolvers.add(requestParameterResolver);
         this.orderedResolvers.add(registeredServicePrincipalAttributeResolver);
         this.orderedResolvers.add(principalAttributeResolver);
@@ -161,6 +164,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     public void setRegisteredServicePrincipalAttributeResolver(final CasWebflowEventResolver r) {
         this.registeredServicePrincipalAttributeResolver = r;
+    }
+
+    public void setAdaptiveAuthenticationResolver(final CasWebflowEventResolver adaptiveAuthenticationResolver) {
+        this.adaptiveAuthenticationResolver = adaptiveAuthenticationResolver;
     }
 
     public void setSelectiveResolver(final CasWebflowEventResolver r) {
