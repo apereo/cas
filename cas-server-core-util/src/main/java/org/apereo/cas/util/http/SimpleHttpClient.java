@@ -109,7 +109,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched {}.", responseCode);
                     entity = response.getEntity();
-                    final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent()));
+                    final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), "UTF-8"));
                     msg.setContentType(entity.getContentType().getValue());
                     msg.setResponseCode(responseCode);
                     return msg;

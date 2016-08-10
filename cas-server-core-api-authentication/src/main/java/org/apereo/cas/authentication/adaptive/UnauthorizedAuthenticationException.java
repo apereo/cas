@@ -26,7 +26,9 @@ public class UnauthorizedAuthenticationException extends AuthenticationException
         super(handlerErrors, handlerSuccesses);
     }
 
-    public UnauthorizedAuthenticationException(final String message, final Map<String, Class<? extends Exception>> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
+    public UnauthorizedAuthenticationException(final String message, 
+                                               final Map<String, Class<? extends Exception>> handlerErrors, 
+                                               final Map<String, HandlerResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);
     }
 }

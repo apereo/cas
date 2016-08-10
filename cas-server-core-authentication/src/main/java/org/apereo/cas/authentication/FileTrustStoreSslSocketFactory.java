@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -94,8 +94,8 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
             final TrustManager[] trustManagers = {
                     new CompositeX509TrustManager(Lists.newArrayList(jvmTrustManager, customTrustManager))
             };
-
-            final SSLContext context = SSLContexts.custom().useSSL().build();
+            
+            final SSLContext context = SSLContexts.custom().useProtocol("SSL").build();
             context.init(keyManagers, trustManagers, null);
             return context;
 
