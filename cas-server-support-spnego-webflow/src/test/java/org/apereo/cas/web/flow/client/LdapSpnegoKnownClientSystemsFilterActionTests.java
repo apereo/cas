@@ -23,11 +23,12 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations="classpath:/spnego-ldap-context.xml", classes = {RefreshAutoConfiguration.class})
+@SpringApplicationConfiguration(locations = "classpath:/spnego-ldap-context.xml", classes = {RefreshAutoConfiguration.class})
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
     @Autowired
@@ -44,9 +45,16 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() {
-        final LdapSpnegoKnownClientSystemsFilterAction action =
-                new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
-                this.searchRequest, "mail");
+        final LdapSpnegoKnownClientSystemsFilterAction action = new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
+                this.searchRequest, "mail") {
+            @Override
+            protected String getRemoteHostName(final String remoteIp) {
+                if ("localhost".equalsIgnoreCase(remoteIp) || remoteIp.startsWith("127")) {
+                    return remoteIp;
+                }
+                return super.getRemoteHostName(remoteIp);
+            }
+        };
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");
