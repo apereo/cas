@@ -36,6 +36,11 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     @Override
     public boolean apply(final String userAgent, final GeoLocationRequest location) {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo == null || StringUtils.isBlank(userAgent)) {
+            LOGGER.warn("No client IP or user-agent was provided. Skipping adaptive authentication policy...");
+            return true;
+        }
+        
         final String clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as {}", clientIp);
 
