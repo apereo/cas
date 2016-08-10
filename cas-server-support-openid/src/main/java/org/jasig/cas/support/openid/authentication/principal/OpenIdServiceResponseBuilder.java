@@ -82,7 +82,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
         Assertion assertion = null;
         try {
-            if (associated && associationValid) {
+            if ((associated && associationValid) || !associated) {
                 assertion = centralAuthenticationService.validateServiceTicket(ticketId, service);
                 LOGGER.debug("Validated openid ticket {} for {}", ticketId, service);
             } else {
