@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ServicesManager;
@@ -12,7 +11,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,28 +33,13 @@ import java.util.List;
  */
 public class InitialFlowSetupAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    /**
-     * The services manager with access to the registry.
-     **/
+    
     private ServicesManager servicesManager;
 
-    /**
-     * CookieGenerator for the Warnings.
-     */
     private CookieRetrievingCookieGenerator warnCookieGenerator;
-
-    /**
-     * CookieGenerator for the TicketGrantingTickets.
-     */
+    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    /**
-     * Extractors for finding the service.
-     */
+    
     private List<ArgumentExtractor> argumentExtractors;
 
     private boolean trackGeoLocation;
@@ -69,7 +52,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     private boolean enableFlowOnAbsentServiceRequest = true;
 
     private boolean staticAuthentication;
-    
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         configureCookieGenerators(context);
@@ -77,7 +60,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         configureWebflowContextForService(context);
         return result("success");
     }
-    
+
     private void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
@@ -130,7 +113,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                     this.warnCookieGenerator.getCookiePath());
         }
         if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
-            logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
+            logger.debug("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
             logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
@@ -138,9 +121,8 @@ public class InitialFlowSetupAction extends AbstractAction {
         }
     }
 
-    public void setTicketGrantingTicketCookieGenerator(
-            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator t) {
+        this.ticketGrantingTicketCookieGenerator = t;
     }
 
     public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
@@ -166,7 +148,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
-    
+
     public void setStaticAuthentication(final boolean staticAuthentication) {
         this.staticAuthentication = staticAuthentication;
     }
