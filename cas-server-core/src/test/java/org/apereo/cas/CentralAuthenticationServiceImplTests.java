@@ -55,7 +55,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     @Test
-    public void verifyDestroyTicketGrantingTicketWithNonExistantTicket() {
+    public void verifyDestroyTicketGrantingTicketWithNonExistingTicket() {
         getCentralAuthenticationService().destroyTicketGrantingTicket("test");
     }
 
