@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.AbstractResourceBasedMessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,10 @@ public class CasCoreWebConfiguration {
     public ArgumentExtractor defaultArgumentExtractor() {
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
-
+    
     @RefreshScope
     @Bean
-    public ResourceLoaderAware messageSource() {
+    public AbstractResourceBasedMessageSource messageSource() {
         final CasReloadableMessageBundle bean = new CasReloadableMessageBundle();
         bean.setDefaultEncoding(casProperties.getMessageBundle().getEncoding());
         bean.setCacheSeconds(casProperties.getMessageBundle().getCacheSeconds());
