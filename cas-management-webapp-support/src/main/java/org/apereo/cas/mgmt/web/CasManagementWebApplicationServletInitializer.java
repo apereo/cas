@@ -2,7 +2,8 @@ package org.apereo.cas.mgmt.web;
 
 import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
+
 
 /**
  * This is {@link CasManagementWebApplicationServletInitializer}.

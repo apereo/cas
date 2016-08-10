@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.PersistenceConfiguration;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -44,25 +45,14 @@ public class EhcacheTicketRegistryConfiguration {
                 casProperties.getTicket().getRegistry().getEhcache().isReplicateUpdatesViaCopy(),
                 casProperties.getTicket().getRegistry().getEhcache().isReplicateRemovals());
     }
-
-    /**
-     * Ticket cache bootstrap cache loader rmi bootstrap cache loader.
-     *
-     * @return the rmi bootstrap cache loader
-     */
+    
     @RefreshScope
     @Bean
     public RMIBootstrapCacheLoader ticketCacheBootstrapCacheLoader() {
         return new RMIBootstrapCacheLoader(casProperties.getTicket().getRegistry().getEhcache().isLoaderAsync(),
                 casProperties.getTicket().getRegistry().getEhcache().getMaxChunkSize());
     }
-
-
-    /**
-     * Cache manager eh cache manager factory bean.
-     *
-     * @return the eh cache manager factory bean
-     */
+    
     @Lazy
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
@@ -75,12 +65,6 @@ public class EhcacheTicketRegistryConfiguration {
         return bean;
     }
 
-    /**
-     * Service tickets cache eh cache factory bean.
-     *
-     * @param manager the manager
-     * @return the eh cache factory bean
-     */
     @Lazy
     @Bean
     public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager")
@@ -93,16 +77,20 @@ public class EhcacheTicketRegistryConfiguration {
 
         bean.setCacheManager(manager);
         bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
-
         bean.setDiskExpiryThreadIntervalSeconds(
                 casProperties.getTicket().getRegistry().getEhcache().getDiskExpiryThreadIntervalSeconds());
-        bean.setDiskPersistent(casProperties.getTicket().getRegistry().getEhcache().isDiskPersistent());
+        
         bean.setEternal(casProperties.getTicket().getRegistry().getEhcache().isEternal());
-        bean.setMaxElementsInMemory(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInMemory());
-        bean.setMaxElementsOnDisk(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsOnDisk());
+        bean.setMaxEntriesLocalHeap(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInMemory());
+        bean.setMaxEntriesInCache(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInCache());
+        bean.setMaxEntriesLocalDisk(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsOnDisk());
         bean.setMemoryStoreEvictionPolicy(casProperties.getTicket().getRegistry().getEhcache().getMemoryStoreEvictionPolicy());
-        bean.setOverflowToDisk(casProperties.getTicket().getRegistry().getEhcache().isOverflowToDisk());
-
+        
+        PersistenceConfiguration c = new PersistenceConfiguration();
+        c.strategy(casProperties.getTicket().getRegistry().getEhcache().getPersistence());
+        c.setSynchronousWrites(casProperties.getTicket().getRegistry().getEhcache().isSynchronousWrites());
+        bean.persistence(c);
+        
         return bean;
     }
 

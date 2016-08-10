@@ -80,7 +80,7 @@ public class SamlMetadataController {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 writer.write(warning);
             } else {
-                final String contents = IOUtils.toString(this.templateSpMetadata.getInputStream());
+                final String contents = IOUtils.toString(this.templateSpMetadata.getInputStream(), "UTF-8");
                 response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_OK);
                 writer.write(contents.replace("$entityId", entityID).replace("$acsUrl", acsUrl)
@@ -102,7 +102,7 @@ public class SamlMetadataController {
     @RequestMapping(method = RequestMethod.GET, value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
-        final String contents = FileUtils.readFileToString(metadataFile);
+        final String contents = FileUtils.readFileToString(metadataFile, "UTF-8");
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
         final PrintWriter writer = response.getWriter();
