@@ -77,6 +77,7 @@ public class CasCoreWebflowConfiguration {
     private CasConfigurationProperties casProperties;
     
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
         final AdaptiveMultifactorAuthenticationWebflowEventResolver r =
                 new AdaptiveMultifactorAuthenticationWebflowEventResolver();
@@ -95,11 +96,13 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {
         return new FirstMultifactorAuthenticationProviderSelector();
     }
 
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         final InitialAuthenticationAttemptWebflowEventResolver r =
                 new InitialAuthenticationAttemptWebflowEventResolver();
@@ -127,6 +130,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
         final ServiceTicketRequestWebflowEventResolver r =
                 new ServiceTicketRequestWebflowEventResolver();
@@ -135,6 +139,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
         final SelectiveAuthenticationProviderWebflowEventResolver r =
                 new SelectiveAuthenticationProviderWebflowEventResolver();
@@ -162,6 +167,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
         final RegisteredServiceAuthenticationPolicyWebflowEventResolver r =
                 new RegisteredServiceAuthenticationPolicyWebflowEventResolver();
@@ -181,6 +187,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public CipherExecutor<byte[], byte[]> webflowCipherExecutor() {
         return new WebflowConversationStateCipherExecutor(
                 casProperties.getWebflow().getEncryption().getKey(),

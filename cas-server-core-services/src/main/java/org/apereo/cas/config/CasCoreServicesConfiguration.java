@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.ArrayList;
@@ -137,6 +138,7 @@ public class CasCoreServicesConfiguration {
         }
     }
 
+    @Lazy
     @Bean
     public List serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();

@@ -44,7 +44,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -131,39 +130,17 @@ public class OpenIdConfiguration {
     private Map authenticationHandlersResolvers;
 
     @Autowired
-    @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
-
-    @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
     private Map uniqueIdGeneratorsMap;
 
 
-    @Autowired
-    @Qualifier("serviceFactoryList")
-    private List serviceFactoryList;
-
-
-    /**
-     * Openid delegating controller delegating controller.
-     *
-     * @return the delegating controller
-     */
     @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Lists.newArrayList(
-                smartOpenIdAssociationController(),
-                openIdValidateController()));
+        controller.setDelegates(Lists.newArrayList(smartOpenIdAssociationController(), openIdValidateController()));
         return controller;
     }
 
-    /**
-     * Smart OpenId Association controller.
-     * Handles OpenId association requests.
-     *
-     * @return the association controller
-     */
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         final SmartOpenIdController b = new SmartOpenIdController();
@@ -172,12 +149,6 @@ public class OpenIdConfiguration {
         return b;
     }
 
-    /**
-     * OpenId validate controller.
-     * Handles signature verification requests.
-     *
-     * @return the signature verification controller
-     */
     @Bean
     public AbstractDelegateController openIdValidateController() {
         final OpenIdValidateController c = new OpenIdValidateController();
@@ -198,11 +169,6 @@ public class OpenIdConfiguration {
         return c;
     }
 
-    /**
-     * Server manager server manager.
-     *
-     * @return the server manager
-     */
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
@@ -283,10 +249,8 @@ public class OpenIdConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler(),
-                openIdPrincipalResolver());
-        uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(),
-                this.serviceTicketUniqueIdGenerator);
-        serviceFactoryList.add(0, openIdServiceFactory());
+        authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler(), openIdPrincipalResolver());
+        uniqueIdGeneratorsMap.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
+        this.argumentExtractor.getServiceFactories().add(0, openIdServiceFactory());
     }
 }
