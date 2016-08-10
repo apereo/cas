@@ -66,16 +66,16 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @Autowired(required = true)
+    @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired(required = true)
+    @Autowired
     private TicketRegistry ticketRegistry;
 
-    @Autowired(required = true)
+    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired(required = true)
+    @Autowired
     private ServicesManager servicesManager;
 
     @Autowired
@@ -138,7 +138,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @PostConstruct
     public void init() {
-        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }
