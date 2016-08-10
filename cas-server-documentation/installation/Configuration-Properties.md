@@ -2035,7 +2035,6 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.memoryStoreEvictionPolicy=LRU
 # cas.ticket.registry.ehcache.configLocation=classpath:/ehcache-replicated.xml
 # cas.ticket.registry.ehcache.maximumBatchSize=100
-# cas.ticket.registry.ehcache.overflowToDisk=false
 # cas.ticket.registry.ehcache.shared=false
 # cas.ticket.registry.ehcache.replicationInterval=10000
 # cas.ticket.registry.ehcache.cacheTimeToLive=2147483647
@@ -2043,12 +2042,14 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.replicateRemovals=true
 # cas.ticket.registry.ehcache.maxChunkSize=5000000
 # cas.ticket.registry.ehcache.maxElementsOnDisk=0
+# cas.ticket.registry.ehcache.maxElementsInCache=10000
 # cas.ticket.registry.ehcache.cacheName=org.apereo.cas.ticket.TicketCache
 # cas.ticket.registry.ehcache.eternal=false
 # cas.ticket.registry.ehcache.loaderAsync=true
 # cas.ticket.registry.ehcache.replicatePutsViaCopy=true
 # cas.ticket.registry.ehcache.cacheTimeToIdle=0
-# cas.ticket.registry.ehcache.diskPersistent=false
+# cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
+# cas.ticket.registry.ehcache.synchronousWrites=
 
 # cas.ticket.registry.ehcache.crypto.signing.key=
 # cas.ticket.registry.ehcache.crypto.signing.keySize=512

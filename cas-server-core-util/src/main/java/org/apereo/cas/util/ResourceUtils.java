@@ -126,7 +126,7 @@ public final class ResourceUtils {
                         }
                         
                         try(FileWriter writer = new FileWriter(copyDestination)) {
-                            IOUtils.copy(stream, writer);
+                            IOUtils.copy(stream, writer, "UTF-8");
                         }
                     }
                 }

@@ -14,6 +14,8 @@ import org.springframework.core.io.Resource;
 
 public class EhcacheProperties {
     
+    private boolean synchronousWrites;
+    
     private boolean loaderAsync = true;
     
     private int maxChunkSize = 5000000;
@@ -42,21 +44,21 @@ public class EhcacheProperties {
 
     private int diskExpiryThreadIntervalSeconds;
     
-    private boolean diskPersistent;
-    
     private boolean eternal;
     
-    private int maxElementsInMemory = 10000;
+    private int maxElementsInMemory = 10_000;
+    
+    private int maxElementsInCache = 10_000;
 
     private int maxElementsOnDisk;
     
     private String memoryStoreEvictionPolicy = "LRU";
     
-    private boolean overflowToDisk;
-    
     private int cacheTimeToIdle;
     
     private int cacheTimeToLive = Integer.MAX_VALUE;
+    
+    private String persistence = "NONE";
 
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
@@ -180,15 +182,7 @@ public class EhcacheProperties {
     public void setDiskExpiryThreadIntervalSeconds(final int diskExpiryThreadIntervalSeconds) {
         this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
     }
-
-    public boolean isDiskPersistent() {
-        return diskPersistent;
-    }
-
-    public void setDiskPersistent(final boolean diskPersistent) {
-        this.diskPersistent = diskPersistent;
-    }
-
+    
     public boolean isEternal() {
         return eternal;
     }
@@ -220,15 +214,7 @@ public class EhcacheProperties {
     public void setMemoryStoreEvictionPolicy(final String memoryStoreEvictionPolicy) {
         this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
     }
-
-    public boolean isOverflowToDisk() {
-        return overflowToDisk;
-    }
-
-    public void setOverflowToDisk(final boolean overflowToDisk) {
-        this.overflowToDisk = overflowToDisk;
-    }
-
+    
     public int getCacheTimeToIdle() {
         return cacheTimeToIdle;
     }
@@ -243,6 +229,30 @@ public class EhcacheProperties {
 
     public void setCacheTimeToLive(final int cacheTimeToLive) {
         this.cacheTimeToLive = cacheTimeToLive;
+    }
+
+    public int getMaxElementsInCache() {
+        return maxElementsInCache;
+    }
+
+    public void setMaxElementsInCache(final int maxElementsInCache) {
+        this.maxElementsInCache = maxElementsInCache;
+    }
+
+    public boolean isSynchronousWrites() {
+        return synchronousWrites;
+    }
+
+    public void setSynchronousWrites(final boolean synchronousWrites) {
+        this.synchronousWrites = synchronousWrites;
+    }
+
+    public String getPersistence() {
+        return persistence;
+    }
+
+    public void setPersistence(final String persistence) {
+        this.persistence = persistence;
     }
 }
 

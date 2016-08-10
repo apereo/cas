@@ -160,12 +160,13 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         logger.info("Setting up Ehcache Ticket Registry...");
 
         Assert.notNull(this.ehcacheTicketsCache, "Ehcache Tickets cache cannot nbe null");
-        
         if (logger.isDebugEnabled()) {
             final CacheConfiguration config = this.ehcacheTicketsCache.getCacheConfiguration();
-            logger.debug("TicketCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
-            logger.debug("TicketCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-            logger.debug("TicketCache.isOverflowToDisk={}", config.isOverflowToDisk());
+            logger.debug("TicketCache.maxEntriesLocalHeap={}", config.getMaxEntriesLocalHeap());
+            logger.debug("TicketCache.maxEntriesLocalDisk={}", config.getMaxEntriesLocalDisk());
+            logger.debug("TicketCache.maxEntriesInCache={}", config.getMaxEntriesInCache());
+            logger.debug("TicketCache.persistenceConfiguration={}", config.getPersistenceConfiguration().getStrategy());
+            logger.debug("TicketCache.synchronousWrites={}", config.getPersistenceConfiguration().getSynchronousWrites());
             logger.debug("TicketCache.timeToLive={}", config.getTimeToLiveSeconds());
             logger.debug("TicketCache.timeToIdle={}", config.getTimeToIdleSeconds());
             logger.debug("TicketCache.cacheManager={}", this.ehcacheTicketsCache.getCacheManager().getName());
