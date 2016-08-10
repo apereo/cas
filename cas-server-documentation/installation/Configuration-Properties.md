@@ -26,6 +26,16 @@ simply declaring and configuring properties listed below is sufficient. You shou
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
+## Remember
+
+- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
+All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
+and syntax. **BE CAREFUL** with the distinction. 
+
+- Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
+misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
+ignored by CAS and likely the feature it controls will never be activated in the way you intended. 
+
 ## Encryption/Decryption
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
@@ -1072,6 +1082,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### Google Authenticator
 
+To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
+
 ```properties
 # cas.authn.mfa.gauth.windowSize=3
 # cas.authn.mfa.gauth.issuer=
@@ -1107,6 +1119,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### YubiKey
 
+To learn more about this topic, [please review this guide](YubiKey-Authentication.html).
+
+
 ```properties
 # cas.authn.mfa.yubikey.clientId=
 # cas.authn.mfa.yubikey.secretKey=
@@ -1114,6 +1129,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 ```
 
 ### Radius OTP
+
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
 
 ```properties
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
@@ -1139,6 +1156,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### DuoSecurity
 
+To learn more about this topic, [please review this guide](DuoSecurity-Authentication.html).
+
 ```properties
 # cas.authn.mfa.duo.duoSecretKey=
 # cas.authn.mfa.duo.rank=0
@@ -1148,6 +1167,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 ```
 
 ### Authy
+
+To learn more about this topic, [please review this guide](AuthyAuthenticator-Authentication.html).
 
 ```properties
 # cas.authn.mfa.authy.apiKey=
@@ -1159,8 +1180,10 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ## Authentication Exceptions
 
-Map custom authentication exceptions in the CAS webflow
-and link them to custom messages defined in message bundles.
+Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
+
+To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
+
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
