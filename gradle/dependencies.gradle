@@ -1005,6 +1005,16 @@ ext.libraries = [
                 }
 
         ],
+        springbootjetty        : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
+                    force = true
+                }
+        ],
+        springbootundertow        : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion") {
+                    force = true
+                }
+        ],
         springbootredis         : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-redis:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-tx")
