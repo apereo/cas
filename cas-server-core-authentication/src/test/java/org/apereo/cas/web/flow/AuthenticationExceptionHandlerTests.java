@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class AuthenticationExceptionHandlerTests {
  
     @Test
-    public void handleAccountNotFoundExceptionByDefefault() {
+    public void handleAccountNotFoundExceptionByDefault() {
         final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         final MessageContext ctx = mock(MessageContext.class);
         
@@ -97,7 +97,7 @@ public class AuthenticationExceptionHandlerTests {
         handler.setErrors(twoCustomErrors);
         assertTrue(handler.containsCustomErrors());
         assertTrue(handler.getErrors().containsAll(twoCustomErrors));
-        assertEquals(12, handler.getErrors().size());
+        assertEquals(13, handler.getErrors().size());
     }
 
     private static class TestContextualAuthenticationPolicy implements ContextualAuthenticationPolicy<Object> {
