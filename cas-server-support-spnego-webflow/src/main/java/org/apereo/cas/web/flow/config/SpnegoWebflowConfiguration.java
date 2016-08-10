@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow.config;
 
 import com.google.common.collect.Lists;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -21,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -34,7 +38,23 @@ import org.springframework.webflow.execution.Action;
 @Configuration("spnegoWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowConfiguration {
+    
+    @Autowired
+    @Qualifier("spnegoPrincipalFactory")
+    private PrincipalFactory spnegoPrincipalFactory;
+    
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
+    
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+    
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -52,13 +72,18 @@ public class SpnegoWebflowConfiguration {
         w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
-
+    
+    
     @Bean
     @RefreshScope
     public SpnegoCredentialsAction spnego() {
         final SpnegoCredentialsAction a = new SpnegoCredentialsAction();
         a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
         a.setSend401OnAuthenticationFailure(casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
+        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
+        a.setPrincipalFactory(this.spnegoPrincipalFactory);
+        a.setWarnCookieGenerator(this.warnCookieGenerator);
+        a.setCentralAuthenticationService(this.centralAuthenticationService);
         return a;
     }
 
