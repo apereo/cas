@@ -71,8 +71,11 @@ dependencies {
     compile project(":cas-server-support-themes")
     compile project(":cas-server-webapp-config")
     compile project(":cas-server-support-validation")
-    
+
     providedRuntime libraries.springboottomcat
+    //providedRuntime libraries.springbootjetty
+    //providedRuntime libraries.springbootundertow
+    
     compile libraries.pac4j
     compile libraries.springcloud
     compile libraries.springboot
