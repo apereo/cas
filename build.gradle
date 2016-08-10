@@ -353,8 +353,11 @@ subprojects {
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
                 files("${projectDir}/src/test/resources")
         testLogging {
-            events "failed", "standardError"
-            exceptionFormat "full"
+            events = ["FAILED", "STANDARD_OUT"]
+            exceptionFormat = "full"
+            showStandardStreams = true
+            showExceptions = true
+            showCauses = true
         }
     }
 

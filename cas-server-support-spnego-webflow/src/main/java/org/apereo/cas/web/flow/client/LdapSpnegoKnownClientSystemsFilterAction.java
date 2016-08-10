@@ -17,30 +17,32 @@ import org.ldaptive.Operation;
 /**
  * Peek into an LDAP server and check for the existence of an attribute
  * in order to target invocation of spnego.
+ *
  * @author Misagh Moayyed
  * @author Sean Baker
  * @since 4.1
  */
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-    /** The must-have attribute name.*/
+    /**
+     * The must-have attribute name.
+     */
     private String spnegoAttributeName;
 
     private ConnectionFactory connectionFactory;
     private SearchRequest searchRequest;
-    
-    public LdapSpnegoKnownClientSystemsFilterAction() {}
-    
+
+    public LdapSpnegoKnownClientSystemsFilterAction() {
+    }
+
     /**
      * Instantiates a new action.
      *
-     * @param connectionFactory the connection factory
-     * @param searchRequest the search request
+     * @param connectionFactory   the connection factory
+     * @param searchRequest       the search request
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(
-             final ConnectionFactory connectionFactory,
-             final SearchRequest searchRequest,
-             final String spnegoAttributeName) {
+    public LdapSpnegoKnownClientSystemsFilterAction(final ConnectionFactory connectionFactory, final SearchRequest searchRequest,
+                                                    final String spnegoAttributeName) {
         this.connectionFactory = connectionFactory;
         this.spnegoAttributeName = spnegoAttributeName;
         this.searchRequest = searchRequest;
@@ -82,7 +84,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-
+        logger.debug("Attempting to locate attribute {} for {}", this.spnegoAttributeName, remoteIp);
         return executeSearchForSpnegoAttribute(remoteIp);
     }
 
@@ -111,9 +113,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
             if (searchResult.getResultCode() == ResultCode.SUCCESS) {
                 return processSpnegoAttribute(searchResult);
             }
-            throw new RuntimeException("Failed to establish a connection ldap. "
-                    + searchResult.getMessage());
-
+            throw new RuntimeException("Failed to establish a connection ldap. " + searchResult.getMessage());
         } catch (final LdapException e) {
             logger.error(e.getMessage(), e);
             throw Throwables.propagate(e);
@@ -139,16 +139,18 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
         }
         final LdapEntry entry = result.getEntry();
         final LdapAttribute attribute = entry.getAttribute(this.spnegoAttributeName);
-        return verifySpnegyAttributeValue(attribute);
+        logger.debug("Spnego attribute {} found as {} for {}", attribute.getName(), attribute.getStringValue(), entry.getDn());
+        return verifySpnegoAttributeValue(attribute);
     }
 
     /**
-     * Verify spnegy attribute value.
+     * Verify spnego attribute value.
      * This impl simply makes sure the attribute exists and has a value.
+     *
      * @param attribute the ldap attribute
      * @return true if available. false otherwise.
      */
-    protected boolean verifySpnegyAttributeValue(final LdapAttribute attribute) {
+    protected boolean verifySpnegoAttributeValue(final LdapAttribute attribute) {
         return attribute != null && StringUtils.isNotBlank(attribute.getStringValue());
     }
 }

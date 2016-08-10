@@ -88,7 +88,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) {
         final String remoteIp = getRemoteIp(context);
         logger.debug("Current user IP {}", remoteIp);
-        return shouldDoSpnego(remoteIp) ? yes() : no();
+        if (shouldDoSpnego(remoteIp)) {
+            logger.info("Spnego should be activated for {}", remoteIp);
+            return yes();
+        }
+        logger.info("Spnego should is skipped for {}", remoteIp);
+        return no();
     }
 
     /**
