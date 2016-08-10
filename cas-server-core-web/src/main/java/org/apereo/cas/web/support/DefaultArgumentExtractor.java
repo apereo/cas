@@ -42,7 +42,7 @@ public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return getServiceFactoryList().stream().map(factory -> {
+        return getServiceFactories().stream().map(factory -> {
             final WebApplicationService service = factory.createService(request);
             if (service != null) {
                 logger.debug("Created {} based on {}", service, factory);
