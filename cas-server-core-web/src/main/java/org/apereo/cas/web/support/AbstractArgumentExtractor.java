@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,9 +18,6 @@ import java.util.List;
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    /**
-     * Logger instance.
-     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
@@ -79,7 +77,8 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
         return this.serviceFactoryList.get(0);
     }
 
-    protected List<ServiceFactory<? extends WebApplicationService>> getServiceFactoryList() {
+    @Override
+    public List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
         return this.serviceFactoryList;
     }
 
