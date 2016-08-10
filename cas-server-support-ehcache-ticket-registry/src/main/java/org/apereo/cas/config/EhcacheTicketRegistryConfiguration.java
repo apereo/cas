@@ -86,7 +86,7 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setMaxEntriesLocalDisk(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsOnDisk());
         bean.setMemoryStoreEvictionPolicy(casProperties.getTicket().getRegistry().getEhcache().getMemoryStoreEvictionPolicy());
         
-        PersistenceConfiguration c = new PersistenceConfiguration();
+        final PersistenceConfiguration c = new PersistenceConfiguration();
         c.strategy(casProperties.getTicket().getRegistry().getEhcache().getPersistence());
         c.setSynchronousWrites(casProperties.getTicket().getRegistry().getEhcache().isSynchronousWrites());
         bean.persistence(c);
