@@ -26,6 +26,16 @@ simply declaring and configuring properties listed below is sufficient. You shou
 explicitly massage a CAS XML configuration file to design an authentication handler,
 create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.</p></div>
 
+## Remember
+
+- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
+All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
+and syntax. **BE CAREFUL** with the distinction. 
+
+- Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
+misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
+ignored by CAS and likely the feature it controls will never be activated in the way you intended. 
+
 ## Encryption/Decryption
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
@@ -209,6 +219,8 @@ To learn more about this topic, [please review this guide](Logging.html).
 # logging.config=file:/etc/cas/log4j2.xml
 server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
+
+To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`. 
 
 ## AspectJ Configuration
 
@@ -453,6 +465,39 @@ same IP address.
 # cas.authn.throttle.jdbc.pool.maxWait=2000
 ```
 
+## Adaptive Authentication
+
+Control how CAS authentication should adapt itself to incoming client requests.
+To learn more about this topic, [please review this guide](Configuring-Adaptive-Authentication.html).
+
+```properties
+# cas.authn.adaptive.rejectCountries=United.+
+# cas.authn.adaptive.rejectBrowsers=Gecko.+
+# cas.authn.adaptive.rejectIpAddresses=127.+
+
+# cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
+```
+
+## GoogleMaps GeoTracking
+
+Used to geo-profile authentication events.
+
+```properties
+# cas.googleMaps.apiKey=
+# cas.googleMaps.clientId=
+# cas.googleMaps.clientSecret=
+# cas.googleMaps.connectTimeout=3000
+# cas.googleMaps.googleAppsEngine=false
+```
+
+## Maxmind GeoTracking
+
+Used to geo-profile authentication events.
+
+```properties
+# cas.maxmind.cityDatabase=file:/etc/cas/maxmind/GeoLite2-City.mmdb
+# cas.maxmind.countryDatabase=file:/etc/cas/maxmind/GeoLite2-Country.mmdb
+```
 
 ## Digest Authentication
 
@@ -1072,6 +1117,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### Google Authenticator
 
+To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
+
 ```properties
 # cas.authn.mfa.gauth.windowSize=3
 # cas.authn.mfa.gauth.issuer=
@@ -1107,6 +1154,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### YubiKey
 
+To learn more about this topic, [please review this guide](YubiKey-Authentication.html).
+
+
 ```properties
 # cas.authn.mfa.yubikey.clientId=
 # cas.authn.mfa.yubikey.secretKey=
@@ -1114,6 +1164,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 ```
 
 ### Radius OTP
+
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
 
 ```properties
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
@@ -1139,6 +1191,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### DuoSecurity
 
+To learn more about this topic, [please review this guide](DuoSecurity-Authentication.html).
+
 ```properties
 # cas.authn.mfa.duo.duoSecretKey=
 # cas.authn.mfa.duo.rank=0
@@ -1148,6 +1202,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 ```
 
 ### Authy
+
+To learn more about this topic, [please review this guide](AuthyAuthenticator-Authentication.html).
 
 ```properties
 # cas.authn.mfa.authy.apiKey=
@@ -1159,8 +1215,10 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ## Authentication Exceptions
 
-Map custom authentication exceptions in the CAS webflow
-and link them to custom messages defined in message bundles.
+Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
+
+To learn more about this topic, [please review this guide](Webflow-Customization-Exceptions.html).
+
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
@@ -1690,14 +1748,6 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 # cas.events.mongodb.collection=MongoDbCasEventRepository
 ```
 
-## Maxmind GeoTracking
-
-Used to geo-profile authentication events and such.
-
-```properties
-# cas.maxmind.cityDatabase=
-# cas.maxmind.countryDatabase=
-```
 
 ## Http Web Requests
 
@@ -2008,7 +2058,6 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.memoryStoreEvictionPolicy=LRU
 # cas.ticket.registry.ehcache.configLocation=classpath:/ehcache-replicated.xml
 # cas.ticket.registry.ehcache.maximumBatchSize=100
-# cas.ticket.registry.ehcache.overflowToDisk=false
 # cas.ticket.registry.ehcache.shared=false
 # cas.ticket.registry.ehcache.replicationInterval=10000
 # cas.ticket.registry.ehcache.cacheTimeToLive=2147483647
@@ -2016,12 +2065,14 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.replicateRemovals=true
 # cas.ticket.registry.ehcache.maxChunkSize=5000000
 # cas.ticket.registry.ehcache.maxElementsOnDisk=0
+# cas.ticket.registry.ehcache.maxElementsInCache=10000
 # cas.ticket.registry.ehcache.cacheName=org.apereo.cas.ticket.TicketCache
 # cas.ticket.registry.ehcache.eternal=false
 # cas.ticket.registry.ehcache.loaderAsync=true
 # cas.ticket.registry.ehcache.replicatePutsViaCopy=true
 # cas.ticket.registry.ehcache.cacheTimeToIdle=0
-# cas.ticket.registry.ehcache.diskPersistent=false
+# cas.ticket.registry.ehcache.persistence=LOCALTEMPSWAP|NONE|LOCALRESTARTABLE|DISTRIBUTED
+# cas.ticket.registry.ehcache.synchronousWrites=
 
 # cas.ticket.registry.ehcache.crypto.signing.key=
 # cas.ticket.registry.ehcache.crypto.signing.keySize=512
