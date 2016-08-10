@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,9 +27,18 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     public InMemoryServiceRegistryDaoImpl() {
     }
 
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime "
+                + "WILL be LOST upon container restarts.");
+    }
+    
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        logWarning();
         return this.registeredServices.remove(registeredService);
     }
 
@@ -44,7 +54,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        logWarning();
+        
 
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
@@ -70,12 +80,6 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
      */
     private long findHighestId() {
         return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse((long) 0);
-    }
-
-    private static void logWarning() {
-        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime "
-                + "will be LOST upon container restarts.");
     }
 
     @Override

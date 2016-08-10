@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -55,6 +56,15 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
 
         logger.debug("Added ticket [{}] to registry.", ticket.getId());
         this.cache.put(ticket.getId(), ticket);
+    }
+
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        logger.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
+                    + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
     }
 
     @Override
