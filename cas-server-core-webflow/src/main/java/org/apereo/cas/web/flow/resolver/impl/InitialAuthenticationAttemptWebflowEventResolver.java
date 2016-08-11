@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,8 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver
+        implements CasDelegatingWebflowEventResolver {
     
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
@@ -112,8 +114,9 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return eventBuilder.build();
     }
 
-    public List<CasWebflowEventResolver> getOrderedResolvers() {
-        return orderedResolvers;
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r) {
+        orderedResolvers.add(r);
     }
 
     public void setSelectiveResolver(final CasWebflowEventResolver r) {
