@@ -11,17 +11,17 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
-import org.apereo.cas.web.flow.resolver.AbstractCasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.AdaptiveMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.InitialAuthenticationAttemptWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.RankedAuthenticationProviderWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.RegisteredServiceAuthenticationPolicyWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.RequestParameterAuthenticationPolicyWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.SelectiveAuthenticationProviderWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.ServiceTicketRequestWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RegisteredServiceAuthenticationPolicyWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RequestParameterAuthenticationPolicyWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,7 +43,7 @@ public class CasCoreWebflowConfiguration {
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
-    
+
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -75,7 +75,7 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
@@ -85,7 +85,7 @@ public class CasCoreWebflowConfiguration {
         r.setGeoLocationService(this.geoLocationService);
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
@@ -104,27 +104,13 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        final InitialAuthenticationAttemptWebflowEventResolver r =
-                new InitialAuthenticationAttemptWebflowEventResolver();
-
-        r.setAdaptiveAuthenticationResolver(
-                adaptiveAuthenticationPolicyWebflowEventResolver());
-        
-        r.setPrincipalAttributeResolver(
-                principalAttributeAuthenticationPolicyWebflowEventResolver());
-        
-        r.setRegisteredServiceResolver(
-                registeredServiceAuthenticationPolicyWebflowEventResolver());
-        
-        r.setRegisteredServicePrincipalAttributeResolver(
-                registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
-        
-        r.setRequestParameterResolver(
-                requestParameterAuthenticationPolicyWebflowEventResolver());
-        
-        r.setSelectiveResolver(
-                selectiveAuthenticationProviderWebflowEventResolver());
-
+        final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
+        r.getOrderedResolvers().add(adaptiveAuthenticationPolicyWebflowEventResolver());
+        r.getOrderedResolvers().add(requestParameterAuthenticationPolicyWebflowEventResolver());
+        r.getOrderedResolvers().add(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.getOrderedResolvers().add(principalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.getOrderedResolvers().add(registeredServiceAuthenticationPolicyWebflowEventResolver());
+        r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver());
         configureResolver(r);
         return r;
     }
@@ -196,7 +182,7 @@ public class CasCoreWebflowConfiguration {
                 casProperties.getWebflow().getSigning().getKeySize(),
                 casProperties.getWebflow().getEncryption().getKeySize());
     }
-    
+
     private void configureResolver(final AbstractCasWebflowEventResolver r) {
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
         r.setCentralAuthenticationService(centralAuthenticationService);
