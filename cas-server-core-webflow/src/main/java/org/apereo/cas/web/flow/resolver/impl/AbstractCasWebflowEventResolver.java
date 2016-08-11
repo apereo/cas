@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver;
+package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
@@ -23,6 +23,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

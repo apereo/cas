@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver;
+package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -9,12 +9,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,32 +29,10 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
-
-    private CasWebflowEventResolver requestParameterResolver;
-
-    private CasWebflowEventResolver adaptiveAuthenticationResolver;
-
-    private CasWebflowEventResolver registeredServiceResolver;
-
-    private CasWebflowEventResolver principalAttributeResolver;
-
-    private CasWebflowEventResolver registeredServicePrincipalAttributeResolver;
-
-    private CasWebflowEventResolver selectiveResolver;
-
+    
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
-    /**
-     * Tracks the current resolvers in an ordered list.
-     */
-    @PostConstruct
-    public void init() {
-        this.orderedResolvers.add(adaptiveAuthenticationResolver);
-        this.orderedResolvers.add(requestParameterResolver);
-        this.orderedResolvers.add(registeredServicePrincipalAttributeResolver);
-        this.orderedResolvers.add(principalAttributeResolver);
-        this.orderedResolvers.add(registeredServiceResolver);
-    }
+    private CasWebflowEventResolver selectiveResolver;
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -134,6 +112,13 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return eventBuilder.build();
     }
 
+    public List<CasWebflowEventResolver> getOrderedResolvers() {
+        return orderedResolvers;
+    }
+
+    public void setSelectiveResolver(final CasWebflowEventResolver r) {
+        this.selectiveResolver = r;
+    }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
 
@@ -150,27 +135,4 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 
-    public void setRequestParameterResolver(final CasWebflowEventResolver r) {
-        this.requestParameterResolver = r;
-    }
-
-    public void setRegisteredServiceResolver(final CasWebflowEventResolver r) {
-        this.registeredServiceResolver = r;
-    }
-
-    public void setPrincipalAttributeResolver(final CasWebflowEventResolver r) {
-        this.principalAttributeResolver = r;
-    }
-
-    public void setRegisteredServicePrincipalAttributeResolver(final CasWebflowEventResolver r) {
-        this.registeredServicePrincipalAttributeResolver = r;
-    }
-
-    public void setAdaptiveAuthenticationResolver(final CasWebflowEventResolver adaptiveAuthenticationResolver) {
-        this.adaptiveAuthenticationResolver = adaptiveAuthenticationResolver;
-    }
-
-    public void setSelectiveResolver(final CasWebflowEventResolver r) {
-        this.selectiveResolver = r;
-    }
 }

@@ -21,8 +21,7 @@ public interface CasWebflowEventResolver {
      * @return the event
      */
     Set<Event> resolve(RequestContext context);
-
-
+    
     /**
      * Resolve single event.
      *

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
-import org.apereo.cas.web.flow.resolver.AbstractCasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
