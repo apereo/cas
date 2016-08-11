@@ -26,6 +26,7 @@ include "cas-server-core-audit"
 include "cas-server-core-configuration"
 include "cas-server-core-configuration-cloud-amqp"
 include "cas-server-core-configuration-cloud-kafka"
+include "cas-server-core-configuration-cloud-vault"
 include "cas-server-core-authentication"
 include "cas-server-core"
 
