@@ -1158,6 +1158,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 }
         ],
