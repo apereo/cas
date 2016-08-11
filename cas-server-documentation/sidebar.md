@@ -13,6 +13,7 @@
     *   [Configuration Management](/$version/installation/Configuration-Management.html)
         *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
         *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
+        *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
         *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
