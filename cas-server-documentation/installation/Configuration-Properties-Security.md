@@ -102,5 +102,14 @@ All settings and secrets that are stored inside Vault may be reloaded at any giv
 To lean more about CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
 To lean more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
 
+### Troubleshooting
 
+To enable additional logging, modify the logging configuration file to add the following:
+
+```xml
+<AsyncLogger name="org.springframework.cloud.vault" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+```
 
