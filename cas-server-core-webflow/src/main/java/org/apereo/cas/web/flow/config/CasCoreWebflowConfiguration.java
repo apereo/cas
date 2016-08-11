@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -29,6 +30,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
+
+import static com.sun.tools.internal.xjc.reader.Ring.add;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -105,11 +108,11 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
-        r.getOrderedResolvers().add(adaptiveAuthenticationPolicyWebflowEventResolver());
-        r.getOrderedResolvers().add(requestParameterAuthenticationPolicyWebflowEventResolver());
-        r.getOrderedResolvers().add(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.getOrderedResolvers().add(principalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.getOrderedResolvers().add(registeredServiceAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver());
         r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver());
         configureResolver(r);
         return r;
@@ -118,8 +121,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        final ServiceTicketRequestWebflowEventResolver r =
-                new ServiceTicketRequestWebflowEventResolver();
+        final ServiceTicketRequestWebflowEventResolver r = new ServiceTicketRequestWebflowEventResolver();
         configureResolver(r);
         return r;
     }
@@ -127,8 +129,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
-        final SelectiveAuthenticationProviderWebflowEventResolver r =
-                new SelectiveAuthenticationProviderWebflowEventResolver();
+        final SelectiveAuthenticationProviderWebflowEventResolver r = new SelectiveAuthenticationProviderWebflowEventResolver();
         configureResolver(r);
         return r;
     }
@@ -136,8 +137,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver() {
-        final RequestParameterAuthenticationPolicyWebflowEventResolver r =
-                new RequestParameterAuthenticationPolicyWebflowEventResolver();
+        final RequestParameterAuthenticationPolicyWebflowEventResolver r = new RequestParameterAuthenticationPolicyWebflowEventResolver();
         configureResolver(r);
         return r;
     }
@@ -155,8 +155,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
-        final RegisteredServiceAuthenticationPolicyWebflowEventResolver r =
-                new RegisteredServiceAuthenticationPolicyWebflowEventResolver();
+        final RegisteredServiceAuthenticationPolicyWebflowEventResolver r = new RegisteredServiceAuthenticationPolicyWebflowEventResolver();
         configureResolver(r);
         return r;
     }
