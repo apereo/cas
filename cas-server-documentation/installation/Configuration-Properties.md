@@ -63,10 +63,6 @@ the entire CAS running context. They are to be put inside the `bootstrap.propert
 # spring.cloud.vault.scheme=http
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
-
-# Vault Client SSL
-# spring.cloud.vault.ssl.trust-store=classpath:keystore.jks
-# spring.cloud.vault.ssl.trust-store-password=changeit
 ```
 
 To learn more about how sensitive CAS settings can be
