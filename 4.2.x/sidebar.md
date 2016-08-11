@@ -13,7 +13,7 @@
     *   [Docker](/$version/installation/Docker-Installation.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
-* [Authentication](#authentication)
+* [Authentication](#casauthentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Database](/$version/installation/Database-Authentication.html)
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
