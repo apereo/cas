@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver;
+package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.Pair;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
