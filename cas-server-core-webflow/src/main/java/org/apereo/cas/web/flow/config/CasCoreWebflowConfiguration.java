@@ -11,10 +11,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
@@ -30,8 +29,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
-
-import static com.sun.tools.internal.xjc.reader.Ring.add;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
