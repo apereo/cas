@@ -140,7 +140,7 @@ distributed system with a lightweight message broker.
 
 To learn more about this topic, [please review this guide](Configuration-Management.html).
 
-### Cloud Configuration Bus -> RabbitMQ
+### RabbitMQ
 
 ```properties
 # spring.rabbitmq.host=
@@ -152,12 +152,31 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 # spring.rabbitmq.addresses=
 ```
 
-### Cloud Configuration Bus -> Kafka
+### Kafka
 
 ```
 # spring.cloud.stream.bindings.output.content-type=application/json
 # spring.cloud.stream.kafka.binder.zkNodes=...
 # spring.cloud.stream.kafka.binder.brokers=...
+```
+
+### Vault
+
+```
+# spring.cloud.vault.host=127.0.0.1
+# spring.cloud.vault.port=8200
+# spring.cloud.vault.connectionTimeout=3000
+# spring.cloud.vault.readTimeout=5000
+# spring.cloud.vault.enabled=true
+# spring.cloud.vault.fail-fast=true
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
+# spring.cloud.vault.scheme=http
+# spring.cloud.vault.generic.enabled=true
+# spring.cloud.vault.generic.backend=secret
+
+# Vault Client SSL
+# spring.cloud.vault.ssl.trust-store=classpath:keystore.jks
+# spring.cloud.vault.ssl.trust-store-password=changeit
 ```
 
 ## Admin Status Endpoints
