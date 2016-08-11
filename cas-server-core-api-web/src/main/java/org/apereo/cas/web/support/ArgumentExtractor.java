@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
