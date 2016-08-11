@@ -22,6 +22,7 @@
     *   [Database](/$version/installation/Database-Authentication.html)
     *   [JAAS](/$version/installation/JAAS-Authentication.html)
     *   [X.509](/$version/installation/X509-Authentication.html)
+    *   [Adaptive](/$version/installation/Configuring-Adaptive-Authentication.html)
     *   [LDAP](/$version/installation/LDAP-Authentication.html)
         *   [Password Policy](/$version/installation/Password-Policy-Enforcement.html)
     *   [OAuth/OpenId](/$version/installation/OAuth-OpenId-Authentication.html)
