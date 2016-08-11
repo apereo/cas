@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver;
+package org.apereo.cas.web.flow.resolver.impl;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,7 +24,7 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
     /**
      * Resolve events internal set. Implementation may filter events from the collection
      * to only return the one that is appropriate for this request. The default
-     * implementation returns the the entire collection.
+     * implementation returns the entire collection.
      *
      * @param resolveEvents the resolve events
      * @return the set

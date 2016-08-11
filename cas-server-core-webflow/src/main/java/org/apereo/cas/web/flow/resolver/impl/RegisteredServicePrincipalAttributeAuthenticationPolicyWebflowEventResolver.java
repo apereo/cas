@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.resolver;
+package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
