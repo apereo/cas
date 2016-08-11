@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -44,8 +45,15 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
     @Test
     public void ensureLdapAttributeShouldDoSpnego() {
         final LdapSpnegoKnownClientSystemsFilterAction action =
-                new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
-                this.searchRequest, "mail");
+                new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory, this.searchRequest, "mail") {
+                    @Override
+                    protected String getRemoteHostName(final String remoteIp) {
+                        if ("localhost".equalsIgnoreCase(remoteIp) || remoteIp.startsWith("127")) {
+                            return remoteIp;
+                        }
+                        return super.getRemoteHostName(remoteIp);
+                    }
+                };
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");
