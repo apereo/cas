@@ -116,9 +116,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         final List<ServiceTicketImpl> sts = this.entityManager
                 .createQuery("select s from " + TABLE_SERVICE_TICKETS + " s", ServiceTicketImpl.class)
                 .getResultList();
+        final List<OAuthCodeImpl> ots = this.entityManager
+                .createQuery("select s from " + TABLE_OAUTH_TICKETS + " s", OAuthCodeImpl.class)
+                .getResultList();
 
         final List<Ticket> tickets = new ArrayList<>(tgts);
         tickets.addAll(sts);
+        tickets.addAll(ots);
 
         return tickets;
     }
