@@ -27,7 +27,6 @@ war {
     enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
 }
 
-
 bootRun {
     dependsOn pathingJar
     doFirst {
@@ -35,7 +34,7 @@ bootRun {
     }
 
     addResources = true
-    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    //jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     systemProperties = System.properties
 }
 
@@ -61,7 +60,6 @@ dependencies {
     compile project(":cas-server-core-validation")
     compile project(":cas-server-core-util")
     compile project(":cas-server-core-configuration")
-    compile project(":cas-server-core-configuration-cloud-amqp")
     compile project(":cas-server-webapp-init")
     compile project(":cas-server-support-throttle")
     compile project(":cas-server-support-geolocation")
@@ -86,4 +84,12 @@ dependencies {
     compile libraries.metrics
     compile libraries.hibernate
     compile libraries.bouncycastle
+    
+    compile project(':cas-server-support-jdbc')
+    compile project(':cas-server-support-oauth')
+    compile project(':cas-server-support-jpa-ticket-registry')
+    compile project(':cas-server-support-jpa-service-registry')
+    compile project(':cas-server-support-audit-jdbc')
+    compile project(':cas-server-webapp-session-mongo')
+    
 }

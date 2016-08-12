@@ -7,191 +7,191 @@ package org.apereo.cas.configuration.model.core;
  * @since 5.0.0
  */
 public class ServerProperties {
-    
-    private int connectionTimeout = 20000;
-    
-    private String name = "https://cas.example.org:8443";
-    private String prefix = name.concat("/cas");
-    private Ajp ajp = new Ajp();
-    private Http http = new Http();
 
-    public Http getHttp() {
-        return http;
-    }
+	private int connectionTimeout = 20000;
 
-    public void setHttp(final Http http) {
-        this.http = http;
-    }
+	private String name = "https://cas.example.org:8443";
+	private String prefix = name.concat("/cas");
+	private Ajp ajp = new Ajp();
+	private Http http = new Http();
 
-    public Ajp getAjp() {
-        return ajp;
-    }
+	public Http getHttp() {
+		return http;
+	}
 
-    public void setAjp(final Ajp ajp) {
-        this.ajp = ajp;
-    }
+	public void setHttp(final Http http) {
+		this.http = http;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Ajp getAjp() {
+		return ajp;
+	}
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+	public void setAjp(final Ajp ajp) {
+		this.ajp = ajp;
+	}
 
-    public String getPrefix() {
-        return prefix;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-    
-    public String getLoginUrl() {
-        return getPrefix().concat("/login");
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public String getLogoutUrl() {
-        return getPrefix().concat("/logout");
-    }
+	public String getPrefix() {
+		return prefix;
+	}
 
-    public void setConnectionTimeout(final int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
+	public void setPrefix(final String prefix) {
+		this.prefix = prefix;
+	}
 
-    public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
+	public String getLoginUrl() {
+		return getPrefix().concat("/login");
+	}
 
-    public static class Ajp {
-        private String protocol = "AJP/1.3";
-        private int port = 8009;
-        private boolean secure;
-        private boolean allowTrace;
-        private String scheme = "http";
-        private boolean enabled;
-        private int asyncTimeout = 5000;
-        private boolean enableLookups;
-        private int maxPostSize = 20971520;
-        private int proxyPort = -1;
-        private int redirectPort = -1;
-        
-        public String getProtocol() {
-            return protocol;
-        }
+	public String getLogoutUrl() {
+		return getPrefix().concat("/logout");
+	}
 
-        public void setProtocol(final String protocol) {
-            this.protocol = protocol;
-        }
+	public void setConnectionTimeout(final int connectionTimeout) {
+		this.connectionTimeout = connectionTimeout;
+	}
 
-        public int getPort() {
-            return port;
-        }
+	public int getConnectionTimeout() {
+		return connectionTimeout;
+	}
 
-        public void setPort(final int port) {
-            this.port = port;
-        }
+	public static class Ajp {
+		private String protocol = "AJP/1.3";
+		private int port = 8009;
+		private boolean secure;
+		private boolean allowTrace;
+		private String scheme = "http";
+		private boolean enabled;
+		private int asyncTimeout = 5000;
+		private boolean enableLookups;
+		private int maxPostSize = 20971520;
+		private int proxyPort = -1;
+		private int redirectPort = -1;
 
-        public boolean isSecure() {
-            return secure;
-        }
+		public String getProtocol() {
+			return protocol;
+		}
 
-        public void setSecure(final boolean secure) {
-            this.secure = secure;
-        }
+		public void setProtocol(final String protocol) {
+			this.protocol = protocol;
+		}
 
-        public boolean isAllowTrace() {
-            return allowTrace;
-        }
+		public int getPort() {
+			return port;
+		}
 
-        public void setAllowTrace(final boolean allowTrace) {
-            this.allowTrace = allowTrace;
-        }
+		public void setPort(final int port) {
+			this.port = port;
+		}
 
-        public String getScheme() {
-            return scheme;
-        }
+		public boolean isSecure() {
+			return secure;
+		}
 
-        public void setScheme(final String scheme) {
-            this.scheme = scheme;
-        }
+		public void setSecure(final boolean secure) {
+			this.secure = secure;
+		}
 
-        public boolean isEnabled() {
-            return enabled;
-        }
+		public boolean isAllowTrace() {
+			return allowTrace;
+		}
 
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
+		public void setAllowTrace(final boolean allowTrace) {
+			this.allowTrace = allowTrace;
+		}
 
-        public int getAsyncTimeout() {
-            return asyncTimeout;
-        }
+		public String getScheme() {
+			return scheme;
+		}
 
-        public void setAsyncTimeout(final int asyncTimeout) {
-            this.asyncTimeout = asyncTimeout;
-        }
+		public void setScheme(final String scheme) {
+			this.scheme = scheme;
+		}
 
-        public boolean isEnableLookups() {
-            return enableLookups;
-        }
+		public boolean isEnabled() {
+			return enabled;
+		}
 
-        public void setEnableLookups(final boolean enableLookups) {
-            this.enableLookups = enableLookups;
-        }
+		public void setEnabled(final boolean enabled) {
+			this.enabled = enabled;
+		}
 
-        public int getMaxPostSize() {
-            return maxPostSize;
-        }
+		public int getAsyncTimeout() {
+			return asyncTimeout;
+		}
 
-        public void setMaxPostSize(final int maxPostSize) {
-            this.maxPostSize = maxPostSize;
-        }
+		public void setAsyncTimeout(final int asyncTimeout) {
+			this.asyncTimeout = asyncTimeout;
+		}
 
-        public int getProxyPort() {
-            return proxyPort;
-        }
+		public boolean isEnableLookups() {
+			return enableLookups;
+		}
 
-        public void setProxyPort(final int proxyPort) {
-            this.proxyPort = proxyPort;
-        }
+		public void setEnableLookups(final boolean enableLookups) {
+			this.enableLookups = enableLookups;
+		}
 
-        public int getRedirectPort() {
-            return redirectPort;
-        }
+		public int getMaxPostSize() {
+			return maxPostSize;
+		}
 
-        public void setRedirectPort(final int redirectPort) {
-            this.redirectPort = redirectPort;
-        }
-    }
-    
-    public static class Http {
-        private boolean enabled = true;
-        private int port = 8080;
-        private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
+		public void setMaxPostSize(final int maxPostSize) {
+			this.maxPostSize = maxPostSize;
+		}
 
-        public String getProtocol() {
-            return protocol;
-        }
+		public int getProxyPort() {
+			return proxyPort;
+		}
 
-        public void setProtocol(final String protocol) {
-            this.protocol = protocol;
-        }
+		public void setProxyPort(final int proxyPort) {
+			this.proxyPort = proxyPort;
+		}
 
-        public boolean isEnabled() {
-            return enabled;
-        }
+		public int getRedirectPort() {
+			return redirectPort;
+		}
 
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
+		public void setRedirectPort(final int redirectPort) {
+			this.redirectPort = redirectPort;
+		}
+	}
 
-        public int getPort() {
-            return port;
-        }
+	public static class Http {
+		private boolean enabled = true;
+		private int port = 9090;
+		private String protocol = "org.apache.coyote.http11.Http11NioProtocol";
 
-        public void setPort(final int port) {
-            this.port = port;
-        }
-    }
+		public String getProtocol() {
+			return protocol;
+		}
+
+		public void setProtocol(final String protocol) {
+			this.protocol = protocol;
+		}
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(final boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		public void setPort(final int port) {
+			this.port = port;
+		}
+	}
 }
