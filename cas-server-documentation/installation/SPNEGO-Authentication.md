@@ -38,21 +38,6 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
-If maven complains about missing `jcifs-ext` component, you may have to add a repository in the WAR overlay:
-
-```xml
-<repository>
-  <id>jasig-legacy</id>
-    <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
-    <snapshots>
-      <enabled>false</enabled>
-    </snapshots>
-    <releases>
-      <enabled>true</enabled>
-    </releases>
-</repository>
-```
-
 ## Configuration
 
 ### Create SPN Account
@@ -151,11 +136,7 @@ Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
 ### Authentication Configuration
 
-Provide at least this CAS property :
-
-```properties
-cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@REALM
-```
+Make sure you have at least specified the JCIFS Service Principal in the CAS configuration. Use [this link](Configuration-Properties.html#spnego-authentication) to see relevant settings.
 
 You may provide a JAAS `login.conf` file:
 
