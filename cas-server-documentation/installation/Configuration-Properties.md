@@ -41,12 +41,28 @@ ignored by CAS and likely the feature it controls will never be activated in the
 The following settings are to be loaded by the CAS configuration server, which bootstraps
 the entire CAS running context. They are to be put inside the `bootstrap.properties`.
 
+### Spring Cloud
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
 # encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
 # encrypt.keyStore.password=keystorePassword
 # encrypt.keyStore.alias=DaKey
 # encrypt.keyStore.secret=changeme
+```
+
+### Vault
+
+```
+# spring.cloud.vault.host=127.0.0.1
+# spring.cloud.vault.port=8200
+# spring.cloud.vault.connectionTimeout=3000
+# spring.cloud.vault.readTimeout=5000
+# spring.cloud.vault.enabled=true
+# spring.cloud.vault.fail-fast=true
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
+# spring.cloud.vault.scheme=http
+# spring.cloud.vault.generic.enabled=true
+# spring.cloud.vault.generic.backend=secret
 ```
 
 To learn more about how sensitive CAS settings can be
@@ -140,7 +156,7 @@ distributed system with a lightweight message broker.
 
 To learn more about this topic, [please review this guide](Configuration-Management.html).
 
-### Cloud Configuration Bus -> RabbitMQ
+### RabbitMQ
 
 ```properties
 # spring.rabbitmq.host=
@@ -152,7 +168,7 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 # spring.rabbitmq.addresses=
 ```
 
-### Cloud Configuration Bus -> Kafka
+### Kafka
 
 ```
 # spring.cloud.stream.bindings.output.content-type=application/json
