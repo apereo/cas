@@ -10,6 +10,7 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,46 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 public class RegisteredServiceAttributeReleasePolicyTests {
+    @Test
+    public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
+        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
+        final Map<String, String> mappedAttr = new HashMap<>();
+        mappedAttr.put("attr1", "newAttr1");
+        policy.setAllowedAttributes(mappedAttr);
+
+        final Principal p = mock(Principal.class);
+        final Map<String, Object> map = new HashMap<>();
+        map.put("ATTR1", "value1");
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+
+        final Map<String, Object> attr = policy.getAttributes(p);
+        assertEquals(attr.size(), 1);
+        assertTrue(attr.containsKey("newAttr1"));
+    }
+    
+    @Test
+    public void verifyAttributeFilterMappedAttributesIsCaseInsensitive() {
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        final List<String> attrs = new ArrayList<>();
+        attrs.add("attr1");
+        attrs.add("attr2");
+
+        policy.setAllowedAttributes(attrs);
+
+        final Principal p = mock(Principal.class);
+        final Map<String, Object> map = new HashMap<>();
+        map.put("ATTR1", "value1");
+        map.put("ATTR2", "value2");
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+
+        final Map<String, Object> attr = policy.getAttributes(p);
+        assertEquals(attr.size(), 2);
+        assertTrue(attr.containsKey("attr1"));
+        assertTrue(attr.containsKey("attr2"));
+    }
+    
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();

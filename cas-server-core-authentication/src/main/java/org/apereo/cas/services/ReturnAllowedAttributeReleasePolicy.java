@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -61,7 +62,9 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
     
     @Override
-    protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
+    protected Map<String, Object> getAttributesInternal(final Map<String, Object> attrs) {
+        final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
         this.allowedAttributes.stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
