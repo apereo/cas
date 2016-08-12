@@ -88,15 +88,18 @@ the auto-configuration strategy is ensure deployers aren't swimming in a sea of 
 configuring beans and such. CAS should take care of it all. If you find an instance where
 this claim does not hold, consider that a "bug" and file a feature request.</p></div>
 
-## Embedded
+## Profiles
+
+Various profiles exist to determine how CAS should retrieve properties and settings. 
+
+### Embedded
 
 By default, all CAS settings and configuration is controlled via the embedded `application.properties` file. 
 
-## Native
+### Native
 
 CAS is also configured to load `*.properties` or `*.yml` files from an external location that is `/etc/cas/config`. 
-This location is constantly
-monitored by CAS to detect external changes. Note that this location simply needs to 
+This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to 
 exist, and does not require any special permissions
 or structure. The names of the configuration files that go inside this directory also do
  not matter, and there can be many. 
@@ -116,7 +119,7 @@ cas.server.name=...
 
 You could have just as well used a `cas.yml` file to host the changes.
 
-## Default
+### Default
 
 CAS is also able to handle git-based repositories that host CAS configuration. 
 Such repositories can either be local to the CAS
@@ -148,31 +151,8 @@ To learn how sensitive CAS settings can be secured via encryption, [please revie
 
 ## Reloading Changes
 
-CAS contains an embedded configuration server that is able to consume properties and settings
-via the above strategies. The server is constantly monitoring changes automatically, 
-but has no way to broadcast those changes
-to the rest of the CAS application, which would act as a client of the configuration 
-server expecting change notifications
-to quietly reload its configuration. 
-
-Therefor, in order to broadcast such `change` events CAS 
-presents [various endpoints](Monitoring-Statistics.html) that allow the adopter
-to **refresh** the configuration as needed. This means that an adopter would simply 
-change a required CAS settings and then would submit
-a request to CAS to refresh its current state. All CAS internal components that are affected 
-by the external change are quietly reloaded
-and the setting takes immediate effect, completely removing the need for container restarts or CAS redeployments.
-
-<div class="alert alert-info"><strong>Do Not Discriminate!</strong><p>Most if not all CAS settings are eligible candidates
-for reloads. CAS should be smart enough to reload the appropriate configuration, regardless of setting/module that
-ends up using that setting. All is fair game, as the entire CAS web application inclusive of all modules and all
-relevant settings is completely and utterly reloadable. </p></div>
-
-Any changes you make to the externally-defined `application.properties` file must be refreshed manually on the UI. 
-If you are using the CAS admin screens to update and edit properties, the configuration state of the CAS server
-is refreshed seamlessly and automatically without your resorting to manual and forceful refresh. 
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+To lean more about CAS allows you to reload configuration changes, 
+please [review this guide](Configuration-Management-Reload.html).
 
 ## Clustered Deployments
 
@@ -181,63 +161,4 @@ to manage configuration in a distributed deployment. Spring Cloud Bus links node
 distributed system with a lightweight message broker. This can then be used to broadcast state 
 changes (e.g. configuration changes) or other management instructions.
 
-The bus supports sending messages to all nodes listening.
-Broadcasted events will attempt to update, refresh and 
-reload each application’s configuration.
-
-If CAS nodes are not sharing a central location for configuration properties such that each 
-node contains a copy of the settings, any changes you make to one node must be replicated and 
-synced across all nodes so they are persisted on disk. The broadcast mechanism noted above only 
-applies changes to the runtime and the running CAS instance. Ideally, you should be keeping track 
-of CAS settings in a shared (git) repository (or better yet, inside a private Github repository perhaps) 
-where you make a change in one place and it's broadcasted to all nodes. This model removes the need for 
-synchronizing changes across disks and CAS nodes.  
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-The transport mechanism for the bus to broadcast events is handled via one of the following components.
-
-### Troubleshooting
-
-To enable additional logging, modify the logging configuration file to add the following:
-
-```xml
-<AsyncLogger name="org.springframework.amqp" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-```
-
-### RabbitMQ
-
-This is the default option for broadcasting change events to CAS nodes. 
-[RabbitMQ](https://www.rabbitmq.com/) is open source message broker 
-software (sometimes called message-oriented middleware) that implements 
-the Advanced Message Queuing Protocol (AMQP).
-
-Support is enabled by including the following dependency in the final overlay:
-
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-amqp</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
-
-### Kafka
-
-Apache Kafka is an open-source message broker project developed by the Apache Software Foundation. 
-The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. 
-It is, in its essence, a "massively scalable pub/sub message queue architected as a distributed transaction log",
-making it highly valuable for enterprise infrastructures to process streaming data.
-
-Support is enabled by including the following dependency in the final overlay:
-
-```xml
-<dependency>
-     <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-kafka</artifactId>
-     <version>${cas.version}</version>
-</dependency>
-```
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Management-Clustered.html).
