@@ -27,8 +27,7 @@ CAS by adding third-party components that implement CAS APIs as Java source file
 
 
 CAS uses Spring Webflow to drive the login process in a modular and configurable fashion; the `login-webflow.xml`
-file contains a straightforward description of states and transitions in the flow. Customizing this file is probably
-the most common configuration concern beyond component configuration in the Spring XML configuration files. 
+file contains a straightforward description of states and transitions in the flow. 
 
 ## Spring Configuration
 
@@ -37,13 +36,13 @@ can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which is mostly expected by CAS adopters to be 
+There is a `deployerConfigContext.xml` which CAS adopters may
 included in the overlay for environment-specific CAS settings.
 
 ### Groovy
 
 The CAS application context is able to load a `deployerConfigContext.groovy`. 
-For advanced use cases, CAS beans can be dynamically defined via the Groovy programming language. 
+For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
 As an example, here is an `exampleBean` defined inside a `applicationContext.groovy` file:
 
 
@@ -91,7 +90,7 @@ class ExampleMessenger implements Messenger {
 
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
 to include third-party source by Maven dependency references. Including third-party source is trivial; simply include
-the relevant dependency in the overlay `pom.xml` file. In order to include custom Java source, it should be included
+the relevant dependency in the overlay `pom.xml` or `build.gradle` file. In order to include custom Java source, it should be included
 under a `src/java/main` directory in the overlay project source tree.
 
     ├── src
