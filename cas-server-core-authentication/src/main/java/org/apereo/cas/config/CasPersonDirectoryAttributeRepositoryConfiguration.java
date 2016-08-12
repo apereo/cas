@@ -162,6 +162,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             }
             constraints.setDerefLinkFlag(true);
             ldapDao.setSearchControls(constraints);
+            ldapDao.initialize();
             list.add(ldapDao);
         }
     }
