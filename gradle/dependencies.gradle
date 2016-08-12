@@ -1005,12 +1005,12 @@ ext.libraries = [
                 }
 
         ],
-        springbootjetty        : [
+        springbootjetty         : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
                     force = true
                 }
         ],
-        springbootundertow        : [
+        springbootundertow      : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-undertow:$springBootVersion") {
                     force = true
                 }
@@ -1145,6 +1145,21 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    force = true
+                }
+        ],
+        springcloudvault        : [
+                dependencies.create("org.springframework.cloud:spring-cloud-vault-starter-config:$springCloudVaultVersion") {
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-messaging")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 }
         ],

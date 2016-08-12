@@ -128,6 +128,7 @@ public class CasCoreAuthenticationConfiguration {
         return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
     }
 
+    @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final Pattern pattern = Pattern.compile("::");
