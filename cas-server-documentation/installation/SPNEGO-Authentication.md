@@ -38,11 +38,26 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
+If maven complains about missing `jcifs-ext` component, you may have to add a repository in the WAR overlay:
+
+```xml
+<repository>
+  <id>jasig-legacy</id>
+    <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+    <releases>
+      <enabled>true</enabled>
+    </releases>
+</repository>
+```
+
 ## Configuration
 
 ### Create SPN Account
 
-Create an Active Directory account for the Service Principal Name (SPN) and record the username and password.
+Create an Active Directory account for the Service Principal Name (SPN) and record the username. Password will be overwritten by the next step.
 
 ### Create Keytab File
 
@@ -50,7 +65,22 @@ The keytab file enables a trust link between the CAS server and the Key Distribu
 domain controller serves the role of KDC in this context.
 The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is used to generate the keytab file,
 which contains a cryptographic key. Be sure to execute the command from an Active Directory domain controller as
-administrator.
+administrator (a member of domain administrators will not be able to use `ktpass` successfully).
+
+Example of use :
+
+```
+C:\Users\administrator.DOMAIN>ktpass /out myspnaccount.keytab /princ HTTP/cas.example.com@REALM /pass * /mapuser domain-account@YOUR.REALM /ptype KRB5_NT_PRINCIPAL /crypto RC4-HMAC-NT
+Targeting domain controller: DC.YOUR.REALM
+Successfully mapped HTTP/cas.example.com to domaine-account.
+Type the password for HTTP/cas.example.com:
+Type the password again to confirm:
+Password succesfully set!
+Key created.
+Output keytab to myspnaccount.keytab:
+Keytab version: 0x502
+keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16 (0x00112233445566778899aabbccddeeff)
+```
 
 
 ### Test SPN Account
@@ -83,17 +113,29 @@ as a reference.
  your.realm.here = YOUR.REALM.HERE
 ```
 
+It is important to note that `myspnaccount.keytab` is declared as default keytab, otherwise, CAS may not be able to find it and raise an exception like `KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP - RC4 with HMAC`
+
 Then verify that your are able to read the keytab file:
 
 ```bash
 klist -k
+Keytab name: FILE:/home/cas/kerberos/myspnaccount.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   3 HTTP/cas.example.com@REALM
 ```
 
-Then verify that your are able to read the keytab file:
+Then verify that your are able to use the keytab file:
 
 ```bash
-kinit a_user_in_the_realm@YOUR.REALM.HERE
+kinit -k HTTP/cas.example.com@REALM
 klist
+Ticket cache: FILE:/tmp/krb5cc_999
+Default principal: HTTP/cas.example.com@REALM
+
+Valid starting       Expires              Service principal
+12/08/2016 10:52:00  12/08/2016 20:52:00  krbtgt/REALM@REALM
+	renew until 12/08/2016 20:52:00
 ```
 
 ### Browser Configuration
@@ -109,7 +151,13 @@ Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
 ### Authentication Configuration
 
-Provide a JAAS `login.conf` file:
+Provide at least this CAS property :
+
+```properties
+cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@REALM
+```
+
+You may provide a JAAS `login.conf` file:
 
 ```
 jcifs.spnego.initiate {
