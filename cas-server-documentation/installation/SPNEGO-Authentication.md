@@ -52,9 +52,9 @@ The [`ktpass` tool](http://technet.microsoft.com/en-us/library/cc753771.aspx) is
 which contains a cryptographic key. Be sure to execute the command from an Active Directory domain controller as
 administrator (a member of domain administrators will not be able to use `ktpass` successfully).
 
-Example of use :
+Example:
 
-```
+```bash
 C:\Users\administrator.DOMAIN>ktpass /out myspnaccount.keytab /princ HTTP/cas.example.com@REALM /pass * /mapuser domain-account@YOUR.REALM /ptype KRB5_NT_PRINCIPAL /crypto RC4-HMAC-NT
 Targeting domain controller: DC.YOUR.REALM
 Successfully mapped HTTP/cas.example.com to domaine-account.
@@ -66,7 +66,6 @@ Output keytab to myspnaccount.keytab:
 Keytab version: 0x502
 keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x17 (RC4-HMAC) keylength 16 (0x00112233445566778899aabbccddeeff)
 ```
-
 
 ### Test SPN Account
 
@@ -98,9 +97,14 @@ as a reference.
  your.realm.here = YOUR.REALM.HERE
 ```
 
-It is important to note that `myspnaccount.keytab` is declared as default keytab, otherwise, CAS may not be able to find it and raise an exception like `KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP - RC4 with HMAC`
+It is important to note that `myspnaccount.keytab` is declared as default keytab, otherwise CAS may not be able to 
+find it and will raise an exception similar to 
 
-Then verify that your are able to read the keytab file:
+```bash
+KrbException: Invalid argument (400) - Cannot find key of appropriate type to decrypt AP REP -RC4 with HMAC`
+```
+
+Then verify that your are able to **read** the keytab file:
 
 ```bash
 klist -k
@@ -110,7 +114,7 @@ KVNO Principal
    3 HTTP/cas.example.com@REALM
 ```
 
-Then verify that your are able to use the keytab file:
+Then verify that your are able to **use** the keytab file:
 
 ```bash
 kinit -k HTTP/cas.example.com@REALM
@@ -136,7 +140,8 @@ Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
 
 ### Authentication Configuration
 
-Make sure you have at least specified the JCIFS Service Principal in the CAS configuration. Use [this link](Configuration-Properties.html#spnego-authentication) to see relevant settings.
+Make sure you have at least specified the JCIFS Service Principal in the CAS configuration. 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 You may provide a JAAS `login.conf` file:
 
@@ -148,8 +153,6 @@ jcifs.spnego.accept {
    com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
 };
 ```
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Client Selection Strategy
 
