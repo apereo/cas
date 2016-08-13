@@ -5,7 +5,7 @@ title: CAS - Adaptive Authentication
 
 # Adaptive Authentication
 
-Adaptive authentication in CAS allows you to accept or reject authentication requests based on certain characteristics 
+Adaptive authentication in CAS allows you to accept or reject authentication requests based on certain characteristics
 of the client browser and/or device. When configured, you are provided with options to block authentication requests
 from certain locations submitted by certain browser agents. For instance, you may consider authentication requests submitted
 from `London, UK` to be considered suspicious, or you may want to block requests that are submitted from Internet Explorer, etc.
@@ -27,7 +27,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Maxmind
 
-Uses the [Maxmind](https://www.maxmind.com/en/home) to translate
+Uses [Maxmind](https://www.maxmind.com/en/home) to translate
 authentication requests into a geo-location.
 
 ```xml

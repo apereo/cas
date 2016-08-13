@@ -25,9 +25,9 @@ A sample JSON file follows:
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "evaluationOrder" : 0
+  "name" : "testJsonFile",
+  "id" : 103935657744185,
+  "evaluationOrder" : 10
 }
 ```
 
@@ -65,7 +65,7 @@ if duplicate data is found.
 
 ## JSON Syntax
 
-CAS uses [a version of the JSON syntax](http://hjson.org/) that provides a much more relaxed 
+CAS uses [a version of the JSON syntax](http://hjson.org/) that provides a much more relaxed
 syntax with the ability to specify comments.
 
 A given JSON file for instance could be formatted as such in CAS:
@@ -73,7 +73,7 @@ A given JSON file for instance could be formatted as such in CAS:
 ```
 {
   /*
-    Generic service definition that applies to https/imaps urls 
+    Generic service definition that applies to https/imaps urls
     that wish to register with CAS for authentication.
   */
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
@@ -84,4 +84,4 @@ A given JSON file for instance could be formatted as such in CAS:
 
 ```
 
-Note the trailing comma at the end. See the above link for more info on the alternative syntax. 
+Note the trailing comma at the end. See the above link for more info on the alternative syntax.
