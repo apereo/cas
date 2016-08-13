@@ -8,6 +8,7 @@ package org.apereo.cas.configuration.model.core.web.view;
  */
 
 public class ViewProperties {
+    private String defaultRedirectUrl;
     
     private Cas2 cas2 = new Cas2();
     private Cas3 cas3 = new Cas3();
@@ -26,6 +27,14 @@ public class ViewProperties {
 
     public void setCas3(final Cas3 cas3) {
         this.cas3 = cas3;
+    }
+
+    public String getDefaultRedirectUrl() {
+        return defaultRedirectUrl;
+    }
+
+    public void setDefaultRedirectUrl(final String defaultRedirectUrl) {
+        this.defaultRedirectUrl = defaultRedirectUrl;
     }
 
     public static class Cas2 {
@@ -108,5 +117,7 @@ public class ViewProperties {
         public void setFailure(final String failure) {
             this.failure = failure;
         }
+        
+        
     }
 }

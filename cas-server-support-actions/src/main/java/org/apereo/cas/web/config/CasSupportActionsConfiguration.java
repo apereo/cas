@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -75,6 +76,10 @@ public class CasSupportActionsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
+    
+    @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
     
@@ -124,6 +129,7 @@ public class CasSupportActionsConfiguration {
         return bean;
     }
 
+    @RefreshScope
     @Bean
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
@@ -158,6 +164,7 @@ public class CasSupportActionsConfiguration {
         return bean;
     }
 
+    @RefreshScope
     @Bean
     public Action initialAuthenticationRequestValidationAction() {
         final InitialAuthenticationRequestValidationAction a =
@@ -166,9 +173,13 @@ public class CasSupportActionsConfiguration {
         return a;
     }
 
+    @RefreshScope
     @Bean
     public Action genericSuccessViewAction() {
-        return new GenericSuccessViewAction(this.centralAuthenticationService);
+        final GenericSuccessViewAction a = new GenericSuccessViewAction(
+                this.centralAuthenticationService, this.servicesManager, this.webApplicationServiceFactory);
+        a.setRedirectUrl(casProperties.getView().getDefaultRedirectUrl());
+        return a;
     }
 
     @Bean
