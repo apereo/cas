@@ -115,6 +115,7 @@
 
 * [Integration](#integration)
     *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)

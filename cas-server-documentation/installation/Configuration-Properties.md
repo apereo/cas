@@ -2260,6 +2260,16 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.useStartTls=false
 ```
 
+## Google reCAPTCHA Integration
+
+Display Google's reCAPTCHA widget on the CAS login page.
+
+```properties
+# cas.googleRecaptcha.verifyUrl="https://www.google.com/recaptcha/api/siteverify";
+# cas.googleRecaptcha.siteKey=
+# cas.googleRecaptcha.secret=
+```
+
 ## Google Analytics Integration
 
 To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
