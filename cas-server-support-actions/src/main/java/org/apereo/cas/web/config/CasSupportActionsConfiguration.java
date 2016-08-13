@@ -27,6 +27,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -139,6 +140,7 @@ public class CasSupportActionsConfiguration {
         return a;
     }
 
+    @RefreshScope
     @Bean
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
@@ -148,6 +150,7 @@ public class CasSupportActionsConfiguration {
         bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
         bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
+        bean.setGoogleRecaptchaSiteKey(casProperties.getGoogleRecaptcha().getSiteKey());
         bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
         bean.setStaticAuthentication(
                 StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
