@@ -143,8 +143,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         			String hostName = thisURL.getHost().substring(0, thisURL.getHost().lastIndexOf(".local")-1);
         			String serviceURLHost = serviceURL.getHost();
                     if(serviceURLHost.startsWith(hostName) || serviceURLHost.substring(0,serviceURLHost.indexOf('.')).equalsIgnoreCase("accounts")){
-        				matched = ( thisURL.getPath().equalsIgnoreCase(serviceURL.getPath()) &&
-        						thisURL.getProtocol().equalsIgnoreCase(serviceURL.getProtocol()));
+        				matched = ( thisURL.getPath().equalsIgnoreCase(serviceURL.getPath()));
         			}
                     if(!matched){
                         logger.error("$$$"+thisUrl + ":"+ serviceUrl +":"+ serviceURLHost.substring(0,serviceURLHost.indexOf('.')));
