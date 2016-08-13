@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProper
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
@@ -108,6 +109,9 @@ public class CasConfigurationProperties {
     @NestedConfigurationProperty
     private GoogleAnalyticsProperties googleAnalytics = new GoogleAnalyticsProperties();
 
+    @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
+    
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
 
@@ -431,5 +435,13 @@ public class CasConfigurationProperties {
 
     public void setGoogleMaps(final GoogleMapsProperties googleMaps) {
         this.googleMaps = googleMaps;
+    }
+
+    public GoogleRecaptchaProperties getGoogleRecaptcha() {
+        return googleRecaptcha;
+    }
+
+    public void setGoogleRecaptcha(final GoogleRecaptchaProperties googleRecaptcha) {
+        this.googleRecaptcha = googleRecaptcha;
     }
 }

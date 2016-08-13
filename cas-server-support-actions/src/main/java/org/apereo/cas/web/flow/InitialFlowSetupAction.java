@@ -45,6 +45,8 @@ public class InitialFlowSetupAction extends AbstractAction {
     private boolean trackGeoLocation;
 
     private String googleAnalyticsTrackingId;
+    
+    private String googleRecaptchaSiteKey;
 
     /**
      * If no authentication request from a service is present, halt and warn the user.
@@ -98,6 +100,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
+        WebUtils.putRecaptchaSiteKeyIntoFlowScope(context, this.googleRecaptchaSiteKey);
         WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
     }
 
@@ -151,5 +154,9 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     public void setStaticAuthentication(final boolean staticAuthentication) {
         this.staticAuthentication = staticAuthentication;
+    }
+
+    public void setGoogleRecaptchaSiteKey(final String googleRecaptchaSiteKey) {
+        this.googleRecaptchaSiteKey = googleRecaptchaSiteKey;
     }
 }

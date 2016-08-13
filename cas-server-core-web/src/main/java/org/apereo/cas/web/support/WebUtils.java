@@ -539,6 +539,16 @@ public final class WebUtils {
     }
 
     /**
+     * Put recaptcha site key into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaSiteKeyIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaSiteKey", value);
+    }
+    
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context

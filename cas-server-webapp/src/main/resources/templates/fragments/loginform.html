@@ -59,6 +59,14 @@
                 <p/>
             </div>
         </section>
+        
+        <section class="row" th:if="${recaptchaSiteKey}">
+            <div>
+                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}" />
+                <p/>
+            </div>
+        </section>
+            
         <section class="row btn-row">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
