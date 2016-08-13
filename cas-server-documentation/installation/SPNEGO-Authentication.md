@@ -136,7 +136,7 @@ URL, e.g. `https://cas.example.com`.
 
 ### Webflow Configuration
 
-Replace instances of `viewLoginForm` with `startSpnegoAuthenticate`, if any.
+Replace instances of `initializeLoginForm` with `startSpnegoAuthenticate`, if any.
 
 ### Authentication Configuration
 
