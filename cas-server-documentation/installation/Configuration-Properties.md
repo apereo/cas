@@ -30,11 +30,11 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
-and syntax. **BE CAREFUL** with the distinction. 
+and syntax. **BE CAREFUL** with the distinction.
 
 - Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
-ignored by CAS and likely the feature it controls will never be activated in the way you intended. 
+ignored by CAS and likely the feature it controls will never be activated in the way you intended.
 
 ## Encryption/Decryption
 
@@ -224,6 +224,8 @@ spring.thymeleaf.cache=false
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 # cas.view.cas3.releaseProtocolAttributes=true
+
+# cas.view.defaultRedirectUrl=https://www.github.com
 ```
 
 ## Logging
@@ -236,7 +238,7 @@ To learn more about this topic, [please review this guide](Logging.html).
 server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
 
-To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`. 
+To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
 
 ## AspectJ Configuration
 
