@@ -32,6 +32,7 @@ import org.apereo.cas.configuration.model.support.saml.SamlCore;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
+import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -124,6 +125,9 @@ public class CasConfigurationProperties {
     @NestedConfigurationProperty
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
+    @NestedConfigurationProperty
+    private SamlServiceProviderProperties samlSP = new SamlServiceProviderProperties();
+    
     @NestedConfigurationProperty
     private MaxmindProperties maxmind = new MaxmindProperties();
 
@@ -443,5 +447,13 @@ public class CasConfigurationProperties {
 
     public void setGoogleRecaptcha(final GoogleRecaptchaProperties googleRecaptcha) {
         this.googleRecaptcha = googleRecaptcha;
+    }
+
+    public SamlServiceProviderProperties getSamlSP() {
+        return samlSP;
+    }
+
+    public void setSamlSP(final SamlServiceProviderProperties samlSP) {
+        this.samlSP = samlSP;
     }
 }
