@@ -37,18 +37,18 @@ public final class ResourceUtils {
     /**
      * Gets resource from a String location.
      *
-     * @param metadataLocation the metadata location
+     * @param location the metadata location
      * @return the resource from
      * @throws IOException the exception
      */
-    public static AbstractResource getRawResourceFrom(final String metadataLocation) throws IOException {
+    public static AbstractResource getRawResourceFrom(final String location) throws IOException {
         final AbstractResource metadataLocationResource;
-        if (metadataLocation.toLowerCase().startsWith("http")) {
-            metadataLocationResource = new UrlResource(metadataLocation);
-        } else if (metadataLocation.toLowerCase().startsWith("classpath")) {
-            metadataLocationResource = new ClassPathResource(metadataLocation);
+        if (location.toLowerCase().startsWith("http")) {
+            metadataLocationResource = new UrlResource(location);
+        } else if (location.toLowerCase().startsWith("classpath")) {
+            metadataLocationResource = new ClassPathResource(location);
         } else {
-            metadataLocationResource = new FileSystemResource(metadataLocation);
+            metadataLocationResource = new FileSystemResource(location);
         }
         return metadataLocationResource;
     }
