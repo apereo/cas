@@ -1295,7 +1295,33 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
+     
+### SAManage
+
+```properties
+# cas.samlSP.saManage.metadata=/etc/cas/saml/samanage.xml
+# cas.samlSP.saManage.name=SAManage
+# cas.samlSP.saManage.description=SAManage Integration
+# cas.samlSP.saManage.nameIdAttribute=mail
+```
         
+### Workday
+
+```properties
+# cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
+# cas.samlSP.workday.name=Workday
+# cas.samlSP.workday.description=Workday Integration
+```
+
+### Salesforce
+
+```properties
+# cas.samlSP.salesforce.metadata=/etc/cas/saml/salesforce.xml
+# cas.samlSP.salesforce.name=Salesforce
+# cas.samlSP.salesforce.description=Salesforce Integration
+# cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
+```
+
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
