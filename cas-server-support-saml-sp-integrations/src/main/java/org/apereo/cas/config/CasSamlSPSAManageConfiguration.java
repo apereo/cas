@@ -12,18 +12,18 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link CasSamlSPDropboxConfiguration}.
+ * This is {@link CasSamlSPSAManageConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPDropboxConfiguration")
+@Configuration("casSamlSPSAManageConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPDropboxConfiguration {
+public class CasSamlSPSAManageConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -31,10 +31,10 @@ public class CasSamlSPDropboxConfiguration {
     @PostConstruct
     public void init() {
         final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getDropbox().getName(),
-                casProperties.getSamlSP().getDropbox().getDescription(),
-                casProperties.getSamlSP().getDropbox().getMetadata(),
-                casProperties.getSamlSP().getDropbox().getNameIdAttribute()
+                casProperties.getSamlSP().getSaManage().getName(),
+                casProperties.getSamlSP().getSaManage().getDescription(),
+                casProperties.getSamlSP().getSaManage().getMetadata(),
+                casProperties.getSamlSP().getSaManage().getNameIdAttribute()
         );
         if (service != null) {
             service.setSignResponses(true);
