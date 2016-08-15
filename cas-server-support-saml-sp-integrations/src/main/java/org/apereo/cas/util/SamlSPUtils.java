@@ -1,12 +1,13 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 public final class SamlSPUtils {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlSPUtils.class);
+    
     private SamlSPUtils() {
     }
 
@@ -73,6 +75,11 @@ public final class SamlSPUtils {
                                                                       final String userIdAttribute,
                                                                       final List<String> attributes) {
 
+        if (StringUtils.isBlank(metadataLocation)) {
+            LOGGER.debug("Skipped registration of {} since no metadata location is found", name);
+            return null;
+        }
+        
         try {
             final SamlRegisteredService service = new SamlRegisteredService();
             service.setName(name);
@@ -84,6 +91,7 @@ public final class SamlSPUtils {
             final Matcher m = Pattern.compile("entityID=\"(\\w+)", Pattern.CASE_INSENSITIVE).matcher(content);
             if (m.find()) {
                 service.setServiceId(m.group(1));
+                LOGGER.debug("Located entityID {} from metadata location {}", service.getServiceId(), metadataLocation);
             } else {
                 throw new IllegalArgumentException("Could not locate entityID from the supplied metadata file " +
                         metadataLocation);
@@ -93,7 +101,6 @@ public final class SamlSPUtils {
             service.setMetadataLocation(metadataLocation);
 
             final List<String> attributesToRelease = new ArrayList<>(attributes);
-
             if (StringUtils.isNotBlank(userIdAttribute)) {
                 attributesToRelease.add(userIdAttribute);
                 service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(userIdAttribute));
