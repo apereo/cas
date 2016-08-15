@@ -1281,6 +1281,21 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 ```
 
+
+## Saml SPs
+
+Allow CAS to register and enable a number of built-in SAML service provider integrations.
+To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
+### Dropbox
+
+```properties
+# cas.samlSP.dropbox.metadata=/etc/cas/saml/dropbox.xml
+# cas.samlSP.dropbox.name=Dropbox
+# cas.samlSP.dropbox.description=Dropbox Integration
+# cas.samlSP.dropbox.nameIdAttribute=mail
+```
+        
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
