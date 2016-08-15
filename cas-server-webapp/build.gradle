@@ -62,16 +62,19 @@ dependencies {
     compile project(":cas-server-core-util")
     compile project(":cas-server-core-configuration")
     compile project(":cas-server-core-configuration-cloud-amqp")
-    compile project(":cas-server-webapp-init")
+    
     compile project(":cas-server-support-throttle")
     compile project(":cas-server-support-geolocation")
     compile project(":cas-server-support-actions")
     compile project(":cas-server-support-cookie")
     compile project(":cas-server-support-reports")
     compile project(":cas-server-support-themes")
-    compile project(":cas-server-webapp-config")
     compile project(":cas-server-support-validation")
+//    compile project(":cas-server-support-saml-sp-integrations")
 
+    compile project(":cas-server-webapp-init")
+    compile project(":cas-server-webapp-config")
+    
     providedRuntime libraries.springboottomcat
     //providedRuntime libraries.springbootjetty
     //providedRuntime libraries.springbootundertow
