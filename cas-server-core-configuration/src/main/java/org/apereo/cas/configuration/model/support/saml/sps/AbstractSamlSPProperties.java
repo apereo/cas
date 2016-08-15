@@ -1,5 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is {@link AbstractSamlSPProperties}.
  *
@@ -11,6 +16,15 @@ public abstract class AbstractSamlSPProperties {
     private String name = this.getClass().getSimpleName();
     private String description = this.getClass().getSimpleName().concat(" SAML SP Integration");
     private String nameIdAttribute;
+    private List<String> attributes = new ArrayList<>();
+
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final List<String> attributes) {
+        this.attributes = attributes;
+    }
 
     public String getNameIdAttribute() {
         return nameIdAttribute;

@@ -2,8 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.sps;
 
 import com.google.common.collect.Lists;
 
-import java.util.List;
-
 /**
  * This is {@link SamlServiceProviderProperties}.
  *
@@ -15,6 +13,15 @@ public class SamlServiceProviderProperties {
     private Workday workday = new Workday();
     private SAManage saManage = new SAManage();
     private Salesforce salesforce = new Salesforce();
+    private Box box = new Box();
+
+    public Box getBox() {
+        return box;
+    }
+
+    public void setBox(final Box box) {
+        this.box = box;
+    }
 
     public Salesforce getSalesforce() {
         return salesforce;
@@ -54,24 +61,24 @@ public class SamlServiceProviderProperties {
         }
     }
 
+    public static class Box extends AbstractSamlSPProperties {
+        public Box() {
+            setAttributes(Lists.newArrayList("email", "firstName", "lastName"));
+        }
+    }
+    
     public static class SAManage extends AbstractSamlSPProperties {
         public SAManage() {
             setNameIdAttribute("mail");
         }
     }
-    
+
     public static class Workday extends AbstractSamlSPProperties {
     }
-    
+
     public static class Salesforce extends AbstractSamlSPProperties {
-        private List<String> attributes = Lists.newArrayList("mail", "eduPersonPrincipalName");
-
-        public List<String> getAttributes() {
-            return attributes;
-        }
-
-        public void setAttributes(final List<String> attributes) {
-            this.attributes = attributes;
+        public Salesforce() {
+            setAttributes(Lists.newArrayList("mail", "eduPersonPrincipalName"));
         }
     }
 }
