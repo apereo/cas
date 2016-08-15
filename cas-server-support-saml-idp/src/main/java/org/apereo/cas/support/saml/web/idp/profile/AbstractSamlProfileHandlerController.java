@@ -196,7 +196,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(
-                this.serverPrefix.concat(callbackUrl));
+                this.serverPrefix.concat(callbackUrl.concat(".+")));
         logger.debug("Initialized callback service [{}]", callbackService);
 
         if (!this.servicesManager.matchesExistingService(callbackService)) {
@@ -204,7 +204,7 @@ public abstract class AbstractSamlProfileHandlerController {
             service.setId(new SecureRandom().nextLong());
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
-            service.setDescription(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
+            service.setDescription("SAML Authentication Request");
             service.setServiceId(callbackService.getId());
 
             logger.debug("Saving callback service [{}] into the registry", service);
