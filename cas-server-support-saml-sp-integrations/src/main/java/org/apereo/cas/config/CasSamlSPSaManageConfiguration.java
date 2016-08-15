@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link CasSamlSPSAManageConfiguration}.
+ * This is {@link CasSamlSPSaManageConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("casSamlSPSAManageConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPSAManageConfiguration {
+public class CasSamlSPSaManageConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;

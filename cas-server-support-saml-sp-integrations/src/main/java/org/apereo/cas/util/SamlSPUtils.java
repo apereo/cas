@@ -93,8 +93,7 @@ public final class SamlSPUtils {
                 service.setServiceId(m.group(1));
                 LOGGER.debug("Located entityID {} from metadata location {}", service.getServiceId(), metadataLocation);
             } else {
-                throw new IllegalArgumentException("Could not locate entityID from the supplied metadata file " +
-                        metadataLocation);
+                throw new IllegalArgumentException("Could not locate entityID from the supplied metadata file " + metadataLocation);
             }
 
             service.setEvaluationOrder(Integer.MIN_VALUE);

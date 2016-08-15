@@ -27,8 +27,9 @@ The following SAML SP integrations are provided by CAS:
 
 * [Dropbox](https://www.dropbox.com/guide/admin/security/configure-single-sign-on)
 * [SAManage](https://blog.samanage.com/company/saml-single-sign-on-support-samanage/)
-* Workday
 * [Salesforce](https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm)
+* [Box](https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263)
+* Workday
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
