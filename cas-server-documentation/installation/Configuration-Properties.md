@@ -1322,6 +1322,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
 ```
 
+### Box
+
+```properties
+# cas.samlSP.box.metadata=/etc/cas/saml/box.xml
+# cas.samlSP.box.name=Box
+# cas.samlSP.box.description=Box Integration
+# cas.samlSP.box.attributes=email,firstName,lastName
+```
+
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
