@@ -22,7 +22,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Gets well known discovery configuration.
      *
@@ -35,19 +35,19 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
 
-        discoveryProperties.setSupportedClaims(
+        discoveryProperties.setClaims_supported(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
                         "family_name", "given_name", "middle_name", "given_name", "profile",
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",
                         "phone_number_verified", "address"));
-        discoveryProperties.setSupportedScopes(OidcConstants.SCOPES);
+        discoveryProperties.setScopes_supported(OidcConstants.SCOPES);
 
-        discoveryProperties.setSupportedResponseTypes(ImmutableList.of("code", "token"));
-        discoveryProperties.setSupportedSubjectTypes(ImmutableList.of("public", "pairwise"));
-        discoveryProperties.setSupportedClaimTypes(ImmutableList.of("normal"));
+        discoveryProperties.setResponse_types_supported(ImmutableList.of("code", "token"));
+        discoveryProperties.setSubject_types_supported(ImmutableList.of("public", "pairwise"));
+        discoveryProperties.setClaim_types_supported(ImmutableList.of("normal"));
 
-        discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit"));
+        discoveryProperties.setGrant_types_supported(ImmutableList.of("authorization_code", "password", "implicit"));
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }
 
@@ -56,7 +56,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", 
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();

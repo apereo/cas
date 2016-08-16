@@ -12,13 +12,13 @@ import java.util.List;
  * @since 5.0.0
  */
 public class OidcServerDiscoverySettings {
-    
-    private List<String> supportedScopes;
-    private List<String> supportedResponseTypes;
-    private List<String> supportedSubjectTypes;
-    private List<String> supportedClaimTypes;
-    private List<String> supportedClaims;
-    private List<String> supportedGrantTypes;
+
+    private List<String> scopes_supported;
+    private List<String> response_types_supported;
+    private List<String> subject_types_supported;
+    private List<String> claim_types_supported;
+    private List<String> claims_supported;
+    private List<String> grant_types_supported;
 
     private final String issuer;
     private final String serverPrefix;
@@ -27,86 +27,76 @@ public class OidcServerDiscoverySettings {
         this.issuer = issuer;
         this.serverPrefix = serverPrefix;
     }
-    
+
     public String getIssuer() {
         return issuer;
     }
 
-    public String getAuthorizationEndpoint() {
+    public String getAuthorization_endpoint() {
         return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL);
     }
 
-    public String getTokenEndpoint() {
+    public String getToken_endpoint() {
         return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
     }
 
-    public String getUserinfoEndpoint() {
+    public String getUserinfo_endpoint() {
         return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL);
     }
 
-    public String getJwksEndpoint() {
+    public String getJwks_uri() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL);
     }
 
-    public String getRegistrationEndpoint() {
+    public String getRegistration_endpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL);
     }
 
-    public String getIntrospectionEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
+    public List<String> getScopes_supported() {
+        return scopes_supported;
     }
 
-    public String getRevocationEndpoint() {
-        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL);
-    }
-    
-    public List<String> getSupportedScopes() {
-        return supportedScopes;
+    public List<String> getResponse_types_supported() {
+        return response_types_supported;
     }
 
-    public List<String> getSupportedResponseTypes() {
-        return supportedResponseTypes;
+    public List<String> getSubject_types_supported() {
+        return subject_types_supported;
     }
 
-    public List<String> getSupportedSubjectTypes() {
-        return supportedSubjectTypes;
+    public List<String> getClaim_types_supported() {
+        return claim_types_supported;
     }
 
-    public List<String> getSupportedClaimTypes() {
-        return supportedClaimTypes;
+    public List<String> getClaims_supported() {
+        return claims_supported;
     }
 
-    public List<String> getSupportedClaims() {
-        return supportedClaims;
-    }
-    
-    public void setSupportedScopes(final List<String> supportedScopes) {
-        this.supportedScopes = supportedScopes;
+    public void setScopes_supported(final List<String> scopes_supported) {
+        this.scopes_supported = scopes_supported;
     }
 
-    public void setSupportedResponseTypes(final List<String> supportedResponseTypes) {
-        this.supportedResponseTypes = supportedResponseTypes;
+    public void setResponse_types_supported(final List<String> response_types_supported) {
+        this.response_types_supported = response_types_supported;
     }
 
-    public void setSupportedSubjectTypes(final List<String> supportedSubjectResponseTypes) {
-        this.supportedSubjectTypes = supportedSubjectResponseTypes;
+    public void setSubject_types_supported(final List<String> supportedSubjectResponseTypes) {
+        this.subject_types_supported = supportedSubjectResponseTypes;
     }
 
-    public void setSupportedClaimTypes(final List<String> supportedClaimTypes) {
-        this.supportedClaimTypes = supportedClaimTypes;
+    public void setClaim_types_supported(final List<String> claim_types_supported) {
+        this.claim_types_supported = claim_types_supported;
     }
 
-    public void setSupportedClaims(final List<String> supportedClaims) {
-        this.supportedClaims = supportedClaims;
+    public void setClaims_supported(final List<String> claims_supported) {
+        this.claims_supported = claims_supported;
     }
 
-    public List<String> getSupportedGrantTypes() {
-        return supportedGrantTypes;
+    public List<String> getGrant_types_supported() {
+        return grant_types_supported;
     }
 
-    public void setSupportedGrantTypes(final List<String> supportedGrantTypes) {
-        this.supportedGrantTypes = supportedGrantTypes;
+    public void setGrant_types_supported(final List<String> grant_types_supported) {
+        this.grant_types_supported = grant_types_supported;
     }
-    
-    
 }
