@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.*;
-
 /**
  * This is {@link SamlSPUtils}.
  *
