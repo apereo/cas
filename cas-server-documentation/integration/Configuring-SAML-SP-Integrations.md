@@ -29,7 +29,9 @@ The following SAML SP integrations are provided by CAS:
 * [SAManage](https://blog.samanage.com/company/saml-single-sign-on-support-samanage/)
 * [Salesforce](https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm)
 * [Box](https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263)
-* Workday
+* [ServiceNow](http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile)
+* [Workday](http://www.workday.com/)
+* [PowerFAIDS Net Partner](https://www.collegeboard.org/powerfaids/net-partner)
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 

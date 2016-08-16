@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link CasSamlSPSalesforceConfiguration}.
+ * This is {@link CasSamlSPServiceNowConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPSalesforceConfiguration")
+@Configuration("casSamlSPServiceNowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPSalesforceConfiguration {
+public class CasSamlSPServiceNowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -30,7 +30,7 @@ public class CasSamlSPSalesforceConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getSalesforce());
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getServiceNow());
         if (service != null) {
             service.setSignResponses(true);
             SamlSPUtils.saveService(service, this.servicesManager);

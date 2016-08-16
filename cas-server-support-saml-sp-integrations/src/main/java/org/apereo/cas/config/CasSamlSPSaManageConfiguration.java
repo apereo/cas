@@ -30,16 +30,10 @@ public class CasSamlSPSaManageConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getSaManage().getName(),
-                casProperties.getSamlSP().getSaManage().getDescription(),
-                casProperties.getSamlSP().getSaManage().getMetadata(),
-                casProperties.getSamlSP().getSaManage().getNameIdAttribute()
-        );
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getSaManage());
         if (service != null) {
             service.setSignResponses(true);
-            servicesManager.save(service);
-            servicesManager.load();
+            SamlSPUtils.saveService(service, this.servicesManager);
         }
     }
 }
