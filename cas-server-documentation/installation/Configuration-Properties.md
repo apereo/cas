@@ -1349,6 +1349,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.netPartner.nameIdAttribute=studentId
 ```
 
+### Webex
+
+```properties
+# cas.samlSP.webex.metadata=/etc/cas/saml/webex.xml
+# cas.samlSP.webex.name=Webex
+# cas.samlSP.webex.description=Webex Integration
+# cas.samlSP.webex.nameIdAttribute=email
+# cas.samlSP.webex.attributes=firstName,lastName,
+```
+
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
