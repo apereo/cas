@@ -26,9 +26,7 @@ public class PasswordPolicyProperties {
     private boolean warnAll;
 
     private int warningDays = 30;
-
-    private String url = "https://password.example.edu/change";
-
+    
     public void setWarnAll(final boolean warnAll) {
         this.warnAll = warnAll;
     }
@@ -39,14 +37,6 @@ public class PasswordPolicyProperties {
 
     public void setWarningDays(final int warningDays) {
         this.warningDays = warningDays;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
     }
 
     public String getWarningAttributeValue() {
