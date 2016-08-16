@@ -30,17 +30,11 @@ public class CasSamlSPWorkdayConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getWorkday().getName(),
-                casProperties.getSamlSP().getWorkday().getDescription(),
-                casProperties.getSamlSP().getWorkday().getMetadata(),
-                casProperties.getSamlSP().getWorkday().getNameIdAttribute()
-        );
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getWorkday());
         if (service != null) {
             service.setSignResponses(true);
             service.setSignAssertions(true);
-            servicesManager.save(service);
-            servicesManager.load();
+            SamlSPUtils.saveService(service, this.servicesManager);
         }
     }
 }

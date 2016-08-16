@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
@@ -34,6 +35,8 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     private ServiceRegistryDao serviceRegistryDao;
 
+    private ServiceFactory serviceFactory;
+    
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
@@ -53,6 +56,10 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     public void setServiceRegistryDao(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
+    }
+
+    public void setServiceFactory(final ServiceFactory serviceFactory) {
+        this.serviceFactory = serviceFactory;
     }
 
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
@@ -144,7 +151,17 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         LOGGER.info("Loaded {} services from {}.", this.services.size(),
                 this.serviceRegistryDao);
     }
-    
+
+    @Override
+    public RegisteredService findServiceBy(final String serviceId) {
+        return findServiceBy(this.serviceFactory.createService(serviceId));
+    }
+
+    @Override
+    public boolean matchesExistingService(final String service) {
+        return matchesExistingService(this.serviceFactory.createService(service));
+    }
+
     /**
      * Handle services manager refresh event.
      *
