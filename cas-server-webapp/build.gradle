@@ -70,8 +70,7 @@ dependencies {
     compile project(":cas-server-support-reports")
     compile project(":cas-server-support-themes")
     compile project(":cas-server-support-validation")
-//    compile project(":cas-server-support-saml-sp-integrations")
-
+    
     compile project(":cas-server-webapp-init")
     compile project(":cas-server-webapp-config")
     
