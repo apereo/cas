@@ -1,0 +1,7 @@
+description = "Apereo CAS Core Configuration - MongoDB"
+dependencies {
+    compile libraries.springboot
+    compile libraries.spring
+    compile libraries.springcloud
+    compile libraries.mongo
+}
