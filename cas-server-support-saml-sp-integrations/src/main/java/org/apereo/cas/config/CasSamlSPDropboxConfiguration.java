@@ -30,16 +30,10 @@ public class CasSamlSPDropboxConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                casProperties.getSamlSP().getDropbox().getName(),
-                casProperties.getSamlSP().getDropbox().getDescription(),
-                casProperties.getSamlSP().getDropbox().getMetadata(),
-                casProperties.getSamlSP().getDropbox().getNameIdAttribute()
-        );
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getDropbox());
         if (service != null) {
             service.setSignResponses(true);
-            servicesManager.save(service);
-            servicesManager.load();
+            SamlSPUtils.saveService(service, this.servicesManager);
         }
     }
 }

@@ -13,7 +13,25 @@ public class SamlServiceProviderProperties {
     private Workday workday = new Workday();
     private SAManage saManage = new SAManage();
     private Salesforce salesforce = new Salesforce();
+    private ServiceNow serviceNow = new ServiceNow();
     private Box box = new Box();
+    private NetPartner netPartner = new NetPartner();
+
+    public NetPartner getNetPartner() {
+        return netPartner;
+    }
+
+    public void setNetPartner(final NetPartner netPartner) {
+        this.netPartner = netPartner;
+    }
+
+    public ServiceNow getServiceNow() {
+        return serviceNow;
+    }
+
+    public void setServiceNow(final ServiceNow serviceNow) {
+        this.serviceNow = serviceNow;
+    }
 
     public Box getBox() {
         return box;
@@ -66,7 +84,7 @@ public class SamlServiceProviderProperties {
             setAttributes(Lists.newArrayList("email", "firstName", "lastName"));
         }
     }
-    
+
     public static class SAManage extends AbstractSamlSPProperties {
         public SAManage() {
             setNameIdAttribute("mail");
@@ -79,6 +97,18 @@ public class SamlServiceProviderProperties {
     public static class Salesforce extends AbstractSamlSPProperties {
         public Salesforce() {
             setAttributes(Lists.newArrayList("mail", "eduPersonPrincipalName"));
+        }
+    }
+
+    public static class ServiceNow extends AbstractSamlSPProperties {
+        public ServiceNow() {
+            setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
+        }
+    }
+
+    public static class NetPartner extends AbstractSamlSPProperties {
+        public NetPartner() {
+            setAttributes(Lists.newArrayList("studentId"));
         }
     }
 }

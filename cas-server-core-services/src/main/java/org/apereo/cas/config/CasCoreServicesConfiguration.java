@@ -103,6 +103,7 @@ public class CasCoreServicesConfiguration {
                                            final ServiceRegistryDao serviceRegistryDao) {
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
         impl.setServiceRegistryDao(serviceRegistryDao);
+        impl.setServiceFactory(this.webApplicationServiceFactory());
         return impl;
     }
 
