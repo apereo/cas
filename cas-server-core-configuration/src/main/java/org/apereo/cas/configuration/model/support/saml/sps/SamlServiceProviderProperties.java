@@ -108,7 +108,7 @@ public class SamlServiceProviderProperties {
 
     public static class NetPartner extends AbstractSamlSPProperties {
         public NetPartner() {
-            setAttributes(Lists.newArrayList("studentId"));
+            setNameIdAttribute("studentId");
         }
     }
 }
