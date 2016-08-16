@@ -165,7 +165,7 @@ public final class ThemeUtils {
 				searchResult = results.nextElement();
 			}
 			if (searchResult == null) {
-				logger.error("No search result found");
+				logger.warn("No search result found");
 				return;
 			}
 			// Get all attributes
@@ -183,7 +183,7 @@ public final class ThemeUtils {
 			// Close the context when we're done
 			ctx.close();
 		} catch (NamingException e) {
-			logger.warn("An exception happened!", e);
+			logger.warn("No search result found");
 		} catch (FileNotFoundException e) {
 			logger.warn("An exception happened!", e);
 		} catch (IOException e) {
