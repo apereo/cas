@@ -1331,6 +1331,24 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.box.attributes=email,firstName,lastName
 ```
 
+### Service Now
+
+```properties
+# cas.samlSP.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
+# cas.samlSP.serviceNow.name=ServiceNow
+# cas.samlSP.serviceNow.description=serviceNow Integration
+# cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
+```
+
+### Net Partner
+
+```properties
+# cas.samlSP.netPartner.metadata=/etc/cas/saml/netPartner.xml
+# cas.samlSP.netPartner.name=Net Partner
+# cas.samlSP.netPartner.description=Net Partner Integration
+# cas.samlSP.netPartner.nameIdAttribute=studentId
+```
+
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
