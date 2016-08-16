@@ -36,18 +36,26 @@ and syntax. **BE CAREFUL** with the distinction.
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intended.
 
-## Encryption/Decryption
+## Configuration Storage
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
 the entire CAS running context. They are to be put inside the `bootstrap.properties`.
 
-### Spring Cloud
+### Native
+
 ```properties
-# spring.cloud.config.server.encrypt.enabled=true
-# encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
-# encrypt.keyStore.password=keystorePassword
-# encrypt.keyStore.alias=DaKey
-# encrypt.keyStore.secret=changeme
+# spring.profiles.active=native
+# spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+```
+
+### Git Repository
+
+```properties
+# spring.profiles.active=default
+# spring.cloud.config.server.git.uri=https://github.com/repoName/config
+# spring.cloud.config.server.git.uri=file://${user.home}/config
+# spring.cloud.config.server.git.username=
+# spring.cloud.config.server.git.password=
 ```
 
 ### Vault
@@ -65,8 +73,62 @@ the entire CAS running context. They are to be put inside the `bootstrap.propert
 # spring.cloud.vault.generic.backend=secret
 ```
 
+### MongoDb
+
+```properties
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
+```
+
+## Configuration Security
+
+Encrypt and decrypt configuration via Spring Cloud. 
+
+```properties
+# spring.cloud.config.server.encrypt.enabled=true
+# encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
+# encrypt.keyStore.password=keystorePassword
+# encrypt.keyStore.alias=DaKey
+# encrypt.keyStore.secret=changeme
+```
+
 To learn more about how sensitive CAS settings can be
 secured, [please review this guide](Configuration-Properties-Security.html).
+
+
+## Cloud Configuration Bus
+
+CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
+distributed system with a lightweight message broker.
+
+```properties
+# spring.cloud.bus.enabled=false
+# spring.cloud.bus.refresh.enabled=true
+# spring.cloud.bus.env.enabled=true
+# spring.cloud.bus.destination=CasCloudBus
+# spring.cloud.bus.ack.enabled=true
+```
+
+To learn more about this topic, [please review this guide](Configuration-Management.html).
+
+### RabbitMQ
+
+```properties
+# spring.rabbitmq.host=
+# spring.rabbitmq.port=
+# spring.rabbitmq.username=
+# spring.rabbitmq.password=
+
+# Or all of the above in one line
+# spring.rabbitmq.addresses=
+```
+
+### Kafka
+
+```
+# spring.cloud.stream.bindings.output.content-type=application/json
+# spring.cloud.stream.kafka.binder.zkNodes=...
+# spring.cloud.stream.kafka.binder.brokers=...
+```
 
 ## Embedded Tomcat
 
@@ -141,40 +203,6 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
-## Cloud Configuration Bus
-
-CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
-distributed system with a lightweight message broker.
-
-```properties
-# spring.cloud.bus.enabled=false
-# spring.cloud.bus.refresh.enabled=true
-# spring.cloud.bus.env.enabled=true
-# spring.cloud.bus.destination=CasCloudBus
-# spring.cloud.bus.ack.enabled=true
-```
-
-To learn more about this topic, [please review this guide](Configuration-Management.html).
-
-### RabbitMQ
-
-```properties
-# spring.rabbitmq.host=
-# spring.rabbitmq.port=
-# spring.rabbitmq.username=
-# spring.rabbitmq.password=
-
-# Or all of the above in one line
-# spring.rabbitmq.addresses=
-```
-
-### Kafka
-
-```
-# spring.cloud.stream.bindings.output.content-type=application/json
-# spring.cloud.stream.kafka.binder.zkNodes=...
-# spring.cloud.stream.kafka.binder.brokers=...
-```
 
 ## Admin Status Endpoints
 
