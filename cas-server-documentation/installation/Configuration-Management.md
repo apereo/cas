@@ -145,6 +145,28 @@ unnecessary to grab a copy of all CAS settings and move them to an external loca
 defined by the external configuration location or repository are able to override what is provided by CAS
 as a default.</p></div>
 
+
+### MongoDb
+
+CAS is also able to locate properties entirely from a MongoDb instance.
+
+Support is provided via the following dependency:
+                                                    
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
+
+### Vault
+
+CAS is also able to use [Vault](https://www.vaultproject.io/) to 
+locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
+
 ## Securing Settings
 
 To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
