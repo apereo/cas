@@ -29,6 +29,8 @@ import java.util.Collections;
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
 @ConditionalOnProperty(name = "cas.spring.cloud.mongo.uri")
 public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfiguration {
+    private static final int TIMEOUT = 5000;
+    private static final int DEFAULT_PORT = 27017;
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -59,7 +61,7 @@ public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfi
         final String hostUri = mongoClientUri().getHosts().get(0);
         final String[] host = hostUri.split(":");
         return new MongoClient(new ServerAddress(
-                host[0], host.length > 1 ? Integer.valueOf(host[1]) : 27017),
+                host[0], host.length > 1 ? Integer.valueOf(host[1]) : DEFAULT_PORT),
                 Collections.singletonList(credential),
                 mongoClientOptions());
     }
@@ -68,8 +70,8 @@ public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfi
     public MongoClientOptions mongoClientOptions() {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setSocketTimeout(5000);
-            bean.setConnectTimeout(5000);
+            bean.setSocketTimeout(TIMEOUT);
+            bean.setConnectTimeout(TIMEOUT);
             bean.afterPropertiesSet();
             return bean.getObject();
         } catch (final Exception e) {
