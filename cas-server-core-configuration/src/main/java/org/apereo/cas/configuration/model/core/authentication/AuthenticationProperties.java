@@ -41,6 +41,9 @@ public class AuthenticationProperties {
 
     @NestedConfigurationProperty
     private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
+
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
     
     @NestedConfigurationProperty
     private PrincipalAttributesProperties attributeRepository = new PrincipalAttributesProperties();
@@ -370,5 +373,13 @@ public class AuthenticationProperties {
 
     public void setPolicy(final AuthenticationPolicyProperties policy) {
         this.policy = policy;
+    }
+
+    public PasswordPolicyProperties getPasswordPolicy() {
+        return passwordPolicy;
+    }
+
+    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
+        this.passwordPolicy = passwordPolicy;
     }
 }
