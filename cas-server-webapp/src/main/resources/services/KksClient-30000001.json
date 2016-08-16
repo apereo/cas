@@ -1,0 +1,9 @@
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "kks_mobile",
+  "clientSecret": "e10adc3949ba59abbe56e057f20f883e",
+  "bypassApprovalPrompt": false,
+  "serviceId" : "^http://.*",
+  "name" : "咔咔硕",
+  "id" : 30000001
+}

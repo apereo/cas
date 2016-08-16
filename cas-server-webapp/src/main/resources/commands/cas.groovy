@@ -3,6 +3,7 @@ package commands
 import org.crsh.cli.Command
 import org.crsh.cli.Usage
 import org.crsh.command.InvocationContext
+import org.apereo.cas.services.JpaServiceRegistryDaoImpl
 
 class cas {
 
@@ -15,6 +16,8 @@ class cas {
         
         def ticketRegistry = beans.getBean("ticketRegistry")
         def serviceRegistry = beans.getBean("serviceRegistryDao")
+    
+    	serviceRegistryDao(JpaServiceRegistryDaoImpl)
         
         return "CAS version: " + org.apereo.cas.util.CasVersion.getVersion() +
                 "\nTicket registry instance: " + ticketRegistry.getClass().getSimpleName() +

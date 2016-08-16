@@ -11,5 +11,10 @@
        http://www.springframework.org/schema/lang/spring-lang.xsd
        http://www.springframework.org/schema/util
        http://www.springframework.org/schema/util/spring-util.xsd">
-    
+
+    <!-- <bean name="jsonServiceRegistryDao" class="org.apereo.cas.services.JpaServiceRegistryDaoImpl"/>
+    <bean name="jpaTicketRegistry" class="org.apereo.cas.ticket.registry.jpaTicketRegistry"/> -->
+
+	<alias name="jpaTicketRegistry" alias="ticketRegistry" />
+	<alias name="serviceRegistryDao" alias="serviceRegistry" />
 </beans>

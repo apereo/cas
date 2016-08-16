@@ -25,39 +25,32 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ImportResource(locations = {
-        "classpath:/deployerConfigContext.groovy",
-        "classpath:/deployerConfigContext.xml"})
-@SpringBootApplication(
-        exclude = {HibernateJpaAutoConfiguration.class,
-                JerseyAutoConfiguration.class,
-                GroovyTemplateAutoConfiguration.class,
-                DataSourceAutoConfiguration.class,
-                DataSourceTransactionManagerAutoConfiguration.class,
-                MetricsDropwizardAutoConfiguration.class,
-                VelocityAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.apereo.cas", "org.pac4j.springframework"},
-        excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX,
-                pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
+@SuppressWarnings("deprecation")
+@ImportResource(locations = { "classpath:/deployerConfigContext.groovy", "classpath:/deployerConfigContext.xml" })
+@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
+		GroovyTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class,
+		DataSourceTransactionManagerAutoConfiguration.class, MetricsDropwizardAutoConfiguration.class,
+		VelocityAutoConfiguration.class })
+@ComponentScan(basePackages = { "org.apereo.cas", "org.pac4j.springframework" }, excludeFilters = {
+		@ComponentScan.Filter(type = FilterType.REGEX, pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController") })
 @EnableConfigServer
 @EnableAsync
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement
 public class CasWebApplication {
-    /**
-     * Instantiates a new Cas web application.
-     */
-    protected CasWebApplication() {
-    }
+	/**
+	 * Instantiates a new Cas web application.
+	 */
+	protected CasWebApplication() {
+	}
 
-    /**
-     * Main entry point of the CAS web application.
-     *
-     * @param args the args
-     */
-    public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasWebApplication.class)
-                .banner(new CasBanner())
-                .run(args);
-    }
+	/**
+	 * Main entry point of the CAS web application.
+	 *
+	 * @param args
+	 *            the args
+	 */
+	public static void main(final String[] args) {
+		new SpringApplicationBuilder(CasWebApplication.class).banner(new CasBanner()).run(args);
+	}
 }
