@@ -24,11 +24,7 @@ public class PasswordPolicyConfiguration {
     public boolean isAlwaysDisplayPasswordExpirationWarning() {
         return this.passwordPolicyProperties.isWarnAll();
     }
-
-    public String getPasswordPolicyUrl() {
-        return this.passwordPolicyProperties.getUrl();
-    }
-
+    
     public int getPasswordWarningNumberOfDays() {
         return this.passwordPolicyProperties.getWarningDays();
     }

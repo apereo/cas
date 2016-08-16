@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
+import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -26,6 +27,7 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +36,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.l;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -110,7 +114,7 @@ public class LdapAuthenticationConfiguration {
             }
         });
     }
-
+    
     private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(
             final LdapAuthenticationProperties l, final Authenticator authenticator) {
 

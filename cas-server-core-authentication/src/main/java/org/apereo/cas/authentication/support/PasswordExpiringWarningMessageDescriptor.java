@@ -21,17 +21,13 @@ public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDesc
      *
      * @param defaultMsg  Default warning message.
      * @param days Days to password expiration.
-     * @param passwordChangeUrl Password change URL.
      */
-    public PasswordExpiringWarningMessageDescriptor(final String defaultMsg, final long days, final String passwordChangeUrl) {
-        super(CODE, defaultMsg, days, passwordChangeUrl);
+    public PasswordExpiringWarningMessageDescriptor(final String defaultMsg, final long days) {
+        super(CODE, defaultMsg, days);
     }
 
     public long getDaysToExpiration() {
         return (Long) getParams()[0];
     }
-
-    public String getPasswordChangeUrl() {
-        return (String) getParams()[1];
-    }
+    
 }
