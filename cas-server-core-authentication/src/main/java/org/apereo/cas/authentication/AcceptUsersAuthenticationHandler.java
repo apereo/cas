@@ -52,6 +52,10 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        if (1==1) {
+            throw new AccountPasswordMustChangeException("change the password");
+        }
+        
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
