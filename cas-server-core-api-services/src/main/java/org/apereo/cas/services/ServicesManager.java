@@ -34,6 +34,14 @@ public interface ServicesManager {
     /**
      * Find a RegisteredService by matching with the supplied service.
      *
+     * @param serviceId the service to match with.
+     * @return the RegisteredService that matches the supplied service.
+     */
+    RegisteredService findServiceBy(String serviceId);
+    
+    /**
+     * Find a RegisteredService by matching with the supplied service.
+     *
      * @param service the service to match with.
      * @return the RegisteredService that matches the supplied service.
      */
@@ -70,6 +78,14 @@ public interface ServicesManager {
      */
     boolean matchesExistingService(Service service);
 
+    /**
+     * Convenience method to let one know if a service exists in the data store.
+     *
+     * @param service the service to check.
+     * @return true if it exists, false otherwise.
+     */
+    boolean matchesExistingService(String service);
+    
     /**
      * Inform the ServicesManager to reload its list of services if its cached
      * them. Note that this is a suggestion and that ServicesManagers are free
