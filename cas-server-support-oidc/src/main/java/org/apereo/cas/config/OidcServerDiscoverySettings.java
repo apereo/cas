@@ -33,15 +33,15 @@ public class OidcServerDiscoverySettings {
     }
 
     public String getAuthorization_endpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL);
     }
 
     public String getToken_endpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
     }
 
     public String getUserinfo_endpoint() {
-        return this.serverPrefix.concat(OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.PROFILE_URL);
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL);
     }
 
     public String getJwks_uri() {
