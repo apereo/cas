@@ -168,9 +168,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()
                 || ttl < configuration.getPasswordWarningNumberOfDays()) {
             messages.add(new PasswordExpiringWarningMessageDescriptor(
-                    "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
-                    ttl,
-                    configuration.getPasswordPolicyUrl()));
+                    "Password expires in {0} days.", ttl));
         }
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(
@@ -203,7 +201,6 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 }
             }
         }
-
     }
 }
 
