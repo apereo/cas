@@ -7,8 +7,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
 
-import javax.annotation.PostConstruct;
-
 /**
  * This is {@link MongoDbPropertySourceLocator}.
  *
