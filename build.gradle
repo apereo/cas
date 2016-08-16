@@ -363,7 +363,7 @@ subprojects {
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
             exceptionFormat = "full"
-            showStandardStreams = true
+            showStandardStreams = Boolean.getBoolean("showStandardStreams")
             showExceptions = true
             showCauses = true
         }

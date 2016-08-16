@@ -39,7 +39,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -369,13 +368,5 @@ public class CasCoreAuthenticationConfiguration {
         p.setGeoLocationService(this.geoLocationService);
         p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
         return p;
-    }
-
-
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "passwordPolicyConfiguration")
-    @Bean
-    public PasswordPolicyConfiguration passwordPolicyConfiguration() {
-        return new PasswordPolicyConfiguration(casProperties.getAuthn().getPasswordPolicy());
     }
 }
