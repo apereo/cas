@@ -16,6 +16,15 @@ public class SamlServiceProviderProperties {
     private ServiceNow serviceNow = new ServiceNow();
     private Box box = new Box();
     private NetPartner netPartner = new NetPartner();
+    private Webex webex = new Webex();
+
+    public Webex getWebex() {
+        return webex;
+    }
+
+    public void setWebex(final Webex webex) {
+        this.webex = webex;
+    }
 
     public NetPartner getNetPartner() {
         return netPartner;
@@ -109,6 +118,13 @@ public class SamlServiceProviderProperties {
     public static class NetPartner extends AbstractSamlSPProperties {
         public NetPartner() {
             setNameIdAttribute("studentId");
+        }
+    }
+    
+    public static class Webex extends AbstractSamlSPProperties {
+        public Webex() {
+            setNameIdAttribute("email");
+            setAttributes(Lists.newArrayList("firstName,lastName"));
         }
     }
 }
