@@ -3,13 +3,59 @@
 
 <head th:inline="text">
     <title>[[#{screen.mustchangepass.heading}]]</title>
+
+    <script>
+        function jqueryReady() {
+            var strength = {
+                0: "Worst ☹",
+                1: "Bad ☹",
+                2: "Weak ☹",
+                3: "Good ☺",
+                4: "Strong ☻"
+            }
+
+            var password = document.getElementById('password');
+            var meter = document.getElementById('password-strength-meter');
+            var text = document.getElementById('password-strength-text');
+
+            password.addEventListener('input', function () {
+                var val = password.value;
+                var result = zxcvbn(val);
+
+                // Update the password strength meter
+                meter.value = result.score;
+
+                // Update the text indicator
+                if (val !== "") {
+                    text.innerHTML = "Strength: " + strength[result.score];
+                } else {
+                    text.innerHTML = "";
+                }
+            });
+        }
+    </script>
 </head>
 
 <body id="cas">
 <div layout:fragment="content">
     <div class="alert alert-danger">
         <h2 th:utext="#{screen.mustchangepass.heading}"/>
-        <p th:utext="#{screen.mustchangepass.message(${passwordPolicyUrl})}"/>
+        <p th:if="${passwordPolicyUrl}" th:utext="#{screen.mustchangepass.message(${passwordPolicyUrl})}"/>
+
+        <p>
+            <label for="password">Enter password:</label>
+            <input class="required" type="password" id="password"/>
+
+            <label for="confirmpassword">Confirm password:</label>
+            <input class="required" type="password" id="confirmpassword"/>
+
+        </p>
+
+        <p>
+            <meter max="4" id="password-strength-meter"/>
+        <p id="password-strength-text"/>
+        </p>
+
     </div>
 </div>
 </body>
