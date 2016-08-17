@@ -137,7 +137,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-    	final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = TestUtils.getAuthentication();
         this.registry.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket(
