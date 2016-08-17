@@ -48,5 +48,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ### LDAP
 
 The updated password may be stored inside an LDAP server.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 
