@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.pm;
 
-import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 
 /**
