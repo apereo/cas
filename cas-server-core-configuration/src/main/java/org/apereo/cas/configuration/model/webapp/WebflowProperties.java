@@ -67,7 +67,7 @@ public class WebflowProperties extends CryptographyProperties {
         private int lockTimeout = 30;
         private int maxConversations = 5;
         private boolean compress;
-        private boolean storage = true;
+        private boolean storage;
         private Resource hzLocation = new ClassPathResource("hazelcast.xml");
 
         public int getLockTimeout() {

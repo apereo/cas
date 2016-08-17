@@ -37,6 +37,7 @@ import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
+import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -211,15 +212,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
      */
-    protected void createTransitionForState(final TransitionableState state,
+    protected Transition createTransitionForState(final TransitionableState state,
                                             final String criteriaOutcome, final String targetState) {
         try {
             final Transition transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
             logger.debug("Added transition {} to the state {}", transition.getId(), state.getId());
+            return transition;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+        return null;
     }
     
     @Override
@@ -243,7 +246,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
 
         final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
-        return new Transition(criteria, resolver);
+        final Transition t = new Transition(criteria, resolver);
+        return t;
     }
 
     /**
@@ -335,7 +339,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
         
     @Override
-    public ViewState createViewState(final Flow flow, final String id, final Expression expression) {
+    public ViewState createViewState(final Flow flow, final String id, final Expression expression, 
+                                     final BinderConfiguration binder) {
         try {
             if (containsFlowState(flow, id)) {
                 logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
@@ -346,7 +351,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                     expression,
                     this.flowBuilderServices.getExpressionParser(),
                     this.flowBuilderServices.getConversionService(),
-                    null,
+                    binder,
                     this.flowBuilderServices.getValidator(),
                     this.flowBuilderServices.getValidationHintResolver());
 
@@ -361,7 +366,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public ViewState createViewState(final Flow flow, final String id, final String viewId) {
-        return createViewState(flow, id, new LiteralExpression(viewId));
+        return createViewState(flow, id, new LiteralExpression(viewId), null);
+    }
+
+    @Override
+    public ViewState createViewState(final Flow flow, final String id, final String viewId, final BinderConfiguration binder) {
+        return createViewState(flow, id, new LiteralExpression(viewId), binder);
     }
     
     @Override
