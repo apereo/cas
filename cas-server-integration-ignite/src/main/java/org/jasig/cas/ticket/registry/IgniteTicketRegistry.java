@@ -1,6 +1,5 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.HashSet;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
