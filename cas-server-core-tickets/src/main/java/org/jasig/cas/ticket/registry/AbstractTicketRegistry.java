@@ -10,6 +10,7 @@ import java.util.Map;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import java.util.Iterator;
 
 /**
  * @author Scott Battaglia
@@ -84,7 +85,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            proxyGrantingTickets.stream().map(Ticket::getId).forEach(this::deleteTicket);
+            Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
+            while(it.hasNext()) {
+            	ProxyGrantingTicket pgt = it.next();
+            	deleteTicket(pgt.getId());
+            }
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
         return deleteSingleTicket(ticketId);
