@@ -44,7 +44,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, "casBadHoursView", "casBadHoursView");
         createViewState(flow, "casAccountLockedView", "casAccountLockedView");
         createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
-        
+        createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
+        createEndState(flow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
+
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configure(CAS_MUST_CHANGE_PASS_VIEW);
             configure(CAS_EXPIRED_PASS_VIEW);
@@ -73,8 +75,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createStateDefaultTransition(viewState, id);
         
         final ActionState aupAcceptedAction = createActionState(flow, PASSWORD_CHANGE_ACTION, createEvaluateAction(PASSWORD_CHANGE_ACTION));
-        aupAcceptedAction.getTransitionSet().add(
-                createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
+        aupAcceptedAction.getTransitionSet().add(createTransition("passwordUpdateSuccess", "casPasswordUpdateSuccess"));
         aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, id));
     }
 }
