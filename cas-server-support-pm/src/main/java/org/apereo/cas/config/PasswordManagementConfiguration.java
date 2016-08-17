@@ -2,13 +2,13 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.PasswordChangeOpExecutor;
+import org.apereo.cas.web.PasswordChangeService;
 import org.apereo.cas.web.PasswordValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.InitPasswordChangeAction;
 import org.apereo.cas.web.flow.PasswordChangeAction;
 import org.apereo.cas.web.flow.PasswordManagementWebflowConfigurer;
-import org.apereo.cas.web.ldap.LdapPasswordChangeOpExecutor;
+import org.apereo.cas.web.ldap.LdapPasswordChangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,18 +52,18 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction(passwordChangeOpExecutor());
+        return new PasswordChangeAction(passwordChangeService());
     }
 
-    @ConditionalOnMissingBean(name = "passwordChangeOpExecutor")
+    @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
-    public PasswordChangeOpExecutor passwordChangeOpExecutor() {
+    public PasswordChangeService passwordChangeService() {
         if (casProperties.getAuthn().getPm().isEnabled() 
             && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
             && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
             && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
-            return new LdapPasswordChangeOpExecutor();
+            return new LdapPasswordChangeService();
         }
         if (casProperties.getAuthn().getPm().isEnabled()) {
             LOGGER.warn("No backend is configured to handle the account update operation. Verify your settings");

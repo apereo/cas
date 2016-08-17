@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.PasswordChangeBean;
-import org.apereo.cas.web.PasswordChangeOpExecutor;
+import org.apereo.cas.web.PasswordChangeService;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * This is {@link LdapPasswordChangeOpExecutor}.
+ * This is {@link LdapPasswordChangeService}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class LdapPasswordChangeOpExecutor implements PasswordChangeOpExecutor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapPasswordChangeOpExecutor.class);
+public class LdapPasswordChangeService implements PasswordChangeService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapPasswordChangeService.class);
     
     @Autowired
     private CasConfigurationProperties casProperties;

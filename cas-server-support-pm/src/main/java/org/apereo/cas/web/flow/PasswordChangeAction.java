@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.PasswordChangeBean;
-import org.apereo.cas.web.PasswordChangeOpExecutor;
+import org.apereo.cas.web.PasswordChangeService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +26,10 @@ public class PasswordChangeAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private PasswordChangeOpExecutor passwordChangeOpExecutor;
+    private PasswordChangeService passwordChangeService;
 
-    public PasswordChangeAction(final PasswordChangeOpExecutor passwordChangeOpExecutor) {
-        this.passwordChangeOpExecutor = passwordChangeOpExecutor;
+    public PasswordChangeAction(final PasswordChangeService passwordChangeService) {
+        this.passwordChangeService = passwordChangeService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PasswordChangeAction extends AbstractAction {
         try {
             final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
             final PasswordChangeBean bean = requestContext.getFlowScope().get("password", PasswordChangeBean.class);
-            if (passwordChangeOpExecutor.execute(c, bean)) {
+            if (passwordChangeService.execute(c, bean)) {
                 return new EventFactorySupport().event(this, "passwordUpdateSuccess");
             }
         } catch (final Exception e) {
