@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +78,7 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
      * Removes the ticket.
      *
      * @param ticket the ticket
-     * @return true if ticket was removed 
+     * @return true if ticket was removed
      */
     public boolean removeTicket(final Ticket ticket) {
         try {
@@ -88,7 +87,7 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
                 logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
             entityManager.remove(ticket);
-	    return true;
+            return true;
         } catch (final Exception e) {
             logger.error("Error removing {} from registry.", ticket, e);
         }
