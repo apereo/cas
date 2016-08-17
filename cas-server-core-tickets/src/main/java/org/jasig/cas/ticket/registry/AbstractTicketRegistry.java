@@ -104,13 +104,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            services.keySet().stream().forEach(ticketId -> {
+            Iterator<String> it = services.keySet().iterator();
+        	
+            while (it.hasNext()) {
+                String ticketId = it.next();
                 if (deleteSingleTicket(ticketId)) {
                     logger.debug("Removed ticket [{}]", ticketId);
                 } else {
                     logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
-            });
+       	    }
         }
     }
 
