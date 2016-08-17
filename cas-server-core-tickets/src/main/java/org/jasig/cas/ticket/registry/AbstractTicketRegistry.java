@@ -85,10 +85,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
+            final Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
             while(it.hasNext()) {
-            	ProxyGrantingTicket pgt = it.next();
-            	deleteTicket(pgt.getId());
+                final ProxyGrantingTicket pgt = it.next();
+                deleteTicket(pgt.getId());
             }
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
@@ -104,10 +104,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            Iterator<String> it = services.keySet().iterator();
-        	
+            final Iterator<String> it = services.keySet().iterator();
+
             while (it.hasNext()) {
-                String ticketId = it.next();
+                final String ticketId = it.next();
                 if (deleteSingleTicket(ticketId)) {
                     logger.debug("Removed ticket [{}]", ticketId);
                 } else {

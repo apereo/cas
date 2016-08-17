@@ -2,7 +2,6 @@ package org.jasig.cas.ticket.registry;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
