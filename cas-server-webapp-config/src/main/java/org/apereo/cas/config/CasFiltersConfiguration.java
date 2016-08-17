@@ -4,6 +4,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
+import org.apereo.cas.web.support.CurrentCredentialsAndAuthenticationClearingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -97,6 +98,20 @@ public class CasFiltersConfiguration {
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("requestParameterSecurityFilter");
         bean.setInitParameters(initParams);
+        return bean;
+    }
+
+
+    /**
+     * Current credentials and authentication clearing filter.
+     *
+     * @return the current credentials and authentication clearing filter
+     */
+    public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
+        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new CurrentCredentialsAndAuthenticationClearingFilter());
+        bean.setUrlPatterns(Collections.singleton("/*"));
+        bean.setName("currentCredentialsAndAuthenticationClearingFilter");
         return bean;
     }
 }

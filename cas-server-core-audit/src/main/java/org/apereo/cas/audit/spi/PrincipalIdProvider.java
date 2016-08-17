@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.Authentication;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@FunctionalInterface
 public interface PrincipalIdProvider {
 
     /**
