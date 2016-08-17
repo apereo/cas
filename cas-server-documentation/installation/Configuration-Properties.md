@@ -2491,3 +2491,13 @@ connections and queries.
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
 ```
+
+## Password Management
+
+Allow the user to update their account password, etc in-place. 
+
+```properties
+# cas.authn.pm.enabled=true
+# Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
+# cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
+```

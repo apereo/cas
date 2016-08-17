@@ -10,6 +10,7 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.Credential;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapAttribute;
@@ -23,6 +24,8 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.extended.PasswordModifyOperation;
+import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.referral.DeleteReferralHandler;
 import org.ldaptive.referral.ModifyReferralHandler;
 import org.ldaptive.referral.SearchReferralHandler;
@@ -169,14 +172,14 @@ public final class LdapUtils {
                                                                 final String baseDn,
                                                                 final SearchFilter filter)
             throws LdapException {
-        try(Connection connection = createConnection(connectionFactory)) {
+        try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
             final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
             request.setReferralHandler(new SearchReferralHandler());
             return searchOperation.execute(request);
         }
     }
-    
+
 
     /**
      * Checks to see if response has a result.
@@ -209,6 +212,30 @@ public final class LdapUtils {
     }
 
     /**
+     * Execute a password modify operation.
+     *
+     * @param currentDn         the current dn
+     * @param connectionFactory the connection factory
+     * @param oldPassword       the old password
+     * @param newPassword       the new password
+     * @return the boolean
+     */
+    public static boolean executePasswordModifyOperation(final String currentDn,
+                                                         final ConnectionFactory connectionFactory,
+                                                         final String oldPassword,
+                                                         final String newPassword) {
+        try (Connection modifyConnection = createConnection(connectionFactory)) {
+            final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
+            final Response response = operation.execute(new PasswordModifyRequest(currentDn,
+                    new Credential(oldPassword), new Credential(newPassword)));
+            return response.getResultCode() == ResultCode.SUCCESS;
+        } catch (final LdapException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    /**
      * Execute modify operation boolean.
      *
      * @param currentDn         the current dn
@@ -219,7 +246,7 @@ public final class LdapUtils {
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
-        try(Connection modifyConnection = createConnection(connectionFactory)) {
+        try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
             final List<AttributeModification> mods = attributes.entrySet()
                     .stream().map(entry -> new AttributeModification(AttributeModificationType.REPLACE,
@@ -264,7 +291,7 @@ public final class LdapUtils {
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry)
             throws LdapException {
 
-        try(Connection connection = createConnection(connectionFactory)) {
+        try (Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
             return true;
@@ -286,7 +313,7 @@ public final class LdapUtils {
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,
                                                  final LdapEntry entry) throws LdapException {
 
-        try(Connection connection = createConnection(connectionFactory)) {
+        try (Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
             request.setReferralHandler(new DeleteReferralHandler());
