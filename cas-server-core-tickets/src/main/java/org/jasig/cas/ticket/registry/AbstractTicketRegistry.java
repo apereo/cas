@@ -113,7 +113,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 } else {
                     logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
-       	    }
+            }
         }
     }
 
