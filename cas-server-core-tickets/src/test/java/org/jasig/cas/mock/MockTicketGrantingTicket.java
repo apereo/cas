@@ -26,6 +26,7 @@ import java.util.Map;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import java.util.Collection;
 import java.util.HashSet;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Mock ticket-granting ticket.
@@ -168,5 +169,19 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(7, 31)
+                .append(this.id)
+                .append(this.authentication)
+                .append(this.created)
+                .append(this.usageCount)
+                .append(this.expired)
+                .append(this.proxiedBy)
+                .append(this.services)
+                .append(this.proxyGrantingTickets)
+                .toHashCode();
     }
 }

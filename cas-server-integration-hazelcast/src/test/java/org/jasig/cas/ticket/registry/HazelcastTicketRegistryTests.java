@@ -139,7 +139,7 @@ public class HazelcastTicketRegistryTests {
         assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
 
-        TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
         this.hzTicketRegistry1.deleteTicket(tgt.getId());

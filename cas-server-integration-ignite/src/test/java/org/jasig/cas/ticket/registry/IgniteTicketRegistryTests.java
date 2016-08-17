@@ -272,7 +272,7 @@ public final class IgniteTicketRegistryTests {
         assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
 
-        TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
         
         this.ticketRegistry.deleteTicket(tgt.getId());
