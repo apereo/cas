@@ -2501,3 +2501,31 @@ Allow the user to update their account password, etc in-place.
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 ```
+
+### LDAP
+
+```
+# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.useSsl=true
+# cas.authn.pm.ldap.useStartTls=false
+# cas.authn.pm.ldap.connectTimeout=5000
+# cas.authn.pm.ldap.baseDn=dc=example,dc=org
+# cas.authn.pm.ldap.userFilter=cn={user}
+# cas.authn.pm.ldap.subtreeSearch=true
+# cas.authn.pm.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.pm.ldap.bindCredential=Password
+# cas.authn.pm.ldap.trustCertificates=
+# cas.authn.pm.ldap.keystore=
+# cas.authn.pm.ldap.keystorePassword=
+# cas.authn.pm.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.pm.ldap.minPoolSize=3
+# cas.authn.pm.ldap.maxPoolSize=10
+# cas.authn.pm.ldap.validateOnCheckout=true
+# cas.authn.pm.ldap.validatePeriodically=true
+# cas.authn.pm.ldap.validatePeriod=600
+# cas.authn.pm.ldap.failFast=true
+# cas.authn.pm.ldap.idleTime=500
+# cas.authn.pm.ldap.prunePeriod=600
+# cas.authn.pm.ldap.blockWaitTime=5000
+# cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+```
