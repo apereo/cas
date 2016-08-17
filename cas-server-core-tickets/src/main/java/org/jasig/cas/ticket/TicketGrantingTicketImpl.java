@@ -23,6 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import java.util.Set;
+import java.util.HashSet;
+
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
  * the global identifier of a principal into the system. It grants the Principal
@@ -66,6 +72,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
     private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
+
+    /** The PGTs associated to this ticket. */
+    @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
+    private Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     /**
      * Instantiates a new ticket granting ticket impl.
@@ -194,6 +204,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public final synchronized Map<String, Service> getServices() {
         return ImmutableMap.copyOf(this.services);
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return this.proxyGrantingTickets;
     }
 
     /**

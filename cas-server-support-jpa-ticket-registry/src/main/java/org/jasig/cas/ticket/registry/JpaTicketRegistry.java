@@ -43,6 +43,8 @@ import java.util.UUID;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "ticketTransactionManager")
 public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+    private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
+    private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
 
     @Value("${ticket.registry.cleaner.repeatinterval:300}")
     private int refreshInterval;
@@ -72,69 +74,25 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         logger.debug("Added ticket [{}] to registry.", ticket);
     }
 
-    @Override
-    public boolean deleteTicket(final String ticketId) {
-        final Ticket ticket = getRawTicket(ticketId);
-
-        if (ticket == null) {
-            return false;
-        }
-
-        if (ticket instanceof ServiceTicket) {
-            removeTicket(ticket);
-            logger.debug("Deleted ticket [{}] from the registry.", ticket);
-            return true;
-        }
-
-        deleteTicketAndChildren(ticket);
-        logger.debug("Deleted ticket [{}] and its children from the registry.", ticket);
-        return true;
-    }
-
-    /**
-     * Delete the TGt and all of its service tickets.
-     *
-     * @param ticket the ticket
-     */
-    public void deleteTicketAndChildren(final Ticket ticket) {
-        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id",
-                    TicketGrantingTicketImpl.class)
-            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-            .setParameter("id", ticket.getId())
-            .getResultList();
-        final List<ServiceTicketImpl> serviceTicketImpls = entityManager
-                .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id",
-                        ServiceTicketImpl.class)
-                .setParameter("id", ticket.getId())
-                .getResultList();
-
-        for (final ServiceTicketImpl s : serviceTicketImpls) {
-            removeTicket(s);
-        }
-
-        for (final TicketGrantingTicketImpl t : ticketGrantingTicketImpls) {
-            deleteTicketAndChildren(t);
-        }
-
-        removeTicket(ticket);
-    }
 
     /**
      * Removes the ticket.
      *
      * @param ticket the ticket
+     * @return true if ticket was removed 
      */
-    public void removeTicket(final Ticket ticket) {
+    public boolean removeTicket(final Ticket ticket) {
         try {
             if (logger.isDebugEnabled()) {
                 final Date creationDate = new Date(ticket.getCreationTime());
                 logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
             entityManager.remove(ticket);
+	    return true;
         } catch (final Exception e) {
             logger.error("Error removing {} from registry.", ticket, e);
         }
+        return false;
     }
 
     @Override
@@ -193,6 +151,97 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Override
     public int serviceTicketCount() {
         return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String ticketId) {
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return true;
+        }
+
+        final int failureCount;
+
+        if (ticket instanceof ServiceTicket) {
+            failureCount = deleteServiceTickets(ticketId);
+        } else if (ticket instanceof TicketGrantingTicket) {
+            failureCount = deleteTicketGrantingTickets(ticketId);
+        } else {
+            throw new IllegalArgumentException("Invalid ticket type with id " + ticketId);
+        }
+        return failureCount == 0;
+    }
+
+    /**
+     * Gets ticket query result list.
+     *
+     * @param <T>      the type parameter
+     * @param ticketId the ticket id
+     * @param query    the query
+     * @param clazz    the clazz
+     * @return the ticket query result list
+     */
+    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query,
+                                                               final Class<T> clazz) {
+        return this.entityManager.createQuery(query, clazz)
+                .setParameter("id", ticketId)
+                .getResultList();
+    }
+
+    /**
+     * Delete service tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
+    public int deleteServiceTickets(final String ticketId) {
+        final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
+                "select s from " + TABLE_SERVICE_TICKETS + " s where s.id = :id", ServiceTicketImpl.class);
+        return deleteTicketsFromResultList(serviceTicketImpls);
+    }
+
+    /**
+     * Delete tickets from result list int.
+     *
+     * @param serviceTicketImpls the service ticket impls
+     * @return the int
+     */
+    public int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
+        int failureCount = 0;
+        for (final Ticket serviceTicketImpl : serviceTicketImpls) {
+            if (!removeTicket(serviceTicketImpl)) {
+                failureCount++;
+            }
+        }
+        return failureCount;
+    }
+
+    /**
+     * Delete ticket granting tickets int.
+     *
+     * @param ticketId the ticket id
+     * @return the int
+     */
+    public int deleteTicketGrantingTickets(final String ticketId) {
+        int failureCount = 0;
+
+        final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
+                "select s from "
+                + TABLE_SERVICE_TICKETS
+                + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(serviceTicketImpls);
+
+        List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS
+                + " t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
+
+        ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
+                "select t from " + TABLE_TICKET_GRANTING_TICKETS
+                + " t where t.id = :id", TicketGrantingTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
+
+        return failureCount;
     }
 
     /**

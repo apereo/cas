@@ -19,6 +19,8 @@ import java.util.Collection;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.authentication.Authentication;
+
 /**
  * Unit tests for {@link HazelcastTicketRegistry}.
  *
@@ -117,6 +119,34 @@ public class HazelcastTicketRegistryTests {
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = org.jasig.cas.authentication.TestUtils.getAuthentication();
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.hzTicketRegistry1.addTicket(st1);
+
+        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+
+        TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        this.hzTicketRegistry1.deleteTicket(tgt.getId());
+
+        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("PGT-1", ServiceTicket.class));
     }
 
     private TicketGrantingTicket newTestTgt() {

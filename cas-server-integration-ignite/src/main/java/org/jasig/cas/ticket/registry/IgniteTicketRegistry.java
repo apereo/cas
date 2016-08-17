@@ -130,39 +130,22 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
     }
 
     @Override
-    public boolean deleteTicket(final String ticketIdToDelete) {
-        final String ticketId = encodeTicketId(ticketIdToDelete);
-        if (StringUtils.isBlank(ticketId)) {
-            return false;
-        }
-
+    public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
+        
         if (ticket == null) {
-            return false;
+            logger.debug("Ticket {} cannot be retrieved from the cache", ticketId);
+            return true;
         }
 
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+        if (this.ticketGrantingTicketsCache.remove(ticket.getId())) {
+            logger.debug("Ticket {} is removed", ticket.getId());
         }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return this.serviceTicketsCache.remove(ticketId);
-    }
-
-    /**
-     * Delete the TGT and all of its service tickets.
-     *
-     * @param ticket the ticket
-     * @return boolean indicating whether ticket was deleted or not
-     */
-    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            this.serviceTicketsCache.removeAll(services.keySet());
+        if (this.serviceTicketsCache.remove(ticket.getId())) {
+            logger.debug("Ticket {} is removed", ticket.getId());
         }
-
-        return this.ticketGrantingTicketsCache.remove(ticket.getId());
+        
+        return true;
     }
 
     @Override

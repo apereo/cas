@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.util.Assert;
+
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
  *
@@ -140,54 +142,14 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
     }
 
     @Override
-    public boolean deleteTicket(final String ticketIdToDel) {
-        if (this.client == null) {
-            logger.debug("No memcached client is configured.");
-            return false;
-        }
-
-        final String ticketId = encodeTicketId(ticketIdToDel);
-        if (ticketId == null) {
-            return false;
-        }
-
-        final Ticket ticket = getTicket(ticketId);
-        if (ticket == null) {
-            return false;
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket children [{}] from the registry.", ticket);
-            deleteChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Deleting ticket {}", ticketId);
+    public boolean deleteSingleTicket(final String ticketId) {
         try {
+            Assert.notNull(this.client, "No memcached client is defined.");
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
             logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
         }
         return false;
-    }
-
-    /**
-     * Delete the TGT service tickets.
-     *
-     * @param ticket the ticket
-     */
-    private void deleteChildren(final TicketGrantingTicket ticket) {
-        // delete service tickets
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                try {
-                    this.client.delete(entry.getKey());
-                    logger.trace("Scheduled deletion of service ticket [{}]", entry.getKey());
-                } catch (final Exception e) {
-                    logger.error("Failed deleting {}", entry.getKey(), e);
-                }
-            }
-        }
     }
 
     @Override

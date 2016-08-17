@@ -23,6 +23,8 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.authentication.Authentication;
+
 /**
  * Unit test for {@link EhCacheTicketRegistry}.
  *
@@ -251,6 +253,33 @@ public final class EhCacheTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
     }
 
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.ticketRegistry.addTicket(st1);
+
+        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+
+        TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        this.ticketRegistry.deleteTicket(tgt.getId());
+
+        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("PGT-1", ServiceTicket.class));
+    }
 
     /**
      * Cleaning ticket registry to start afresh, after newing up the instance.

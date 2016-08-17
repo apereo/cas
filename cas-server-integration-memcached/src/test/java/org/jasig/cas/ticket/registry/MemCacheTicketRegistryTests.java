@@ -24,6 +24,8 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.TestUtils;
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -133,5 +135,31 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         assertNull(this.registry.getTicket("ST3", ServiceTicket.class));
     }
 
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+    	final Authentication a = TestUtils.getAuthentication();
+        this.registry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket(
+                "TGT", TicketGrantingTicket.class);
 
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.registry.addTicket(st1);
+
+        assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
+
+        TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+        
+        this.registry.deleteTicket(tgt.getId());
+        
+        assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.registry.getTicket("PGT-1", ServiceTicket.class));
+    }
 }

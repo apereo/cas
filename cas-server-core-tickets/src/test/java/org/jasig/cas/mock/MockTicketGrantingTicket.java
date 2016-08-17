@@ -23,6 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * Mock ticket-granting ticket.
  *
@@ -47,6 +51,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     private Service proxiedBy;
 
     private final Map<String, Service> services = new HashMap<>();
+
+    private HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -138,6 +144,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public Map<String, Service> getServices() {
         return this.services;
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return this.proxyGrantingTickets;
     }
 
     @Override
