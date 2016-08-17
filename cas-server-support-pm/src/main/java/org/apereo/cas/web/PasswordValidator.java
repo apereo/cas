@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
@@ -12,12 +14,9 @@ import org.springframework.binding.validation.ValidationContext;
  */
 public class PasswordValidator {
 
-    private String passwordPolicyPattern;
-
-    public PasswordValidator(final String passwordPolicyPattern) {
-        this.passwordPolicyPattern = passwordPolicyPattern;
-    }
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     /**
      * Validate cas must change pass view.
      *
@@ -32,7 +31,7 @@ public class PasswordValidator {
             return;
         }
 
-        if (!bean.getPassword().matches(this.passwordPolicyPattern)) {
+        if (!bean.getPassword().matches(casProperties.getAuthn().getPm().getPolicyPattern())) {
             messages.addMessage(new MessageBuilder().error().source("pm.passwordFailedCriteria").
                     defaultText("Password policy rejected the provided insecure password.").build());
             return;
