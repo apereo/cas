@@ -13,7 +13,7 @@
         <p/>
         <br/>
 
-        <form>
+        <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post">
         <p>
         <table>
             <tr>
@@ -32,7 +32,6 @@
                     <input class="required" type="password" id="confirmpassword"/>
                 </td>
             </tr>
-
         </table>
 
         <div>
@@ -55,7 +54,10 @@
                     type="button"
                     onclick="location.href = location.href;" />
         </form>
+        <p th:unless="${passwordManagementEnabled}" th:utext="#{screen.mustchangepass.message}"/>
     </div>
+
+    
 </div>
 </body>
 </html>

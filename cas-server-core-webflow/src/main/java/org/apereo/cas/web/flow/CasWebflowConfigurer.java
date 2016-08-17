@@ -4,6 +4,7 @@ import org.springframework.binding.expression.Expression;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
+import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
@@ -29,7 +30,7 @@ public interface CasWebflowConfigurer {
      * Main logout flow id.
      */
     String FLOW_ID_LOGOUT = "logout";
-    
+
     /**
      * Initialize.
      */
@@ -48,7 +49,7 @@ public interface CasWebflowConfigurer {
      * @return the logout flow
      */
     Flow getLogoutFlow();
-    
+
     /**
      * Gets start state.
      *
@@ -144,11 +145,21 @@ public interface CasWebflowConfigurer {
     /**
      * Create end state.
      *
+     * @param flow the flow
+     * @param id   the id
+     * @return the end state
+     */
+    EndState createEndState(Flow flow, String id);
+
+    /**
+     * Create end state.
+     *
      * @param flow   the flow
      * @param id     the id
      * @param viewId the view id
+     * @return the end state
      */
-    void createEndState(Flow flow, String id, String viewId);
+    EndState createEndState(Flow flow, String id, String viewId);
 
     /**
      * Create end state.
@@ -156,8 +167,9 @@ public interface CasWebflowConfigurer {
      * @param flow       the flow
      * @param id         the id
      * @param expression the expression
+     * @return the end state
      */
-    void createEndState(Flow flow, String id, Expression expression);
+    EndState createEndState(Flow flow, String id, Expression expression);
 
     /**
      * Create end state.
@@ -165,8 +177,9 @@ public interface CasWebflowConfigurer {
      * @param flow        the flow
      * @param id          the id
      * @param viewFactory the view factory
+     * @return the end state
      */
-    void createEndState(Flow flow, String id, ViewFactory viewFactory);
+    EndState createEndState(Flow flow, String id, ViewFactory viewFactory);
 
     /**
      * Create view state view state.
