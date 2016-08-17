@@ -3,12 +3,12 @@ package org.apereo.cas.web;
 import org.apereo.cas.authentication.Credential;
 
 /**
- * This is {@link PasswordChangeOpExecutor}.
+ * This is {@link PasswordChangeService}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface PasswordChangeOpExecutor {
+public interface PasswordChangeService {
 
     /**
      * Execute op.
