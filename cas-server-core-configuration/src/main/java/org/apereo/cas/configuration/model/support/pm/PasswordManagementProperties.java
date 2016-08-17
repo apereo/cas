@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+
 /**
  * This is {@link PasswordManagementProperties}.
  *
@@ -11,6 +14,8 @@ public class PasswordManagementProperties {
     
     // Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
+    
+    private Ldap ldap = new Ldap();
     
     public boolean isEnabled() {
         return enabled;
@@ -26,5 +31,34 @@ public class PasswordManagementProperties {
 
     public void setPolicyPattern(final String policyPattern) {
         this.policyPattern = policyPattern;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public static class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String userFilter;
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getUserFilter() {
+            return userFilter;
+        }
+
+        public void setUserFilter(final String userFilter) {
+            this.userFilter = userFilter;
+        }
     }
 }

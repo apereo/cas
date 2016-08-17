@@ -11,10 +11,6 @@ Password policy enforcement attempts to:
 - Warn users whose account status is near a configurable expiration date and redirect the flow to an external 
 identity management system.
 
-<div class="alert alert-danger"><strong>No Password Management!</strong><p>LPPE is not about password management.
-If you are looking for that sort of capability, you might be interested in
-<a href="http://code.google.com/p/pwm/">http://code.google.com/p/pwm/</a></p></div>
-
 ## LDAP
 
 The below scenarios are by default considered errors preventing authentication in a generic manner through
@@ -38,3 +34,19 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 LPPE is also able to warn the user when the account is about to expire. The expiration policy is 
 determined through pre-configured Ldap attributes with default values in place.
+
+## Password Management
+
+CAS presents humble password management features. If authentication fails due to a rejected password policy, CAS is able to intercept
+that request and allow the user to update the account password in place. The password management features of CAS are rather modest, and
+alternatively should the functionality provide inadequate for your policy, you may always redirect CAS to use a separate and standalone
+application that is fully in charge of managing the account password and associated flows.
+
+This functionality needs to be explicitly enabled in CAS settings. You may also specify a particular pattern for accepted passwords. 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+### LDAP
+
+The updated password may be stored inside an LDAP server.
+
+
