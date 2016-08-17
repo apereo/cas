@@ -2434,3 +2434,7 @@ meter[value="4"]::-moz-meter-bar {
     font-family: Courgette, cursive;
     margin-top: 1em;
 }
+
+.pm {
+    padding: 5px;
+}
