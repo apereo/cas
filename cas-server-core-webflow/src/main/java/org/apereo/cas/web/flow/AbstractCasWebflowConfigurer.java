@@ -211,6 +211,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param state           the action state
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
+     * @return the transition
      */
     protected Transition createTransitionForState(final TransitionableState state,
                                             final String criteriaOutcome, final String targetState) {
