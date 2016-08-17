@@ -1,8 +1,6 @@
 ---
 ---
 
-* [Blog](https://mmoayyed.github.io)
-
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
