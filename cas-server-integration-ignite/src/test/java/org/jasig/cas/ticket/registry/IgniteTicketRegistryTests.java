@@ -256,7 +256,7 @@ public final class IgniteTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-    	final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = TestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
