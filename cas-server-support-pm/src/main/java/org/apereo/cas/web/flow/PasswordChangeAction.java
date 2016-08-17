@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class PasswordChangeAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        requestContext.getFlowScope().put("passwordManagementEnabled", Boolean.TRUE);
-        return null;
+        
+        return error();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 
@@ -187,9 +188,10 @@ public interface CasWebflowConfigurer {
      * @param flow       the flow
      * @param id         the id
      * @param expression the expression
+     * @param binder     the binder
      * @return the view state
      */
-    ViewState createViewState(Flow flow, String id, Expression expression);
+    ViewState createViewState(Flow flow, String id, Expression expression, BinderConfiguration binder);
 
     /**
      * Create view state view state.
@@ -200,6 +202,17 @@ public interface CasWebflowConfigurer {
      * @return the view state
      */
     ViewState createViewState(Flow flow, String id, String viewId);
+
+    /**
+     * Create view state view state.
+     *
+     * @param flow   the flow
+     * @param id     the id
+     * @param viewId the view id
+     * @param binder the binder
+     * @return the view state
+     */
+    ViewState createViewState(Flow flow, String id, String viewId, BinderConfiguration binder);
 
     /**
      * Create subflow state subflow state.

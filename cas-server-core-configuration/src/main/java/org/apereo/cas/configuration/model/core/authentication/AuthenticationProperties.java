@@ -16,6 +16,7 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -39,6 +40,9 @@ import java.util.List;
  */
 public class AuthenticationProperties {
 
+    @NestedConfigurationProperty
+    private PasswordManagementProperties pm = new PasswordManagementProperties();
+    
     @NestedConfigurationProperty
     private AdaptiveAuthenticationProperties adaptive = new AdaptiveAuthenticationProperties();
     
@@ -370,5 +374,13 @@ public class AuthenticationProperties {
 
     public void setPolicy(final AuthenticationPolicyProperties policy) {
         this.policy = policy;
+    }
+
+    public PasswordManagementProperties getPm() {
+        return pm;
+    }
+
+    public void setPm(final PasswordManagementProperties pm) {
+        this.pm = pm;
     }
 }
