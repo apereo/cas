@@ -24,7 +24,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
         
-        final Expression expression = createExpression(flow, "flowScope.WsFederationIdentityProviderUrl", String.class);
+        final Expression expression = createExpression("flowScope.WsFederationIdentityProviderUrl", String.class);
         final ActionExecutingViewFactory viewFactory = new ActionExecutingViewFactory(
                 new ExternalRedirectAction(expression));
 
