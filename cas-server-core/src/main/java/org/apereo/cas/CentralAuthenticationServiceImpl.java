@@ -141,8 +141,6 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             final Service service, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
-        CurrentCredentialsAndAuthentication.bindCurrent(authenticationResult.getAuthentication());
-
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
@@ -156,7 +154,9 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
-        final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
+        final Authentication latestAuthentication = authentications.get(authentications.size() - 1);
+        CurrentCredentialsAndAuthentication.bindCurrent(latestAuthentication);
+        final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
