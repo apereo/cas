@@ -160,9 +160,8 @@
     </end-state>
 
     <!-- Password policy failure states -->
-    <end-state id="abstactPasswordChangeView" />
-    <end-state id="casExpiredPassView" view="casExpiredPassView" parent="#abstactPasswordChangeView"/>
-    <end-state id="casMustChangePassView" view="casMustChangePassView" parent="#abstactPasswordChangeView"/>
+    <end-state id="casExpiredPassView" view="casExpiredPassView"/>
+    <end-state id="casMustChangePassView" view="casMustChangePassView"/>
     <end-state id="casAccountDisabledView" view="casAccountDisabledView"/>
     <end-state id="casAccountLockedView" view="casAccountLockedView"/>
     <end-state id="casBadHoursView" view="casBadHoursView"/>
