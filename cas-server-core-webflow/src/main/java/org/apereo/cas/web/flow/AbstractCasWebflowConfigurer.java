@@ -21,7 +21,6 @@ import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
-import org.springframework.util.Assert;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -85,9 +84,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @PostConstruct
     @Override
     public void initialize() {
-        Assert.notNull(this.flowBuilderServices, "flowBuilderServices cannot be null.");
-        Assert.notNull(this.loginFlowDefinitionRegistry, "loginFlowDefinitionRegistry cannot be null.");
-        
         try {
             logger.debug("Initializing CAS webflow configuration...");
             if (casProperties.getWebflow().isAutoconfigure()) {
