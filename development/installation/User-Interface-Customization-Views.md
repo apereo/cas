@@ -4,9 +4,11 @@ title: CAS - User Interface Customization
 ---
 
 # Views
+
 The views are found at `src/main/resources/templates`.
 
 ## Warning Before Accessing Application
+
 CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in.
 (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
 Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
@@ -38,3 +40,11 @@ and will not generate the TGC that is designed to do so.
 <label for="publicWorkstation" th:utext="#{screen.welcome.label.publicstation}"/>
 ...
 ```
+
+## Default service
+
+In the event that no `service` is submitted to CAS, you may specify a default
+service url to which CAS will redirect. Note that this default service, much like
+all other services, MUST be authorized and registered with CAS.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

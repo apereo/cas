@@ -1,6 +1,8 @@
 ---
 ---
 
+* [Blog](https://mmoayyed.github.io)
+
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
@@ -114,7 +116,9 @@
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#integration)
-    *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [SAML2 SPs](/$version/integration/Configuring-SAML-SP-Integrations.html)
+        *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)

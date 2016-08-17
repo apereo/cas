@@ -160,6 +160,11 @@ from a Metadata query server, the metadata location must be configured to point 
 
 ...where `{0}` serves as an entityID placeholder for which metadata is to be queried. 
 
+## SP Integrations
+
+A number of SAML2 service provider integrations are provided natively by CAS. To learn more, 
+please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
 
 
 
