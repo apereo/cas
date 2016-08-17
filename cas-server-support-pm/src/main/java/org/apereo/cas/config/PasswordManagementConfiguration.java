@@ -1,11 +1,16 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.PasswordChangeOpExecutor;
 import org.apereo.cas.web.PasswordValidator;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.InitPasswordChangeAction;
 import org.apereo.cas.web.flow.PasswordChangeAction;
 import org.apereo.cas.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.web.ldap.LdapPasswordChangeOpExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,7 +31,8 @@ import org.springframework.webflow.execution.Action;
 @Configuration("passwordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -46,9 +52,25 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction();
+        return new PasswordChangeAction(passwordChangeOpExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "passwordChangeOpExecutor")
+    @RefreshScope
+    @Bean
+    public PasswordChangeOpExecutor passwordChangeOpExecutor() {
+        if (casProperties.getAuthn().getPm().isEnabled() 
+            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
+            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
+            return new LdapPasswordChangeOpExecutor();
+        }
+        if (casProperties.getAuthn().getPm().isEnabled()) {
+            LOGGER.warn("No backend is configured to handle the account update operation. Verify your settings");
+        }
+        return (c, bean) -> false;
+    }
+    
     @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
@@ -59,7 +81,7 @@ public class PasswordManagementConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean(name = "PasswordValidator")
+    @ConditionalOnMissingBean(name = "passwordValidator")
     @Bean
     public PasswordValidator passwordValidator() {
         return new PasswordValidator();
