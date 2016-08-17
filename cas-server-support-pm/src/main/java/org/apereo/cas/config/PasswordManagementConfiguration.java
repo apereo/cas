@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -38,21 +39,19 @@ public class PasswordManagementConfiguration {
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
-    @Bean
-    public View passwordChangeView() {
-        return new PasswordChangeView();
-    }
-
+    @RefreshScope
     @Bean
     public Action initPasswordChangeAction() {
-        return new InitPasswordChangeAction(casProperties.getAuthn().getPm());
+        return new InitPasswordChangeAction();
     }
 
+    @RefreshScope
     @Bean
     public Action passwordChangeAction() {
         return new PasswordChangeAction();
     }
 
+    @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
         final PasswordManagementWebflowConfigurer w = new PasswordManagementWebflowConfigurer();
@@ -61,13 +60,11 @@ public class PasswordManagementConfiguration {
         return w;
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "PasswordValidator")
     @Bean
     public PasswordValidator passwordValidator() {
-        return new PasswordValidator(casProperties.getAuthn().getPm().getPolicyPattern());
-    }
-
-    private static class PasswordChangeView extends ThymeleafView {
+        return new PasswordValidator();
     }
 }
 
