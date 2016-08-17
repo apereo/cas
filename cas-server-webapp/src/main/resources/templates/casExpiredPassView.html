@@ -7,10 +7,7 @@
 
 <body id="cas">
 <div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h2 th:utext="#{screen.expiredpass.heading}"/>
-        <p th:utext="#{screen.expiredpass.message}"/>
-    </div>
+    <div th:replace="fragments/pwdupdateform"/>
 </div>
 </body>
 </html>
