@@ -28,34 +28,37 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class PasswordChangeAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-        final PasswordChangeBean bean = requestContext.getFlowScope().get("password", PasswordChangeBean.class);
-        
-        final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), c.getId());
-        
-        final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
-        final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, 
-                ldap.getBaseDn(), filter);
-        
-        if (LdapUtils.containsResultEntry(response)) {
-            final String dn = response.getResult().getEntry().getDn();
-            LOGGER.debug("Updating account password for {}", dn);
-            if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword())) {
-                LOGGER.debug("Successfully updated the account password for {}", dn);
-                return new EventFactorySupport().event(this, "passwordUpdateSuccess");
+        try {
+            final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
+            final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
+            final PasswordChangeBean bean = requestContext.getFlowScope().get("password", PasswordChangeBean.class);
+
+            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), c.getId());
+            final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
+            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory,
+                    ldap.getBaseDn(), filter);
+
+            if (LdapUtils.containsResultEntry(response)) {
+                final String dn = response.getResult().getEntry().getDn();
+                LOGGER.debug("Updating account password for {}", dn);
+                if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword())) {
+                    LOGGER.debug("Successfully updated the account password for {}", dn);
+                    return new EventFactorySupport().event(this, "passwordUpdateSuccess");
+                }
+                LOGGER.error("Could not update the LDAP entry's password for {} and base DN {}", filter.format(), ldap.getBaseDn());
+            } else {
+                LOGGER.error("Could not locate an LDAP entry for {} and base DN {}", filter.format(), ldap.getBaseDn());
             }
-            LOGGER.error("Could not update the LDAP entry's password for {} and base DN {}", filter.format(), ldap.getBaseDn());
-        } else {
-            LOGGER.error("Could not locate an LDAP entry for {} and base DN {}", filter.format(), ldap.getBaseDn());
+        } catch (final Exception e) {
+            LOGGER.error("Update failed", e.getMessage());
         }
-        requestContext.getMessageContext().addMessage(new MessageBuilder().error().source("pm.updateFailure").
+        requestContext.getMessageContext().addMessage(new MessageBuilder().error().code("pm.updateFailure").
                 defaultText("Could not update the account password").build());
         return error();
     }
