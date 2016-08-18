@@ -99,11 +99,10 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public boolean deleteSingleTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
-            couchbase.bucket().remove(ticketId);
-            return true;
+            return this.couchbase.bucket().remove(ticketId) != null;
         } catch (final Exception e) {
             logger.error("Failed deleting {}: {}", ticketId, e);
             return false;

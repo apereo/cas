@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import java.util.Collection;
+
 /**
  * This is {@link TicketGrantingTicketDelegator}.
  *
@@ -89,5 +92,10 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
     @Override
     public void removeAllServices() {
         this.getTicket().removeAllServices();
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+       return this.getTicket().getProxyGrantingTickets();
     }
 }

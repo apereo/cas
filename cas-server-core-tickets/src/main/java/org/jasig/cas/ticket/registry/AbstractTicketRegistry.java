@@ -5,6 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
+import java.util.Map;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import java.util.Iterator;
+
 /**
  * @author Scott Battaglia
  * @since 3.0.0
@@ -56,4 +63,75 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
+
+    @Override
+    public boolean deleteTicket(final String ticketId) {
+        if (ticketId == null) {
+            return false;
+        }
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            if (ticket instanceof ProxyGrantingTicket) {
+                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+            }
+
+            logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
+            final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
+            deleteChildren(tgt);
+
+            final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
+            final Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
+            while(it.hasNext()) {
+                final ProxyGrantingTicket pgt = it.next();
+                deleteTicket(pgt.getId());
+            }
+        }
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return deleteSingleTicket(ticketId);
+    }
+
+    /**
+     * Delete TGT's service tickets.
+     *
+     * @param ticket the ticket
+     */
+    public void deleteChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            final Iterator<String> it = services.keySet().iterator();
+
+            while (it.hasNext()) {
+                final String ticketId = it.next();
+                if (deleteSingleTicket(ticketId)) {
+                    logger.debug("Removed ticket [{}]", ticketId);
+                } else {
+                    logger.debug("Unable to remove ticket [{}]", ticketId);
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete a single ticket instance from the store.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    public boolean deleteSingleTicket(final Ticket ticketId) {
+        return deleteSingleTicket(ticketId.getId());
+    }
+
+    /**
+     * Delete a single ticket instance from the store.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    public abstract boolean deleteSingleTicket(final String ticketId);
 }
