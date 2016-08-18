@@ -1,0 +1,85 @@
+<!--
+Todo: New pane to configure Multifactor Authentication Policy. Fields are:
+
+
+Todo: Add properties table
+Providers: CSV list
+
+-->
+<div class="multiauth-container">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:text="#{services.form.header.multiauth}" />
+            </h3>
+        </div> <!-- end .panel-header div -->
+        <div class="panel-body">
+            <!-- Providers -->
+            <div class="form-group">
+                <label class="col-sm-4" for="publicKeyLocation">
+                    <span th:text="#{services.form.label.multiauth.providers}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.multiauth.providers}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="multiAuthProviders" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.providers"/>
+                </div>
+            </div>
+
+            <!-- Failure Mode-->
+            <div class="form-group">
+                <label class="col-sm-4" for="multiAuthFailureMode">
+                    <span th:text="#{services.form.label.multiauth.failuremode}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.multiauth.failuremode}"></i>
+                </label>
+                <div class="col-sm-8">
+
+                    <select class="form-control" id="multiAuthFailureMode" ng-model="serviceFormCtrl.serviceData.multiAuth.failureMode">
+                        <option
+                                ng-repeat="opt in serviceFormCtrl.selectOptions.failureMode"
+                                ng-attr-value="{{ opt.value }}"
+                                ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.multiAuth.failureMode)">{{ opt.name }}</option>
+                    </select>
+
+                </div>
+            </div>
+
+            <!-- Principal Attribute Name Trigger -->
+            <div class="form-group">
+                <label class="col-sm-4" for="multiAuthAttrNameTrigger">
+                    <span th:text="#{services.form.label.multiauth.principalattribute.nametrigger}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.multiauth.principalattribute.nametrigger}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="multiAuthAttrNameTrigger" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.principalAttr.nameTrigger"/>
+                </div>
+            </div>
+
+            <!-- Principal Attribute Value to Match -->
+            <div class="form-group">
+                <label class="col-sm-4" for="multiAuthAttrValueMatch">
+                    <span th:text="#{services.form.label.multiauth.principalattribute.valuetomatch}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.multiauth.principalattribute.valuetomatch}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="multiAuthAttrValueMatch" 
+                           ng-model="serviceFormCtrl.serviceData.multiAuth.principalAttr.valueMatch"/>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

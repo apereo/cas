@@ -4,7 +4,7 @@
     <Match>
         <Confidence value="2"/>
         <Rank value="15"/>
-        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE"/>
-        <Package name="^org\.jasig\.cas.+" />
+        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE,STYLE,BAD_PRACTICE"/>
+        <Package name="^org\.apereo\.cas.+" />
     </Match>
 </FindBugsFilter>

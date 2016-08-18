@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
-
-<!--
-    This configuration file was written by the eclipse-cs plugin configuration editor
--->
-<!--
-    Checkstyle-Configuration: CAS
-    Description: 
-Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
--->
 <module name="Checker">
     <property name="severity" value="warning"/>
     <property name="charset" value="UTF-8"/>
@@ -17,12 +8,16 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        <module name="JavadocMethod">
-      <property name="scope" value="protected"/>
+        <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="scope" value="protected"/>
+            <property name="severity" value="error"/>
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
-      <property name="allowThrowsTagsForSubclasses" value="true"/>
+            <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
         <module name="JavadocType">
             <property name="severity" value="error"/>
@@ -39,25 +34,32 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
             <property name="severity" value="error"/>
         </module>
         <module name="ClassFanOutComplexity">
-            <property name="max" value="50"/>
+            <property name="max" value="120"/>
             <property name="severity" value="error"/>
         </module>
         <module name="CommentsIndentation">
             <property name="severity" value="error"/>
         </module>
         <module name="CyclomaticComplexity">
-            <property name="max" value="15"/>
+            <property name="max" value="20"/>
             <property name="severity" value="error"/>
         </module>
         <module name="DefaultComesLast">
             <property name="severity" value="error"/>
         </module>
-
+        <!--
+        <module name="MissingCtorCheck">
+            <property name="severity" value="error"/>
+        </module>
+        -->
         <module name="AnnotationLocation">
             <property name="severity" value="error"/>
             <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
         </module>
         <module name="ConstantName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="GenericWhitespaceCheck">
             <property name="severity" value="error"/>
         </module>
         <module name="ModifiedControlVariable">
@@ -92,12 +94,20 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="PackageName">
             <property name="severity" value="error"/>
         </module>
+        <module name="UnnecessaryParentheses">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
+            <property name="ignoreOverridden" value="true" />
         </module>
         <module name="StaticVariableName">
             <property name="severity" value="error"/>
             <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)"/>
+        </module>
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="true"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="AbbreviationAsWordInName"/>
         <module name="TypeName">
@@ -105,7 +115,20 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         </module>
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
-            <property name="allowStaticMemberImports" value="true"/>
+            <property name="excludes"
+                      value="java.io,
+                      java.net,
+                      java.lang.Math,
+                      org.junit.Assert,
+                      org.mockito.Mockito,
+                      org.mockito.Matchers,
+                      org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
+                      org.springframework.test.web.servlet.result.MockMvcResultMatchers,
+                      org.springframework.test.web.client.ExpectedCount,
+                      org.springframework.test.web.client.match.MockRestRequestMatchers,
+                      org.springframework.test.web.client.response.MockRestResponseCreators,
+                      java.nio.file.StandardWatchEventKinds"/>
+            <property name="allowStaticMemberImports" value="false"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -116,7 +139,20 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="RedundantImport">
             <property name="severity" value="error"/>
         </module>
+        
+        <!--
+        This check insofar is unable to ignore constants and logger fields.
+        <module name="RequireThis">
+            <property name="severity" value="error"/>
+            <property name="checkMethods" value="false" />
+            <property name="validateOnlyOverlapping" value="false" />
+        </module>
+        -->
+        
         <module name="UnusedImports">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="UnnecessaryParentheses">
             <property name="severity" value="error"/>
         </module>
         <module name="SuperClone">
@@ -132,7 +168,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
             <property name="tokens" value="METHOD_DEF"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="140"/>
+            <property name="max" value="160"/>
             <property name="tabWidth" value="4"/>
             <property name="severity" value="error"/>
         </module>
@@ -149,7 +185,9 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="OperatorWrap">
             <property name="severity" value="error"/>
         </module>
-        <module name="ParenPad"/>
+        <module name="ParenPad">
+            <property name="severity" value="error" />
+        </module>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter">
             <property name="severity" value="error"/>
@@ -185,16 +223,56 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="EqualsAvoidNull">
             <property name="severity" value="error"/>
         </module>
-        <module name="RightCurly"/>
+        <module name="MultipleVariableDeclarations">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="OneTopLevelClass">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="StringLiteralEquality">
+            <property name="severity" value="error"/>
+        </module>
+        
+        <module name="AnnotationLocation">
+            <property name="severity" value="error" />
+        </module>
+        
+        <!--
+        <module name="MissingCtor">
+            <property name="severity" value="error" />
+        </module>
+        -->
+
+        <module name="OuterTypeFilename">
+            <property name="severity" value="error" />
+        </module>
+        <module name="OuterTypeNumber">
+            <property name="severity" value="error" />
+        </module>
+        <module name="AnnotationUseStyle">
+            <property name="severity" value="error" />
+        </module>
+        <module name="CatchParameterName">
+            <property name="severity" value="error" />
+        </module>
+        <module name="AnonInnerLength">
+            <property name="max" value="40" />
+            <property name="severity" value="error" />
+        </module>
+        <module name="RightCurly">
+            <property name="severity" value="error"/>
+        </module>
         <module name="NoFinalizer">
             <property name="severity" value="error"/>
         </module>
         <module name="EmptyStatement"/>
-        <module name="EqualsHashCode"/>
+        <module name="EqualsHashCode">
+            <property name="severity" value="info"/>
+        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MissingSwitchDefault">
-            <property name="severity" value="error"/>
+            <property name="severity" value="info"/>
         </module>
         <module name="SimplifyBooleanExpression">
             <property name="severity" value="error"/>
@@ -208,9 +286,17 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="HideUtilityClassConstructor">
             <property name="severity" value="error"/>
         </module>
+        <!--
         <module name="InterfaceIsType">
             <property name="severity" value="info"/>
         </module>
+        <module name="MultipleStringLiterals">
+            <property name="severity" value="info"/>
+            <property name="ignoreStringsRegexp" 
+                      value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
+        </module>
+         -->
+        
         <module name="VisibilityModifier">
             <property name="severity" value="error"/>
             <property name="protectedAllowed" value="true"/>
@@ -250,6 +336,15 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
 
         <!-- Custom checks based on regular expressions -->
         <module name="RegexpSinglelineJava">
+            <property name="id" value="namedAnnotations"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@(Configuration|Component|Controller)(\(\))*$"/>
+            <property name="message"
+                      value="It's better to name controller/component/configuration annotations to avoid implicit configuration"/>
+        </module>
+        
+        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
             <property name="severity" value="error"/>
             <property name="format" value="log\.\w+\(((\&quot;.+\&quot;\s*\+)|(.*\s*\+\s*\&quot;))"/>
@@ -267,6 +362,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
             <property name="severity" value="error"/>
             <property name="format" value="LogFactory\.getLog"/>
             <property name="message" value="CAS uses the slf4j logging framework."/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Logger as non-transient"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(protected|public)\s+(final\s)*Logger"/>
+            <property name="message" value="Non-static logger must be declared as transient to avoid serialization issues."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="sysOutConsoleLogs"/>
@@ -300,6 +401,13 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
                       value="The Logger object must only be called &quot;logger&quot; or &quot;LOGGER&quot;"/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="finalNonUtilClass"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="final non-utility classes"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(public\s)*(static\s)*final\s+class\s+\w+"/>
+            <property name="message" value="Non-utility class should not be marked as final"/>
+        </module>
+        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Qualifying logger with the &quot;this&quot; keyword"/>
             <property name="severity" value="error"/>
             <property name="format" value="((this\.logger)|(super\.logger))\.\w+\("/>
@@ -320,10 +428,10 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Checking for logging level"/>
-            <property name="severity" value="warning"/>
+            <property name="severity" value="error"/>
             <property name="format" value="log\.is\w+Enabled\("/>
             <property name="message"
-                      value="If the construction of the log message is cheap, consider not checking for logging levels."/>
+                      value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
@@ -331,6 +439,13 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
             <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
             <property name="message"
                       value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
+            <property name="severity" value="error"/>
+            <property name="format" value=".+InitializingBean.+"/>
+            <property name="message"
+                      value="Use the @PostConstruct annotation instead of implementing InitializingBean"/>
         </module>
     </module>
 
@@ -350,6 +465,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="FileTabCharacter">
         <property name="severity" value="error"/>
     </module>
+
+    
 
     <!-- Custom checks based on regular expressions -->
     <module name="RegexpSingleline">
@@ -377,11 +494,24 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <property name="message" value="For security purposes, use 'java.security.SecureRandom' instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="final clone() method"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="JUnit Assert static import"/>
         <property name="severity" value="error"/>
-        <property name="format" value="public\s+\w+\s+clone\(\)"/>
-        <property name="message"
-                  value="Consider marking the clone() method as final to reduce chances of data corruption"/>
+        <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
+        <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="Arrays\.asList\(.+"/>
+        <property name="message" value="Use Lists.newArrayList() instead."/>
+    </module>
+    
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="import\s+static\s+org\.mockito\.Mockito\.\w+"/>
+        <property name="message" value="Mockito methods MUST be imported statically with a *"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
@@ -392,7 +522,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <property name="fileExtensions" value="java,groovy"/>
         <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
     </module>
-
     <module name="SuppressionFilter">
         <property name="file" value="${checkstyle.suppressions.file}"/>
     </module>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/properties/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+    
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="mappingContext"
+          class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
+
+    <bean id="mongoEventsTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"
+          c:mongoDbFactory-ref="mongoDbFactory"/>
+
+    <bean id="mongoDbEventsRepository" class="org.apereo.cas.support.events.mongo.MongoDbCasEventRepository"
+          c:collectionName="MongoDbCasEventRepository"
+          c:dropCollection="true"
+          c:mongoTemplate-ref="mongoEventsTemplate"/>
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
+
+    <bean id="mongoDbFactory" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory"
+          c:uri-ref="clientUri" />
+
+    <bean id="clientUri" class="com.mongodb.MongoClientURI"
+          c:uri="mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas" />
+
+    
+
+</beans>

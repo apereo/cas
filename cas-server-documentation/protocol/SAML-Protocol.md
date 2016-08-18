@@ -3,20 +3,30 @@ layout: default
 title: CAS - CAS SAML Protocol
 ---
 
-#SAML Protocol
-CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
+# SAML Protocol
+CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. 
+This document deals with CAS-specific concerns.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-saml</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
-#SAML 1.1
+## SAML2
+
+CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html). 
+
+## Google Apps
+
+CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
+
+## SAML 1.1
+
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -25,8 +35,8 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
 
-##Sample Request
-{% highlight xml %}
+## Sample Request
+```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
 Content-Length: 491
@@ -44,11 +54,11 @@ Content-Type: text/xml
     </samlp:Request>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
-##Sample Response
-{% highlight xml %}
+## Sample Response
+```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
   <SOAP-ENV:Body>
@@ -110,24 +120,27 @@ Content-Type: text/xml
     </Response>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
-##Configuration
-SAML configuration in CAS is contained within the `cas.properties` file.
+## Configuration
 
-{% highlight properties %}
-# Indicates the SAML response issuer
-# cas.saml.response.issuer=localhost
+SAML configuration in CAS is contained within the `application.properties` file.
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
-# Indicates the skew allowance which controls the issue instant of the SAML response
-# cas.saml.response.skewAllowance=0
-{% endhighlight %}
+You may also need to declare the following Maven repository in 
+your CAS Overlay to be able to resolve dependencies:
 
-#SAML 2
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
+```
 
-CAS support for SAML 2 at this point is mostly limited to 
-[Google Apps Integration](../integration/Google-Apps-Integration.html). 
-Full SAML 2 support can also be achieved via Shibboleth with CAS 
-handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
+
 

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.mustchangepass.heading}]]</title>
+    <script type="text/javascript" th:src="@{/js/pm.js}"></script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div th:replace="fragments/pwdupdateform"/>
+</div>
+</body>
+</html>

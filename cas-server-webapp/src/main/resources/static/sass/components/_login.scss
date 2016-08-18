@@ -1,0 +1,156 @@
+@import "variables";
+
+/*
+ * CAS default overrides
+ */
+.login #content {
+  background: transparent;
+}
+
+#login {
+  padding: 30px;
+  background-color: #efefef;
+  border-radius: 4px;
+  overflow: hidden;
+  vertical-align: top;
+
+  .login-header {
+
+    text-align: center;
+    padding: 20px;
+    background-color: #d5d5d5;
+    margin: -30px;
+    margin-bottom: 10px;
+
+    h2 {
+      font-weight: 300;
+      color: black;
+      font-family: 'Lato', sans-serif;
+      margin-top: 0;
+    }
+
+    .fa-stack {
+    }
+
+    .fa-circle {
+      color: $secondary-color;
+    }
+
+  }
+
+  form > h2 {
+    display: none;
+  }
+
+  .row {
+    margin: 20px 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .check label {
+    display: inline;
+  }
+
+  input[type=text], input[type=password] {
+    font-size: 1.82rem;
+    padding: 5px;
+    width: 100%;
+  }
+
+  .btn-row {
+    text-align: center;
+  }
+
+  .btn-reset {
+    display: none;
+
+    &:hover {
+      cursor: pointer;
+      background: #d4d4d4;
+
+    }
+  }
+
+  #yubiKeyForm {
+    > h2 {
+      display: block;
+    }
+
+    .btn-reset {
+      display: inline-block;
+    }
+  }
+
+}
+
+#capslock-on {
+  color: firebrick;
+}
+
+#sidebar {
+  width: auto;
+}
+
+#sidebar-content {
+}
+
+#list-providers {
+  ul {
+    list-style: none;
+
+    li {
+      list-style: none;
+      margin-bottom: 1em;
+
+    }
+  }
+
+  a.btn:link, a.btn:visited {
+    color: white;
+  }
+}
+
+#list-languages h3, #list-providers h3 {
+  margin-bottom: 1.4em;
+}
+
+#list-languages ul li {
+  list-style: none;
+  display: inline-block;
+  margin-right: 2em;
+}
+
+#notices {
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  p {
+    font-size: 1.33rem;
+  }
+
+  ul.list-group .fa {
+    margin-right: 7px;
+  }
+
+  #serviceui {
+    h2, h3, h4 {
+      margin-top: 0;
+    }
+  }
+
+  .well {
+    h3 {
+      margin-top: 0;
+      font-size: 1.75rem;
+    }
+
+    ul.list-group {
+      margin-bottom: 0;
+    }
+  }
+}

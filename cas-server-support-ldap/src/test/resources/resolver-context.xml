@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="ldaptivePersonAttributeDao" class="org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao"
+          p:connectionFactory-ref="provisioningConnectionFactory"
+          p:baseDN="${ldap.baseDn}"
+          p:searchFilter="${ldap.resolver.searchFilter}"
+          p:searchControls-ref="searchControls"
+          p:resultAttributeMapping-ref="attributeMapping" />
+
+    <bean id="searchControls" class="javax.naming.directory.SearchControls"
+          p:searchScope="2" />
+
+    <util:map id="attributeMapping">
+        <entry key="givenName" value="givenName" />
+        <entry key="displayName" value="displayName" />
+    </util:map>
+
+
+    <bean id="usernameAttribute" class="java.lang.String"
+          c:_0="sAMAccountName" />
+</beans>

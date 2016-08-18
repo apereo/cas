@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{cas.login.pagetitle}]]</title>
+</head>
+
+<body id="cas" class="login">
+    <div layout:fragment="content">
+        <div class="row">
+            <div id="notices" class="col-sm-12 col-md-6 col-md-push-6">
+                <div th:replace="fragments/insecure"/>
+                <div th:replace="fragments/defaultauthn"/>
+                <div th:replace="fragments/cookies"/>
+                <div th:replace="fragments/serviceui"/>
+                <div th:replace="fragments/cas-resources-list" />
+                <div th:replace="fragments/loginProviders" />
+            </div>
+            <div class="col-sm-12 col-md-6 col-md-pull-6">
+                <div th:replace="fragments/loginform" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

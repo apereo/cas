@@ -1,0 +1,237 @@
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <span th:remove="tag" th:text="#{services.form.header.sas}"/>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="col-sm-6 checkbox">
+                <label class="col-sm-12" for="ssoEnabled">
+                    <input type="checkbox" id="ssoEnabled"
+                           ng-model="serviceFormCtrl.serviceData.supportAccess.ssoEnabled"/>
+                    <span th:remove="tag" th:text="#{services.form.label.sas.ssoEnabled}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.sas.ssoEnabled}"></i>
+                </label>
+            </div>
+            <div class="col-sm-6 checkbox">
+                <label class="col-sm-12" for="sasRequireAll">
+                    <input type="checkbox" id="sasRequireAll"
+                           ng-model="serviceFormCtrl.serviceData.supportAccess.requireAll"/>
+                    <span th:remove="tag" th:text="#{services.form.label.sas.requireAll}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.sas.requireAll}"></i>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-12">
+                <span th:remove="tag" th:text="#{services.form.label.sas.requiredAttr}"/>
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.requiredAttr}"></i>
+            </label>
+        </div>
+
+        <!-- sasMapTable -->
+        <div class="panel panel-default">
+            <table id="sasMapTable" class="table table-striped table-hover table-responsive table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-md-6"><span th:remove="tag"
+                                               th:text="#{services.form.label.attrRelease.policies.sourceAttribute}"/>
+                    </th>
+                    <th class="col-md-6"><span th:remove="tag"
+                                               th:text="#{services.form.label.attrRelease.policies.casAttribute}"/>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
+                    <td class="va-middle">{{ mappedValue }}</td>
+                    <td><input class="form-control noresize"
+                                  ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]"></input>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Unauthorized Redirect URL -->
+        <div class="form-group">
+            <label for="unauthorizedRedirectUrl" class="col-sm-4" th:inline="text">
+                [[#{services.form.label.sas.unauthorizedredirecturl}]]
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.unauthorizedredirecturl}"></i>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="unauthorizedRedirectUrl"
+                       ng-model="serviceFormCtrl.serviceData.supportAccess.unauthorizedRedirectUrl"/>
+            </div>
+        </div>
+
+        <!-- Case Insensitive -->
+        <div class="form-group">
+            <label for="unauthorizedRedirectUrl" class="col-sm-4" th:inline="text">
+                [[#{services.form.label.sas.caseinsensitive}]]
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.unauthorizedredirecturl}"></i>
+            </label>
+            <div class="col-sm-8">
+                <div class="checkbox checkbox-inline">
+                    <input type="checkbox" id="caseInsensitive" ng-model="serviceFormCtrl.serviceData.supportAccess.caseInsensitive"/>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/serviceform/rejectedAttributes"/>
+
+        <!-- Select Type -->
+        <div class="form-group">
+            <label for="selectType" class="col-sm-4" th:inline="text">
+                [[#{services.form.label.sas.selecttype}]]
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.selecttype}"></i>
+            </label>
+            <div class="col-sm-8">
+                <select class="form-control" id="selectType" ng-model="serviceFormCtrl.serviceData.supportAccess.type">
+
+                    <option
+                            ng-repeat="opt in serviceFormCtrl.selectOptions.selectType"
+                            ng-attr-value="{{opt.value}}"
+                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.supportAccess.type)">{{ opt.name
+                        }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" ng-show="serviceFormCtrl.serviceData.supportAccess.type == 'REMOTE'">
+            <label for="unauthorizedRedirectUrl" class="col-sm-4" th:inline="text">
+                [[#{services.form.label.sas.remoteUrl}]]
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.remoteUrl}"></i>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="remoteUrl"
+                       ng-model="serviceFormCtrl.serviceData.supportAccess.url"/>
+            </div>
+
+            <label for="authorizedCodes" class="col-sm-4" th:inline="text">
+                [[#{services.form.label.sas.authorizedCodes}]]
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.sas.authorizedCodes}"></i>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="authorizedCodes"
+                       ng-model="serviceFormCtrl.serviceData.supportAccess.codes"/>
+            </div>
+        </div>
+
+        <div id="accessDateTime"
+             ng-show="serviceFormCtrl.serviceData.supportAccess.type != 'DEFAULT' &amp;&amp; serviceFormCtrl.serviceData.supportAccess.type != 'REMOTE'">
+            <div class="form-group">
+                <label for="accessStartingDateInput" class="col-sm-4">
+                    <span th:remove="tag" th:text="#{services.form.label.sas.starttime}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.sas.starttime}"></i>
+                </label>
+
+                <div class='col-sm-8'>
+                    <div class="input-group date" id="accessStartingDate">
+                        <input type='text' class="form-control"
+                               id='accessStartingDateInput'
+                               ng-model="serviceFormCtrl.serviceData.supportAccess.startingTime"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="accessEndingDateInput" class="col-sm-4">
+                    <span th:remove="tag" th:text="#{services.form.label.sas.endtime}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.sas.endtime}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class='input-group date' id='accessEndingDate'>
+                        <input type='text' class="form-control"
+                               id='accessEndingDateInput'
+                               ng-model="serviceFormCtrl.serviceData.supportAccess.endingTime"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="grouperOptions" ng-show="serviceFormCtrl.serviceData.supportAccess.type == 'GROUPER'">
+            <div class="form-group">
+                <label for="groupField" class="col-sm-4" th:inline="text">
+                    [[#{services.form.label.sas.grouper.groupfield}]]
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.sas.grouper}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <select class="form-control" id="groupField" ng-model="serviceFormCtrl.serviceData.supportAccess.groupField">
+                            <option
+                                    ng-repeat="opt in serviceFormCtrl.selectOptions.groupField"
+                                    ng-attr-value="{{ opt.value }}"
+                                    ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.supportAccess.groupField)">
+                                {{ opt.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('#accessStartingDate').datetimepicker({
+                format: "YYYY-MM-DDTHH:mm:ss.SSS",
+                useCurrent: true
+            });
+            $('#accessEndingDate').datetimepicker({
+                format: "YYYY-MM-DDTHH:mm:ss.SSS",
+                useCurrent: true
+            });
+
+            $("#accessStartingDateInput").blur(function () {
+                $("#accessStartingDateInput").trigger('input')
+            });
+            $("#accessEndingDateInput").blur(function () {
+                $("#accessEndingDateInput").trigger('input');
+            });
+
+        });
+    </script>
+</div>
