@@ -52,6 +52,7 @@ import java.util.Set;
 @Controller("loggingConfigController")
 @RequestMapping("/status/logging")
 public class LoggingConfigController {
+    private static StringBuilder LOG_OUTPUT = new StringBuilder();;
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
@@ -60,6 +61,8 @@ public class LoggingConfigController {
     private Resource logConfigurationFile;
 
     private LoggerContext loggerContext;
+    
+    private Object lock = new Object();
     
     /**
      * Init.
@@ -96,7 +99,7 @@ public class LoggingConfigController {
                 }
             }
         }
-
+                
         outputFileNames.forEach(s -> {
             final Tailer t = new Tailer(new File(s), new LogTailerListener(), 1000, false);
             final Thread thread = new Thread(t);
@@ -115,7 +118,7 @@ public class LoggingConfigController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getDefaultView() throws Exception {
         final Map<String, Object> model = new HashMap<>();
-        model.put("logConfigurationFile", logConfigurationFile.getURI());
+        model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
         return new ModelAndView(VIEW_CONFIG, model);
     }
 
@@ -266,28 +269,32 @@ public class LoggingConfigController {
     /**
      * Gets logs.
      *
-     * @param request  the request
-     * @param response the response
      * @return the log output
      * @throws Exception the exception
      */
     @MessageMapping("/logoutput")
     @SendTo("/logs/logoutput")
-    public String logoutput(final HttpServletRequest request,
-                             final HttpServletResponse response) throws Exception {
-        
-        return "hello world";
+    public String logoutput() throws Exception {
+        synchronized (lock) {
+            final String log = LOG_OUTPUT.toString();
+            LOG_OUTPUT = new StringBuilder();
+            return log;
+        }
     }
     
-    public static class LogTailerListener extends TailerListenerAdapter {
+    private class LogTailerListener extends TailerListenerAdapter {
         @Override
         public void handle(final String line) {
-            System.out.println(line);
+            synchronized (lock) {
+                LOG_OUTPUT.append(line).append("\n");
+            }
         }
 
         @Override
         public void handle(final Exception ex) {
-            System.out.println(ex.getMessage());
+            synchronized (lock) {
+                LOG_OUTPUT.append(ex).append("\n");
+            }
         }
     }
 }
