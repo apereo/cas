@@ -3,6 +3,14 @@
 
 <head th:inline="text">
     <title>[[#{cas.loggingdashboard.title}]]</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var logConfigFileLocation = /*[[${logConfigurationFile}]]*/ ;
+        
+        /*]]>*/
+    </script>
+    
     <script type="text/javascript">
         
         function jqueryReady() {
@@ -28,7 +36,7 @@
 <div layout:fragment="content">
 
     <div id="loggingDashboard">
-        <h1>Log Configuration Dashboard</h1>
+        <h1>Logging</h1>
 
         <div id="loadingMessage">
             <h3 th:text="#{cas.loggingdashboard.loading}"/>
@@ -48,8 +56,11 @@
             <ul id="myTabs" class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#loggersTab" aria-controls="loggersTab" role="tab"
                                                           data-toggle="tab">Loggers</a></li>
+                
+                <!--
                 <li role="presentation"><a href="#activeLoggers" aria-controls="activeLoggers" role="tab" data-toggle="tab">Active
                     Loggers</a></li>
+                 -->
                 <li role="presentation"><a href="#logOutput" aria-controls="logOutput" role="tab" data-toggle="tab">Log Output</a></li>
             </ul>
 
@@ -96,7 +107,7 @@
                     </table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="logOutput">
-                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden"/>
+                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden" />
                     <textarea id="logoutputarea" rows="20" cols="20"></textarea>
                 </div>
             </div>
