@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="credential" class="org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential" />
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="viewLoginFormRadius"/>
+    </action-state>
+
+    <view-state id="viewLoginFormRadius" view="casRadiusLoginView" model="credential">
+        <binder>
+            <binding property="token" required="true"/>
+        </binder>
+        <on-entry>
+            <set name="viewScope.commandName" value="'credential'" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" bind="true" validate="false" to="realSubmitRadius"/>
+
+    </view-state>
+
+    <action-state id="realSubmitRadius">
+        <evaluate expression="radiusAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success" />
+
+</flow>

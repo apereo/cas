@@ -1,0 +1,79 @@
+<!-- Username Attribute Provider Options -->
+<div class="username-attribute-provider-container">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:remove="tag" th:text="#{services.form.header.usernameAttProvider}" />
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="radio-group">
+                <!-- Username Attribute Provider Radio Button - Default -->
+                <label class="radio-inline">
+                    <input type="radio" name="uapRadio" id="uapDefault" value="default"
+                           ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
+                           ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'default'" />
+                    <span th:remove="tag" th:text="#{services.form.label.uap.default}" />
+                </label>
+                <!-- Username Attribute Provider Radio Button - Anonymous -->
+                <label class="radio-inline">
+                    <input type="radio" name="uapRadio" id="uapAnon" value="anon"
+                           ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
+                           ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'" />
+                    <span th:remove="tag" th:text="#{services.form.label.uap.anon}" />
+                </label>
+                <!-- Username Attribute Provider Radio Button - Principle Attribute -->
+                <label class="radio-inline">
+                    <input type="radio" name="uapRadio" id="uapAtt" value="attr"
+                           ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
+                           ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'attr'" />
+                    <span th:remove="tag" th:text="#{services.form.label.uap.principleAtt}" />
+                </label>
+            </div>
+
+            <!-- Username Attribute Provider Default Options -->
+            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'default'">
+                <span th:remove="tag" th:text="#{management.services.service.noAction}" />
+            </div>
+            <!-- Username Attribute Provider Anonymous Options -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'">
+                <label class="col-sm-4" for="uapSaltSetting">
+                    <span th:remove="tag" th:text="#{services.form.label.uap.saltSetting}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.uap.saltSetting}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAnon" />
+                    </div>
+                </div>
+            </div>
+            <!-- Username Attribute Provider Principle Attribute Options -->
+            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'attr'">
+                <label class="col-sm-4" for="uapUsernameAttribute">
+                    <span th:remove="tag" th:text="#{services.form.label.uap.usernameAttribute}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.uap.usernameAttribute}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAttr">
+                            <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" ng-attr-value="{{ opt }}"
+                                    ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.userAttrProvider.value)">{{ opt }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="alert alert-info">
+    <h2 th:utext="#{screen.mustchangepass.heading}"/>
+    <p/>
+    <br/>
+
+    <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
+        <p>
+
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+            <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+        </div>
+
+        <table>
+            <tr>
+                <td class="pm">
+                    <label for="password">Enter password:</label>
+                </td>
+                <td class="pm">
+                    <input class="required" type="password" id="password" th:field="*{password}"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="pm">
+                    <label for="confirmedPassword">Confirm password:</label>
+                </td>
+                <td class="pm">
+                    <input class="required" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" />
+                </td>
+            </tr>
+        </table>
+
+        <div>
+            <br/>
+            <meter max="4" id="password-strength-meter"/>
+            <p id="password-strength-text"/>
+        </div>
+        </p>
+
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="submit"/>
+        <input class="btn btn-success"
+               name="submit"
+               accesskey="s"
+               th:value="#{screen.pm.button.submit}"
+               type="submit"/>
+        <input
+                class="btn-reset"
+                name="cancel"
+                accesskey="c"
+                th:value="#{screen.pm.button.cancel}"
+                type="button"
+                onclick="location.href = location.href;"/>
+    </form>
+    <p th:unless="${passwordManagementEnabled}" th:utext="#{screen.mustchangepass.message}"/>
+</div>

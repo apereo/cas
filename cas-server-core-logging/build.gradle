@@ -1,17 +1,12 @@
-
-description = 'Apereo CAS Core Logging'
+description = "Apereo CAS Core Logging"
 dependencies {
-  compile project(':cas-server-core-api')
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
-  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
-  }
-  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
-  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context', version:springVersion
-  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+    compile project(":cas-server-core-api-ticket")
+    compile project(":cas-server-core-web")
+    compile project(":cas-server-core-util")
+    compileOnly project(":cas-server-support-cookie")
+    compile libraries.spring
+    compile libraries.log4j
+    compile libraries.jackson
 }
 
 

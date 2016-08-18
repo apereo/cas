@@ -3,50 +3,29 @@ layout: default
 title: CAS - Whitelist Authentication
 ---
 
-
 # Whitelist Authentication
-Whitelist authentication components fall into two categories: Those that accept a set of credentials stored directly in the configuration and those that accept a set of credentials from a file resource on the server.
 
-These are:
-* `AcceptUsersAuthenticationHandler`
-* `FileAuthenticationHandler`
+Whitelist authentication components fall into two categories: 
+Those that accept a set of credentials stored directly in the configuration and those 
+that accept a set of credentials from a file resource on the server.
 
+## Configuration
 
-## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-generic</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
-###`AcceptUsersAuthenticationHandler`
-{% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
-    <property name="users">
-       <map>
-          <entry key="scott" value="password" />
-       </map>
-    </property>
-</bean>
-{% endhighlight %}
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## Example Password File
 
-
-###`FileAuthenticationHandler`
-{% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.FileAuthenticationHandler"
-   p:fileName="file:/opt/cas/file_of_passwords.txt" />
-{% endhighlight %}
-
-
-####Example Password File
-{% highlight bash %}
+```bash
 scott::password
 bob::password2
-{% endhighlight %}
-
-
+```

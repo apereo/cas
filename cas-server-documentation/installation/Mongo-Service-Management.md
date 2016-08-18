@@ -7,28 +7,23 @@ title: CAS - Mongo Service Registry
 This DAO uses a [MongoDb](https://www.mongodb.org/) instance to load and persist service definitions.
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-mongo</artifactId>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-mongo-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 This implementation auto-configures most of the internal details.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-{% highlight xml %}
-<alias name="mongoServiceRegistryDao" alias="serviceRegistryDao" />
-{% endhighlight %}
+## Auto Initialization
 
+Upon startup and if the services registry database is blank, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS. 
 
-The following configuration in `cas.properties` is required.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-{% highlight properties %}
-mongodb.host=mongodb database url
-mongodb.port=mongodb database port
-mongodb.userId=mongodb userid to bind
-mongodb.userPassword=mongodb password to bind
-cas.service.registry.mongo.db=Collection name to store service definitions
-{% endhighlight %}
