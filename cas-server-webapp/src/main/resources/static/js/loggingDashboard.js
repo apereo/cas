@@ -1,9 +1,16 @@
 var stompClient = null;
 
 function setConnected(connected) {
-    document.getElementById('websocketStatus').style.visibility = connected ? 'visible' : 'hidden';
-    document.getElementById('websocketStatus').class = connected ? 'alert alert-info' : 'alert alert-danger';
-    document.getElementById('websocketStatus').innerHTML = connected ? "Connected to CAS. Streaming logs..." : "Disconnected!";
+    
+    var el = document.getElementById('websocketStatus');
+    el.style.visibility = connected ? 'visible' : 'hidden';
+    el.class = connected ? 'alert alert-info' : 'alert alert-danger';
+    
+    if (!connected) {
+        el.innerHTML = "Disconnected!";
+    } else {
+        el.innerHTML = "Connected to CAS. Streaming logs from " + logConfigFileLocation + "...";
+    }
 }
 
 function connect() {
@@ -13,13 +20,17 @@ function connect() {
     stompClient.connect({}, function(frame) {
         setConnected(true);
         stompClient.subscribe('/logs/logoutput', function(msg){
-            showLogs(msg.body);
+            if (msg != null && msg.body != "") {
+                showLogs(msg.body);
+            }
         });
     });
 }
 
 function disconnect() {
     $("#logoutputarea").empty();
+    $("#logoutputarea").attr('readonly','readonly');
+    
     if (stompClient != null) {
         stompClient.disconnect();
     }
@@ -38,7 +49,7 @@ function showLogs(message) {
 
 disconnect(); 
 connect(); 
-setInterval(function(){ getLogs(); }, 5000);
+setInterval(function(){ getLogs(); }, 1000);
 
 /*************
  * 
