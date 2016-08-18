@@ -147,6 +147,7 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "principalIdProvider")
     @Bean
     public PrincipalIdProvider principalIdProvider() {
-        return authentication -> authentication != null ? authentication.getPrincipal().getId() : null;
+        return new PrincipalIdProvider() {
+        };
     }
 }

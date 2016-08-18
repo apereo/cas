@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class ThreadLocalPrincipalResolverTests {
 
     private ThreadLocalPrincipalResolver theResolver =
-            new ThreadLocalPrincipalResolver(a -> a != null ? a.getPrincipal().getId() : null);
+            new ThreadLocalPrincipalResolver(new PrincipalIdProvider() {});
 
     @After
     public void cleanup() {

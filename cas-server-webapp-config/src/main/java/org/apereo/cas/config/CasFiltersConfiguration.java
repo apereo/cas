@@ -107,6 +107,7 @@ public class CasFiltersConfiguration {
      *
      * @return the current credentials and authentication clearing filter
      */
+    @Bean
     public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new CurrentCredentialsAndAuthenticationClearingFilter());

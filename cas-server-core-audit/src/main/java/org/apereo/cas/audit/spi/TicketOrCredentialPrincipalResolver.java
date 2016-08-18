@@ -24,7 +24,7 @@ import java.util.Collection;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- *
+ * @deprecated
  */
 public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
@@ -33,7 +33,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     private CentralAuthenticationService centralAuthenticationService;
     
-    private PrincipalIdProvider principalIdProvider = authentication -> authentication.getPrincipal().getId();
+    private PrincipalIdProvider principalIdProvider = new PrincipalIdProvider() {};
 
     /**
      * Instantiates a new Ticket or credential principal resolver.
