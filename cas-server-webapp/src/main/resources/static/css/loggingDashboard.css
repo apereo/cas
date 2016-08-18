@@ -1,3 +1,5 @@
+@import 'https://fonts.googleapis.com/css?family=PT+Mono';
+
 #loggingDashboard {
 
 }
@@ -38,4 +40,16 @@
 }
 .additive .glyphicon-remove {
     color: #d9534f;
+}
+
+#logoutputarea {
+    border: 0.1em solid #ccc;
+    border-radius: 0.5em;
+    padding: 1em;   /* space on all directions */
+    font-family: 'PT Mono', monospace;
+    font-size: 1em;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: #39e600;
 }

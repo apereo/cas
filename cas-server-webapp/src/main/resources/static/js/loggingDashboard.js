@@ -1,3 +1,48 @@
+var stompClient = null;
+
+function setConnected(connected) {
+    document.getElementById('websocketStatus').style.visibility = connected ? 'visible' : 'hidden';
+    document.getElementById('websocketStatus').class = connected ? 'alert alert-info' : 'alert alert-danger';
+    document.getElementById('websocketStatus').innerHTML = connected ? "Connected to CAS. Streaming logs..." : "Disconnected!";
+}
+
+function connect() {
+    $("#logoutputarea").empty();
+    var socket = new SockJS('/cas/logoutput');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function(frame) {
+        setConnected(true);
+        stompClient.subscribe('/logs/logoutput', function(msg){
+            showLogs(msg.body);
+        });
+    });
+}
+
+function disconnect() {
+    $("#logoutputarea").empty();
+    if (stompClient != null) {
+        stompClient.disconnect();
+    }
+    setConnected(false);
+}
+
+function getLogs() {
+    stompClient.send("/cas/logoutput", {}, {});
+}
+
+function showLogs(message) {
+    var response = document.getElementById('logoutputarea');
+    response.value += message + "\n";
+    response.scrollTop = response.scrollHeight
+}
+
+disconnect(); 
+connect(); 
+setInterval(function(){ getLogs(); }, 5000);
+
+/*************
+ * 
+ ***************/
 $('#myTabs a').click(function (e) {
     e.preventDefault()
     $(this).tab('show')
@@ -34,7 +79,6 @@ var loggingDashboard = (function () {
     var getData = function () {
         $.getJSON("/cas/status/logging/getConfiguration", function (data) {
             json = data;
-
             loggerTable();
         });
     };
