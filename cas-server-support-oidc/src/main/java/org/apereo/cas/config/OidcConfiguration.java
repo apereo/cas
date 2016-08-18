@@ -106,6 +106,18 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
+    @Autowired
+    @Qualifier("oidcAuthorizeEndpointController")
+    private OidcAuthorizeEndpointController oidcAuthorizeEndpointController;
+
+    @Autowired
+    @Qualifier("oidcAccessTokenEndpointController")
+    private OidcAccessTokenEndpointController oidcAccessTokenEndpointController;
+
+    @Autowired
+    @Qualifier("oidcProfileEndpointController")
+    private OidcProfileEndpointController oidcProfileEndpointController;
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oidcInterceptor())
@@ -247,15 +259,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public BaseOAuthWrapperController oidcAccessTokenController() {
-        final OidcAccessTokenEndpointController c = new OidcAccessTokenEndpointController();
-        c.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setRefreshTokenFactory(defaultRefreshTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
-        return c;
+        oidcAccessTokenEndpointController.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
+        oidcAccessTokenEndpointController.setAccessTokenFactory(defaultAccessTokenFactory);
+        oidcAccessTokenEndpointController.setPrincipalFactory(oidcPrincipalFactory());
+        oidcAccessTokenEndpointController.setRefreshTokenFactory(defaultRefreshTokenFactory);
+        oidcAccessTokenEndpointController.setServicesManager(servicesManager);
+        oidcAccessTokenEndpointController.setTicketRegistry(ticketRegistry);
+        oidcAccessTokenEndpointController.setValidator(oAuthValidator);
+        return oidcAccessTokenEndpointController;
     }
 
     @RefreshScope
@@ -268,7 +279,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
         c.setValidator(oAuthValidator);
-        
+
         return c;
     }
 
@@ -283,43 +294,28 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setValidator(oAuthValidator);
         return c;
     }
-    
+
     @RefreshScope
     @Bean
     public BaseOAuthWrapperController oidcProfileController() {
-        final OidcProfileEndpointController c = new OidcProfileEndpointController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        return c;
+        oidcProfileEndpointController.setAccessTokenFactory(defaultAccessTokenFactory);
+        oidcProfileEndpointController.setServicesManager(servicesManager);
+        oidcProfileEndpointController.setTicketRegistry(ticketRegistry);
+        oidcProfileEndpointController.setValidator(oAuthValidator);
+        oidcProfileEndpointController.setPrincipalFactory(oidcPrincipalFactory());
+        return oidcProfileEndpointController;
     }
 
     @RefreshScope
     @Bean
     public BaseOAuthWrapperController oidcAuthorizeController() {
-        final OidcAuthorizeEndpointController c = new OidcAuthorizeEndpointController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setConsentApprovalViewResolver(consentApprovalViewResolver());
-        c.setoAuthCodeFactory(defaultOAuthCodeFactory);
-        return c;
+        oidcAuthorizeEndpointController.setAccessTokenFactory(defaultAccessTokenFactory);
+        oidcAuthorizeEndpointController.setServicesManager(servicesManager);
+        oidcAuthorizeEndpointController.setTicketRegistry(ticketRegistry);
+        oidcAuthorizeEndpointController.setValidator(oAuthValidator);
+        oidcAuthorizeEndpointController.setPrincipalFactory(oidcPrincipalFactory());
+        oidcAuthorizeEndpointController.setConsentApprovalViewResolver(consentApprovalViewResolver());
+        oidcAuthorizeEndpointController.setoAuthCodeFactory(defaultOAuthCodeFactory);
+        return oidcAuthorizeEndpointController;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
