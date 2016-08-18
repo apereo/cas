@@ -296,7 +296,7 @@ all case-sensitive.
 
 -   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   `lt` [REQUIRED] - a login ticket. This is provided as part of the login form
+-   `lt` [OPTIONAL] - a login ticket. This is provided as part of the login form
     discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
     in Section [3.5](#head3.5).
 
@@ -560,9 +560,9 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 
 -   `format` [OPTIONAL] - if this parameter is set, ticket validation response
     MUST be produced based on the parameter value. Supported values are `XML`
-    and `JSON`. If this parameter is not set, the default `XML` format will be used. 
+    and `JSON`. If this parameter is not set, the default `XML` format will be used.
     If the parameter value is not supported by the CAS server, an error code
-    MUST be returned as is described in section [2.5.3](<#head2.5.3>). 
+    MUST be returned as is described in section [2.5.3](<#head2.5.3>).
 
 <a name="head2.5.2"/>
 
@@ -573,17 +573,17 @@ in the XML schema in Appendix A. Below are example responses:
 
 **On ticket validation success:**
 
-{% highlight xml %}
+```xml
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationSuccess>
   <cas:user>username</cas:user>
   <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
  </cas:authenticationSuccess>
 </cas:serviceResponse>
-{% endhighlight %}
+```
 
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationSuccess" : {
@@ -592,28 +592,28 @@ in the XML schema in Appendix A. Below are example responses:
     }
   }
 }
-{% endhighlight %}
+```
 
 **On ticket validation failure:**
 
-{% highlight xml %}
+```xml
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationFailure code="INVALID_TICKET">
     Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
   </cas:authenticationFailure>
 </cas:serviceResponse>
-{% endhighlight %}
+```
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
-{% endhighlight %}
+```
 
 For proxy responses, see section [2.6.2](<#head2.6.2>).
 
@@ -666,10 +666,10 @@ The proxy callback mechanism works as follows:
     "pgtUrl" to `/serviceValidate` (or `/proxyValidate`). This is a callback URL of
     the service to which CAS will connect to verify the service's identity. This
     URL MUST be HTTPS and CAS MUST evaluate the endpoint to establish peer trust.
-    Building trust at a minimum involves utilizing PKIX and employing container trust to 
+    Building trust at a minimum involves utilizing PKIX and employing container trust to
     validate the signature, chain and the expiration window of the certificate of the
     callback url. The generation of the proxy-granting-ticket or the corresponding
-    proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum 
+    proxy granting ticket IOU may fail due to the proxy callback url failing to meet the minimum
     security requirements such as failure to establishing trust between peers or unresponsiveness
     of the endpoint, etc. In case of failure, no proxy-granting ticket will be issued and the CAS
     service response as described in Section [2.5.2](#head2.5.2) MUST NOT contain a
@@ -680,7 +680,7 @@ The proxy callback mechanism works as follows:
 2.  CAS uses an HTTP GET request to pass the HTTP request parameters `pgtId` and
     `pgtIou` to the pgtUrl endpoint. These entities are discussed in Sections [3.3](#head3.3) and
     [3.4](#head3.4), respectively. If the proxy callback url specifies any parameters, those
-    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying 
+    MUST be preserved. CAS MUST also ensure that the endpoint is reachable by verifying
     the response HTTP status code from the GET request, as detailed in step #3. If the
     proxy service fails to authenticate or the endpoint responds with an unacceptable status
     code, proxy authentication MUST fail and CAS MUST respond with the appropriate error code
@@ -737,7 +737,7 @@ Pass in a callback URL for proxying:
 <a name="head2.5.7"/>
 
 ### **2.5.7 Example response with custom attributes**
-{% highlight xml %}
+```xml
   <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
     <cas:authenticationSuccess>
       <cas:user>username</cas:user>
@@ -752,9 +752,9 @@ Pass in a callback URL for proxying:
       <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
     </cas:authenticationSuccess>
   </cas:serviceResponse>
-{% endhighlight %}
+```
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationSuccess" : {
@@ -771,7 +771,7 @@ Pass in a callback URL for proxying:
     }
   }
 }
-{% endhighlight %}
+```
 
 <a name="head2.6"/>
 
@@ -803,8 +803,8 @@ the XML schema in Appendix A. Below are example responses:
 
 Response on ticket validation success:
 
-{% highlight xml %}
-  <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas"> 
+```xml
+  <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
     <cas:authenticationSuccess>
       <cas:user>username</cas:user>
       <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
@@ -812,11 +812,11 @@ Response on ticket validation success:
         <cas:proxy>https://proxy2/pgtUrl</cas:proxy>
         <cas:proxy>https://proxy1/pgtUrl</cas:proxy>
       </cas:proxies>
-    </cas:authenticationSuccess> 
+    </cas:authenticationSuccess>
   </cas:serviceResponse>
-{% endhighlight %}
+```
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationSuccess" : {
@@ -826,7 +826,7 @@ Response on ticket validation success:
     }
   }
 }
-{% endhighlight %}
+```
 
 
 >   Note: when authentication has proceeded through multiple proxies, the order
@@ -839,24 +839,24 @@ Response on ticket validation success:
 
 Response on ticket validation failure:
 
-{% highlight xml %}
+```xml
   <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
       <cas:authenticationFailure code="INVALID_TICKET">
          ticket PT-1856376-1HMgO86Z2ZKeByc5XdYD not recognized
       </cas:authenticationFailure>
   </cas:serviceResponse>
-{% endhighlight %}
+```
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
-{% endhighlight %}
+```
 
 <a name="head2.6.3"/>
 
@@ -910,34 +910,34 @@ schema in [Appendix A](#head_appdx_a). Below are example responses:
 
 Response on request success:
 
-{% highlight xml %}
+```xml
   <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
       <cas:proxySuccess>
           <cas:proxyTicket>PT-1856392-b98xZrQN4p90ASrw96c8</cas:proxyTicket>
       </cas:proxySuccess>
   </cas:serviceResponse>
-{% endhighlight %}
+```
 
 Response on request failure:
 
-{% highlight xml %}
+```xml
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
       <cas:proxyFailure code="INVALID_REQUEST">
           'pgt' and 'targetService' parameters are both required
       </cas:proxyFailure>
   </cas:serviceResponse>
-{% endhighlight %}
+```
 
-{% highlight json %}
+```json
 {
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_REQUEST",
-      "message" : "'pgt' and 'targetService' parameters are both required"
+      "description" : "'pgt' and 'targetService' parameters are both required"
     }
   }
 }
-{% endhighlight %}
+```
 
 <a name="head2.7.3"/>
 
@@ -1170,11 +1170,10 @@ Section [2.5.4](<#head2.5.4>) for a full description of this process.
 **3.5. login ticket**
 ---------------------
 
-A login ticket is a string that is provided by `/login` as a credential requester
+A login ticket is an *optional* string that MAY be provided by `/login` as a credential requester
 and passed to `/login` as a credential acceptor for username/password
 authentication. Its purpose is to prevent the replaying of credentials due to
 bugs in web browsers.
-
 
 
 <a name="head3.5.1"/>
@@ -1412,14 +1411,14 @@ SAML 1.0 or 1.1 request XML document of document type "text/xml".
 
 ### **4.2.4 Example of /samlValidate POST request**
 
-{% highlight bash %}
+```bash
 POST /cas/samlValidate?TARGET=
 Host: cas.example.com
 Content-Length: 491
-Content-Type: text/xml 
-{% endhighlight %}
+Content-Type: text/xml
+```
 
-{% highlight xml %}
+```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 	<SOAP-ENV:Header/>
 	<SOAP-ENV:Body>
@@ -1428,7 +1427,7 @@ Content-Type: text/xml
 		</samlp:Request>
 	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
 <a name="head4.2.5"/>
@@ -1439,7 +1438,7 @@ CAS Server response to a `/samlValidate` request. MUST be a SAML 1.1 response.
 
 Example SAML 1.1 validation response:
 
-{% highlight xml %}
+```xml
 
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -1502,7 +1501,7 @@ Example SAML 1.1 validation response:
     </Response>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
 <a name="head4.2.5.1"/>
@@ -1522,7 +1521,7 @@ to the CAS client.
 **Appendix A: CAS response XML schema**
 =======================================
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cas="http://www.yale.edu/tp/cas" targetNamespace="http://www.yale.edu/tp/cas" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:annotation>
@@ -1595,29 +1594,29 @@ to the CAS client.
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
-{% endhighlight %}
+```
 
 >   Note: As user attributes can be extended by the CAS Server implementer (see
 >   \<xs:any\> schema definition), it is RECOMMENDED to form custom attributes
 >   as using the following format:
 
-{% highlight xml %}
+```xml
 <cas:attributes>
     ...
     <cas:[attribute-name]>VALUE</cas:[attribute-name]>
 </cas:attributes>
-{% endhighlight %}
+```
 
 > Example response with custom attribute:
 
-{% highlight xml %}
+```xml
 <cas:attributes>
     <cas:authenticationDate>2015-11-12T09:30:10Z</cas:authenticationDate>
     <cas:longTermAuthenticationRequestTokenUsed>true</cas:longTermAuthenticationRequestTokenUsed>
     <cas:isFromNewLogin>true</cas:isFromNewLogin>
     <cas:myAttribute>myValue</cas:myAttribute>
 </cas:attributes>
-{% endhighlight %}
+```
 
 <a name="head_appdx_b"/>
 
@@ -1638,7 +1637,7 @@ correctly.
 The RECOMMENDED method of redirection is thus JavaScript. A page containing a
 `window.location.href` in the following manner performs adequately:
 
-{% highlight html %}
+```html
  <html>
     <head>
         <title>Yale Central Authentication Service</title>
@@ -1656,7 +1655,7 @@ mce_href="https://portal.yale.edu/Login?ticket=ST-...">here</a>
         </noscript>
     </body>
  </html>
-{% endhighlight %}
+```
 
 
 Additionally, CAS should disable browser caching by setting all of the various
@@ -1690,7 +1689,7 @@ services that are registered with the system and send a POST request with the
 following SAML Logout Request XML document:
 
 
-{% highlight xml %}
+```xml
   <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
      ID="[RANDOM ID]" Version="2.0" IssueInstant="[CURRENT DATE/TIME]">
     <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
@@ -1698,7 +1697,7 @@ following SAML Logout Request XML document:
     </saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
   </samlp:LogoutRequest>`
-{% endhighlight %}
+```
 
 
 <a name="head_appdx_d"/>
@@ -1759,7 +1758,7 @@ specific language governing permissions and limitations under the License.
 **Appendix F: YALE License**
 ===========================
 
-Copyright (c) 2000-2005 Yale University. All rights reserved.
+Copyright (c) 2000-2005 Yale University.
 
 THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND

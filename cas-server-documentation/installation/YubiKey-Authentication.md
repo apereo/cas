@@ -10,35 +10,27 @@ is available to use YubiKey devices as a primary authentication source that CAS 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
 [YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the 
-following dependencies in the Maven WAR overlay:
+following dependencies in the WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
-     <groupId>org.jasig.cas</groupId>
+     <groupId>org.apereo.cas</groupId>
      <artifactId>cas-server-support-yubikey</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
-The authentication handler may be configured as such:
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-{% highlight xml %}
-<bean class="org.jasig.cas.adaptors.yubikey.YubiKeyAuthenticationHandler"
-   	c:clientId="${yubikey.apiKey.id}"
-   	c:secretKey="${yubikey.apiKey.secret}"/>
-{% endhighlight %}
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 
 which users are allowed to use their YubiKey accounts for authentication, you may plug in a custom implementation of the `YubiKeyAccountRegistry`
 that allows you to provide a mapping between usernames and YubiKey public keys.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.adaptors.yubikey.YubiKeyAuthenticationHandler"
-    c:clientId="${yubikey.apiKey.id}"
-    c:secretKey="${yubikey.apiKey.secret}"
-    c:registry-ref="customYubiKeyAccountRegistry" />
-{% endhighlight %}
+```xml
+<alias name="customYubiKeyAccountRegistry" alias="yubiKeyAccountRegistry" />
+```
 
 
