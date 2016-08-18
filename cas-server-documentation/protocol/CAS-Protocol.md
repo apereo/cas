@@ -18,9 +18,13 @@ The key concepts are:
 - The ST (Service Ticket), transmitted as a GET parameter in urls, stands for the access granted by the CAS server to the *CASified* application for a specific user.
 
 
-## Versions
-The current CAS protocol is the version 3.0. The draft version of the protocol is available as [part of the CAS codebase](https://github.com/Jasig/cas/blob/master/cas-server-protocol/3.0/cas_protocol_3_0.md), which is hereby implemented. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision 2.0. Among all features, the most noticeable update between versions 2.0 and 3.0 is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` response (in addition to the `/serviceValidate` endpoint, already existing for CAS 2.0 protocol).
+## Specification versions
 
+### 3.0.2
+The current CAS protocol specification is `3.0.2`. The actual protocol specification is available at [CAS-Protocol-Specification](CAS-Protocol-Specification.html), which is hereby implemented by the Apereo CAS Server as the official reference implementation. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision `2.0`. Among all features, the most noticeable update between versions `2.0` and `3.0` is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` response, in addition to the `/serviceValidate` endpoint from CAS `2.0` protocol.
+
+### 2.0
+The version `2.0` protocol specification is available at [CAS-Protocol-Specification](CAS-Protocol-V2-Specification.html). 
 
 ## Web flow diagram
 
@@ -46,6 +50,6 @@ Even if the primary goal of the CAS server is to implement the CAS protocol, oth
 
 
 
-#Delegated Authentication
+# Delegated Authentication
 Using the CAS protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
 

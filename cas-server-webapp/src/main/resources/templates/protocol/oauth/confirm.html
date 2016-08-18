@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{cas.oauth.confirm.pagetitle}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div id="login" style="width: 100%;">
+        <div id="msg" class="question">
+            <h2 th:text="#{screen.oauth.confirm.header}"/>
+            <p th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
+            <p>
+                <a class="btn btn-success" id="allow" name="allow"
+                        th:href="@{${callbackUrl}}"
+                        th:text="#{screen.oauth.confirm.allow}"/>
+            </p>
+        </div>
+        
+    </div>
+</div>
+</body>
+</html>

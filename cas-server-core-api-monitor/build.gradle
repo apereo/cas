@@ -1,0 +1,5 @@
+
+description = "Apereo CAS Core Monitor APIs"
+dependencies {
+    compile libraries.spring
+}

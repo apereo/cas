@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+  <title>[[#{screen.confirmation.message}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content" class="confirmView">
+    <div class="alert alert-info">
+      <h2 class="h3" th:text="#{screen.confirmation.message}" />
+
+      <section class="row btn-row">
+        <a class="btn btn-submit" th:href="${serviceWarningUrl}"><span th:text="#{screen.button.continue}"/></a>
+      </section>
+    </div>
+</div>
+</body>
+</html>

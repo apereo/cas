@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{cas.acceptableusagepolicyview.pagetitle}]]</title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div id="login" style="width: 100%;">
+        <form method="post" id="fm1">
+
+            <h2>Acceptable Usage Policy</h2>
+            <div>
+                The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and network resources
+                in conjunction with the established culture of ethical and lawful behavior, openness, trust, and integrity.
+                <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+            </div>
+
+            <section class="row btn-row">
+                <input type="hidden" name="execution" value="${flowExecutionKey}" />
+                <input type="hidden" name="_eventId" value="submit" />
+                <input class="btn-submit"
+                       name="submit"
+                       accesskey="s"
+                       th:value="#{screen.aup.button.accept}"
+                       type="submit" />
+                <input
+                        class="btn-reset"
+                        name="cancel"
+                        accesskey="c"
+                        th:value="#{screen.aup.button.cancel}"
+                        type="button"
+                        onclick="location.href = location.href;" />
+            </section>
+        </form>
+    </div>
+</div>
+</body>
+</html>

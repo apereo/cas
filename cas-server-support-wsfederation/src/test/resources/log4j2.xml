@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Configuration>
+<Configuration shutdownHook="disable">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/wsfed.log" append="true"
+        <RollingFile name="file" fileName="build/wsfed.log" append="true"
                      filePattern="wsfed-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="warn">
+        <Logger name="org.apereo" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig.cas.support.wsfederation" level="warn">
+        <Logger name="org.apereo.cas.support.wsfederation" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.opensaml" level="warn">

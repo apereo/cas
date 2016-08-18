@@ -4,30 +4,19 @@ title: CAS - Blacklist Authentication
 ---
 
 # Blacklist Authentication
-Blacklist authentication components are those that specifically deny access to a set of credentials. Those that fail to match against the predefined set will blindly be accepted.
 
-These are:
+Blacklist authentication components are those that specifically deny access to a set of credentials.
+Those that fail to match against the predefined set will blindly be accepted.
 
-* `RejectUsersAuthenticationHandler`
+## Configuration
+Support is enabled by including the following dependency in the WAR overlay:
 
-## Authentication Components
-Support is enabled by including the following dependency in the Maven WAR overlay:
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-generic</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
 
-{% highlight xml %}
-  <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-generic</artifactId>
-    <version>${cas.version}</version>
-  </dependency>
-{% endhighlight %}
-
-###`AcceptUsersAuthenticationHandler`
-{% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler">
-    <property name="users">
-       <map>
-          <entry key="scott" value="password" />
-       </map>
-    </property>
-</bean>
-{% endhighlight %}
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

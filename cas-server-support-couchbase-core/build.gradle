@@ -1,0 +1,8 @@
+description = "Apereo CAS Couchbase Support Core"
+dependencies {
+    compile libraries.spring
+    compile libraries.hibernate
+    compile libraries.couchbase
+}
+
+
