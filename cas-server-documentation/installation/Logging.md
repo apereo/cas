@@ -3,7 +3,6 @@ layout: default
 title: CAS - Logging Configuration
 ---
 
-
 # Logging
 
 CAS provides a logging facility that logs important informational events like authentication success and
@@ -26,6 +25,9 @@ These may be overridden by the `application.properties` file
 ```properties
 # logging.config=classpath:log4j2.xml
 ```
+
+<div class="alert alert-info"><strong>Monitoring Logs</strong><p>To review log settings and output, 
+ you may also use the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ### Refresh Interval
 
@@ -63,7 +65,6 @@ Certain number of characters are left at the trailing end of the ticket id to as
 troubleshooting and diagnostics.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
 
 ## AsyncLoggers Shutdown with Tomcat
 
