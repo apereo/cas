@@ -5,6 +5,9 @@ import org.jasig.cas.authentication.principal.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
+
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main
@@ -58,6 +61,13 @@ public interface TicketGrantingTicket extends Ticket {
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     Map<String, Service> getServices();
+
+    /**
+     * Gets proxy granting tickets created by this TGT.
+     *
+     * @return the proxy granting tickets
+     */
+    Collection<ProxyGrantingTicket> getProxyGrantingTickets();
 
     /**
      * Remove all services of the TGT (at logout).

@@ -10,6 +10,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Mock service ticket.
  *
@@ -91,5 +93,15 @@ public class MockServiceTicket implements ServiceTicket {
     @Override
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(7, 31)
+                .append(this.id)
+                .append(this.created)
+                .append(this.service)
+                .append(this.parent)
+                .toHashCode();
     }
 }

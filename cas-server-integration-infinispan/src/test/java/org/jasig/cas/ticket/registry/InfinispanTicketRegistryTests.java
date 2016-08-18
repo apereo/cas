@@ -15,6 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
+
 /**
  * This is {@link InfinispanTicketRegistryTests}.
  *
@@ -71,5 +74,33 @@ public class InfinispanTicketRegistryTests {
     private Ticket getTicket() {
         final Authentication authentication = TestUtils.getAuthentication();
         return new TicketGrantingTicketImpl("123", authentication, new NeverExpiresExpirationPolicy());
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.infinispanTicketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.infinispanTicketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.infinispanTicketRegistry.addTicket(st1);
+
+        assertNotNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
+
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        this.infinispanTicketRegistry.deleteTicket(tgt.getId());
+
+        assertNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.infinispanTicketRegistry.getTicket("PGT-1", ServiceTicket.class));
     }
 }

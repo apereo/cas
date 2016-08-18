@@ -68,13 +68,9 @@ public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistr
      *         exist.
      */
     @Override
-    public boolean deleteTicket(final String ticketId) {
-        if (getTicket(ticketId) == null) {
-            return false;
-        }
+    public boolean deleteSingleTicket(final String ticketId) {
         this.cache.evict(ticketId);
-        return true;
-
+        return getTicket(ticketId) == null;
     }
 
     /**
