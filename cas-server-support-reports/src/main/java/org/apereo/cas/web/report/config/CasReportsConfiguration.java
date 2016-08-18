@@ -19,6 +19,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 /**
  * This is {@link CasReportsConfiguration}.
@@ -28,7 +33,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasReportsConfiguration {
+@EnableWebSocketMessageBroker
+public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
     @Qualifier("healthCheckMonitor")
@@ -94,5 +100,17 @@ public class CasReportsConfiguration {
         return c;
     }
 
+    @Override
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/logs");
+        config.setApplicationDestinationPrefixes("/cas");
+    }
+
+    @Override
+    public void registerStompEndpoints(final StompEndpointRegistry registry) {
+        registry.addEndpoint("/logoutput")
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .withSockJS();
+    }
 
 }

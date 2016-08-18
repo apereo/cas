@@ -914,6 +914,20 @@ ext.libraries = [
                 dependencies.create("org.json:json:$jsonVersion")
         ],
         springboot              : [
+                dependencies.create("org.springframework.boot:spring-boot-starter-websocket:$springBootVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")

@@ -1,6 +1,8 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.base.Throwables;
+import org.apache.commons.io.input.Tailer;
+import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -15,11 +17,14 @@ import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,13 +37,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Controller to handle the logging dashboard requests.
@@ -57,16 +60,50 @@ public class LoggingConfigController {
     private Resource logConfigurationFile;
 
     private LoggerContext loggerContext;
-
+    
     /**
      * Init.
      *
      * @throws Exception the exception
      */
     @PostConstruct
-    public void initialize() throws Exception {
-        this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
-        this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+    public void initialize() {
+        try {
+            this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
+            this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            registerLogFileTailThreads();
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    private void registerLogFileTailThreads() throws IOException {
+        final Collection<String> outputFileNames = new HashSet<>();
+        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
+        for (final LoggerConfig config : loggerConfigs) {
+            for (final String key : config.getAppenders().keySet()) {
+                final Appender appender = config.getAppenders().get(key);
+                if (appender instanceof FileAppender) {
+                    outputFileNames.add(((FileAppender) appender).getFileName());
+                } else if (appender instanceof RandomAccessFileAppender) {
+                    outputFileNames.add(((RandomAccessFileAppender) appender).getFileName());
+                } else if (appender instanceof RollingFileAppender) {
+                    outputFileNames.add(((RollingFileAppender) appender).getFileName());
+                } else if (appender instanceof MemoryMappedFileAppender) {
+                    outputFileNames.add(((MemoryMappedFileAppender) appender).getFileName());
+                } else if (appender instanceof RollingRandomAccessFileAppender) {
+                    outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
+                }
+            }
+        }
+
+        outputFileNames.forEach(s -> {
+            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 1000, false);
+            final Thread thread = new Thread(t);
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setName(s);
+            thread.start();
+        });
     }
 
     /**
@@ -96,10 +133,8 @@ public class LoggingConfigController {
                                                 final HttpServletResponse response)
             throws Exception {
         final Map<String, Object> responseMap = new HashMap<>();
-        final Set<Map.Entry<String, Logger>> loggers = getActiveLoggersInFactory();
-        final Collection<Logger> activeLoggers = loggers.stream().map(Map.Entry::getValue)
-                .collect(Collectors.toCollection(ArrayList::new));
-        responseMap.put("activeLoggers", activeLoggers);
+        final Map<String, Logger> loggers = getActiveLoggersInFactory();
+        responseMap.put("activeLoggers", loggers.values());
         return responseMap;
     }
 
@@ -170,9 +205,12 @@ public class LoggingConfigController {
         return responseMap;
     }
 
-    private Set<Map.Entry<String, Logger>> getActiveLoggersInFactory() {
-        final ILoggerFactory factory = getCasLoggerFactoryInstance();
-        return new HashSet<>();
+    private Map<String, Logger> getActiveLoggersInFactory() {
+        final Log4jLoggerFactory factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
+        if (factory != null) {
+            return factory.getLoggersInContext(this.loggerContext);
+        }
+        return new HashMap<>();
     }
 
     private ILoggerFactory getCasLoggerFactoryInstance() {
@@ -233,33 +271,23 @@ public class LoggingConfigController {
      * @return the log output
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getLogOutput")
-    @ResponseBody
-    public Map<String, Object> getLogOutput(final HttpServletRequest request,
-                                            final HttpServletResponse response) throws Exception {
-        final Collection<String> outputFileNames = new HashSet<>();
-        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
-        for (final LoggerConfig config : loggerConfigs) {
-            for (final String key : config.getAppenders().keySet()) {
-                final Appender appender = config.getAppenders().get(key);
-                if (appender instanceof FileAppender) {
-                    outputFileNames.add(((FileAppender) appender).getFileName());
-                } else if (appender instanceof RandomAccessFileAppender) {
-                    outputFileNames.add(((RandomAccessFileAppender) appender).getFileName());
-                } else if (appender instanceof RollingFileAppender) {
-                    outputFileNames.add(((RollingFileAppender) appender).getFileName());
-                } else if (appender instanceof MemoryMappedFileAppender) {
-                    outputFileNames.add(((MemoryMappedFileAppender) appender).getFileName());
-                } else if (appender instanceof RollingRandomAccessFileAppender) {
-                    outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
-                }
-            }
+    @MessageMapping("/logoutput")
+    @SendTo("/logs/logoutput")
+    public String logoutput(final HttpServletRequest request,
+                             final HttpServletResponse response) throws Exception {
+        
+        return "hello world";
+    }
+    
+    public static class LogTailerListener extends TailerListenerAdapter {
+        @Override
+        public void handle(final String line) {
+            System.out.println(line);
         }
 
-        final Map<String, Object> responseMap = new HashMap();
-        for (final String file : outputFileNames) {
-            responseMap.put(file, FileUtils.readFileToString(new File(file), "UTF-8"));
+        @Override
+        public void handle(final Exception ex) {
+            System.out.println(ex.getMessage());
         }
-        return responseMap;
     }
 }
