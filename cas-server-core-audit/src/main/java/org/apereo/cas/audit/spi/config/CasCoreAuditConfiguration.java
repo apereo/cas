@@ -1,14 +1,12 @@
 package org.apereo.cas.audit.spi.config;
 
 import com.google.common.collect.ImmutableList;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.spi.AssertionAsReturnValuePrincipalResolver;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
 import org.apereo.cas.audit.spi.PrincipalIdProvider;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
+import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
-import org.apereo.cas.audit.spi.TicketOrCredentialPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -50,13 +48,12 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(
-            @Qualifier("centralAuthenticationService")
-            final CentralAuthenticationService centralAuthenticationService,
             @Qualifier("auditTrailManager")
             final AuditTrailManager auditTrailManager) {
+
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(centralAuthenticationService),
+                auditablePrincipalResolver(principalIdProvider()),
                 ImmutableList.of(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
@@ -133,14 +130,8 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public PrincipalResolver auditablePrincipalResolver(
-            @Qualifier("centralAuthenticationService")
-            final CentralAuthenticationService centralAuthenticationService
-    ) {
-        final TicketOrCredentialPrincipalResolver r =
-                new TicketOrCredentialPrincipalResolver(centralAuthenticationService);
-        r.setPrincipalIdProvider(principalIdProvider());
-        return new AssertionAsReturnValuePrincipalResolver(r);
+    public PrincipalResolver auditablePrincipalResolver(@Qualifier("principalIdProvider") final PrincipalIdProvider principalIdProvider) {
+        return new ThreadLocalPrincipalResolver(principalIdProvider);
     }
 
     @Bean
@@ -153,8 +144,10 @@ public class CasCoreAuditConfiguration {
         return new MessageBundleAwareResourceResolver();
     }
 
+    @ConditionalOnMissingBean(name = "principalIdProvider")
     @Bean
     public PrincipalIdProvider principalIdProvider() {
-        return authentication -> authentication.getPrincipal().getId();
+        return new PrincipalIdProvider() {
+        };
     }
 }
