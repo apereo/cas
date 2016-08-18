@@ -23,6 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import java.util.Collection;
+import java.util.HashSet;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Mock ticket-granting ticket.
  *
@@ -47,6 +52,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     private Service proxiedBy;
 
     private final Map<String, Service> services = new HashMap<>();
+
+    private HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -141,6 +148,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return this.proxyGrantingTickets;
+    }
+
+    @Override
     public void removeAllServices() {
     }
 
@@ -157,5 +169,19 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public boolean equals(final Object obj) {
         return compareTo((Ticket) obj) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(7, 31)
+                .append(this.id)
+                .append(this.authentication)
+                .append(this.created)
+                .append(this.usageCount)
+                .append(this.expired)
+                .append(this.proxiedBy)
+                .append(this.services)
+                .append(this.proxyGrantingTickets)
+                .toHashCode();
     }
 }
