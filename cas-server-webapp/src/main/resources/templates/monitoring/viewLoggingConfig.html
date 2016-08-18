@@ -4,7 +4,7 @@
 <head th:inline="text">
     <title>[[#{cas.loggingdashboard.title}]]</title>
     <script type="text/javascript">
-        var logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
+        
         function jqueryReady() {
             head.load(
                     // Bootstrap Datables CSS
@@ -16,6 +16,8 @@
                     "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
                     "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
                     "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
+                    "/cas/js/sockjs.js",
+                    "/cas/js/stomp.js",
                     "/cas/js/loggingDashboard.js"
             );
         }
@@ -39,7 +41,7 @@
                        onclick="location.reload();" th:value="#{cas.ssosessions.button.refresh}"/>
             </div>
         </div>
-
+                
         <div class="tabsContainer hidden row">
             <div id="alert-container"></div>
             <!-- Nav tabs -->
@@ -94,7 +96,8 @@
                     </table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="logOutput">
-                    
+                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden"/>
+                    <textarea id="logoutputarea" rows="20" cols="20"></textarea>
                 </div>
             </div>
         </div>
