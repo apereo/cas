@@ -359,8 +359,8 @@ public final class WebUtils {
      * @return the authenticated username.
      */
     public static String getAuthenticatedUsername() {
-        final HttpServletRequest request = getHttpServletRequest();
-        final HttpServletResponse response = getHttpServletResponse();
+        final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
+        final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
