@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Determines the username for this registered service based on a principal attribute.
@@ -51,8 +52,12 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
         String principalId = principal.getId();
-        final Map<String, Object> originalPrincipalAttributes = principal.getAttributes();
-        final Map<String, Object> attributes = getPrincipalAttributes(principal, service);
+
+        final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        originalPrincipalAttributes.putAll(principal.getAttributes());
+        
+        final Map<String, Object> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        attributes.putAll(getPrincipalAttributes(principal, service));
 
         LOGGER.debug("Principal attributes available for selection of username attribute [{}] are [{}].",
                 this.usernameAttribute, attributes);
