@@ -19,7 +19,7 @@ The following shell commands may be used to build the source:
 ```bash
 cd cas-server
 git checkout master
-./gradlew build --parallel -x test -x javadoc -DskipCheckstyle=true -DskipAspectJ=true -DskipFindbugs=true
+./gradlew build --parallel -x test -x javadoc -DskipCheckstyle=true -DskipFindbugs=true
 ```
 
 The following commandline boolean flags are supported by the build:
@@ -27,7 +27,6 @@ The following commandline boolean flags are supported by the build:
 | Flag                              | Description
 |-----------------------------------+----------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks.
-| `skipAspectJ`                     | Skip decorating source files with AspectJ.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
