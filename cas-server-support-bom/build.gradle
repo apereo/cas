@@ -1,8 +1,7 @@
 description = "Apereo CAS ‌‌Bill of Material"
 
-configurations.archives.artifacts.clear()
 artifacts {
-    archives(file("cas-bom.md"))
+    archives(file("cas-server-support-bom.md"))
 }
 
 install {
@@ -54,7 +53,7 @@ install {
                                         }
                                     }    
                                 } else {
-                                    ExternalModuleDependency d = it.value
+                                    def d = it.value
                                     delegate.dependency {
                                         delegate.groupId(d.group)
                                         delegate.artifactId(d.name)
