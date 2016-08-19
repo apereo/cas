@@ -271,7 +271,6 @@ buildscript {
     }
 
     dependencies {
-        classpath "nl.eveoh:gradle-aspectj:1.6"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:0.27.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
@@ -318,7 +317,6 @@ subprojects {
     apply plugin: "java"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
-    apply plugin: "aspectj"
     apply plugin: "project-report"
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
@@ -473,10 +471,6 @@ subprojects {
 
         if (Boolean.getBoolean("genConfigMetadata")) {
             optional libraries.springbootconfigmetadata
-        }
-        if (!Boolean.getBoolean("skipAspectJ")) {
-            compile libraries.inspektraspects
-            aspectpath libraries.inspektraspects
         }
 
         if (!Boolean.getBoolean("skipFindbugs")) {
