@@ -53,6 +53,7 @@ import java.util.Set;
 @RequestMapping("/status/logging")
 public class LoggingConfigController {
     private static StringBuilder LOG_OUTPUT = new StringBuilder();;
+    private static final Object LOCK = new Object();
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
@@ -62,8 +63,7 @@ public class LoggingConfigController {
 
     private LoggerContext loggerContext;
     
-    private Object lock = new Object();
-    
+
     /**
      * Init.
      *
@@ -275,24 +275,24 @@ public class LoggingConfigController {
     @MessageMapping("/logoutput")
     @SendTo("/logs/logoutput")
     public String logoutput() throws Exception {
-        synchronized (lock) {
+        synchronized (LOCK) {
             final String log = LOG_OUTPUT.toString();
             LOG_OUTPUT = new StringBuilder();
             return log;
         }
     }
     
-    private class LogTailerListener extends TailerListenerAdapter {
+    private static class LogTailerListener extends TailerListenerAdapter {
         @Override
         public void handle(final String line) {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 LOG_OUTPUT.append(line).append("\n");
             }
         }
 
         @Override
         public void handle(final Exception ex) {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 LOG_OUTPUT.append(ex).append("\n");
             }
         }

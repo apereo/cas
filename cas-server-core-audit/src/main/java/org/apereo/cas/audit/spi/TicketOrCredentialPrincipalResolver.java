@@ -24,8 +24,9 @@ import java.util.Collection;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- * @deprecated
+ * @deprecated As of CAS 5. 
  */
+@Deprecated
 public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
