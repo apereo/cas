@@ -185,7 +185,6 @@ var ssoSessions = (function () {
         $('#ssoSessions').DataTable( {
             "order": [[ 3, "desc" ]],
             "initComplete": function(settings, json) {
-
                 if (!json || json.activeSsoSessions.length == 0) {
                     $('#loadingMessage').hide();
                     $('#no-cas-sessions').show();

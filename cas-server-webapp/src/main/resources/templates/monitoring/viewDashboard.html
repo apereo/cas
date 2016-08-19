@@ -11,7 +11,7 @@
         <div class="viewDashboard">
 
             <div class="app-launcher">
-                <h2 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h2>
+                <h1 th:inline="text"><i class="fa fa-dashboard"></i>[[#{cas.dashboard.section.dashboard.title}]]</h1>
                 <ul>
                     <li><a href="/cas/status">Status</a></li>
                     <li><a href="/cas/status/logging">Logging</a></li>
@@ -36,7 +36,7 @@
                 </ul>
             </div>
             <div class="app-launcher server-config">
-                <h2 th:inline="text"><i class="fa fa-cogs"></i>[[#{cas.dashboard.section.configuration.title}]]</h2>
+                <h1 th:inline="text"><i class="fa fa-cogs"></i>[[#{cas.dashboard.section.configuration.title}]]</h1>
                 <ul class="configserver">
                     <li th:if="${isDefaultProfile}"><a href="/cas/configserver/cas/default">Default Profile</a></li>
                     <li th:if="${isNativeProfile}"><a href="/cas/configserver/cas/native">Native Profile</a></li>
@@ -44,7 +44,7 @@
             </div>
 
             <div class="server-functions">
-                <h2 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h2>
+                <h1 th:inline="text"><i class="fa fa-server"></i>[[#{cas.dashboard.section.server.functions.title}]]</h1>
                 <ul>
                     <li th:if="${restartEndpointEnabled}">
                         <form method="post" action="/cas/status/restart">
