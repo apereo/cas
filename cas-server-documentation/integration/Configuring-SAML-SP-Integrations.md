@@ -34,6 +34,7 @@ The following SAML SP integrations are provided by CAS:
 * [Workday](http://www.workday.com/)
 * [Webex](https://help.webex.com/docs/DOC-1067)
 * [PowerFAIDS Net Partner](https://www.collegeboard.org/powerfaids/net-partner)
+* [Office365](https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx)
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 

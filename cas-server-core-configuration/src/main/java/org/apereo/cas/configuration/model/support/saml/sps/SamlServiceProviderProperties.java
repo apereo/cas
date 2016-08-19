@@ -17,6 +17,15 @@ public class SamlServiceProviderProperties {
     private Box box = new Box();
     private NetPartner netPartner = new NetPartner();
     private Webex webex = new Webex();
+    private Office365 office365 = new Office365();
+
+    public Office365 getOffice365() {
+        return office365;
+    }
+
+    public void setOffice365(final Office365 office365) {
+        this.office365 = office365;
+    }
 
     public Webex getWebex() {
         return webex;
@@ -121,6 +130,12 @@ public class SamlServiceProviderProperties {
         }
     }
     
+    public static class Office365 extends AbstractSamlSPProperties {
+        public Office365() {
+            setNameIdAttribute("scopedImmutableID");
+            setAttributes(Lists.newArrayList("IDPEmail,ImmutableID"));
+        }
+    }
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
             setNameIdAttribute("email");
