@@ -101,7 +101,7 @@ public class LoggingConfigController {
         }
                 
         outputFileNames.forEach(s -> {
-            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 1000, false);
+            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 1000, false, true);
             final Thread thread = new Thread(t);
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setName(s);
