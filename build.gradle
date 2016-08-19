@@ -300,7 +300,7 @@ allprojects {
             downloadJavadoc = false
         }
     }
-    
+
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -377,6 +377,8 @@ subprojects {
                 failOnVersionConflict()
             }
         }
+        exclude(group: "ch.qos.logback", module: "logback-core")
+        exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
     }
@@ -411,9 +413,9 @@ subprojects {
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 
