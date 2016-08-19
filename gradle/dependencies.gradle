@@ -419,14 +419,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        inspektraspects         : [
-                dependencies.create("org.apereo.inspektr:inspektr-aspects:$inspektrVersion") {
-                    exclude(group: "javax.validation", module: "validation-api")
-                    exclude(group: "org.aspectj", module: "aspectjrt")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                }
-        ],
         inspektr                : [
                 dependencies.create("org.apereo.inspektr:inspektr-audit:$inspektrVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1056,6 +1048,61 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     force = true
                 }
+        ],
+        springcloudeureka       : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka:$springCloudEurekaVersion") {
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "io.reactivex", module: "rxjava")
+                    exclude(group: "com.google.code.findbugs", module: "annotations")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.netflix.eureka", module: "eureka-client")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
+                    force = true
+                },
+                dependencies.create("com.netflix.eureka:eureka-client:1.4.10") {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "com.netflix.servo", module: "servo-core")
+                    exclude(group: "com.netflix.archaius", module: "archaius-core")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "com.sun.jersey", module: "jersey-client")
+                    exclude(group: "com.sun.jersey", module: "jersey-core")
+                    exclude(group: "com.sun.jersey.contribs", module: "jersey-apache-client4")
+                    exclude(group: "joda-time", module: "joda-time")
+                    force = true
+                },
+                dependencies.create("com.netflix.servo:servo-core:0.10.1") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "com.google.code.findbugs", module: "annotations")
+                    force = true
+                }
+
         ],
         springcloudbuskafka     : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-kafka:$springCloudBusVersion") {
