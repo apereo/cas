@@ -1323,6 +1323,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
+   
+### Office365
+
+```properties
+# cas.samlSP.dropbox.metadata=/etc/cas/saml/azure.xml
+# cas.samlSP.dropbox.name=O365
+# cas.samlSP.dropbox.description=O365 Integration
+# cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
+# cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
+```
      
 ### SAManage
 
