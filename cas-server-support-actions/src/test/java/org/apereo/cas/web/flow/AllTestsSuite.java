@@ -13,6 +13,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({AuthenticationViaFormActionTests.class, FrontChannelLogoutActionTests.class,
         GenerateServiceTicketActionTests.class, GenericSuccessViewActionTests.class,
         InitialFlowSetupActionTests.class, LogoutActionTests.class,
+        InitialFlowSetupActionSsoTests.class, InitialFlowSetupActionCookieTests.class,
         SendTicketGrantingTicketActionTests.class, ServiceAuthorizationCheckTests.class,
         TicketGrantingTicketCheckActionTests.class, CasDefaultFlowUrlHandlerTests.class
 })
