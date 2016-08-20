@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -21,8 +22,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
+    @Column(length = 255, updatable = true, insertable = true)
     private String jwks;
-    
+
+    @Column(length = 255, updatable = true, insertable = true)
     private boolean signIdToken = true;
 
     public OidcRegisteredService() {
