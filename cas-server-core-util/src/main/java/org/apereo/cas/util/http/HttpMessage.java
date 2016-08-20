@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import java.io.Serializable;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,7 +14,9 @@ import org.springframework.http.MediaType;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class HttpMessage {
+public class HttpMessage implements Serializable {
+    private static final long serialVersionUID = 2015460875654586133L;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
     
     /** The default asynchronous callbacks enabled. */
@@ -70,11 +73,11 @@ public class HttpMessage {
         return this.formatOutputMessageInternal(this.message);
     }
 
-    protected String getContentType() {
+    public String getContentType() {
         return this.contentType;
     }
-    
-    protected void setContentType(final String type) {
+
+    public void setContentType(final String type) {
         this.contentType = type;
     }
 

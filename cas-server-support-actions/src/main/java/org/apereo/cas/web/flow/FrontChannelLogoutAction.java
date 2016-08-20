@@ -1,21 +1,21 @@
 package org.apereo.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Logout action for front SLO : find the next eligible service and perform front logout.
@@ -24,21 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
-    /** Defines the default logout parameter for requests. */
-    public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
-
-    /** Defines the parameter name that is passed to the flow which contains the logout request. */
-    public static final String DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL = "logoutUrl";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FrontChannelLogoutAction.class);
-
-    private String logoutRequestParameter = DEFAULT_LOGOUT_PARAMETER;
-
-    @Qualifier("logoutManager")
+    
     private LogoutManager logoutManager;
-
-    public FrontChannelLogoutAction() {
-    }
 
     /**
      * Build from the logout manager.
@@ -51,45 +39,29 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-            final RequestContext context) throws Exception {
+                                      final RequestContext context) throws Exception {
 
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
-        final Integer startIndex = getLogoutIndex(context);
+        final Map<LogoutRequest, LogoutHttpMessage> logoutUrls = new HashMap<>();
+
         if (logoutRequests != null) {
-            for (int i = startIndex; i < logoutRequests.size(); i++) {
-                final LogoutRequest logoutRequest = logoutRequests.get(i);
-                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
-                    // assume it has been successful
-                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-
-                    // save updated index
-                    putLogoutIndex(context, i + 1);
-
-                    final String logoutUrl = logoutRequest.getLogoutUrl().toExternalForm();
-                    LOGGER.debug("Using logout url [{}] for front-channel logout requests", logoutUrl);
-
-                    final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(logoutRequest);
-                    LOGGER.debug("Front-channel logout message to send under [{}] is [{}]",
-                            this.logoutRequestParameter, logoutMessage);
-
-                    // redirect to application with SAML logout message
-                    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(logoutUrl);
-                    builder.queryParam(this.logoutRequestParameter, EncodingUtils.urlEncode(logoutMessage));
-
-                    return result(REDIRECT_APP_EVENT, DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL, builder.build().toUriString());
-                }
+            logoutRequests.stream()
+                    .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
+                    .forEach(r -> {
+                        LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
+                        final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
+                        LOGGER.debug("Front-channel logout message to send is [{}]", logoutMessage);
+                        final LogoutHttpMessage msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
+                        logoutUrls.put(r, msg);
+                        r.setStatus(LogoutRequestStatus.SUCCESS);
+                        r.getService().setLoggedOutAlready(true);
+                    });
+            
+            if (!logoutUrls.isEmpty()) {
+                context.getFlowScope().put("logoutUrls", logoutUrls);
+                return new EventFactorySupport().event(this, "propagate");
             }
         }
-
-        // no new service with front-channel logout -> finish logout
-        return new Event(this, FINISH_EVENT);
-    }
-
-    public LogoutManager getLogoutManager() {
-        return this.logoutManager;
-    }
-
-    public void setLogoutRequestParameter(final String logoutRequestParameter) {
-        this.logoutRequestParameter = logoutRequestParameter;
+        return new EventFactorySupport().event(this, FINISH_EVENT);
     }
 }
