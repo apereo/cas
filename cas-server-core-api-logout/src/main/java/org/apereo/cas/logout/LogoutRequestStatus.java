@@ -13,6 +13,6 @@ public enum LogoutRequestStatus {
     /** The logout request has failed. */
     FAILURE,
     
-    /** The logout request is successful*/
+    /** The logout request is successful. */
     SUCCESS
 }
