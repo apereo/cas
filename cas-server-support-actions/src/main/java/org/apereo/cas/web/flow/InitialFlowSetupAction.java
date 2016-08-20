@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ServicesManager;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,6 +36,9 @@ import java.util.List;
 public class InitialFlowSetupAction extends AbstractAction {
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     private ServicesManager servicesManager;
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -41,20 +46,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     
     private List<ArgumentExtractor> argumentExtractors;
-
-    private boolean trackGeoLocation;
-
-    private String googleAnalyticsTrackingId;
     
-    private String googleRecaptchaSiteKey;
-
-    /**
-     * If no authentication request from a service is present, halt and warn the user.
-     */
-    private boolean enableFlowOnAbsentServiceRequest = true;
-
-    private boolean staticAuthentication;
-
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         configureCookieGenerators(context);
@@ -83,7 +75,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
-        } else if (!this.enableFlowOnAbsentServiceRequest) {
+        } else if (!casProperties.getSso().isMissingService()) {
             logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
                     WebUtils.getHttpServletRequest(context).getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
@@ -96,12 +88,15 @@ public class InitialFlowSetupAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         WebUtils.putTicketGrantingTicketInScopes(context,
                 this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, this.googleAnalyticsTrackingId);
+        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
         WebUtils.putWarningCookie(context,
                 Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context, this.trackGeoLocation);
-        WebUtils.putRecaptchaSiteKeyIntoFlowScope(context, this.googleRecaptchaSiteKey);
-        WebUtils.putStaticAuthenticationIntoFlowScope(context, this.staticAuthentication);
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
+        WebUtils.putRecaptchaSiteKeyIntoFlowScope(context, casProperties.getGoogleRecaptcha().getSiteKey());
+        WebUtils.putStaticAuthenticationIntoFlowScope(context, 
+                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
+                || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
+        WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
     }
 
     private void configureCookieGenerators(final RequestContext context) {
@@ -140,23 +135,23 @@ public class InitialFlowSetupAction extends AbstractAction {
         this.servicesManager = servicesManager;
     }
 
-    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
-        this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
+    public ServicesManager getServicesManager() {
+        return servicesManager;
     }
 
-    public void setTrackGeoLocation(final boolean trackGeoLocation) {
-        this.trackGeoLocation = trackGeoLocation;
+    public CookieRetrievingCookieGenerator getWarnCookieGenerator() {
+        return warnCookieGenerator;
     }
 
-    public void setGoogleAnalyticsTrackingId(final String googleAnalyticsTrackingId) {
-        this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
+    public CookieRetrievingCookieGenerator getTicketGrantingTicketCookieGenerator() {
+        return ticketGrantingTicketCookieGenerator;
     }
 
-    public void setStaticAuthentication(final boolean staticAuthentication) {
-        this.staticAuthentication = staticAuthentication;
+    public List<ArgumentExtractor> getArgumentExtractors() {
+        return argumentExtractors;
     }
 
-    public void setGoogleRecaptchaSiteKey(final String googleRecaptchaSiteKey) {
-        this.googleRecaptchaSiteKey = googleRecaptchaSiteKey;
+    public void setCasProperties(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
     }
 }

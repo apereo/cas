@@ -7,7 +7,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link InitPasswordChangeAction}.
+ * This is {@link InitPasswordChangeAction}, serves a as placeholder for extensions.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -18,7 +18,7 @@ public class InitPasswordChangeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        requestContext.getFlowScope().put("passwordManagementEnabled", casProperties.getAuthn().getPm().isEnabled());
+        
         return null;
     }
 }
