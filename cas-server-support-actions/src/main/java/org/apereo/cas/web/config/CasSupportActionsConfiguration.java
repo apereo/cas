@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -91,6 +92,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+    
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -191,7 +196,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action frontChannelLogoutAction() {
-        return new FrontChannelLogoutAction();
+        return new FrontChannelLogoutAction(this.logoutManager);
     }
 
     @Bean

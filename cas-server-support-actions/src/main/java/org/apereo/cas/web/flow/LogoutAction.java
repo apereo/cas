@@ -41,7 +41,6 @@ public class LogoutAction extends AbstractLogoutAction {
             final RequestContext context) throws Exception {
 
         boolean needFrontSlo = false;
-        putLogoutIndex(context, 0);
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
             for (final LogoutRequest logoutRequest : logoutRequests) {
@@ -59,7 +58,7 @@ public class LogoutAction extends AbstractLogoutAction {
             final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
-                context.getFlowScope().put("logoutRedirectUrl", service);
+                WebUtils.putLogoutRedirectUrl(context, service);
             }
         }
 
