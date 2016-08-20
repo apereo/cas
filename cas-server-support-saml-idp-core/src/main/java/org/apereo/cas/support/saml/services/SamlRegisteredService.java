@@ -8,6 +8,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -30,12 +31,25 @@ public class SamlRegisteredService extends RegexRegisteredService {
      * A maximum validity interval of less than 1 means that
      * no restriction is placed on the metadata's validUntil attribute.
      */
+    @Column(length = 255, updatable = true, insertable = true)
     private long metadataMaxValidity;
-    
+
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredAuthenticationContextClass;
+
+    @Column(length = 255, updatable = true, insertable = true)
+    private String requiredNameIdFormat;
+
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataSignatureLocation;
+
+    @Column(length = 255, updatable = true, insertable = true)
     private boolean signAssertions;
+
+    @Column(length = 255, updatable = true, insertable = true)
     private boolean signResponses = true;
+
+    @Column(length = 255, updatable = true, insertable = true)
     private boolean encryptAssertions;
 
     /**
@@ -113,18 +127,25 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataMaxValidity(samlRegisteredService.getMetadataMaxValidity());
             setMetadataSignatureLocation(samlRegisteredService.getMetadataSignatureLocation());
             setEncryptAssertions(samlRegisteredService.isEncryptAssertions());
+            setRequiredNameIdFormat(samlRegisteredService.getRequiredNameIdFormat());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public String getRequiredNameIdFormat() {
+        return requiredNameIdFormat;
+    }
+
+    public void setRequiredNameIdFormat(final String requiredNameIdFormat) {
+        this.requiredNameIdFormat = requiredNameIdFormat;
     }
 
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
     }
-
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -146,6 +167,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.signAssertions, rhs.signAssertions)
                 .append(this.signResponses, rhs.signResponses)
                 .append(this.encryptAssertions, rhs.encryptAssertions)
+                .append(this.requiredNameIdFormat, rhs.requiredNameIdFormat)
                 .isEquals();
     }
 
@@ -160,6 +182,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.signAssertions)
                 .append(this.signResponses)
                 .append(this.encryptAssertions)
+                .append(this.requiredNameIdFormat)
                 .toHashCode();
     }
 
@@ -174,6 +197,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("signAssertions", this.signAssertions)
                 .append("signResponses", this.signResponses)
                 .append("encryptAssertions", this.encryptAssertions)
+                .append("requiredNameIdFormat", this.requiredNameIdFormat)
                 .toString();
     }
 }
