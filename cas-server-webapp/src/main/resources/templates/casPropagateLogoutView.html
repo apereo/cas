@@ -3,6 +3,14 @@
 
 <head th:inline="text">
     <title>[[#{screen.logout.header}]]</title>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function redirectToApp() {
+            window.location = /*[[${logoutRedirectUrl}]]*/ ;
+        }
+        /*]]>*/
+    </script>
 </head>
 
 <body id="cas">
@@ -26,31 +34,37 @@
                             success: function (data) {
                                 var index = /*[[${iterStat.index}]]*/;
                                 $("#service" + index).addClass("fa fa-check")
-                                $("#service" + index).prop('title', 
+                                $("#service" + index).prop('alt', 
                                             'Logout notification was successfully submitted.');
                             },
                             error: function (err) {
                                 var index = /*[[${iterStat.index}]]*/;
                                 if (err.status == 200) {
                                     $("#service" + index).addClass("fa fa-exclamation")
-                                    $("#service" + index).prop('title',
+                                    $("#service" + index).prop('alt',
                                             'Logout request was rejected.');
                                 } else {
                                     $("#service" + index).addClass("fa fa-error")
-                                    $("#service" + index).prop('title',
+                                    $("#service" + index).prop('alt',
                                             'Logout notification could not be sent.');
                                 }
                             }
                         });
                     </script>
                     <p>
-                        <i class="misagh" data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
+                        <i data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
                         <kbd th:text="${entry.key.service}"/>
                     </p>
                 </li>
             </ol>
+
+            
         </div>
         <p th:utext="#{screen.logout.security}"/>
+        <br/>
+        <input type="button" th:if="${logoutRedirectUrl}"
+                class="btn btn-primary btn-success" onclick="redirectToApp();"
+                th:value="${'Go to ' + logoutRedirectUrl}"/>
 
     </div>
 </div>
