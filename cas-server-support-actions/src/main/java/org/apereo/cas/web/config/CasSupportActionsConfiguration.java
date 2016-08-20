@@ -150,17 +150,10 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
-        bean.setEnableFlowOnAbsentServiceRequest(casProperties.getSso().isMissingService());
         bean.setArgumentExtractors(this.argumentExtractors);
         bean.setServicesManager(this.servicesManager);
         bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
-        bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
-        bean.setGoogleRecaptchaSiteKey(casProperties.getGoogleRecaptcha().getSiteKey());
-        bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
-        bean.setStaticAuthentication(
-                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
-                        || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
         return bean;
     }
 

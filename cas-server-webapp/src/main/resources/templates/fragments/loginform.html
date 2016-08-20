@@ -59,6 +59,13 @@
                 <p/>
             </div>
         </section>
+
+        <section class="row" th:if="${passwordManagementEnabled}">
+            <div>
+                <input type="button" th:value="#{screen.pm.button.forgotpwd}" />
+                <p/>
+            </div>
+        </section>
         
         <section class="row" th:if="${recaptchaSiteKey}">
             <div>

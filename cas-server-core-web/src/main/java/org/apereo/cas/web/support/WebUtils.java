@@ -558,8 +558,17 @@ public final class WebUtils {
     public static void putStaticAuthenticationIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("staticAuthentication", value);
     }
-
-
+    
+    /**
+     * Put static authentication into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putPasswordManagementEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("passwordManagementEnabled", value);
+    }
+    
     /**
      * Put tracking id into flow scope.
      *
