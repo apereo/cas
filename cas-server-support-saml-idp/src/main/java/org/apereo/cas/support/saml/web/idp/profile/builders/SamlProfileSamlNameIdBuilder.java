@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SamlProfileSamlNameIdBuilder}.
@@ -51,6 +50,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
         }
+        if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
+            supportedNameFormats.add(0, service.getRequiredNameIdFormat());
+        }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
@@ -61,14 +63,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 requiredNameFormat = null;
             }
         }
-
-        final Map<String, Object> principalAttributes = assertion.getPrincipal().getAttributes();
-        if (principalAttributes.isEmpty() && StringUtils.isNotBlank(requiredNameFormat)) {
-            logger.warn("No CAS attributes for CAS principal [{}], so no name identifier will be created.",
-                    assertion.getPrincipal().getName());
-            throw new SamlException("No attributes for principal, so NameID format required can not be supported");
-        }
-
+        
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
@@ -101,4 +96,5 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         }
         return null;
     }
+    
 }
