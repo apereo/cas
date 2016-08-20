@@ -16,37 +16,33 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class AbstractLogoutAction extends AbstractAction {
 
-    /** A constant for the logout index in web flow. */
-    public static final String LOGOUT_INDEX = "logoutIndex";
-
-    /** The finish event in webflow. */
+    /**
+     * The finish event in webflow.
+     */
     public static final String FINISH_EVENT = "finish";
 
-    /** The front event in webflow. */
+    /**
+     * The front event in webflow.
+     */
     public static final String FRONT_EVENT = "front";
-
-    /** The redirect to app event in webflow. */
-    public static final String REDIRECT_APP_EVENT = "redirectApp";
-
+    
     private static final String NO_CACHE = "no-cache";
     private static final String CACHE_CONTROL = "Cache-Control";
-    
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-
         preventCaching(response);
-
         return doInternalExecute(request, response, context);
     }
 
     /**
      * Execute the logout action after invalidating the cache.
      *
-     * @param request the HTTP request.
+     * @param request  the HTTP request.
      * @param response the HTTP response.
-     * @param context the webflow context.
+     * @param context  the webflow context.
      * @return the event triggered by this actions.
      * @throws Exception exception returned by this action.
      */
@@ -65,26 +61,5 @@ public abstract class AbstractLogoutAction extends AbstractAction {
         response.setDateHeader("Expires", 1L);
         response.setHeader(CACHE_CONTROL, NO_CACHE);
         response.addHeader(CACHE_CONTROL, "no-store");
-    }
-
-    /**
-     * Put logout index into flow scope.
-     *
-     * @param context the context
-     * @param index the index
-     */
-    protected void putLogoutIndex(final RequestContext context, final int index) {
-        context.getFlowScope().put(LOGOUT_INDEX, index);
-    }
-
-    /**
-     * Gets the logout index from the flow scope.
-     *
-     * @param context the context
-     * @return the logout index
-     */
-    protected int getLogoutIndex(final RequestContext context) {
-        final Object value = context.getFlowScope().get(LOGOUT_INDEX);
-        return value == null ? 0 : (Integer) value;
     }
 }

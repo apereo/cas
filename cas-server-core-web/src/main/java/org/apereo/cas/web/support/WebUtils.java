@@ -599,4 +599,14 @@ public final class WebUtils {
     public static void putPrincipal(final RequestContext requestContext, final Principal authenticationPrincipal) {
         requestContext.getFlowScope().put("principal", authenticationPrincipal);
     }
+
+    /**
+     * Put logout redirect url.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putLogoutRedirectUrl(final RequestContext context, final String service) {
+        context.getFlowScope().put("logoutRedirectUrl", service);
+    }
 }
