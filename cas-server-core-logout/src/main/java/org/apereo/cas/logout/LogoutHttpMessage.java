@@ -14,15 +14,17 @@ import java.net.URL;
 public class LogoutHttpMessage extends HttpMessage {
 
     /** The parameter name that contains the logout request. */
-    private static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
-
+    private final String logoutParameterName = "logoutRequest";
+    
+    private boolean prefixLogoutParameterName = true;
+    
     /**
      * Constructs a logout message.
      *
      * @param url The url to send the message to
      * @param message Message to send to the url
      */
-    LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {
+    public LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {
         super(url, message, asynchronous);
         setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     }
@@ -33,6 +35,15 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return LOGOUT_PARAMETER_NAME + '=' + super.formatOutputMessageInternal(message);
+        return (prefixLogoutParameterName ? logoutParameterName + '=' : "") 
+                + super.formatOutputMessageInternal(message);
+    }
+
+    public void setPrefixLogoutParameterName(final boolean prefixLogoutParameterName) {
+        this.prefixLogoutParameterName = prefixLogoutParameterName;
+    }
+
+    public String getLogoutParameterName() {
+        return logoutParameterName;
     }
 }
