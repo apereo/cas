@@ -8,6 +8,7 @@
     "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
   },
   "evaluationOrder" : 10000,
+  "logoutType" : "BACK_CHANNEL",
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider"
   },
