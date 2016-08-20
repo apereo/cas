@@ -60,20 +60,13 @@
             </div>
         </section>
 
-        <section class="row" th:if="${passwordManagementEnabled}">
-            <div>
-                <input type="button" th:value="#{screen.pm.button.forgotpwd}" />
-                <p/>
-            </div>
-        </section>
-        
         <section class="row" th:if="${recaptchaSiteKey}">
             <div>
-                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}" />
+                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
                 <p/>
             </div>
         </section>
-            
+
         <section class="row btn-row">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
@@ -94,5 +87,13 @@
         </section>
     </form>
 
-    <div th:replace="fragments/loginsidebar" />
+    <form method="post" id="fm2" th:if="${passwordManagementEnabled}">
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="forgotPassword"/>
+        <input class="btn btn-link"
+               type="submit"
+               th:value="#{screen.pm.button.forgotpwd}"/>
+    </form>
+    
+    <div th:replace="fragments/loginsidebar"/>
 </div>
