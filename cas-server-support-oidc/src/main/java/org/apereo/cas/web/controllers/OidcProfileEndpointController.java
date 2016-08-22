@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller
+@Controller(value = "oidcProfileEndpointController")
 public class OidcProfileEndpointController extends OAuth20ProfileController {
 
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,

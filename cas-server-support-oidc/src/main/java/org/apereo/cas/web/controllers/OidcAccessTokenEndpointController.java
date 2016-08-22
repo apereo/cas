@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller
+@Controller(value = "oidcAccessTokenEndpointController")
 public class OidcAccessTokenEndpointController extends OAuth20AccessTokenController {
 
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL, method = RequestMethod.POST)

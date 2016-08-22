@@ -1,6 +1,7 @@
 package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.config.OidcServerDiscoverySettings;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -35,19 +36,23 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
 
-        discoveryProperties.setClaims_supported(
+        discoveryProperties.setClaimsSupported(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
                         "family_name", "given_name", "middle_name", "given_name", "profile",
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",
                         "phone_number_verified", "address"));
-        discoveryProperties.setScopes_supported(OidcConstants.SCOPES);
+        discoveryProperties.setScopesSupported(OidcConstants.SCOPES);
 
-        discoveryProperties.setResponse_types_supported(ImmutableList.of("code", "token"));
-        discoveryProperties.setSubject_types_supported(ImmutableList.of("public", "pairwise"));
-        discoveryProperties.setClaim_types_supported(ImmutableList.of("normal"));
+        discoveryProperties.setResponseTypesSupported(ImmutableList.of("code", "token"));
+        discoveryProperties.setSubjectTypesSupported(ImmutableList.of("public", "pairwise"));
+        discoveryProperties.setClaimTypesSupported(ImmutableList.of("normal"));
 
-        discoveryProperties.setGrant_types_supported(ImmutableList.of("authorization_code", "password", "implicit"));
+        discoveryProperties.setGrantTypesSupported(ImmutableList.of("authorization_code", "password", "implicit"));
+
+        final String idTokenSigningAlgValues = casProperties.getAuthn().getOidc().getIdTokenSigningAlgValues();
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(Lists.newArrayList(idTokenSigningAlgValues.split(",")));
+
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.OAuthConstants;
 
@@ -13,12 +14,20 @@ import java.util.List;
  */
 public class OidcServerDiscoverySettings {
 
-    private List<String> scopes_supported;
-    private List<String> response_types_supported;
-    private List<String> subject_types_supported;
-    private List<String> claim_types_supported;
-    private List<String> claims_supported;
-    private List<String> grant_types_supported;
+    @JsonProperty("scopes_supported")
+    private List<String> scopesSupported;
+    @JsonProperty("response_types_supported")
+    private List<String> responseTypesSupported;
+    @JsonProperty("subject_types_supported")
+    private List<String> subjectTypesSupported;
+    @JsonProperty("claim_types_supported")
+    private List<String> claimTypesSupported;
+    @JsonProperty("claims_supported")
+    private List<String> claimsSupported;
+    @JsonProperty("grant_types_supported")
+    private List<String> grantTypesSupported;
+    @JsonProperty("id_token_signing_alg_values_supported")
+    private List<String> idTokenSigningAlgValuesSupported;
 
     private final String issuer;
     private final String serverPrefix;
@@ -32,71 +41,84 @@ public class OidcServerDiscoverySettings {
         return issuer;
     }
 
-    public String getAuthorization_endpoint() {
+    @JsonProperty("authorization_endpoint")
+    public String getAuthorizationEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL);
     }
 
-    public String getToken_endpoint() {
+    @JsonProperty("token_endpoint")
+    public String getTokenEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.ACCESS_TOKEN_URL);
     }
 
-    public String getUserinfo_endpoint() {
+    @JsonProperty("userinfo_endpoint")
+    public String getUserinfoEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL);
     }
 
-    public String getJwks_uri() {
+    @JsonProperty("jwks_uri")
+    public String getJwksUri() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL);
     }
 
-    public String getRegistration_endpoint() {
+    @JsonProperty("registration_endpoint")
+    public String getRegistrationEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL);
     }
 
-    public List<String> getScopes_supported() {
-        return scopes_supported;
+    public List<String> getScopesSupported() {
+        return scopesSupported;
     }
 
-    public List<String> getResponse_types_supported() {
-        return response_types_supported;
+    public List<String> getResponseTypesSupported() {
+        return responseTypesSupported;
     }
 
-    public List<String> getSubject_types_supported() {
-        return subject_types_supported;
+    public List<String> getSubjectTypesSupported() {
+        return subjectTypesSupported;
     }
 
-    public List<String> getClaim_types_supported() {
-        return claim_types_supported;
+    public List<String> getClaimTypesSupported() {
+        return claimTypesSupported;
     }
 
-    public List<String> getClaims_supported() {
-        return claims_supported;
+    public List<String> getClaimsSupported() {
+        return claimsSupported;
     }
 
-    public void setScopes_supported(final List<String> scopes_supported) {
-        this.scopes_supported = scopes_supported;
+    public void setScopesSupported(final List<String> scopesSupported) {
+        this.scopesSupported = scopesSupported;
     }
 
-    public void setResponse_types_supported(final List<String> response_types_supported) {
-        this.response_types_supported = response_types_supported;
+    public void setResponseTypesSupported(final List<String> responseTypesSupported) {
+        this.responseTypesSupported = responseTypesSupported;
     }
 
-    public void setSubject_types_supported(final List<String> supportedSubjectResponseTypes) {
-        this.subject_types_supported = supportedSubjectResponseTypes;
+    public void setSubjectTypesSupported(final List<String> supportedSubjectResponseTypes) {
+        this.subjectTypesSupported = supportedSubjectResponseTypes;
     }
 
-    public void setClaim_types_supported(final List<String> claim_types_supported) {
-        this.claim_types_supported = claim_types_supported;
+    public void setClaimTypesSupported(final List<String> claimTypesSupported) {
+        this.claimTypesSupported = claimTypesSupported;
     }
 
-    public void setClaims_supported(final List<String> claims_supported) {
-        this.claims_supported = claims_supported;
+    public void setClaimsSupported(final List<String> claimsSupported) {
+        this.claimsSupported = claimsSupported;
     }
 
-    public List<String> getGrant_types_supported() {
-        return grant_types_supported;
+    public List<String> getGrantTypesSupported() {
+        return grantTypesSupported;
     }
 
-    public void setGrant_types_supported(final List<String> grant_types_supported) {
-        this.grant_types_supported = grant_types_supported;
+    public void setGrantTypesSupported(final List<String> grantTypesSupported) {
+        this.grantTypesSupported = grantTypesSupported;
+    }
+
+    public List<String> getIdTokenSigningAlgValuesSupported() {
+        return idTokenSigningAlgValuesSupported;
+    }
+
+    public void setIdTokenSigningAlgValuesSupported(final List<String> idTokenSigningAlgValuesSupported) {
+        this.idTokenSigningAlgValuesSupported = idTokenSigningAlgValuesSupported;
     }
 }
