@@ -2,6 +2,7 @@ package org.apereo.cas.web.report.config;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,6 +16,7 @@ import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +38,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
+    @Autowired
+    private ServerProperties serverProperties;
+    
     @Autowired
     @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
@@ -103,7 +108,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/logs");
-        config.setApplicationDestinationPrefixes("/cas");
+        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
+            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
+        }
     }
 
     @Override
