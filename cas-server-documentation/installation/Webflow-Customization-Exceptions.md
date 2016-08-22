@@ -19,12 +19,10 @@ Suppose that there is a need for a custom authentication handler that throws a c
 message in this case presented to UI (suppose that the exception type thrown is `com.mycompany.MyAuthenticationException`). To achieve
 this customization, one would need to do the following:
 
-- Adjust the list of exceptions in the `application.properties` file.
- 
+Define custom message mapping in `messages.properties` (or the variant for the locale in question):
+
+```properties
+authenticationFailure.MyAuthenticationException=Authentication has failed, but it did it my way!
+```
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-- Define custom message mapping in `messages.properties` (or the variant for the locale in question):
-
- ```properties
- authenticationFailure.MyAuthenticationException=Authentication has failed, but it did it my way!!!
- ```
