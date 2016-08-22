@@ -153,7 +153,7 @@
                                 <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.server.label}"/>
                                 <td th:text="${#httpServletRequest.getServerName() + '-' + #httpServletRequest.getLocalAddr()}"/>
                             </tr>
-                            <tr>
+                            <tr th:if="${casTicketSuffix}">
                                 <td th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.table.property.casticketsuffix.label}"/>
                                 <td th:text="${casTicketSuffix}"/>
                             </tr>

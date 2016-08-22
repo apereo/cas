@@ -7,26 +7,31 @@
         /*<![CDATA[*/
 
         var logConfigFileLocation = /*[[${logConfigurationFile}]]*/ ;
+
+        var urls = {
+            getConfiguration: /*[[@{/status/logging/getConfiguration}]]*/ ,
+            updateLevel: /*[[@{/status/logging/updateLoggerLevel}]]*/ 
+        };
         
         /*]]>*/
     </script>
     
-    <script type="text/javascript">
+    <script type="text/javascript" th:inline="javascript">
         
         function jqueryReady() {
             head.load(
                     // Bootstrap Datables CSS
                     "//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
-                    "/cas/css/loggingDashboard.css"
+                    /*[[@{/css/loggingDashboard.css}]]*/
             );
             head.load(
                     // JS Libraries
                     "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
                     "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
                     "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-                    "/cas/js/sockjs.js",
-                    "/cas/js/stomp.js",
-                    "/cas/js/loggingDashboard.js"
+                    /*[[@{/js/sockjs.js}]]*/ ,
+                    /*[[@{/js/stomp.js}]]*/ ,
+                    /*[[@{/js/loggingDashboard.js}]]*/ 
             );
         }
     </script>
