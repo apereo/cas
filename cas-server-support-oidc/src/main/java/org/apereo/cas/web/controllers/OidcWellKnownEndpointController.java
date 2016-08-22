@@ -1,6 +1,7 @@
 package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.config.OidcServerDiscoverySettings;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,7 +23,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Gets well known discovery configuration.
      *
@@ -35,19 +36,23 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
         final OidcServerDiscoverySettings discoveryProperties =
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
 
-        discoveryProperties.setSupportedClaims(
+        discoveryProperties.setClaimsSupported(
                 ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
                         "family_name", "given_name", "middle_name", "given_name", "profile",
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",
                         "phone_number_verified", "address"));
-        discoveryProperties.setSupportedScopes(OidcConstants.SCOPES);
+        discoveryProperties.setScopesSupported(OidcConstants.SCOPES);
 
-        discoveryProperties.setSupportedResponseTypes(ImmutableList.of("code", "token"));
-        discoveryProperties.setSupportedSubjectTypes(ImmutableList.of("public", "pairwise"));
-        discoveryProperties.setSupportedClaimTypes(ImmutableList.of("normal"));
+        discoveryProperties.setResponseTypesSupported(ImmutableList.of("code", "token"));
+        discoveryProperties.setSubjectTypesSupported(ImmutableList.of("public", "pairwise"));
+        discoveryProperties.setClaimTypesSupported(ImmutableList.of("normal"));
 
-        discoveryProperties.setSupportedGrantTypes(ImmutableList.of("authorization_code", "password", "implicit"));
+        discoveryProperties.setGrantTypesSupported(ImmutableList.of("authorization_code", "password", "implicit"));
+
+        final String idTokenSigningAlgValues = casProperties.getAuthn().getOidc().getIdTokenSigningAlgs();
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(Lists.newArrayList(idTokenSigningAlgValues.split(",")));
+
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }
 
@@ -56,7 +61,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
      *
      * @return the well known discovery configuration
      */
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", 
+    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
