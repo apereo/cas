@@ -66,8 +66,6 @@ public class LoggingConfigController {
 
     /**
      * Init.
-     *
-     * @throws Exception the exception
      */
     @PostConstruct
     public void initialize() {

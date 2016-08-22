@@ -41,6 +41,8 @@ public class GenericSuccessViewAction extends AbstractAction {
      * Instantiates a new Generic success view action.
      *
      * @param centralAuthenticationService the central authentication service
+     * @param servicesManager              the services manager
+     * @param serviceFactory               the service factory
      */
     public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService,
                                     final ServicesManager servicesManager,
