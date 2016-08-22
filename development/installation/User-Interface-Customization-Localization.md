@@ -42,5 +42,3 @@ English language and is thus called `messages.properties`. If there are any cust
 they may also be formatted under `custom_messages.properties` files.
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
