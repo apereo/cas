@@ -38,9 +38,9 @@ import java.util.UUID;
  * @since 5.0.0
  */
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
-    
+
     private String issuer;
-    
+
     private int skew;
 
     private Resource jwksFile;
@@ -55,15 +55,15 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
                                         final Service service,
                                         final OAuthRegisteredService registeredService) throws Exception {
 
-        super.generateJsonInternal(request, response, jsonGenerator, accessTokenId, 
+        super.generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                 refreshTokenId, timeout, service, registeredService);
         final OidcRegisteredService oidcRegisteredService = (OidcRegisteredService) registeredService;
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
         final Optional<UserProfile> profile = manager.get(true);
-        
-        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout, 
+
+        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout,
                 oidcRegisteredService, profile.get(), context);
         final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(oidcRegisteredService);
         final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
@@ -81,14 +81,14 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
      * @param context       the context
      * @return the jwt claims
      */
-    protected JwtClaims produceIdTokenClaims(final HttpServletRequest request, 
-                                             final AccessToken accessTokenId, final long timeout, 
+    protected JwtClaims produceIdTokenClaims(final HttpServletRequest request,
+                                             final AccessToken accessTokenId, final long timeout,
                                              final OidcRegisteredService service,
                                              final UserProfile profile,
                                              final J2EContext context) {
         final Authentication authentication = accessTokenId.getAuthentication();
         final Principal principal = authentication.getPrincipal();
-        
+
         final JwtClaims claims = new JwtClaims();
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
@@ -97,17 +97,17 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(this.skew);
         claims.setSubject(principal.getId());
-        
+
         claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
-        
+
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
         setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
-        
+
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());
         }
-        
+
         return claims;
     }
 
@@ -168,7 +168,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         } finally {
             if (jsonWebKeySet == null) {
                 logger.debug("Loading default JWKS from {}", this.jwksFile);
-                
+
                 if (this.jwksFile != null) {
                     final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
                     jsonWebKeySet = new JsonWebKeySet(jsonJwks);
