@@ -16,6 +16,7 @@
         *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
         *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
+    *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
@@ -61,7 +62,7 @@
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
-        *   [Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
 
 * [Ticketing](#ticketing)
