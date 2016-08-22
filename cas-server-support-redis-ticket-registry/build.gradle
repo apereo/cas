@@ -1,0 +1,8 @@
+description = "Apereo CAS Redis Integration"
+
+dependencies {
+    compile project(":cas-server-core-tickets")
+    compile project(":cas-server-core-services")
+    compile project(":cas-server-core-configuration")
+    compile libraries.springbootredis
+}
