@@ -136,12 +136,12 @@ function removeSession( ticketId ) {
 
 
     if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
-        factory.url = '/cas/status/ssosessions/destroySsoSessions';
+        factory.url = urls.destroy.all
         factory.data = { type: ticketId };
         factory.messages.success = 'Removed <strong>' + ticketId + '</strong> tickets successfully.';
         factory.messages.error = 'Could not remove <strong>' + ticketId + '</strong> tickets.';
     } else {
-        factory.url = '/cas/status/ssosessions/destroySsoSession';
+        factory.url = urls.destroy.single
         factory.data = { ticketGrantingTicket: factory.ticketId };
         factory.messages.success = 'Ticket is removed successfully.';
         factory.messages.error = 'Ticket is not removed successfully.';
@@ -173,14 +173,6 @@ function removeSession( ticketId ) {
 }
 
 var ssoSessions = (function () {
-    var urls = {
-        destroy: {
-            all: '/cas/status/ssosessions/destroySsoSessions',
-            single: '/cas/status/ssosessions/destroySsoSession'
-        },
-        getSessions: '/cas/status/ssosessions/getSsoSessions'
-    };
-
     var createDataTable = function() {
         $('#ssoSessions').DataTable( {
             "order": [[ 3, "desc" ]],
@@ -203,7 +195,7 @@ var ssoSessions = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/status/ssosessions/getSsoSessions',
+                "url": urls.getSessions,
                 "dataSrc": "activeSsoSessions"
             },
 

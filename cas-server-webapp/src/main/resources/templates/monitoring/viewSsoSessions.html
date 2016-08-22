@@ -10,6 +10,14 @@
     <div id="content">
 
         <script type="text/javascript" th:inline="javascript">
+            var urls = {
+                destroy: {
+                    all:  /*[[@{/status/ssosessions/destroySsoSessions}]]*/ ,
+                    single: /*[[@{/status/ssosessions/destroySsoSession}]]*/
+                },
+                getSessions: /*[[@{/status/ssosessions/getSsoSessions}]]*/
+            };
+            
             function jqueryReady() {
                 head.load(
                         // Bootstrap Datables CSS
@@ -28,7 +36,6 @@
                         /*[[@{/js/ssosessions.js}]]*/
                 );
             }
-
         </script>
 
         <div class="ssoSessions">
