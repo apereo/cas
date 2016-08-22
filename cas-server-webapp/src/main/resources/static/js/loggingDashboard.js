@@ -15,7 +15,7 @@ function setConnected(connected) {
 
 function connect() {
     $("#logoutputarea").empty();
-    var socket = new SockJS('/cas/logoutput');
+    var socket = new SockJS(urls.logOutput);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
         setConnected(true);
@@ -38,7 +38,7 @@ function disconnect() {
 }
 
 function getLogs() {
-    stompClient.send("/cas/logoutput", {}, {});
+    stompClient.send(urls.logOutput, {}, {});
 }
 
 function showLogs(message) {
@@ -88,7 +88,7 @@ var loggingDashboard = (function () {
     var logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 
     var getData = function () {
-        $.getJSON("/cas/status/logging/getConfiguration", function (data) {
+        $.getJSON(urls.getConfiguration , function (data) {
             json = data;
             loggerTable();
         });
@@ -249,7 +249,7 @@ var loggingDashboard = (function () {
 
         var cell = table.cell($(el).closest('td')[0]);
 
-        var jqxhr = $.post('/cas/status/logging/updateLoggerLevel', {
+        var jqxhr = $.post(urls.updateLevel, {
             loggerName: data.name,
             loggerLevel: newLevel,
             additive: data.additive
