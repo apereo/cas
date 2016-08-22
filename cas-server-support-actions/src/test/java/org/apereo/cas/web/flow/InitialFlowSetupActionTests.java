@@ -28,7 +28,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -57,9 +56,6 @@ import static org.junit.Assert.*;
         initializers = ConfigFileApplicationContextInitializer.class)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class InitialFlowSetupActionTests {
-    private static final String CONST_CONTEXT_PATH = "/test";
-    private static final String CONST_CONTEXT_PATH_2 = "/test1";
-
     @Autowired
     @Qualifier("initialFlowSetupAction")
     private Action action;
@@ -86,14 +82,5 @@ public class InitialFlowSetupActionTests {
         assertEquals("test", WebUtils.getService(context).getId());
         assertNotNull(WebUtils.getRegisteredService(context));
         assertEquals("success", event.getId());
-    }
-
-    @Test(expected = NoSuchFlowExecutionException.class)
-    public void disableFlowIfNoService() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        this.action.execute(context);
     }
 }
