@@ -27,7 +27,7 @@ CAS by adding third-party components that implement CAS APIs as Java source file
 
 ## Servlet Container
 
-CAS can be deployed to a number of servlet containers.
+CAS can be deployed to a number of servlet containers. See [this guide](Configuring-Servlet-Container.html) for more info.
 
 ## Spring Configuration
 
