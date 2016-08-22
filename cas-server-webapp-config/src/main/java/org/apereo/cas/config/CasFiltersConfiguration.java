@@ -113,6 +113,7 @@ public class CasFiltersConfiguration {
         bean.setFilter(new CurrentCredentialsAndAuthenticationClearingFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("currentCredentialsAndAuthenticationClearingFilter");
+        bean.setAsyncSupported(true);
         return bean;
     }
 }
