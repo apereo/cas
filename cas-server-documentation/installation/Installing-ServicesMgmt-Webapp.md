@@ -5,7 +5,7 @@ title: CAS - Services Management Webapp
 # Services Management Webapp
 
 The services management webapp is no longer part of the CAS server and
-is a standalone web application: `cas-management-webapp`.
+is a standalone web application.
 
 * The management webapp is used to add/edit/delete all the CAS services
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
@@ -22,15 +22,11 @@ A sample Maven overlay for the services management webapp is provided
 
 ## Services Registry
 
-You also need to define the *common* services registry by overriding the `src/main/resources/managementConfigContext.xml`
-file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
-It should be the same configuration you already use in your CAS server in the `/deployerConfigContext.xml` file.
+The [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server.
 
 ## Authentication Method
 
-Access to the management webapp is controlled via [Pac4j](https://github.com/pac4j/pac4j).
-By default, the application is configured to authenticate against a CAS server. 
-
+Access to the management webapp is by default configured to authenticate against a CAS server. 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Authorization
