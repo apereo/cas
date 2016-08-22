@@ -21,6 +21,10 @@ WAR overlay projects are provided for reference and study.
 
 - [https://github.com/apereo/cas-overlay-template](https://github.com/apereo/cas-overlay-template)
 
+## Docker
+
+- See [this guide](Docker-Installation.html) for more info.
+
 Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
 CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
