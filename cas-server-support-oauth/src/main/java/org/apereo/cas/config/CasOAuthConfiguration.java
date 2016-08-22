@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.DefaultOAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
@@ -395,6 +396,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             service.setDescription("OAuth Wrapper Callback Url");
             service.setServiceId(oAuthCallbackUrl);
             service.setEvaluationOrder(Integer.MIN_VALUE);
+            service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
             servicesManager.save(service);
             servicesManager.load();

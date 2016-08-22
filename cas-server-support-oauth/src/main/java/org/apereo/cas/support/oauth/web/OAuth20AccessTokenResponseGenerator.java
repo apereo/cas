@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * The Resource loader.
      */
@@ -108,6 +108,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final Service service,
                                         final OAuthRegisteredService registeredService) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
+        jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
         jsonGenerator.writeNumberField(OAuthConstants.EXPIRES, timeout);
         if (refreshTokenId != null) {
             jsonGenerator.writeStringField(OAuthConstants.REFRESH_TOKEN, refreshTokenId.getId());

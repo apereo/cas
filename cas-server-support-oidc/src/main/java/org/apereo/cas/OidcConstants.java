@@ -29,7 +29,7 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User consent.
      */
     String PROMPT_CONSENT = "consent";
-    
+
     /**
      * The sub claim.
      */
@@ -88,16 +88,6 @@ public interface OidcConstants {
      * Registration endpoint URL.
      */
     String REGISTRATION_URL = "register";
-
-    /**
-     * The constant INTROSPECTION_URL.
-     */
-    String INTROSPECTION_URL = "introspect";
-
-    /**
-     * Revocation endpoint url.
-     */
-    String REVOCATION_URL = "revocation";
 
     /**
      * Indicates authentication is required and could not be performed.
