@@ -9,7 +9,6 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
@@ -52,8 +51,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configure(CAS_MUST_CHANGE_PASS_VIEW);
             configure(CAS_EXPIRED_PASS_VIEW);
-            final TransitionableState submit = flow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-            submit.getTransitionSet().add(createTransition("forgotPassword", CAS_MUST_CHANGE_PASS_VIEW));
         } else {
             createViewState(flow, CAS_MUST_CHANGE_PASS_VIEW, CAS_MUST_CHANGE_PASS_VIEW);
             createViewState(flow, CAS_EXPIRED_PASS_VIEW, CAS_EXPIRED_PASS_VIEW);

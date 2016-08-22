@@ -41,6 +41,7 @@
 
         <section class="row">
             <label for="password" th:utext="#{screen.welcome.label.password}"/>
+            
             <div>
                 <input class="required"
                        type="password"
@@ -56,7 +57,7 @@
                         <span th:utext="#{screen.capslock.on}"/>
                     </p>
                 </span>
-                <p/>
+                <a href="https://pwd.example.org" th:text="#{screen.pm.button.forgotpwd}" />
             </div>
         </section>
 
@@ -86,14 +87,6 @@
                    type="reset"/>
         </section>
     </form>
-
-    <form method="post" id="fm2" th:if="${passwordManagementEnabled}">
-        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-        <input type="hidden" name="_eventId" value="forgotPassword"/>
-        <input class="btn btn-link"
-               type="submit"
-               th:value="#{screen.pm.button.forgotpwd}"/>
-    </form>
-    
+        
     <div th:replace="fragments/loginsidebar"/>
 </div>
