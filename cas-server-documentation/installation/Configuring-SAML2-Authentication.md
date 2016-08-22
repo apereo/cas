@@ -79,7 +79,13 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
+Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you 
+mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
+CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
+`https://sso.example.org/login`).
+
 ### SP Metadata
+
 - `/cas/idp/servicemetadatagen`
 
 This endpoint will attempt to generate metadata for relying party upon receiving a POST request. This is useful when integrating with
