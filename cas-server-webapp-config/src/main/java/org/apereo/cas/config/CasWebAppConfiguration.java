@@ -1,21 +1,16 @@
 package org.apereo.cas.config;
 
-import org.apache.catalina.connector.Connector;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.coyote.AbstractProtocol;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.util.SocketUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -147,54 +142,5 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
-    }
-
-
-    @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat =
-                new TomcatEmbeddedServletContainerFactory();
-
-        if (casProperties.getServer().getAjp().isEnabled()) {
-            final Connector ajpConnector = new Connector(casProperties.getServer().getAjp().getProtocol());
-            ajpConnector.setProtocol(casProperties.getServer().getAjp().getProtocol());
-            ajpConnector.setPort(casProperties.getServer().getAjp().getPort());
-            ajpConnector.setSecure(casProperties.getServer().getAjp().isSecure());
-            ajpConnector.setAllowTrace(casProperties.getServer().getAjp().isAllowTrace());
-            ajpConnector.setScheme(casProperties.getServer().getAjp().getScheme());
-            ajpConnector.setAsyncTimeout(casProperties.getServer().getAjp().getAsyncTimeout());
-            ajpConnector.setEnableLookups(casProperties.getServer().getAjp().isEnableLookups());
-            ajpConnector.setMaxPostSize(casProperties.getServer().getAjp().getMaxPostSize());
-
-            if (casProperties.getServer().getAjp().getProxyPort() > 0) {
-                ajpConnector.setProxyPort(casProperties.getServer().getAjp().getProxyPort());
-            }
-
-            if (casProperties.getServer().getAjp().getRedirectPort() > 0) {
-                ajpConnector.setRedirectPort(casProperties.getServer().getAjp().getRedirectPort());
-            }
-            tomcat.addAdditionalTomcatConnectors(ajpConnector);
-        }
-
-        if (casProperties.getServer().getHttp().isEnabled()) {
-            final Connector connector = new Connector(casProperties.getServer().getHttp().getProtocol());
-
-            int port = casProperties.getServer().getHttp().getPort();
-            if (port <= 0) {
-                port = SocketUtils.findAvailableTcpPort();
-            }
-            connector.setPort(port);
-            tomcat.addAdditionalTomcatConnectors(connector);
-        }
-
-        tomcat.getAdditionalTomcatConnectors()
-                .stream()
-                .filter(connector -> connector.getProtocolHandler() instanceof AbstractProtocol)
-                .forEach(connector -> {
-                    final AbstractProtocol handler = (AbstractProtocol) connector.getProtocolHandler();
-                    handler.setSoTimeout(casProperties.getServer().getConnectionTimeout());
-                    handler.setConnectionTimeout(casProperties.getServer().getConnectionTimeout());
-                });
-        return tomcat;
     }
 }
