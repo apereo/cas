@@ -13,6 +13,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -28,6 +36,14 @@
       <version>1.8.9</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -45,6 +61,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -60,6 +84,14 @@
       <version>2.6.2</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -77,6 +109,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -92,6 +132,14 @@
       <version>2.6.2</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -113,6 +161,14 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -128,6 +184,14 @@
       <version>2.6.2</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -145,6 +209,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -160,6 +232,14 @@
       <version>1.7.21</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -177,6 +257,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -193,6 +281,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -208,6 +304,14 @@
       <version>0.9.10</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -232,6 +336,14 @@
       <version>3.20.0-GA</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -281,6 +393,10 @@
           <groupId>gigaspaces</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -311,6 +427,14 @@
         <exclusion>
           <artifactId>jboss-cache</artifactId>
           <groupId>jboss</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>xstream</artifactId>
+          <groupId>xstream</groupId>
         </exclusion>
         <exclusion>
           <artifactId>ehcache</artifactId>
@@ -369,6 +493,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -385,6 +517,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -400,6 +540,14 @@
       <version>1.1</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -429,6 +577,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -444,6 +600,14 @@
       <version>0.9.11</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -461,6 +625,14 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -476,6 +648,14 @@
       <version>2.9.4</version>
       <scope>compile</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -495,6 +675,14 @@
         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -525,8 +713,16 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -569,6 +765,14 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -585,6 +789,14 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -600,6 +812,14 @@
       <version>1.10.19</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -625,6 +845,14 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -640,6 +868,14 @@
       <version>4.12</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -659,6 +895,14 @@
         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -681,6 +925,14 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -700,6 +952,14 @@
       <version>2.0.7</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -729,8 +989,16 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>commons-lang3</artifactId>
           <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -765,6 +1033,10 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>jsonassert</artifactId>
           <groupId>org.skyscreamer</groupId>
         </exclusion>
@@ -795,6 +1067,10 @@
         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
@@ -833,6 +1109,14 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -848,6 +1132,14 @@
       <version>1.3.0</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -869,6 +1161,14 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -884,6 +1184,14 @@
       <version>1.0-groovy-2.4</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
@@ -901,6 +1209,14 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -916,6 +1232,14 @@
       <version>20160212</version>
       <scope>test</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
