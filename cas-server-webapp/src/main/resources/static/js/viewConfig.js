@@ -23,7 +23,7 @@ var viewConfigs = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/status/env',
+                "url": urls.getConfiguration,
                 "dataSrc": function (json) {
                     var return_data = new Array();
                     for (var section in json) {
