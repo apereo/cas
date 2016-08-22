@@ -8,28 +8,30 @@
     <div th:include="fragments/logo"/>
 
     <div id="content">
-
-
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/cupertino/jquery-ui.css"/>
         <link rel="stylesheet" href="//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css" />
 
-        <script type="text/javascript">
-            function jqueryReady() {
+        <script type="text/javascript" th:inline="javascript">
+            var urls = {
+                getConfiguration: /*[[@{/status/env}]]*/
+            };
+            
+            function jqueryReady() {                
                 head.load(
                         // Bootstrap Datables CSS
-                        "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
+                        "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
                         "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
-                        "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"
+                        "//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css"
                 );
 
                 head.load(
                         // JS Libraries
-                        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+                        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
 
                         // Bootstrap Datatables
-                        "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
-                        "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-                        "/cas/js/viewConfig.js"
+                        "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
+                        "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
+                        /*[[@{/js/viewConfig.js}]]*/ 
                 );
             }
         </script>
