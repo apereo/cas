@@ -17,12 +17,13 @@ public class LogoutHttpMessage extends HttpMessage {
     private final String logoutParameterName = "logoutRequest";
     
     private boolean prefixLogoutParameterName = true;
-    
+
     /**
      * Constructs a logout message.
      *
-     * @param url The url to send the message to
-     * @param message Message to send to the url
+     * @param url          The url to send the message to
+     * @param message      Message to send to the url
+     * @param asynchronous the asynchronous
      */
     public LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {
         super(url, message, asynchronous);
