@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -246,7 +245,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public BaseOAuthWrapperController oidcAccessTokenController() {
+    public OidcAccessTokenEndpointController oidcAccessTokenController() {
         final OidcAccessTokenEndpointController c = new OidcAccessTokenEndpointController();
         c.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
         c.setAccessTokenFactory(defaultAccessTokenFactory);
@@ -268,7 +267,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
         c.setValidator(oAuthValidator);
-        
+
         return c;
     }
 
@@ -283,10 +282,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setValidator(oAuthValidator);
         return c;
     }
-    
+
     @RefreshScope
     @Bean
-    public BaseOAuthWrapperController oidcProfileController() {
+    public OidcProfileEndpointController oidcProfileController() {
         final OidcProfileEndpointController c = new OidcProfileEndpointController();
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
@@ -298,7 +297,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @RefreshScope
     @Bean
-    public BaseOAuthWrapperController oidcAuthorizeController() {
+    public OidcAuthorizeEndpointController oidcAuthorizeController() {
         final OidcAuthorizeEndpointController c = new OidcAuthorizeEndpointController();
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
@@ -310,16 +309,3 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

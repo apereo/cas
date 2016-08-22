@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class OidcProfileEndpointController extends OAuth20ProfileController {
-    
+
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
@@ -33,15 +33,15 @@ public class OidcProfileEndpointController extends OAuth20ProfileController {
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication, 
+    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
                                                           final Principal principal) throws IOException {
         final Map<String, Object> map = new HashMap<>(principal.getAttributes());
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());
         }
-        
+
         map.put(OidcConstants.CLAIM_AUTH_TIME, authentication.getAuthenticationDate().toEpochSecond());
-        
+
         return map;
     }
 }
