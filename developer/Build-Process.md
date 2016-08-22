@@ -86,11 +86,12 @@ Is CN=$FULL_MACHINE_NAME, OU=Test, O=Test, L=Test, ST=Test, C=US correct?
 ```
 
 ### Deploy
+
 Execute the following command:
 
 ```bash
 CD cas-server-webapp
-gradle build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipAspectJ=true -DskipFindbugs=true 
+gradle build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipFindbugs=true 
 ```
 
 The response will look something like this:
