@@ -1,11 +1,12 @@
+showLogs("")
 var stompClient = null;
 
 function setConnected(connected) {
-    
+
     var el = document.getElementById('websocketStatus');
     el.style.visibility = connected ? 'visible' : 'hidden';
     el.class = connected ? 'alert alert-info' : 'alert alert-danger';
-    
+
     if (!connected) {
         el.innerHTML = "Disconnected!";
     } else {
@@ -17,9 +18,9 @@ function connect() {
     $("#logoutputarea").empty();
     var socket = new SockJS(urls.logOutput);
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.connect({}, function (frame) {
         setConnected(true);
-        stompClient.subscribe('/logs/logoutput', function(msg){
+        stompClient.subscribe('/logs/logoutput', function (msg) {
             if (msg != null && msg.body != "") {
                 showLogs(msg.body);
             }
@@ -29,8 +30,8 @@ function connect() {
 
 function disconnect() {
     $("#logoutputarea").empty();
-    $("#logoutputarea").attr('readonly','readonly');
-    
+    $("#logoutputarea").attr('readonly', 'readonly');
+
     if (stompClient != null) {
         stompClient.disconnect();
     }
@@ -43,16 +44,20 @@ function getLogs() {
 
 function showLogs(message) {
     var response = document.getElementById('logoutputarea');
-    response.value += message + "\n";
+    if (message != "") {
+        response.value += message + "\n";
+    }
     response.scrollTop = response.scrollHeight
 }
 
-disconnect(); 
-connect(); 
-setInterval(function(){ getLogs(); }, 1000);
+disconnect();
+connect();
+setInterval(function () {
+    getLogs();
+}, 1000);
 
 /*************
- * 
+ *
  ***************/
 $('#myTabs a').click(function (e) {
     e.preventDefault()
@@ -88,7 +93,7 @@ var loggingDashboard = (function () {
     var logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 
     var getData = function () {
-        $.getJSON(urls.getConfiguration , function (data) {
+        $.getJSON(urls.getConfiguration, function (data) {
             json = data;
             loggerTable();
         });
@@ -254,7 +259,7 @@ var loggingDashboard = (function () {
             loggerLevel: newLevel,
             additive: data.additive
         }, function () {
-            cell.data( newLevel ).draw();
+            cell.data(newLevel).draw();
             alertHandler.show('Successfully changed.', 'success');
         }).fail(function () {
             alertHandler.show('Error saving change.  Please try again', 'danger');
