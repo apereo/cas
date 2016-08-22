@@ -10,6 +10,10 @@
     <div class="alert alert-danger">
         <h2 th:utext="#{screen.unavailable.heading(${status},${error})}" />
         <p th:utext="#{screen.unavailable.message}" />
+        
+        <p>
+        <kbd th:text="${'Error: ' + message}" />
+        </p>
     </div>
 </div>
 </body>

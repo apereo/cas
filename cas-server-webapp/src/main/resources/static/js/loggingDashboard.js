@@ -208,9 +208,10 @@ var loggingDashboard = (function () {
 
     /* Formatting function for row details - modify as you need */
     var viewAppenders = function (data) {
+        alert(data.appenders)
         return '<table class="table table-bordered row-detail"><tbody><tr class="">' +
             '<td class="field-label active">Appenders:</td>' +
-            '<td>' + data.appenders + '</td>' +
+            '<td><kbd>' + JSON.stringify(data.appenders, null, 2) + '</kbd></td>' +
             '</tr>' +
             '</tbody></table>';
     };

@@ -25,9 +25,9 @@ Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
 CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
 
+## Servlet Container
 
-CAS uses Spring Webflow to drive the login process in a modular and configurable fashion; the `login-webflow.xml`
-file contains a straightforward description of states and transitions in the flow. 
+CAS can be deployed to a number of servlet containers.
 
 ## Spring Configuration
 
