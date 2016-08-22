@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController {
-    
+
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL, method = RequestMethod.GET)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
