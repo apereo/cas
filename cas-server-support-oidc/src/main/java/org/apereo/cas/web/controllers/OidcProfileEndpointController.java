@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -23,7 +22,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller(value = "oidcProfileEndpointController")
 public class OidcProfileEndpointController extends OAuth20ProfileController {
 
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,

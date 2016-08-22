@@ -50,7 +50,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
 
         discoveryProperties.setGrantTypesSupported(ImmutableList.of("authorization_code", "password", "implicit"));
 
-        final String idTokenSigningAlgValues = casProperties.getAuthn().getOidc().getIdTokenSigningAlgValues();
+        final String idTokenSigningAlgValues = casProperties.getAuthn().getOidc().getIdTokenSigningAlgs();
         discoveryProperties.setIdTokenSigningAlgValuesSupported(Lists.newArrayList(idTokenSigningAlgValues.split(",")));
 
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);

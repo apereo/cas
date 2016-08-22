@@ -11,11 +11,11 @@ import org.springframework.core.io.Resource;
  */
 
 public class OidcProperties {
-    
+
     private String issuer = "http://localhost:8080/cas/oidc";
     private int skew = 5;
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
-    private String idTokenSigningAlgValues = "RS256";
+    private String idTokenSigningAlgs = "RS256";
 
     public String getIssuer() {
         return issuer;
@@ -41,11 +41,11 @@ public class OidcProperties {
         this.jwksFile = jwksFile;
     }
 
-    public String getIdTokenSigningAlgValues() {
-        return idTokenSigningAlgValues;
+    public String getIdTokenSigningAlgs() {
+        return idTokenSigningAlgs;
     }
 
-    public void setIdTokenSigningAlgValues(final String idTokenSigningAlgValues) {
-        this.idTokenSigningAlgValues = idTokenSigningAlgValues;
+    public void setIdTokenSigningAlgs(final String idTokenSigningAlgs) {
+        this.idTokenSigningAlgs = idTokenSigningAlgs;
     }
 }
