@@ -67,7 +67,9 @@ Configure the appropriate service in your service registry to hold the secret:
       "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
     }
+ }
 }
+
 ```
 
 Note that the configuration of `jwtEncryptionSecret` is optional. 
