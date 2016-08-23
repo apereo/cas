@@ -57,20 +57,6 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 - Close [the milestone](https://github.com/apereo/cas/milestones) for this release.
 - Find [the release](https://github.com/apereo/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
 - Mark the release as pre-release, when releasing RC versions of the project. 
-
-To generate the changelog and release notes, use the below steps:
-
-1. Download and install [this tool](https://github.com/lalitkapoor/github-changes)
-2. Generate a github access token [here](https://github.com/settings/tokens)
-3. Execute the following command:
-
-```bash
-github-changes -o apereo -r cas -k <TOKEN> -a --use-commit-body
-```
-
-The output will be saved in `CHANGELOG.md` file. Comb
-through the file, edit, format and paste the final content under the release tag. 
-
 - Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
 
 ```bash
