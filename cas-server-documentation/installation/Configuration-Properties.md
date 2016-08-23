@@ -243,6 +243,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 ```properties
 spring.thymeleaf.encoding=UTF-8
 spring.thymeleaf.cache=false
+# spring.thymeleaf.prefix=classpath:/templates/
 
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
