@@ -195,7 +195,7 @@ public class CasValidationConfiguration {
     @Bean
     public ProxyValidateController proxyValidateController() {
         final ProxyValidateController c = new ProxyValidateController();
-        c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
+        c.setValidationSpecification(cas20ProtocolValidationSpecification);
         c.setSuccessView(cas3ServiceSuccessView());
         c.setFailureView(cas3ServiceFailureView);
         c.setProxyHandler(proxy20Handler);
