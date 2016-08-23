@@ -1,5 +1,5 @@
 description = "Apereo CAS Management Web Application LDAP Support"
 
 dependencies {
-    compile project(":cas-server-support-ldap")
+    compile project(":cas-server-support-ldap-core")
 }
