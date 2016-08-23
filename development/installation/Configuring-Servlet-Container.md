@@ -19,8 +19,7 @@ Remember that mostly all aspects of the embedded container can be controlled via
 
 Other embedded containers such as Jetty and Undertow may also be configured as a Tomcat replacement. To do this, the provided
 tomcat dependency **MUST** be excluded from the final package and substituted with either 
-`org.springframework.boot:spring-boot-starter-undertow` 
-or `org.springframework.boot:spring-boot-starter-jetty` instead.
+`spring-boot-starter-undertow` or `spring-boot-starter-jetty` instead.
 
 ### Root Deployments
 
