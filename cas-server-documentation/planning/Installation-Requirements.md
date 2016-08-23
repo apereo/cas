@@ -29,7 +29,7 @@ deployment solution. While it admittedly requires a high up-front cost in learni
 benefits in the long run. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
-You **DO NOT* need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
+You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
 </p></div>
 
 ## Internet Connectivity
