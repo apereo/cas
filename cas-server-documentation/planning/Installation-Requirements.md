@@ -13,14 +13,14 @@ requirements.
 
 ## Java
 
-CAS at its heart is Java-based web application. Prior to deployment, you will need [Java](http://www.java.com) `v1.8` installed.
+CAS at its heart is a Java-based web application. Prior to deployment, you will need [Java](http://www.java.com) `v1.8` installed.
 
 ## Servlet Containers
 
 There is no officially supported servlet container for CAS, but [Apache Tomcat](http://tomcat.apache.org/) is the most
 commonly used. Support for a particular servlet container depends on the expertise of community members.
 
-See [this guide](../Configuring-Servlet-Container.html) for more info.
+See [this guide](../installation/Configuring-Servlet-Container.html) for more info.
 
 ## Build Tools
 
