@@ -13,14 +13,14 @@ requirements.
 
 ## Java
 
-CAS at its heart is Java-based web application. Prior to deployment, you will need [Java](http://www.java.com) `v1.8` installed.
+CAS at its heart is a Java-based web application. Prior to deployment, you will need [Java](http://www.java.com) `v1.8` installed.
 
 ## Servlet Containers
 
 There is no officially supported servlet container for CAS, but [Apache Tomcat](http://tomcat.apache.org/) is the most
 commonly used. Support for a particular servlet container depends on the expertise of community members.
 
-See [this guide](../Configuring-Servlet-Container.html) for more info.
+See [this guide](../installation/Configuring-Servlet-Container.html) for more info.
 
 ## Build Tools
 
@@ -29,7 +29,7 @@ deployment solution. While it admittedly requires a high up-front cost in learni
 benefits in the long run. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
-You **DO NOT* need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
+You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
 </p></div>
 
 ## Internet Connectivity
