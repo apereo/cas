@@ -73,6 +73,7 @@ Configure the appropriate service in your service registry to hold the secrets:
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
     }
+  }  
 }
 ```
 
