@@ -15,12 +15,14 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
@@ -30,6 +32,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
@@ -40,6 +43,7 @@ import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
+import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
@@ -53,6 +57,7 @@ import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,18 +76,23 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * The logout flow definition registry.
      */
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
-    
+
     /**
      * The Login flow definition registry.
      */
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
-    /** CAS Properties. */
+    /**
+     * CAS Properties.
+     */
     @Autowired
     protected CasConfigurationProperties casProperties;
-    
+
     private FlowBuilderServices flowBuilderServices;
-    
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @PostConstruct
     @Override
     public void initialize() {
@@ -104,22 +114,22 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @throws Exception the exception
      */
     protected abstract void doInitialize() throws Exception;
-    
+
     @Override
     public Flow getLoginFlow() {
         return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
     }
-    
+
     @Override
     public Flow getLogoutFlow() {
         return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
     }
-    
+
     @Override
     public TransitionableState getStartState(final Flow flow) {
         return TransitionableState.class.cast(flow.getStartState());
     }
-    
+
     @Override
     public ActionState createActionState(final Flow flow, final String name, final Action... actions) {
         if (containsFlowState(flow, name)) {
@@ -132,8 +142,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         logger.debug("Added action to the action state {} list of actions: {}", actionState.getId(), actionState.getActionList());
         return actionState;
     }
-    
-    
+
+
     @Override
     public DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                              final String thenStateId, final String elseStateId) {
@@ -154,19 +164,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return decisionState;
 
     }
-    
+
     @Override
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
         final TransitionableState startState = getStartState(flow);
         logger.debug("Start state is now set to {}", startState.getId());
     }
-    
+
     @Override
     public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
     }
-    
+
     /**
      * From string to class type, based on the flow conversion service.
      *
@@ -176,7 +186,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected ConversionExecutor convertClassToTargetType(final Class targetType) {
         return this.flowBuilderServices.getConversionService().getConversionExecutor(String.class, targetType);
     }
-    
+
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
         final ParserContext ctx = new FluentParserContext();
@@ -212,7 +222,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the transition
      */
     protected Transition createTransitionForState(final TransitionableState state,
-                                            final String criteriaOutcome, final String targetState) {
+                                                  final String criteriaOutcome, final String targetState) {
         try {
             final Transition transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
@@ -223,17 +233,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
         return null;
     }
-    
+
     @Override
     public Transition createTransition(final String criteriaOutcome, final String targetState) {
         return createTransition(new LiteralExpression(criteriaOutcome), targetState);
     }
-    
+
     @Override
     public Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
         return createTransition(new LiteralExpression(criteriaOutcome), targetState.getId());
     }
-    
+
     @Override
     public Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
         final TransitionCriteria criteria;
@@ -287,7 +297,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return parser;
 
     }
-    
+
     @Override
     public Transition createTransition(final String targetState) {
         final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
@@ -303,7 +313,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public EndState createEndState(final Flow flow, final String id, final String viewId) {
         return createEndState(flow, id, new LiteralExpression(viewId));
     }
-    
+
     @Override
     public EndState createEndState(final Flow flow, final String id, final Expression expression) {
         final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
@@ -344,11 +354,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             logger.debug("Created end state state {} on flow id {}", id, flow.getId());
         }
         return endState;
- 
+
     }
-        
+
     @Override
-    public ViewState createViewState(final Flow flow, final String id, final Expression expression, 
+    public ViewState createViewState(final Flow flow, final String id, final Expression expression,
                                      final BinderConfiguration binder) {
         try {
             if (containsFlowState(flow, id)) {
@@ -382,7 +392,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public ViewState createViewState(final Flow flow, final String id, final String viewId, final BinderConfiguration binder) {
         return createViewState(flow, id, new LiteralExpression(viewId), binder);
     }
-    
+
     @Override
     public SubflowState createSubflowState(final Flow flow, final String id, final String subflow,
                                            final Action entryAction) {
@@ -419,7 +429,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
         }
     }
-    
+
     /**
      * Create mapper to subflow state.
      *
@@ -520,5 +530,54 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected boolean containsFlowState(final Flow flow, final String stateId) {
         return flow.containsState(stateId);
+    }
+
+    /**
+     * Create flow variable flow variable.
+     *
+     * @param flow the flow
+     * @param id   the id
+     * @param type the type
+     * @return the flow variable
+     */
+    protected FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
+        final FlowVariable flowVar = new FlowVariable(id, new BeanFactoryVariableValueFactory(type,
+                applicationContext.getAutowireCapableBeanFactory()));
+        flow.addVariable(flowVar);
+        return flowVar;
+    }
+
+    /**
+     * Create state model bindings.
+     *
+     * @param properties the properties
+     */
+    protected BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
+        final BinderConfiguration binder = new BinderConfiguration();
+        properties.forEach(p -> binder.addBinding(new BinderConfiguration.Binding(p, null, true)));
+        return binder;
+    }
+
+    /**
+     * Create state model binding.
+     *
+     * @param state     the state
+     * @param modelName the model name
+     * @param modelType the model type
+     */
+    protected void createStateModelBinding(final TransitionableState state, final String modelName, final Class modelType) {
+        state.getAttributes().put("model", createExpression(modelName, modelType));
+    }
+
+    /**
+     * Gets state binder configuration.
+     *
+     * @param state the state
+     * @return the state binder configuration
+     */
+    protected BinderConfiguration getViewStateBinderConfiguration(final ViewState state) {
+        final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
+        ReflectionUtils.makeAccessible(field);
+        return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
     }
 }

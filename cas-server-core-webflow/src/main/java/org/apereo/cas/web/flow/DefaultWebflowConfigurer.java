@@ -1,10 +1,14 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
@@ -15,6 +19,8 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * @since 5.0.0
  */
 public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
+    
+    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -23,6 +29,19 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createDefaultEndStates(flow);
         createDefaultDecisionStates(flow);
         createDefaultActionStates(flow);
+        
+        createRememberMeAuthnWebflowConfig(flow);
+    }
+
+    private void createRememberMeAuthnWebflowConfig(final Flow flow) {
+        if (casProperties.getTicket().getTgt().getRememberMe().isEnabled()) {
+            createFlowVariable(flow, "credential", RememberMeUsernamePasswordCredential.class);
+            final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
+            cfg.addBinding(new BinderConfiguration.Binding("rememberMe", null, false));
+        } else {
+            createFlowVariable(flow, "credential", UsernamePasswordCredential.class);
+        }
     }
 
     /**
@@ -98,8 +117,6 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createDecisionState(flow, "renewRequestCheck",
                 "requestParameters.renew != '' and requestParameters.renew != null",
                 "serviceAuthorizationCheck", "generateServiceTicket");
-        
-        
     }
 }
 

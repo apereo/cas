@@ -609,4 +609,14 @@ public final class WebUtils {
     public static void putLogoutRedirectUrl(final RequestContext context, final String service) {
         context.getFlowScope().put("logoutRedirectUrl", service);
     }
+
+    /**
+     * Put remember me authentication enabled.
+     *
+     * @param context the context
+     * @param enabled the enabled
+     */
+    public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
+        context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled); 
+    }
 }
