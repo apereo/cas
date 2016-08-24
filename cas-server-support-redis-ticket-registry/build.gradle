@@ -10,4 +10,5 @@ dependencies {
     testCompile project(path: ":cas-server-core-services", configuration: "tests")
     testCompile project(":cas-server-core-util")
     testCompile project(":cas-server-core-logout")
+    testCompile group: 'com.github.kstyrc', name: 'embedded-redis', version: '0.6'
 }

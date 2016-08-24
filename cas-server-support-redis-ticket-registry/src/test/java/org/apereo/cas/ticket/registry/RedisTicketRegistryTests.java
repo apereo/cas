@@ -8,7 +8,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import redis.embedded.RedisServer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,9 +51,22 @@ public class RedisTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    private static RedisServer redisServer;
+
     @Before
     public void setUp() throws Exception {
         initTicketRegistry();
+    }
+
+    @BeforeClass
+    public static void startRedis() throws Exception {
+        redisServer = new RedisServer(6379);
+        redisServer.start();
+    }
+
+    @AfterClass
+    public static void stopRedis(){
+        redisServer.stop();
     }
 
     /**
