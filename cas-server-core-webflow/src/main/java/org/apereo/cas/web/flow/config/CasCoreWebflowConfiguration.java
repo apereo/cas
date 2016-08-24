@@ -10,6 +10,8 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.DefaultWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
@@ -29,6 +31,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -76,6 +80,13 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+    
     @Bean
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
@@ -95,6 +106,14 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
+    @Bean
+    public CasWebflowConfigurer defaultWebflowConfigurer() {
+        final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer();
+        c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        c.setFlowBuilderServices(flowBuilderServices);
+        return c;
+    }
+    
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {

@@ -28,7 +28,7 @@
     </action-state>
 
     <action-state id="terminateSession">
-        <evaluate expression="terminateSessionAction.terminate(flowRequestContext)"/>
+        <evaluate expression="terminateSessionAction"/>
         <transition to="gatewayRequestCheck"/>
     </action-state>
 
@@ -177,9 +177,4 @@
     </decision-state>
 
     <end-state id="viewRedirectToUnauthorizedUrlView" view="externalRedirect:#{flowScope.unauthorizedRedirectUrl}"/>
-    <global-transitions>
-        <transition to="viewLoginForm" on-exception="org.apereo.cas.services.UnauthorizedSsoServiceException"/>
-        <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
-        <transition to="serviceUnauthorizedCheck" on-exception="org.apereo.cas.services.UnauthorizedServiceException"/>
-    </global-transitions>
 </flow>
