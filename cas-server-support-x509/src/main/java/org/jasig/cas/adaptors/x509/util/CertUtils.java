@@ -61,7 +61,7 @@ public final class CertUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final Resource resource) {
-        try (final InputStream in = resource.getInputStream()) {
+        try (InputStream in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
             throw new RuntimeException("Error reading certificate " + resource, e);

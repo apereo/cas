@@ -88,7 +88,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
             final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-            try (final FileInputStream casStream = new FileInputStream(trustStoreFile)) {
+            try (FileInputStream casStream = new FileInputStream(trustStoreFile)) {
                 casTrustStore.load(casStream, trustStorePasswordCharArray);
             }
 

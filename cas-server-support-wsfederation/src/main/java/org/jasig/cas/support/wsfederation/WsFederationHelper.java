@@ -147,8 +147,7 @@ public final class WsFederationHelper {
      * @return an assertion
      */
     public Assertion parseTokenFromString(final String wresult, final WsFederationConfiguration config) {
-        try (final InputStream in = new ByteArrayInputStream(wresult.getBytes("UTF-8"))) {
-
+        try (InputStream in = new ByteArrayInputStream(wresult.getBytes("UTF-8"))) {
             final Document document = configBean.getParserPool().parse(in);
             final Element metadataRoot = document.getDocumentElement();
             final UnmarshallerFactory unmarshallerFactory = configBean.getUnmarshallerFactory();
