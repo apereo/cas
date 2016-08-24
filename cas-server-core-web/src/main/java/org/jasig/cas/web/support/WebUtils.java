@@ -317,17 +317,7 @@ public final class WebUtils {
         final String lt = (String) context.getFlowScope().remove("loginTicket");
         return lt != null ? lt : "";
     }
-
-    /**
-     * Gets the login ticket from request.
-     *
-     * @param context the context
-     * @return the login ticket from request
-     */
-    public static String getLoginTicketFromRequest(final RequestContext context) {
-       return context.getRequestParameters().get("lt");
-    }
-
+    
     /**
      * Put logout requests into flow scope.
      *
