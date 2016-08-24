@@ -9,6 +9,7 @@ import org.apereo.cas.util.DateTimeUtils;
 
 /**
  * Converts ZonedDateTime &lt;-&gt; Date.
+ *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
@@ -16,13 +17,21 @@ import org.apereo.cas.util.DateTimeUtils;
 public class ZonedDateTimeConverter implements AttributeConverter<ZonedDateTime, Date> {
 
     @Override
-    public Date convertToDatabaseColumn(final ZonedDateTime zonedDateTime){
-        return DateTimeUtils.dateOf(zonedDateTime);
+    public Date convertToDatabaseColumn(final ZonedDateTime zonedDateTime) {
+        if (zonedDateTime != null) {
+            return DateTimeUtils.dateOf(zonedDateTime);
+        } else {
+            return null;
+        }
     }
 
 
     @Override
     public ZonedDateTime convertToEntityAttribute(final Date date) {
-        return DateTimeUtils.zonedDateTimeOf(date);
+        if (date != null) {
+            return DateTimeUtils.zonedDateTimeOf(date);
+        } else {
+            return null;
+        }
     }
 }
