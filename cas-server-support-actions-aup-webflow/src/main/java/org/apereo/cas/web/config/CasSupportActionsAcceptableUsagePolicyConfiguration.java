@@ -54,7 +54,7 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
+    @ConditionalOnMissingBean
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         return new DefaultAcceptableUsagePolicyRepository();

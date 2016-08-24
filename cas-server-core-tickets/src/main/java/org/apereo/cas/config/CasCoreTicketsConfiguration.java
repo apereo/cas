@@ -268,7 +268,7 @@ public class CasCoreTicketsConfiguration {
         return map;
     }
     
-    @ConditionalOnMissingBean(name = "lockingStrategy")
+    @ConditionalOnMissingBean
     @Bean
     public LockingStrategy lockingStrategy() {
         return new LockingStrategy() {
@@ -286,7 +286,7 @@ public class CasCoreTicketsConfiguration {
         };
     }
      
-    @ConditionalOnMissingBean(name="ticketRegistryCleaner")
+    @ConditionalOnMissingBean
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
@@ -296,7 +296,7 @@ public class CasCoreTicketsConfiguration {
         return c;
     }
 
-    @ConditionalOnMissingBean(name = "ticketTransactionManager")
+    @ConditionalOnMissingBean
     @Bean
     public PlatformTransactionManager ticketTransactionManager() {
         return new PseudoTransactionManager();

@@ -316,7 +316,7 @@ public class CasCoreAuthenticationConfiguration {
         return h;
     }
 
-    @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
+    @ConditionalOnMissingBean
     @Bean
     public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT)
                                                final HttpClient httpClient) {

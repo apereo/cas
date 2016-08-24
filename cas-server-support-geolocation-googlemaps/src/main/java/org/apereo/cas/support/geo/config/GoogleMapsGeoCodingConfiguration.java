@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleMapsGeoCodingConfiguration {
 
-    @ConditionalOnMissingBean(name = "geoLocationService")
+    @ConditionalOnMissingBean
     @Bean
     @RefreshScope
     public GeoLocationService geoLocationService() {
