@@ -551,6 +551,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * Create state model bindings.
      *
      * @param properties the properties
+     * @return the binder configuration
      */
     protected BinderConfiguration createStateBinderConfiguration(final List<String> properties) {
         final BinderConfiguration binder = new BinderConfiguration();
