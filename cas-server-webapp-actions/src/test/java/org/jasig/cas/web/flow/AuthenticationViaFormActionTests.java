@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -55,7 +56,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
+
         request.addParameter("username", "test");
         request.addParameter("password", "test");
 
@@ -76,7 +77,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         request.addParameter("username", "test");
         request.addParameter("password", "test");
@@ -100,7 +100,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("warn", "true");
@@ -121,21 +120,20 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test2");
-
+        final UsernamePasswordCredential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        
+        request.addParameter("username", c.getUsername());
+        request.addParameter("password", c.getPassword());
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-
-        final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
+        
         putCredentialInRequestScope(context, c);
-
         context.getRequestScope().put(
             "org.springframework.validation.BindException.credentials",
             new BindException(c, "credentials"));
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("error", this.action.submit(context, c, messageContext).getId());
+        assertEquals("authenticationFailure", this.action.submit(context, c, messageContext).getId());
     }
 
     @Test
@@ -151,7 +149,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         request.addParameter("renew", "true");
         request.addParameter("service", TestUtils.getService(TestUtils.CONST_TEST_URL).getId());
@@ -178,7 +175,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putLoginTicket(context, "LOGIN");
-        request.addParameter("lt", "LOGIN");
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");
@@ -217,7 +213,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
             new BindException(c2, "credentials"));
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("error", this.action.submit(context, c2, messageContext).getId());
+        assertEquals("authenticationFailure", this.action.submit(context, c2, messageContext).getId());
     }
 
 

@@ -37,11 +37,11 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         actionState.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow).getId()));
         setStartState(flow, actionState);
 
-        final TransitionableState loginTicketState = flow.getTransitionableState(STATE_ID_GENERATE_LOGIN_TICKET);
-        final Iterator<Transition> it = loginTicketState.getTransitionSet().iterator();
+        final TransitionableState initLoginState = flow.getTransitionableState(STATE_ID_INITIALIZE_LOGIN);
+        final Iterator<Transition> it = initLoginState.getTransitionSet().iterator();
         while (it.hasNext()) {
             final Transition transition = it.next();
-            if (transition.getId().equals(TRANSITION_ID_GENERATED)) {
+            if (transition.getId().equals(TRANSITION_ID_SUCCESS)) {
                 final TargetStateResolver targetStateResolver = (TargetStateResolver) fromStringTo(TargetStateResolver.class)
                         .execute("wsFederationRedirect");
                 transition.setTargetStateResolver(targetStateResolver);
