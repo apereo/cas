@@ -59,7 +59,7 @@ public class CasBasicAuthenticationConfiguration {
         return a;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="basicAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
         final BasicAuthenticationWebflowConfigurer w =

@@ -35,7 +35,7 @@ public class CasCaptchaConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="captchaWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer captchaWebflowConfigurer() {
         final CasCaptchaWebflowConfigurer w = new CasCaptchaWebflowConfigurer();

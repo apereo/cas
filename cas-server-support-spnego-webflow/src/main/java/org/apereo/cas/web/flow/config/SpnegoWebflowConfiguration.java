@@ -66,7 +66,7 @@ public class SpnegoWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="spnegoWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
         final SpengoWebflowConfigurer w = new SpengoWebflowConfigurer();

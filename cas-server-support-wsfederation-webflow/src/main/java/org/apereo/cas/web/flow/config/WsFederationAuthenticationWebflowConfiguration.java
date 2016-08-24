@@ -32,7 +32,7 @@ public class WsFederationAuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="wsFederationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         final WsFederationWebflowConfigurer w = new WsFederationWebflowConfigurer();
