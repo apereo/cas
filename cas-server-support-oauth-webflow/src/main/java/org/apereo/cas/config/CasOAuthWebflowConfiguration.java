@@ -38,7 +38,7 @@ public class CasOAuthWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="oauth20LogoutWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         final OAuth20LogoutWebflowConfigurer c = new OAuth20LogoutWebflowConfigurer();

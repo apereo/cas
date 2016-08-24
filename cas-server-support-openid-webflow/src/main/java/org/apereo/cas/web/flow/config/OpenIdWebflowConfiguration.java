@@ -29,7 +29,7 @@ public class OpenIdWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="openidWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer openidWebflowConfigurer() {
         final OpenIdWebflowConfigurer w = new OpenIdWebflowConfigurer();

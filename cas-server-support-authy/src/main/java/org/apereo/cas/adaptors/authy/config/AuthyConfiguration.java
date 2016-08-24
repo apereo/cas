@@ -159,7 +159,7 @@ public class AuthyConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         final AuthyMultifactorWebflowConfigurer c =

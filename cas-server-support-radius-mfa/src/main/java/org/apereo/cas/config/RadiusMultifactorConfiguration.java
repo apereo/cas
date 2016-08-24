@@ -210,7 +210,7 @@ public class RadiusMultifactorConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="radiusMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
         final RadiusMultifactorWebflowConfigurer w =

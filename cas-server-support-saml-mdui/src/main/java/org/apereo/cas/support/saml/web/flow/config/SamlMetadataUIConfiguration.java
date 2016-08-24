@@ -83,7 +83,7 @@ public class SamlMetadataUIConfiguration {
     @javax.annotation.Resource(name = "webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="samlMetadataUIWebConfigurer")
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
         final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();

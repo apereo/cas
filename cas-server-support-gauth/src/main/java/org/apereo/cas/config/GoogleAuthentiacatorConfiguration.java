@@ -147,7 +147,7 @@ public class GoogleAuthentiacatorConfiguration {
         return g;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="googleAuthenticatorAccountRegistry")
     @Bean
     @RefreshScope
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
@@ -202,7 +202,7 @@ public class GoogleAuthentiacatorConfiguration {
         return a;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         final GoogleAuthenticatorMultifactorWebflowConfigurer c =

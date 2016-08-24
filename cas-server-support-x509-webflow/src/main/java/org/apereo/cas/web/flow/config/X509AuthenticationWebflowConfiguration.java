@@ -29,7 +29,7 @@ public class X509AuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="x509WebflowConfigurer")
     @Bean
     public CasWebflowConfigurer x509WebflowConfigurer() {
         final X509WebflowConfigurer w = new X509WebflowConfigurer();
