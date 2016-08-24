@@ -60,7 +60,13 @@
                 <a href="https://pwd.example.org" th:text="#{screen.pm.button.forgotpwd}" />
             </div>
         </section>
-
+        <section class="row check">
+            <p th:if="${rememberMeAuthenticationEnabled}">
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
+                <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}"/>
+            </p>
+        </section>
+        
         <section class="row" th:if="${recaptchaSiteKey}">
             <div>
                 <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>

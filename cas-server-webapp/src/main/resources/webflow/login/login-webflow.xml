@@ -4,11 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.apereo.cas.authentication.UsernamePasswordCredential"/>
     
-    <!--
-    <var name="credential" class="RememberMeUsernamePasswordCredential" />
-    -->
     <on-start>
         <evaluate expression="initialFlowSetupAction"/>
     </on-start>
@@ -36,10 +32,6 @@
         <binder>
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
-
-            <!--
-            <binding property="rememberMe" />
-            -->
         </binder>
         <!--
         <on-entry>
