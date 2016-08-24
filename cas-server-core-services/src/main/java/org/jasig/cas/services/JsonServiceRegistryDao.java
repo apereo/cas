@@ -154,7 +154,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
         final File f = makeFile(service);
-        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
+        try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
             this.registeredServiceJsonSerializer.toJson(out, service);
 
             if (this.serviceMap.containsKey(service.getId())) {
@@ -242,7 +242,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             return null;
         }
 
-        try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceJsonSerializer.fromJson(in);
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file " + file.getName(), e);

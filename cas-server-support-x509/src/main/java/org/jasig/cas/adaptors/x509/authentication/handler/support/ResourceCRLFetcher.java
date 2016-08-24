@@ -81,7 +81,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
             throw new IllegalArgumentException("Resource " + r + " could not be identified");
         }
 
-        try (final InputStream ins = rs.getInputStream()) {
+        try (InputStream ins = rs.getInputStream()) {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
         }
     }

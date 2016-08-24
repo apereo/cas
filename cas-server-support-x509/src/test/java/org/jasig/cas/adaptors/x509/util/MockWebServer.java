@@ -151,7 +151,7 @@ public class MockWebServer {
             out.write(SEPARATOR.getBytes());
 
             final byte[] buffer = new byte[BUFFER_SIZE];
-            try (final InputStream in = this.resource.getInputStream()) {
+            try (InputStream in = this.resource.getInputStream()) {
                 int count = 0;
                 while ((count = in.read(buffer)) > -1) {
                     out.write(buffer, 0, count);

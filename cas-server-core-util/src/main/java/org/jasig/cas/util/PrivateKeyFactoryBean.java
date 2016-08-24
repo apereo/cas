@@ -27,7 +27,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
 
     @Override
     protected PrivateKey createInstance() throws Exception {
-        try (final InputStream privKey = this.location.getInputStream()) {
+        try (InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
             privKey.read(bytes);
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
