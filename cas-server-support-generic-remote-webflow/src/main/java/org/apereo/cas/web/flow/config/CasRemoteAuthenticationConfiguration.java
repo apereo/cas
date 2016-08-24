@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,7 @@ public class CasRemoteAuthenticationConfiguration {
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
         final RemoteAddressWebflowConfigurer w = new RemoteAddressWebflowConfigurer();

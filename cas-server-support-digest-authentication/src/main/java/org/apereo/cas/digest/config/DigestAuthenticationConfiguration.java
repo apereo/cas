@@ -77,6 +77,7 @@ public class DigestAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
         final DigestAuthenticationWebflowConfigurer w = new DigestAuthenticationWebflowConfigurer();
@@ -103,7 +104,7 @@ public class DigestAuthenticationConfiguration {
         return w;
     }
 
-    @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
+    @ConditionalOnMissingBean
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {

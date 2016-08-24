@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.OpenIdWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class OpenIdWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer openidWebflowConfigurer() {
         final OpenIdWebflowConfigurer w = new OpenIdWebflowConfigurer();

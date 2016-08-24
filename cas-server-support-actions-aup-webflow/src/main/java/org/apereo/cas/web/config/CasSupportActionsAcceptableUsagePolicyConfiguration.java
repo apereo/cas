@@ -45,6 +45,7 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
         return a;
     }
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer();

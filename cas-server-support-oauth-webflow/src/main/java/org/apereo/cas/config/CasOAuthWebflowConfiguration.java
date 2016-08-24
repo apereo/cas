@@ -8,6 +8,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,7 @@ public class CasOAuthWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         final OAuth20LogoutWebflowConfigurer c = new OAuth20LogoutWebflowConfigurer();
