@@ -168,19 +168,7 @@ subprojects {
         compile group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
         compile group: 'javax.validation', name: 'validation-api', version: javaxValidationVersion
         compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
-
-        if (!Boolean.getBoolean("skipAspectJ")) {
-            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(group: 'javax.validation', module: 'validation-api')
-                exclude(group: 'org.aspectj', module: 'aspectjrt')
-            }
-
-            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(group: 'javax.validation', module: 'validation-api')
-                exclude(group: 'org.aspectj', module: 'aspectjrt')
-            }
-        }
-
+        
         if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: findbugsVersion
             findbugs configurations.findbugsPlugins.dependencies
