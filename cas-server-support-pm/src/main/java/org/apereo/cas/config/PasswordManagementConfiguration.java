@@ -82,7 +82,7 @@ public class PasswordManagementConfiguration {
     }
 
     @RefreshScope
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "passwordValidator")
     @Bean
     public PasswordValidator passwordValidator() {
         return new PasswordValidator();
