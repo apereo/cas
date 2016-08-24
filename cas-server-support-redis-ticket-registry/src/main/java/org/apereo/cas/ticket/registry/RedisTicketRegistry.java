@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
+import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author serv
  */
-public class RedisTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
+public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     private final static String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
@@ -84,9 +84,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Dispo
         Set<Ticket> tickets = new HashSet<Ticket>();
         Set<String> keys = this.client.keys(CAS_TICKET_PREFIX + "*");
         for (String key:keys){
-            Ticket ticket = this.client.boundValueOps(CAS_TICKET_PREFIX+key).get();
+            Ticket ticket = this.client.boundValueOps(key).get();
             if(ticket==null){
-                this.client.delete(CAS_TICKET_PREFIX+key);
+                this.client.delete(key);
             }else{
                 tickets.add(this.decodeTicket(ticket));
             }
@@ -99,7 +99,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Dispo
         addTicket(ticket);
     }
 
-    @Override
+    @PreDestroy
     public void destroy() throws Exception {
         client.getConnectionFactory().getConnection().close();
     }
