@@ -91,10 +91,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * The transition state 'submit'.
      */
     protected static final String TRANSITION_ID_SUBMIT = "submit";
-    /**
-     * The transition state 'generated'.
-     */
-    protected static final String TRANSITION_ID_GENERATED = "generated";
+
     /**
      * The transition state 'error'.
      */
@@ -110,9 +107,9 @@ public abstract class AbstractCasWebflowConfigurer {
     protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
-     * The action state 'generateLoginTicket'.
+     * The action state 'initializeLogin'.
      */
-    protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
+    protected static final String STATE_ID_INITIALIZE_LOGIN = "initializeLogin";
 
     private static final String FLOW_ID_LOGIN = "login";
 

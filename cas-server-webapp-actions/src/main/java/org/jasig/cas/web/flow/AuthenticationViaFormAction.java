@@ -5,12 +5,12 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Service;
@@ -85,48 +85,11 @@ public class AuthenticationViaFormAction {
      */
     public final Event submit(final RequestContext context, final Credential credential,
                               final MessageContext messageContext)  {
-        if (!checkLoginTicketIfExists(context)) {
-            return returnInvalidLoginTicketEvent(context, messageContext);
-        }
-
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);
         }
 
         return createTicketGrantingTicket(context, credential, messageContext);
-    }
-
-    /**
-     * Tries to to determine if the login ticket in the request flow scope
-     * matches the login ticket provided by the request. The comparison
-     * is case-sensitive.
-     *
-     * @param context the context
-     * @return true if valid
-     * @since 4.1.0
-     */
-    protected boolean checkLoginTicketIfExists(final RequestContext context) {
-        final String loginTicketFromFlowScope = WebUtils.getLoginTicketFromFlowScope(context);
-        final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
-
-        logger.trace("Comparing login ticket in the flow scope [{}] with login ticket in the request [{}]",
-                loginTicketFromFlowScope, loginTicketFromRequest);
-        return StringUtils.equals(loginTicketFromFlowScope, loginTicketFromRequest);
-    }
-
-    /**
-     * Return invalid login ticket event.
-     *
-     * @param context the context
-     * @param messageContext the message context
-     * @return the error event
-     * @since 4.1.0
-     */
-    protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
-        final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
-        logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
-        messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
-        return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR);
     }
 
     /**
