@@ -24,7 +24,7 @@ public class RedisTicketRegistryConfiguration {
 
 
     @Autowired
-    CasConfigurationProperties properties;
+    private CasConfigurationProperties properties;
 
     private RedisTicketRegistryProperties redisProperties(){
         return properties.getTicket().getRegistry().getRedis();

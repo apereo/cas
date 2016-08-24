@@ -17,21 +17,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisTicketRegistry extends AbstractTicketRegistry {
 
-    private final static String CAS_TICKET_PREFIX = "CAS_TICKET:";
+    private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     /**
      * redis client.
      */
     @NotNull
-    private TicketRedisTemplate client;
+    private final TicketRedisTemplate client;
 
 
-    public RedisTicketRegistry(TicketRedisTemplate client) {
+    public RedisTicketRegistry(final TicketRedisTemplate client) {
         this.client = client;
     }
 
     @Override
-    public boolean deleteSingleTicket(String ticketId) {
+    public boolean deleteSingleTicket(final String ticketId) {
         try {
             Assert.notNull(this.client, "No redis client is defined.");
             this.client.delete(CAS_TICKET_PREFIX+ticketId);
@@ -44,7 +44,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
 
     @Override
-    public void addTicket(Ticket ticket) {
+    public void addTicket(final Ticket ticket) {
         if (this.client == null) {
             logger.error("No redis client is configured.");
         }
@@ -57,7 +57,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         if (this.client == null) {
             logger.error("No redis client is configured.");
             return null;
@@ -95,7 +95,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
