@@ -25,7 +25,7 @@
                    th:title="#{services.form.tooltip.assignedId}"></i>
             </label>
             <div class="col-sm-7">
-                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.assignedId" />
+                <input type="text" class="form-control" id="assignedId" ng-disabled="serviceFormCtrl.serviceData.assignedId != ''" ng-model="serviceFormCtrl.serviceData.assignedId" />
             </div>
         </div>
     </div>
