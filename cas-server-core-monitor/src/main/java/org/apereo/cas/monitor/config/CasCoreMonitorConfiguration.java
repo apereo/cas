@@ -39,7 +39,7 @@ public class CasCoreMonitorConfiguration {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @ConditionalOnMissingBean(name = "healthCheckMonitor")
+    @ConditionalOnMissingBean
     @Bean
     public Monitor healthCheckMonitor() {
         final Map<String, Monitor> beans = applicationContext.getBeansOfType(Monitor.class, false, true);

@@ -144,7 +144,7 @@ public class CasCoreAuditConfiguration {
         return new MessageBundleAwareResourceResolver();
     }
 
-    @ConditionalOnMissingBean(name = "principalIdProvider")
+    @ConditionalOnMissingBean
     @Bean
     public PrincipalIdProvider principalIdProvider() {
         return new PrincipalIdProvider() {
