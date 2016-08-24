@@ -107,13 +107,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     private TicketRegistry ticketRegistry;
 
 
-    @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
+    @ConditionalOnMissingBean
     @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
 
-    @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
+    @ConditionalOnMissingBean
     @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
@@ -171,13 +171,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
+    @ConditionalOnMissingBean
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), CAS_OAUTH_CLIENT);
     }
 
-    @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
+    @ConditionalOnMissingBean
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver();
