@@ -1,8 +1,8 @@
-
 description = "Apereo CAS Core Webflow"
 dependencies {
     compile libraries.spring
     compile libraries.hibernate
+    compile libraries.guava
     compile project(":cas-server-core-api-authentication")
     compile project(":cas-server-core-web")
     compile project(":cas-server-core-api-ticket")
