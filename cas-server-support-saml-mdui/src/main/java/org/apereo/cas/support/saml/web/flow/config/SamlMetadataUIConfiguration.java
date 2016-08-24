@@ -31,6 +31,7 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +83,7 @@ public class SamlMetadataUIConfiguration {
     @javax.annotation.Resource(name = "webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
         final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
