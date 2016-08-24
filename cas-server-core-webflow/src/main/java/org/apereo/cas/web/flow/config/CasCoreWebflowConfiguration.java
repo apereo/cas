@@ -26,6 +26,7 @@ import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebf
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -106,6 +107,7 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer();

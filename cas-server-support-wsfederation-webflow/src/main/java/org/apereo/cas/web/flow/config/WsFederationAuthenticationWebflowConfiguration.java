@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,8 @@ public class WsFederationAuthenticationWebflowConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
+    @ConditionalOnMissingBean
     @Bean
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         final WsFederationWebflowConfigurer w = new WsFederationWebflowConfigurer();
