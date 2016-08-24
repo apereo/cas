@@ -183,7 +183,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20ConsentApprovalViewResolver();
     }
 
-    @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
+    @ConditionalOnMissingBean
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
