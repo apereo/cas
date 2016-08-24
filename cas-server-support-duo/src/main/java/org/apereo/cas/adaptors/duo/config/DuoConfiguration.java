@@ -174,7 +174,7 @@ public class DuoConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="duoMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final DuoMultifactorWebflowConfigurer r = new DuoMultifactorWebflowConfigurer();

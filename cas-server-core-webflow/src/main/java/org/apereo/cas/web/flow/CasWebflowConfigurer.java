@@ -153,6 +153,17 @@ public interface CasWebflowConfigurer {
     EndState createEndState(Flow flow, String id);
 
     /**
+     * Create end state with option to handle an external redirect.
+     *
+     * @param flow     the flow
+     * @param id       the id
+     * @param viewId   the view id
+     * @param redirect the redirect
+     * @return the end state
+     */
+    EndState createEndState(Flow flow, String id, String viewId, boolean redirect);
+
+    /**
      * Create end state.
      *
      * @param flow   the flow

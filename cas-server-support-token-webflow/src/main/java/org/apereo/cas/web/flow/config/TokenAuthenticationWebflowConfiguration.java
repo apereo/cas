@@ -29,7 +29,7 @@ public class TokenAuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="tokenWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer tokenWebflowConfigurer() {
         final TokenWebflowConfigurer w = new TokenWebflowConfigurer();

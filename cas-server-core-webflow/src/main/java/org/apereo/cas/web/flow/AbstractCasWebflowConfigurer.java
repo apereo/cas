@@ -22,6 +22,7 @@ import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.webflow.action.EvaluateAction;
+import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -38,6 +39,7 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
@@ -312,6 +314,16 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 this.flowBuilderServices.getValidator(),
                 this.flowBuilderServices.getValidationHintResolver());
 
+        return createEndState(flow, id, viewFactory);
+    }
+
+    @Override
+    public EndState createEndState(final Flow flow, final String id, final String viewId, final boolean redirect) {
+        if (!redirect) {
+            return createEndState(flow, id, viewId);
+        }
+        final Expression expression = createExpression(viewId, String.class);
+        final ActionExecutingViewFactory viewFactory = new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
         return createEndState(flow, id, viewFactory);
     }
 

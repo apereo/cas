@@ -107,7 +107,7 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="defaultWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer();
