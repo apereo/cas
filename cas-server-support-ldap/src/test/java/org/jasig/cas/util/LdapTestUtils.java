@@ -46,7 +46,7 @@ public final class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(BASE_DN_PLACEHOLDER)) {

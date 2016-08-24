@@ -83,7 +83,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
-        try (final Formatter formatter = new Formatter(builder)) {
+        try (Formatter formatter = new Formatter(builder)) {
             formatter.format("%.2f", this.size / BYTES_PER_MB);
             builder.append("MB used, ");
             builder.append(getPercentFree()).append("% free, ");

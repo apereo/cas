@@ -105,7 +105,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
 
     @Override
     public void toJson(final OutputStream out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             final String hjsonString = JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON);
             IOUtils.write(hjsonString, out);
@@ -116,7 +116,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
 
     @Override
     public void toJson(final Writer out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             JsonValue.readHjson(writer.toString()).writeTo(out, Stringify.FORMATTED);
         } catch (final Exception e) {
@@ -126,7 +126,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
 
     @Override
     public void toJson(final File out, final T object) {
-        try (final StringWriter writer = new StringWriter()) {
+        try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
         } catch (final Exception e) {

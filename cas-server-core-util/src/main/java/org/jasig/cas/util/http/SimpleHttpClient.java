@@ -111,7 +111,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
 
         HttpEntity entity = null;
 
-        try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {

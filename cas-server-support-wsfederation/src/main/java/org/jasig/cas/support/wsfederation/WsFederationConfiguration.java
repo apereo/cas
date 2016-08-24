@@ -281,7 +281,7 @@ public final class WsFederationConfiguration implements Serializable {
      * @return an X509 credential
      */
     private Credential getSigningCredential(final Resource resource) {
-        try (final InputStream inputStream = resource.getInputStream()) {
+        try (InputStream inputStream = resource.getInputStream()) {
             final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
             final Credential publicCredential = new BasicX509Credential(certificate);

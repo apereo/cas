@@ -45,7 +45,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     public boolean submit(final RequestContext requestContext, final Credential credential) {
 
         String currentDn = null;
-        try (final Connection searchConnection = LdapUtils.createConnection(this.connectionFactory)) {
+        try (Connection searchConnection = LdapUtils.createConnection(this.connectionFactory)) {
             final Response<SearchResult> response = searchForId(searchConnection, credential.getId());
             if (LdapUtils.containsResultEntry(response)) {
                 currentDn = response.getResult().getEntry().getDn();
