@@ -24,8 +24,9 @@ import java.util.Collection;
  *
  * @author Scott Battaglia
  * @since 3.1.2
- *
+ * @deprecated As of CAS 5. 
  */
+@Deprecated
 public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
@@ -33,7 +34,7 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     private CentralAuthenticationService centralAuthenticationService;
     
-    private PrincipalIdProvider principalIdProvider = authentication -> authentication.getPrincipal().getId();
+    private PrincipalIdProvider principalIdProvider = new PrincipalIdProvider() {};
 
     /**
      * Instantiates a new Ticket or credential principal resolver.

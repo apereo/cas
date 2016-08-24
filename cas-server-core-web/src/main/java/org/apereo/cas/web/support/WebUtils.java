@@ -1,17 +1,18 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -54,7 +55,7 @@ public final class WebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
-    
+
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -120,7 +121,7 @@ public final class WebUtils {
     public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
     }
-    
+
     /**
      * Gets the http servlet response from the context.
      *
@@ -129,7 +130,7 @@ public final class WebUtils {
      */
     public static HttpServletResponse getHttpServletResponse(
             final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context .getExternalContext(),
+        Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
                 "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
         return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
@@ -228,7 +229,7 @@ public final class WebUtils {
      * @param ticketValue the ticket value
      */
     public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                       final String ticketValue) {
+                                                      final String ticketValue) {
         map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 
@@ -239,7 +240,7 @@ public final class WebUtils {
      * @return the ticket granting ticket id
      */
     public static String getTicketGrantingTicketId(
-             final RequestContext context) {
+            final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
         final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
@@ -358,8 +359,8 @@ public final class WebUtils {
      * @return the authenticated username.
      */
     public static String getAuthenticatedUsername() {
-        final HttpServletRequest request = getHttpServletRequest();
-        final HttpServletResponse response = getHttpServletResponse();
+        final HttpServletRequest request = getHttpServletRequestFromRequestAttributes();
+        final HttpServletResponse response = getHttpServletResponseFromRequestAttributes();
         if (request != null && response != null) {
             final J2EContext context = new J2EContext(request, response);
             final ProfileManager manager = new ProfileManager(context);
@@ -539,6 +540,16 @@ public final class WebUtils {
     }
 
     /**
+     * Put recaptcha site key into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putRecaptchaSiteKeyIntoFlowScope(final RequestContext context, final Object value) {
+        context.getFlowScope().put("recaptchaSiteKey", value);
+    }
+
+    /**
      * Put static authentication into flow scope.
      *
      * @param context the context
@@ -548,6 +559,15 @@ public final class WebUtils {
         context.getFlowScope().put("staticAuthentication", value);
     }
     
+    /**
+     * Put static authentication into flow scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putPasswordManagementEnabled(final RequestContext context, final Boolean value) {
+        context.getFlowScope().put("passwordManagementEnabled", value);
+    }
     
     /**
      * Put tracking id into flow scope.
@@ -558,6 +578,7 @@ public final class WebUtils {
     public static void putGoogleAnalyticsTrackingIdIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("googleAnalyticsTrackingId", value);
     }
+
     /**
      * Put unauthorized redirect url into flowscope.
      *
@@ -569,4 +590,23 @@ public final class WebUtils {
         context.getFlowScope().put(PARAMETER_UNAUTHORIZED_REDIRECT_URL, unauthorizedRedirectUrl);
     }
 
+    /**
+     * Put principal.
+     *
+     * @param requestContext          the request context
+     * @param authenticationPrincipal the authentication principal
+     */
+    public static void putPrincipal(final RequestContext requestContext, final Principal authenticationPrincipal) {
+        requestContext.getFlowScope().put("principal", authenticationPrincipal);
+    }
+
+    /**
+     * Put logout redirect url.
+     *
+     * @param context the context
+     * @param service the service
+     */
+    public static void putLogoutRedirectUrl(final RequestContext context, final String service) {
+        context.getFlowScope().put("logoutRedirectUrl", service);
+    }
 }

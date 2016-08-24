@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProper
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
@@ -31,6 +32,7 @@ import org.apereo.cas.configuration.model.support.saml.SamlCore;
 import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
+import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -109,6 +111,9 @@ public class CasConfigurationProperties {
     private GoogleAnalyticsProperties googleAnalytics = new GoogleAnalyticsProperties();
 
     @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
+    
+    @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
 
     @NestedConfigurationProperty
@@ -120,6 +125,9 @@ public class CasConfigurationProperties {
     @NestedConfigurationProperty
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
+    @NestedConfigurationProperty
+    private SamlServiceProviderProperties samlSP = new SamlServiceProviderProperties();
+    
     @NestedConfigurationProperty
     private MaxmindProperties maxmind = new MaxmindProperties();
 
@@ -431,5 +439,21 @@ public class CasConfigurationProperties {
 
     public void setGoogleMaps(final GoogleMapsProperties googleMaps) {
         this.googleMaps = googleMaps;
+    }
+
+    public GoogleRecaptchaProperties getGoogleRecaptcha() {
+        return googleRecaptcha;
+    }
+
+    public void setGoogleRecaptcha(final GoogleRecaptchaProperties googleRecaptcha) {
+        this.googleRecaptcha = googleRecaptcha;
+    }
+
+    public SamlServiceProviderProperties getSamlSP() {
+        return samlSP;
+    }
+
+    public void setSamlSP(final SamlServiceProviderProperties samlSP) {
+        this.samlSP = samlSP;
     }
 }

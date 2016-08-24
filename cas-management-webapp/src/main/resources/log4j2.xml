@@ -20,11 +20,11 @@
         <AsyncLogger name="org.springframework.amqp" level="error" />
         <AsyncLogger name="org.springframework.webflow" level="warn" />
         <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.context.annotation" level="off" />
         <AsyncLogger name="org.pac4j" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
         </AsyncLogger>
-
         <AsyncLogger name="org.apereo" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
@@ -36,7 +36,6 @@
         <AsyncLogger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="cas-management"/>
         </AsyncLogger>
-
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

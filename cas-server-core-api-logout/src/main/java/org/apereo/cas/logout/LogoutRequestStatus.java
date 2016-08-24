@@ -7,10 +7,12 @@ package org.apereo.cas.logout;
  * @since 4.0.0
  */
 public enum LogoutRequestStatus {
-    /** the logout request has not been performed. */
+    /** The logout request has not been performed. */
     NOT_ATTEMPTED,
-    /** the logout request has failed. */
+    
+    /** The logout request has failed. */
     FAILURE,
-    /** the logout request has successed. */
+    
+    /** The logout request is successful. */
     SUCCESS
 }

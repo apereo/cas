@@ -5,13 +5,11 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 
-The CAS server exposes a `/status` endpoint that may be used to inquire about
- the health and general state of the software.
-
 The following endpoints are secured and available:
 
 | Parameter                         | Description
 |-----------------------------------+-----------------------------------------+
+| `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
 | `/status`                         | [Monitor status information](Configuring-Monitoring.html).
 | `/status/autoconfig`              | Describes how the application context is auto configured.
 | `/status/beans`                   | Displays all application context beans.
@@ -22,26 +20,26 @@ The following endpoints are secured and available:
 | `/status/info`                    | CAS version information.
 | `/status/metrics`                 | Runtime metrics and stats.
 | `/status/stats`                   | Visual representation of CAS statistics.
+| `/status/logging`                 | Monitor CAS logs in a streaming fashion.
 | `/status/config`                  | Visual representation of application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
 | `/status/refresh`                 | Refresh the application configuration via a `POST`.
-| `/status/dashboard`               | Control panel to CAS server functionality and management.
 | `/status/ssosessions`             | Report of active SSO sessions and authentications.
 
 ## Security
 
 Access is granted the following settings in `application.properties` file.
 The `/status` endpoint is always protected by an IP pattern. The other administrative 
-endpoints however can optionally 
-be protected by the CAS server.
+endpoints however can optionally be protected by the CAS server.
 Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Monitors
 
+Monitors allow you to watch the internal state of a given CAS component. 
 See [this guide](Configuring-Monitoring.html) for more info. 
 
 ## Metrics

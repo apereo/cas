@@ -79,7 +79,7 @@ public class CasCoreAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
-            
+
     @Autowired(required = false)
     @Qualifier("acceptPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;

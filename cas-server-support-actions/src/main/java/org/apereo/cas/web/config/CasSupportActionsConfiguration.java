@@ -1,10 +1,11 @@
 package org.apereo.cas.web.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -27,6 +28,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -74,6 +76,10 @@ public class CasSupportActionsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
+    
+    @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
     
@@ -85,6 +91,10 @@ public class CasSupportActionsConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+    
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -123,6 +133,7 @@ public class CasSupportActionsConfiguration {
         return bean;
     }
 
+    @RefreshScope
     @Bean
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
@@ -139,22 +150,18 @@ public class CasSupportActionsConfiguration {
         return a;
     }
 
+    @RefreshScope
     @Bean
     public Action initialFlowSetupAction() {
         final InitialFlowSetupAction bean = new InitialFlowSetupAction();
-        bean.setEnableFlowOnAbsentServiceRequest(casProperties.getSso().isMissingService());
         bean.setArgumentExtractors(this.argumentExtractors);
         bean.setServicesManager(this.servicesManager);
         bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         bean.setWarnCookieGenerator(this.warnCookieGenerator);
-        bean.setGoogleAnalyticsTrackingId(casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
-        bean.setTrackGeoLocation(casProperties.getEvents().isTrackGeolocation());
-        bean.setStaticAuthentication(
-                StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
-                        || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
         return bean;
     }
 
+    @RefreshScope
     @Bean
     public Action initialAuthenticationRequestValidationAction() {
         final InitialAuthenticationRequestValidationAction a =
@@ -163,9 +170,13 @@ public class CasSupportActionsConfiguration {
         return a;
     }
 
+    @RefreshScope
     @Bean
     public Action genericSuccessViewAction() {
-        return new GenericSuccessViewAction(this.centralAuthenticationService);
+        final GenericSuccessViewAction a = new GenericSuccessViewAction(
+                this.centralAuthenticationService, this.servicesManager, this.webApplicationServiceFactory);
+        a.setRedirectUrl(casProperties.getView().getDefaultRedirectUrl());
+        return a;
     }
 
     @Bean
@@ -184,7 +195,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action frontChannelLogoutAction() {
-        return new FrontChannelLogoutAction();
+        return new FrontChannelLogoutAction(this.logoutManager);
     }
 
     @Bean

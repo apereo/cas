@@ -2,6 +2,7 @@ package org.apereo.cas.web.report.config;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -10,13 +11,21 @@ import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.InternalConfigStateController;
+import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 /**
  * This is {@link CasReportsConfiguration}.
@@ -26,8 +35,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasReportsConfiguration {
+@EnableWebSocketMessageBroker
+public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
+    @Autowired
+    private ServerProperties serverProperties;
+    
     @Autowired
     @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
@@ -49,11 +62,13 @@ public class CasReportsConfiguration {
     @Qualifier("healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
+    @RefreshScope
     @Bean
     public DashboardController dashboardController() {
         return new DashboardController();
     }
 
+    @RefreshScope
     @Bean
     public InternalConfigStateController internalConfigController() {
         return new InternalConfigStateController();
@@ -74,6 +89,13 @@ public class CasReportsConfiguration {
         return c;
     }
 
+    @RefreshScope
+    @Bean
+    public LoggingConfigController loggingConfigController() {
+        final LoggingConfigController c = new LoggingConfigController();
+        return c;
+    }
+    
     @Bean
     public StatisticsController statisticsController() {
         final StatisticsController c = new StatisticsController();
@@ -83,5 +105,19 @@ public class CasReportsConfiguration {
         return c;
     }
 
+    @Override
+    public void configureMessageBroker(final MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/logs");
+        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
+            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
+        }
+    }
+
+    @Override
+    public void registerStompEndpoints(final StompEndpointRegistry registry) {
+        registry.addEndpoint("/logoutput")
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .withSockJS();
+    }
 
 }

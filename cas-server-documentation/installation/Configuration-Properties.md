@@ -30,24 +30,32 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
-and syntax. **BE CAREFUL** with the distinction. 
+and syntax. **BE CAREFUL** with the distinction.
 
 - Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
-ignored by CAS and likely the feature it controls will never be activated in the way you intended. 
+ignored by CAS and likely the feature it controls will never be activated in the way you intended.
 
-## Encryption/Decryption
+## Configuration Storage
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
 the entire CAS running context. They are to be put inside the `bootstrap.properties`.
 
-### Spring Cloud
+### Native
+
 ```properties
-# spring.cloud.config.server.encrypt.enabled=true
-# encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
-# encrypt.keyStore.password=keystorePassword
-# encrypt.keyStore.alias=DaKey
-# encrypt.keyStore.secret=changeme
+# spring.profiles.active=native
+# spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+```
+
+### Git Repository
+
+```properties
+# spring.profiles.active=default
+# spring.cloud.config.server.git.uri=https://github.com/repoName/config
+# spring.cloud.config.server.git.uri=file://${user.home}/config
+# spring.cloud.config.server.git.username=
+# spring.cloud.config.server.git.password=
 ```
 
 ### Vault
@@ -65,8 +73,62 @@ the entire CAS running context. They are to be put inside the `bootstrap.propert
 # spring.cloud.vault.generic.backend=secret
 ```
 
+### MongoDb
+
+```properties
+# cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
+```
+
+## Configuration Security
+
+Encrypt and decrypt configuration via Spring Cloud. 
+
+```properties
+# spring.cloud.config.server.encrypt.enabled=true
+# encrypt.keyStore.location=file:///etc/cas/casconfigserver.jks
+# encrypt.keyStore.password=keystorePassword
+# encrypt.keyStore.alias=DaKey
+# encrypt.keyStore.secret=changeme
+```
+
 To learn more about how sensitive CAS settings can be
 secured, [please review this guide](Configuration-Properties-Security.html).
+
+
+## Cloud Configuration Bus
+
+CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
+distributed system with a lightweight message broker.
+
+```properties
+# spring.cloud.bus.enabled=false
+# spring.cloud.bus.refresh.enabled=true
+# spring.cloud.bus.env.enabled=true
+# spring.cloud.bus.destination=CasCloudBus
+# spring.cloud.bus.ack.enabled=true
+```
+
+To learn more about this topic, [please review this guide](Configuration-Management.html).
+
+### RabbitMQ
+
+```properties
+# spring.rabbitmq.host=
+# spring.rabbitmq.port=
+# spring.rabbitmq.username=
+# spring.rabbitmq.password=
+
+# Or all of the above in one line
+# spring.rabbitmq.addresses=
+```
+
+### Kafka
+
+```
+# spring.cloud.stream.bindings.output.content-type=application/json
+# spring.cloud.stream.kafka.binder.zkNodes=...
+# spring.cloud.stream.kafka.binder.brokers=...
+```
 
 ## Embedded Tomcat
 
@@ -141,40 +203,6 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
-## Cloud Configuration Bus
-
-CAS uses the Spring Cloud Bus to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a
-distributed system with a lightweight message broker.
-
-```properties
-# spring.cloud.bus.enabled=false
-# spring.cloud.bus.refresh.enabled=true
-# spring.cloud.bus.env.enabled=true
-# spring.cloud.bus.destination=CasCloudBus
-# spring.cloud.bus.ack.enabled=true
-```
-
-To learn more about this topic, [please review this guide](Configuration-Management.html).
-
-### RabbitMQ
-
-```properties
-# spring.rabbitmq.host=
-# spring.rabbitmq.port=
-# spring.rabbitmq.username=
-# spring.rabbitmq.password=
-
-# Or all of the above in one line
-# spring.rabbitmq.addresses=
-```
-
-### Kafka
-
-```
-# spring.cloud.stream.bindings.output.content-type=application/json
-# spring.cloud.stream.kafka.binder.zkNodes=...
-# spring.cloud.stream.kafka.binder.brokers=...
-```
 
 ## Admin Status Endpoints
 
@@ -215,6 +243,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 ```properties
 spring.thymeleaf.encoding=UTF-8
 spring.thymeleaf.cache=false
+# spring.thymeleaf.prefix=classpath:/templates/
 
 # cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
 # cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
@@ -224,6 +253,8 @@ spring.thymeleaf.cache=false
 # cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
 # cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
 # cas.view.cas3.releaseProtocolAttributes=true
+
+# cas.view.defaultRedirectUrl=https://www.github.com
 ```
 
 ## Logging
@@ -236,7 +267,7 @@ To learn more about this topic, [please review this guide](Logging.html).
 server.contextParameters.isLog4jAutoInitializationDisabled=true
 ```
 
-To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`. 
+To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
 
 ## AspectJ Configuration
 
@@ -1279,6 +1310,94 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 ```
 
+
+## Saml SPs
+
+Allow CAS to register and enable a number of built-in SAML service provider integrations.
+To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
+### Dropbox
+
+```properties
+# cas.samlSP.dropbox.metadata=/etc/cas/saml/dropbox.xml
+# cas.samlSP.dropbox.name=Dropbox
+# cas.samlSP.dropbox.description=Dropbox Integration
+# cas.samlSP.dropbox.nameIdAttribute=mail
+```
+   
+### Office365
+
+```properties
+# cas.samlSP.dropbox.metadata=/etc/cas/saml/azure.xml
+# cas.samlSP.dropbox.name=O365
+# cas.samlSP.dropbox.description=O365 Integration
+# cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
+# cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
+```
+     
+### SAManage
+
+```properties
+# cas.samlSP.saManage.metadata=/etc/cas/saml/samanage.xml
+# cas.samlSP.saManage.name=SAManage
+# cas.samlSP.saManage.description=SAManage Integration
+# cas.samlSP.saManage.nameIdAttribute=mail
+```
+        
+### Workday
+
+```properties
+# cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
+# cas.samlSP.workday.name=Workday
+# cas.samlSP.workday.description=Workday Integration
+```
+
+### Salesforce
+
+```properties
+# cas.samlSP.salesforce.metadata=/etc/cas/saml/salesforce.xml
+# cas.samlSP.salesforce.name=Salesforce
+# cas.samlSP.salesforce.description=Salesforce Integration
+# cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
+```
+
+### Box
+
+```properties
+# cas.samlSP.box.metadata=/etc/cas/saml/box.xml
+# cas.samlSP.box.name=Box
+# cas.samlSP.box.description=Box Integration
+# cas.samlSP.box.attributes=email,firstName,lastName
+```
+
+### Service Now
+
+```properties
+# cas.samlSP.serviceNow.metadata=/etc/cas/saml/serviceNow.xml
+# cas.samlSP.serviceNow.name=ServiceNow
+# cas.samlSP.serviceNow.description=serviceNow Integration
+# cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
+```
+
+### Net Partner
+
+```properties
+# cas.samlSP.netPartner.metadata=/etc/cas/saml/netPartner.xml
+# cas.samlSP.netPartner.name=Net Partner
+# cas.samlSP.netPartner.description=Net Partner Integration
+# cas.samlSP.netPartner.nameIdAttribute=studentId
+```
+
+### Webex
+
+```properties
+# cas.samlSP.webex.metadata=/etc/cas/saml/webex.xml
+# cas.samlSP.webex.name=Webex
+# cas.samlSP.webex.description=Webex Integration
+# cas.samlSP.webex.nameIdAttribute=email
+# cas.samlSP.webex.attributes=firstName,lastName,
+```
+
 ## OpenID Connect
 
 Allow CAS to become am OpenID Connect provider (OP).
@@ -2260,6 +2379,16 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.useStartTls=false
 ```
 
+## Google reCAPTCHA Integration
+
+Display Google's reCAPTCHA widget on the CAS login page.
+
+```properties
+# cas.googleRecaptcha.verifyUrl="https://www.google.com/recaptcha/api/siteverify";
+# cas.googleRecaptcha.siteKey=
+# cas.googleRecaptcha.secret=
+```
+
 ## Google Analytics Integration
 
 To learn more about this topic, [please review this guide](../integration/Configuring-Google-Analytics.html).
@@ -2372,4 +2501,42 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+```
+
+## Password Management
+
+Allow the user to update their account password, etc in-place. 
+
+```properties
+# cas.authn.pm.enabled=true
+# Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
+# cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
+```
+
+### LDAP
+
+```
+# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.useSsl=true
+# cas.authn.pm.ldap.useStartTls=false
+# cas.authn.pm.ldap.connectTimeout=5000
+# cas.authn.pm.ldap.baseDn=dc=example,dc=org
+# cas.authn.pm.ldap.userFilter=cn={user}
+# cas.authn.pm.ldap.subtreeSearch=true
+# cas.authn.pm.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.pm.ldap.bindCredential=Password
+# cas.authn.pm.ldap.trustCertificates=
+# cas.authn.pm.ldap.keystore=
+# cas.authn.pm.ldap.keystorePassword=
+# cas.authn.pm.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.pm.ldap.minPoolSize=3
+# cas.authn.pm.ldap.maxPoolSize=10
+# cas.authn.pm.ldap.validateOnCheckout=true
+# cas.authn.pm.ldap.validatePeriodically=true
+# cas.authn.pm.ldap.validatePeriod=600
+# cas.authn.pm.ldap.failFast=true
+# cas.authn.pm.ldap.idleTime=500
+# cas.authn.pm.ldap.prunePeriod=600
+# cas.authn.pm.ldap.blockWaitTime=5000
+# cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 ```

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>[[#{screen.logout.header}]]</title>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function redirectToApp() {
+            window.location = /*[[${logoutRedirectUrl}]]*/ ;
+        }
+        /*]]>*/
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+        <h2 th:utext="#{screen.logout.header}"/>
+        <p th:utext="#{screen.logout.fc.success}"/>
+        <br/><br/>
+        <div>
+            <ol start="a">
+                <li th:each="entry,iterStat : ${logoutUrls}">
+                    <script type="text/javascript" th:inline="javascript">
+                                                
+                        $.ajax({
+                            url:/*[[${entry.key.logoutUrl.toExternalForm()}]]*/,
+                            dataType: 'jsonp',
+                            async: true,
+                            contentType: /*[[${entry.value.contentType}]]*/
+                            , data: /*[[${entry.value.message}]]*/
+                            , method: 'post',
+                            success: function (data) {
+                                var index = /*[[${iterStat.index}]]*/;
+                                $("#service" + index).addClass("fa fa-check")
+                                $("#service" + index).prop('alt', 
+                                            'Logout notification was successfully submitted.');
+                            },
+                            error: function (err) {
+                                var index = /*[[${iterStat.index}]]*/;
+                                if (err.status == 200) {
+                                    $("#service" + index).addClass("fa fa-exclamation")
+                                    $("#service" + index).prop('alt',
+                                            'Logout request was rejected.');
+                                } else {
+                                    $("#service" + index).addClass("fa fa-error")
+                                    $("#service" + index).prop('alt',
+                                            'Logout notification could not be sent.');
+                                }
+                            }
+                        });
+                    </script>
+                    <p>
+                        <i data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
+                        <kbd th:text="${entry.key.service}"/>
+                    </p>
+                </li>
+            </ol>
+
+            
+        </div>
+        <p th:utext="#{screen.logout.security}"/>
+        <br/>
+        <input type="button" th:if="${logoutRedirectUrl}"
+                class="btn btn-primary btn-success" onclick="redirectToApp();"
+                th:value="${'Go to ' + logoutRedirectUrl}"/>
+
+    </div>
+</div>
+</body>
+</html>

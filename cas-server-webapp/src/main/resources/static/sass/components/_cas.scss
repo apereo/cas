@@ -1,7 +1,8 @@
 
 
 /*@import url(https://fonts.googleapis.com/css?family=Lato);*/
-@import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100);
+@import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100|Signika:400,700|Courgette);
+
 * {
   box-sizing: border-box;
   //-webkit-transition: all 0.2s ease;
@@ -32,6 +33,21 @@ table { border-collapse: collapse; border-spacing: 0; }
 hr { display: block; height: 1px; border: 0; border-top: 1px solid #cccccc; margin: 1em 0; padding: 0; }
 input, select { vertical-align: middle; }
 body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; background: #eee; }
+
+input {
+  border: none;
+  transition: all .5s linear;
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+
+input:hover, input:focus {
+  outline: 0;
+  transition: all .5s linear;
+  box-shadow: 0 0 5px 1px #969696;
+  border: solid 1px #707070;
+}
 
 #container { width: 960px; margin: 0 auto; }
 
@@ -446,5 +462,73 @@ table.principal_attributes>tbody>tr>td {
 #view-configuration {
   display: none;
 }
+
+/**
+ * CAS Meter/PM
+ */
+meter {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  margin: 0 auto 1em;
+  width: 100%;
+  height: .5em;
+
+  /* Applicable only to Firefox */
+  background: none;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+meter::-webkit-meter-bar {
+  background: none;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+meter[value="1"]::-webkit-meter-optimum-value {
+  background: red;
+}
+
+meter[value="2"]::-webkit-meter-optimum-value {
+  background: yellow;
+}
+
+meter[value="3"]::-webkit-meter-optimum-value {
+  background: orange;
+}
+
+meter[value="4"]::-webkit-meter-optimum-value {
+  background: green;
+}
+
+meter[value="1"]::-moz-meter-bar {
+  background: red;
+}
+
+meter[value="2"]::-moz-meter-bar {
+  background: yellow;
+}
+
+meter[value="3"]::-moz-meter-bar {
+  background: orange;
+}
+
+meter[value="4"]::-moz-meter-bar {
+  background: green;
+}
+
+.feedback {
+  color: #9ab;
+  font-size: 90%;
+  padding: 0 .25em;
+  font-family: Courgette, cursive;
+  margin-top: 1em;
+}
+
+.pm {
+  padding: 5px;
+}
+
 
 @import "dashboard-view";

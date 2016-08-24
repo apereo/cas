@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +80,6 @@ public class LogoutManagerImpl implements LogoutManager {
         } else {
             proxyGrantingTickets.stream().forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
         }
-
-
     }
 
     /**
@@ -114,15 +111,7 @@ public class LogoutManagerImpl implements LogoutManager {
     public void setSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler) {
         this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
     }
-
-    public boolean isSingleLogoutCallbacksDisabled() {
-        return this.singleLogoutCallbacksDisabled;
-    }
-
-    public LogoutMessageCreator getLogoutMessageBuilder() {
-        return this.logoutMessageBuilder;
-    }
-
+    
     public SingleLogoutServiceMessageHandler getSingleLogoutServiceMessageHandler() {
         return this.singleLogoutServiceMessageHandler;
     }

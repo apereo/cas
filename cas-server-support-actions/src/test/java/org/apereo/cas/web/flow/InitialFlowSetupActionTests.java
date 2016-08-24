@@ -1,109 +1,72 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Lists;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.TestUtils;
-import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringApplicationConfiguration(
+        classes = {CasSupportActionsConfiguration.class, 
+                CasCoreWebflowConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasCoreConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreLogoutConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasCookieConfiguration.class,
+                RefreshAutoConfiguration.class,
+                CasCoreServicesConfiguration.class},
+        locations = {
+                "classpath:/core-context.xml"
+        },
+        initializers = ConfigFileApplicationContextInitializer.class)
+@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class InitialFlowSetupActionTests {
-    private static final String CONST_CONTEXT_PATH = "/test";
-    private static final String CONST_CONTEXT_PATH_2 = "/test1";
-
-    private InitialFlowSetupAction action = new InitialFlowSetupAction();
-
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-
-    private CookieRetrievingCookieGenerator tgtCookieGenerator;
-
-    private ServicesManager servicesManager;
-
-    @Before
-    public void setUp() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.warnCookieGenerator.setCookiePath("");
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.tgtCookieGenerator.setCookiePath("");
-        this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor(
-                new WebApplicationServiceFactory()
-        )};
-        this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
-
-        this.servicesManager = mock(ServicesManager.class);
-        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                TestUtils.getRegisteredService("test"));
-        this.action.setServicesManager(this.servicesManager);
-
-        this.action.afterPropertiesSet();
-
-    }
-
-    @Test
-    public void verifySettingContextPath() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        this.action.doExecute(context);
-
-        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
-    }
-
-    @Test
-    public void verifyResettingContexPath() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        this.action.doExecute(context);
-
-        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
-
-        request.setContextPath(CONST_CONTEXT_PATH_2);
-        this.action.doExecute(context);
-
-        assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.warnCookieGenerator.getCookiePath());
-        assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.tgtCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
-    }
-
+    @Autowired
+    @Qualifier("initialFlowSetupAction")
+    private Action action;
+    
     @Test
     public void verifyNoServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
                 new MockHttpServletResponse()));
-
         final Event event = this.action.execute(context);
-
         assertNull(WebUtils.getService(context));
-
         assertEquals("success", event.getId());
     }
 
@@ -119,15 +82,5 @@ public class InitialFlowSetupActionTests {
         assertEquals("test", WebUtils.getService(context).getId());
         assertNotNull(WebUtils.getRegisteredService(context));
         assertEquals("success", event.getId());
-    }
-
-    @Test(expected = NoSuchFlowExecutionException.class)
-    public void disableFlowIfNoService() throws Exception {
-        this.action.setEnableFlowOnAbsentServiceRequest(false);
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-
-        this.action.execute(context);
     }
 }

@@ -1,0 +1,55 @@
+@import 'https://fonts.googleapis.com/css?family=PT+Mono';
+
+#loggingDashboard {
+
+}
+#loggingDashboard .tabsContainer {
+    padding: 0 20px;
+}
+#error-retrieving-data {}
+
+#loggingDashboard .btn .caret {
+    margin-left: 5px;
+}
+
+#loggersTable td.details-control span {
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 10pt;
+    color: #337ab7;
+}
+#loggersTable td.details-control span:after {
+    content: "\f067";
+    /*content: "\002B"; - thinner plus sign */
+}
+#loggersTable tr.shown td.details-control span:after {
+    content: "\f068";
+    /*content: "\002D"; - thinner minus sign */
+}
+
+.tab-pane {
+    padding: 20px 10px;
+    border: 1px solid #ddd;
+    border-top: none;
+}
+.additive {
+    text-align: center;
+}
+.additive .glyphicon-ok {
+    color: #5cb85c;
+}
+.additive .glyphicon-remove {
+    color: #d9534f;
+}
+
+#logoutputarea {
+    border: 0.1em solid #ccc;
+    border-radius: 0.5em;
+    padding: 1em;   /* space on all directions */
+    font-family: 'PT Mono', monospace;
+    font-size: 1em;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: #39e600;
+}

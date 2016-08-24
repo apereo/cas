@@ -1,0 +1,2 @@
+# Bootstrap Configuration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration

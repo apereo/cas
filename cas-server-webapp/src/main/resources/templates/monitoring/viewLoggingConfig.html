@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html layout:decorator="monitoring/layout">
+
+<head th:inline="text">
+    <title>[[#{cas.loggingdashboard.title}]]</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var logConfigFileLocation = /*[[${logConfigurationFile}]]*/ ;
+
+        var urls = {
+            getConfiguration: /*[[@{/status/logging/getConfiguration}]]*/ ,
+            updateLevel: /*[[@{/status/logging/updateLoggerLevel}]]*/  ,
+            logOutput: /*[[@{/logoutput}]]*/
+        };
+        
+        /*]]>*/
+    </script>
+    
+    <script type="text/javascript" th:inline="javascript">
+        
+        function jqueryReady() {
+            head.load(
+                    // Bootstrap Datables CSS
+                    "//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
+                    /*[[@{/css/loggingDashboard.css}]]*/
+            );
+            head.load(
+                    // JS Libraries
+                    "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+                    "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
+                    "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
+                    /*[[@{/js/sockjs.js}]]*/ ,
+                    /*[[@{/js/stomp.js}]]*/ ,
+                    /*[[@{/js/loggingDashboard.js}]]*/ 
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div id="loggingDashboard">
+        <h1>Logging</h1>
+
+        <div id="loadingMessage">
+            <h3 th:text="#{cas.loggingdashboard.loading}"/>
+        </div>
+
+        <div id="errorLoadingData" class="alert alert-danger hidden">
+            <h2 th:text="#{cas.loggingdashboard.loading.error}"/>
+            <div>
+                <input class="btn btn-success" type="button"
+                       onclick="location.reload();" th:value="#{cas.ssosessions.button.refresh}"/>
+            </div>
+        </div>
+                
+        <div class="tabsContainer hidden row">
+            <div id="alert-container"></div>
+            <!-- Nav tabs -->
+            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#loggersTab" aria-controls="loggersTab" role="tab"
+                                                          data-toggle="tab">Loggers</a></li>
+                
+                <!--
+                <li role="presentation"><a href="#activeLoggers" aria-controls="activeLoggers" role="tab" data-toggle="tab">Active
+                    Loggers</a></li>
+                 -->
+                <li role="presentation"><a href="#logOutput" aria-controls="logOutput" role="tab" data-toggle="tab">Log Output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="loggersTab">
+                    <table id="loggersTable" class="display table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th th:text="#{cas.loggingdashboard.logger}" />
+                            <th th:text="#{cas.loggingdashboard.additive}" />
+                            <th th:text="#{cas.loggingdashboard.state}" />
+                            <th th:text="#{cas.loggingdashboard.level}" />
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td></td>
+                            <td>logger</td>
+                            <td>level</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="activeLoggers">
+                    <table id="activeLoggersTable" class="display table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th th:text="#{cas.loggingdashboard.logger}" />
+                            <th th:text="#{cas.loggingdashboard.additive}" />
+                            <th th:text="#{cas.loggingdashboard.state}" />
+                            <th th:text="#{cas.loggingdashboard.level}" />
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="logOutput">
+                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden" />
+                    <textarea id="logoutputarea" rows="20" cols="20"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>

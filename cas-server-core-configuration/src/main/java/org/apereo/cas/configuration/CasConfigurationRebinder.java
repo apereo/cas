@@ -36,6 +36,7 @@ public class CasConfigurationRebinder {
      */
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
+        LOGGER.debug("Received event {}", event);
         rebindCasConfigurationProperties();
     }
 
@@ -46,6 +47,7 @@ public class CasConfigurationRebinder {
      */
     @EventListener
     public void handleRefreshEvent(final RefreshRemoteApplicationEvent event) {
+        LOGGER.debug("Received event {}", event);
         rebindCasConfigurationProperties();
     }
 
@@ -57,10 +59,11 @@ public class CasConfigurationRebinder {
                 this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
 
         final String name = map.keySet().iterator().next();
-        LOGGER.info("Reloading CAS configuration via {}", name);
+        LOGGER.debug("Reloading CAS configuration via {}", name);
         final Object e = this.applicationContext.getBean(name);
         this.binder.postProcessBeforeInitialization(e, name);
-        this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        final Object bean = this.applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        this.applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.info("Reloaded CAS configuration {}", name);
     }
 }

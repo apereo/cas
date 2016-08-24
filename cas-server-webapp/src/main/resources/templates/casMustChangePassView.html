@@ -3,14 +3,12 @@
 
 <head th:inline="text">
     <title>[[#{screen.mustchangepass.heading}]]</title>
+    <script type="text/javascript" th:src="@{/js/pm.js}"></script>
 </head>
 
 <body id="cas">
 <div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h2 th:utext="#{screen.mustchangepass.heading}"/>
-        <p th:utext="#{screen.mustchangepass.message(${passwordPolicyUrl})}"/>
-    </div>
+    <div th:replace="fragments/pwdupdateform"/>
 </div>
 </body>
 </html>

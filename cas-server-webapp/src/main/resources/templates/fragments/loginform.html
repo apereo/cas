@@ -41,6 +41,7 @@
 
         <section class="row">
             <label for="password" th:utext="#{screen.welcome.label.password}"/>
+            
             <div>
                 <input class="required"
                        type="password"
@@ -56,9 +57,17 @@
                         <span th:utext="#{screen.capslock.on}"/>
                     </p>
                 </span>
+                <a href="https://pwd.example.org" th:text="#{screen.pm.button.forgotpwd}" />
+            </div>
+        </section>
+
+        <section class="row" th:if="${recaptchaSiteKey}">
+            <div>
+                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
                 <p/>
             </div>
         </section>
+
         <section class="row btn-row">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
@@ -78,6 +87,6 @@
                    type="reset"/>
         </section>
     </form>
-
-    <div th:replace="fragments/loginsidebar" />
+        
+    <div th:replace="fragments/loginsidebar"/>
 </div>

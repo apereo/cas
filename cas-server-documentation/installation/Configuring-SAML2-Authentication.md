@@ -79,7 +79,13 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
+Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you 
+mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
+CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
+`https://sso.example.org/login`).
+
 ### SP Metadata
+
 - `/cas/idp/servicemetadatagen`
 
 This endpoint will attempt to generate metadata for relying party upon receiving a POST request. This is useful when integrating with
@@ -93,7 +99,8 @@ service providers that do not publish a defined metadata. The following paramete
 | `x509Certificate`                 | Required.
 | `acsUrl`                          | Required.
 
-## Components
+## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -104,13 +111,10 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-## Configuration
-
-### Settings
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### SAML Services
+
 SAML relying parties and services must be registered within the CAS service registry similar to the following example:
 
 ```json
@@ -123,7 +127,6 @@ SAML relying parties and services must be registered within the CAS service regi
   "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
 }
 ```
-
 
 <div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata 
 contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined by their entity id, explicitly via 
@@ -140,6 +143,15 @@ The following fields are available for SAML services:
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request. 
+| `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
+
+### Name ID Selection
+
+Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format. 
+The Name ID value is always simply the authenticated user that is designed to be returned to this service. In other words, if you
+decide to configure CAS to return a particular attribute as 
+[the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html), 
+that value will then be used to construct the Name ID along with the right format. 
 
 ### Dynamic Metadata
 
@@ -160,8 +172,7 @@ from a Metadata query server, the metadata location must be configured to point 
 
 ...where `{0}` serves as an entityID placeholder for which metadata is to be queried. 
 
+## SP Integrations
 
-
-
-
-
+A number of SAML2 service provider integrations are provided natively by CAS. To learn more, 
+please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).

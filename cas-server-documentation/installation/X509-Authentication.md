@@ -56,7 +56,9 @@ The following policies are available by default:
 | `thresholdExpiredCRLRevocationPolicy`
 
 ### Fixed Resource
-Performs a certificate revocation check against a CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
+
+Performs a certificate revocation check against a CRL hosted at a fixed location. 
+The CRL is fetched at periodic intervals and cached.
 
 ```xml
 <alias name="resourceCrlRevocationChecker" alias="x509RevocationChecker" />
@@ -67,6 +69,7 @@ Performs a certificate revocation check against a CRL hosted at a fixed location
 ```
 
 ### CRL URL(s)
+
 Performs certificate revocation checking against the CRL URI(s) mentioned in the certificate _cRLDistributionPoints_
 extension field. The component leverages a cache to prevent excessive IO against CRL endpoints; CRL data is fetched
 if does not exist in the cache or if it is expired.
@@ -88,7 +91,7 @@ By default, all revocation checks use the `ResourceCRLFetcher` component to fetc
 The following alternatives are available:
 
 ### LDAP Attribute
-Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance.
+Fetches a CRL resource from a pre-configured attribute, in the event that the CRL resource is an LDAP instance.
 
 ```xml
 <alias name="ldaptiveResourceCRLFetcher" alias="x509CrlFetcher" />
@@ -97,7 +100,7 @@ Fetches a CRL resource from a preconfigured attribute, in the event that the CRL
 ```
 
 ### Pooling LDAP Attribute
-Fetches a CRL resource from a preconfigured attribute, in the event that the CRL resource is an LDAP instance. 
+Fetches a CRL resource from a pre-configured attribute, in the event that the CRL resource is an LDAP instance. 
 This component is able to use connection pooling.
 
 ```xml

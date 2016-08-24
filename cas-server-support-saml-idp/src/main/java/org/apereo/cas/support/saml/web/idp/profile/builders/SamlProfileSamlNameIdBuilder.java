@@ -5,13 +5,13 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
-import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SamlProfileSamlNameIdBuilder}.
@@ -51,6 +50,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
         }
+        if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
+            supportedNameFormats.add(0, service.getRequiredNameIdFormat());
+        }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
@@ -61,14 +63,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 requiredNameFormat = null;
             }
         }
-
-        final Map<String, Object> principalAttributes = assertion.getPrincipal().getAttributes();
-        if (principalAttributes.isEmpty() && StringUtils.isNotBlank(requiredNameFormat)) {
-            logger.warn("No CAS attributes for CAS principal [{}], so no name identifier will be created.",
-                    assertion.getPrincipal().getName());
-            throw new SamlException("No attributes for principal, so NameID format required can not be supported");
-        }
-
+        
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
@@ -77,19 +72,29 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         try {
             for (final String nameFormat : supportedNameFormats) {
+                logger.debug("Evaluating NameID format {}", nameFormat);
+                
                 final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
                 encoder.setNameFormat(nameFormat);
                 if (authnRequest.getNameIDPolicy() != null) {
-                    encoder.setNameQualifier(authnRequest.getNameIDPolicy().getSPNameQualifier());
+                    final String qualifier = authnRequest.getNameIDPolicy().getSPNameQualifier();
+                    logger.debug("NameID qualifier is set to {}", qualifier);
+                    encoder.setNameQualifier(qualifier);
                 }
                 final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
                 final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
+                logger.debug("NameID attribute value is set to {}", assertion.getPrincipal().getName());
                 attribute.setValues(Collections.singletonList(value));
-                return encoder.encode(attribute);
+                logger.debug("Encoding NameID based on {}", nameFormat);
+                
+                final NameID nameid = encoder.encode(attribute);
+                logger.debug("Final NameID encoded is {} with value", nameid.getFormat(), nameid.getValue());
+                return nameid;
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
         return null;
     }
+    
 }

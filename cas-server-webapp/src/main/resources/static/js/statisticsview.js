@@ -126,9 +126,9 @@ var casStatistics = function (urls, messages) {
     }
 
     var timers = {
-        memory: 15000,
-        availability: 30000,
-        tickets: 15000
+        memory: 5000,
+        availability: 15000,
+        tickets: 5000
     };
 
     var memoryGauage;

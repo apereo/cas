@@ -5,7 +5,7 @@
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <var name="credential" class="org.apereo.cas.authentication.UsernamePasswordCredential"/>
-
+    
     <!--
     <var name="credential" class="RememberMeUsernamePasswordCredential" />
     -->
@@ -149,9 +149,7 @@
     
     <end-state id="viewGenericLoginSuccess" view="casGenericSuccessView">
         <on-entry>
-            <evaluate expression="genericSuccessViewAction.getAuthenticationPrincipal(flowScope.ticketGrantingTicketId)"
-                      result="requestScope.principal"
-                      result-type="org.apereo.cas.authentication.principal.Principal"/>
+            <evaluate expression="genericSuccessViewAction"/>
         </on-entry>
     </end-state>
     
@@ -160,21 +158,7 @@
             <evaluate expression="serviceWarningAction" />
         </on-entry>
     </end-state>
-
-    <!-- Password policy failure states -->
-    <end-state id="abstactPasswordChangeView">
-        <on-entry>
-            <set name="flowScope.passwordPolicyUrl" value="passwordPolicyConfiguration.passwordPolicyUrl"/>
-        </on-entry>
-    </end-state>
-    <end-state id="casExpiredPassView" view="casExpiredPassView" parent="#abstactPasswordChangeView"/>
-    <end-state id="casMustChangePassView" view="casMustChangePassView" parent="#abstactPasswordChangeView"/>
-    <end-state id="casAccountDisabledView" view="casAccountDisabledView"/>
-    <end-state id="casAccountLockedView" view="casAccountLockedView"/>
-    <end-state id="casBadHoursView" view="casBadHoursView"/>
-    <end-state id="casBadWorkstationView" view="casBadWorkstationView"/>
-    <end-state id="casAuthenticationBlockedView" view="casAuthenticationBlockedView" />
-    
+        
     <end-state id="postView" view="protocol/casPostResponseView">
         <on-entry>
             <set name="requestScope.parameters" value="requestScope.response.attributes"/>

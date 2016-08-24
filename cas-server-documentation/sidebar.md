@@ -16,6 +16,7 @@
         *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
         *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
+    *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
@@ -61,7 +62,7 @@
     *   [Attribute Resolution](/$version/integration/Attribute-Resolution.html)
     *   [Attribute Release](/$version/integration/Attribute-Release.html)
         *   [Principal Id](/$version/integration/Attribute-Release-PrincipalId.html)
-        *   [Policies](/$version/integration/Attribute-Release-Policies.html)
+        *   [Release Policies](/$version/integration/Attribute-Release-Policies.html)
         *   [Caching](/$version/integration/Attribute-Release-Caching.html)
 
 * [Ticketing](#ticketing)
@@ -114,7 +115,9 @@
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#integration)
-    *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [SAML2 SPs](/$version/integration/Configuring-SAML-SP-Integrations.html)
+        *   [Google Apps](/$version/integration/Google-Apps-Integration.html)
+    *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
@@ -127,3 +130,4 @@
     *   [Release Policy](/cas/developer/Release-Policy.html)
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)
+    *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)

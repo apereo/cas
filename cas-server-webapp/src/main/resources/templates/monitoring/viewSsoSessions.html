@@ -5,24 +5,26 @@
     <title>[[#{cas.ssosessions.report.pagetitle}]]</title>
 </head>
 
-<!--
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
-<div th:replace="fragments/top"/>
--->
 <body id="cas">
 <div layout:fragment="content">
     <div id="content">
 
         <script type="text/javascript" th:inline="javascript">
+            var urls = {
+                destroy: {
+                    all:  /*[[@{/status/ssosessions/destroySsoSessions}]]*/ ,
+                    single: /*[[@{/status/ssosessions/destroySsoSession}]]*/
+                },
+                getSessions: /*[[@{/status/ssosessions/getSsoSessions}]]*/
+            };
+            
             function jqueryReady() {
                 head.load(
                         // Bootstrap Datables CSS
                         "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
                         "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
                         "//cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
-                        "/cas/css/ssosessions.css"
+                        /*[[@{/css/ssosessions.css}]]*/
                 );
 
                 head.load(
@@ -31,10 +33,9 @@
                         // Bootstrap Datatables
                         "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
                         "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-                        "/cas/js/ssosessions.js"
+                        /*[[@{/js/ssosessions.js}]]*/
                 );
             }
-
         </script>
 
         <div class="ssoSessions">

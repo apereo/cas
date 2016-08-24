@@ -61,7 +61,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
         final String theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
 
-        if (StringUtils.isNotBlank(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
+        if (StringUtils.isBlank(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
             super.addCookie(response, theCookieValue);
         } else {
             final Cookie cookie = createCookie(theCookieValue);

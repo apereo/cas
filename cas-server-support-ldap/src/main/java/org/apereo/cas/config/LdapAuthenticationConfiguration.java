@@ -110,7 +110,7 @@ public class LdapAuthenticationConfiguration {
             }
         });
     }
-
+    
     private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(
             final LdapAuthenticationProperties l, final Authenticator authenticator) {
 

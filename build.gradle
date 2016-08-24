@@ -271,9 +271,8 @@ buildscript {
     }
 
     dependencies {
-        classpath "nl.eveoh:gradle-aspectj:1.6"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:0.27.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:5.0.0"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
@@ -301,7 +300,7 @@ allprojects {
             downloadJavadoc = false
         }
     }
-    
+
     signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
 
     /*
@@ -318,7 +317,6 @@ subprojects {
     apply plugin: "java"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
-    apply plugin: "aspectj"
     apply plugin: "project-report"
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
@@ -351,7 +349,6 @@ subprojects {
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
-        maxParallelForks = 1
         useJUnit()
         scanForTestClasses = false
 
@@ -363,7 +360,7 @@ subprojects {
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
             exceptionFormat = "full"
-            showStandardStreams = true
+            showStandardStreams = Boolean.getBoolean("showStandardStreams")
             showExceptions = true
             showCauses = true
         }
@@ -379,6 +376,8 @@ subprojects {
                 failOnVersionConflict()
             }
         }
+        exclude(group: "ch.qos.logback", module: "logback-core")
+        exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
     }
@@ -399,7 +398,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-
+        
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
@@ -413,9 +412,9 @@ subprojects {
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
-                    "Implementation-Vendor": project.group,
-                    "Created-By": project.group,
-                    "Implementation-Version": project.version)
+                       "Implementation-Vendor": project.group,
+                       "Created-By": project.group,
+                       "Implementation-Version": project.version)
         }
     }
 
@@ -473,10 +472,6 @@ subprojects {
 
         if (Boolean.getBoolean("genConfigMetadata")) {
             optional libraries.springbootconfigmetadata
-        }
-        if (!Boolean.getBoolean("skipAspectJ")) {
-            compile libraries.inspektraspects
-            aspectpath libraries.inspektraspects
         }
 
         if (!Boolean.getBoolean("skipFindbugs")) {

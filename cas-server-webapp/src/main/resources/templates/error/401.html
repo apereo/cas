@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html layout:decorator="layout">
+
+<head th:inline="text">
+    <title>WAH WAH WAH</title>
+    <style>
+        @import 'https://fonts.googleapis.com/css?family=Gloria+Hallelujah';
+
+        .prompt {
+            font-family: 'Gloria Hallelujah', cursive;
+        }
+    </style>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 class="prompt">YOU DID NOT SAY THE MAGIC WORD!</h2>
+        <div class="prompt">
+            <p/>
+            <p>We are sorry. You do not have permission to view this page.</p>
+            <br/>
+            <p>Maybe you're just unfortunate today. Maybe it's just not your day. Maybe you're just not feeling well. Maybe. So much 
+                uncertainty, so much doubt. But you know, in these times of anguish and confusion, one thing is for certain:</p>
+            <br/>
+            <p>You are not getting in.</p>
+
+            <br/>
+            <p>In closing, <a href="/login">go away</a>. </p>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
