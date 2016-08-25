@@ -4,13 +4,13 @@
         var memory_graph, completion_graph;
         function jqueryReady() {
                 head.load(
-                    "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
+                    "//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
                     "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
                 );
 
             head.load(
-                "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
-                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+                "//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js",
+                "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
                 "/cas/js/statisticsview.js",
                 function() {
 
@@ -82,7 +82,7 @@
                             <div class="row">
                                 <div class="col-xs-12 text-right">
                                     <div class="semi-huge"><spring:message code="cas.statistics.section.ticket.panel.expiredsts.title" /></div>
-                                    <div class="huge">0</div>
+                                    <div class="huge">${expiredSts}</div>
                                 </div>
                             </div>
                         </div>
