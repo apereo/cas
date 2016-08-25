@@ -26,12 +26,12 @@ public class RedisTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties properties;
 
-    private RedisTicketRegistryProperties redisProperties(){
+    private RedisTicketRegistryProperties redisProperties() {
         return properties.getTicket().getRegistry().getRedis();
     }
 
     @Bean
-    public JedisConnectionFactory jedisConnectionFactory(){
+    public JedisConnectionFactory jedisConnectionFactory() {
         JedisPoolConfig poolConfig = this.redisProperties().getPool() != null
                 ? jedisPoolConfig() : new JedisPoolConfig();
 
@@ -61,7 +61,7 @@ public class RedisTicketRegistryConfiguration {
 
 
     @Bean
-    public TicketRedisTemplate ticketRedisTemplate(){
+    public TicketRedisTemplate ticketRedisTemplate() {
         return new TicketRedisTemplate(jedisConnectionFactory());
     }
 
@@ -70,6 +70,6 @@ public class RedisTicketRegistryConfiguration {
     public TicketRegistry redisTicketRegistry() {
         return new RedisTicketRegistry(ticketRedisTemplate());
     }
-    
-    
+
+
 }
