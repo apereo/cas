@@ -80,14 +80,7 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
-    
+        
     @Bean
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
@@ -106,16 +99,7 @@ public class CasCoreWebflowConfiguration {
         configureResolver(r);
         return r;
     }
-
-    @ConditionalOnMissingBean(name="defaultWebflowConfigurer")
-    @Bean
-    public CasWebflowConfigurer defaultWebflowConfigurer() {
-        final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer();
-        c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        c.setFlowBuilderServices(flowBuilderServices);
-        return c;
-    }
-    
+        
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {
