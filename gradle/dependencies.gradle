@@ -1587,5 +1587,11 @@ ext.libraries = [
                     exclude(group: "org.json", module: "json")
                     force = true
                 }
+        ],
+        embeddedRedis           : [
+                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
+                    exclude(module: "commons-io")
+                    force = true
+                }
         ]
 ]
