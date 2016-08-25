@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +59,7 @@ public class CasBasicAuthenticationConfiguration {
         return a;
     }
 
+    @ConditionalOnMissingBean(name="basicAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
         final BasicAuthenticationWebflowConfigurer w =

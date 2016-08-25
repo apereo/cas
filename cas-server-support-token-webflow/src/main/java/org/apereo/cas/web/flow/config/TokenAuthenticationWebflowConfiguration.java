@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.TokenWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,8 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
+    @ConditionalOnMissingBean(name="tokenWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer tokenWebflowConfigurer() {
         final TokenWebflowConfigurer w = new TokenWebflowConfigurer();

@@ -63,54 +63,56 @@ public class LdapAuthenticationConfiguration {
 
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
-        casProperties.getAuthn().getLdap().forEach(l -> {
-            if (l.getType() != null) {
-                final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
-                handler.setServicesManager(servicesManager);
-                handler.setAdditionalAttributes(l.getAdditionalAttributes());
-                handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
-                handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
-                handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
-                
-                if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
-                    handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
-                            .apply(credential.getId()));
-                }
+        casProperties.getAuthn().getLdap()
+                .stream()
+                .filter(l -> l.getType() != null && StringUtils.isNotBlank(l.getBaseDn()) && StringUtils.isNotBlank(l.getLdapUrl()))
+                .forEach(l -> {
+                    final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
+                    handler.setServicesManager(servicesManager);
+                    handler.setAdditionalAttributes(l.getAdditionalAttributes());
+                    handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
+                    handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
+                    handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
 
-                final Map<String, String> attributes = new HashMap<>();
-                l.getPrincipalAttributeList().forEach(a -> {
-                    final String attributeName = a.toString().trim();
-                    if (attributeName.contains(":")) {
-                        final String[] attrCombo = attributeName.split(":");
-                        attributes.put(attrCombo[0].trim(), attrCombo[1].trim());
-                    } else {
-                        attributes.put(attributeName, attributeName);
+                    if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
+                        handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
+                                .apply(credential.getId()));
                     }
+
+                    final Map<String, String> attributes = new HashMap<>();
+                    l.getPrincipalAttributeList().forEach(a -> {
+                        final String attributeName = a.toString().trim();
+                        if (attributeName.contains(":")) {
+                            final String[] attrCombo = attributeName.split(":");
+                            attributes.put(attrCombo[0].trim(), attrCombo[1].trim());
+                        } else {
+                            attributes.put(attributeName, attributeName);
+                        }
+                    });
+                    attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
+                    handler.setPrincipalAttributeMap(attributes);
+
+                    handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
+
+                    final Authenticator authenticator = getAuthenticator(l);
+                    authenticator.setReturnAttributes(attributes.keySet().toString());
+
+                    if (l.getPasswordPolicy().isEnabled()) {
+                        handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator));
+                    }
+
+                    handler.setAuthenticator(authenticator);
+                    handler.initialize();
+
+                    if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
+                        this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
+                    } else {
+                        this.authenticationHandlersResolvers.put(handler, null);
+                    }
+                
                 });
-                attributes.putAll(casProperties.getAuthn().getAttributeRepository().getAttributes());
-                handler.setPrincipalAttributeMap(attributes);
-
-                handler.setPrincipalIdAttribute(l.getPrincipalAttributeId());
-
-                final Authenticator authenticator = getAuthenticator(l);
-                authenticator.setReturnAttributes(attributes.keySet().toString());
-
-                if (l.getPasswordPolicy().isEnabled()) {
-                    handler.setPasswordPolicyConfiguration(createLdapPasswordPolicyConfiguration(l, authenticator));
-                }
-
-                handler.setAuthenticator(authenticator);
-                handler.initialize();
-
-                if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
-                    this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
-                } else {
-                    this.authenticationHandlersResolvers.put(handler, null);
-                }
-            }
-        });
     }
-    
+
     private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(
             final LdapAuthenticationProperties l, final Authenticator authenticator) {
 

@@ -57,10 +57,16 @@
                         <span th:utext="#{screen.capslock.on}"/>
                     </p>
                 </span>
-                <a href="https://pwd.example.org" th:text="#{screen.pm.button.forgotpwd}" />
+                <span th:utext="#{screen.pm.button.forgotpwd}" />
             </div>
         </section>
-
+        <section class="row check">
+            <p th:if="${rememberMeAuthenticationEnabled}">
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
+                <label for="rememberMe" th:text="#{screen.rememberme.checkbox.title}"/>
+            </p>
+        </section>
+        
         <section class="row" th:if="${recaptchaSiteKey}">
             <div>
                 <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
@@ -79,14 +85,15 @@
                    th:value="#{screen.welcome.button.login}"
                    tabindex="6"
                    type="submit"/>
-            <input class="btn-reset"
-                   name="reset"
-                   accesskey="c"
-                   th:value="#{screen.welcome.button.clear}"
-                   tabindex="7"
-                   type="reset"/>
         </section>
     </form>
         
+    <script type="text/javascript" th:inline="javascript">
+        var i = [[#{screen.welcome.button.loginwip}]]
+        $(":submit").on("click",function() {
+            $(this).attr("disabled", true);
+            $(this).attr("value", i);
+        });
+    </script>
     <div th:replace="fragments/loginsidebar"/>
 </div>
