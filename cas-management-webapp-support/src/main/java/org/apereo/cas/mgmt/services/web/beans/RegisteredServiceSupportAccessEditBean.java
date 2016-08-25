@@ -77,7 +77,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     }
 
     public void setRejectedAttr(final Map<String, Set<String>> rejectedAttr) {
-        this.rejectedAttr = requiredAttr;
+        this.rejectedAttr = rejectedAttr;
     }
 
     public Map<String, Set<String>> getRejectedAttr() {
