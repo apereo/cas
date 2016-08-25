@@ -116,7 +116,7 @@ public class RedisTicketRegistryProperties {
             return this.maxIdle;
         }
 
-        public void setMaxIdle(int maxIdle) {
+        public void setMaxIdle(final int maxIdle) {
             this.maxIdle = maxIdle;
         }
 
@@ -124,7 +124,7 @@ public class RedisTicketRegistryProperties {
             return this.minIdle;
         }
 
-        public void setMinIdle(int minIdle) {
+        public void setMinIdle(final int minIdle) {
             this.minIdle = minIdle;
         }
 
@@ -132,7 +132,7 @@ public class RedisTicketRegistryProperties {
             return this.maxActive;
         }
 
-        public void setMaxActive(int maxActive) {
+        public void setMaxActive(final int maxActive) {
             this.maxActive = maxActive;
         }
 
@@ -140,7 +140,7 @@ public class RedisTicketRegistryProperties {
             return this.maxWait;
         }
 
-        public void setMaxWait(int maxWait) {
+        public void setMaxWait(final int maxWait) {
             this.maxWait = maxWait;
         }
 
