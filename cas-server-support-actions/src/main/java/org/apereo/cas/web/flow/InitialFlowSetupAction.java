@@ -97,6 +97,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                 StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                 || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
         WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
+        WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
     }
 
     private void configureCookieGenerators(final RequestContext context) {

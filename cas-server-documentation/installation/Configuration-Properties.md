@@ -2308,7 +2308,7 @@ Provides a hard-time out as well as a sliding window.
 
 ```properties
 # cas.ticket.tgt.rememberMe.enabled=true
-# cas.ticket.tgt.rememberMe.timeToKillInSeconds=true
+# cas.ticket.tgt.rememberMe.timeToKillInSeconds=28800
 ```
 
 ### Timeout

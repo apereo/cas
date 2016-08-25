@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.PasswordChangeBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.FlowVariable;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
-import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactory;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -59,14 +58,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     
     private void configure(final String id) {
         final Flow flow = getLoginFlow();
-        flow.addVariable(new FlowVariable("password", new BeanFactoryVariableValueFactory(PasswordChangeBean.class,
-                            applicationContext.getAutowireCapableBeanFactory())));
+        createFlowVariable(flow, "password", PasswordChangeBean.class);
         
-        final BinderConfiguration binder = new BinderConfiguration();
-        binder.addBinding(new BinderConfiguration.Binding("password", null, true));
-        binder.addBinding(new BinderConfiguration.Binding("confirmedPassword", null, true));
+        final BinderConfiguration binder = createStateBinderConfiguration(Lists.newArrayList("password", "confirmedPassword"));
         final ViewState viewState = createViewState(flow, id, id, binder);
-        viewState.getAttributes().put("model", createExpression("password", PasswordChangeBean.class));
+        createStateModelBinding(viewState, "password", PasswordChangeBean.class);
         
         viewState.getEntryActionList().add(this.passwordChangeAction);
         final Transition transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, PASSWORD_CHANGE_ACTION);
