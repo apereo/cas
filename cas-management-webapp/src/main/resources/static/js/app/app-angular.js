@@ -690,7 +690,7 @@ if (array.length == 3) {
                 serviceDataTransformation('load');
                 showInstructions();
 
-                $http.get(appContext + '/getService.html?id=-1')
+                $http.get(appContext + '/getService?id=-1')
                     .then(function (response) {
                         if (response.status != 200)
                             delayedAlert('notloaded', 'danger', data);
@@ -707,7 +707,7 @@ if (array.length == 3) {
             this.loadService = function (serviceId, duplicate) {
                 serviceForm.radioWatchBypass = true;
 
-                $http.get(appContext + '/getService.html?id=' + serviceId)
+                $http.get(appContext + '/getService?id=' + serviceId)
                     .then(function (response) {
                         if (response.status != 200) {
                             delayedAlert('notloaded', 'danger', data);
