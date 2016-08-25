@@ -34,7 +34,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         try {
             Assert.notNull(this.client, "No redis client is defined.");
-            this.client.delete(CAS_TICKET_PREFIX+ticketId);
+            String redisKey = this.getTicketRedisKey(ticketId);
+            this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
             logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
@@ -50,7 +51,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         }
         logger.debug("Adding ticket {}", ticket);
         try {
-            this.client.boundValueOps(CAS_TICKET_PREFIX + ticket.getId()).set(this.encodeTicket(ticket), getTimeout(ticket), TimeUnit.SECONDS);
+            String redisKey = this.getTicketRedisKey(ticket.getId());
+            //Encode first, then add
+            Ticket encodeTicket = this.encodeTicket(ticket);
+            this.client.boundValueOps(redisKey)
+                    .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
         } catch (final Exception e) {
             logger.error("Failed to add {}", ticket);
         }
@@ -64,8 +69,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         }
 
         try {
-            final Ticket t = this.client.boundValueOps(CAS_TICKET_PREFIX + ticketId).get();
+            String redisKey = this.getTicketRedisKey(ticketId);
+            final Ticket t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
+                //Decoding add first
                 return decodeTicket(t);
             }
         } catch (final Exception e) {
@@ -82,12 +89,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         }
 
         Set<Ticket> tickets = new HashSet<Ticket>();
-        Set<String> keys = this.client.keys(CAS_TICKET_PREFIX + "*");
-        for (String key:keys){
-            Ticket ticket = this.client.boundValueOps(key).get();
-            if(ticket==null){
-                this.client.delete(key);
-            }else{
+        // ticket keys in the redis
+        Set<String> redisKeys = this.client.keys(this.getPatternTicketRedisKey());
+        for (String redisKey : redisKeys) {
+            Ticket ticket = this.client.boundValueOps(redisKey).get();
+            if (ticket == null) {
+                this.client.delete(redisKey);
+            } else {
+                //Decoding add first
                 tickets.add(this.decodeTicket(ticket));
             }
         }
@@ -100,8 +109,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @PreDestroy
-    public void destroy() throws Exception {
-        client.getConnectionFactory().getConnection().close();
+    public void destroy() {
+        try {
+            client.getConnectionFactory().getConnection().close();
+        } catch (Exception e) {
+            logger.error("Failed destroy redis connection ", e);
+        }
+
+
     }
 
     /**
@@ -116,5 +131,15 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             return 1;
         }
         return ttl;
+    }
+
+    //Add a prefix as the key of redis
+    private String getTicketRedisKey(String ticketId) {
+        return CAS_TICKET_PREFIX + ticketId;
+    }
+
+    // pattern all ticket redisKey
+    private String getPatternTicketRedisKey() {
+        return CAS_TICKET_PREFIX + "*";
     }
 }

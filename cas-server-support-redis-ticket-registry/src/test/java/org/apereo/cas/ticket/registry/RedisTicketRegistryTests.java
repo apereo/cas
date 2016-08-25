@@ -35,9 +35,9 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = RedisTicketRegistryConfiguration.class)
 public class RedisTicketRegistryTests {
-    
+
     private static final String TEST_STR = "TEST";
-    
+
     private static final String TGT_STR = "TGT";
 
     private static final String EXCEPTION_CAUGHT = "Exception caught.  None expected.";
@@ -46,7 +46,7 @@ public class RedisTicketRegistryTests {
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -65,7 +65,7 @@ public class RedisTicketRegistryTests {
     }
 
     @AfterClass
-    public static void stopRedis(){
+    public static void stopRedis() {
         redisServer.stop();
     }
 
