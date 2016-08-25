@@ -689,6 +689,10 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>hjson</artifactId>
+          <groupId>org.hjson</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
@@ -709,14 +713,6 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
-          <artifactId>slf4j-api</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-classic</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-web</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
@@ -725,8 +721,28 @@
           <groupId>ch.qos.logback</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>aspectjrt</artifactId>
+          <groupId>org.aspectj</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spring-beans</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib</artifactId>
           <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hjson</artifactId>
+          <groupId>org.hjson</groupId>
         </exclusion>
         <exclusion>
           <artifactId>cglib-full</artifactId>
@@ -745,15 +761,7 @@
           <groupId>org.springframework</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>aspectjrt</artifactId>
-          <groupId>org.aspectj</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spring-webmvc</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-beans</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
       </exclusions>
@@ -1229,7 +1237,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20160212</version>
+      <version>20160810</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

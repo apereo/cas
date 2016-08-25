@@ -33,14 +33,3 @@ handled via a long-term timeout expiration policy, and other requests
 are handled via the CAS default SSO session expiration policy.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-### Webflow Configuration
-
-Two sections of `login-webflow.xml` require changes:
-
-1. Uncomment `RememberMeUsernamePasswordCredential` as the `credential` type.
-2. Uncomment the binding property for `rememberMe`.
-
-### User Interface Customization
-
-Uncomment the `rememberMe` checkbox control in `loginform.html`.
