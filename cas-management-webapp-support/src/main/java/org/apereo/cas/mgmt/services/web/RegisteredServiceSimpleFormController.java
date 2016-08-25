@@ -88,7 +88,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param request  the request
      * @param response the response
      */
-    @RequestMapping(method = RequestMethod.GET, value = {"getService.html"})
+    @RequestMapping(method = RequestMethod.GET, value = {"getService"})
     public void getServiceById(@RequestParam(value = "id", required = false) final Long id,
                                final HttpServletRequest request, final HttpServletResponse response) {
 
