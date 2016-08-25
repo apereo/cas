@@ -38,6 +38,7 @@ Enable the registry via:
 ```
 
 #### Configuration
+
 ```properties
 # ehcache.config.file=classpath:ehcache-replicated.xml
 # ehcache.cachemanager.shared=false
@@ -67,7 +68,9 @@ Enable the registry via:
 ```
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
+
 ```xml
+
 <ehcache name="ehCacheTicketRegistryCache"
     updateCheck="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -99,11 +102,11 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
       class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
       properties="port=41001,remoteObjectPort=41002" />
 </ehcache>
+
 ```
 
-
-
 ### Eviction Policy
+
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
 The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
