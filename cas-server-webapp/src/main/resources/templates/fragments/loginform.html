@@ -85,14 +85,15 @@
                    th:value="#{screen.welcome.button.login}"
                    tabindex="6"
                    type="submit"/>
-            <input class="btn-reset"
-                   name="reset"
-                   accesskey="c"
-                   th:value="#{screen.welcome.button.clear}"
-                   tabindex="7"
-                   type="reset"/>
         </section>
     </form>
         
+    <script type="text/javascript" th:inline="javascript">
+        var i = [[#{screen.welcome.button.loginwip}]]
+        $(":submit").on("click",function() {
+            $(this).attr("disabled", true);
+            $(this).attr("value", i);
+        });
+    </script>
     <div th:replace="fragments/loginsidebar"/>
 </div>
