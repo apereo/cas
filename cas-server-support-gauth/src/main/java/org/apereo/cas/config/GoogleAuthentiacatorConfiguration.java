@@ -202,6 +202,7 @@ public class GoogleAuthentiacatorConfiguration {
         return a;
     }
 
+    @ConditionalOnMissingBean(name="googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         final GoogleAuthenticatorMultifactorWebflowConfigurer c =

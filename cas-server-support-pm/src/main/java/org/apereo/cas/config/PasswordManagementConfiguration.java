@@ -55,7 +55,7 @@ public class PasswordManagementConfiguration {
         return new PasswordChangeAction(passwordChangeService());
     }
 
-    @ConditionalOnMissingBean(name = "passwordChangeService")
+    @ConditionalOnMissingBean(name="passwordChangeService")
     @RefreshScope
     @Bean
     public PasswordChangeService passwordChangeService() {
@@ -70,7 +70,8 @@ public class PasswordManagementConfiguration {
         }
         return (c, bean) -> false;
     }
-    
+
+    @ConditionalOnMissingBean(name="passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
