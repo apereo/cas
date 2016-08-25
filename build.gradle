@@ -438,7 +438,7 @@ subprojects {
         includePlugins = false
         includeSubProjects = true
     }
-
+    
     findbugs {
         toolVersion = "${findbugsVersion}"
         sourceSets = [sourceSets.main]

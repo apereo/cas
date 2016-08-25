@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -158,6 +159,7 @@ public class AuthyConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name="authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         final AuthyMultifactorWebflowConfigurer c =

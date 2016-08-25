@@ -1,10 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import org.springframework.binding.expression.Expression;
-import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.support.ActionExecutingViewFactory;
 
 /**
  * The {@link WsFederationWebflowConfigurer} is responsible for
@@ -23,12 +20,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        
-        final Expression expression = createExpression("flowScope.WsFederationIdentityProviderUrl", String.class);
-        final ActionExecutingViewFactory viewFactory = new ActionExecutingViewFactory(
-                new ExternalRedirectAction(expression));
-
-        createEndState(flow, WS_FEDERATION_REDIRECT, viewFactory);
+        createEndState(flow, WS_FEDERATION_REDIRECT, "flowScope.WsFederationIdentityProviderUrl", true);
         final ActionState actionState = createActionState(flow, WS_FEDERATION_ACTION, createEvaluateAction(WS_FEDERATION_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
@@ -37,10 +29,6 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
         if (this.autoRedirect) {
             setStartState(flow, actionState);
         }
-    }
-
-    public boolean isAutoRedirect() {
-        return autoRedirect;
     }
 
     public void setAutoRedirect(final boolean autoRedirect) {
