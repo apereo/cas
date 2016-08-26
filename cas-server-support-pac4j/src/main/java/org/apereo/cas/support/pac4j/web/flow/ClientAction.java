@@ -165,7 +165,11 @@ public class ClientAction extends AbstractAction {
                 logger.error("Cannot process client {}", client, e);
             }
         }
-        context.getFlowScope().put(PAC4J_URLS, urls);
+        if (!urls.isEmpty()) {
+            context.getFlowScope().put(PAC4J_URLS, urls);
+        } else {
+            logger.warn("No clients could be determined based on the provided configuration");
+        }
     }
 
     /**
