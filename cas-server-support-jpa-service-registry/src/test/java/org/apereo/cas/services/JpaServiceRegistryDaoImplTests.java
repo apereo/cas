@@ -9,8 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -30,8 +29,7 @@ import static org.junit.Assert.*;
  * @since 3.1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class})
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
