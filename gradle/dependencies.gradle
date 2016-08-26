@@ -607,6 +607,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework", module: "spring-test")
@@ -795,6 +796,7 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
@@ -848,6 +850,7 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "commons-io", module: "commons-io")
                     exclude(group: "net.minidev", module: "json-smart")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
@@ -855,6 +858,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "net.minidev", module: "json-smart")
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
@@ -871,6 +875,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     force = true
                 },
@@ -923,6 +928,17 @@ ext.libraries = [
                     exclude(group: "org.pac4j", module: "pac4j-core")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    force = true
+                },
+                dependencies.create("com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion") {
+                    exclude(group: "net.minidev", module: "json-smart")
+                    force = true
+                },
+                dependencies.create("com.nimbusds:oauth2-oidc-sdk:$nimbusOidcVersion") {
+                    exclude(group: "net.minidev", module: "json-smart")
+                    force = true
+                },
+                dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
                     force = true
                 }
         ],

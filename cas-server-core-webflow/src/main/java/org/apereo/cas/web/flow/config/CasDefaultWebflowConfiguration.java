@@ -18,7 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casCoreWebflowConfiguration")
+@Configuration("casDefaultWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasDefaultWebflowConfiguration {
 
