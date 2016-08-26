@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.embedded.RedisServer;
 
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RedisTicketRegistryConfiguration.class)
+@SpringBootTest(classes = {RedisTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class RedisTicketRegistryTests {
 
     private static final String TEST_STR = "TEST";
