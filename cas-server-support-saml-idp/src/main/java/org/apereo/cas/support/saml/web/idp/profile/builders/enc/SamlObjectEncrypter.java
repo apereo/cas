@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.util.PrivateKeyFactoryBean;
+import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;

@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.crypto;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;

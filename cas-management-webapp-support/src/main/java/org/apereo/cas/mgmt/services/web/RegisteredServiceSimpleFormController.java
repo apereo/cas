@@ -4,9 +4,9 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,7 +75,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             final Map<String, Object> model = new HashMap<>();
             model.put("id", newSvc.getId());
             model.put("status", HttpServletResponse.SC_OK);
-            JsonViewUtils.render(model, response);
+            JsonUtils.render(model, response);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -108,7 +108,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
             bean.setFormData(this.registeredServiceFactory.createFormData());
 
             bean.setStatus(HttpServletResponse.SC_OK);
-            JsonViewUtils.render(bean, response);
+            JsonUtils.render(bean, response);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

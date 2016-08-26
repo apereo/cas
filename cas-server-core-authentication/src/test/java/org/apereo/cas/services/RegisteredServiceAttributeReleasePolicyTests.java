@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.apereo.cas.util.SerializationUtils;
+import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
