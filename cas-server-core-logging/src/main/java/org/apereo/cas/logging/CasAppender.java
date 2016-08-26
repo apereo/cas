@@ -15,7 +15,7 @@ import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.SimpleMessage;
-import org.apereo.cas.util.TicketIdSanitizationUtils;
+import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.springframework.util.Assert;
 
 /**

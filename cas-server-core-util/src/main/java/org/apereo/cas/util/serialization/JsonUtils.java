@@ -1,4 +1,4 @@
-package org.apereo.cas.mgmt.services.web.view;
+package org.apereo.cas.util.serialization;
 
 import com.google.common.base.Throwables;
 import org.springframework.http.MediaType;
@@ -14,10 +14,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class JsonViewUtils {
+public final class JsonUtils {
 
     /** Private constructor. */
-    private JsonViewUtils() {}
+    private JsonUtils() {}
 
     /**
      * Render model and view.

@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.serialization;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;

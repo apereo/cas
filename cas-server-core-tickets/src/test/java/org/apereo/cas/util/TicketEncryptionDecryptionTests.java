@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 
 import com.google.common.io.ByteSource;
 import org.apereo.cas.util.cipher.BinaryCipherExecutor;
+import org.apereo.cas.util.serialization.SerializationUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

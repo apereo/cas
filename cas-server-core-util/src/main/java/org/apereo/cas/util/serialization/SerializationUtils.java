@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.serialization;
 
 import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;

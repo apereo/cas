@@ -4,10 +4,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
-import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -124,7 +124,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         final Map<String, Object> model = new HashMap<>();
         model.put("serviceName", r.getName());
         model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonViewUtils.render(model, response);
+        JsonUtils.render(model, response);
     }
 
     /**
@@ -156,7 +156,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         serviceBeans.addAll(services.stream().map(this.registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         model.put("services", serviceBeans);
         model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonViewUtils.render(model, response);
+        JsonUtils.render(model, response);
     }
 
     /**
@@ -182,7 +182,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
         }
         final Map<String, Object> model = new HashMap<>();
         model.put(STATUS, HttpServletResponse.SC_OK);
-        JsonViewUtils.render(model, response);
+        JsonUtils.render(model, response);
     }
 
 

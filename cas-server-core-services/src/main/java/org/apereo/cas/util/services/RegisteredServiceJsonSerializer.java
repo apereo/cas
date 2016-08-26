@@ -3,7 +3,7 @@ package org.apereo.cas.util.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 
