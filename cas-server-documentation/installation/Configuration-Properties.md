@@ -1541,13 +1541,15 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 
 
 ```properties
-# cas.authn.oauth.refreshToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.code.policy.numberOfUses=1
+# cas.authn.oauth.code.policy.maxTimeToLiveInSeconds=30
 
-# cas.authn.oauth.code.timeToKillInSeconds=30
-# cas.authn.oauth.code.numberOfUses=1
+# cas.authn.oauth.accessToken.policy.timeToKillInSeconds=7200
+# cas.authn.oauth.accessToken.policy.maxTimeToLiveInSeconds=28800
 
-# cas.authn.oauth.accessToken.timeToKillInSeconds=7200
-# cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+# cas.authn.oauth.refreshToken.policy.numberOfUses=100
+# cas.authn.oauth.refreshToken.policy.timeToKillInSeconds=604800
+# cas.authn.oauth.refreshToken.policy.maxTimeToLiveInSeconds=2592000
 ```
 
 

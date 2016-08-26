@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.code;
 
-import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.support.oauth.util.OAuthTokenExporationPolicy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,28 +10,17 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+public class OAuthCodeExpirationPolicy extends OAuthTokenExporationPolicy {
     private static final long serialVersionUID = -8383186621682727360L;
 
     /**
      * Instantiates a new O auth code expiration policy.
      *
-     * @param numberOfUses             the number of uses
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param numberOfUses  the number of uses
+     * @param maxTimeToLive the time to kill
+     * @param timeUnit      the time unit
      */
-    public OAuthCodeExpirationPolicy(final int numberOfUses,
-                                     final long timeToKillInMilliSeconds) {
-        super(numberOfUses, timeToKillInMilliSeconds);
-    }
-
-    /**
-     * Instantiates a new O auth code expiration policy.
-     *
-     * @param numberOfUses the number of uses
-     * @param timeToKill   the time to kill
-     * @param timeUnit     the time unit
-     */
-    public OAuthCodeExpirationPolicy(final int numberOfUses, final long timeToKill, final TimeUnit timeUnit) {
-        super(numberOfUses, timeToKill, timeUnit);
+    public OAuthCodeExpirationPolicy(int numberOfUses, long maxTimeToLive, TimeUnit timeUnit) {
+        super(numberOfUses, -1, maxTimeToLive, timeUnit);
     }
 }
