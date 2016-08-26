@@ -90,9 +90,10 @@
         
     <script type="text/javascript" th:inline="javascript">
         var i = [[#{screen.welcome.button.loginwip}]]
-        $(":submit").on("click",function() {
-            $(this).attr("disabled", true);
-            $(this).attr("value", i);
+        $("#fm1").submit(function() {
+            $(":submit").attr("disabled", true);
+            $(":submit").attr("value", i);
+            return true;
         });
     </script>
     <div th:replace="fragments/loginsidebar"/>
