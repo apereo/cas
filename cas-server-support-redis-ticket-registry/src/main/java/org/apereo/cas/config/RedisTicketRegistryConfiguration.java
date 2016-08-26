@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.registry.TicketRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -31,6 +32,7 @@ public class RedisTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public JedisConnectionFactory jedisConnectionFactory() {
         JedisPoolConfig poolConfig = this.redisProperties().getPool() != null
                 ? jedisPoolConfig() : new JedisPoolConfig();
@@ -61,12 +63,14 @@ public class RedisTicketRegistryConfiguration {
 
 
     @Bean
+    @RefreshScope
     public TicketRedisTemplate ticketRedisTemplate() {
         return new TicketRedisTemplate(jedisConnectionFactory());
     }
 
 
     @Bean(name = {"redisTicketRegistry", "ticketRegistry"})
+    @RefreshScope
     public TicketRegistry redisTicketRegistry() {
         return new RedisTicketRegistry(ticketRedisTemplate());
     }
