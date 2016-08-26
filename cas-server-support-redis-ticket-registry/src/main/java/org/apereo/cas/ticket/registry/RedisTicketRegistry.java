@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
@@ -111,7 +112,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @PreDestroy
     public void destroy() {
         try {
-            client.getConnectionFactory().getConnection().close();
+            if (client == null) {
+                return;
+            }
+            JedisConnectionFactory jedisConnectionFactory = (JedisConnectionFactory) client.getConnectionFactory();
+            jedisConnectionFactory.destroy();
         } catch (Exception e) {
             logger.error("Failed destroy redis connection ", e);
         }
@@ -134,7 +139,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     //Add a prefix as the key of redis
-    private String getTicketRedisKey(String ticketId) {
+    private String getTicketRedisKey(final String ticketId) {
         return CAS_TICKET_PREFIX + ticketId;
     }
 
