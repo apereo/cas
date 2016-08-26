@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.crypto;
 
 import java.io.InputStream;
 import java.security.KeyFactory;

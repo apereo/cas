@@ -8,7 +8,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
-import org.apereo.cas.util.PrivateKeyFactoryBean;
+import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Before;
 import org.junit.Test;

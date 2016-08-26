@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.serialization;
 
 import java.io.File;
 import java.io.InputStream;

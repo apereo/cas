@@ -10,7 +10,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.StringSerializer;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

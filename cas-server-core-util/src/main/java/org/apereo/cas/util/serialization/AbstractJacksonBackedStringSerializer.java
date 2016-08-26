@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.serialization;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.StringSerializer;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.util.services.RegisteredServiceJsonSerializer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;

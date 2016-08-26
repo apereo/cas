@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
-import org.apereo.cas.util.SerializationUtils;
+import org.apereo.cas.util.serialization.SerializationUtils;
 
 import org.junit.Before;
 import org.junit.Test;

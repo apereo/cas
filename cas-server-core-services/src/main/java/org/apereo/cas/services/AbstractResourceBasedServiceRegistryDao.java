@@ -4,7 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.StringSerializer;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

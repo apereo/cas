@@ -2,12 +2,15 @@ package org.apereo.cas.web.report;
 
 import java.util.concurrent.Callable;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.monitor.Status;
+import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +20,9 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.name;
 
 
 /**
@@ -50,26 +56,27 @@ public class HealthCheckController {
 
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
-            final StringBuilder sb = new StringBuilder();
-            sb.append("Health: ").append(healthStatus.getCode());
-            String name;
-            Status status;
-            int i = 0;
-            for (final Map.Entry<String, Status> entry : healthStatus.getDetails().entrySet()) {
-                name = entry.getKey();
-                status = entry.getValue();
-                response.addHeader("X-CAS-" + name, String.format("%s;%s", status.getCode(), status.getDescription()));
-                final Callable<HealthStatus> asyncTask1 = () -> healthCheckMonitor.observe();
-
-                sb.append("\n\n\t").append(++i).append('.').append(name).append(": ");
-                sb.append(status.getCode());
-                if (status.getDescription() != null) {
-                    sb.append(" - ").append(status.getDescription());
-                }
-            }
             response.setStatus(healthStatus.getCode().value());
-            response.setContentType("text/plain");
-            response.getOutputStream().write(sb.toString().getBytes(response.getCharacterEncoding()));
+            
+            if (StringUtils.equals(request.getParameter("format"), "json")) {
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                JsonUtils.render(healthStatus.getDetails(), response);
+            } else {
+                final StringBuilder sb = new StringBuilder();
+                sb.append("Health: ").append(healthStatus.getCode());
+
+                final AtomicInteger i = new AtomicInteger();
+                healthStatus.getDetails().forEach((name, status) -> {
+                    response.addHeader("X-CAS-" + name, String.format("%s;%s", status.getCode(), status.getDescription()));
+                    sb.append("\n\n\t").append(i.incrementAndGet()).append('.').append(name).append(": ");
+                    sb.append(status.getCode());
+                    if (status.getDescription() != null) {
+                        sb.append(" - ").append(status.getDescription());
+                    }
+                });
+                response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+                response.getOutputStream().write(sb.toString().getBytes(response.getCharacterEncoding()));
+            }
             return null;
         };
 
