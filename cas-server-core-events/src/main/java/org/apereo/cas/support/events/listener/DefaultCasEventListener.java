@@ -3,7 +3,7 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
-import org.apereo.cas.util.TicketIdSanitizationUtils;
+import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;

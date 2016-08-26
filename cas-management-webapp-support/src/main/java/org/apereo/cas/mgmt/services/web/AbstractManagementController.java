@@ -1,7 +1,7 @@
 package org.apereo.cas.mgmt.services.web;
 
-import org.apereo.cas.mgmt.services.web.view.JsonViewUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.serialization.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,7 +59,7 @@ public abstract class AbstractManagementController {
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
             logger.debug("Handling exception {} for ajax request indicated by header {}",
                     ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
-            JsonViewUtils.renderException(ex, response);
+            JsonUtils.renderException(ex, response);
             return null;
         } else {
             logger.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
