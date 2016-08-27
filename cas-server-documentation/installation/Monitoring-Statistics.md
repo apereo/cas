@@ -22,7 +22,7 @@ Access is granted the following settings in `cas.properties` file:
 
 ```bash
 # security configuration based on IP address to access the /status and /statistics pages
-# cas.securityContext.adminpages.ip=127\.0\.0\.1
+# cas.securityContext.adminpages.ip=127\.0\.0\.1|0:0:0:0:0:0:0:1
 ```
 
 
@@ -242,7 +242,7 @@ The CAS web application exposes a `/statistics` endpoint that can be used to vie
 
 ```bash
 # security configuration based on IP address to access the /status and /statistics pages
-# cas.securityContext.adminpages.ip=127\.0\.0\.1
+# cas.securityContext.adminpages.ip=127\.0\.0\.1|0:0:0:0:0:0:0:1
 ```
 
 Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:
