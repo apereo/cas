@@ -84,9 +84,7 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 
 ### Turning Off Single Logout
 
-To disable single logout, adjust the following setting in `application.properties` file. 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
 
 ### Single Logout Per Service
 
@@ -131,8 +129,7 @@ To configure a service specific endpoint, try the following example:
 
 ### Asynchronous SLO Messages
 
-By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous 
-messages, enable the behavior in `application.properties`. 
+By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. 
 
 ## SSO Session vs. Application Session
 
