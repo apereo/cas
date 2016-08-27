@@ -1,12 +1,16 @@
 package org.jasig.cas.ticket.registry;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import org.jasig.cas.logout.LogoutManager;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.web.support.WebUtils;
 import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -25,13 +29,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.jasig.cas.web.support.WebUtils;
+import org.jasig.cas.logout.LogoutManager;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 /**
  * This is {@link TicketRegistryCleaner}.
@@ -112,26 +114,33 @@ public class TicketRegistryCleaner implements Job {
                     jobExecutionContext.getScheduler().getContext().get(getClass().getSimpleName());
             logger.debug("Cleaning up tickets from an instance of {}", registry);
 
-            final Collection<Ticket> ticketsToRemove = Collections2.filter(registry.getTickets(), new Predicate<Ticket>() {
+            final Collection<Integer> deletedTicketCounts = Collections2.transform(registry.getTickets(), new Function<Ticket, Integer>() {
                 @Override
-                public boolean apply(@Nullable final Ticket ticket) {
+                public Integer apply(@Nullable final Ticket ticket) {
+                    int count = 0;
+
                     if (ticket != null && ticket.isExpired()) {
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
-                            registry.deleteTicket(ticket.getId());
+                            count += registry.deleteTicket(ticket.getId());
                         } else if (ticket instanceof ServiceTicket) {
                             logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                            registry.deleteTicket(ticket.getId());
+                            count += registry.deleteTicket(ticket.getId());
                         } else {
                             logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                         }
-                        return true;
                     }
-                    return false;
+                    return count;
                 }
             });
-            logger.info("{} expired tickets found and removed.", ticketsToRemove.size());
+            
+            int cumulativeCount = 0;
+            for (final int count : deletedTicketCounts) {
+                cumulativeCount += count;
+            }
+            
+            logger.info("{} expired tickets found and removed.", cumulativeCount);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }

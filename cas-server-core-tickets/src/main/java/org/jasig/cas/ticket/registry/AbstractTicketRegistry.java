@@ -65,14 +65,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) {
+        int count = 0;
+
         if (ticketId == null) {
-            return false;
+            return count;
         }
 
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
-            return false;
+            return count;
         }
 
         if (ticket instanceof TicketGrantingTicket) {
@@ -82,25 +84,33 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-            deleteChildren(tgt);
+            count += deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
             final Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
             while(it.hasNext()) {
                 final ProxyGrantingTicket pgt = it.next();
-                deleteTicket(pgt.getId());
+                count += deleteTicket(pgt.getId());
             }
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return deleteSingleTicket(ticketId);
+
+        if (deleteSingleTicket(ticketId)) {
+            count++;
+        }
+ 
+        return count;
     }
 
     /**
      * Delete TGT's service tickets.
      *
      * @param ticket the ticket
+     * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
-    public void deleteChildren(final TicketGrantingTicket ticket) {
+    public int deleteChildren(final TicketGrantingTicket ticket) {
+        int count = 0;
+
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
@@ -110,11 +120,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 final String ticketId = it.next();
                 if (deleteSingleTicket(ticketId)) {
                     logger.debug("Removed ticket [{}]", ticketId);
+                    count++;
                 } else {
                     logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
             }
         }
+
+        return count;
     }
 
     /**
