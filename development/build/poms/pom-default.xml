@@ -1085,6 +1085,10 @@
           <groupId>cglib</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>json-smart</artifactId>
+          <groupId>net.minidev</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>cglib-full</artifactId>
           <groupId>cglib</groupId>
         </exclusion>
