@@ -34,7 +34,7 @@ By default, CAS attempts to cross-check computed hash values against what the cl
 In order for this to succeed, CAS will need access to the data store where MD5 representations of credentials are kept. The store
 needs to keep the hash value at a minimum of course. 
 
-By default, CAS uses the `application.properties` file to house the hashed credentials. Real production-level deployments
+By default, CAS uses its properties file to house the hashed credentials. Real production-level deployments
 of this module will need to provide their own data store that provides a collection of hashed values as authenticating accounts.
 
 ## Client Requests

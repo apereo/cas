@@ -31,8 +31,7 @@ This ticket registry implementation is enabled by simply including the module in
 
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
 implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
-configuration in this auto-configuration mode are controlled by the following exposed properties which could be set via
-an external `application.properties` file (with sensible defaults for all the properties if not explicitly set):
+configuration in this auto-configuration mode are controlled by CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 

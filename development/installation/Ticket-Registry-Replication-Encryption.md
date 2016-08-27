@@ -18,7 +18,7 @@ when you use the above ticket registries. It requires explicit configuration bef
 ## Configuration
 
 Each ticket registry configuration supports a cipher component that needs to be configured by the deployer.
-The settings, algorithms and secret keys used for the cipher may be controlled via `application.properties`.
+The settings, algorithms and secret keys used for the cipher may be controlled via CAS settings.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Additionally, [Ignite](Ignite-Ticket-Registry.html) may be configured to use TLS for replication transport.

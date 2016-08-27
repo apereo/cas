@@ -95,7 +95,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 
 ## OAuth Expiration Policy
 
-The expiration policy for OAuth tokens is controlled by the `application.properties` file.
+The expiration policy for OAuth tokens is controlled by CAS settings and properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 # OpenID Authentication
