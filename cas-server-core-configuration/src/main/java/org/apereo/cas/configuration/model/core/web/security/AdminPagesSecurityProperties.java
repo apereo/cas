@@ -11,7 +11,7 @@ import org.springframework.core.io.Resource;
 
 public class AdminPagesSecurityProperties {
 
-    private String ip = "127\\.0\\.0\\.1";
+    private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
     private String adminRoles = "ROLE_ADMIN";
     private String loginUrl;
     private String service;
