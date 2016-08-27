@@ -20,7 +20,6 @@ you probably want to run them both as <code>WARN</code>.</p></div>
 ## Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath.
-These may be overridden by the `application.properties` file
 
 ```properties
 # logging.config=classpath:log4j2.xml

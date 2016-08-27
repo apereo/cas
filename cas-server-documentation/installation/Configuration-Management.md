@@ -33,8 +33,8 @@ properties are considered in the following order:
 5. OS environment variables.
 6. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants)
 7. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants)
-8. Application properties outside of your packaged jar (application.properties and YAML variants).
-9. Application properties packaged inside your jar (application.properties and YAML variants).
+8. Application properties outside of your packaged jar (`application.properties` and YAML variants).
+9. Application properties packaged inside your jar (`application.properties` and YAML variants).
 
 All CAS settings can be overridden via the above outlined strategies.
 
@@ -111,7 +111,7 @@ spring.profiles.active=native
 spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
 ```
 
-An example of an external `application.properties` file hosted by an external location follows:
+An example of an external `.properties` file hosted by an external location follows:
 
 ```properties
 cas.server.name=...
@@ -123,7 +123,7 @@ You could have just as well used a `cas.yml` file to host the changes.
 
 CAS is also able to handle git-based repositories that host CAS configuration. 
 Such repositories can either be local to the CAS
-deployment, or they could be on the cloud in form of GitHub/Bitbucket. Access to 
+deployment, or they could be on the cloud in form of GitHub/BitBucket. Access to 
 cloud-based repositories can either be in form of a
 username/password, or via SSH so as long the appropriate keys are configured in the 
 CAS deployment environment which is really no different

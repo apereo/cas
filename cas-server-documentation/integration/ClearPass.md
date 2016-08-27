@@ -30,8 +30,7 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 
 ## Cache Credential
 
-Enable the caching and capturing of the credential in `application.properties`.
-
+Enable the caching and capturing of the credential in CAS properties.
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 ## Create Keys
