@@ -30,7 +30,6 @@ The following endpoints are secured and available:
 
 ## Security
 
-Access is granted the following settings in `application.properties` file.
 The `/status` endpoint is always protected by an IP pattern. The other administrative 
 endpoints however can optionally be protected by the CAS server.
 Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
@@ -54,7 +53,7 @@ Supported metrics include:
 
 ### Metric Refresh Interval
 
-The metrics reporting interval can be configured via the `application.properties` file.
+The metrics reporting interval can be configured via CAS properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Loggers

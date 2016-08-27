@@ -14,7 +14,10 @@ and Spring-managed `@Aspect`-style aspects.
 CAS server auto-configures all the relevant Inspektr components. 
 All the available configuration
 options that are injected to Inspektr classes are available to 
-deployers via relevant properties in `application.properties`
+deployers via relevant CAS properties.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 
 ## File-based Audits
 
