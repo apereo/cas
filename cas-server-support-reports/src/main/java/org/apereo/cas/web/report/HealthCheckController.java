@@ -1,13 +1,10 @@
 package org.apereo.cas.web.report;
 
-import java.util.concurrent.Callable;
-
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
-import org.apereo.cas.monitor.Status;
 import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,10 +16,8 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.name;
 
 
 /**
