@@ -80,6 +80,11 @@ Update the following overlay projects to point to the newly released CAS version
 - [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
 
 
-## Docker Image
+## Update Maintenance Policy
+
+Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with GA or minor releases.
+
+## Docker Image (Optional)
+
 Release a new CAS [Docker image](https://github.com/apereo/cas/tree/dockerized-caswebapp).
 This task is only relevant when dealing with GA releases.
