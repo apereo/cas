@@ -4,7 +4,12 @@ title: CAS - Release Process
 ---
 
 # CAS 5.0.x Release Process
-This page documents the steps that a release engineer should take for cutting a CAS server release.
+
+This page documents the steps that a release engineer should take for cutting a CAS server release. 
+
+## Account Setup
+
+You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask to be authorized to publish releases to the `org.apereo` package.
 
 ## Environment Review
 
