@@ -50,7 +50,7 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
 - Find the staged repository for CAS artifacts
 - "Close" the repository.
-- "Release" the repository.  Both c and d should be accompanied by email confirmation.
+- "Release" the repository.
 
 ## Finalizing the Release
 
