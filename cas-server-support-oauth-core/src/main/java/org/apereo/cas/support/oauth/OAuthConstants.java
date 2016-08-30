@@ -84,7 +84,7 @@ public interface OAuthConstants {
     String PROFILE_URL = "profile";
 
     /** The remaining time in seconds before expiration with syntax : expires=3600... */
-    String EXPIRES = "expires";
+    String EXPIRES_IN = "expires_in";
 
     /** The nonce parameter. */
     String NONCE = "nonce";
