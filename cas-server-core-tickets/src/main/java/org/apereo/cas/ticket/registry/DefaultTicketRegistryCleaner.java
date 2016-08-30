@@ -68,19 +68,21 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                     .collect(Collectors.toSet());
             LOGGER.debug("{} expired tickets found.", ticketsToRemove.size());
 
+            int count = 0;
+
             for (final Ticket ticket : ticketsToRemove) {
                 if (ticket instanceof TicketGrantingTicket) {
                     LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                     logoutManager.performLogout((TicketGrantingTicket) ticket);
-                    ticketRegistry.deleteTicket(ticket.getId());
+                    count += ticketRegistry.deleteTicket(ticket.getId());
                 } else if (ticket instanceof ServiceTicket) {
                     LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                    ticketRegistry.deleteTicket(ticket.getId());
+                    count += ticketRegistry.deleteTicket(ticket.getId());
                 } else {
                     LOGGER.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                 }
             }
-            LOGGER.info("{} expired tickets removed.", ticketsToRemove.size());
+            LOGGER.info("{} expired tickets removed.", count);
 
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

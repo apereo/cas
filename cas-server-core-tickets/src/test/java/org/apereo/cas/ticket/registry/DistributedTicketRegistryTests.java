@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,6 +102,34 @@ public class DistributedTicketRegistryTests {
     @Test
     public void verifyTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+       final Authentication a = TestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+
+        this.ticketRegistry.addTicket(st1);
+
+        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 3);
+
+        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("PGT-1", ServiceTicket.class));
     }
 
     private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {

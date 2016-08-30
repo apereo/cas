@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.Authentication;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -40,15 +41,12 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private String registryBean;
 
-    private boolean binaryProtocol;
-
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;
-        binaryProtocol = binary;
     }
 
     @Parameterized.Parameters
-    public static Collection getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() throws Exception {
         return Lists.newArrayList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
     }
 
@@ -136,4 +134,31 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         assertNull(this.registry.getTicket("ST3", ServiceTicket.class));
     }
 
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.registry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), null, true);
+
+        this.registry.addTicket(st1);
+
+        assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
+
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+        
+        assertTrue("TGT and children were deleted", this.registry.deleteTicket(tgt.getId()) == 3);
+        
+        assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.registry.getTicket("PGT-1", ServiceTicket.class));
+    }
 }

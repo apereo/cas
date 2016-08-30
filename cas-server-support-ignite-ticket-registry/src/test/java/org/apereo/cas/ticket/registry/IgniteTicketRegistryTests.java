@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
@@ -144,7 +145,7 @@ public class IgniteTicketRegistryTests {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
+            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST") == 1);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
@@ -156,7 +157,7 @@ public class IgniteTicketRegistryTests {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1") == 1);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
@@ -168,7 +169,7 @@ public class IgniteTicketRegistryTests {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
@@ -241,7 +242,7 @@ public class IgniteTicketRegistryTests {
         assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
 
-        this.ticketRegistry.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 4);
 
         assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
@@ -249,6 +250,34 @@ public class IgniteTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
     }
 
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+
+        this.ticketRegistry.addTicket(st1);
+
+        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+
+        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+        
+        this.ticketRegistry.updateTicket(tgt);
+        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 3);
+        
+        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("PGT-1", ServiceTicket.class));
+    }
 
     /**
      * Cleaning ticket registry to start afresh, after newing up the instance.
