@@ -4,6 +4,7 @@ issuebot:
       organization: spring-projects
       name: spring-boot
       collaborators:
+        - bclozel
         - dsyer
         - philwebb
         - snicoll
