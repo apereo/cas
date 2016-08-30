@@ -75,7 +75,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final long timeout) {
         final StringBuilder builder = new StringBuilder(
                 String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenId.getId(),
-                        OAuthConstants.EXPIRES, timeout));
+                        OAuthConstants.EXPIRES_IN, timeout));
 
         if (refreshTokenId != null) {
             builder.append('&')
@@ -109,7 +109,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final OAuthRegisteredService registeredService) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
         jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
-        jsonGenerator.writeNumberField(OAuthConstants.EXPIRES, timeout);
+        jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);
         if (refreshTokenId != null) {
             jsonGenerator.writeStringField(OAuthConstants.REFRESH_TOKEN, refreshTokenId.getId());
         }
