@@ -57,10 +57,7 @@ public interface OAuthConstants {
      * The missing access token.
      **/
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
-
-    /** The expired access token. */
-    String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
-
+    
     /** The confirm view. */
     String CONFIRM_VIEW = "oauthConfirmView";
 
@@ -86,5 +83,5 @@ public interface OAuthConstants {
     String PROFILE_URL = "profile";
 
     /** The remaining time in seconds before expiration with syntax : expires=3600... */
-    String EXPIRES = "expires";
+    String EXPIRES_IN = "expires_in";
 }
