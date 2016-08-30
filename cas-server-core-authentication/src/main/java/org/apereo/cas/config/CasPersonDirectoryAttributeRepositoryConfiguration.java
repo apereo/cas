@@ -114,7 +114,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     private void addJdbcAttributeRepository(final List<IPersonAttributeDao> list) {
         final PrincipalAttributesProperties.Jdbc jdbc = casProperties.getAuthn().getAttributeRepository().getJdbc();
-        if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty() && StringUtils.isNotBlank(jdbc.getSql())) {
+        if (StringUtils.isNotBlank(jdbc.getSql())) {
             final AbstractJdbcPersonAttributeDao jdbcDao;
 
             if (jdbc.isSingleRow()) {
@@ -131,7 +131,9 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             }
 
             jdbcDao.setQueryAttributeMapping(ImmutableMap.of("username", jdbc.getUsername()));
-            jdbcDao.setResultAttributeMapping(casProperties.getAuthn().getAttributeRepository().getAttributes());
+            Map<String, String> mapping = casProperties.getAuthn().getAttributeRepository().getAttributes();
+            if (mapping != null && mapping.size() > 0)
+                jdbcDao.setResultAttributeMapping(mapping);
             jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
             jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
             jdbcDao.setQueryType(jdbc.getQueryType());
