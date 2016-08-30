@@ -151,7 +151,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
                 .append('=')
                 .append(OAuthConstants.TOKEN_TYPE_BEARER)
                 .append('&')
-                .append(OAuthConstants.EXPIRES)
+                .append(OAuthConstants.EXPIRES_IN)
                 .append('=')
                 .append(casProperties.getTicket().getTgt().getTimeToKillInSeconds());
 
