@@ -140,6 +140,7 @@ public class CasCoreTicketsConfiguration {
 
     @ConditionalOnMissingBean(name="ticketRegistry")
     @RefreshScope
+    @ConditionalOnMissingBean(name = "ticketRegistry")
     @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
     public TicketRegistry defaultTicketRegistry() {
         final DefaultTicketRegistry r = new DefaultTicketRegistry(
