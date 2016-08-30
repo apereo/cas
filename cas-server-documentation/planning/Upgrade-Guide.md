@@ -60,7 +60,7 @@ Um, No.
 
 Make sure you have a separate development environment ready for configuration and testing. Regardless of how small
 the upgrade is, you want to make sure it is well tested in your environment before you flip the switch. Evaluate
-the software dependencies and platform requirements of the new upgrade (i.e. Java, Maven, etc)
+the software dependencies and platform requirements of the new upgrade (i.e. Java, etc)
 and make sure you have everything installed and configured correctly before you attempt. 
 
 ## Sanitize Configuration
@@ -71,7 +71,7 @@ will be functional without any local changes. Build and deploy the clean CAS ove
 your build/deployment process is functional.
 
 ## Apply Changes
-Go through your catalog of changes found in your local Maven overlay. Compare and diff those files with their
+Go through your catalog of changes found in your local overlay. Compare and diff those files with their
 original version. You can find out the delta between two versions via the following ways:
 
 1. If you have built the clean CAS overlay once, you will automatically get the original version typically
