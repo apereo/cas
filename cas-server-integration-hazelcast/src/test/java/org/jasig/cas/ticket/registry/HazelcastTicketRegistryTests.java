@@ -73,8 +73,8 @@ public class HazelcastTicketRegistryTests {
 
         assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
         assertNotNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
-        assertTrue(this.hzTicketRegistry2.deleteTicket(tgt.getId()));
-        assertFalse(this.hzTicketRegistry1.deleteTicket(tgt.getId()));
+        assertEquals(1, this.hzTicketRegistry2.deleteTicket(tgt.getId()));
+        assertEquals(0, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
         assertNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
         assertNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
 
@@ -113,7 +113,7 @@ public class HazelcastTicketRegistryTests {
         assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
 
-        this.hzTicketRegistry1.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were deleted", this.hzTicketRegistry1.deleteTicket(tgt.getId()) > 0);
 
         assertNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
@@ -142,7 +142,7 @@ public class HazelcastTicketRegistryTests {
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
-        this.hzTicketRegistry1.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were deleted", this.hzTicketRegistry1.deleteTicket(tgt.getId()) > 0);
 
         assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
