@@ -2260,6 +2260,42 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
+### Redis Ticket Registry
+
+To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
+
+```properties
+## Redis server host.
+# cas.ticket.registry.redis.host=localhost
+#
+## Database index used by the connection factory.
+# cas.ticket.registry.redis.database=0
+#
+## Redis server port.
+# cas.ticket.registry.redis.port=6379
+#
+## Login password of the redis server.
+# cas.ticket.registry.redis.password=
+#
+## Connection timeout in milliseconds
+# cas.ticket.registry.redis.timeout=
+#
+##
+# cas.ticket.registry.redis.pool.max-active=20
+#
+## Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
+# cas.ticket.registry.redis.pool.maxIdle=8
+#
+## Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
+# cas.ticket.registry.redis.pool.minIdle=0
+#
+## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
+# cas.ticket.registry.redis.pool.maxActive=8
+#
+## Maximum amount of time (in milliseconds) a connection allocation should block before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
+# cas.ticket.registry.redis.pool.maxWait=-1
+```
+
 ## Service Ticket
 
 Controls the expiration policy of service tickets, as well as other properties
