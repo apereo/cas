@@ -1,22 +1,19 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.OAuthToken;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
-import org.apereo.cas.ticket.code.OAuthCode;
-import org.apereo.cas.ticket.code.OAuthCodeImpl;
-import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.metamodel.EntityType;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,17 +87,17 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      */
     public Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
-                    || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
-                // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
-                return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
-                        this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
-            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
-                    || ticketId.startsWith(RefreshToken.PREFIX)) {
-                return this.entityManager.find(OAuthCodeImpl.class, ticketId);
+            Class<? extends Ticket> entityClass = null;
+            for (EntityType<?> entityType : this.entityManager.getEntityManagerFactory().getMetamodel().getEntities()) {
+                entityClass = (Class<? extends Ticket>) entityType.getJavaType();
+                DiscriminatorValue[] discriminatorValues = entityClass.getAnnotationsByType(DiscriminatorValue.class);
+                if (discriminatorValues.length > 0) {
+                    final String prefix = discriminatorValues[0].value();
+                    if (ticketId.startsWith(prefix))
+                        break;
+                }
             }
-
-            return this.entityManager.find(ServiceTicketImpl.class, ticketId);
+            return this.entityManager.find(entityClass, ticketId);
         } catch (final Exception e) {
             logger.error("Error getting ticket {} from registry.", ticketId, e);
         }
