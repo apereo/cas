@@ -75,6 +75,7 @@
     *   [Ignite](/$version/installation/Ignite-Ticket-Registry.html)
     *   [Couchbase](/$version/installation/Couchbase-Ticket-Registry.html)
     *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
+    *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
