@@ -53,14 +53,14 @@ public class InfinispanTicketRegistryTests {
     public void deleteTicketRemovesFromCacheReturnsTrue() {
         final Ticket ticket = getTicket();
         infinispanTicketRegistry.addTicket(ticket);
-        assertTrue(infinispanTicketRegistry.deleteTicket(ticket.getId()));
+        assertTrue(infinispanTicketRegistry.deleteTicket(ticket.getId()) == 1);
         assertNull(infinispanTicketRegistry.getTicket(ticket.getId()));
     }
 
     @Test
     public void deleteTicketOnNonExistingTicketReturnsFalse() {
         final String ticketId = "does_not_exist";
-        assertFalse(infinispanTicketRegistry.deleteTicket(ticketId));
+        assertFalse(infinispanTicketRegistry.deleteTicket(ticketId) == 1);
     }
 
     @Test
@@ -93,11 +93,10 @@ public class InfinispanTicketRegistryTests {
 
         assertNotNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
-
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
-        this.infinispanTicketRegistry.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were deleted", this.infinispanTicketRegistry.deleteTicket(tgt.getId()) == 3);
 
         assertNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
