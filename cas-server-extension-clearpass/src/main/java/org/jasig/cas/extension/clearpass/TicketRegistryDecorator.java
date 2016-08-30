@@ -63,7 +63,10 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return this.ticketRegistry.deleteTicket(ticketId);
+        if (this.ticketRegistry.deleteTicket(ticketId) > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
