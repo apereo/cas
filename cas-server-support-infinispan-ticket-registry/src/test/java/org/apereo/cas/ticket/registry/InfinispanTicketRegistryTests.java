@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(
         classes = {RefreshAutoConfiguration.class, InfinispanTicketRegistryConfiguration.class})
 public class InfinispanTicketRegistryTests {
+    private static final String TGT_NAME = "TGT";
 
     @Autowired
     @Qualifier("infinispanTicketRegistry")
@@ -57,14 +58,14 @@ public class InfinispanTicketRegistryTests {
     public void deleteTicketRemovesFromCacheReturnsTrue() {
         final Ticket ticket = getTicket();
         infinispanTicketRegistry.addTicket(ticket);
-        assertTrue(infinispanTicketRegistry.deleteTicket(ticket.getId()) == 1);
+        assertSame(1, infinispanTicketRegistry.deleteTicket(ticket.getId()));
         assertNull(infinispanTicketRegistry.getTicket(ticket.getId()));
     }
 
     @Test
     public void deleteTicketOnNonExistingTicketReturnsFalse() {
         final String ticketId = "does_not_exist";
-        assertFalse(infinispanTicketRegistry.deleteTicket(ticketId) == 1);
+        assertSame(0, infinispanTicketRegistry.deleteTicket(ticketId));
     }
 
     @Test
@@ -84,9 +85,9 @@ public class InfinispanTicketRegistryTests {
     public void verifyDeleteTicketWithPGT() {
         final Authentication a = TestUtils.getAuthentication();
         this.infinispanTicketRegistry.addTicket(new TicketGrantingTicketImpl(
-                "TGT", a, new NeverExpiresExpirationPolicy()));
+                TGT_NAME, a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.infinispanTicketRegistry.getTicket(
-                "TGT", TicketGrantingTicket.class);
+                TGT_NAME, TicketGrantingTicket.class);
 
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
@@ -95,14 +96,14 @@ public class InfinispanTicketRegistryTests {
 
         this.infinispanTicketRegistry.addTicket(st1);
 
-        assertNotNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.infinispanTicketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNotNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
         assertTrue("TGT and children were deleted", this.infinispanTicketRegistry.deleteTicket(tgt.getId()) == 3);
 
-        assertNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.infinispanTicketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNull(this.infinispanTicketRegistry.getTicket("ST1", ServiceTicket.class));
         assertNull(this.infinispanTicketRegistry.getTicket("PGT-1", ServiceTicket.class));
     }

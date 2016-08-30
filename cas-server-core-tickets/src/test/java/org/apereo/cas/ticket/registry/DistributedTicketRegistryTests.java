@@ -24,11 +24,13 @@ import static org.junit.Assert.*;
  * @since 3.1
  */
 public class DistributedTicketRegistryTests {
+    private static final String TGT_NAME = "TGT";
 
     private TestDistributedTicketRegistry ticketRegistry;
 
     private boolean wasTicketUpdated;
 
+    
     public void setWasTicketUpdated(final boolean wasTicketUpdated) {
         this.wasTicketUpdated = wasTicketUpdated;
     }
@@ -106,11 +108,11 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-       final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = TestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
-                "TGT", a, new NeverExpiresExpirationPolicy()));
+                TGT_NAME, a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
-                "TGT", TicketGrantingTicket.class);
+                TGT_NAME, TicketGrantingTicket.class);
 
         final Service service = TestUtils.getService("TGT_DELETE_TEST");
 
@@ -119,15 +121,15 @@ public class DistributedTicketRegistryTests {
 
         this.ticketRegistry.addTicket(st1);
 
-        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
 
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
-        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 3);
+        assertSame(3, this.ticketRegistry.deleteTicket(tgt.getId()));
 
-        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
         assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
         assertNull(this.ticketRegistry.getTicket("PGT-1", ServiceTicket.class));
     }

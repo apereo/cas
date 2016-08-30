@@ -128,7 +128,7 @@ public class HazelcastTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = org.apereo.cas.authentication.TestUtils.getAuthentication();
+        final Authentication a = TestUtils.getAuthentication();
         this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
@@ -148,7 +148,7 @@ public class HazelcastTicketRegistryTests {
         assertEquals(a, pgt.getAuthentication());
 
         this.hzTicketRegistry1.updateTicket(tgt);
-        assertTrue("TGT and children were deleted", this.hzTicketRegistry1.deleteTicket(tgt.getId()) == 3);
+        assertSame(3, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
 
         assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
