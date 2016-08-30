@@ -17,7 +17,7 @@ affected by that vulnerability and/or bug?
 local changes, I can realize their benefit from CAS directly and end up with a smaller more-maintainable overlay? 
 
 This document attempts to describe, at a very high level, the scope and effort required to upgrade a given 
-[CAS Maven overlay](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
+[CAS deployment](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
@@ -38,7 +38,7 @@ with an understanding of what changes you may expect from new version and what t
 may be for the upgrade.
 
 ## Evaluate Local Overlay
-As a best practice, it is recommended that you deploy CAS via a [Maven overlay method](../installation/Maven-Overlay-Installation.html).
+As a best practice, it is recommended that you deploy CAS via the [overlay method](../installation/Maven-Overlay-Installation.html).
 If you have, the task here would be to identify the number of files your overlay has touched and modified. Catalog the 
 what and why of the changes applied, and cross-check those changes with the CAS change log. Chances are, many of the
 local changes that are present within your overlay are provided by default via CAS as a result of that upgrade which will
