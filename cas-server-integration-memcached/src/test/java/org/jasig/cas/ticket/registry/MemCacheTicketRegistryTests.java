@@ -156,7 +156,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
         
-        assertTrue("TGT and children were deleted", this.registry.deleteTicket(tgt.getId()) == 2);
+        assertTrue("TGT and children were deleted", this.registry.deleteTicket(tgt.getId()) == 3);
         
         assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.registry.getTicket("ST1", ServiceTicket.class));

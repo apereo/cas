@@ -126,7 +126,7 @@ public final class DistributedTicketRegistryTests {
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
-        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 2);
+        assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 3);
 
         assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
