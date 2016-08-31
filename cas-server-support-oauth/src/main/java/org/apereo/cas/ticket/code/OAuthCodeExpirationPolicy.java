@@ -20,7 +20,7 @@ public class OAuthCodeExpirationPolicy extends OAuthTokenExporationPolicy {
      * @param maxTimeToLive the time to kill
      * @param timeUnit      the time unit
      */
-    public OAuthCodeExpirationPolicy(int numberOfUses, long maxTimeToLive, TimeUnit timeUnit) {
+    public OAuthCodeExpirationPolicy(final int numberOfUses, final long maxTimeToLive, final TimeUnit timeUnit) {
         super(numberOfUses, -1, maxTimeToLive, timeUnit);
     }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OAuthRefreshTokenExpirationPolicy extends OAuthTokenExporationPolicy {
 
-    public OAuthRefreshTokenExpirationPolicy(int numberOfUses, long timeToKill, long maxTimeToLive, TimeUnit timeUnit) {
+    public OAuthRefreshTokenExpirationPolicy(final int numberOfUses, final long timeToKill, final long maxTimeToLive, final TimeUnit timeUnit) {
         super(numberOfUses, timeToKill, maxTimeToLive, timeUnit);
     }
 }
