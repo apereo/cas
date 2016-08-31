@@ -1629,7 +1629,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.messageBundle.fallbackSystemLocale=false
 # cas.messageBundle.cacheSeconds=180
 # cas.messageBundle.useCodeMessage=true
-# cas.messageBundle.baseNames=classpath:custom_messagesclasspath:messages
+# cas.messageBundle.baseNames=classpath:custom_messages,classpath:messages
 ```
 
 ## Shibboleth Attribute Resolver
@@ -2384,7 +2384,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
-# cas.googleRecaptcha.verifyUrl="https://www.google.com/recaptcha/api/siteverify";
+# cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
 ```
