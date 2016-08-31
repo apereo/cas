@@ -38,13 +38,13 @@ public class OAuthProperties {
     }
 
     private static class OAuthToken {
-        Policy policy = new Policy();
+        protected Policy policy = new Policy();
 
         public Policy getPolicy() {
             return policy;
         }
 
-        public void setPolicy(Policy policy) {
+        public void setPolicy(final Policy policy) {
             this.policy = policy;
         }
     }
@@ -80,7 +80,7 @@ public class OAuthProperties {
             return numberOfUses;
         }
 
-        public void setNumberOfUses(int numberOfUses) {
+        public void setNumberOfUses(final int numberOfUses) {
             this.numberOfUses = numberOfUses;
         }
 
@@ -88,7 +88,7 @@ public class OAuthProperties {
             return timeToKillInSeconds;
         }
 
-        public void setTimeToKillInSeconds(long timeToKillInSeconds) {
+        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
 
@@ -96,7 +96,7 @@ public class OAuthProperties {
             return maxTimeToLiveInSeconds;
         }
 
-        public void setMaxTimeToLiveInSeconds(long maxTimeToLiveInSeconds) {
+        public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds) {
             this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
         }
     }
