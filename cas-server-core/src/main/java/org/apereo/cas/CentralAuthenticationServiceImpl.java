@@ -357,6 +357,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         } finally {
             if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);
+            } else {
+                this.ticketRegistry.updateTicket(serviceTicket);
             }
         }
     }
