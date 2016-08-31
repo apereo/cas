@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.OAuthToken;
 
 /**
@@ -9,7 +10,7 @@ import org.apereo.cas.ticket.OAuthToken;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public interface AccessToken extends OAuthToken {
+public interface AccessToken extends OAuthToken, Service {
 
     /**
      *  The prefix for access tokens.
