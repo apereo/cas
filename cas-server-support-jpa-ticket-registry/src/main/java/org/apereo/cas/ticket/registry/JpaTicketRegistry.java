@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import java.time.ZonedDateTime;
@@ -93,9 +94,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 DiscriminatorValue[] discriminatorValues = entityClass.getAnnotationsByType(DiscriminatorValue.class);
                 if (discriminatorValues.length > 0) {
                     final String prefix = discriminatorValues[0].value();
-                    if (ticketId.startsWith(prefix))
+                    if (ticketId.startsWith(prefix)){
                         break;
+                    }
                 }
+            }
+            if (entityClass.equals(TicketGrantingTicketImpl.class)) {
+                return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
+                        this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
             }
             return this.entityManager.find(entityClass, ticketId);
         } catch (final Exception e) {
