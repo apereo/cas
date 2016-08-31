@@ -1,6 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.io.ByteSource;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -13,9 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.google.common.io.ByteSource;
 
 /**
  * @author Scott Battaglia
@@ -81,14 +83,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) {
+        final AtomicInteger count = new AtomicInteger(0);
+
         if (ticketId == null) {
-            return false;
+            return count.intValue();
         }
 
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
-            return false;
+            return count.intValue();
         }
 
         if (ticket instanceof TicketGrantingTicket) {
@@ -98,13 +102,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-            deleteChildren(tgt);
+            count.addAndGet(deleteChildren(tgt));
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            proxyGrantingTickets.stream().map(Ticket::getId).forEach(this::deleteTicket);
+            proxyGrantingTickets.stream().map(Ticket::getId).forEach((t) -> {
+                this.deleteTicket(t);
+                count.incrementAndGet();
+            });
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return deleteSingleTicket(ticketId);
+
+        if (deleteSingleTicket(ticketId)) {
+            count.incrementAndGet();
+        }
+
+        return count.intValue();
     }
 
 
@@ -112,19 +124,25 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * Delete TGT's service tickets.
      *
      * @param ticket the ticket
+     * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
-    public void deleteChildren(final TicketGrantingTicket ticket) {
+    public int deleteChildren(final TicketGrantingTicket ticket) {
+        final AtomicInteger count = new AtomicInteger(0);
+        
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
             services.keySet().stream().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
                     logger.debug("Removed ticket [{}]", ticketId);
+                    count.incrementAndGet();
                 } else {
                     logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
             });
         }
+
+        return count.intValue();
     }
 
     /**
