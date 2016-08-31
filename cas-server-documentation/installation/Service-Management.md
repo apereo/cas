@@ -89,3 +89,7 @@ Registered services present the following metadata:
 
 [See this guide](JPA-Service-Management.html) for more info please.
 
+### Couchbase
+
+[See this guide](Couchbase-Service-Management.htmll) for more info please. 
+
