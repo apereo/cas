@@ -132,8 +132,9 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
             jdbcDao.setQueryAttributeMapping(ImmutableMap.of("username", jdbc.getUsername()));
             Map<String, String> mapping = casProperties.getAuthn().getAttributeRepository().getAttributes();
-            if (mapping != null && mapping.size() > 0)
+            if (mapping != null && !mapping.isEmpty()) {
                 jdbcDao.setResultAttributeMapping(mapping);
+            }
             jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
             jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
             jdbcDao.setQueryType(jdbc.getQueryType());
