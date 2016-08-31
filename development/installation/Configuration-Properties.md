@@ -2384,7 +2384,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
-# cas.googleRecaptcha.verifyUrl="https://www.google.com/recaptcha/api/siteverify";
+# cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
 ```
