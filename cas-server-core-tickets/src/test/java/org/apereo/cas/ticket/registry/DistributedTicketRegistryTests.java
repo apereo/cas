@@ -5,8 +5,11 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +25,13 @@ import static org.junit.Assert.*;
  * @since 3.1
  */
 public class DistributedTicketRegistryTests {
+    private static final String TGT_NAME = "TGT";
 
     private TestDistributedTicketRegistry ticketRegistry;
 
     private boolean wasTicketUpdated;
 
+    
     public void setWasTicketUpdated(final boolean wasTicketUpdated) {
         this.wasTicketUpdated = wasTicketUpdated;
     }
@@ -100,6 +105,34 @@ public class DistributedTicketRegistryTests {
     @Test
     public void verifyTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                TGT_NAME, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                TGT_NAME, TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+
+        this.ticketRegistry.addTicket(st1);
+
+        assertNotNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        assertSame(3, this.ticketRegistry.deleteTicket(tgt.getId()));
+
+        assertNull(this.ticketRegistry.getTicket(TGT_NAME, TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 
     private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {

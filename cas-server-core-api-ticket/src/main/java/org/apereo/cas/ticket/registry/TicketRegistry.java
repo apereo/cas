@@ -47,10 +47,9 @@ public interface TicketRegistry {
      * If ticket to delete is TGT then related service tickets are removed as well.
      *
      * @param ticketId The id of the ticket to delete.
-     * @return true if the ticket was removed and false if the ticket did not
-     * exist.
+     * @return the number of tickets deleted including children.
      */
-    boolean deleteTicket(String ticketId);
+    int deleteTicket(String ticketId);
 
     /**
      * Retrieve all tickets from the registry.
