@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -152,13 +153,13 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
 
-        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
         
         assertSame(3, this.registry.deleteTicket(tgt.getId()));
         
         assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
-        assertNull(this.registry.getTicket("PGT-1", ServiceTicket.class));
+        assertNull(this.registry.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 }

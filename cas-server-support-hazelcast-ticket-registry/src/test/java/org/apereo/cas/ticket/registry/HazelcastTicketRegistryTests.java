@@ -8,6 +8,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
@@ -144,7 +145,7 @@ public class HazelcastTicketRegistryTests {
         assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
 
-        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
         this.hzTicketRegistry1.updateTicket(tgt);
@@ -152,7 +153,7 @@ public class HazelcastTicketRegistryTests {
 
         assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
-        assertNull(this.hzTicketRegistry1.getTicket("PGT-1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 
     private static TicketGrantingTicket newTestTgt() {

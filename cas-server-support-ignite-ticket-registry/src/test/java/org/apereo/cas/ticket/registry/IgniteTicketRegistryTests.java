@@ -7,6 +7,7 @@ import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
@@ -268,7 +269,7 @@ public class IgniteTicketRegistryTests {
         assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
 
-        final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
         
         this.ticketRegistry.updateTicket(tgt);
@@ -276,7 +277,7 @@ public class IgniteTicketRegistryTests {
         
         assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
-        assertNull(this.ticketRegistry.getTicket("PGT-1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 
     /**
