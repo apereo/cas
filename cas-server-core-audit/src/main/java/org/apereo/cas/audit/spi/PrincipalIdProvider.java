@@ -20,7 +20,7 @@ public interface PrincipalIdProvider {
      * @param authentication authentication event containing the data to computed the final principal id from
      * @return computed principal id
      */
-    default String getPrincipalIdFrom(Authentication authentication) {
+    default String getPrincipalIdFrom(final Authentication authentication) {
         return authentication != null ? authentication.getPrincipal().getId() : null;
     }
 }
