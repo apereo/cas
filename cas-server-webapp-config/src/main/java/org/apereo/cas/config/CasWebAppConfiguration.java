@@ -70,7 +70,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
                 if (StringUtils.isBlank(casProperties.getLocale().getDefaultValue())
-                        || locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
+                        || !locale.getLanguage().equals(casProperties.getLocale().getDefaultValue())) {
                     return locale;
                 }
                 return new Locale(casProperties.getLocale().getDefaultValue());
