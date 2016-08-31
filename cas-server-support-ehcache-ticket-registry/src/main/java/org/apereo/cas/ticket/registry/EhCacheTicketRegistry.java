@@ -176,17 +176,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     public void setEhcacheTicketsCache(final Cache ehcacheTicketsCache) {
         this.ehcacheTicketsCache = ehcacheTicketsCache;
     }
-
-    @Override
-    public long sessionCount() {
-        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
-    }
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)

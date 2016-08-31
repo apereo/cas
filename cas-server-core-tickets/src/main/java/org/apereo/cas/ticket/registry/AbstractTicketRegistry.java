@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -29,11 +30,11 @@ import com.google.common.io.ByteSource;
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
-    
+
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private CipherExecutor cipherExecutor;
-    
+
     /**
      * Default constructor.
      */
@@ -70,16 +71,26 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public long sessionCount() {
-        logger.trace("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Long.MIN_VALUE);
-        return Long.MIN_VALUE;
+        try {
+            return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+        } catch (final Throwable t) {
+            logger.trace("sessionCount() operation is not implemented by the ticket registry instance {}. "
+                            + "Message is: {} Returning unknown as {}",
+                    this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
     }
 
     @Override
     public long serviceTicketCount() {
-        logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Long.MIN_VALUE);
-        return Long.MIN_VALUE;
+        try {
+            return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
+        } catch (final Throwable t) {
+            logger.trace("serviceTicketCount() operation is not implemented by the ticket registry instance {}. "
+                            + "Message is: {} Returning unknown as {}",
+                    this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+            return Long.MIN_VALUE;
+        }
     }
 
     @Override
@@ -128,7 +139,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public int deleteChildren(final TicketGrantingTicket ticket) {
         final AtomicInteger count = new AtomicInteger(0);
-        
+
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
@@ -162,7 +173,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return the boolean
      */
     public abstract boolean deleteSingleTicket(final String ticketId);
-    
+
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
@@ -253,10 +264,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
         return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
-    
+
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
-    
-    
+
+
 }

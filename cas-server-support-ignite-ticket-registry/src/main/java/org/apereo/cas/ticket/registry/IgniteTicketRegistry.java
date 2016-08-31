@@ -211,17 +211,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
 
     }
-
-    @Override
-    public long sessionCount() {
-        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
-    }
-
+    
     /**
      * Make sure we shutdown Ignite when the context is destroyed.
      */

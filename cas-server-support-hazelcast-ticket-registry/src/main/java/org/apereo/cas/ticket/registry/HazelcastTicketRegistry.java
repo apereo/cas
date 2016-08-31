@@ -110,17 +110,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         }
         return collection;
     }
-
-    @Override
-    public long sessionCount() {
-        return getTickets().stream().filter(t -> t instanceof TicketGrantingTicket).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return getTickets().stream().filter(t -> t instanceof ServiceTicket).count();
-    }
-
+    
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */

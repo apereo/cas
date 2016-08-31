@@ -86,17 +86,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
-
-    @Override
-    public long sessionCount() {
-        return this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
-    }
-
-    @Override
-    public long serviceTicketCount() {
-        return this.cache.values().stream().filter(t -> t instanceof ServiceTicket).count();
-    }
-
+    
     @Override
     public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
