@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -7,6 +8,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
@@ -76,8 +78,8 @@ public class HazelcastTicketRegistryTests {
 
         assertNotNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
         assertNotNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
-        assertTrue(this.hzTicketRegistry2.deleteTicket(tgt.getId()));
-        assertFalse(this.hzTicketRegistry1.deleteTicket(tgt.getId()));
+        assertEquals(1, this.hzTicketRegistry2.deleteTicket(tgt.getId()));
+        assertEquals(0, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
         assertNull(this.hzTicketRegistry1.getTicket(tgt.getId()));
         assertNull(this.hzTicketRegistry2.getTicket(tgt.getId()));
 
@@ -86,7 +88,7 @@ public class HazelcastTicketRegistryTests {
 
         assertNotNull(this.hzTicketRegistry1.getTicket("ST-TEST"));
         assertNotNull(this.hzTicketRegistry2.getTicket("ST-TEST"));
-        this.hzTicketRegistry1.deleteTicket("ST-TEST");
+        assertEquals(1, this.hzTicketRegistry1.deleteTicket("ST-TEST"));
         assertNull(this.hzTicketRegistry1.getTicket("ST-TEST"));
         assertNull(this.hzTicketRegistry2.getTicket("ST-TEST"));
     }
@@ -117,12 +119,41 @@ public class HazelcastTicketRegistryTests {
         assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
 
-        this.hzTicketRegistry1.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were deleted", this.hzTicketRegistry1.deleteTicket(tgt.getId()) > 0);
 
         assertNull(this.hzTicketRegistry1.getTicket(tgt.getId(), TicketGrantingTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
         assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = TestUtils.getAuthentication();
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
+                "TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), null, true);
+
+        this.hzTicketRegistry1.addTicket(st1);
+
+        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        assertEquals(a, pgt.getAuthentication());
+
+        this.hzTicketRegistry1.updateTicket(tgt);
+        assertSame(3, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
+
+        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("PGT-1", ProxyGrantingTicket.class));
     }
 
     private static TicketGrantingTicket newTestTgt() {
