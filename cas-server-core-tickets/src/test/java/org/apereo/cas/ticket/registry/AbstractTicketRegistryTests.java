@@ -134,7 +134,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
+            assertSame(1, this.ticketRegistry.deleteTicket("TEST"));
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
         }
@@ -146,7 +146,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
+            assertSame(0, this.ticketRegistry.deleteTicket("TEST1"));
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -158,7 +158,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -228,7 +228,7 @@ public abstract class AbstractTicketRegistryTests {
             assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
             assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
 
-            this.ticketRegistry.deleteTicket(tgt.getId());
+            assertSame(4, this.ticketRegistry.deleteTicket(tgt.getId()));
 
             assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));

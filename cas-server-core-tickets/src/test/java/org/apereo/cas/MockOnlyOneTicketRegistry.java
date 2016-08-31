@@ -40,9 +40,9 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public int deleteTicket(final String ticketId) {
         this.ticket = null;
-        return false;
+        return 0;
     }
 
     @Override
