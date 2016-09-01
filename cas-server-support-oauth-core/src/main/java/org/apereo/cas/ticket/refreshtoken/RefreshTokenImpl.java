@@ -87,7 +87,7 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
     }
 
     @Override
-    public ServiceTicket grantServiceTicket(String id, Service service, ExpirationPolicy expirationPolicy, Authentication currentAuthentication, boolean onlyTrackMostRecentSession) {
+    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final Authentication currentAuthentication, final boolean onlyTrackMostRecentSession) {
         AccessTokenImpl accessToken = new AccessTokenImpl(id, this.getService(), this.getAuthentication(), expirationPolicy);
         accessToken.setRefreshToken(this);
         updateStateAndTrackServiceSession(id, accessToken, onlyTrackMostRecentSession);
@@ -145,7 +145,7 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
         return accessTokenHashMap;
     }
 
-    public void setAccessTokenHashMap(Map<String, AccessToken> accessTokenHashMap) {
+    public void setAccessTokenHashMap(final Map<String, AccessToken> accessTokenHashMap) {
         this.accessTokenHashMap = accessTokenHashMap;
     }
 }
