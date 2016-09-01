@@ -71,7 +71,8 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final String accessTokenEncoded = this.accessTokenGenerator.generate(service, ticketGrantingTicket);
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenEncoded, OAuthConstants.EXPIRES_IN, expires);
+        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, 
+                accessTokenEncoded, OAuthConstants.EXPIRES_IN, expires);
         logger.debug("OAuth access token response: {}", text);
         response.setContentType("text/plain");
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
