@@ -75,16 +75,17 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
      * @throws IllegalArgumentException if the service or authentication are null.
      */
     public AccessTokenImpl(final String id, final Service service, final Authentication authentication,
-                           final ExpirationPolicy expirationPolicy, List<String> scopes) {
+                           final ExpirationPolicy expirationPolicy, final List<String> scopes) {
         super(id, service, authentication, expirationPolicy);
         scope = new HashSet<>(scopes);
     }
 
     @Override
-    public boolean isValidFor(Service serviceToValidate) {
+    public boolean isValidFor(final Service serviceToValidate) {
         update();
-        if (scope == null)
+        if (scope == null){
             return true;
+        }
         return this.scope.contains(serviceToValidate.getId());
     }
 
@@ -93,17 +94,17 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
         return this.ticketGrantingTicket;
     }
 
-    public void setRefreshToken(RefreshToken refreshToken) {
+    public void setRefreshToken(final RefreshToken refreshToken) {
         this.ticketGrantingTicket = refreshToken;
     }
 
     @Override
-    public void setPrincipal(Principal principal) {
+    public void setPrincipal(final Principal principal) {
 
     }
 
     @Override
-    public boolean matches(Service service) {
+    public boolean matches(final Service service) {
         return this.getId().matches(service.getId());
     }
 
