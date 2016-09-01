@@ -101,7 +101,7 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
 
     @Override
     public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
