@@ -17,7 +17,7 @@ affected by that vulnerability and/or bug?
 local changes, I can realize their benefit from CAS directly and end up with a smaller more-maintainable overlay? 
 
 This document attempts to describe, at a very high level, the scope and effort required to upgrade a given 
-[CAS Maven overlay](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
+[CAS deployment](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
@@ -38,7 +38,7 @@ with an understanding of what changes you may expect from new version and what t
 may be for the upgrade.
 
 ## Evaluate Local Overlay
-As a best practice, it is recommended that you deploy CAS via a [Maven overlay method](../installation/Maven-Overlay-Installation.html).
+As a best practice, it is recommended that you deploy CAS via the [overlay method](../installation/Maven-Overlay-Installation.html).
 If you have, the task here would be to identify the number of files your overlay has touched and modified. Catalog the 
 what and why of the changes applied, and cross-check those changes with the CAS change log. Chances are, many of the
 local changes that are present within your overlay are provided by default via CAS as a result of that upgrade which will
@@ -60,7 +60,7 @@ Um, No.
 
 Make sure you have a separate development environment ready for configuration and testing. Regardless of how small
 the upgrade is, you want to make sure it is well tested in your environment before you flip the switch. Evaluate
-the software dependencies and platform requirements of the new upgrade (i.e. Java, Maven, etc)
+the software dependencies and platform requirements of the new upgrade (i.e. Java, etc)
 and make sure you have everything installed and configured correctly before you attempt. 
 
 ## Sanitize Configuration
@@ -71,7 +71,7 @@ will be functional without any local changes. Build and deploy the clean CAS ove
 your build/deployment process is functional.
 
 ## Apply Changes
-Go through your catalog of changes found in your local Maven overlay. Compare and diff those files with their
+Go through your catalog of changes found in your local overlay. Compare and diff those files with their
 original version. You can find out the delta between two versions via the following ways:
 
 1. If you have built the clean CAS overlay once, you will automatically get the original version typically

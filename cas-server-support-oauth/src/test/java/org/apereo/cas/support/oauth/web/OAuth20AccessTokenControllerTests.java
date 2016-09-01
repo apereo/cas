@@ -437,7 +437,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
@@ -445,7 +445,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + "=RT-"));
             }
-            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
@@ -460,16 +460,16 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final int timeLeft;
         if (json) {
             if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES + "\":", ","));
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES_IN + "\":", ","));
             } else {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES + "\":", "}"));
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, OAuthConstants.EXPIRES_IN + "\":", "}"));
             }
         } else {
             if (refreshToken) {
-                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES + '=',
+                timeLeft = Integer.parseInt(StringUtils.substringBetween(body, '&' + OAuthConstants.EXPIRES_IN + '=',
                         '&' + OAuthConstants.REFRESH_TOKEN));
             } else {
-                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
+                timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES_IN + '='));
             }
         }
         return timeLeft;
@@ -605,7 +605,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
             }
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());
@@ -613,7 +613,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             if (refreshToken) {
                 assertTrue(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
             }
-            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
@@ -751,13 +751,13 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
             assertEquals("application/json", mockResponse.getContentType());
             assertTrue(body.contains('"' + OAuthConstants.ACCESS_TOKEN + "\":\"AT-"));
             assertFalse(body.contains('"' + OAuthConstants.REFRESH_TOKEN + "\":\"RT-"));
-            assertTrue(body.contains('"' + OAuthConstants.EXPIRES + "\":7"));
+            assertTrue(body.contains('"' + OAuthConstants.EXPIRES_IN + "\":7"));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + "\":\"", "\",\"");
         } else {
             assertEquals("text/plain", mockResponse.getContentType());
             assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
             assertFalse(body.contains(OAuthConstants.REFRESH_TOKEN + '='));
-            assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+            assertTrue(body.contains(OAuthConstants.EXPIRES_IN + '='));
             accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
         }
 
