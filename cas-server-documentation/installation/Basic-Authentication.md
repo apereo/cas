@@ -24,7 +24,7 @@ curl <APPLICATION-URL> -L -u <USER>:<PASSWORD>
 
 Use `--insecure -v` flags to bypass certificate validation and receive additional logs from `curl`. 
 
-If your APPLICATION-URL and CAS-SERVER-URL are not on the same host, curl will **NOT** send the Basic Authentication header to the CAS server when redirected. This behaivour in curl can be overriden by passing the `--location-trusted` flag to curl.
+If your APPLICATION-URL and CAS-SERVER-URL are not on the same host, curl will **NOT** send the Basic Authentication header to the CAS server when redirected. This behavior in curl can be overriden by passing the `--location-trusted` flag to curl.
 
 From CURL man page:
 
