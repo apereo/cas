@@ -106,8 +106,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
             proxyGrantingTickets.stream().map(Ticket::getId).forEach((t) -> {
-                this.deleteTicket(t);
-                count.incrementAndGet();
+                count.addAndGet(this.deleteTicket(t));
             });
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
