@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * <p>
  * If that is not the case, it delegates to the wrapped {@link TicketOrCredentialPrincipalResolver} which might return
  * <code>org.apereo.inspektr.common.spi.PrincipalResolver.UNKNOWN_USER</code> if it's unable to resolve principal id.
- *
+ * </p>
  * @author Dmitriy Kopylenko
  * @since 4.1.9
  */
