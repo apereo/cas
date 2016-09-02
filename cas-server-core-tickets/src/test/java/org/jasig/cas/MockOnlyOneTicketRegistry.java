@@ -42,7 +42,7 @@ public final class MockOnlyOneTicketRegistry implements TicketRegistry {
     @Override
     public int deleteTicket(final String ticketId) {
         this.ticket = null;
-        return 0;
+        return 1;
     }
 
     @Override

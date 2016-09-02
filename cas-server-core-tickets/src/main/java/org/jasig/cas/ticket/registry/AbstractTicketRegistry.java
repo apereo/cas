@@ -90,8 +90,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             final Iterator<ProxyGrantingTicket> it = proxyGrantingTickets.iterator();
             while(it.hasNext()) {
                 final ProxyGrantingTicket pgt = it.next();
-                deleteTicket(pgt.getId());
-                count++;
+                count += deleteTicket(pgt.getId());
             }
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
