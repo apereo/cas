@@ -52,6 +52,4 @@ This reduces performance of the JPA Ticket Registry and may not be desirable or 
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
 
-The following setting can disable this locking behavior:
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
