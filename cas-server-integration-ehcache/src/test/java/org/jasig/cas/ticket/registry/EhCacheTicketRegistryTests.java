@@ -274,6 +274,7 @@ public final class EhCacheTicketRegistryTests {
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
+        this.ticketRegistry.addTicket(pgt);
         assertTrue("TGT and children were deleted", this.ticketRegistry.deleteTicket(tgt.getId()) == 3);
 
         assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
