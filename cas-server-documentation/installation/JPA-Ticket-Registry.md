@@ -32,7 +32,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
+Note that the default value for Hibernate's DDL setting is `create-drop`
 which may not be appropriate for use in production. Setting the value to
 `validate` may be more desirable, but any of the following options can be used:
 
