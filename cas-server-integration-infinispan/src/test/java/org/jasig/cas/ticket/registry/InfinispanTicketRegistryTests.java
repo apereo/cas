@@ -96,6 +96,7 @@ public class InfinispanTicketRegistryTests {
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
+        this.infinispanTicketRegistry.addTicket(pgt);
         assertTrue("TGT and children were deleted", this.infinispanTicketRegistry.deleteTicket(tgt.getId()) == 3);
 
         assertNull(this.infinispanTicketRegistry.getTicket("TGT", TicketGrantingTicket.class));
