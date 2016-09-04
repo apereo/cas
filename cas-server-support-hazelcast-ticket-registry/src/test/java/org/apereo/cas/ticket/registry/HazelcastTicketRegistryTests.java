@@ -148,6 +148,7 @@ public class HazelcastTicketRegistryTests {
         final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
 
+        this.hzTicketRegistry1.addTicket(pgt);
         this.hzTicketRegistry1.updateTicket(tgt);
         assertSame(3, this.hzTicketRegistry1.deleteTicket(tgt.getId()));
 

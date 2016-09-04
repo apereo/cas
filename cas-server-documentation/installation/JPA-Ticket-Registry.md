@@ -32,7 +32,7 @@ Support is enabled by adding the following module into the Maven overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-Note that the default value for `ticketreg.database.ddl.auto` is `create-drop`
+Note that the default value for Hibernate's DDL setting is `create-drop`
 which may not be appropriate for use in production. Setting the value to
 `validate` may be more desirable, but any of the following options can be used:
 
@@ -51,7 +51,5 @@ TGT is used concurrently by multiple requests.
 This reduces performance of the JPA Ticket Registry and may not be desirable or necessary for some deployments depending
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
-
-The following setting can disable this locking behavior:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

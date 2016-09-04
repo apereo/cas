@@ -273,6 +273,7 @@ public class IgniteTicketRegistryTests {
         assertEquals(a, pgt.getAuthentication());
         
         this.ticketRegistry.updateTicket(tgt);
+        this.ticketRegistry.addTicket(pgt);
         assertSame(3, this.ticketRegistry.deleteTicket(tgt.getId()));
         
         assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
