@@ -34,9 +34,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * Retrieves Subject Alternative Name UPN extension as a principal id String.
      *
      * @param certificate X.509 certificate credential.
-     *
      * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
-     *
      * @see AbstractX509PrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
      * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
      */
@@ -67,8 +65,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * Get UPN String.
      *
      * @param seq ASN1Sequence abstraction representing subject alternative name.
-     * First element is the object identifier, second is the object itself.
-     *
+     *            First element is the object identifier, second is the object itself.
      * @return UPN string or null
      */
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
@@ -78,7 +75,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 ASN1Primitive prim = obj.getObject();
-                
+
                 // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
                 if (prim instanceof ASN1TaggedObject) {
                     prim = ASN1TaggedObject.getInstance(prim).getObject();
@@ -88,7 +85,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
                     return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
                 } else if (prim instanceof ASN1String) {
                     return ((ASN1String) prim).getString();
-                } else{
+                } else {
                     return null;
                 }
             }
@@ -100,14 +97,12 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * Get alt name seq.
      *
      * @param sanItem subject alternative name value encoded as a two elements List with elem(0) representing object id and elem(1)
-     * representing object (subject alternative name) itself.
-     *
+     *                representing object (subject alternative name) itself.
      * @return ASN1Sequence abstraction representing subject alternative name or null if the passed in
      * List doesn't contain at least to elements
      * as expected to be returned by implementation of {@code X509Certificate.html#getSubjectAlternativeNames}
-     *
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
-     *     X509Certificate#getSubjectAlternativeNames</a>
+     * X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getAltnameSequence(final List sanItem) {
         //Should not be the case, but still, a extra "safety" check
@@ -126,16 +121,14 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * Get alt name seq.
      *
      * @param sanValue subject alternative name value encoded as byte[]
-     *
      * @return ASN1Sequence abstraction representing subject alternative name
-     *
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/java/security/cert/X509Certificate.html#getSubjectAlternativeNames()">
-     *     X509Certificate#getSubjectAlternativeNames</a>
+     * X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
         ASN1Primitive oct = null;
-        try(ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
-            try(ASN1InputStream input = new ASN1InputStream(bInput)) {
+        try (ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
+            try (ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
             } catch (final IOException e) {
                 logger.error("Error on getting Alt Name as a DERSEquence: {}", e.getMessage(), e);

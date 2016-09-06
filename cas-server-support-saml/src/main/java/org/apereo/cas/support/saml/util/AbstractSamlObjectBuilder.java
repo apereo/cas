@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -354,11 +355,16 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final StringWriter elemStrWriter = new StringWriter();
             xmlOutputter.output(doc, elemStrWriter);
             final byte[] xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
-            final DocumentBuilderFactory dbf = DocumentBuilderFactory
-                    .newInstance();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
-            return dbf.newDocumentBuilder().parse(
-                    new ByteArrayInputStream(xmlBytes));
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
+            dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+
+            return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
             logger.trace(e.getMessage(), e);
             return null;

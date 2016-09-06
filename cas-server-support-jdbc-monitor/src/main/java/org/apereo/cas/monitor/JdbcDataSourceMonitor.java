@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import com.google.common.base.Throwables;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -52,7 +53,7 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
                 return StatusCode.WARN;
             });
         } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw Throwables.propagate(e);
         }
     }
 

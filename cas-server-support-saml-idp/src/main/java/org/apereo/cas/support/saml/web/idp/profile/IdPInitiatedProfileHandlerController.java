@@ -88,7 +88,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
         final SAMLObjectBuilder pBuilder = (SAMLObjectBuilder) configBean.getBuilderFactory().getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         final NameIDPolicy nameIDPolicy = (NameIDPolicy) pBuilder.buildObject();
-        nameIDPolicy.setAllowCreate(Boolean.valueOf(true));
+        nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         final String id = "_" + String.valueOf(Math.abs(new SecureRandom().nextLong()));
@@ -100,8 +100,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
             authnRequest.setID(id);
             authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
         }
-        authnRequest.setForceAuthn(false);
-
+        authnRequest.setForceAuthn(Boolean.FALSE);
         if (StringUtils.isNotBlank(target)) {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, target);
         }

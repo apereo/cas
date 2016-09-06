@@ -29,7 +29,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private boolean signIdToken = true;
 
     public OidcRegisteredService() {
-        setJsonFormat(true);
+        setJsonFormat(Boolean.TRUE);
     }
 
     public boolean isSignIdToken() {
