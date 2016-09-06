@@ -46,7 +46,7 @@ public class OidcAuthorizationRequestSupport {
     public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
         final URIBuilder builderContext = new URIBuilder(url);
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                .stream().filter(p -> p.getName().equals(OidcConstants.PROMPT))
+                .stream().filter(p -> OidcConstants.PROMPT.equals(p.getName()))
                 .findFirst();
 
         if (parameter.isPresent()) {
@@ -74,7 +74,7 @@ public class OidcAuthorizationRequestSupport {
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
         final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                .stream().filter(p -> p.getName().equals(OidcConstants.MAX_AGE))
+                .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
                 .findFirst();
 
         if (parameter.isPresent()) {

@@ -56,6 +56,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.HashMap;
@@ -196,7 +198,8 @@ public class Beans {
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
             default:
-                return new BCryptPasswordEncoder(properties.getStrength(), new SecureRandom(properties.getSecret().getBytes()));
+                return new BCryptPasswordEncoder(properties.getStrength(), 
+                        new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
         }
     }
 

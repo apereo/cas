@@ -41,7 +41,7 @@ public class PasswordChangeAction extends AbstractAction {
                 return new EventFactorySupport().event(this, "passwordUpdateSuccess");
             }
         } catch (final Exception e) {
-            LOGGER.error("Update failed", e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         requestContext.getMessageContext().addMessage(new MessageBuilder().error().code("pm.updateFailure").
                 defaultText("Could not update the account password").build());

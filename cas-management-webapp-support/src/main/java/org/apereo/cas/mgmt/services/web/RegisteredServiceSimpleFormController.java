@@ -62,7 +62,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
                             final BindingResult result) {
         try {
             if (StringUtils.isNotBlank(service.getAssignedId())) {
-                final RegisteredService svc = this.servicesManager.findServiceBy(Long.valueOf(service.getAssignedId()));
+                final RegisteredService svc = this.servicesManager.findServiceBy(Long.parseLong(service.getAssignedId()));
                 if (svc != null) {
                     this.servicesManager.delete(svc.getId());
                 }

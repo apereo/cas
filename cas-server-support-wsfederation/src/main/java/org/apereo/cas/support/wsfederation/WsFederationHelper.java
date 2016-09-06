@@ -59,6 +59,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
 import java.time.ZonedDateTime;
@@ -146,7 +147,7 @@ public class WsFederationHelper {
     public Assertion parseTokenFromString(final String wresult, final WsFederationConfiguration config) {
         LOGGER.debug("Result token received from ADFS is {}", wresult);
         
-        try(InputStream in = new ByteArrayInputStream(wresult.getBytes("UTF-8"))) {
+        try(InputStream in = new ByteArrayInputStream(wresult.getBytes(StandardCharsets.UTF_8))) {
             final Document document = configBean.getParserPool().parse(in);
             final Element metadataRoot = document.getDocumentElement();
             final UnmarshallerFactory unmarshallerFactory = configBean.getUnmarshallerFactory();
@@ -172,12 +173,12 @@ public class WsFederationHelper {
             Assertion assertion = null;
 
             XMLObject securityToken = reqToken.getSecurityTokens().get(0);
-            if (securityToken != null) {
-                if (securityToken instanceof EncryptedData) {
-                    final EncryptedData encryptedData = EncryptedData.class.cast(securityToken);
-                    securityToken = buildAssertionDecrypter(config).decryptData(encryptedData);
-                }
+            
+            if (securityToken instanceof EncryptedData) {
+                final EncryptedData encryptedData = EncryptedData.class.cast(securityToken);
+                securityToken = buildAssertionDecrypter(config).decryptData(encryptedData);
             }
+            
             if (securityToken instanceof Assertion) {
                 assertion = Assertion.class.cast(securityToken);
             }
@@ -264,7 +265,8 @@ public class WsFederationHelper {
     private Credential getEncryptionCredential(final WsFederationConfiguration config) {
         try {
             // This will need to contain the private keypair in PEM format
-            final BufferedReader br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream()));
+            final BufferedReader br = new BufferedReader(new InputStreamReader(
+                    config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
             Security.addProvider(new BouncyCastleProvider());
             final PEMParser pemParser = new PEMParser(br);
 

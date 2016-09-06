@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -24,8 +25,6 @@ import java.util.Map;
  * @since 3.5.1
  */
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
-    private static final String DEFAULT_ENCODING = "UTF-8";
-
     /**
      * The Saml object builder.
      */
@@ -33,7 +32,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private ArgumentExtractor samlArgumentExtractor;
     
-    private String encoding = DEFAULT_ENCODING;
+    private String encoding = StandardCharsets.UTF_8.name();
 
     /** Defaults to 0. */
     private int skewAllowance;
@@ -120,7 +119,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     /**
      * Subclasses must implement this method by adding child elements (status, assertion, etc) to
-     * the given empty SAML 1 response message.  Impelmenters need not be concerned with error handling.
+     * the given empty SAML 1 response message.  Implementers need not be concerned with error handling.
      *
      * @param response SAML 1 response message to be filled.
      * @param model Spring MVC model map containing data needed to prepare response.

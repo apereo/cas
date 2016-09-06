@@ -12,8 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Map;
+
+import static com.sun.xml.internal.ws.encoding.SOAPBindingCodec.UTF8_ENCODING;
 
 /**
  * A implementation that is based on algorithms
@@ -23,10 +27,7 @@ import java.util.Map;
  * @since 4.2
  */
 public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
-    private static final String UTF8_ENCODING = "UTF-8";
-    
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-        
+
     /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
@@ -73,7 +74,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
     @Override
     public byte[] encode(final byte[] value) {
         try {
-            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
@@ -88,7 +89,7 @@ public class BinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
     public byte[] decode(final byte[] value) {
         try {
             final byte[] verifiedValue = verifySignature(value);
-            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(UTF8_ENCODING),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(StandardCharsets.UTF_8),
                     this.secretKeyAlgorithm);
             final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();

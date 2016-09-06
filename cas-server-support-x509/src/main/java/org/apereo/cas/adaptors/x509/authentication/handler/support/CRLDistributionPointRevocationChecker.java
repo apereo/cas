@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -235,7 +236,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         try {
             URI uri;
             try {
-                final URL url = new URL(URLDecoder.decode(uriString, "UTF-8"));
+                final URL url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
                 uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             } catch (final MalformedURLException e) {
                 uri = new URI(uriString);

@@ -1,5 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.security.SecureRandom;
 import java.util.stream.IntStream;
 
@@ -17,7 +19,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
     public static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** The array of printable characters to be used in our random string. */
-    public static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
+    private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
 
     /** An instance of secure random to ensure randomness is secure. */
     private SecureRandom randomizer = new SecureRandom();
@@ -62,9 +64,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
     @Override
     public byte[] getNewStringAsBytes() {
         final byte[] random = new byte[this.maximumRandomLength];
-
         this.randomizer.nextBytes(random);
-
         return random;
     }
 

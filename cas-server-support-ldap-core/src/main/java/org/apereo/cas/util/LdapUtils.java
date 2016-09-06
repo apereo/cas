@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +149,7 @@ public final class LdapUtils {
         final String v;
         if (attr.isBinary()) {
             final byte[] b = attr.getBinaryValue();
-            v = new String(b, Charset.forName("UTF-8"));
+            v = new String(b, StandardCharsets.UTF_8);
         } else {
             v = attr.getStringValue();
         }

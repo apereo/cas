@@ -27,7 +27,7 @@ public final class DigestAuthenticationUtils {
         final String fmtDate = ZonedDateTime.now().toString();
         final SecureRandom rand = new SecureRandom();
         final Integer randomInt = rand.nextInt();
-        return DigestUtils.md5Hex(fmtDate + randomInt.toString());
+        return DigestUtils.md5Hex(fmtDate + randomInt);
     }
 
     /**

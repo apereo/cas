@@ -180,14 +180,14 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
             this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getClientAliases(keyType, issuers))));
-            return (String[]) aliases.toArray();
+            return aliases.toArray(new String[] {});
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
             this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getServerAliases(keyType, issuers))));
-            return (String[]) aliases.toArray();
+            return aliases.toArray(new String[] {});
         }
 
     }

@@ -17,6 +17,8 @@ import java.util.Optional;
  * @since 5.0.0
  */
 public class SamlIdPEntityIdValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
+    private static final long serialVersionUID = -2059445756475980894L;
+
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private ServiceFactory webApplicationServiceFactory;

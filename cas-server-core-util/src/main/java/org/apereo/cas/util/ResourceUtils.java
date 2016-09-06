@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -30,7 +31,7 @@ import java.util.zip.ZipEntry;
  */
 public final class ResourceUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
-    
+
     private ResourceUtils() {
     }
 
@@ -52,7 +53,7 @@ public final class ResourceUtils {
         }
         return metadataLocationResource;
     }
-    
+
     /**
      * Gets resource from a String location.
      *
@@ -80,18 +81,18 @@ public final class ResourceUtils {
 
     /**
      * If the provided resource is a classpath resource, running inside an embedded container,
-     * and if the container is running in a non-exploded form, classpath resources become non-accessible. 
+     * and if the container is running in a non-exploded form, classpath resources become non-accessible.
      * So, this method will attempt to move resources out of classpath and onto a physical location
      * outside the context, typically in the "cas" directory of the temp system folder.
      *
-     * @param resource            the resource
-     * @param isDirectory         the if the resource is a directory, in which case entries will be copied over.
+     * @param resource     the resource
+     * @param isDirectory  the if the resource is a directory, in which case entries will be copied over.
      * @param containsName the resource name pattern
      * @return the file
      */
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
-                                                        final boolean isDirectory,
-                                                        final String containsName) {
+                                                            final boolean isDirectory,
+                                                            final String containsName) {
         try {
 
             if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
@@ -100,7 +101,7 @@ public final class ResourceUtils {
             if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
                 return resource;
             }
-            
+
             final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
             final File file = org.springframework.util.ResourceUtils.getFile(url);
 
@@ -113,20 +114,21 @@ public final class ResourceUtils {
                 FileUtils.forceDelete(destination);
             }
 
-            final JarFile jFile = new JarFile(file);
-            final Enumeration e = jFile.entries();
-            while (e.hasMoreElements()) {
-                final ZipEntry entry = (ZipEntry) e.nextElement();
-                if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                    try(InputStream stream = jFile.getInputStream(entry)) {
-                        File copyDestination = destination;
-                        if (isDirectory) {
-                            final File entryFileName = new File(entry.getName());
-                            copyDestination = new File(destination, entryFileName.getName());
-                        }
-                        
-                        try(FileWriter writer = new FileWriter(copyDestination)) {
-                            IOUtils.copy(stream, writer, "UTF-8");
+            try (JarFile jFile = new JarFile(file)) {
+                final Enumeration e = jFile.entries();
+                while (e.hasMoreElements()) {
+                    final ZipEntry entry = (ZipEntry) e.nextElement();
+                    if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
+                        try (InputStream stream = jFile.getInputStream(entry)) {
+                            File copyDestination = destination;
+                            if (isDirectory) {
+                                final File entryFileName = new File(entry.getName());
+                                copyDestination = new File(destination, entryFileName.getName());
+                            }
+
+                            try (FileWriter writer = new FileWriter(copyDestination)) {
+                                IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+                            }
                         }
                     }
                 }

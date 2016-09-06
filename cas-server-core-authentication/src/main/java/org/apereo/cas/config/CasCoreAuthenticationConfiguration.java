@@ -169,7 +169,6 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationContextValidator authenticationContextValidator() {
         final AuthenticationContextValidator val = new AuthenticationContextValidator();
         val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        val.setServicesManager(servicesManager);
         val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;
     }
