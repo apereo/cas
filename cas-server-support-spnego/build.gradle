@@ -8,7 +8,9 @@ dependencies {
   compile(group: 'org.ldaptive', name: 'ldaptive', version:ldaptiveVersion) {
     exclude(group: 'org.slf4j', module: 'slf4j-api')
   }
-  compile group: 'jcifs', name: 'jcifs', version:jcifsVersion
+  compile(group: 'jcifs', name: 'jcifs', version:jcifsVersion) {
+    exclude(group: 'javax.servlet', module: 'servlet-api')
+  }
   compile group: 'org.samba.jcifs', name: 'jcifs-ext', version:jcifsExtVersion
   compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(group: 'commons-logging', module: 'commons-logging')
