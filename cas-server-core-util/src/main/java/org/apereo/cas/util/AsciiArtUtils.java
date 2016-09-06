@@ -40,7 +40,7 @@ public final class AsciiArtUtils {
     public static void printAsciiArt(final Logger out, final String asciiArt, final String additional) {
         try {
             out.warn(ANSI_CYAN);
-            out.warn("\n\n" + FigletFont.convertOneLine(asciiArt) + additional);
+            out.warn("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
             out.warn(ANSI_RESET);
         } catch (final Exception e) {
             throw Throwables.propagate(e);

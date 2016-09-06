@@ -28,6 +28,7 @@ import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -161,7 +162,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
             if (StringUtils.isNotBlank(service.getJwks())) {
                 logger.debug("Loading JWKS from {}", service.getJwks());
                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
-                jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), "UTF-8"));
+                jsonWebKeySet = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
             }
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
@@ -170,7 +171,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
                 logger.debug("Loading default JWKS from {}", this.jwksFile);
 
                 if (this.jwksFile != null) {
-                    final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
+                    final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
                     jsonWebKeySet = new JsonWebKeySet(jsonJwks);
                 }
             }

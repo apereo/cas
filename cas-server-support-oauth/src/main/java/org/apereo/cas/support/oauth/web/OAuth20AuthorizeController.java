@@ -44,8 +44,6 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
     protected OAuthCodeFactory oAuthCodeFactory;
     
     private ConsentApprovalViewResolver consentApprovalViewResolver;
-
-    private TicketRegistrySupport ticketRegistrySupport;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -267,9 +265,5 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     public void setConsentApprovalViewResolver(final ConsentApprovalViewResolver consentApprovalViewResolver) {
         this.consentApprovalViewResolver = consentApprovalViewResolver;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 }

@@ -88,7 +88,7 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
             @Override
             public boolean preHandle(final HttpServletRequest request,
                                      final HttpServletResponse response,
-                                     final Object handler) throws Exception {
+                                     final Object handler) {
                 return true;
             }
         };

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.flow.mdui;
 
+import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -92,7 +93,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 return this.metadataResolver.resolveSingle(criterions);
             }
         } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+            throw Throwables.propagate(ex);
         }
         return null;
 
@@ -120,7 +121,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 loadMetadataFromResource(entry.getValue(), resource, entityId);
             }
         } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+            throw Throwables.propagate(ex);
         }
     }
 

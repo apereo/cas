@@ -37,8 +37,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .toString();
+        return new ToStringBuilder(this).toString();
     }
 
     @Override

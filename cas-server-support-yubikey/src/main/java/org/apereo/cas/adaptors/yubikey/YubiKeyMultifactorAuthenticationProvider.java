@@ -11,6 +11,7 @@ import java.net.URL;
 
 /**
  * The authentication provider for yubikey.
+ *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
@@ -19,9 +20,9 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private static final long serialVersionUID = 4789727148634156909L;
 
     private final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
-    
+
     private final HttpClient httpClient;
-    
+
     public YubiKeyMultifactorAuthenticationProvider(final YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler,
                                                     final HttpClient httpClient) {
         this.yubiKeyAuthenticationHandler = yubiKeyAuthenticationHandler;
@@ -46,8 +47,9 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
             for (final String endpoint : endpoints) {
                 logger.debug("Pinging YubiKey API endpoint at {}", endpoint);
                 final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(endpoint));
-                if (msg != null && StringUtils.isNotBlank(msg.getMessage())) {
-                    final String response = EncodingUtils.urlDecode(msg.getMessage());
+                final String message = msg.getMessage();
+                if (msg != null && StringUtils.isNotBlank(message)) {
+                    final String response = EncodingUtils.urlDecode(message);
                     logger.debug("Received YubiKey ping response {}", response);
                     return true;
                 }

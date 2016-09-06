@@ -61,25 +61,27 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        if (event.getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR)
-            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
-            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
-            logger.debug("Returning webflow event as {}", event.getId());
+        final String id = event.getId();
+        
+        if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR)
+            || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
+            || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+            logger.debug("Returning webflow event as {}", id);
             return ImmutableSet.of(event);
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(authentication, event.getId(), service);
+                this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getFirst()) {
             return resumeFlow();
         }
 
         if (result.getSecond().isPresent()) {
-            return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(event.getId(), context,
+            return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getSecond().get())));
         }
-        logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", event.getId());
+        logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
         return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
 
     }

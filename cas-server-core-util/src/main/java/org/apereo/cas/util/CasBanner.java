@@ -31,14 +31,14 @@ public class CasBanner implements Banner {
     private static String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
         try (Formatter formatter = new Formatter()) {
-            formatter.format("CAS Version: %s\n", CasVersion.getVersion());
-            formatter.format("Build Date/Time: %s\n", CasVersion.getDateTime());
-            formatter.format("Java Home: %s\n", properties.get("java.home"));
-            formatter.format("Java Vendor: %s\n", properties.get("java.vendor"));
-            formatter.format("Java Version: %s\n", properties.get("java.version"));
-            formatter.format("OS Architecture: %s\n", properties.get("os.arch"));
-            formatter.format("OS Name: %s\n", properties.get("os.name"));
-            formatter.format("OS Version: %s\n", properties.get("os.version"));
+            formatter.format("CAS Version: %s%n", CasVersion.getVersion());
+            formatter.format("Build Date/Time: %s%n", CasVersion.getDateTime());
+            formatter.format("Java Home: %s%n", properties.get("java.home"));
+            formatter.format("Java Vendor: %s%n", properties.get("java.vendor"));
+            formatter.format("Java Version: %s%n", properties.get("java.version"));
+            formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
+            formatter.format("OS Name: %s%n", properties.get("os.name"));
+            formatter.format("OS Version: %s%n", properties.get("os.version"));
             return formatter.toString();
         }
     }

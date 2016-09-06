@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 
 /**
@@ -18,7 +19,6 @@ import java.security.PublicKey;
  * @since 4.1
  */
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
-    private static final String UTF8_ENCODING = "UTF-8";
 
     /** Logger instance. **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -61,7 +61,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
         try {
             final Cipher cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
             if (cipher != null) {
-                return cipher.doFinal(data.getBytes(UTF8_ENCODING));
+                return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
             }
         } catch (final Exception e) {
             throw Throwables.propagate(e);

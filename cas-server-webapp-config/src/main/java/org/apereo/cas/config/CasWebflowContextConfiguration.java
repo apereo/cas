@@ -322,6 +322,8 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowExecutorImpl loginFlowExecutor() {
+        final FlowDefinitionRegistry loginFlowRegistry = loginFlowRegistry();
+        
         if (casProperties.getWebflow().getSession().isStorage()) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
             conversationManager.setLockTimeoutSeconds(casProperties.getWebflow().getSession().getLockTimeout());
@@ -336,17 +338,17 @@ public class CasWebflowContextConfiguration {
             final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
                     flowExecutionSnapshotFactory);
             executionFactory.setExecutionKeyFactory(repository);
-            return new FlowExecutorImpl(loginFlowRegistry(), executionFactory, repository);
+            return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
         }
 
         final ClientFlowExecutionRepository repository = new ClientFlowExecutionRepository();
-        repository.setFlowDefinitionLocator(loginFlowRegistry());
+        repository.setFlowDefinitionLocator(loginFlowRegistry);
         repository.setTranscoder(loginFlowStateTranscoder());
 
         final FlowExecutionImplFactory factory = new FlowExecutionImplFactory();
         factory.setExecutionKeyFactory(repository);
         repository.setFlowExecutionFactory(factory);
-        return new FlowExecutorImpl(loginFlowRegistry(), factory, repository);
+        return new FlowExecutorImpl(loginFlowRegistry, factory, repository);
     }
 }
 

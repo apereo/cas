@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
             recordThrottle(request);
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
             response.sendError(HttpStatus.SC_FORBIDDEN,
-                    "Access Denied for user [" + request.getParameter(this.usernameParameter)
+                    "Access Denied for user [" + StringEscapeUtils.escapeHtml4(request.getParameter(this.usernameParameter))
                     + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
         }

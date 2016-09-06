@@ -45,6 +45,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
@@ -131,10 +132,12 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         oauthCasClient.setName(CAS_OAUTH_CLIENT);
         oauthCasClient.setCallbackUrlResolver(buildOAuthCasCallbackUrlResolver());
 
-        final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(oAuthClientAuthenticator());
+        final Authenticator authenticator = oAuthClientAuthenticator();
+        final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(authenticator);
         basicAuthClient.setName("clientBasicAuth");
 
-        final DirectFormClient directFormClient = new DirectFormClient(oAuthClientAuthenticator());
+       
+        final DirectFormClient directFormClient = new DirectFormClient(authenticator);
         directFormClient.setName("clientForm");
         directFormClient.setUsernameParameter(OAuthConstants.CLIENT_ID);
         directFormClient.setPasswordParameter(OAuthConstants.CLIENT_SECRET);

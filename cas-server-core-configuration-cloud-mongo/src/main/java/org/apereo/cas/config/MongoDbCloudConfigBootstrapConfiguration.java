@@ -61,7 +61,7 @@ public class MongoDbCloudConfigBootstrapConfiguration extends AbstractMongoConfi
         final String hostUri = mongoClientUri().getHosts().get(0);
         final String[] host = hostUri.split(":");
         return new MongoClient(new ServerAddress(
-                host[0], host.length > 1 ? Integer.valueOf(host[1]) : DEFAULT_PORT),
+                host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT),
                 Collections.singletonList(credential),
                 mongoClientOptions());
     }

@@ -74,6 +74,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +106,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     
     @Bean
     public Filter characterEncodingFilter() {
-        return new CharacterEncodingFilter("UTF-8", true);
+        return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
 
 
@@ -238,7 +239,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             }
             return new FromAttributesAuthorizationGenerator(
                     StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    StringUtils.commaDelimitedListToStringArray(new String())
+                    StringUtils.commaDelimitedListToStringArray("")
             );
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());

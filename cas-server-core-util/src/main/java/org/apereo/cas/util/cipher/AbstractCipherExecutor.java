@@ -9,6 +9,9 @@ import org.jose4j.keys.AesKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Abstract cipher to provide common operations around signing objects.
  * @author Misagh Moayyed
@@ -36,7 +39,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     }
 
     public void setSigningKey(final String signingSecretKey) {
-        this.signingKey = new AesKey(signingSecretKey.getBytes());
+        this.signingKey = new AesKey(signingSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -52,7 +55,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             jws.setPayload(base64);
             jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             jws.setKey(this.signingKey);
-            return jws.getCompactSerialization().getBytes();
+            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -67,7 +70,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      */
     protected byte[] verifySignature(final byte[] value) {
         try {
-            final String asString = new String(value);
+            final String asString = new String(value, StandardCharsets.UTF_8);
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setCompactSerialization(asString);
             jws.setKey(this.signingKey);

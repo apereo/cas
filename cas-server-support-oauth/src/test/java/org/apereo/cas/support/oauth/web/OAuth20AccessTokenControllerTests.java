@@ -37,6 +37,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -416,7 +417,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuthConstants.GRANT_TYPE, OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase());
         if (basicAuth) {
             final String auth = CLIENT_ID + ':' + CLIENT_SECRET;
-            final String value = Base64.encodeBase64String(auth.getBytes("UTF-8"));
+            final String value = Base64.encodeBase64String(auth.getBytes(StandardCharsets.UTF_8));
             mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
         } else {
             mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
