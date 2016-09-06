@@ -2,6 +2,8 @@ package org.apereo.cas.util;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 /**
@@ -22,7 +24,7 @@ public final class DigestUtils {
      * @return sha-512 hash
      */
     public static String sha512(final String data) {
-        return digest(MessageDigestAlgorithms.SHA_512, data.getBytes());
+        return digest(MessageDigestAlgorithms.SHA_512, data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -50,7 +52,7 @@ public final class DigestUtils {
      * @return hex encoded hash
      */
     public static String digest(final String alg, final String data) {
-        return digest(alg, data.getBytes());
+        return digest(alg, data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

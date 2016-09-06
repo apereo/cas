@@ -415,7 +415,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 return results;
             }
         }
-        logger.debug("No set of events based the principal attribute(s) could be matched",
+        logger.debug("No set of events based the principal attribute(s) {} could be matched",
                 attributeNames);
         return null;
     }

@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
 
 import static org.junit.Assert.*;
@@ -27,7 +28,7 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     }
 
     private String deflateViaStream(final String samlRequest) throws IOException {
-        final byte[] xmlBytes = samlRequest.getBytes("UTF-8");
+        final byte[] xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
         final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
         final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
                 byteOutputStream);

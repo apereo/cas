@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Optional;
@@ -226,7 +227,7 @@ public abstract class AbstractSamlProfileHandlerController {
     protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) throws Exception {
         logger.debug("Retrieving authentication request from scope");
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
-        final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes("UTF-8"));
+        final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
         final AuthnRequest authnRequest = (AuthnRequest)
                 XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
@@ -359,7 +360,7 @@ public abstract class AbstractSamlProfileHandlerController {
                     new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
                     SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
-            final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes("UTF-8"));
+            final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             builder.getQueryParams().add(
                     new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, 
                     samlRequest));

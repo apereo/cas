@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Formatter;
 import java.util.stream.IntStream;
@@ -84,7 +85,7 @@ public final class EncodingUtils {
      */
     public static String urlEncode(final String value) {
         try {
-            return URLEncoder.encode(value, "UTF-8");
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
             throw Throwables.propagate(e);
         }
@@ -98,7 +99,7 @@ public final class EncodingUtils {
      */
     public static String urlDecode(final String value) {
         try {
-            return URLDecoder.decode(value, "UTF-8");
+            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
             throw Throwables.propagate(e);
         }

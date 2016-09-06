@@ -17,9 +17,11 @@ import org.springframework.binding.message.MessageContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +53,8 @@ public class AuthenticationExceptionHandler {
     /**
      * Default list of errors this class knows how to handle.
      */
-    private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
-            new ArrayList<>();
+    private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST =
+            new HashSet<>();
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -83,7 +85,7 @@ public class AuthenticationExceptionHandler {
      * Ordered list of error classes that this class knows how to handle.
      */
 
-    private List<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
+    private Set<Class<? extends Exception>> errors = DEFAULT_ERROR_LIST;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
@@ -123,12 +125,12 @@ public class AuthenticationExceptionHandler {
             Need to do this copy as we have the errors field pointing to DEFAULT_ERROR_LIST statically,
             so not to mutate it.
          */
-        this.errors = new ArrayList<>(this.errors);
+        this.errors = new HashSet<>(this.errors);
         this.errors.addAll(nonNullErrors);
     }
 
-    public List<Class<? extends Exception>> getErrors() {
-        return Collections.unmodifiableList(this.errors);
+    public Set<Class<? extends Exception>> getErrors() {
+        return Collections.unmodifiableSet(this.errors);
     }
 
     /**
@@ -136,7 +138,7 @@ public class AuthenticationExceptionHandler {
      *
      * @return true if any custom errors have been added, false otherwise.
      */
-    final boolean containsCustomErrors() {
+    private boolean containsCustomErrors() {
         return DEFAULT_ERROR_LIST.size() != this.errors.size()
                 && this.errors.containsAll(DEFAULT_ERROR_LIST);
     }

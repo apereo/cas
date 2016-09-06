@@ -63,7 +63,7 @@ public class AuthyTokenCredential implements Credential, Serializable {
 
     @Override
     public String getId() {
-        return this.token.toString();
+        return this.token;
     }
     
     public String getToken() {

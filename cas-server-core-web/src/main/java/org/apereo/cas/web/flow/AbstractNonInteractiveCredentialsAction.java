@@ -64,7 +64,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
-        if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
+        if (ticketGrantingTicketId != null && service != null && isRenewPresent(context)) {
             try {
                 final AuthenticationResult authenticationResult =
                         this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);

@@ -63,7 +63,7 @@ public class GoogleAuthenticatorTokenCredential implements Credential, Serializa
 
     @Override
     public String getId() {
-        return this.token.toString();
+        return this.token;
     }
 
 

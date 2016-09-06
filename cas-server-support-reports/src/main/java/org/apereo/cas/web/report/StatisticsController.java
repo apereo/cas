@@ -9,8 +9,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +38,7 @@ public class StatisticsController implements ServletContextAware {
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
 
     private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
-
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     private ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Autowired

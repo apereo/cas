@@ -7,10 +7,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+
+import static com.sun.xml.internal.ws.encoding.SOAPBindingCodec.UTF8_ENCODING;
 
 /**
  * This is {@link CompressionUtils}
@@ -25,9 +28,7 @@ public final class CompressionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
 
     private static final int INFLATED_ARRAY_LENGTH = 10000;
-
-    private static final String UTF8_ENCODING = "UTF-8";
-
+    
     /**
      * Private ctor for a utility class.
      */
@@ -59,54 +60,46 @@ public final class CompressionUtils {
             }
 
             inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, "UTF-8");
+            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
         } catch (final DataFormatException e) {
             return null;
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("Cannot find encoding: UTF-8", e);
         }
     }
 
 
     /**
      * Deflate the given bytes using zlib.
-     * The result will be base64 encoded with {@link #UTF8_ENCODING}.
      *
      * @param bytes the bytes
      * @return the converted string
      */
     public static String deflate(final byte[] bytes) {
-        final String data = new String(bytes, Charset.forName(UTF8_ENCODING));
+        final String data = new String(bytes, StandardCharsets.UTF_8);
         return deflate(data);
     }
 
     /**
      * Deflate the given string via a {@link java.util.zip.Deflater}.
-     * The result will be base64 encoded with {@link #UTF8_ENCODING}.
      *
      * @param data the data
      * @return base64 encoded string
      */
     public static String deflate(final String data) {
-        try {
-            final Deflater deflater = new Deflater();
-            deflater.setInput(data.getBytes(UTF8_ENCODING));
-            deflater.finish();
-            final byte[] buffer = new byte[data.length()];
-            final int resultSize = deflater.deflate(buffer);
-            final byte[] output = new byte[resultSize];
-            System.arraycopy(buffer, 0, output, 0, resultSize);
-            return EncodingUtils.encodeBase64(output);
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("Cannot find encoding:" + UTF8_ENCODING, e);
-        }
+        final Deflater deflater = new Deflater();
+        deflater.setInput(data.getBytes(StandardCharsets.UTF_8));
+        deflater.finish();
+        final byte[] buffer = new byte[data.length()];
+        final int resultSize = deflater.deflate(buffer);
+        final byte[] output = new byte[resultSize];
+        System.arraycopy(buffer, 0, output, 0, resultSize);
+        return EncodingUtils.encodeBase64(output);
     }
 
     /**
      * Decode the byte[] in base64 to a string.
      *
      * @param bytes the data to encode
-     * @return the new string in {@link #UTF8_ENCODING}.
+     * @return the new string
      */
     public static String decodeByteArrayToString(final byte[] bytes) {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
@@ -118,7 +111,7 @@ public final class CompressionUtils {
                 baos.write(buf, 0, count);
                 count = iis.read(buf);
             }
-            return new String(baos.toByteArray(), Charset.forName(UTF8_ENCODING));
+            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } catch (final Exception e) {
             LOGGER.error("Base64 decoding failed", e);
             return null;

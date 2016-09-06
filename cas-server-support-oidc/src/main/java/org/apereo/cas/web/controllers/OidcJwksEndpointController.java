@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OidcJwksEndpointController}.
@@ -63,7 +64,7 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
         Assert.notNull(this.jwksFile, "JWKS file cannot be undefined or null.");
         
         try {
-            final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), "UTF-8");
+            final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
             this.servicesManager.getAllServices()
@@ -73,7 +74,7 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
                             Unchecked.consumer(s -> {
                                 final OidcRegisteredService service = (OidcRegisteredService) s;
                                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
-                                final JsonWebKeySet set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), "UTF-8"));
+                                final JsonWebKeySet set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
                                 set.getJsonWebKeys().forEach(k -> jsonWebKeySet.addJsonWebKey(k));
                             }));
             final String body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);

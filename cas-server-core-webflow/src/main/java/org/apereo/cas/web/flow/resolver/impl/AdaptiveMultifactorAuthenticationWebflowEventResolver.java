@@ -79,7 +79,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
             }
             
             if (agent.matches(pattern) || clientIp.matches(pattern)) {
-                logger.debug("Current user agent [{}] at [{}] matches the provided pattern for "
+                logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
                              + "adaptive authentication and is required to use [{}]",
                             agent, clientIp, pattern, mfaMethod);
 
@@ -92,7 +92,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
                 if (loc != null) {
                     final String address = loc.buildAddress();
                     if (address.matches(pattern)) {
-                        logger.debug("Current address [{}] at [{}] matches the provided pattern for "
+                        logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
                                         + "adaptive authentication and is required to use [{}]",
                                 address, clientIp, pattern, mfaMethod);
                         return buildEvent(context, service, authentication, providerFound.get());

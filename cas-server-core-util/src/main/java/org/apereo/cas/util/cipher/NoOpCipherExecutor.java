@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.1
  */
 public class NoOpCipherExecutor extends AbstractCipherExecutor<String, String> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NoOpCipherExecutor.class);
     
     @Override
     public String encode(final String value) {

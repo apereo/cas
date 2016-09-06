@@ -23,6 +23,7 @@ import org.springframework.util.SocketUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link CasEmbeddedContainerConfiguration}.
@@ -96,7 +97,7 @@ public class CasEmbeddedContainerConfiguration {
                 protected synchronized void startInternal() throws LifecycleException {
                     super.startInternal();
                     try (InputStream is = rewriteValveConfig.getInputStream();
-                         BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
+                         BufferedReader buffer = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                         parse(buffer);
                     } catch (final Exception e) {
                         throw Throwables.propagate(e);

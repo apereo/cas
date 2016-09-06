@@ -23,6 +23,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -57,9 +58,9 @@ public class CoreSamlConfiguration {
 
         final Properties properties = new Properties();
         properties.put(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, SLF4JLogChute.class.getName());
-        properties.put(RuntimeConstants.INPUT_ENCODING, "UTF-8");
-        properties.put(RuntimeConstants.OUTPUT_ENCODING, "UTF-8");
-        properties.put(RuntimeConstants.ENCODING_DEFAULT, "UTF-8");
+        properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
+        properties.put(RuntimeConstants.OUTPUT_ENCODING, StandardCharsets.UTF_8.name());
+        properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, FileUtils.getTempDirectory().getAbsolutePath());
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, false);

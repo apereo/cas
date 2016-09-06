@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,7 +51,7 @@ public final class SamlSPUtils {
             final Resource resource = ResourceUtils.prepareClasspathResourceIfNeeded(
                     ResourceUtils.getResourceFrom(sp.getMetadata())
             );
-            final String content = IOUtils.toString(resource.getInputStream(), "UTF-8");
+            final String content = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
             final Matcher m = Pattern.compile("entityID=\"(\\w+)", Pattern.CASE_INSENSITIVE).matcher(content);
             if (m.find()) {
                 service.setServiceId(m.group(1));

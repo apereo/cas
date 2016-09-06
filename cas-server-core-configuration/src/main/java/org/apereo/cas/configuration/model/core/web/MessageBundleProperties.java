@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Configuration properties class for message.bundle.
  *
@@ -9,7 +11,7 @@ package org.apereo.cas.configuration.model.core.web;
 
 public class MessageBundleProperties {
 
-    private String encoding = "UTF-8";
+    private String encoding = StandardCharsets.UTF_8.name();
 
     private int cacheSeconds = 180;
 
