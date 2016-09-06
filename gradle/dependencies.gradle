@@ -532,9 +532,11 @@ ext.libraries = [
 
         jcifs                   : [
                 dependencies.create("jcifs:jcifs:$jcifsVersion") {
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     force = true
                 },
                 dependencies.create("org.samba.jcifs:jcifs-ext:$jcifsExtVersion") {
+                    exclude(group: "javax.servlet", module: "servlet-api")
                     force = true
                 }
         ],
