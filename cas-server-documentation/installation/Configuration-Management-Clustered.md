@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuration Management Clustered Deployment
 ---
 
-# Configuration Management Clustered Deployments
+# Clustered Deployments
 
 CAS uses the [Spring Cloud Bus](http://cloud.spring.io/spring-cloud-static/spring-cloud.html) 
 to manage configuration in a distributed deployment. Spring Cloud Bus links nodes of a 
