@@ -1335,7 +1335,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     force = true
                 },
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-config:$springCloudStarterVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-config:$springCloudStarterConfigVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
