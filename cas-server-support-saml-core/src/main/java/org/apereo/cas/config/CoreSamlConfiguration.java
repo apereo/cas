@@ -63,7 +63,7 @@ public class CoreSamlConfiguration {
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, FileUtils.getTempDirectory().getAbsolutePath());
-        properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, false);
+        properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, Boolean.FALSE);
         properties.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         properties.put("string.resource.loader.class", StringResourceLoader.class.getName());
         properties.put("file.resource.loader.class", FileResourceLoader.class.getName());

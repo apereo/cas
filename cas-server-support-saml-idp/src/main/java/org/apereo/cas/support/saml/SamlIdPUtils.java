@@ -154,7 +154,7 @@ public final class SamlIdPUtils {
                 acs.setLocation(authnRequest.getAssertionConsumerServiceURL());
                 acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
                 acs.setIndex(0);
-                acs.setIsDefault(true);
+                acs.setIsDefault(Boolean.TRUE);
             }
             
             LOGGER.debug("Resolved AssertionConsumerService from the request is {}", acs);
