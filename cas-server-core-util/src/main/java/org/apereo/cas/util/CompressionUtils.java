@@ -5,15 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
-import static com.sun.xml.internal.ws.encoding.SOAPBindingCodec.UTF8_ENCODING;
 
 /**
  * This is {@link CompressionUtils}

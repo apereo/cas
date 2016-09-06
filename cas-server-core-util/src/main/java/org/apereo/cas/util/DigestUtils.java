@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
