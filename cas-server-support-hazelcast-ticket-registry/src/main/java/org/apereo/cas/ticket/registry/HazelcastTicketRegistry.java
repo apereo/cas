@@ -3,9 +3,7 @@ package org.apereo.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.PagingPredicate;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

@@ -1,10 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.util.Pair;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
@@ -58,14 +63,17 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             return;
         }
 
-        final LogoutRequest logoutRequest = decodeRequest(request, decoder, LogoutRequest.class);
-        if (isForceSignedLogoutRequests() && !logoutRequest.isSigned()) {
+        final Pair<? extends SignableSAMLObject, MessageContext> pair = decodeRequest(request, decoder, LogoutRequest.class);
+        final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getFirst());
+        final MessageContext ctx = pair.getSecond();
+        
+        if (isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
-        } else if (logoutRequest.isSigned()) {
+        } else if (SAMLBindingSupport.isMessageSigned(ctx)) {
             final MetadataResolver resolver = SamlIdPUtils.getMetadataResolverForAllSamlServices(this.servicesManager,
                     SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest),
                     this.samlRegisteredServiceCachingMetadataResolver);
-            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver);
+            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(logoutRequest, resolver, request, ctx);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
         response.sendRedirect(getLogoutUrl());

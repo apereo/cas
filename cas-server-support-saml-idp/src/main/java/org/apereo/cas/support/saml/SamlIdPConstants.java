@@ -29,5 +29,17 @@ public interface SamlIdPConstants {
     
     /** The SAML2 SSO post callback profile endpoint. */
     String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/POST/SSO/Callback";
+
+    /** The shire constant. */
+    String SHIRE = "shire";
+
+    /** The provider id constant. */
+    String PROVIDER_ID = "providerId";
+
+    /** The target constant. */
+    String TARGET = "target";
+
+    /** The time constant. */
+    String TIME = "time";
 }
 

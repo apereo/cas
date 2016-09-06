@@ -113,7 +113,7 @@ public class SamlIdPConfiguration {
     private List overrideSignatureAlgorithms;
 
     @Autowired(required = false)
-    @Qualifier("overrideBlackListedSignatureSigningAlgorithms")
+    @Qualifier("overrideBlackListedSignatureAlgorithms")
     private List overrideBlackListedSignatureSigningAlgorithms;
 
     @Autowired(required = false)
@@ -214,7 +214,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlObjectSigner samlObjectSigner() {
         final SamlObjectSigner s = new SamlObjectSigner();
-        s.setOverrideBlackListedSignatureSigningAlgorithms(overrideBlackListedSignatureSigningAlgorithms);
+        s.setOverrideBlackListedSignatureAlgorithms(overrideBlackListedSignatureSigningAlgorithms);
         s.setOverrideSignatureAlgorithms(overrideSignatureAlgorithms);
         s.setOverrideSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
         s.setOverrideWhiteListedAlgorithms(overrideWhiteListedSignatureSigningAlgorithms);
