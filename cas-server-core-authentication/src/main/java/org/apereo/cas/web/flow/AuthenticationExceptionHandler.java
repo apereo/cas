@@ -138,7 +138,7 @@ public class AuthenticationExceptionHandler {
      *
      * @return true if any custom errors have been added, false otherwise.
      */
-    private boolean containsCustomErrors() {
+    public final boolean containsCustomErrors() {
         return DEFAULT_ERROR_LIST.size() != this.errors.size()
                 && this.errors.containsAll(DEFAULT_ERROR_LIST);
     }

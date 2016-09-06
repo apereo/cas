@@ -141,7 +141,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         // no MFA auth context found
         if (!requestedContext.isPresent()) {
             logger.debug("No particular authentication context is required for this request");
-            return new Pair<>(true, Optional.empty());
+            return new Pair<>(Boolean.TRUE, Optional.empty());
         }
 
         // validate the requested strategy
