@@ -1,7 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.util.Pair;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -64,7 +67,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSsoPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final AuthnRequest authnRequest = retrieveAuthnRequest(request, decoder);
+        final Pair<? extends SignableSAMLObject, MessageContext> authnRequest = retrieveAuthnRequest(request, decoder);
         initiateAuthenticationRequest(authnRequest, response, request);
     }
     
@@ -75,7 +78,8 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param decoder the decoder
      * @return the authn request
      */
-    protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request, final BaseHttpServletRequestXMLMessageDecoder decoder) {
+    protected Pair<? extends SignableSAMLObject, MessageContext> retrieveAuthnRequest(final HttpServletRequest request, 
+                                                                                final BaseHttpServletRequestXMLMessageDecoder decoder) {
         return decodeRequest(request, decoder, AuthnRequest.class);
     }
 

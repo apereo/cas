@@ -11,9 +11,7 @@ import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
