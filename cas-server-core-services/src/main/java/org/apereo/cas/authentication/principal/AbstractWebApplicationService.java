@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -122,8 +123,8 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @Override
     public boolean matches(final Service service) {
         try {
-            final String thisUrl = URLDecoder.decode(this.id, "UTF-8");
-            final String serviceUrl = URLDecoder.decode(service.getId(), "UTF-8");
+            final String thisUrl = URLDecoder.decode(this.id, StandardCharsets.UTF_8.name());
+            final String serviceUrl = URLDecoder.decode(service.getId(), StandardCharsets.UTF_8.name());
 
             logger.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
             return thisUrl.equalsIgnoreCase(serviceUrl);

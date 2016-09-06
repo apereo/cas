@@ -88,7 +88,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 logger.debug("Encoding NameID based on {}", nameFormat);
                 
                 final NameID nameid = encoder.encode(attribute);
-                logger.debug("Final NameID encoded is {} with value", nameid.getFormat(), nameid.getValue());
+                logger.debug("Final NameID encoded is {} with value {}", nameid.getFormat(), nameid.getValue());
                 return nameid;
             }
         } catch (final Exception e) {

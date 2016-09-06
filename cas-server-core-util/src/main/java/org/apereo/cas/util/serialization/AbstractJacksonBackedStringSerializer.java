@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
@@ -23,6 +24,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
@@ -86,8 +88,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final File json) {
         try {
             final String jsonString = isJsonFormat() 
-                    ? JsonValue.readHjson(FileUtils.readFileToString(json, "UTF-8")).toString()
-                    : FileUtils.readFileToString(json, "UTF-8");
+                    ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+                    : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
             
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
@@ -112,8 +114,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final InputStream json) {
         try {
             final String jsonString = isJsonFormat() 
-                    ? JsonValue.readHjson(IOUtils.toString(json, "UTF-8")).toString()
-                    : IOUtils.readLines(json, "UTF-8").stream().collect(Collectors.joining("\n"));
+                    ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
+                    : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
             
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
@@ -129,7 +131,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                     ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
                     : writer.toString();
             
-            IOUtils.write(hjsonString, out, "UTF-8");
+            IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -158,10 +160,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             if (isJsonFormat()) {
                 JsonValue.readHjson(writer.toString()).writeTo(new BufferedWriter(new FileWriter(out)));
             } else {
-                FileUtils.write(out, writer.toString(), "UTF-8");
+                FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
             }
         } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
+            throw Throwables.propagate(e);
         }
     }
     

@@ -51,7 +51,7 @@ public class LdapPasswordChangeService implements PasswordChangeService {
                 LOGGER.error("Could not locate an LDAP entry for {} and base DN {}", filter.format(), ldap.getBaseDn());
             }
         } catch (final Exception e) {
-            LOGGER.error("Update failed", e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }

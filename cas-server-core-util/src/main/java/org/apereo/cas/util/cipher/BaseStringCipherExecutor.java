@@ -10,6 +10,8 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,15 +99,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
     @Override
     public String encode(final String value) {
         final String encoded = encryptValue(value);
-        final String signed = new String(sign(encoded.getBytes()));
+        final String signed = new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return signed;
     }
 
     @Override
     public String decode(final String value) {
-        final byte[] encoded = verifySignature(value.getBytes());
+        final byte[] encoded = verifySignature(value.getBytes(StandardCharsets.UTF_8));
         if (encoded != null && encoded.length > 0) {
-            return decryptValue(new String(encoded));
+            return decryptValue(new String(encoded, StandardCharsets.UTF_8));
         }
         return null;
     }

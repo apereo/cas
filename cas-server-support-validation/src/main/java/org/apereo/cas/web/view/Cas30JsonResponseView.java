@@ -29,11 +29,6 @@ import java.util.stream.Collectors;
  */
 public class Cas30JsonResponseView extends Cas30ResponseView {
     /**
-     * Logger instance.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
      * Instantiates a new json response view.
      * Forces pretty printing of the JSON view.
      */

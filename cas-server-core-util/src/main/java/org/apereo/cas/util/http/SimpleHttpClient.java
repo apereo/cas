@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
@@ -109,7 +110,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched {}.", responseCode);
                     entity = response.getEntity();
-                    final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), "UTF-8"));
+                    final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                     msg.setContentType(entity.getContentType().getValue());
                     msg.setResponseCode(responseCode);
                     return msg;

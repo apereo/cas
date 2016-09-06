@@ -10,6 +10,7 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -84,7 +85,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
                 }
 
                 if (prim instanceof ASN1OctetString) {
-                    return new String(((ASN1OctetString) prim).getOctets());
+                    return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
                 } else if (prim instanceof ASN1String) {
                     return ((ASN1String) prim).getString();
                 } else{

@@ -284,14 +284,14 @@ public class LoggingConfigController {
         @Override
         public void handle(final String line) {
             synchronized (LOCK) {
-                LOG_OUTPUT.append(line).append("\n");
+                LOG_OUTPUT.append(line).append('\n');
             }
         }
 
         @Override
         public void handle(final Exception ex) {
             synchronized (LOCK) {
-                LOG_OUTPUT.append(ex).append("\n");
+                LOG_OUTPUT.append(ex).append('\n');
             }
         }
     }

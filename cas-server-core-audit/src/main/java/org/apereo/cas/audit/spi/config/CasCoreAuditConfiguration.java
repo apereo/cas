@@ -102,15 +102,22 @@ public class CasCoreAuditConfiguration {
     @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
-        map.put("AUTHENTICATION_RESOLVER", authenticationActionResolver());
-        map.put("SAVE_SERVICE_ACTION_RESOLVER", authenticationActionResolver());
-        map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
-        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
-        map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", ticketCreationActionResolver());
-        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", new DefaultAuditActionResolver());
-        map.put("GRANT_SERVICE_TICKET_RESOLVER", ticketCreationActionResolver());
-        map.put("GRANT_PROXY_TICKET_RESOLVER", ticketCreationActionResolver());
+        final AuditActionResolver resolver = authenticationActionResolver();
+        map.put("AUTHENTICATION_RESOLVER", resolver);
+        map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
+
+        final AuditActionResolver defResolver = new DefaultAuditActionResolver();
+        map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
+        map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
+        
+        final AuditActionResolver cResolver = ticketCreationActionResolver();
+        map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
+        map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);
+        map.put("GRANT_PROXY_TICKET_RESOLVER", cResolver);
+        map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
+        
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
+        
         return map;
     }
 

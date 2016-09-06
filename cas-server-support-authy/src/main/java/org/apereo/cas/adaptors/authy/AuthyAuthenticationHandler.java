@@ -28,7 +28,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final AuthyClientInstance instance) throws MalformedURLException {
+    public AuthyAuthenticationHandler(final AuthyClientInstance instance) {
         this.instance = instance;
     }
 

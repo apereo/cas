@@ -104,7 +104,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     final Event result = r.resolveSingle(context);
 
                     if (result != null) {
-                        logger.debug("Recorded the resulting event {} for {} is {}", result, r.getName());
+                        logger.debug("Recorded the resulting event {} for {}", result, r.getName());
                         eventBuilder.add(result);
                     } else {
                         logger.debug("Resulting event for {} is blank/ignored", r.getName());

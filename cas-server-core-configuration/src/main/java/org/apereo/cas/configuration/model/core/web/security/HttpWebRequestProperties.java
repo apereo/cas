@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * This is {@link HttpWebRequestProperties}.
  *
@@ -59,7 +61,7 @@ public class HttpWebRequestProperties {
     }
 
     public static class Web {
-        private String encoding = "UTF-8";
+        private String encoding = StandardCharsets.UTF_8.name();
         private boolean forceEncoding = true;
 
         public String getEncoding() {

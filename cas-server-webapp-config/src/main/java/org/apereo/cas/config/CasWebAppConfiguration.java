@@ -128,12 +128,13 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleUrlHandlerMapping handlerMapping() {
         final SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        
+        final Controller root = rootController();
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
-        mapping.setRootHandler(rootController());
-        
+        mapping.setRootHandler(root);
         final Map urls = new HashMap();
-        urls.put("/", rootController());
+        urls.put("/", root);
         
         mapping.setUrlMap(urls);
         return mapping;

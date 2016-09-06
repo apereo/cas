@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public class GoogleAuthenticatorQRGeneratorController {
     private static void generateQRCode(final OutputStream stream, final String key) {
         try {
             final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
-            hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
             hintMap.put(EncodeHintType.MARGIN, 2);
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
 
@@ -56,17 +56,22 @@ public class GoogleAuthenticatorQRGeneratorController {
             image.createGraphics();
 
             final Graphics2D graphics = (Graphics2D) image.getGraphics();
-            graphics.setColor(Color.WHITE);
-            graphics.fillRect(0, 0, width, width);
-            graphics.setColor(Color.BLACK);
+            try {
+                graphics.setColor(Color.WHITE);
+                graphics.fillRect(0, 0, width, width);
+                graphics.setColor(Color.BLACK);
 
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < width; j++) {
-                    if (byteMatrix.get(i, j)) {
-                        graphics.fillRect(i, j, 1, 1);
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < width; j++) {
+                        if (byteMatrix.get(i, j)) {
+                            graphics.fillRect(i, j, 1, 1);
+                        }
                     }
                 }
+            } finally {
+                graphics.dispose();
             }
+            
             ImageIO.write(image, "png", stream);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
