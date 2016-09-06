@@ -8,16 +8,11 @@ import org.apache.shiro.crypto.CipherService;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Map;
-
-import static com.sun.xml.internal.ws.encoding.SOAPBindingCodec.UTF8_ENCODING;
 
 /**
  * A implementation that is based on algorithms

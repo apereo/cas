@@ -123,9 +123,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
             return (QName) f.get(null);
         } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
+            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
         } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
+            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
         }
     }
 

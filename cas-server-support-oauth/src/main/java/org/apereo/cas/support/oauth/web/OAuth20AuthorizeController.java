@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;

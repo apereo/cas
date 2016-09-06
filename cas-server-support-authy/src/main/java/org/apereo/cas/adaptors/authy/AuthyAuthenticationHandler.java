@@ -13,7 +13,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
-import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
