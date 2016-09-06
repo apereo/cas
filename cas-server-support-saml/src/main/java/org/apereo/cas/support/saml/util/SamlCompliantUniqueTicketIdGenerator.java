@@ -49,7 +49,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
         try {
             this.random = SecureRandom.getInstance("SHA1PRNG");
         } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot get SHA1PRNG secure random instance.");
+            throw new IllegalStateException("Cannot get SHA1PRNG secure random instance.", e);
         }
     }
 

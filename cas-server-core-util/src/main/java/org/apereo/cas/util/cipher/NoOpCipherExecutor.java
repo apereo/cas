@@ -1,8 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
  * @author Misagh Moayyed
