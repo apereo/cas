@@ -3,8 +3,6 @@ package org.apereo.cas.web.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;

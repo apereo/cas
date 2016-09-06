@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- See http://findbugs.sourceforge.net/manual/filter.html -->
 <FindBugsFilter>
     <Match>
         <Confidence value="2"/>
         <Rank value="15"/>
-        <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE,STYLE,BAD_PRACTICE"/>
-        <Package name="^org\.apereo\.cas.+" />
+        <Bug category="CORRECTNESS,MT_CORRECTNESS,SECURITY,PERFORMANCE,MALICIOUS_CODE,STYLE,BAD_PRACTICE"/>
+        <Package name=".+" />
     </Match>
 </FindBugsFilter>
