@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -21,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -77,19 +81,26 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            final HttpRequestFutureTask<String> task = this.requestExecutorService.execute(request,
-                    HttpClientContext.create(), new BasicResponseHandler());
+            final ResponseHandler<Boolean> handler = new ResponseHandler<Boolean>() {
+                @Override
+                public Boolean handleResponse(final HttpResponse response) throws IOException {
+                    return response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+                }
+            };
+            
+            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request,
+                    HttpClientContext.create(), handler);
 
             if (message.isAsynchronous()) {
                 return true;
             }
             
-            return StringUtils.isNotBlank(task.get());
+            return task.get();
         } catch (final RejectedExecutionException e) {
             LOGGER.warn(e.getMessage(), e);
             return false;
         } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return false;
         }
     }
