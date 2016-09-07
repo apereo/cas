@@ -2,16 +2,15 @@ package org.apereo.cas.util.http;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpRequestFutureTask;
@@ -40,29 +39,37 @@ import java.util.concurrent.RejectedExecutionException;
  */
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
-    /** Unique Id for serialization. */
+    /**
+     * Unique Id for serialization.
+     */
     private static final long serialVersionUID = -4949380008568071855L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
-    /** the acceptable codes supported by this client. */
+    /**
+     * the acceptable codes supported by this client.
+     */
     private List<Integer> acceptableCodes;
 
-    /** the HTTP client for this client. */
+    /**
+     * the HTTP client for this client.
+     */
     private CloseableHttpClient httpClient;
 
-    /** the request executor service for this client. */
+    /**
+     * the request executor service for this client.
+     */
     private FutureRequestExecutionService requestExecutorService;
 
     /**
      * Instantiates a new Simple HTTP client, based on the provided inputs.
      *
-     * @param acceptableCodes the acceptable codes of the client
-     * @param httpClient the HTTP client used by the client
+     * @param acceptableCodes        the acceptable codes of the client
+     * @param httpClient             the HTTP client used by the client
      * @param requestExecutorService the request executor service used by the client
      */
     SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
-            final FutureRequestExecutionService requestExecutorService) {
+                     final FutureRequestExecutionService requestExecutorService) {
         Collections.sort(acceptableCodes);
         this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
         this.httpClient = httpClient;
@@ -76,23 +83,22 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
-            
+
             final StringEntity entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            final HttpRequestFutureTask<String> task = this.requestExecutorService.execute(request,
-                    HttpClientContext.create(), new BasicResponseHandler());
-
+            final ResponseHandler<Boolean> handler = response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request,
+                    HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
             }
-
-            return StringUtils.isNotBlank(task.get());
+            return task.get();
         } catch (final RejectedExecutionException e) {
             LOGGER.warn(e.getMessage(), e);
             return false;
         } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return false;
         }
     }
@@ -103,7 +109,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
         HttpEntity entity = null;
 
-        try(CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
@@ -148,7 +154,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
         HttpEntity entity = null;
 
-        try(CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
@@ -175,6 +181,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     /**
      * Shutdown the executor service and close the http client.
+     *
      * @throws Exception if the executor cannot properly shut down
      */
     @Override
