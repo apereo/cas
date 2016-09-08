@@ -39,7 +39,7 @@ ignored by CAS and likely the feature it controls will never be activated in the
 ## Configuration Storage
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
-the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`.
+the entire CAS running context. They are to be put inside the `bootstrap.properties`.
 
 ### Native
 
