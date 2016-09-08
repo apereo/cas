@@ -104,7 +104,7 @@ exist, and does not require any special permissions
 or structure. The names of the configuration files that go inside this directory also do
  not matter, and there can be many. 
 
-The configuration of this behavior is controlled via the `bootstrap.properties` file:
+The configuration of this behavior is controlled via the `src/main/resources/bootstrap.properties` file:
 
 ```properties
 spring.profiles.active=native
