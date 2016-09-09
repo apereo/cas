@@ -279,7 +279,7 @@ To disable log sanitization, start the container with the system property `CAS_T
 ## Authentication Attributes
 
 Set of authentication attributes that are retrieved by the principal resolution process,
-typically via some component of [Person Directory](..\Attribute-Resolution.html)
+typically via some component of [Person Directory](..\integration\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
 If no other attribute source is defined, the below attributes are used to create
