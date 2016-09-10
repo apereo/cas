@@ -20,7 +20,6 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  */
 public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     
-    
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();

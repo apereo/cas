@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.principal.Principal;
 
 import com.google.common.cache.Cache;
@@ -78,7 +79,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         try {
             return this.cache.get(p.getId(), () -> {
                 LOGGER.debug("No cached attributes could be found for {}", p.getId());
-                return new HashMap<>();
+                return Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
             });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -94,7 +95,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static class PrincipalAttributesCacheLoader extends CacheLoader<String, Map<String, Object>> {
         @Override
         public Map<String, Object> load(final String key) throws Exception {
-            return new HashMap<>();
+            return Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
         }
     }
 }
