@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts
  * that were prevented by system errors. This policy may be a desirable alternative to {@link AnyAuthenticationPolicy}
@@ -9,7 +12,8 @@ package org.apereo.cas.authentication;
  * @since 4.0.0
  */
 public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotPreventedAuthenticationPolicy.class);
+    
     public NotPreventedAuthenticationPolicy() {
         super(true);
     }
@@ -19,6 +23,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
         final boolean fail = authentication.getFailures().values().stream()
                 .anyMatch(failure -> failure.isAssignableFrom(PreventedException.class));
         if (fail) {
+            LOGGER.warn("Authentication policy has failed given at least one authentication failure is found to prevent authentication");
             return false;
         }
         return super.isSatisfiedBy(authentication);
