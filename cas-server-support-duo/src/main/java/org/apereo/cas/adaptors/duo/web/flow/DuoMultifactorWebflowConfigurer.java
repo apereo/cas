@@ -19,7 +19,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
     @Override
     protected void doInitialize() throws Exception {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_DUO_EVENT_ID, this.duoFlowRegistry);
-
     }
 
     public void setDuoFlowRegistry(final FlowDefinitionRegistry duoFlowRegistry) {

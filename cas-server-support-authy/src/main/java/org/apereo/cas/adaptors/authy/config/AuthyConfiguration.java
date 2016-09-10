@@ -64,9 +64,6 @@ public class AuthyConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @Autowired
-    @Qualifier("builder")
-    private FlowBuilderServices builder;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -104,7 +101,7 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-authy/*-webflow.xml");
         return builder.build();
