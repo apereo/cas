@@ -10,4 +10,5 @@ dependencies {
 
     compileOnly project(":cas-server-core-api-authentication")
     compileOnly project(":cas-server-core-util")
+    compileOnly project(":cas-server-core-api-webflow")
 }

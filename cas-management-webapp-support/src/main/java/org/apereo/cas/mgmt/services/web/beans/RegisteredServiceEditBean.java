@@ -50,7 +50,7 @@ public class RegisteredServiceEditBean implements Serializable {
     /**
      * The type Form data.
      */
-    public static class FormData {
+    public static class FormData implements Serializable {
         private List<String> availableAttributes = new ArrayList<>();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
@@ -99,7 +99,7 @@ public class RegisteredServiceEditBean implements Serializable {
     /**
      * The type Service data.
      */
-    public static class ServiceData {
+    public static class ServiceData implements Serializable {
         private String assignedId;
         private String serviceId;
         private String name;

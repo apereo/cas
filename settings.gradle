@@ -11,6 +11,7 @@ include "cas-server-core-api-web"
 include "cas-server-core-api"
 include "cas-server-core-api-protocol"
 include "cas-server-core-api-events"
+include "cas-server-core-api-webflow"
 
 include "cas-server-core-util"
 include "cas-server-core-webflow"
