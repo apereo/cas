@@ -3,6 +3,17 @@
 
 <head th:inline="text">
     <title>[[#{screen.badhours.heading}]]</title>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        function showErrorDetails() {
+            $("#errorMsg").remove();
+            $("#errorDetails").empty();
+            $("#errorDetails").append("<p><pre>" + /*[[${trace}]]*/ + "</pre></p>");
+        }
+        /*]]>*/
+    </script>
 </head>
 
 <body id="cas">
@@ -10,9 +21,12 @@
     <div class="alert alert-danger">
         <h2 th:utext="#{screen.unavailable.heading(${status},${error})}" />
         <p th:utext="#{screen.unavailable.message}" />
-        
-        <p>
-        <kbd th:text="${'Error: ' + message}" />
+        <p id="errorMsg">
+        <pre th:text="${'Error: ' + message}" />
+        </p>
+        <p id="errorDetails">
+            <button type="button" class="btn btn-shutdown" 
+                    onclick="showErrorDetails();">View Details</button>
         </p>
     </div>
 </div>

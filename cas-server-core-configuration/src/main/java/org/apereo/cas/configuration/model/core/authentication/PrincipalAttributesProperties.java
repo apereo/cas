@@ -8,8 +8,10 @@ import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link PrincipalAttributesProperties}.
@@ -22,6 +24,7 @@ public class PrincipalAttributesProperties {
     private int expireInMinutes = 30;
     private int maximumCacheSize = 10000;
 
+    private Set<String> defaultAttributesToRelease = new HashSet<>();
     private Map<String, String> attributes = new HashMap();
 
     private Jdbc jdbc = new Jdbc();
@@ -83,6 +86,14 @@ public class PrincipalAttributesProperties {
 
     public void setAttributes(final Map<String, String> attributes) {
         this.attributes = attributes;
+    }
+
+    public Set<String> getDefaultAttributesToRelease() {
+        return defaultAttributesToRelease;
+    }
+
+    public void setDefaultAttributesToRelease(final Set<String> defaultAttributesToRelease) {
+        this.defaultAttributesToRelease = defaultAttributesToRelease;
     }
 
     public static class Jdbc extends AbstractJpaProperties {
