@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *
@@ -7,8 +10,11 @@ package org.apereo.cas.authentication;
  * @since 4.0.0
  */
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnyAuthenticationPolicy.class);
 
-    /** Flag to try all credentials before policy is satisfied. Defaults to {@code false}.*/
+    /**
+     * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
+     */
     private boolean tryAll;
 
     /**
@@ -40,8 +46,18 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authn) {
         if (this.tryAll) {
-            return authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
+            if (authn.getCredentials().size() != authn.getSuccesses().size() + authn.getFailures().size()) {
+                LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
+                return false;
+            }
+            LOGGER.debug("Authentication policy is satisfied with all authentication transactions");
+            return true;
         }
-        return !authn.getSuccesses().isEmpty();
+        if (!authn.getSuccesses().isEmpty()) {
+            LOGGER.debug("Authentication policy is satisfied having found at least one authentication transactions");
+            return true;
+        }
+        LOGGER.warn("Authentication policy has failed to find a successful authentication transaction");
+        return false;
     }
 }
