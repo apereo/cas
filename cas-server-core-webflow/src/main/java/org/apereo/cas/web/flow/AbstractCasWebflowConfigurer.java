@@ -92,7 +92,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Autowired
     private ApplicationContext applicationContext;
-
+    
     @PostConstruct
     @Override
     public void initialize() {

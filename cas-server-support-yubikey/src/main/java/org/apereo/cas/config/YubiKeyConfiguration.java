@@ -74,9 +74,6 @@ public class YubiKeyConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    @Qualifier("builder")
-    private FlowBuilderServices builder;
 
     @Autowired(required = false)
     @Qualifier("yubiKeyAccountRegistry")
@@ -110,7 +107,7 @@ public class YubiKeyConfiguration {
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
