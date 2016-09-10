@@ -400,7 +400,7 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     compileJava {
-        options.incremental = true
+        options.incremental = false
     }
     
     compileJava.doLast {
