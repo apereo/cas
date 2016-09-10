@@ -63,7 +63,6 @@ public class WsFederationAction extends AbstractAction {
      */
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
             final HttpSession session = request.getSession();
@@ -72,22 +71,24 @@ public class WsFederationAction extends AbstractAction {
 
             // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
-                final String wresult = request.getParameter(WRESULT);
-                LOGGER.debug("Parameter [{}] received: {}", WRESULT, wresult);
+                final String wResult = request.getParameter(WRESULT);
+                LOGGER.debug("Parameter [{}] received: {}", WRESULT, wResult);
 
-                if (StringUtils.isBlank(wresult)) {
+                if (StringUtils.isBlank(wResult)) {
                     LOGGER.error("No {} parameter is found", WRESULT);
                     return error();
                 }
 
                 // create credentials
-                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wresult, configuration);
+                LOGGER.debug("Attempting to create an assertion from the token parameter");
+                final Assertion assertion = this.wsFederationHelper.parseTokenFromString(wResult, configuration);
 
                 if (assertion == null) {
                     LOGGER.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
-                               
+
+                LOGGER.debug("Attempting to validate the signature on the assertion");
                 if (!this.wsFederationHelper.validateSignature(assertion, this.configuration)) {
                     LOGGER.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
@@ -96,16 +97,24 @@ public class WsFederationAction extends AbstractAction {
                 try {
                     final Service service = (Service) session.getAttribute(SERVICE);
 
+                    LOGGER.debug("Creating credential based on the provided assertion");
                     final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion);
-                    if (credential != null && credential.isValid(getRelyingPartyIdentifier(service),
+
+                    final String rpId = getRelyingPartyIdentifier(service);
+                    if (credential != null && credential.isValid(rpId,
                             this.configuration.getIdentityProviderIdentifier(),
                             this.configuration.getTolerance())) {
 
+                        LOGGER.debug("Validated assertion for the created credential successfully");
                         if (this.configuration.getAttributeMutator() != null) {
+                            LOGGER.debug("Modifying credential attributes based on {}",
+                                    this.configuration.getAttributeMutator().getClass().getSimpleName());
                             this.configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
-                        logger.warn("SAML assertions are blank or no longer valid.");
+                        LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier {} and IdP identifier {}",
+                                rpId, this.configuration.getIdentityProviderIdentifier());
+
                         final String authorizationUrl = String.format(
                                 "%s%s%s",
                                 this.configuration.getIdentityProviderUrl(),
@@ -113,6 +122,7 @@ public class WsFederationAction extends AbstractAction {
                                 getRelyingPartyIdentifier(service)
                         );
                         context.getFlowScope().put(PROVIDERURL, authorizationUrl);
+                        LOGGER.warn("Created authentication url {} and returning error", authorizationUrl);
                         return error();
                     }
 
@@ -121,9 +131,11 @@ public class WsFederationAction extends AbstractAction {
                     restoreRequestAttribute(request, session, LOCALE);
                     restoreRequestAttribute(request, session, METHOD);
 
+                    LOGGER.debug("Creating final authentication result based on the given credential");
                     final AuthenticationResult authenticationResult =
                             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
+                    LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
                     WebUtils.putTicketGrantingTicketInScopes(context,
                             this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
 
@@ -134,12 +146,8 @@ public class WsFederationAction extends AbstractAction {
                     LOGGER.error(e.getMessage(), e);
                     return error();
                 }
-
-
             } else {
-
-                // no authentication : go to login page
-                // save parameters in web session
+                // no authentication : go to login page. save parameters in web session
                 final Service service = (Service) context.getFlowScope().get(SERVICE);
                 if (service != null) {
                     session.setAttribute(SERVICE, service);
@@ -149,7 +157,6 @@ public class WsFederationAction extends AbstractAction {
                 saveRequestParameter(request, session, METHOD);
 
                 final String relyingPartyIdentifier = getRelyingPartyIdentifier(service);
-                
                 final String authorizationUrl = this.configuration.getIdentityProviderUrl()
                         + QUERYSTRING
                         + relyingPartyIdentifier;
@@ -158,7 +165,7 @@ public class WsFederationAction extends AbstractAction {
                 context.getFlowScope().put(PROVIDERURL, authorizationUrl);
             }
 
-            LOGGER.debug("Redirecting to the IdP");
+            LOGGER.debug("Returning error event");
             return error();
 
         } catch (final Exception ex) {
