@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -10,7 +12,8 @@ import org.apache.commons.lang3.StringUtils;
  * @since 4.0.0
  */
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequiredHandlerAuthenticationPolicy.class);
+    
     /** Authentication handler name that is required to satisfy policy. */
     private String requiredHandlerName;
 
@@ -47,10 +50,29 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     public boolean isSatisfiedBy(final Authentication authn) {
         boolean credsOk = true;
         if (this.tryAll) {
-            credsOk = authn.getCredentials().size() == authn.getSuccesses().size()
-                + authn.getFailures().size();
+            credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
         }
-        return credsOk && StringUtils.isNotBlank(this.requiredHandlerName)
-                    && authn.getSuccesses().containsKey(this.requiredHandlerName);
+        
+        if (!credsOk) {
+            LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
+            return false;
+        }
+        
+        LOGGER.debug("Examining authentication successes for authentication handler {}", this.requiredHandlerName);
+        if (StringUtils.isNotBlank(this.requiredHandlerName)) {
+            credsOk = authn.getSuccesses().keySet()
+                    .stream()
+                    .filter(s -> s.equalsIgnoreCase(this.requiredHandlerName))
+                    .findAny()
+                    .isPresent();
+            
+            if (!credsOk) {
+                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications");
+                return false;
+            }
+        } 
+        
+        LOGGER.debug("Authentication policy is satisfied");
+        return true;
     }
 }
