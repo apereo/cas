@@ -63,11 +63,7 @@ public class DuoConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-
-    @Autowired
-    @Qualifier("builder")
-    private FlowBuilderServices builder;
-
+    
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
@@ -107,7 +103,7 @@ public class DuoConfiguration {
 
     @Bean
     public FlowDefinitionRegistry duoFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-duo/*-webflow.xml");
         return builder.build();
