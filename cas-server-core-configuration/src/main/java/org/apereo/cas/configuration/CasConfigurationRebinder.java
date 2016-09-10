@@ -57,7 +57,6 @@ public class CasConfigurationRebinder {
     public void rebindCasConfigurationProperties() {
         final Map<String, CasConfigurationProperties> map =
                 this.applicationContext.getBeansOfType(CasConfigurationProperties.class);
-
         final String name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via {}", name);
         final Object e = this.applicationContext.getBean(name);

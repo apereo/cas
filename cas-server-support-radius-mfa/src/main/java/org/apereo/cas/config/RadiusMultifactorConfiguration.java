@@ -65,9 +65,6 @@ public class RadiusMultifactorConfiguration {
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
 
-    @Autowired
-    @Qualifier("builder")
-    private FlowBuilderServices builder;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -110,7 +107,7 @@ public class RadiusMultifactorConfiguration {
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, this.builder);
+                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
