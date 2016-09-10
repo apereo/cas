@@ -18,6 +18,15 @@ The following settings are shared by all attribute release policies:
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think VERY CAREFULLY before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
 may produce an oppurunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
+## Default
+
+CAS provides the ability to release a bundle of attributes to all services by default. This bundle is not defined on a per-service
+basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise 
+rules to always release `givenName` and `cn` to every application, and additionally allow other specific attributes for only some 
+applications per their attribute release policy. 
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Return All
 
 Return all resolved attributes to the service.

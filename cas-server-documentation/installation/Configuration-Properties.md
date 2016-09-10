@@ -408,6 +408,14 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc.pool.maxWait=2000
 ```
 
+If you wish to release a default bundle of attributes to all applications, the following settings are relevant:
+
+```properties
+# cas.authn.attributeRepository.defaultAttributesToRelease=cn,givenName,uid,affiliation
+```
+
+To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
+
 ## Principal Resolution
 
 In the event that a separate resolver is put into place, control
