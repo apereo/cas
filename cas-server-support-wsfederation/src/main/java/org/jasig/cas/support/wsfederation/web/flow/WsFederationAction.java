@@ -37,7 +37,8 @@ import javax.validation.constraints.NotNull;
  */
 @Component("wsFederationAction")
 public final class WsFederationAction extends AbstractAction {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationAction.class);
+    
     private static final String LOCALE = "locale";
     private static final String METHOD = "method";
     private static final String PROVIDERURL = "WsFederationIdentityProviderUrl";
@@ -88,39 +89,46 @@ public final class WsFederationAction extends AbstractAction {
 
             // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
-                final String wresult = request.getParameter(WRESULT);
-                logger.debug("Parameter [{}] received: {}", WRESULT, wresult);
+                final String wResult = request.getParameter(WRESULT);
+                logger.debug("Parameter [{}] received: {}", WRESULT, wResult);
 
-                if (StringUtils.isBlank(wresult)) {
+                if (StringUtils.isBlank(wResult)) {
                     logger.error("No {} parameter is found", WRESULT);
                     return error();
                 }
 
                 // create credentials
-                final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult, this.configuration);
+                LOGGER.debug("Attempting to create an assertion from the token parameter");
+                final Assertion assertion = wsFederationHelper.parseTokenFromString(wResult, this.configuration);
 
                 if (assertion == null) {
                     logger.error("Could not validate assertion via parsing the token from {}", WRESULT);
                     return error();
                 }
 
+                LOGGER.debug("Attempting to validate the signature on the assertion");
                 if (!wsFederationHelper.validateSignature(assertion, configuration)) {
                     logger.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
                 }
 
                 try {
-
+                    LOGGER.debug("Creating credential based on the provided assertion");
                     final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
+                    if (credential != null && credential.isValid(
+                            configuration.getRelyingPartyIdentifier(),
                             configuration.getIdentityProviderIdentifier(),
                             configuration.getTolerance())) {
 
                         if (configuration.getAttributeMutator() != null) {
+                            LOGGER.debug("Modifying credential attributes based on {}",
+                                    this.configuration.getAttributeMutator().getClass().getSimpleName());
                             configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
                     } else {
-                        logger.warn("SAML assertions are blank or no longer valid.");
+                        LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier {} and IdP identifier {}",
+                                configuration.getRelyingPartyIdentifier(), 
+                                this.configuration.getIdentityProviderIdentifier());
                         return error();
                     }
 
@@ -130,6 +138,7 @@ public final class WsFederationAction extends AbstractAction {
                     restoreRequestAttribute(request, session, LOCALE);
                     restoreRequestAttribute(request, session, METHOD);
 
+                    LOGGER.debug("Creating final authentication result based on the given credential");
                     final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                             this.authenticationSystemSupport.getPrincipalElectionStrategy());
                         final AuthenticationTransaction transaction =
@@ -138,6 +147,7 @@ public final class WsFederationAction extends AbstractAction {
                                 .handle(transaction,  builder);
                         final AuthenticationContext authenticationContext = builder.build(service);
 
+                    LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
                     WebUtils.putTicketGrantingTicketInScopes(context,
                             this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 
@@ -148,12 +158,8 @@ public final class WsFederationAction extends AbstractAction {
                     logger.error(e.getMessage(), e);
                     return error();
                 }
-
-
-
+                
             } else { // no authentication : go to login page
-
-
                 // save parameters in web session
                 final Service service = (Service) context.getFlowScope().get(SERVICE);
                 if (service != null) {
@@ -179,7 +185,6 @@ public final class WsFederationAction extends AbstractAction {
             logger.error(ex.getMessage(), ex);
             return error();
         }
-
     }
 
     /**
