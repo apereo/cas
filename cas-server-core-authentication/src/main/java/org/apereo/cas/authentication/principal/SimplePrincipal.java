@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable
@@ -58,7 +60,9 @@ public class SimplePrincipal implements Principal {
      */
     @Override
     public Map<String, Object> getAttributes() {
-        return new HashMap<>(this.attributes);
+        final Map<String, Object> attrs = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        attrs.putAll(this.attributes);
+        return attrs;
     }
 
     @Override
