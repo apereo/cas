@@ -1,8 +1,10 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 
+import javax.crypto.Cipher;
 import java.io.PrintStream;
 import java.util.Formatter;
 import java.util.Properties;
@@ -36,10 +38,21 @@ public class CasBanner implements Banner {
             formatter.format("Java Home: %s%n", properties.get("java.home"));
             formatter.format("Java Vendor: %s%n", properties.get("java.vendor"));
             formatter.format("Java Version: %s%n", properties.get("java.version"));
+            formatter.format("JCE Installed: %s%n", BooleanUtils.toStringYesNo(isJceInstallation()));
             formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
             formatter.format("OS Name: %s%n", properties.get("os.name"));
             formatter.format("OS Version: %s%n", properties.get("os.version"));
+
             return formatter.toString();
+        }
+    }
+
+    private static boolean isJceInstallation() {
+        try {
+            final int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+            return maxKeyLen < Integer.MAX_VALUE;
+        } catch (final Exception e) {
+            return false;
         }
     }
 }
