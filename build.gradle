@@ -398,11 +398,7 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-
-    compileJava {
-        options.incremental = false
-    }
-    
+        
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
