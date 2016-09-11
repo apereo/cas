@@ -78,12 +78,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("authenticationThrottle")
     private HandlerInterceptor authenticationThrottle;
-
-    /**
-     * Expression parser web flow spring el expression parser.
-     *
-     * @return the web flow spring el expression parser
-     */
+    
     @Bean
     public WebFlowSpringELExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -93,21 +88,11 @@ public class CasWebflowContextConfiguration {
         return parser;
     }
 
-    /**
-     * Logout conversion service conversion service.
-     *
-     * @return the conversion service
-     */
     @Bean
     public ConversionService logoutConversionService() {
         return new LogoutConversionService();
     }
 
-    /**
-     * View factory creator mvc view factory creator.
-     *
-     * @return the mvc view factory creator
-     */
     @RefreshScope
     @Bean
     public MvcViewFactoryCreator viewFactoryCreator() {
@@ -116,33 +101,18 @@ public class CasWebflowContextConfiguration {
         return resolver;
     }
 
-    /**
-     * Login flow url handler cas default flow url handler.
-     *
-     * @return the cas default flow url handler
-     */
     @Bean
     public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
     }
-
-    /**
-     * Logout flow url handler cas default flow url handler.
-     *
-     * @return the cas default flow url handler
-     */
+    
     @Bean
     public FlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
         handler.setFlowExecutionKeyParameter("RelayState");
         return handler;
     }
-
-    /**
-     * Logout handler adapter selective flow handler adapter.
-     *
-     * @return the selective flow handler adapter
-     */
+    
     @RefreshScope
     @Bean
     public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
@@ -152,12 +122,7 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
     }
-
-    /**
-     * Login flow cipher bean buffered block cipher bean.
-     *
-     * @return the buffered block cipher bean
-     */
+    
     @RefreshScope
     @Bean
     public CipherBean loginFlowCipherBean() {
@@ -190,11 +155,6 @@ public class CasWebflowContextConfiguration {
         }
     }
 
-    /**
-     * Builder flow builder services.
-     *
-     * @return the flow builder services
-     */
     @RefreshScope
     @Bean
     public FlowBuilderServices builder() {
@@ -204,12 +164,7 @@ public class CasWebflowContextConfiguration {
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
         return builder.build();
     }
-
-    /**
-     * Login flow state transcoder encrypted transcoder.
-     *
-     * @return the encrypted transcoder
-     */
+    
     @Bean
     public EncryptedTranscoder loginFlowStateTranscoder() {
         try {
@@ -218,12 +173,7 @@ public class CasWebflowContextConfiguration {
             throw new BeanCreationException(e.getMessage(), e);
         }
     }
-
-    /**
-     * Login handler adapter selective flow handler adapter.
-     *
-     * @return the selective flow handler adapter
-     */
+    
     @Bean
     public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
         final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
@@ -232,22 +182,12 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
-
-    /**
-     * Locale change interceptor locale change interceptor.
-     *
-     * @return the locale change interceptor
-     */
+    
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
     }
-
-    /**
-     * Logout flow handler mapping flow handler mapping.
-     *
-     * @return the flow handler mapping
-     */
+    
     @Bean
     public FlowHandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -257,12 +197,7 @@ public class CasWebflowContextConfiguration {
         handler.setInterceptors(interceptors);
         return handler;
     }
-
-    /**
-     * Login flow handler mapping flow handler mapping.
-     *
-     * @return the flow handler mapping
-     */
+    
     @Bean
     public FlowHandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -272,12 +207,7 @@ public class CasWebflowContextConfiguration {
         handler.setInterceptors(interceptors);
         return handler;
     }
-
-    /**
-     * Logout flow executor flow executor.
-     *
-     * @return the flow executor
-     */
+    
     @RefreshScope
     @Bean
     public FlowExecutor logoutFlowExecutor() {
@@ -286,12 +216,7 @@ public class CasWebflowContextConfiguration {
         builder.setRedirectInSameState(casProperties.getWebflow().isRedirectSameState());
         return builder.build();
     }
-
-    /**
-     * Logout flow registry flow definition registry.
-     *
-     * @return the flow definition registry
-     */
+    
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
@@ -300,25 +225,15 @@ public class CasWebflowContextConfiguration {
         return builder.build();
     }
 
-    /**
-     * Login flow registry flow definition registry.
-     *
-     * @return the flow definition registry
-     */
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = 
+        final FlowDefinitionRegistryBuilder builder =
                 new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
-
-    /**
-     * Login flow executor flow executor.
-     *
-     * @return the flow executor
-     */
+    
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
