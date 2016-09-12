@@ -64,9 +64,8 @@ public final class ThemeUtils {
      * @return JSON string | null
      */
     public static final String fetchTenantLogo(final HttpServletRequest request, final String tenantName) {
-    	if (!hasJpegPhoto(request, tenantName)) {
-    		fetchJpegPhotoFromLdap(request, tenantName, ENTRY_TYPE_TENANTS);
-    	}
+    	// Fetches the JPEG photo of tenant logo every time.
+    	fetchJpegPhotoFromLdap(request, tenantName, ENTRY_TYPE_TENANTS);
     	return getJpegPhotoFullPath(request, tenantName);
     }
     
@@ -77,9 +76,8 @@ public final class ThemeUtils {
      * @return JSON string | null
      */
     public static final String fetchAppLogo(final HttpServletRequest request, final String appName) {
-    	if (!hasJpegPhoto(request, appName)) {
-    		fetchJpegPhotoFromLdap(request, appName, ENTRY_TYPE_SERVICE);
-    	}
+    	// Fetches the JPEG photo of app logo every time.
+    	fetchJpegPhotoFromLdap(request, appName, ENTRY_TYPE_SERVICE);
     	return getJpegPhotoFullPath(request, appName);
     }
     
@@ -176,7 +174,9 @@ public final class ThemeUtils {
 			if (attr != null) {
 				final byte[] jpegByte = (byte[]) attr.get();
 				final String jpegPhotoRealPath = getJpegPhotoRealPath(request, name);
-				final FileOutputStream fileOut = new FileOutputStream(jpegPhotoRealPath);
+				
+				// Overwrites the image downloaded from LDAP every time.
+				final FileOutputStream fileOut = new FileOutputStream(jpegPhotoRealPath, false);
 				fileOut.write(jpegByte);
 				fileOut.close();
 			}
