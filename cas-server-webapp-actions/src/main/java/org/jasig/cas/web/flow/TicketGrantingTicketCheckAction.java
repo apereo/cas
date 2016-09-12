@@ -91,13 +91,17 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
             
             final Map<String, Service> services = ticketGrantingTicket.getServices();
-            final Entry<String, Service> service = services.entrySet().iterator().next();
-            final String serviceId = service.getValue().getId();
-            final String tenantNameOfService = AuthUtils.extractTenantID(serviceId);
-            final String tenantNameOfRequest = AuthUtils.extractTenantID(request);
-            
-            if (ticket != null && !ticket.isExpired() && tenantNameOfService.equals(tenantNameOfRequest)) {
-                eventId = VALID;
+            if(!services.isEmpty()) {
+	            final Entry<String, Service> service = services.entrySet().iterator().next();
+	            final String serviceId = service.getValue().getId();
+	            final String tenantNameOfService = AuthUtils.extractTenantID(serviceId);
+	            final String tenantNameOfRequest = AuthUtils.extractTenantID(request);
+	            if (ticket != null && !ticket.isExpired() && tenantNameOfService.equals(tenantNameOfRequest)) {
+	                eventId = VALID;
+	            }
+            }
+            else {
+            	logger.trace("Could not retrieve any services from a ticket granting ticket(tgtId: "+ tgtId + ").");
             }
         } catch (final AbstractTicketException e) {
             logger.trace("Could not retrieve ticket id {} from registry.", e);
