@@ -1,7 +1,6 @@
 package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.config.OidcServerDiscoverySettings;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -50,8 +49,7 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
 
         discoveryProperties.setGrantTypesSupported(ImmutableList.of("authorization_code", "password", "implicit"));
 
-        final String idTokenSigningAlgValues = casProperties.getAuthn().getOidc().getIdTokenSigningAlgs();
-        discoveryProperties.setIdTokenSigningAlgValuesSupported(Lists.newArrayList(idTokenSigningAlgValues.split(",")));
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(ImmutableList.of("none", "RS256"));
 
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }
