@@ -1,10 +1,7 @@
 package org.apereo.cas.util.cipher;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.keys.AesKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +45,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @return the byte [ ]
      */
     protected byte[] sign(final byte[] value) {
-        try {
-            final String base64 = EncodingUtils.encodeBase64(value);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setPayload(base64);
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
-            jws.setKey(this.signingKey);
-            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
+        return EncodingUtils.signJws(this.signingKey, value);
     }
 
     /**
@@ -68,22 +56,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * be decoded, or null.
      */
     protected byte[] verifySignature(final byte[] value) {
-        try {
-            final String asString = new String(value, StandardCharsets.UTF_8);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setCompactSerialization(asString);
-            jws.setKey(this.signingKey);
-
-            final boolean verified = jws.verifySignature();
-            if (verified) {
-                final String payload = jws.getPayload();
-                logger.debug("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
-                return EncodingUtils.decodeBase64(payload);
-            }
-            return null;
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
+        return EncodingUtils.verifyJwsSignature(this.signingKey, value);
     }
 
     @Override
