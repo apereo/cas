@@ -6,8 +6,8 @@ dependencies {
     compile libraries.commons
     compile libraries.groovy
     compile libraries.cassecurityfilter
-    compile project(":cas-server-core-web")
     compile libraries.hibernate
+    compile project(":cas-server-core-web")
     compile project(":cas-server-support-actions")
     testCompile project(":cas-server-support-themes")
     testCompile project(":cas-server-core")
