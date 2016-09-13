@@ -142,7 +142,13 @@ public final class ThemeUtils
       if (attr != null)
       {
         final byte[] jpegByte = (byte[]) attr.get();
-        return Base64.getEncoder().encodeToString(jpegByte);
+        final String base64EncodedJpegPhoto =
+            Base64.getEncoder().encodeToString(jpegByte);
+        final StringBuilder builder = new StringBuilder();
+        builder
+            .append("data:image/jpeg;base64,")
+            .append(base64EncodedJpegPhoto);
+        return builder.toString();
       }
       ctx.close();
     }
