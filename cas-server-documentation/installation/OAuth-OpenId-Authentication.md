@@ -35,7 +35,7 @@ It's the url to call to get the profile of the authorized user. The response is 
 
 ## Grant types
 
-Four grant types are supported: they allow you to get an access token representing the current user and OAuth client application.
+The following types are supported; they allow you to get an access token representing the current user and OAuth client application.
 With the access token, you'll be able to query the `/profile` endpoint and get the user profile.
 
 `/cas/oauth2.0/profile?access_token=ACCESS_TOKEN` returns the user profile.
