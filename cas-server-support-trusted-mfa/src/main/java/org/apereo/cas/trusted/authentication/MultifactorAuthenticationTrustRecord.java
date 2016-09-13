@@ -7,12 +7,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.time.LocalDate;
 
 /**
- * This is {@link AuthenticationTrustRecord}.
+ * This is {@link MultifactorAuthenticationTrustRecord}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AuthenticationTrustRecord {
+public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
     private String principal;
     private String geography;
     private LocalDate date;
@@ -62,7 +62,7 @@ public class AuthenticationTrustRecord {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final AuthenticationTrustRecord rhs = (AuthenticationTrustRecord) obj;
+        final MultifactorAuthenticationTrustRecord rhs = (MultifactorAuthenticationTrustRecord) obj;
         return new EqualsBuilder()
                 .append(this.principal, rhs.principal)
                 .append(this.geography, rhs.geography)
@@ -98,11 +98,17 @@ public class AuthenticationTrustRecord {
      * @param geography the geography
      * @return the authentication trust record
      */
-    public static AuthenticationTrustRecord newInstance(final String principal, final String geography) {
-        final AuthenticationTrustRecord r = new AuthenticationTrustRecord();
+    public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography) {
+        final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
         r.setDate(LocalDate.now());
         r.setPrincipal(principal);
         r.setGeography(geography);
         return r;
+    }
+
+    
+    @Override
+    public int compareTo(final MultifactorAuthenticationTrustRecord o) {
+        return this.date.compareTo(o.getDate());
     }
 }
