@@ -525,7 +525,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final String targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver("verifyTrusted"));
         final ActionState verifyAction = createActionState(flow, "verifyTrusted", createEvaluateAction("mfaVerifyTrustAction"));
-        createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_SUCCESS);
+        createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_NO, targetStateId);
 
         //set the trust action
