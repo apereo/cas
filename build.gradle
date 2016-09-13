@@ -375,6 +375,8 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
+            cacheDynamicVersionsFor 24, 'hours'
+            cacheChangingModulesFor 24, 'hours'
         }
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -398,13 +400,15 @@ subprojects {
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
-        
+    
+    compileJava.options.fork = true    
     compileJava.doLast {
         buildDate = java.time.ZonedDateTime.now()
         jar.manifest {
             attributes("Implementation-Date": project.buildDate)
         }
     }
+
     tasks.jar.onlyIf {
         project.buildDate != null || !project.buildJarFile.exists()
     }
