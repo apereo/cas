@@ -16,11 +16,20 @@ public class MultifactorAuthenticationProperties {
     private String requestParameter = "authn_method";
     private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
 
+    private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
     private GAuth gauth = new GAuth();
     private Duo duo = new Duo();
     private Authy authy = new Authy();
+
+    public Trusted getTrusted() {
+        return trusted;
+    }
+
+    public void setTrusted(final Trusted trusted) {
+        this.trusted = trusted;
+    }
 
     public Authy getAuthy() {
         return authy;
@@ -405,6 +414,48 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
+    public static class Trusted {
+        private String encryptionKey = "";
+
+        private String signingKey = "";
+
+        private boolean cipherEnabled = true;
+        
+        private long validNumberOfDays = 30;
+
+        public String getEncryptionKey() {
+            return encryptionKey;
+        }
+
+        public void setEncryptionKey(final String encryptionKey) {
+            this.encryptionKey = encryptionKey;
+        }
+
+        public String getSigningKey() {
+            return signingKey;
+        }
+
+        public void setSigningKey(final String signingKey) {
+            this.signingKey = signingKey;
+        }
+
+        public boolean isCipherEnabled() {
+            return cipherEnabled;
+        }
+
+        public void setCipherEnabled(final boolean cipherEnabled) {
+            this.cipherEnabled = cipherEnabled;
+        }
+
+        public long getValidNumberOfDays() {
+            return validNumberOfDays;
+        }
+
+        public void setValidNumberOfDays(final long validNumberOfDays) {
+            this.validNumberOfDays = validNumberOfDays;
+        }
+    }
+    
     public static class GAuth {
         private String issuer = "CASIssuer";
         private String label = "CASLabel";

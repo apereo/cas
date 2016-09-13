@@ -1,0 +1,108 @@
+package org.apereo.cas.trusted.authentication;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.time.LocalDate;
+
+/**
+ * This is {@link AuthenticationTrustRecord}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.1.0
+ */
+public class AuthenticationTrustRecord {
+    private String principal;
+    private String geography;
+    private LocalDate date;
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(final String id) {
+        this.key = id;
+    }
+
+    public String getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(final String principal) {
+        this.principal = principal;
+    }
+
+    public String getGeography() {
+        return geography;
+    }
+
+    public void setGeography(final String geography) {
+        this.geography = geography;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(final LocalDate date) {
+        this.date = date;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AuthenticationTrustRecord rhs = (AuthenticationTrustRecord) obj;
+        return new EqualsBuilder()
+                .append(this.principal, rhs.principal)
+                .append(this.geography, rhs.geography)
+                .append(this.date, rhs.date)
+                .append(this.key, rhs.key)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(principal)
+                .append(geography)
+                .append(date)
+                .append(key)
+                .toHashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("principal", principal)
+                .append("geography", geography)
+                .append("date", date)
+                .toString();
+    }
+
+    /**
+     * New instance of authentication trust record.
+     *
+     * @param principal the principal
+     * @param geography the geography
+     * @return the authentication trust record
+     */
+    public static AuthenticationTrustRecord newInstance(final String principal, final String geography) {
+        final AuthenticationTrustRecord r = new AuthenticationTrustRecord();
+        r.setDate(LocalDate.now());
+        r.setPrincipal(principal);
+        r.setGeography(geography);
+        return r;
+    }
+}

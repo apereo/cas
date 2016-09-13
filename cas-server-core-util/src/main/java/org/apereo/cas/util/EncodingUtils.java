@@ -1,11 +1,16 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Formatter;
 import java.util.stream.IntStream;
@@ -19,6 +24,7 @@ import java.util.stream.IntStream;
  * @since 5.0.0
  */
 public final class EncodingUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EncodingUtils.class);
 
     private EncodingUtils() {
     }
@@ -101,6 +107,54 @@ public final class EncodingUtils {
         try {
             return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+
+    /**
+     * Verify jws signature byte [ ].
+     *
+     * @param value      the value
+     * @param signingKey the signing key
+     * @return the byte [ ]
+     */
+    public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
+        try {
+            final String asString = new String(value, StandardCharsets.UTF_8);
+            final JsonWebSignature jws = new JsonWebSignature();
+            jws.setCompactSerialization(asString);
+            jws.setKey(signingKey);
+
+            final boolean verified = jws.verifySignature();
+            if (verified) {
+                final String payload = jws.getPayload();
+                LOGGER.debug("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
+                return EncodingUtils.decodeBase64(payload);
+            }
+            return null;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+
+    /**
+     * Sign jws.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the byte [ ]
+     */
+    public static byte[] signJws(final Key key, final byte[] value) {
+        try {
+            final String base64 = EncodingUtils.encodeBase64(value);
+            final JsonWebSignature jws = new JsonWebSignature();
+            jws.setPayload(base64);
+            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+            jws.setKey(key);
+            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
+        } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }

@@ -20,16 +20,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustEngine;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,8 +34,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -195,7 +190,7 @@ public class DuoConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = {MultifactorAuthenticationTrustEngine.class})
+    @ConditionalOnClass(value = {MultifactorAuthenticationTrustStorage.class})
     @Configuration("duoMultifactorTrustConfiguration")
     public class DuoMultifactorTrustConfiguration {
 
