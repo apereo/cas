@@ -16,7 +16,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param principal the principal id
      * @return the optional
      */
-    Set<AuthenticationTrustRecord> get(String principal);
+    Set<MultifactorAuthenticationTrustRecord> get(String principal);
 
     /**
      * Get record by date.
@@ -25,12 +25,12 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the optional
      */
-    Set<AuthenticationTrustRecord> get(String principal, LocalDate onOrAfterDate);
+    Set<MultifactorAuthenticationTrustRecord> get(String principal, LocalDate onOrAfterDate);
 
     /**
      * Set trusted record.
      *
      * @param record the record
      */
-    void set(AuthenticationTrustRecord record);
+    void set(MultifactorAuthenticationTrustRecord record);
 }

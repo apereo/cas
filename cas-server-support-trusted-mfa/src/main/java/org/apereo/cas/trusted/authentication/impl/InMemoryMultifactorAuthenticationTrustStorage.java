@@ -3,7 +3,7 @@ package org.apereo.cas.trusted.authentication.impl;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.trusted.authentication.AuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 
 import java.time.LocalDate;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class InMemoryMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
     private CipherExecutor<String, String> cipherExecutor;
 
-    private Map<String, AuthenticationTrustRecord> storage = Maps.newConcurrentMap();
+    private Map<String, MultifactorAuthenticationTrustRecord> storage = Maps.newConcurrentMap();
 
     @Override
-    public Set<AuthenticationTrustRecord> get(final String principal) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage.values()
                 .stream()
                 .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
@@ -34,15 +34,15 @@ public class InMemoryMultifactorAuthenticationTrustStorage implements Multifacto
     }
 
     @Override
-    public Set<AuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
-        final Set<AuthenticationTrustRecord> res = get(principal);
+    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
+        final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
         res.removeIf(entry -> entry.getDate().isBefore(onOrAfterDate)
                 && StringUtils.isNotBlank(this.cipherExecutor.decode(entry.getKey())));
         return res;
     }
 
     @Override
-    public void set(final AuthenticationTrustRecord record) {
+    public void set(final MultifactorAuthenticationTrustRecord record) {
         final String key = cipherExecutor.encode(UUID.randomUUID().toString());
         storage.put(key, record);
     }
