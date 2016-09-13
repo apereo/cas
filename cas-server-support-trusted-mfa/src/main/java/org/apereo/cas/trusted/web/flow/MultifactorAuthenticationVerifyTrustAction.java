@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.trusted.authentication.AuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
@@ -30,36 +31,38 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Credential c = WebUtils.getCredential(requestContext);
+        final Authentication c = WebUtils.getAuthentication(requestContext);
         if (c == null) {
             LOGGER.warn("Could not determine credential from the request context");
             return no();
         }
+        final String principal = c.getPrincipal().getId();
         final LocalDate onOrAfter = LocalDate.now().minusDays(this.numberOfDays);
-        final Set<AuthenticationTrustRecord> results = storage.get(c.getId(), onOrAfter);
+        LOGGER.warn("Retrieving trusted authentication records for {} that are on/after {}", principal, onOrAfter);
+        final Set<AuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
-            LOGGER.warn("No valid trusted authentication records could be found for {}", c.getId());
+            LOGGER.info("No valid trusted authentication records could be found for {}", principal);
             return no();
         }
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final String geography = clientInfo.getClientIpAddress()
-                .concat(".").concat(WebUtils.getHttpServletRequestUserAgent());
+        final String geography = clientInfo.getClientIpAddress().concat("@").concat(WebUtils.getHttpServletRequestUserAgent());
+        LOGGER.warn("Retrieving authentication records for {} that match {}", principal, geography);
         if (!results.stream()
                 .filter(entry -> entry.getGeography().equals(geography))
                 .findAny()
                 .isPresent()) {
-            LOGGER.warn("No trusted authentication records could be found for {} to match the current geography", c.getId());
+            LOGGER.debug("No trusted authentication records could be found for {} to match the current geography", principal);
             return no();
         }
 
-        LOGGER.debug("Trusted authentication records found for {} that matches the current geography", c.getId());
+        LOGGER.debug("Trusted authentication records found for {} that matches the current geography", principal);
         return yes();
     }
 
     public void setStorage(final MultifactorAuthenticationTrustStorage storage) {
         this.storage = storage;
     }
-    
+
     public void setNumberOfDays(final long numberOfDays) {
         this.numberOfDays = numberOfDays;
     }
