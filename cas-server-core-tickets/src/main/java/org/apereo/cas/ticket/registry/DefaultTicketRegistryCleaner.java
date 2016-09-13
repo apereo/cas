@@ -59,9 +59,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
                 return;
             }
             LOGGER.debug("Acquired lock.  Proceeding with cleanup.");
-
-            LOGGER.info("Beginning ticket cleanup...");
-
+           
             final Collection<Ticket> ticketsToRemove = ticketRegistry.getTickets()
                     .stream()
                     .filter(t -> t.isExpired())
