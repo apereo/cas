@@ -24,6 +24,7 @@ import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebf
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -64,107 +65,119 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Autowired(required = false)
-    @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new FirstMultifactorAuthenticationProviderSelector();
-
     @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final AdaptiveMultifactorAuthenticationWebflowEventResolver r =
                 new AdaptiveMultifactorAuthenticationWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         r.setGeoLocationService(this.geoLocationService);
         return r;
     }
 
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final PrincipalAttributeAuthenticationPolicyWebflowEventResolver r =
                 new PrincipalAttributeAuthenticationPolicyWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
-        
+
+    @ConditionalOnMissingBean
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderSelector firstMultifactorAuthenticationProviderSelector() {
+    public MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector() {
         return new FirstMultifactorAuthenticationProviderSelector();
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
+    public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
-        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
-        r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver());
-        r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver());
-        r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver());
-        configureResolver(r);
+        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver(selector));
+        r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver(selector));
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
+    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final ServiceTicketRequestWebflowEventResolver r = new ServiceTicketRequestWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
+    public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final SelectiveAuthenticationProviderWebflowEventResolver r = new SelectiveAuthenticationProviderWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final RequestParameterAuthenticationPolicyWebflowEventResolver r = new RequestParameterAuthenticationPolicyWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver r =
                 new RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver();
-
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final RegisteredServiceAuthenticationPolicyWebflowEventResolver r = new RegisteredServiceAuthenticationPolicyWebflowEventResolver();
-        configureResolver(r);
+        configureResolver(r, selector);
         return r;
     }
 
+    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
+    public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final RankedAuthenticationProviderWebflowEventResolver r =
                 new RankedAuthenticationProviderWebflowEventResolver();
         r.setAuthenticationContextValidator(authenticationContextValidator);
-        r.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver());
-        configureResolver(r);
+        r.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver(selector));
+        configureResolver(r, selector);
         return r;
     }
 
@@ -179,10 +192,11 @@ public class CasCoreWebflowConfiguration {
                 casProperties.getWebflow().getEncryption().getKeySize());
     }
 
-    private void configureResolver(final AbstractCasWebflowEventResolver r) {
+    private void configureResolver(final AbstractCasWebflowEventResolver r,
+                                   final MultifactorAuthenticationProviderSelector selector) {
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
         r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setMultifactorAuthenticationProviderSelector(selector);
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);

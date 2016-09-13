@@ -37,7 +37,7 @@ public class AuthenticationViaFormAction extends AbstractAction {
         final GeoLocationRequest geoLocation = WebUtils.getHttpServletRequestGeoLocation();
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
-            final String msg = "Authentication policy does not allow this request for " + agent + " and " + geoLocation;
+            final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
             final Map map = ImmutableMap.of(
                     UnauthorizedAuthenticationException.class.getSimpleName(), 
                     UnauthorizedAuthenticationException.class);
