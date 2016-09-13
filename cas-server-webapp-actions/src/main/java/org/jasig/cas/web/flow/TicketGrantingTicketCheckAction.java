@@ -1,8 +1,10 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +14,10 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -80,8 +86,22 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         String eventId = INVALID;
         try {
             final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
-            if (ticket != null && !ticket.isExpired()) {
-                eventId = VALID;
+            
+            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) ticket;
+            final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+            
+            final Map<String, Service> services = ticketGrantingTicket.getServices();
+            if(!services.isEmpty()) {
+	            final Entry<String, Service> service = services.entrySet().iterator().next();
+	            final String serviceId = service.getValue().getId();
+	            final String tenantNameOfService = AuthUtils.extractTenantID(serviceId);
+	            final String tenantNameOfRequest = AuthUtils.extractTenantID(request);
+	            if (ticket != null && !ticket.isExpired() && tenantNameOfService.equals(tenantNameOfRequest)) {
+	                eventId = VALID;
+	            }
+            }
+            else {
+            	logger.trace("Could not retrieve any services from a ticket granting ticket(tgtId: "+ tgtId + ").");
             }
         } catch (final AbstractTicketException e) {
             logger.trace("Could not retrieve ticket id {} from registry.", e);
