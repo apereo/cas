@@ -429,7 +429,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
         }
     }
-
+    
     /**
      * Create mapper to subflow state.
      *
@@ -509,6 +509,30 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         createTransitionForState(state, subflowId, subflowId);
     }
 
+    /**
+     * Register multifactor trusted authentication into webflow.
+     *
+     * @param registry the registry
+     * @param flowId   the flow id
+     */
+    protected void registerMultifactorTrustedAuthenticationIntoWebflow(final FlowDefinitionRegistry registry,
+                                                                       final String flowId) {
+        final Flow flow = (Flow) registry.getFlowDefinition(flowId);
+
+        // Set the verify action
+        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        final String targetStateId = transition.getTargetStateId();
+        transition.setTargetStateResolver(new DefaultTargetStateResolver("verifyTrusted"));
+        final ActionState verifyAction = createActionState(flow, "verifyTrusted", createEvaluateAction("mfaVerifyTrustAction"));
+        createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_SUCCESS);
+        createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_NO, targetStateId);
+
+        //set the trust action
+        final EndState endState = (EndState) flow.getState(CasWebflowConstants.STATE_ID_SUCCESS);
+        endState.getEntryActionList().add(createEvaluateAction("mfaSetTrustAction"));
+    }
+    
     public void setLogoutFlowDefinitionRegistry(final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
     }

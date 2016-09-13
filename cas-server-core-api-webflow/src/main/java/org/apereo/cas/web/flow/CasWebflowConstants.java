@@ -13,6 +13,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS = "success";
 
     /**
+     * The state state 'success'.
+     */
+    String STATE_ID_SUCCESS = "success";
+
+    /**
      * The transition state 'realSubmit'.
      */
     String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
@@ -31,10 +36,6 @@ public interface CasWebflowConstants {
      * The transition state 'submit'.
      */
     String TRANSITION_ID_SUBMIT = "submit";
-    /**
-     * The transition state 'generated'.
-     */
-    String TRANSITION_ID_GENERATED = "generated";
     /**
      * The transition state 'error'.
      */
@@ -59,7 +60,7 @@ public interface CasWebflowConstants {
      * The transition state 'sendTicketGrantingTicket'.
      */
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
-        
+
     /**
      * The state 'initializeLoginForm'.
      */
@@ -69,5 +70,116 @@ public interface CasWebflowConstants {
      * The state 'viewLoginForm'.
      */
     String STATE_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
+    /**
+     * The state 'serviceAuthorizationCheck'.
+     */
+    String STATE_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
+
+    /**
+     * The state 'terminateSession'.
+     */
+    String STATE_ID_TERMINATE_SESSION = "terminateSession";
+
+    /**
+     * The state 'gatewayRequestCheck'.
+     */
+    String STATE_ID_GATEWAY_REQUEST_CHECK = "gatewayRequestCheck";
+
+    /**
+     * The state 'gatewayRequestCheck'.
+     */
+    String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
+
+
+    /**
+     * The state 'gatewayServicesManagementCheck'.
+     */
+    String STATE_ID_GATEWAY_SERVICES_MGMT_CHECK = "gatewayServicesManagementCheck";
+
+    /**
+     * The state 'postView'.
+     */
+    String STATE_ID_POST_VIEW = "postView";
+
+    /**
+     * The state 'showWarningView'.
+     */
+    String STATE_ID_SHOW_WARNING_VIEW = "showWarningView";
+
+    /**
+     * The state 'redirectView'.
+     */
+    String STATE_ID_REDIR_VIEW = "redirectView";
+
+    /**
+     * The state 'viewRedirectToUnauthorizedUrlView'.
+     */
+    String STATE_ID_VIEW_REDIR_UNAUTHZ_URL = "viewRedirectToUnauthorizedUrlView";
+
+    /**
+     * The state 'serviceUnauthorizedCheck'.
+     */
+    String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
+
+
+    /**
+     * The state 'viewGenericLoginSuccess'.
+     */
+    String STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS = "viewGenericLoginSuccess";
+
+    /**
+     * The state 'serviceCheck'.
+     */
+    String STATE_ID_SERVICE_CHECK = "serviceCheck";
+
+    /**
+     * The state 'viewServiceErrorView'.
+     */
+    String STATE_ID_VIEW_SERVICE_ERROR = "viewServiceErrorView";
+
+    /**
+     * The state id 'warn'.
+     */
+    String STATE_ID_WARN = "warn";
+
+    /**
+     * The state id 'renewRequestCheck'.
+     */
+    String STATE_ID_RENEW_REQUEST_CHECK = "renewRequestCheck";
+
+    /**
+     * The state id 'hasServiceCheck'.
+     */
+    String STATE_ID_HAS_SERVICE_CHECK = "hasServiceCheck";
+
+    /**
+     * The state id 'redirect'.
+     */
+    String STATE_ID_REDIR = "redirect";
+
+    /**
+     * The state id 'postRedirectDecision'.
+     */
+    String STATE_ID_POST_REDIR_DECISION = "postRedirectDecision";
     
+    /**
+     * The view id 'casGenericSuccessView'.
+     */
+    String VIEW_ID_GENERIC_SUCCESS = "casGenericSuccessView";
+
+    /**
+     * The view id 'casConfirmView'.
+     */
+    String VIEW_ID_CONFIRM = "casConfirmView";
+
+    /**
+     * The view id 'casServiceErrorView'.
+     */
+    String VIEW_ID_SERVICE_ERROR = "casServiceErrorView";
+
+    /**
+     * The flow var id 'credential'.
+     */
+    String VAR_ID_CREDENTIAL = "credential";
 }
