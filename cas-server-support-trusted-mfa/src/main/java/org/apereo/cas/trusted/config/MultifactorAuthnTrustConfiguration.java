@@ -1,10 +1,14 @@
 package org.apereo.cas.trusted.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.trusted.authentication.impl.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.impl.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -19,6 +23,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
@@ -30,6 +36,9 @@ import org.springframework.webflow.execution.Action;
 public class MultifactorAuthnTrustConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
+    private static final int INITIAL_CACHE_SIZE = 50;
+    private static final long MAX_CACHE_SIZE = 1000;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -38,6 +47,7 @@ public class MultifactorAuthnTrustConfiguration {
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationSetTrustAction a = new MultifactorAuthenticationSetTrustAction();
         a.setStorage(storage);
+        a.setMfaTrustedAuthnAttributeName(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute());
         return a;
     }
 
@@ -54,8 +64,22 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
-        final InMemoryMultifactorAuthenticationTrustStorage m = new InMemoryMultifactorAuthenticationTrustStorage();
+        final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = CacheBuilder.newBuilder()
+                .initialCapacity(INITIAL_CACHE_SIZE)
+                .maximumSize(MAX_CACHE_SIZE)
+                .recordStats()
+                .refreshAfterWrite(1, TimeUnit.DAYS)
+                .expireAfterWrite(casProperties.getAuthn().getMfa().getTrusted().getValidNumberOfDays(), TimeUnit.DAYS)
+                .build(new CacheLoader<String, MultifactorAuthenticationTrustRecord>() {
+                    @Override
+                    public MultifactorAuthenticationTrustRecord load(final String s) throws Exception {
+                        LOGGER.error("Load operation of the cache is not supported.");
+                        return null;
+                    }});
+        final InMemoryMultifactorAuthenticationTrustStorage m = 
+                new InMemoryMultifactorAuthenticationTrustStorage(storage);
         m.setCipherExecutor(mfaTrustCipherExecutor());
+        m.setNumberOfDays(casProperties.getAuthn().getMfa().getTrusted().getValidNumberOfDays());
         return m;
     }
 

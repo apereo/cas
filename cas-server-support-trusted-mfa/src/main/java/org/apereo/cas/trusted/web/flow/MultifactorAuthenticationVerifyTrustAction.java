@@ -21,12 +21,15 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
+    /** Trusted authentication scope attribute. **/
+    public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
+    
     private MultifactorAuthenticationTrustStorage storage;
 
     private long numberOfDays;
-
+    
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final Authentication c = WebUtils.getAuthentication(requestContext);
@@ -53,6 +56,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
 
         LOGGER.debug("Trusted authentication records found for {} that matches the current geography", principal);
+        requestContext.getFlashScope().put(MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
         return yes();
     }
 
