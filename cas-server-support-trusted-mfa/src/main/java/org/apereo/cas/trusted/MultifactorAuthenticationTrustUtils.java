@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted;
 
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -15,6 +16,19 @@ public final class MultifactorAuthenticationTrustUtils {
     private MultifactorAuthenticationTrustUtils() {
     }
 
+    /**
+     * Generate key.
+     *
+     * @param r the r
+     * @return the geography
+     */
+    public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
+        final StringBuilder builder = new StringBuilder(r.getPrincipal());
+        return builder.append("@")
+                      .append(r.getGeography())
+                      .toString(); 
+    }
+    
     /**
      * Generate geography.
      *

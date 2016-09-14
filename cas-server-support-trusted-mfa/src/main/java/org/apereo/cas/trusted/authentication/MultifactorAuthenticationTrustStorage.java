@@ -10,6 +10,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 public interface MultifactorAuthenticationTrustStorage {
+  
     /**
      * Get record.
      *

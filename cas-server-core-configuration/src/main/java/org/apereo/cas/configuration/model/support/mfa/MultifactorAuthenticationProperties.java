@@ -415,6 +415,8 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Trusted {
+        private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
+        
         private String encryptionKey = "";
 
         private String signingKey = "";
@@ -422,6 +424,14 @@ public class MultifactorAuthenticationProperties {
         private boolean cipherEnabled = true;
         
         private long validNumberOfDays = 30;
+
+        public String getAuthenticationContextAttribute() {
+            return authenticationContextAttribute;
+        }
+
+        public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
+            this.authenticationContextAttribute = authenticationContextAttribute;
+        }
 
         public String getEncryptionKey() {
             return encryptionKey;

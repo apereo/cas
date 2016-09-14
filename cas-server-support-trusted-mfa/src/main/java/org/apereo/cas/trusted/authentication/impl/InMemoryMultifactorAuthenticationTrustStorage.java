@@ -1,15 +1,11 @@
 package org.apereo.cas.trusted.authentication.impl;
 
-import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
-import org.apereo.cas.CipherExecutor;
+import com.google.common.cache.LoadingCache;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -18,14 +14,20 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class InMemoryMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
-    private CipherExecutor<String, String> cipherExecutor;
+public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMultifactorAuthenticationTrustStorage.class);
+    
+    private LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
 
-    private Map<String, MultifactorAuthenticationTrustRecord> storage = Maps.newConcurrentMap();
+    public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
+        this.storage = st;
+        LOGGER.debug("Created cache to track trusted authentication records for {} days", this.numberOfDays);
+    }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
-        return storage.values()
+        return storage.asMap()
+                .values()
                 .stream()
                 .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
                 .sorted()
@@ -34,20 +36,10 @@ public class InMemoryMultifactorAuthenticationTrustStorage implements Multifacto
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
-        final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
-        res.removeIf(entry -> entry.getDate().isBefore(onOrAfterDate)
-                && StringUtils.isNotBlank(this.cipherExecutor.decode(entry.getKey())));
-        return res;
-    }
-
-    @Override
     public void set(final MultifactorAuthenticationTrustRecord record) {
-        final String key = cipherExecutor.encode(UUID.randomUUID().toString());
-        storage.put(key, record);
-    }
-
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
+        LOGGER.debug("Stored authentication trust record for {}", record);
+        record.setKey(generateKey(record));
+        this.storage.put(record.getKey(), record);
+        
     }
 }
