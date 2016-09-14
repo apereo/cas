@@ -105,7 +105,6 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         r.setGeography(geography);
         return r;
     }
-
     
     @Override
     public int compareTo(final MultifactorAuthenticationTrustRecord o) {
