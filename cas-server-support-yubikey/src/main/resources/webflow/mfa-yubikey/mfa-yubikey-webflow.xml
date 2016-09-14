@@ -21,11 +21,11 @@
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" bind="true" validate="false" to="realSubmitYubiKey"/>
+        <transition on="submit" bind="true" validate="false" to="realSubmit"/>
 
     </view-state>
 
-    <action-state id="realSubmitYubiKey">
+    <action-state id="realSubmit">
         <evaluate expression="yubikeyAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="initializeLoginForm" />
