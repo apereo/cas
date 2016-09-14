@@ -1,5 +1,7 @@
 package org.jasig.cas.web.support;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("noOpCookieValueManager")
 public final class NoOpCookieValueManager implements CookieValueManager {
 
     @Override
