@@ -2,13 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
+import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
-import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -18,11 +19,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -103,7 +106,6 @@ public class RadiusMultifactorConfiguration {
      *
      * @return the flow definition registry
      */
-    @RefreshScope
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder =
@@ -157,8 +159,7 @@ public class RadiusMultifactorConfiguration {
     @Bean
     @RefreshScope
     public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
-        final RadiusAuthenticationMetaDataPopulator pop =
-                new RadiusAuthenticationMetaDataPopulator();
+        final RadiusAuthenticationMetaDataPopulator pop =                new RadiusAuthenticationMetaDataPopulator();
 
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(radiusTokenAuthenticationHandler());
@@ -194,10 +195,10 @@ public class RadiusMultifactorConfiguration {
         return w;
     }
 
+    @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        final RadiusAuthenticationWebflowEventResolver r =
-                new RadiusAuthenticationWebflowEventResolver();
+        final RadiusAuthenticationWebflowEventResolver r = new RadiusAuthenticationWebflowEventResolver();
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
         r.setCentralAuthenticationService(centralAuthenticationService);
         r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
@@ -207,11 +208,10 @@ public class RadiusMultifactorConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean(name="radiusMultifactorWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        final RadiusMultifactorWebflowConfigurer w =
-                new RadiusMultifactorWebflowConfigurer();
+        final RadiusMultifactorWebflowConfigurer w = new RadiusMultifactorWebflowConfigurer();
         w.setRadiusFlowRegistry(radiusFlowRegistry());
         w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         w.setFlowBuilderServices(flowBuilderServices);
@@ -222,5 +222,23 @@ public class RadiusMultifactorConfiguration {
     protected void initializeRootApplicationContext() {
         authenticationHandlersResolvers.put(radiusTokenAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, radiusAuthenticationMetaDataPopulator());
+    }
+
+    /**
+     * The Radius multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @Configuration("radiusMultifactorTrustConfiguration")
+    public class RadiusMultifactorTrustConfiguration {
+
+        @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
+        @Bean
+        public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
+            final RadiusMultifactorTrustWebflowConfigurer r = new RadiusMultifactorTrustWebflowConfigurer();
+            r.setFlowDefinitionRegistry(radiusFlowRegistry());
+            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+            r.setFlowBuilderServices(flowBuilderServices);
+            return r;
+        }
     }
 }
