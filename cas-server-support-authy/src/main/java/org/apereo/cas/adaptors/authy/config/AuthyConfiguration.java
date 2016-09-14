@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -25,6 +26,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -195,5 +197,23 @@ public class AuthyConfiguration {
     protected void initializeRootApplicationContext() {
         authenticationHandlersResolvers.put(authyAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, authyAuthenticationMetaDataPopulator());
+    }
+
+    /**
+     * The Authy multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @Configuration("duoMultifactorTrustConfiguration")
+    public class DuoMultifactorTrustConfiguration {
+
+        @ConditionalOnMissingBean(name = "duoMultifactorTrustWebflowConfigurer")
+        @Bean
+        public CasWebflowConfigurer duoMultifactorTrustWebflowConfigurer() {
+            final AuthyMultifactorTrustWebflowConfigurer r = new AuthyMultifactorTrustWebflowConfigurer();
+            r.setFlowDefinitionRegistry(authyAuthenticatorFlowRegistry());
+            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+            r.setFlowBuilderServices(flowBuilderServices);
+            return r;
+        }
     }
 }

@@ -190,7 +190,10 @@ public class DuoConfiguration {
         }
     }
 
-    @ConditionalOnClass(value = {MultifactorAuthenticationTrustStorage.class})
+    /**
+     * The Duo multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("duoMultifactorTrustConfiguration")
     public class DuoMultifactorTrustConfiguration {
 
@@ -198,7 +201,7 @@ public class DuoConfiguration {
         @Bean
         public CasWebflowConfigurer duoMultifactorTrustWebflowConfigurer() {
             final DuoMultifactorTrustWebflowConfigurer r = new DuoMultifactorTrustWebflowConfigurer();
-            r.setDuoFlowRegistry(duoFlowRegistry());
+            r.setFlowDefinitionRegistry(duoFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             return r;

@@ -13,8 +13,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import static org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction.MFA_TRUSTED_AUTHN_SCOPE_ATTR;
-
 /**
  * This is {@link MultifactorAuthenticationSetTrustAction}.
  *
