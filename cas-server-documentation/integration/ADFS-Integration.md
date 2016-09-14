@@ -31,6 +31,8 @@ CAS Overlay to be able to resolve dependencies:
 </repositories>
 ```
 
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted paylods issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+
 ## WsFed Configuration
 
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
