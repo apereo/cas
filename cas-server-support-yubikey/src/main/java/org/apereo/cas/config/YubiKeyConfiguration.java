@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -17,12 +18,14 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -190,6 +193,24 @@ public class YubiKeyConfiguration {
             && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
             this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
+        }
+    }
+
+    /**
+     * The Authy multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @Configuration("yubiMultifactorTrustConfiguration")
+    public class YubiKeyMultifactorTrustConfiguration {
+
+        @ConditionalOnMissingBean(name = "yubiMultifactorTrustConfiguration")
+        @Bean
+        public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
+            final YubiKeyMultifactorTrustWebflowConfigurer r = new YubiKeyMultifactorTrustWebflowConfigurer();
+            r.setFlowDefinitionRegistry(yubikeyFlowRegistry());
+            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+            r.setFlowBuilderServices(flowBuilderServices);
+            return r;
         }
     }
 }
