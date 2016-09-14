@@ -64,6 +64,15 @@ You should then grab each generated key for encryption and signing, and put them
 
 If you wish you manually generate keys, you may [use the following tool](https://github.com/mitreid-connect/json-web-key-generator).
 
+## Turn Off Cookie Encryption/Signing
+
+To disable the cipher configuration for the SSO session cookie, adjust for the following in your
+`deployerConfigContext.xml` file:
+
+```xml
+<alias name="noOpCookieValueManager" alias="defaultCookieValueManager" />
+<alias name="noOpCipherExecutor" alias="defaultCookieCipherExecutor" />
+```
 
 ## Cookie Generation for Renewed Authentications
 
