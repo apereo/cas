@@ -60,9 +60,6 @@ The following optional monitors are also available:
 <util:list id="monitorsList">
     <ref bean="memcachedMonitor" />
 </util:list>
-
-...
-
 ```
 
 
@@ -76,7 +73,6 @@ The following settings are available:
 - `EhcacheMonitor`
 
 ```xml
-
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-integration-ehcache-monitor</artifactId>
@@ -101,7 +97,6 @@ The following settings are available:
 - `DataSourceMonitor`
 
 ```xml
-
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-jdbc-monitor</artifactId>
@@ -125,7 +120,6 @@ The following settings are available:
 - `PooledConnectionFactoryMonitor`
 
 ```xml
-
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-ldap-monitor</artifactId>
@@ -178,10 +172,8 @@ CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/me
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
 
 ```bash
-
 # Define how often should metric data be reported. Default is 30 seconds.
 # metrics.refresh.interval=30s
-
 ```
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
