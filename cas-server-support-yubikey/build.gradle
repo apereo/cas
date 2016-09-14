@@ -6,6 +6,7 @@ dependencies {
     compile libraries.guava
     compile libraries.yubicoapi
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    compileOnly project(":cas-server-support-trusted-mfa")
 }
 
 
