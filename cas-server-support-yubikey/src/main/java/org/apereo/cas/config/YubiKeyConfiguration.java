@@ -115,7 +115,7 @@ public class YubiKeyConfiguration {
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
     }
-    
+
     @Bean
     public PrincipalFactory yubikeyPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -125,6 +125,12 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
+        if (StringUtils.isBlank(this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+            throw new IllegalArgumentException("Yubikey secret key cannot be blank");
+        }
+        if (this.casProperties.getAuthn().getMfa().getYubikey().getClientId() <= 0) {
+            throw new IllegalArgumentException("Yubikey client id is undefined");
+        }
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
                 this.casProperties.getAuthn().getMfa().getYubikey().getClientId(),
                 this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey());
@@ -141,8 +147,7 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     public YubiKeyAuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
-        final YubiKeyAuthenticationMetaDataPopulator pop =
-                new YubiKeyAuthenticationMetaDataPopulator();
+        final YubiKeyAuthenticationMetaDataPopulator pop = new YubiKeyAuthenticationMetaDataPopulator();
 
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
@@ -158,6 +163,7 @@ public class YubiKeyConfiguration {
                 this.httpClient);
     }
 
+    @RefreshScope
     @Bean
     public Action yubikeyAuthenticationWebflowAction() {
         final YubiKeyAuthenticationWebflowAction a = new YubiKeyAuthenticationWebflowAction();
@@ -165,7 +171,7 @@ public class YubiKeyConfiguration {
         return a;
     }
 
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="yubikeyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
         final YubiKeyMultifactorWebflowConfigurer r = new YubiKeyMultifactorWebflowConfigurer();
@@ -190,7 +196,7 @@ public class YubiKeyConfiguration {
     @PostConstruct
     protected void initializeRootApplicationContext() {
         if (casProperties.getAuthn().getMfa().getYubikey().getClientId() > 0
-            && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+                && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
             this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
         }
