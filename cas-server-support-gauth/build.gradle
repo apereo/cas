@@ -5,5 +5,6 @@ dependencies {
     compile libraries.springcloud
     compile project(":cas-server-core-authentication")
     compile project(":cas-server-core-webflow")
+    compileOnly project(":cas-server-support-trusted-mfa")
 }
 

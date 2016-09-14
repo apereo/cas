@@ -15,6 +15,7 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationActi
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountSaveRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -26,11 +27,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -108,7 +111,6 @@ public class GoogleAuthentiacatorConfiguration {
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
     
-    @RefreshScope
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -118,6 +120,7 @@ public class GoogleAuthentiacatorConfiguration {
     }
     
     @Bean
+    @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
         h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
@@ -173,6 +176,7 @@ public class GoogleAuthentiacatorConfiguration {
     }
     
     @Bean
+    @RefreshScope
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
         final GoogleAuthenticatorAuthenticationWebflowEventResolver r = new GoogleAuthenticatorAuthenticationWebflowEventResolver();
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
@@ -185,6 +189,7 @@ public class GoogleAuthentiacatorConfiguration {
     }
     
     @Bean
+    @RefreshScope
     public Action saveAccountRegistrationAction() {
         final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
         a.setGoogleAuthenticator(googleAuthenticatorInstance());
@@ -192,6 +197,7 @@ public class GoogleAuthentiacatorConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public Action googleAuthenticatorAuthenticationWebflowAction() {
         final GoogleAuthenticatorAuthenticationWebflowAction a = new GoogleAuthenticatorAuthenticationWebflowAction();
         a.setCasWebflowEventResolver(googleAuthenticatorAuthenticationWebflowEventResolver());
@@ -222,6 +228,24 @@ public class GoogleAuthentiacatorConfiguration {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
             authenticationHandlersResolvers.put(googleAuthenticatorAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, googleAuthenticatorAuthenticationMetaDataPopulator());
+        }
+    }
+
+    /**
+     * The google authenticator multifactor trust configuration.
+     */
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @Configuration("gauthMultifactorTrustConfiguration")
+    public class GoogleAuthenticatorMultifactorTrustConfiguration {
+
+        @ConditionalOnMissingBean(name = "gauthMultifactorTrustWebflowConfigurer")
+        @Bean
+        public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
+            final GoogleAuthenticatorMultifactorTrustWebflowConfigurer r = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer();
+            r.setFlowDefinitionRegistry(googleAuthenticatorFlowRegistry());
+            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+            r.setFlowBuilderServices(flowBuilderServices);
+            return r;
         }
     }
 }
