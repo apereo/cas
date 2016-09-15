@@ -11,7 +11,6 @@ dependencies {
     compile libraries.hibernate
     compile libraries.groovy
     compile project(":cas-server-core-configuration")
-    compile project(":cas-server-core-configuration-cloud-amqp")
     compile project(":cas-server-core-services")
     compile project(":cas-server-support-oauth-core")
     compile project(":cas-server-support-saml-idp-core")

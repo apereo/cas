@@ -176,7 +176,7 @@ public class YubiKeyConfiguration {
         return a;
     }
 
-    @ConditionalOnMissingBean(name="yubikeyMultifactorWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "yubikeyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
         final YubiKeyMultifactorWebflowConfigurer r = new YubiKeyMultifactorWebflowConfigurer();
