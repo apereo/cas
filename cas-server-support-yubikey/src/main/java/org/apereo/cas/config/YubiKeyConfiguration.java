@@ -212,7 +212,7 @@ public class YubiKeyConfiguration {
      * The Authy multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trustedDeviceEnabled", value = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("yubiMultifactorTrustConfiguration")
     public class YubiKeyMultifactorTrustConfiguration {
 

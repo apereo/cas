@@ -229,7 +229,7 @@ public class RadiusMultifactorConfiguration {
      * The Radius multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.radius", name = "trustedDeviceEnabled", value = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.radius", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("radiusMultifactorTrustConfiguration")
     public class RadiusMultifactorTrustConfiguration {
 

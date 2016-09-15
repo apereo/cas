@@ -236,7 +236,7 @@ public class GoogleAuthentiacatorConfiguration {
      * The google authenticator multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trustedDeviceEnabled", value = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("gauthMultifactorTrustConfiguration")
     public class GoogleAuthenticatorMultifactorTrustConfiguration {
 
