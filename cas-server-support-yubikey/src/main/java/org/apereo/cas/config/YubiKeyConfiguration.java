@@ -141,6 +141,11 @@ public class YubiKeyConfiguration {
 
         handler.setPrincipalFactory(yubikeyPrincipalFactory());
         handler.setServicesManager(servicesManager);
+
+        if (!casProperties.getAuthn().getMfa().getYubikey().getApiUrls().isEmpty()) {
+            final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[] {});
+            handler.getClient().setWsapiUrls(urls);
+        }
         return handler;
     }
 

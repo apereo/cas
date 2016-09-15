@@ -1211,11 +1211,11 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 
 To learn more about this topic, [please review this guide](YubiKey-Authentication.html).
 
-
 ```properties
 # cas.authn.mfa.yubikey.clientId=
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
+# cas.authn.mfa.yubikey.apiUrls=
 ```
 
 ### Radius OTP
