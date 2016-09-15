@@ -65,6 +65,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
@@ -211,6 +212,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
+    @RefreshScope
     public AuditTrailManager slf4jAuditTrailManager() {
         return new Slf4jLoggingAuditTrailManager();
     }
@@ -229,6 +231,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "authorizationGenerator")
     @Bean
+    @RefreshScope
     public AuthorizationGenerator authorizationGenerator() {
         if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
             
@@ -239,7 +242,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             }
             return new FromAttributesAuthorizationGenerator(
                     StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    StringUtils.commaDelimitedListToStringArray("")
+                    new String[] {}
             );
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
@@ -247,11 +250,25 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public CookieLocaleResolver localeResolver() {
-        final CookieLocaleResolver resolver = new CookieLocaleResolver();
-        resolver.setDefaultLocale(Locale.ENGLISH);
-        return resolver;
+        final CookieLocaleResolver bean = new CookieLocaleResolver() {
+            @Override
+            protected Locale determineDefaultLocale(final HttpServletRequest request) {
+                final Locale locale = request.getLocale();
+                if (StringUtils.isEmpty(casProperties.getMgmt().getDefaultLocale())
+                        || !locale.getLanguage().equals(casProperties.getMgmt().getDefaultLocale())) {
+                    return locale;
+                }
+                return new Locale(casProperties.getMgmt().getDefaultLocale());
+            }
+        };
+        return bean;
     }
 
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        return new LocaleChangeInterceptor();
+    }
+    
     @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -270,6 +287,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(casManagementSecurityInterceptor())
                 .addPathPatterns("/**").excludePathPatterns("/callback*", "/logout*", "/authorizationFailure");
     }
