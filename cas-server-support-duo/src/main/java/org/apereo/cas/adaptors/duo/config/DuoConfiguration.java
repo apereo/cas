@@ -195,10 +195,10 @@ public class DuoConfiguration {
      * The Duo multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.duo", name = "trustedDeviceEnabled", value = "true", matchIfMissing = true)
     @Configuration("duoMultifactorTrustConfiguration")
     public class DuoMultifactorTrustConfiguration {
 
+        @ConditionalOnProperty(prefix = "cas.authn.mfa.duo", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
         @ConditionalOnMissingBean(name = "duoMultifactorTrustWebflowConfigurer")
         @Bean
         public CasWebflowConfigurer duoMultifactorTrustWebflowConfigurer() {

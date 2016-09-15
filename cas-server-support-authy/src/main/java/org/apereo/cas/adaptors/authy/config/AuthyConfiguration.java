@@ -214,7 +214,7 @@ public class AuthyConfiguration {
      * The Authy multifactor trust configuration.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "trustedDeviceEnabled", value = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("authyMultifactorTrustConfiguration")
     public class AuthyMultifactorTrustConfiguration {
 
