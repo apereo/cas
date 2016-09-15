@@ -116,6 +116,7 @@ public class TrustedAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
+
         this.authenticationHandlersResolvers.put(principalBearingCredentialsAuthenticationHandler(),
                 trustedPrincipalResolver());
     }
