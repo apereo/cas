@@ -14,7 +14,7 @@ import org.springframework.core.io.Resource;
 public class ManagementWebappProperties {
     private String adminRoles = "ROLE_ADMIN";
     private String serverName = "https://localhost:8443";
-    
+    private String defaultLocale = "en";
     private String authzAttributes;
     
     @NestedConfigurationProperty
@@ -60,6 +60,14 @@ public class ManagementWebappProperties {
 
     public void setAuthzAttributes(final String authzAttributes) {
         this.authzAttributes = authzAttributes;
+    }
+
+    public String getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public void setDefaultLocale(final String defaultLocale) {
+        this.defaultLocale = defaultLocale;
     }
 }
 

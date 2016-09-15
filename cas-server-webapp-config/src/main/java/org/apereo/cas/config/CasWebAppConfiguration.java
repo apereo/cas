@@ -76,8 +76,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                 return new Locale(casProperties.getLocale().getDefaultValue());
             }
         };
-
-
         return bean;
     }
 

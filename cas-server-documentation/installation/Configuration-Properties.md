@@ -2354,6 +2354,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.adminRoles=ROLE_ADMIN
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 # cas.mgmt.serverName=https://localhost:8443
+# cas.mgmt.defaultLocale=en
 
 # cas.mgmt.authzAttributes=memberOf,groupMembership
 
