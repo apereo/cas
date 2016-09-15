@@ -2,6 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Configuration properties class for cas.mfa.
  *
@@ -108,6 +111,7 @@ public class MultifactorAuthenticationProperties {
         private Integer clientId;
         private String secretKey = "";
         private int rank;
+        private List<String> apiUrls = new ArrayList<>();
 
         public Integer getClientId() {
             return clientId;
@@ -131,6 +135,14 @@ public class MultifactorAuthenticationProperties {
 
         public void setRank(final int rank) {
             this.rank = rank;
+        }
+
+        public List<String> getApiUrls() {
+            return apiUrls;
+        }
+
+        public void setApiUrls(final List<String> apiUrls) {
+            this.apiUrls = apiUrls;
         }
     }
 
