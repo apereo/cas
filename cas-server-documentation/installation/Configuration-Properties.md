@@ -1170,6 +1170,18 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
 ```
 
+## Multifactor Trusted Device/Browser
+
+To learn more about this topic, [please review this guide](Multifactor-TrustedDevice-Authentication.html).
+
+```properties
+# cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
+# cas.authn.mfa.trusted.encryptionKey=
+# cas.authn.mfa.trusted.signingKey=
+# cas.authn.mfa.trusted.cipherEnabled=true
+# cas.authn.mfa.trusted.validNumberOfDays=30
+```
+
 ### Google Authenticator
 
 To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
@@ -1181,6 +1193,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.label=
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
+# cas.authn.mfa.gauth.trustedDeviceEnabled=true
 ```
 
 #### Google Authenticator JPA
@@ -1216,6 +1229,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
+# cas.authn.mfa.yubikey.trustedDeviceEnabled=true
 ```
 
 ### Radius OTP
@@ -1226,6 +1240,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
+# cas.authn.mfa.radius.trustedDeviceEnabled=true
 
 # cas.authn.mfa.radius.client.socketTimeout=0
 # cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
@@ -1254,6 +1269,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo.duoApplicationKey=
 # cas.authn.mfa.duo.duoIntegrationKey=
 # cas.authn.mfa.duo.duoApiHost=
+# cas.authn.mfa.duo.trustedDeviceEnabled=true
 ```
 
 ### Authy
@@ -1266,6 +1282,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.phoneAttribute=phone
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.forceVerification=true
+# cas.authn.mfa.authy.trustedDeviceEnabled=true
 ```
 
 ## Authentication Exceptions
@@ -2343,8 +2360,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 ```properties
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
-
-
 
 ## Management Webapp
 

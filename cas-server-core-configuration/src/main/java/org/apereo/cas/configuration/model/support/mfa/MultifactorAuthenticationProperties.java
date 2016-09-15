@@ -112,6 +112,15 @@ public class MultifactorAuthenticationProperties {
         private String secretKey = "";
         private int rank;
         private List<String> apiUrls = new ArrayList<>();
+        private boolean trustedDeviceEnabled = true;
+
+        public boolean isTrustedDeviceEnabled() {
+            return trustedDeviceEnabled;
+        }
+
+        public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
+            this.trustedDeviceEnabled = trustedDeviceEnabled;
+        }
 
         public Integer getClientId() {
             return clientId;
@@ -155,6 +164,16 @@ public class MultifactorAuthenticationProperties {
         private Server server = new Server();
         private Client client = new Client();
 
+        private boolean trustedDeviceEnabled = true;
+
+        public boolean isTrustedDeviceEnabled() {
+            return trustedDeviceEnabled;
+        }
+
+        public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
+            this.trustedDeviceEnabled = trustedDeviceEnabled;
+        }
+        
         public boolean isFailoverOnException() {
             return failoverOnException;
         }
@@ -336,7 +355,15 @@ public class MultifactorAuthenticationProperties {
         private String duoSecretKey;
         private String duoApplicationKey;
         private String duoApiHost;
+        private boolean trustedDeviceEnabled = true;
 
+        public boolean isTrustedDeviceEnabled() {
+            return trustedDeviceEnabled;
+        }
+
+        public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
+            this.trustedDeviceEnabled = trustedDeviceEnabled;
+        }
         public int getRank() {
             return rank;
         }
@@ -384,7 +411,16 @@ public class MultifactorAuthenticationProperties {
         private String phoneAttribute = "phone";
         private String mailAttribute = "mail";
         private boolean forceVerification = true;
+        private boolean trustedDeviceEnabled = true;
 
+        public boolean isTrustedDeviceEnabled() {
+            return trustedDeviceEnabled;
+        }
+
+        public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
+            this.trustedDeviceEnabled = trustedDeviceEnabled;
+        }
+        
         public String getPhoneAttribute() {
             return phoneAttribute;
         }
