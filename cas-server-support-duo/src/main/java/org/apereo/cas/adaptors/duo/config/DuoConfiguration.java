@@ -206,6 +206,7 @@ public class DuoConfiguration {
             r.setFlowDefinitionRegistry(duoFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
+            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
             return r;
         }
     }

@@ -223,6 +223,7 @@ public class YubiKeyConfiguration {
             r.setFlowDefinitionRegistry(yubikeyFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
+            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
             return r;
         }
     }
