@@ -23,15 +23,25 @@ public interface CasWebflowConstants {
     String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
     
     /**
-     * The state id 'registerDevice'.
+     * The view id 'registerDeviceView'.
      */
-    String STATE_ID_REGISTER_DEVICE = "registerDevice";
+    String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
+
+    /**
+     * The state id 'registerTrustedDevice'.
+     */
+    String STATE_ID_REGISTER_TRUSTED_DEVICE = "registerTrustedDevice";
 
     /**
      * The transition state 'realSubmit'.
      */
     String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
 
+    /**
+     * The decision state 'checkRegistrationRequired'.
+     */
+    String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
+    
     /**
      * The transition state 'yes'.
      */

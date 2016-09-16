@@ -35,8 +35,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apereo.inspektr.common.spi.PrincipalResolver.UNKNOWN_USER;
-
 /**
  * Common utilities for the web tier.
  *

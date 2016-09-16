@@ -1,12 +1,12 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalUnit;
 import java.util.Set;
 
 /**
@@ -25,8 +24,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
-    /** Trusted authentication scope attribute. **/
-    public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
+    
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
     
@@ -61,7 +59,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
 
         LOGGER.debug("Trusted authentication records found for {} that matches the current geography", principal);
-        requestContext.getFlashScope().put(MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
+        requestContext.getFlashScope()
+                .put(AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
         return yes();
     }
 

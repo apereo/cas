@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
