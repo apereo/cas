@@ -42,8 +42,7 @@ can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which CAS adopters may
-included in the overlay for environment-specific CAS settings.
+There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
@@ -64,7 +63,7 @@ beans {
 }
 ```
 
-Additionally, dynamic reloadable Groovy beans can be defined in `deployerConfigContext.xml`. These definitions
+Additionally, dynamic reloadable Groovy beans can be defined in the `deployerConfigContext.xml`. These definitions
 are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
 and is monitored for changes every 5 seconds. 
