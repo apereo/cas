@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
