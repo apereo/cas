@@ -16,14 +16,14 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Think VERY CAREFULLY before turning on the above settings. Blindly authorizing an application to receive a proxy-granting ticket or the user credential
-may produce an oppurunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
+may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 ## Default
 
 CAS provides the ability to release a bundle of attributes to all services by default. This bundle is not defined on a per-service
-basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise 
-rules to always release `givenName` and `cn` to every application, and additionally allow other specific attributes for only some 
-applications per their attribute release policy. 
+basis and is always combined with attributes produced by the specific release policy of the service, such that for instance, you can devise
+rules to always release `givenName` and `cn` to every application, and additionally allow other specific attributes for only some
+applications per their attribute release policy.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
@@ -40,6 +40,24 @@ Return all resolved attributes to the service.
   "description" : "sample",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
+```
+
+## Deny All
+
+Never ever return attributes to applications. Note that this policy
+also skips and refuses to release default attributes, if any.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.DenyAllAttributeReleasePolicy"
   }
 }
 ```
@@ -117,7 +135,7 @@ class SampleGroovyPersonAttributeDao {
     def Map<String, List<Object>> run(final Object... args) {
         def currentAttributes = args[0]
         def logger = args[1]
-        
+
         logger.debug("Current attributes received are {}", currentAttributes)
         return[name:["something"], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
