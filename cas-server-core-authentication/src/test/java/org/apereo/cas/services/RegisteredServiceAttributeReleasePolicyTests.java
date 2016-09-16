@@ -9,6 +9,13 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,9 +29,14 @@ import static org.mockito.Mockito.*;
 
 /**
  * Attribute filtering policy tests.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {AopAutoConfiguration.class, RefreshAutoConfiguration.class})
+@EnableTransactionManagement
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
@@ -43,7 +55,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));
     }
-    
+
     @Test
     public void verifyAttributeFilterMappedAttributesIsCaseInsensitive() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
@@ -65,63 +77,76 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey("attr1"));
         assertTrue(attr.containsKey("attr2"));
     }
-    
+
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
         final Map<String, String> mappedAttr = new HashMap<>();
         mappedAttr.put("attr1", "newAttr1");
-        
+
         policy.setAllowedAttributes(mappedAttr);
-                
+
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Lists.newArrayList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = policy.getAttributes(p);
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));
-        
+
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnMappedAttributeReleasePolicy p2 =
-            SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
+                SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
-    
+
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Lists.newArrayList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
-        
+
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Lists.newArrayList("v3", "v4"));
-        
+
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        
+
         final Map<String, Object> attr = policy.getAttributes(p);
         assertEquals(attr.size(), 2);
         assertTrue(attr.containsKey("attr1"));
         assertTrue(attr.containsKey("attr3"));
-        
+
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnAllowedAttributeReleasePolicy p2 =
-            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
 
-    
+    @Test
+    public void verifyServiceAttributeDenyAllAttributes() {
+        final DenyAllAttributeReleasePolicy policy = new DenyAllAttributeReleasePolicy();
+        final Principal p = mock(Principal.class);
+        final Map<String, Object> map = new HashMap<>();
+        map.put("ATTR1", "value1");
+        map.put("ATTR2", "value2");
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+
+        final Map<String, Object> attr = policy.getAttributes(p);
+        assertEquals(attr.size(), 0);
+    }
+
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
@@ -140,7 +165,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final byte[] data = SerializationUtils.serialize(policy);
         final ReturnAllAttributeReleasePolicy p2 =
-            SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
+                SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
 
@@ -163,7 +188,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         repository.setAttributeRepository(dao);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
-                    Collections.<String, Object>singletonMap("mail", "final@example.com"));
+                Collections.<String, Object>singletonMap("mail", "final@example.com"));
 
         policy.setPrincipalAttributesRepository(repository);
 
