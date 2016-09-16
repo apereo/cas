@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         CurrentCredentialsAndAuthentication.bindCurrent(c);
         
         final String principal = c.getPrincipal().getId();
-        if (!requestContext.getFlashScope().contains(MultifactorAuthenticationVerifyTrustAction.MFA_TRUSTED_AUTHN_SCOPE_ATTR)) {
+        if (!requestContext.getFlashScope().contains(
+                AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR)) {
             LOGGER.debug("Attempt to store trusted authentication record for {}", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography());

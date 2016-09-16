@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.authentication.impl;
 
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
-import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +34,9 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .collect(Collectors.toSet());
     }
 
-    @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
-            resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+
     @Override
-    public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
+    public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for {}", record);
         record.setKey(generateKey(record));
         this.storage.put(record.getKey(), record);
