@@ -17,6 +17,9 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyStrategyBea
         /** all type. */
         ALL("all"),
 
+        /** deny type. */
+        DENY("deny"),
+        
         /** Mapped type. */
         MAPPED("mapped"),
 
