@@ -51,6 +51,7 @@
         *   [RSA/Radius](/$version/installation/RADIUS-Authentication.html)
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
+        *   [Trusted Device](/$version/installation/Multifactor-TrustedDevice-Authentication.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
     *   [SSO Session Cookie](/$version/installation/Configuring-SSO-Session-Cookie.html)
