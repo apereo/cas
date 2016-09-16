@@ -470,6 +470,8 @@ public class MultifactorAuthenticationProperties {
         private String signingKey = "";
 
         private boolean cipherEnabled = true;
+
+        private boolean deviceRegistrationEnabled = true;
         
         private long validNumberOfDays = 30;
 
@@ -511,6 +513,14 @@ public class MultifactorAuthenticationProperties {
 
         public void setValidNumberOfDays(final long validNumberOfDays) {
             this.validNumberOfDays = validNumberOfDays;
+        }
+
+        public boolean isDeviceRegistrationEnabled() {
+            return deviceRegistrationEnabled;
+        }
+
+        public void setDeviceRegistrationEnabled(final boolean deviceRegistrationEnabled) {
+            this.deviceRegistrationEnabled = deviceRegistrationEnabled;
         }
     }
     

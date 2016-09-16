@@ -38,8 +38,15 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             LOGGER.debug("Attempt to store trusted authentication record for {}", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography());
+            
+            if (requestContext.getRequestParameters().contains("deviceName")) {
+                final String deviceName = requestContext.getRequestParameters().get("deviceName");
+                if (StringUtils.isNotBlank(deviceName)) {
+                    record.setName(deviceName);
+                }
+            }
             storage.set(record);
-            LOGGER.debug("Saved trusted authentication record for {}", principal);
+            LOGGER.debug("Saved trusted authentication record for {} under {}", principal, record.getName());
         }
         LOGGER.debug("Trusted authentication session exists for {}", principal);
         
