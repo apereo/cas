@@ -1,7 +1,7 @@
-package org.apereo.cas.trusted.authentication.impl;
+package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.cache.LoadingCache;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +15,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryMultifactorAuthenticationTrustStorage.class);
-    
+
     private LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
 
     public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
@@ -37,8 +36,6 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
 
     @Override
     public MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {
-        LOGGER.debug("Stored authentication trust record for {}", record);
-        record.setKey(generateKey(record));
         this.storage.put(record.getKey(), record);
         return record;
     }

@@ -1,6 +1,6 @@
-package org.apereo.cas.trusted;
+package org.apereo.cas.trusted.util;
 
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;

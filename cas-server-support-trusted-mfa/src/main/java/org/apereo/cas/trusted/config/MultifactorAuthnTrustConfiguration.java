@@ -6,9 +6,9 @@ import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.authentication.impl.InMemoryMultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -21,7 +21,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.transaction.PseudoTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
+
+import javax.transaction.TransactionManager;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -81,6 +85,12 @@ public class MultifactorAuthnTrustConfiguration {
         return m;
     }
 
+    @ConditionalOnMissingBean(name = "transactionManagerMfaAuthnTrust")
+    @Bean
+    public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
+        return new PseudoTransactionManager();
+    }
+    
     @Bean
     @RefreshScope
     public CipherExecutor<String, String> mfaTrustCipherExecutor() {
