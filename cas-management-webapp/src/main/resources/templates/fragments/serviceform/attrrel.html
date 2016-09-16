@@ -154,6 +154,13 @@
                     <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.returnAll}" />
                 </label>
 
+                <label class="radio-inline">
+                    <input type="radio" name="policiesReturnAll" id="policiesRadioDeny" value="deny"
+                           ng-model="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type"
+                           ng-checked="serviceFormCtrl.serviceData.attrRelease.attrPolicy.type == 'deny'" />
+                    <span th:remove="tag" th:text="#{services.form.label.attrRelease.policies.denyAll}" />
+                </label>
+                
                 <!-- Filter Policies Radio Button - Return Allowed -->
                 <label class="radio-inline">
                     <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
