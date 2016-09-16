@@ -5,6 +5,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 /**
@@ -13,11 +19,26 @@ import java.time.LocalDate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Entity
+@Table(name = "MultifactorAuthenticationTrustRecord")
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id = Integer.MAX_VALUE;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String geography;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate date;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String key;
+
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String name;
 
     public String getKey() {
@@ -51,8 +72,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     public void setDate(final LocalDate date) {
         this.date = date;
     }
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
