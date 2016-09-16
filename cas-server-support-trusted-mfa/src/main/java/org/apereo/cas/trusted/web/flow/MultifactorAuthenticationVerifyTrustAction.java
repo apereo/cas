@@ -2,9 +2,9 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
