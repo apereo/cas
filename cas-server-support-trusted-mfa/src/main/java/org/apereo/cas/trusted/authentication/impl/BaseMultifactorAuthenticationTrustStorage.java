@@ -16,11 +16,6 @@ import java.util.Set;
  * @since 5.1.0
  */
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
-
-    /**
-     * Number of days records can remain valid.
-     */
-    protected long numberOfDays;
     
     private CipherExecutor<String, String> cipherExecutor;
 
@@ -56,9 +51,5 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
-    }
-
-    public void setNumberOfDays(final long numberOfDays) {
-        this.numberOfDays = numberOfDays;
     }
 }
