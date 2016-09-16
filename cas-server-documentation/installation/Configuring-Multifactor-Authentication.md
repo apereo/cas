@@ -124,6 +124,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 ```
 
 ## Fail-Open vs Fail-Closed
+
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
