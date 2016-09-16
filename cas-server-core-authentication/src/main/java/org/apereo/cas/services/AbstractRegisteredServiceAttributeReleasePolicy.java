@@ -123,6 +123,16 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return this.registeredServiceAttributeFilter.filter(attributesToRelease);
         }
 
+        return returnFinalAttributesCollection(attributesToRelease);
+    }
+
+    /**
+     * Return the final attributes collection.
+     * Subclasses may override this minute to impose last minute rules.
+     * @param attributesToRelease the attributes to release
+     * @return the map
+     */
+    protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease) {
         LOGGER.debug("Final collection of attributes allowed are: {}", attributesToRelease);
         return attributesToRelease;
     }

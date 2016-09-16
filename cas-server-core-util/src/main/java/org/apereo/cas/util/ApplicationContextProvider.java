@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext CONTEXT;
-
+    
     public static ApplicationContext getApplicationContext() {
         return CONTEXT;
     }
