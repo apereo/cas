@@ -1,6 +1,5 @@
 description = "Apereo CAS Mongo Integration"
 dependencies {
-
     compile project(":cas-server-core-services")
     compile libraries.mongo
     compile libraries.spring
