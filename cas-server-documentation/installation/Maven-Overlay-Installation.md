@@ -21,10 +21,12 @@ WAR overlay projects are provided for reference and study.
 
 - [https://github.com/apereo/cas-overlay-template](https://github.com/apereo/cas-overlay-template)
 
+<div class="alert alert-info"><strong>Review Branch!</strong><p>The above repositories point you towards their <code>master</code> branch. You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name] to switch if necessary.</p></div>
+
 ## Docker
 
 - See [this guide](Docker-Installation.html) for more info.
-
+ 
 Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
 CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
@@ -40,8 +42,7 @@ can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which CAS adopters may
-included in the overlay for environment-specific CAS settings.
+There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
@@ -62,7 +63,7 @@ beans {
 }
 ```
 
-Additionally, dynamic reloadable Groovy beans can be defined in `deployerConfigContext.xml`. These definitions
+Additionally, dynamic reloadable Groovy beans can be defined in the `deployerConfigContext.xml`. These definitions
 are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
 and is monitored for changes every 5 seconds. 
