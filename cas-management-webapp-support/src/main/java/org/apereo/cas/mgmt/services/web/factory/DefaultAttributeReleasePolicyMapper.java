@@ -6,6 +6,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleaseP
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceAttributeReleasePolicyViewBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -27,17 +28,17 @@ import java.util.Map;
  * @since 4.2
  */
 public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
-    
+
     private AttributeFilterMapper attributeFilterMapper;
-    
+
     private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
 
     public DefaultAttributeReleasePolicyMapper() {
     }
-    
-    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper, 
+
+    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper,
                                                final PrincipalAttributesRepositoryMapper mapper) {
-        
+
         this.attributeFilterMapper = attributeFilterMapper;
         this.principalAttributesRepositoryMapper = mapper;
     }
@@ -86,6 +87,8 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
                         attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
+            } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.DENY.toString());
             }
         }
     }
@@ -102,28 +105,23 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
             if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL
-                        .toString());
+                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy)
-                        attrPolicy;
+                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
                 if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE
-                            .toString());
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
                 } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types
-                            .ALLOWED.toString());
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALLOWED.toString());
                 }
             } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy)
-                        attrPolicy;
+                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
                 if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE
-                            .toString());
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
                 } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.MAPPED
-                            .toString());
+                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.MAPPED.toString());
                 }
+            } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
+                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.DENY.toString());
             }
         }
     }
@@ -135,8 +133,7 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
         final String policyType = policyBean.getType();
 
         final AbstractRegisteredServiceAttributeReleasePolicy policy;
-        if (StringUtils.equalsIgnoreCase(policyType, AbstractRegisteredServiceAttributeReleasePolicyStrategyBean
-                .Types.ALL.toString())) {
+        if (StringUtils.equalsIgnoreCase(policyType, AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
             policy = new ReturnAllAttributeReleasePolicy();
         } else if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
@@ -144,6 +141,9 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
         } else if (StringUtils.equalsIgnoreCase(policyType,
                 AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
             policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
+        } else if (StringUtils.equalsIgnoreCase(policyType,
+                AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.DENY.toString())) {
+            policy = new DenyAllAttributeReleasePolicy();
         } else {
             policy = new ReturnAllowedAttributeReleasePolicy();
         }
