@@ -70,6 +70,11 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
         this.cipherExecutor = cipherExecutor;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
     /**
      * Set records.
      *

@@ -23,11 +23,6 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
 
     @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
     private EntityManager entityManager;
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
     
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {

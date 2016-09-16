@@ -41,23 +41,7 @@ public class EventsProperties {
         this.jpa = jpa;
     }
 
-    public static class Jpa {
-
-        private Database database = new Database();
-
-        public Database getDatabase() {
-            return database;
-        }
-
-        public void setDatabase(final Database database) {
-            this.database = database;
-        }
-
-        public static class Database extends AbstractJpaProperties {
-            public Database() {
-                super.setUrl("jdbc:hsqldb:mem:cas-events");
-            }
-        }
+    public static class Jpa extends AbstractJpaProperties {
     }
 
     public static class Mongodb {

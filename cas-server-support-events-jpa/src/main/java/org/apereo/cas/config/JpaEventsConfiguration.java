@@ -45,7 +45,7 @@ public class JpaEventsConfiguration {
     @RefreshScope
     @Bean
     public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(casProperties.getEvents().getJpa().getDatabase());
+        return Beans.newHickariDataSource(casProperties.getEvents().getJpa());
     }
     
     public String[] jpaEventPackagesToScan() {
@@ -62,7 +62,7 @@ public class JpaEventsConfiguration {
                                 "jpaEventRegistryContext",
                                 jpaEventPackagesToScan(),
                                 dataSourceEvent()),
-                        casProperties.getEvents().getJpa().getDatabase());
+                        casProperties.getEvents().getJpa());
 
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;

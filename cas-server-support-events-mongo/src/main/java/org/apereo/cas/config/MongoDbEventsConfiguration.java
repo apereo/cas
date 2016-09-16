@@ -28,33 +28,21 @@ public class MongoDbEventsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Persistence exception translation post processor persistence exception translation post processor.
-     *
-     * @return the persistence exception translation post processor
-     */
+
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-    /**
-     * Mongo events template mongo template.
-     *
-     * @return the mongo template
-     */
+
     @RefreshScope
     @Bean
     public MongoTemplate mongoEventsTemplate() {
         return new MongoTemplate(mongoAuthNEventsDbFactory());
     }
 
-    /**
-     * Mongo auth n events db factory simple mongo db factory.
-     *
-     * @return the simple mongo db factory
-     */
+
     @RefreshScope
     @Bean
     public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
