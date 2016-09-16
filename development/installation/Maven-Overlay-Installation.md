@@ -13,7 +13,7 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 
 WAR overlay projects are provided for reference and study.
 
-<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch. You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name] to switch if necessary.</p></div>
+<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch. You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
 ## Gradle
 
