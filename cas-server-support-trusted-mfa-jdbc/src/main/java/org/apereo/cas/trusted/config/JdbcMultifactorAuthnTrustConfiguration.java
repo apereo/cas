@@ -1,10 +1,11 @@
-package org.apereo.cas.config;
+package org.apereo.cas.trusted.config;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,64 +23,68 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
- * This is {@link GoogleAuthentiacatorJpaConfiguration}.
+ * This is {@link JdbcMultifactorAuthnTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-@Configuration("googleAuthentiacatorJpaConfiguration")
+@Configuration("jdbcMultifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class GoogleAuthentiacatorJpaConfiguration {
-
+public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("mfaTrustCipherExecutor")
+    private CipherExecutor<String, String> mfaTrustCipherExecutor;
     
     @RefreshScope
     @Bean
-    public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
+    public HibernateJpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
         return Beans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @RefreshScope
     @Bean
-    public DataSource dataSourceEvent() {
-        return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+    public DataSource dataSourceMfaTrustedAuthn() {
+        return Beans.newHickariDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
     }
-    
+
     @Bean
-    public String[] jpaEventPackagesToScan() {
-        return new String[]{"org.apereo.cas.adaptors.gauth"};
+    public String[] jpaMfaTrustedAuthnPackagesToScan() {
+        return new String[]{"org.apereo.cas.trusted.authentication.api"};
     }
-    
+
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean googleAuthenticatorEntityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
                 Beans.newEntityManagerFactoryBean(
                         new JpaConfigDataHolder(
-                                jpaEventVendorAdapter(),
-                                "jpaGoogleAuthenticatorContext",
-                                jpaEventPackagesToScan(),
-                                dataSourceEvent()),
-                        casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+                                jpaMfaTrustedAuthnVendorAdapter(),
+                                "jpaMfaTrustedAuthnContext",
+                                jpaMfaTrustedAuthnPackagesToScan(),
+                                dataSourceMfaTrustedAuthn()),
+                        casProperties.getAuthn().getMfa().getTrusted().getJpa());
 
         bean.getJpaPropertyMap().put("hibernate.enable_lazy_load_no_trans", Boolean.TRUE);
         return bean;
     }
-    
+
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerGoogleAuthenticator(
-            @Qualifier("googleAuthenticatorEntityManagerFactory") final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerMfaAuthnTrust(
+            @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
 
-
     @Bean
-    public ICredentialRepository googleAuthenticatorAccountRegistry() {
-        return new JpaGoogleAuthenticatorAccountRegistry();
+    public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
+        final JpaMultifactorAuthenticationTrustStorage m = new JpaMultifactorAuthenticationTrustStorage();
+        m.setCipherExecutor(this.mfaTrustCipherExecutor);
+        return m;
     }
 }

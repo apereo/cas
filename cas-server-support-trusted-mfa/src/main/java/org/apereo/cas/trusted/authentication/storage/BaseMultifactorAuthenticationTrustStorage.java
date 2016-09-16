@@ -1,11 +1,15 @@
-package org.apereo.cas.trusted.authentication.impl;
+package org.apereo.cas.trusted.authentication.storage;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -16,7 +20,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@EnableTransactionManagement(proxyTargetClass = true)
+@Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private CipherExecutor<String, String> cipherExecutor;
 
@@ -24,6 +31,8 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
+        logger.debug("Stored authentication trust record for {}", record);
+        record.setKey(generateKey(record));
         return setInternal(record);
     }
 

@@ -475,7 +475,18 @@ public class MultifactorAuthenticationProperties {
         private boolean deviceRegistrationEnabled = true;
 
         private long expiration = 30;
+        
         private TimeUnit timeUnit = TimeUnit.DAYS;
+
+        private Jpa jpa = new Jpa();
+
+        public Jpa getJpa() {
+            return jpa;
+        }
+
+        public void setJpa(final Jpa jpa) {
+            this.jpa = jpa;
+        }
 
         public long getExpiration() {
             return expiration;
@@ -524,14 +535,16 @@ public class MultifactorAuthenticationProperties {
         public void setCipherEnabled(final boolean cipherEnabled) {
             this.cipherEnabled = cipherEnabled;
         }
-
-
+        
         public boolean isDeviceRegistrationEnabled() {
             return deviceRegistrationEnabled;
         }
 
         public void setDeviceRegistrationEnabled(final boolean deviceRegistrationEnabled) {
             this.deviceRegistrationEnabled = deviceRegistrationEnabled;
+        }
+        
+        public static class Jpa extends AbstractJpaProperties {
         }
     }
     

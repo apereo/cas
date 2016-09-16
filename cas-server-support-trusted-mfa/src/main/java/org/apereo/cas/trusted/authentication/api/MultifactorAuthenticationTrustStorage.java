@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.authentication;
+package org.apereo.cas.trusted.authentication.api;
 
 import java.time.LocalDate;
 import java.util.Set;

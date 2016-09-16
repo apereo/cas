@@ -1,4 +1,4 @@
-package org.apereo.cas.trusted.authentication;
+package org.apereo.cas.trusted.authentication.api;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,19 +26,19 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String principal;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String geography;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(length = Integer.MAX_VALUE, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDate date;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String key;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String name;
 
     public String getKey() {
