@@ -23,8 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
@@ -38,7 +36,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1000;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -56,7 +54,7 @@ public class MultifactorAuthnTrustConfiguration {
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationVerifyTrustAction a = new MultifactorAuthenticationVerifyTrustAction();
         a.setStorage(storage);
-        a.setNumberOfDays(casProperties.getAuthn().getMfa().getTrusted().getValidNumberOfDays());
+        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
         return a;
     }
 
@@ -68,18 +66,18 @@ public class MultifactorAuthnTrustConfiguration {
                 .initialCapacity(INITIAL_CACHE_SIZE)
                 .maximumSize(MAX_CACHE_SIZE)
                 .recordStats()
-                .refreshAfterWrite(1, TimeUnit.DAYS)
-                .expireAfterWrite(casProperties.getAuthn().getMfa().getTrusted().getValidNumberOfDays(), TimeUnit.DAYS)
+                .expireAfterWrite(casProperties.getAuthn().getMfa().getTrusted().getExpiration(),
+                        casProperties.getAuthn().getMfa().getTrusted().getTimeUnit())
                 .build(new CacheLoader<String, MultifactorAuthenticationTrustRecord>() {
                     @Override
                     public MultifactorAuthenticationTrustRecord load(final String s) throws Exception {
                         LOGGER.error("Load operation of the cache is not supported.");
                         return null;
-                    }});
-        final InMemoryMultifactorAuthenticationTrustStorage m = 
-                new InMemoryMultifactorAuthenticationTrustStorage(storage);
+                    }
+                });
+
+        final InMemoryMultifactorAuthenticationTrustStorage m = new InMemoryMultifactorAuthenticationTrustStorage(storage);
         m.setCipherExecutor(mfaTrustCipherExecutor());
-        m.setNumberOfDays(casProperties.getAuthn().getMfa().getTrusted().getValidNumberOfDays());
         return m;
     }
 

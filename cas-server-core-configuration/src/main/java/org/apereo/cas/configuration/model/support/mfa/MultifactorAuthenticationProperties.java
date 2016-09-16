@@ -2,8 +2,10 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration properties class for cas.mfa.
@@ -472,8 +474,25 @@ public class MultifactorAuthenticationProperties {
         private boolean cipherEnabled = true;
 
         private boolean deviceRegistrationEnabled = true;
-        
-        private long validNumberOfDays = 30;
+
+        private long expiration = 30;
+        private TimeUnit timeUnit = TimeUnit.DAYS;
+
+        public long getExpiration() {
+            return expiration;
+        }
+
+        public void setExpiration(final long expiration) {
+            this.expiration = expiration;
+        }
+
+        public TimeUnit getTimeUnit() {
+            return timeUnit;
+        }
+
+        public void setTimeUnit(final TimeUnit timeUnit) {
+            this.timeUnit = timeUnit;
+        }
 
         public String getAuthenticationContextAttribute() {
             return authenticationContextAttribute;
@@ -507,13 +526,6 @@ public class MultifactorAuthenticationProperties {
             this.cipherEnabled = cipherEnabled;
         }
 
-        public long getValidNumberOfDays() {
-            return validNumberOfDays;
-        }
-
-        public void setValidNumberOfDays(final long validNumberOfDays) {
-            this.validNumberOfDays = validNumberOfDays;
-        }
 
         public boolean isDeviceRegistrationEnabled() {
             return deviceRegistrationEnabled;

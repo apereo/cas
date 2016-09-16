@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.authentication;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.LocalDate;
 
@@ -94,7 +95,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("principal", principal)
                 .append("geography", geography)
                 .append("date", date)
