@@ -21,7 +21,7 @@ containing metadata that drives a number of CAS behaviors:
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data. The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
 
-The Services Management web application is a standalone application that helps one manage service registrations and 
+The Services Management web application is a standalone application that helps one manage service registrations and
 entries via a customizable user interface. The management web application *MUST* share the same registry configuration as
 the CAS server itself so the entire system can load the same services data. To learn more about the management webapp,
 [please see this guide](Installing-ServicesMgmt-Webapp.html).
@@ -32,7 +32,7 @@ Registered services present the following metadata:
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
+| `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`. This **MUST** be a valid numeric value.
 | `name`                            | Required name (255 characters or less).
 | `description`                     | Optional free-text description of the service. (255 characters or less)
 | `logo`                              | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name.  
@@ -91,5 +91,4 @@ Registered services present the following metadata:
 
 ### Couchbase
 
-[See this guide](Couchbase-Service-Management.htmll) for more info please. 
-
+[See this guide](Couchbase-Service-Management.htmll) for more info please.
