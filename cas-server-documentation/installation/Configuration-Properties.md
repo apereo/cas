@@ -1168,10 +1168,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
-# cas.authn.mfa.deviceRegistrationEnabled=true
 ```
 
-## Multifactor Trusted Device/Browser
+### Multifactor Trusted Device/Browser
 
 To learn more about this topic, [please review this guide](Multifactor-TrustedDevice-Authentication.html).
 
@@ -1180,7 +1179,14 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.encryptionKey=
 # cas.authn.mfa.trusted.signingKey=
 # cas.authn.mfa.trusted.cipherEnabled=true
-# cas.authn.mfa.trusted.validNumberOfDays=30
+# cas.authn.mfa.trusted.deviceRegistrationEnabled=true
+```
+
+### Memory Storage
+
+```properties
+# cas.authn.mfa.trusted.memory.expiration=30
+# cas.authn.mfa.trusted.memory.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 ```
 
 ### Google Authenticator

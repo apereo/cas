@@ -13,6 +13,7 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -34,6 +35,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apereo.inspektr.common.spi.PrincipalResolver.UNKNOWN_USER;
+
 /**
  * Common utilities for the web tier.
  *
@@ -53,9 +56,7 @@ public final class WebUtils {
     public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-
-    private static final String UNKNOWN_USER = "audit:unknown";
-
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -377,7 +378,7 @@ public final class WebUtils {
                 }
             }
         }
-        return UNKNOWN_USER;
+        return PrincipalResolver.UNKNOWN_USER;
     }
 
     /**

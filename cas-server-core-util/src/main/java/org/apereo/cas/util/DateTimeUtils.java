@@ -10,8 +10,12 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
  * @author Timur Duehr timur.duehr@nccgroup.trust
@@ -178,5 +182,70 @@ public final class DateTimeUtils {
     @Deprecated
     private static Timestamp timestampOf(final Instant time) {
         return Timestamp.from(time);
+    }
+
+    /**
+     * To time unit time unit.
+     *
+     * @param tu the tu
+     * @return the time unit
+     * @deprecated Java 8 transition utility method
+     */
+    @Deprecated
+    public static TimeUnit toTimeUnit(final ChronoUnit tu) {
+        if (tu == null) {
+            return null;
+        }
+        switch (tu) {
+            case DAYS:
+                return TimeUnit.DAYS;
+            case HOURS:
+                return TimeUnit.HOURS;
+            case MINUTES:
+                return TimeUnit.MINUTES;
+            case SECONDS:
+                return TimeUnit.SECONDS;
+            case MICROS:
+                return TimeUnit.MICROSECONDS;
+            case MILLIS:
+                return TimeUnit.MILLISECONDS;
+            case NANOS:
+                return TimeUnit.NANOSECONDS;
+            default:
+                //TODO support the rest
+                throw new UnsupportedOperationException("Man, use a real temporal unit");
+        }
+    }
+
+    /**
+     * To chrono unit
+     *
+     * @param tu the tu
+     * @return the chrono unit
+     * @deprecated Java 8 transition utility method
+     */
+    @Deprecated
+    public static ChronoUnit toChronoUnit(final TimeUnit tu) {
+        if (tu == null) {
+            return null;
+        }
+        switch (tu) {
+            case DAYS:
+                return ChronoUnit.DAYS;
+            case HOURS:
+                return ChronoUnit.HOURS;
+            case MINUTES:
+                return ChronoUnit.MINUTES;
+            case SECONDS:
+                return ChronoUnit.SECONDS;
+            case MICROSECONDS:
+                return ChronoUnit.MICROS;
+            case MILLISECONDS:
+                return ChronoUnit.MILLIS;
+            case NANOSECONDS:
+                return ChronoUnit.NANOS;
+            default:
+                return null;
+        }
     }
 }

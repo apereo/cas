@@ -1,9 +1,12 @@
 package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalUnit;
 import java.util.Set;
 
 /**
@@ -28,7 +32,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
     
     private MultifactorAuthenticationTrustStorage storage;
 
-    private long numberOfDays;
+    private MultifactorAuthenticationProperties.Trusted trustedProperties;
     
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -38,7 +42,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             return no();
         }
         final String principal = c.getPrincipal().getId();
-        final LocalDate onOrAfter = LocalDate.now().minusDays(this.numberOfDays);
+        final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
+                DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
         LOGGER.warn("Retrieving trusted authentication records for {} that are on/after {}", principal, onOrAfter);
         final Set<MultifactorAuthenticationTrustRecord> results = storage.get(principal, onOrAfter);
         if (results.isEmpty()) {
@@ -64,7 +69,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         this.storage = storage;
     }
 
-    public void setNumberOfDays(final long numberOfDays) {
-        this.numberOfDays = numberOfDays;
+    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
+        this.trustedProperties = trustedProperties;
     }
 }

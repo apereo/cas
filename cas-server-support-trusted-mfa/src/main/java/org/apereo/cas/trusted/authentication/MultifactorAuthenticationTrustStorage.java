@@ -10,7 +10,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 public interface MultifactorAuthenticationTrustStorage {
-  
+
     /**
      * Get record.
      *
@@ -32,6 +32,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * Set trusted record.
      *
      * @param record the record
+     * @return the multifactor authentication trust record
      */
-    void set(MultifactorAuthenticationTrustRecord record);
+    MultifactorAuthenticationTrustRecord set(MultifactorAuthenticationTrustRecord record);
 }
