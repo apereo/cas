@@ -308,7 +308,7 @@ $(function () {
         formattedVersion = "";
     }
     hideDevelopmentVersionWarning();
-    document.title = $("h1").first().text() + formattedVersion;
+    //document.title = $("h1").first().text() + formattedVersion;
 
     $('[data-toggle=offcanvas]').click(function () {
         $(this).toggleClass('visible-xs-up text-center');
