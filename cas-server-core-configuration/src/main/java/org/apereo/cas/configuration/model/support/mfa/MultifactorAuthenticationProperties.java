@@ -478,9 +478,19 @@ public class MultifactorAuthenticationProperties {
         
         private TimeUnit timeUnit = TimeUnit.DAYS;
 
+        private Rest rest = new Rest();
+        
         private Jpa jpa = new Jpa();
 
         private Mongodb mongodb = new Mongodb();
+
+        public Rest getRest() {
+            return rest;
+        }
+
+        public void setRest(final Rest rest) {
+            this.rest = rest;
+        }
 
         public Mongodb getMongodb() {
             return mongodb;
@@ -552,6 +562,18 @@ public class MultifactorAuthenticationProperties {
 
         public void setDeviceRegistrationEnabled(final boolean deviceRegistrationEnabled) {
             this.deviceRegistrationEnabled = deviceRegistrationEnabled;
+        }
+        
+        public static class Rest {
+            private String endpoint;
+
+            public String getEndpoint() {
+                return endpoint;
+            }
+
+            public void setEndpoint(final String endpoint) {
+                this.endpoint = endpoint;
+            }
         }
         
         public static class Jpa extends AbstractJpaProperties {

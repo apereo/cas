@@ -57,6 +57,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
         }
     }
 
+    @RefreshScope
     @Bean
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         final MongoDbMultifactorAuthenticationTrustStorage m = 
