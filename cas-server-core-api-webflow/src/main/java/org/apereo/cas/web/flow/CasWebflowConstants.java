@@ -13,9 +13,19 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_SUCCESS = "success";
 
     /**
-     * The state state 'success'.
+     * The state id 'success'.
      */
     String STATE_ID_SUCCESS = "success";
+
+    /**
+     * The state id 'verifyTrustedDevice'.
+     */
+    String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
+    
+    /**
+     * The state id 'registerDevice'.
+     */
+    String STATE_ID_REGISTER_DEVICE = "registerDevice";
 
     /**
      * The transition state 'realSubmit'.

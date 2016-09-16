@@ -523,8 +523,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         final String targetStateId = transition.getTargetStateId();
-        transition.setTargetStateResolver(new DefaultTargetStateResolver("verifyTrusted"));
-        final ActionState verifyAction = createActionState(flow, "verifyTrusted", createEvaluateAction("mfaVerifyTrustAction"));
+        transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
+        final ActionState verifyAction = createActionState(flow, CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE, 
+                createEvaluateAction("mfaVerifyTrustAction"));
         createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_NO, targetStateId);
 
@@ -532,8 +533,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         final Transition success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         final String successTarget = success.getTargetStateId();
-        success.setTargetStateResolver(new DefaultTargetStateResolver("registerDevice"));
-        final ViewState viewRegister = createViewState(flow, "registerDevice", "registerTrustedDevice");
+        success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_REGISTER_DEVICE));
+        final ViewState viewRegister = createViewState(flow, CasWebflowConstants.STATE_ID_REGISTER_DEVICE, "casMfaRegisterDeviceView");
         viewRegister.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, successTarget));
         
         //set the trust action
