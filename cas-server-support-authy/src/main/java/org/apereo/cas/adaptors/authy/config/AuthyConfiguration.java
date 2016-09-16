@@ -225,6 +225,7 @@ public class AuthyConfiguration {
             r.setFlowDefinitionRegistry(authyAuthenticatorFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
+            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
             return r;
         }
     }

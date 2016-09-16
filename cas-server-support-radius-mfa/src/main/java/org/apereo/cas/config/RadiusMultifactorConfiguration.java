@@ -240,6 +240,7 @@ public class RadiusMultifactorConfiguration {
             r.setFlowDefinitionRegistry(radiusFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
+            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
             return r;
         }
     }

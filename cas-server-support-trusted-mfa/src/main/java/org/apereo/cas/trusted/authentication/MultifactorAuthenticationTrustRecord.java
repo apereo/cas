@@ -17,6 +17,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String geography;
     private LocalDate date;
     private String key;
+    private String name;
 
     public String getKey() {
         return key;
@@ -68,7 +69,16 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
                 .append(this.geography, rhs.geography)
                 .append(this.date, rhs.date)
                 .append(this.key, rhs.key)
+                .append(this.name, rhs.name)
                 .isEquals();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override
@@ -78,16 +88,17 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
                 .append(geography)
                 .append(date)
                 .append(key)
+                .append(name)
                 .toHashCode();
     }
-
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("principal", principal)
                 .append("geography", geography)
                 .append("date", date)
+                .append("name", name)
                 .toString();
     }
 
@@ -103,6 +114,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         r.setDate(LocalDate.now());
         r.setPrincipal(principal);
         r.setGeography(geography);
+        r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));
         return r;
     }
     

@@ -215,10 +215,15 @@ public final class WebUtils {
      * @param context     the context
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketInScopes(
-            final RequestContext context, final String ticketValue) {
+    public static void putTicketGrantingTicketInScopes(final RequestContext context, final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
+        
+        FlowSession session = context.getFlowExecutionContext().getActiveSession().getParent();
+        while (session != null) {
+            putTicketGrantingTicketIntoMap(session.getScope(), ticketValue);
+            session = session.getParent();
+        }
     }
 
     /**
@@ -558,7 +563,7 @@ public final class WebUtils {
     public static void putStaticAuthenticationIntoFlowScope(final RequestContext context, final Object value) {
         context.getFlowScope().put("staticAuthentication", value);
     }
-    
+
     /**
      * Put static authentication into flow scope.
      *
@@ -568,7 +573,7 @@ public final class WebUtils {
     public static void putPasswordManagementEnabled(final RequestContext context, final Boolean value) {
         context.getFlowScope().put("passwordManagementEnabled", value);
     }
-    
+
     /**
      * Put tracking id into flow scope.
      *
@@ -617,6 +622,6 @@ public final class WebUtils {
      * @param enabled the enabled
      */
     public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
-        context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled); 
+        context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
     }
 }
