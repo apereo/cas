@@ -272,22 +272,18 @@ function responsiveTables() {
 
 function copyButton() {
     $('div.highlight').each(function() {
-        var btn = '<button class="copy-button hidden-md-down">Copy</button>';
+        var btn = '<button class="copy-button hidden-md-down fa fa-clipboard" />';
         $(this).append( btn );
     });
 }
 var clipboard = new Clipboard('.copy-button', {
     target: function(trigger) {
-        var code = $(trigger).prev('table').find('td.code pre')[0];//.text();//[0].innerHTML;
+        var code = $(trigger).prev('table').find('td.code pre')[0];
         return code;
     }
 });
 clipboard.on('success', function(e) {
     e.clearSelection();
-    e.trigger.textContent = 'Copied!';
-    window.setTimeout(function() {
-        e.trigger.textContent = 'Copy';
-    }, 2000);
 });
 
 $(function () {
