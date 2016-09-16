@@ -2,8 +2,6 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 import java.util.stream.Collectors;

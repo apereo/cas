@@ -25,8 +25,6 @@ import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
 
-import javax.transaction.TransactionManager;
-
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
