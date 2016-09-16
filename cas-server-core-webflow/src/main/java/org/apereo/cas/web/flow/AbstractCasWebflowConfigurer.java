@@ -92,7 +92,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @PostConstruct
     @Override
     public void initialize() {
@@ -190,10 +190,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
         final ParserContext ctx = new FluentParserContext();
-        final Expression action = this.flowBuilderServices.getExpressionParser()
-                .parseExpression(expression, ctx);
+        final Expression action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         final EvaluateAction newAction = new EvaluateAction(action, null);
-
         logger.debug("Created evaluate action for expression {}", action.getExpressionString());
         return newAction;
     }
@@ -429,7 +427,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
         }
     }
-    
+
     /**
      * Create mapper to subflow state.
      *
@@ -508,7 +506,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                 .TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         createTransitionForState(state, subflowId, subflowId);
     }
-        
+
     public void setLogoutFlowDefinitionRegistry(final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
     }
@@ -580,5 +578,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Field field = ReflectionUtils.findField(state.getViewFactory().getClass(), "binderConfiguration");
         ReflectionUtils.makeAccessible(field);
         return (BinderConfiguration) ReflectionUtils.getField(field, state.getViewFactory());
+    }
+
+    /**
+     * Gets expression string from action.
+     *
+     * @param act the act
+     * @return the expression string from action
+     */
+    protected Expression getExpressionStringFromAction(final EvaluateAction act) {
+        final Field field = ReflectionUtils.findField(act.getClass(), "expression");
+        ReflectionUtils.makeAccessible(field);
+        return (Expression) ReflectionUtils.getField(field, act);
     }
 }

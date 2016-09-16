@@ -104,21 +104,21 @@ public class CasCoreAuditConfiguration {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
-        map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
 
         final AuditActionResolver defResolver = new DefaultAuditActionResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
-        
+
         final AuditActionResolver cResolver = ticketCreationActionResolver();
         map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);
         map.put("GRANT_PROXY_TICKET_RESOLVER", cResolver);
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
-        
+        map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
+
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
-        
+
         return map;
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.trusted.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustStorage;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -18,6 +19,13 @@ import java.util.Set;
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
     
     private CipherExecutor<String, String> cipherExecutor;
+
+    @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
+            resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Override
+    public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
+        return setInternal(record);
+    }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
@@ -52,4 +60,12 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
+
+    /**
+     * Set records.
+     *
+     * @param record the record
+     * @return the record
+     */
+    protected abstract MultifactorAuthenticationTrustRecord setInternal(MultifactorAuthenticationTrustRecord record);
 }
