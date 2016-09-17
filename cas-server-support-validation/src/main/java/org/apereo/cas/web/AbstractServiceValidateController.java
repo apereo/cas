@@ -283,7 +283,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param request the request
      * @param serviceTicketId the service ticket id
      * @param assertion the assertion
-     * @return the boolean
+     * @return true/false
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
 

@@ -159,7 +159,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * Delete a single ticket instance from the store.
      *
      * @param ticketId the ticket id
-     * @return the boolean
+     * @return true/false
      */
     public boolean deleteSingleTicket(final Ticket ticketId) {
         return deleteSingleTicket(ticketId.getId());
@@ -169,9 +169,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * Delete a single ticket instance from the store.
      *
      * @param ticketId the ticket id
-     * @return the boolean
+     * @return true/false
      */
-    public abstract boolean deleteSingleTicket(final String ticketId);
+    public abstract boolean deleteSingleTicket(String ticketId);
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;

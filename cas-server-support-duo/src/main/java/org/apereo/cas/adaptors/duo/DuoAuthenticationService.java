@@ -85,7 +85,7 @@ public class DuoAuthenticationService {
     /**
      * Can ping boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean canPing() {
         try {

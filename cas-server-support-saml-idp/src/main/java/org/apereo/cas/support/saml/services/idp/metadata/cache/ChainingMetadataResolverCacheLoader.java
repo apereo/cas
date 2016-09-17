@@ -184,7 +184,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * Is dynamic metadata query configured ?
      *
      * @param service the service
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isDynamicMetadataQueryConfigured(final SamlRegisteredService service) {
         return service.getMetadataLocation().trim().endsWith("/entities/{0}");

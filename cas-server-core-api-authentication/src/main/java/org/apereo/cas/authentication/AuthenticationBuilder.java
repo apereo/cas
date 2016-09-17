@@ -161,7 +161,7 @@ public interface AuthenticationBuilder extends Serializable {
      *
      * @param name  the name
      * @param value the value
-     * @return the boolean
+     * @return true/false
      */
     boolean hasAttribute(String name, Predicate<Object> value);
 }

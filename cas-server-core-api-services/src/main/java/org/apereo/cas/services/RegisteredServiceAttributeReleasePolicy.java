@@ -16,14 +16,14 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
     /**
      * Is authorized to release credential password?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedToReleaseCredentialPassword();
 
     /**
      * Is authorized to release proxy granting ticket?
      *
-     * @return the boolean
+     * @return true/false
      */
     boolean isAuthorizedToReleaseProxyGrantingTicket();
 

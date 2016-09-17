@@ -218,7 +218,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * To chrono unit
+     * To chrono unit.
      *
      * @param tu the tu
      * @return the chrono unit

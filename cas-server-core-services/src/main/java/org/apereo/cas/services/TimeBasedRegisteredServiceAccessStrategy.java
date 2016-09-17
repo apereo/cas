@@ -117,7 +117,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     /**
      * Does ending time allow service access boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doesEndingTimeAllowServiceAccess() {
         if (this.endingDateTime != null) {
@@ -146,7 +146,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     /**
      * Does starting time allow service access boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     protected boolean doesStartingTimeAllowServiceAccess() {
         if (this.startingDateTime != null) {
