@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -26,10 +27,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+        final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(principal);
+
         final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity(
-                this.endpoint.concat("/").concat(principal),
-                Object[].class);
+        
+        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity = 
+                restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             final Object[] results = responseEntity.getBody();
             return Arrays.stream(results)
@@ -47,5 +50,13 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             return record;
         }
         return null;
+    }
+
+    public static void main(final String[] args) {
+        RestMultifactorAuthenticationTrustStorage r = new RestMultifactorAuthenticationTrustStorage(
+                "http://demo5926981.mockable.io/"
+        );
+        r.setCipherExecutor(new NoOpCipherExecutor());
+        r.get("casuser");
     }
 }
