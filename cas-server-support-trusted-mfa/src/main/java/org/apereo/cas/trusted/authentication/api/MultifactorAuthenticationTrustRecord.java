@@ -44,7 +44,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String name;
-
+    
     public String getKey() {
         return key;
     }
