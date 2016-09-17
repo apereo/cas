@@ -108,7 +108,7 @@ A `GET` request that returns all trusted authentication records that are valid a
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET ${endpointUrl}/[principal]
 ```
 
-Response payload shall conform to the following:
+Response payload may produce a collection of objects that contain:
 
 ```json
 [
