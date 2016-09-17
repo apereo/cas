@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
@@ -157,11 +159,15 @@ public class SamlIdPConfiguration {
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
 
-        c.setFailFastInitialization(casProperties.getAuthn().getSamlIdp().getMetadata().isFailFast());
-        c.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
-        c.setRequireValidMetadata(casProperties.getAuthn().getSamlIdp().getMetadata().isRequireValidMetadata());
+        final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
+        c.setFailFastInitialization(md.isFailFast());
+        c.setMetadataCacheExpirationMinutes(md.getCacheExpirationMinutes());
+        c.setRequireValidMetadata(md.isRequireValidMetadata());
         c.setConfigBean(this.openSamlConfigBean);
         c.setHttpClient(this.httpClient);
+        c.setBasicAuthnUsername(md.getBasicAuthnUsername());
+        c.setBasicAuthnPassword(md.getBasicAuthnPassword());
+        c.setSupportedContentTypes(md.getSupportedContentTypes());
         return c;
     }
 

@@ -1333,6 +1333,10 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 
+# cas.authn.samlIdp.metadata.basicAuthnUsername=
+# cas.authn.samlIdp.metadata.basicAuthnPassword=
+# cas.authn.samlIdp.metadata.supportedContentTypes=
+
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
