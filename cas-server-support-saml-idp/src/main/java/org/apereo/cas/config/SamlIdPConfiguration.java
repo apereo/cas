@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
