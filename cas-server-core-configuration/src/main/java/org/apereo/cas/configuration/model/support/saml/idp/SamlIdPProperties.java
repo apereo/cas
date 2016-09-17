@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SamlIdPProperties}.
@@ -73,6 +75,9 @@ public class SamlIdPProperties {
         private long cacheExpirationMinutes = 30;
         private File location = new File("/etc/cas/saml");
         private String privateKeyAlgName = "RSA";
+        private String basicAuthnUsername;
+        private String basicAuthnPassword;
+        private List<String> supportedContentTypes = new ArrayList<>();
         
         public boolean isFailFast() {
             return failFast;
@@ -121,8 +126,7 @@ public class SamlIdPProperties {
         public void setPrivateKeyAlgName(final String privateKeyAlgName) {
             this.privateKeyAlgName = privateKeyAlgName;
         }
-
-
+        
         public File getEncryptionCertFile() {
             return new File(getLocation(), "/idp-encryption.crt");
         }
@@ -130,7 +134,30 @@ public class SamlIdPProperties {
         public File getEncryptionKeyFile() {
             return new File(getLocation(), "/idp-encryption.key");
         }
-        
+
+        public String getBasicAuthnUsername() {
+            return basicAuthnUsername;
+        }
+
+        public void setBasicAuthnUsername(final String basicAuthnUsername) {
+            this.basicAuthnUsername = basicAuthnUsername;
+        }
+
+        public String getBasicAuthnPassword() {
+            return basicAuthnPassword;
+        }
+
+        public void setBasicAuthnPassword(final String basicAuthnPassword) {
+            this.basicAuthnPassword = basicAuthnPassword;
+        }
+
+        public List<String> getSupportedContentTypes() {
+            return supportedContentTypes;
+        }
+
+        public void setSupportedContentTypes(final List<String> supportedContentTypes) {
+            this.supportedContentTypes = supportedContentTypes;
+        }
     }
     
     public static class Response {

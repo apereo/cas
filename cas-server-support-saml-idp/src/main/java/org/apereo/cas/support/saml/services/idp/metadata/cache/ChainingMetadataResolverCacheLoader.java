@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
@@ -72,6 +73,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     
     private boolean requireValidMetadata = true;
 
+    private String basicAuthnUsername;
+    private String basicAuthnPassword;
+    private List<String> supportedContentTypes = new ArrayList<>();
+    
     /**
      * Instantiates a new Chaining metadata resolver cache loader.
      */
@@ -117,9 +122,19 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     protected void resolveMetadataDynamically(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
             throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
                 new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
         resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES));
+        resolver.setRequireValidMetadata(requireValidMetadata);
+
+        if (StringUtils.isNotBlank(this.basicAuthnPassword) && StringUtils.isNotBlank(this.basicAuthnUsername)) {
+            resolver.setBasicCredentials(new UsernamePasswordCredentials(this.basicAuthnUsername, this.basicAuthnPassword));
+        }
+        if (!this.supportedContentTypes.isEmpty()) {
+            resolver.setSupportedContentTypes(supportedContentTypes);
+        }
+        
         resolver.setRequestURLBuilder(new Function<String, String>() {
             @Nullable
             @Override
@@ -166,7 +181,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     }
 
     /**
-     * Is dynamic metadata query configured boolean.
+     * Is dynamic metadata query configured ?
      *
      * @param service the service
      * @return the boolean
@@ -299,6 +314,18 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+    
+    public void setBasicAuthnUsername(final String basicAuthnUsername) {
+        this.basicAuthnUsername = basicAuthnUsername;
+    }
+
+    public void setBasicAuthnPassword(final String basicAuthnPassword) {
+        this.basicAuthnPassword = basicAuthnPassword;
+    }
+
+    public void setSupportedContentTypes(final List<String> supportedContentTypes) {
+        this.supportedContentTypes = supportedContentTypes;
     }
 }
 

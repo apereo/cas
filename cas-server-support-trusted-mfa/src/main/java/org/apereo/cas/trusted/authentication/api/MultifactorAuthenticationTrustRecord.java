@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -35,6 +36,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String geography;
 
     @Column(length = Integer.MAX_VALUE, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
@@ -74,7 +76,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     public void setDate(final LocalDate date) {
         this.date = date;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -114,7 +116,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
                 .append(name)
                 .toHashCode();
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
@@ -140,7 +142,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));
         return r;
     }
-    
+
     @Override
     public int compareTo(final MultifactorAuthenticationTrustRecord o) {
         return this.date.compareTo(o.getDate());
