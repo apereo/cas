@@ -12,12 +12,12 @@
         <script type="text/javascript" th:inline="javascript">
             var urls = {
                 destroy: {
-                    all:  /*[[@{/status/ssosessions/destroySsoSessions}]]*/ ,
+                    all:  /*[[@{/status/ssosessions/destroySsoSessions}]]*/,
                     single: /*[[@{/status/ssosessions/destroySsoSession}]]*/
                 },
                 getSessions: /*[[@{/status/ssosessions/getSsoSessions}]]*/
             };
-            
+
             function jqueryReady() {
                 head.load(
                         // Bootstrap Datables CSS
@@ -39,14 +39,10 @@
         </script>
 
         <div class="ssoSessions">
-            <div id="loadingMessage"><h3 th:text="#{cas.ssosessions.loading}" /></div>
+            <div id="loadingMessage"><h3 th:text="#{cas.ssosessions.loading}"/></div>
 
             <div id="no-cas-sessions">
-                <h2 th:text="#{cas.ssosessions.nosessionsfound}" />
-                <div>
-                    <input class="btn btn-success" type="button" onclick="location.reload();" 
-                           th:value="#{cas.ssosessions.button.refresh}" />
-                </div>
+                <h2 th:text="#{cas.ssosessions.nosessionsfound}"/>
             </div>
 
             <div id="cas-sessions">
@@ -54,8 +50,8 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"/> 
-                            <span th:text="#{cas.ssosessions.report.pagetitle}" />
+                        <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"/>
+                            <span th:text="#{cas.ssosessions.report.pagetitle}"/>
                         </h4>
                     </div>
                     <div class="panel-body">
@@ -70,7 +66,7 @@
                                                 </div>
                                                 <div class="col-xs-9 text-right">
                                                     <div class="huge" id="totalUsers">0</div>
-                                                    <div th:text="#{cas.ssosessions.report.panel.totalactiveprincipals}" />
+                                                    <div th:text="#{cas.ssosessions.report.panel.totalactiveprincipals}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -85,7 +81,7 @@
                                                 </div>
                                                 <div class="col-xs-9 text-right">
                                                     <div class="huge" id="totalUsageSessions">0</div>
-                                                    <div th:text="#{cas.ssosessions.report.panel.usagecountsessions}" />
+                                                    <div th:text="#{cas.ssosessions.report.panel.usagecountsessions}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -100,7 +96,7 @@
                                                 </div>
                                                 <div class="col-xs-9 text-right">
                                                     <div class="huge" id="totalTGTs">0</div>
-                                                    <div th:text="#{cas.ssosessions.report.panel.totalssosessions}" />
+                                                    <div th:text="#{cas.ssosessions.report.panel.totalssosessions}"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -112,21 +108,21 @@
                         <div class="container-fluid">
                             <div id="filterButtons" class="btn-group btn-group-sm pull-right" data-toggle="buttons">
                                 <label class="btn btn-default active" data-filter="all">
-                                    <input type="radio" name="options" id="optionAll" autocomplete="off" 
-                                           th:text="#{cas.ssosessions.buttons.filter.all}" /> 
+                                    <input type="radio" name="options" id="optionAll" autocomplete="off"
+                                           th:text="#{cas.ssosessions.buttons.filter.all}"/>
                                 </label>
                                 <label class="btn btn-default" data-filter="proxied">
                                     <input type="radio" name="options" id="optionProxied" autocomplete="off"
-                                           th:text="#{cas.ssosessions.buttons.filter.proxied}" />
+                                           th:text="#{cas.ssosessions.buttons.filter.proxied}"/>
                                 </label>
                                 <label class="btn btn-default" data-filter="non-proxied">
                                     <input type="radio" name="options" id="optionDirect" autocomplete="off"
-                                           th:text="#{cas.ssosessions.buttons.filter.nonproxied}" />
+                                           th:text="#{cas.ssosessions.buttons.filter.nonproxied}"/>
                                 </label>
                             </div>
 
                             <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button" value="ALL"
-                                    th:text="#{cas.ssosessions.buttons.removeall}" />
+                                    th:text="#{cas.ssosessions.buttons.removeall}"/>
 
                         </div>
 
@@ -157,17 +153,15 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <hr />
+                            <hr/>
                         </div>
 
-                        <div id="login">
-                            <input class="btn-submit" type="button" onclick="location.reload();" 
-                                   th:value="#{cas.ssosessions.button.refresh}" />
-                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
+        <div th:replace="fragments/footerButtons"/>
     </div>
 
 </div>
