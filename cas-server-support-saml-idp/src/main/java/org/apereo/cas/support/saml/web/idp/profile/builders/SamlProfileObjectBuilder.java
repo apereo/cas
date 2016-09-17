@@ -32,7 +32,7 @@ public interface SamlProfileObjectBuilder<T extends SAMLObject> {
      * @return the response
      * @throws SamlException the exception
      */
-    T build(final AuthnRequest authnRequest, final HttpServletRequest request,
-            final HttpServletResponse response, final Assertion assertion,
-            final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
+    T build(AuthnRequest authnRequest, HttpServletRequest request,
+            HttpServletResponse response, Assertion assertion,
+            SamlRegisteredService service, SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
 }

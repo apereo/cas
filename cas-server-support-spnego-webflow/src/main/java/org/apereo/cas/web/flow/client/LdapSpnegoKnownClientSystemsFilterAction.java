@@ -92,7 +92,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * Searches the ldap instance for the attribute value.
      *
      * @param remoteIp the remote ip
-     * @return the boolean
+     * @return true/false
      */
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;

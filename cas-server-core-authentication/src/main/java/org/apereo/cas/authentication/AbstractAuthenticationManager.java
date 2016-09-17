@@ -243,7 +243,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * There SHOULD be a record of each attempted authentication, whether success or failure.
      * @throws AuthenticationException When one or more credentials failed authentication such that security policy was not satisfied.
      */
-    protected abstract AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction)
+    protected abstract AuthenticationBuilder authenticateInternal(AuthenticationTransaction transaction)
             throws AuthenticationException;
 
     /**

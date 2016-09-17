@@ -18,5 +18,5 @@ public interface DigestHashedCredentialRetriever {
      * @return the secret
      * @throws AccountNotFoundException if the account is not found
      */
-    String findCredential(final String uid, final String realm) throws AccountNotFoundException;
+    String findCredential(String uid, String realm) throws AccountNotFoundException;
 }

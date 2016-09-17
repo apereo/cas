@@ -23,7 +23,7 @@ import java.util.Set;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private CipherExecutor<String, String> cipherExecutor;
 

@@ -62,7 +62,7 @@ public interface CentralAuthenticationService {
      * @return the updated ticket
      * @since 5.0.0
      */
-    Ticket updateTicket(final Ticket ticket);
+    Ticket updateTicket(Ticket ticket);
 
     /**
      * Obtains the given ticket by its id
