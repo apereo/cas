@@ -70,7 +70,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     /**
      * Can ping boolean.
      *
-     * @return the boolean
+     * @return true/false
      */
     public boolean canPing() {
         final String uidPsw = getClass().getSimpleName();

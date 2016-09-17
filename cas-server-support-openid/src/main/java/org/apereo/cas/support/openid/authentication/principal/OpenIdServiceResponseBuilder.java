@@ -175,7 +175,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * Is association valid.
      *
      * @param association the association
-     * @return the boolean
+     * @return true/false
      */
     protected boolean isAssociationValid(final Association association) {
         return association != null && !association.hasExpired();

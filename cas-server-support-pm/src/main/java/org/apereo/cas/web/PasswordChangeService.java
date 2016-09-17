@@ -17,5 +17,5 @@ public interface PasswordChangeService {
      * @param bean the bean
      * @return true/false
      */
-    boolean execute(final Credential c, PasswordChangeBean bean);
+    boolean execute(Credential c, PasswordChangeBean bean);
 }

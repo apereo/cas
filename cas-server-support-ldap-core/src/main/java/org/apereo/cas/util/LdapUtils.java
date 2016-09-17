@@ -218,7 +218,7 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param oldPassword       the old password
      * @param newPassword       the new password
-     * @return the boolean
+     * @return true/false
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
                                                          final ConnectionFactory connectionFactory,
@@ -241,7 +241,7 @@ public final class LdapUtils {
      * @param currentDn         the current dn
      * @param connectionFactory the connection factory
      * @param attributes        the attributes
-     * @return the boolean
+     * @return true/false
      */
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
@@ -268,7 +268,7 @@ public final class LdapUtils {
      * @param currentDn         the current dn
      * @param connectionFactory the connection factory
      * @param entry             the entry
-     * @return the boolean
+     * @return true/false
      */
     public static boolean executeModifyOperation(final String currentDn,
                                                  final ConnectionFactory connectionFactory,
@@ -285,7 +285,7 @@ public final class LdapUtils {
      *
      * @param connectionFactory the connection factory
      * @param entry             the entry
-     * @return the boolean
+     * @return true/false
      * @throws LdapException the ldap exception
      */
     public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry)
@@ -307,7 +307,7 @@ public final class LdapUtils {
      *
      * @param connectionFactory the connection factory
      * @param entry             the entry
-     * @return the boolean
+     * @return true/false
      * @throws LdapException the ldap exception
      */
     public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,

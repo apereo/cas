@@ -121,7 +121,7 @@ public class OidcAuthorizationRequestSupport {
      *
      * @param context            the context
      * @param authenticationDate the authentication date
-     * @return the boolean
+     * @return true/false
      */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final ZonedDateTime authenticationDate) {

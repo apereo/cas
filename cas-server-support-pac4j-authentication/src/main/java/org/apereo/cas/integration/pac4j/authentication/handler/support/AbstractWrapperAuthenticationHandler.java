@@ -91,7 +91,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract C convertToPac4jCredentials(final I casCredential) throws GeneralSecurityException,
+    protected abstract C convertToPac4jCredentials(I casCredential) throws GeneralSecurityException,
             PreventedException;
 
     /**
@@ -108,7 +108,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @param credential the credential
      * @return the authenticator
      */
-    protected abstract Authenticator getAuthenticator(final Credential credential);
+    protected abstract Authenticator getAuthenticator(Credential credential);
 
     public ProfileCreator getProfileCreator() {
         return this.profileCreator;

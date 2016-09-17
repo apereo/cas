@@ -160,7 +160,7 @@ public class RadiusMultifactorConfiguration {
     @Bean
     @RefreshScope
     public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
-        final RadiusAuthenticationMetaDataPopulator pop =                new RadiusAuthenticationMetaDataPopulator();
+        final RadiusAuthenticationMetaDataPopulator pop = new RadiusAuthenticationMetaDataPopulator();
 
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(radiusTokenAuthenticationHandler());
