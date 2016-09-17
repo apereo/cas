@@ -6,19 +6,19 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        var logConfigFileLocation = /*[[${logConfigurationFile}]]*/ ;
+        var logConfigFileLocation = /*[[${logConfigurationFile}]]*/;
 
         var urls = {
-            getConfiguration: /*[[@{/status/logging/getConfiguration}]]*/ ,
-            updateLevel: /*[[@{/status/logging/updateLoggerLevel}]]*/  ,
+            getConfiguration: /*[[@{/status/logging/getConfiguration}]]*/,
+            updateLevel: /*[[@{/status/logging/updateLoggerLevel}]]*/,
             logOutput: /*[[@{/logoutput}]]*/
         };
-        
+
         /*]]>*/
     </script>
-    
+
     <script type="text/javascript" th:inline="javascript">
-        
+
         function jqueryReady() {
             head.load(
                     // Bootstrap Datables CSS
@@ -30,9 +30,9 @@
                     "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
                     "//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
                     "//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-                    /*[[@{/js/sockjs.js}]]*/ ,
-                    /*[[@{/js/stomp.js}]]*/ ,
-                    /*[[@{/js/loggingDashboard.js}]]*/ 
+                    /*[[@{/js/sockjs.js}]]*/,
+                    /*[[@{/js/stomp.js}]]*/,
+                    /*[[@{/js/loggingDashboard.js}]]*/
             );
         }
     </script>
@@ -55,14 +55,14 @@
                        onclick="location.reload();" th:value="#{cas.ssosessions.button.refresh}"/>
             </div>
         </div>
-                
+
         <div class="tabsContainer hidden row">
             <div id="alert-container"></div>
             <!-- Nav tabs -->
             <ul id="myTabs" class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#loggersTab" aria-controls="loggersTab" role="tab"
                                                           data-toggle="tab">Loggers</a></li>
-                
+
                 <!--
                 <li role="presentation"><a href="#activeLoggers" aria-controls="activeLoggers" role="tab" data-toggle="tab">Active
                     Loggers</a></li>
@@ -77,10 +77,10 @@
                         <thead>
                         <tr>
                             <th></th>
-                            <th th:text="#{cas.loggingdashboard.logger}" />
-                            <th th:text="#{cas.loggingdashboard.additive}" />
-                            <th th:text="#{cas.loggingdashboard.state}" />
-                            <th th:text="#{cas.loggingdashboard.level}" />
+                            <th th:text="#{cas.loggingdashboard.logger}"/>
+                            <th th:text="#{cas.loggingdashboard.additive}"/>
+                            <th th:text="#{cas.loggingdashboard.state}"/>
+                            <th th:text="#{cas.loggingdashboard.level}"/>
                         </tr>
                         </thead>
                         <tbody>
@@ -97,10 +97,10 @@
                         <thead>
                         <tr>
                             <th></th>
-                            <th th:text="#{cas.loggingdashboard.logger}" />
-                            <th th:text="#{cas.loggingdashboard.additive}" />
-                            <th th:text="#{cas.loggingdashboard.state}" />
-                            <th th:text="#{cas.loggingdashboard.level}" />
+                            <th th:text="#{cas.loggingdashboard.logger}"/>
+                            <th th:text="#{cas.loggingdashboard.additive}"/>
+                            <th th:text="#{cas.loggingdashboard.state}"/>
+                            <th th:text="#{cas.loggingdashboard.level}"/>
                         </tr>
                         </thead>
                         <tbody>
@@ -113,11 +113,12 @@
                     </table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="logOutput">
-                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden" />
+                    <div id="websocketStatus" class="alert alert-info" style="visibility:hidden"/>
                     <textarea id="logoutputarea" rows="20" cols="20"></textarea>
                 </div>
             </div>
         </div>
+        <div th:replace="fragments/footerButtons"/>
     </div>
 
 
