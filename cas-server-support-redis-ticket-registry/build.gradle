@@ -1,0 +1,14 @@
+description = "Apereo CAS Redis Ticket Registry"
+
+dependencies {
+    compile project(":cas-server-core-tickets")
+    compile project(":cas-server-core-services")
+    compile project(":cas-server-core-configuration")
+    compile libraries.springbootredis
+    testCompile libraries.embeddedRedis
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(":cas-server-core-services")
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile project(":cas-server-core-util")
+    testCompile project(":cas-server-core-logout")
+}
