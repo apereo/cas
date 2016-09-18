@@ -37,9 +37,44 @@ public class OAuthProperties {
         this.code = code;
     }
 
-    public static class Code {
-        private int numberOfUses = 1;
-        private long timeToKillInSeconds = 30;
+    private static class OAuthToken {
+        protected Policy policy = new Policy();
+
+        public Policy getPolicy() {
+            return policy;
+        }
+
+        public void setPolicy(final Policy policy) {
+            this.policy = policy;
+        }
+    }
+
+    public static class Code extends OAuthToken {
+        public Code() {
+            policy.setNumberOfUses(1);
+            policy.setMaxTimeToLiveInSeconds(30);
+        }
+    }
+
+    public static class AccessToken extends OAuthToken {
+        public AccessToken() {
+            policy.setTimeToKillInSeconds(7200);
+            policy.setMaxTimeToLiveInSeconds(28800);
+        }
+    }
+
+    public static class RefreshToken extends OAuthToken {
+        public RefreshToken() {
+            policy.setNumberOfUses(100);
+            policy.setTimeToKillInSeconds(604800);
+            policy.setMaxTimeToLiveInSeconds(2592000);
+        }
+    }
+
+    public static class Policy {
+        private int numberOfUses = -1;
+        private long timeToKillInSeconds = -1;
+        private long maxTimeToLiveInSeconds = -1;
 
         public int getNumberOfUses() {
             return numberOfUses;
@@ -56,11 +91,6 @@ public class OAuthProperties {
         public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
-    }
-
-    public static class AccessToken {
-        private long maxTimeToLiveInSeconds = 28800;
-        private long timeToKillInSeconds = 7200;
 
         public long getMaxTimeToLiveInSeconds() {
             return maxTimeToLiveInSeconds;
@@ -68,26 +98,6 @@ public class OAuthProperties {
 
         public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds) {
             this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
-        }
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
-        }
-    }
-
-    public static class RefreshToken {
-        private long timeToKillInSeconds = 2592000;
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
 }

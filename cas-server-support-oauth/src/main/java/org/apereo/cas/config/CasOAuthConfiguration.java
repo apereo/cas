@@ -268,15 +268,16 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private ExpirationPolicy accessTokenExpirationPolicy() {
         return new OAuthAccessTokenExpirationPolicy(
-                casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
-                casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds(),
-                TimeUnit.SECONDS
-        );
+                casProperties.getAuthn().getOauth().getAccessToken().getPolicy().getTimeToKillInSeconds(),
+                casProperties.getAuthn().getOauth().getAccessToken().getPolicy().getMaxTimeToLiveInSeconds(),
+                TimeUnit.SECONDS);
     }
 
     private ExpirationPolicy oAuthCodeExpirationPolicy() {
-        return new OAuthCodeExpirationPolicy(casProperties.getAuthn().getOauth().getCode().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds()));
+        return new OAuthCodeExpirationPolicy(
+                casProperties.getAuthn().getOauth().getCode().getPolicy().getNumberOfUses(),
+                casProperties.getAuthn().getOauth().getCode().getPolicy().getMaxTimeToLiveInSeconds(),
+                TimeUnit.SECONDS);
     }
 
     @Bean
@@ -360,8 +361,10 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
         return new OAuthRefreshTokenExpirationPolicy(
-                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds())
-        );
+                casProperties.getAuthn().getOauth().getRefreshToken().getPolicy().getNumberOfUses(),
+                casProperties.getAuthn().getOauth().getRefreshToken().getPolicy().getTimeToKillInSeconds(),
+                casProperties.getAuthn().getOauth().getRefreshToken().getPolicy().getMaxTimeToLiveInSeconds(),
+                TimeUnit.SECONDS);
     }
 
     @Bean
