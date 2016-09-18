@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -34,6 +35,11 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         }
         
         return Sets.newHashSet();
+    }
+
+    @Override
+    public void expire(final LocalDate onOrBefore) {
+        logger.info("{} does not support expiring trusted authentication records", this.getClass().getSimpleName());
     }
 
     @Override

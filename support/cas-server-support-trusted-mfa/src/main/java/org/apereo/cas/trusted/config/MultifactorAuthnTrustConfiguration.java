@@ -9,6 +9,7 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCiphe
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -102,5 +103,15 @@ public class MultifactorAuthnTrustConfiguration {
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
         return new NoOpCipherExecutor();
+    }
+
+    @ConditionalOnMissingBean(name="mfaTrustStorageCleaner")
+    @Bean
+    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
+            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
+        final MultifactorAuthenticationTrustStorageCleaner c = new MultifactorAuthenticationTrustStorageCleaner();
+        c.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
+        c.setStorage(storage);
+        return c;
     }
 }

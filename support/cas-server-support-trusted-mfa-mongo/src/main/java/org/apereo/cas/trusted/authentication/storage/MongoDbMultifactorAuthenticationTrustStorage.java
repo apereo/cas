@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.collect.Sets;
+import com.mongodb.WriteResult;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -8,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.NoResultException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +61,19 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             this.mongoTemplate.createCollection(this.collectionName);
         }
     }
-    
+
+    @Override
+    public void expire(final LocalDate onOrBefore) {
+        try {
+            final Query query = new Query();
+            query.addCriteria(Criteria.where("date").lte(onOrBefore));
+            final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+            logger.info("Found and removed {} records", res.getN());
+        } catch (final NoResultException e) {
+            logger.info("No trusted authentication records could be found");
+        }
+    }
+
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         final Query query = new Query();

@@ -1223,6 +1223,17 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 ```
 
 
+### Cleaner
+
+A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
+This section controls how that process should behave.
+
+```properties
+# cas.authn.mfa.trusted.cleaner.startDelay=10000
+# cas.authn.mfa.trusted.cleaner.repeatInterval=60000
+# cas.authn.mfa.trusted.cleaner.enabled=true
+```
+
 ### Google Authenticator
 
 To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
