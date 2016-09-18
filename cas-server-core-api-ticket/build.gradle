@@ -1,6 +1,0 @@
-
-description = "Apereo CAS Core Ticket APIs"
-dependencies {
-    compile project(":cas-server-core-api-authentication")
-}
-
