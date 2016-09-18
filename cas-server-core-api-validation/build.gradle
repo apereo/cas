@@ -1,6 +1,0 @@
-
-description = "Apereo CAS Core Validation APIs"
-dependencies {
-    compile project(":cas-server-core-api-authentication")
-}
-
