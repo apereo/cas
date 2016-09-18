@@ -9,7 +9,7 @@ branchVersion="development"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
-       *\.1) 
+       *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
         # Do not deploy javadocs to gh-pages as they are pulled from Maven Central
         # invokeJavadoc=true;
@@ -22,7 +22,7 @@ echo -e "Starting with project documentation...\n"
 if [ "$invokeDoc" == true ]; then
 
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
-  cp -R cas-server-documentation $HOME/docs-latest
+  cp -R docs/cas-server-documentation $HOME/docs-latest
 
 fi
 
@@ -36,7 +36,7 @@ if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Invoking build to generate the project site...\n"
   ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
-  
+
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
 
