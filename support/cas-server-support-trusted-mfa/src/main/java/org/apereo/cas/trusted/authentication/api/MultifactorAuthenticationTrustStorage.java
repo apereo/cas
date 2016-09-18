@@ -12,10 +12,17 @@ import java.util.Set;
 public interface MultifactorAuthenticationTrustStorage {
 
     /**
+     * Expire records that are on/before the provided date.
+     *
+     * @param onOrBefore the on or before
+     */
+    void expire(LocalDate onOrBefore);
+
+    /**
      * Get record.
      *
      * @param principal the principal id
-     * @return the optional
+     * @return the records
      */
     Set<MultifactorAuthenticationTrustRecord> get(String principal);
 

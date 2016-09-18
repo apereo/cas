@@ -482,6 +482,8 @@ public class MultifactorAuthenticationProperties {
         
         private Jpa jpa = new Jpa();
 
+        private Cleaner cleaner = new Cleaner();
+        
         private Mongodb mongodb = new Mongodb();
 
         public Rest getRest() {
@@ -563,7 +565,15 @@ public class MultifactorAuthenticationProperties {
         public void setDeviceRegistrationEnabled(final boolean deviceRegistrationEnabled) {
             this.deviceRegistrationEnabled = deviceRegistrationEnabled;
         }
-        
+
+        public Cleaner getCleaner() {
+            return cleaner;
+        }
+
+        public void setCleaner(final Cleaner cleaner) {
+            this.cleaner = cleaner;
+        }
+
         public static class Rest {
             private String endpoint;
 
@@ -606,6 +616,36 @@ public class MultifactorAuthenticationProperties {
 
             public void setDropCollection(final boolean dropCollection) {
                 this.dropCollection = dropCollection;
+            }
+        }
+
+        public static class Cleaner {
+            private boolean enabled = true;
+            private long startDelay = 10000;
+            private long repeatInterval = 60000;
+            
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(final boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            public long getStartDelay() {
+                return startDelay;
+            }
+
+            public void setStartDelay(final long startDelay) {
+                this.startDelay = startDelay;
+            }
+
+            public long getRepeatInterval() {
+                return repeatInterval;
+            }
+
+            public void setRepeatInterval(final long repeatInterval) {
+                this.repeatInterval = repeatInterval;
             }
         }
     }
