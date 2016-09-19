@@ -29,14 +29,14 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
-implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
+This module has a  configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry
+implementation to retrieve a Hazelcast's map for its distributed tickets storage. Some aspects of hazelcast
 configuration in this auto-configuration mode are controlled by CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Should the more fine-grained configuration need arise, there is an option to use a native Hazelcast configuration XML format
-where all the configuration options for `HazelcastInstance` exposed by Hazelcast are available. In order to trigger this configuration mode,
+where all the configuration options exposed by Hazelcast are available. In order to trigger this configuration mode,
 there are two basic steps required:
 
 * Place native `hazelcast.xml` file containing the custom configuration for Hazelcast Instance into an external filesystem location
@@ -108,9 +108,10 @@ Here's a simple example of `hazelcast.xml` that configures AWS cluster join stra
 ```
 
 For more information on the Hazelcast configuration options available, 
-refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.6/manual/html-single/index.html#hazelcast-configuration)
+refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html#hazelcast-configuration)
 
 ## Logging
+
 To enable additional logging for the registry, configure the log4j configuration file to add the following
 levels:
 
