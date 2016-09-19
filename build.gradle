@@ -401,9 +401,11 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
     
-    compileJava.options.fork = true    
+    compileJava.options.fork = true 
+
+    def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {
-        buildDate = java.time.ZonedDateTime.now()
+        buildDate = currentTime
         jar.manifest {
             attributes("Implementation-Date": project.buildDate)
         }
