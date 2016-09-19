@@ -1170,6 +1170,70 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
 ```
 
+### Multifactor Trusted Device/Browser
+
+To learn more about this topic, [please review this guide](Multifactor-TrustedDevice-Authentication.html).
+
+```properties
+# cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
+# cas.authn.mfa.trusted.encryptionKey=
+# cas.authn.mfa.trusted.signingKey=
+# cas.authn.mfa.trusted.cipherEnabled=true
+# cas.authn.mfa.trusted.deviceRegistrationEnabled=true
+# cas.authn.mfa.trusted.expiration=30
+# cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
+```
+
+### JDBC Storage
+
+```properties
+# cas.authn.mfa.trusted.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
+# cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
+# cas.authn.mfa.trusted.jpa.failFast=true
+# cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.trusted.jpa.leakThreshold=10
+# cas.authn.mfa.trusted.jpa.batchSize=1
+# cas.authn.mfa.trusted.jpa.user=sa
+# cas.authn.mfa.trusted.jpa.ddlAuto=create-drop
+# cas.authn.mfa.trusted.jpa.password=
+# cas.authn.mfa.trusted.jpa.autocommit=false
+# cas.authn.mfa.trusted.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.trusted.jpa.idleTimeout=5000
+
+# cas.authn.mfa.trusted.jpa.pool.suspension=false
+# cas.authn.mfa.trusted.jpa.pool.minSize=6
+# cas.authn.mfa.trusted.jpa.pool.maxSize=18
+# cas.authn.mfa.trusted.jpa.pool.maxIdleTime=1000
+# cas.authn.mfa.trusted.jpa.pool.maxWait=2000
+```
+
+### MongoDb Storage
+
+```properties
+# cas.authn.mfa.trusted.mongodb.clientUri=
+# cas.authn.mfa.trusted.mongodb.dropCollection=false
+# cas.authn.mfa.trusted.mongodb.collection=MongoDbCasTrustedAuthnMfaRepository
+```
+
+### REST Storage
+
+```properties
+# cas.authn.mfa.trusted.rest.endpoint=https://api.example.org/trustedBrowser
+```
+
+
+### Cleaner
+
+A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
+This section controls how that process should behave.
+
+```properties
+# cas.authn.mfa.trusted.cleaner.startDelay=10000
+# cas.authn.mfa.trusted.cleaner.repeatInterval=60000
+# cas.authn.mfa.trusted.cleaner.enabled=true
+```
+
 ### Google Authenticator
 
 To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
@@ -1181,41 +1245,43 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.label=
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
+# cas.authn.mfa.gauth.trustedDeviceEnabled=true
 ```
 
 #### Google Authenticator JPA
 
 ```properties
-# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
-# cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.database.failFast=true
-# cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.gauth.jpa.database.leakThreshold=10
-# cas.authn.mfa.gauth.jpa.database.batchSize=1
-# cas.authn.mfa.gauth.jpa.database.user=sa
-# cas.authn.mfa.gauth.jpa.database.ddlAuto=create-drop
-# cas.authn.mfa.gauth.jpa.database.password=
-# cas.authn.mfa.gauth.jpa.database.autocommit=false
-# cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
+# cas.authn.mfa.gauth.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.isolateInternalQueries=false
+# cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:cas-gauth
+# cas.authn.mfa.gauth.jpa.failFast=true
+# cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.gauth.jpa.leakThreshold=10
+# cas.authn.mfa.gauth.jpa.batchSize=1
+# cas.authn.mfa.gauth.jpa.user=sa
+# cas.authn.mfa.gauth.jpa.ddlAuto=create-drop
+# cas.authn.mfa.gauth.jpa.password=
+# cas.authn.mfa.gauth.jpa.autocommit=false
+# cas.authn.mfa.gauth.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.gauth.jpa.idleTimeout=5000
 
-# cas.authn.mfa.gauth.jpa.database.pool.suspension=false
-# cas.authn.mfa.gauth.jpa.database.pool.minSize=6
-# cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
-# cas.authn.mfa.gauth.jpa.database.pool.maxIdleTime=1000
-# cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
+# cas.authn.mfa.gauth.jpa.pool.suspension=false
+# cas.authn.mfa.gauth.jpa.pool.minSize=6
+# cas.authn.mfa.gauth.jpa.pool.maxSize=18
+# cas.authn.mfa.gauth.jpa.pool.maxIdleTime=1000
+# cas.authn.mfa.gauth.jpa.pool.maxWait=2000
 ```
 
 ### YubiKey
 
 To learn more about this topic, [please review this guide](YubiKey-Authentication.html).
 
-
 ```properties
 # cas.authn.mfa.yubikey.clientId=
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
+# cas.authn.mfa.yubikey.apiUrls=
+# cas.authn.mfa.yubikey.trustedDeviceEnabled=true
 ```
 
 ### Radius OTP
@@ -1226,6 +1292,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
+# cas.authn.mfa.radius.trustedDeviceEnabled=true
 
 # cas.authn.mfa.radius.client.socketTimeout=0
 # cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
@@ -1254,6 +1321,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo.duoApplicationKey=
 # cas.authn.mfa.duo.duoIntegrationKey=
 # cas.authn.mfa.duo.duoApiHost=
+# cas.authn.mfa.duo.trustedDeviceEnabled=true
 ```
 
 ### Authy
@@ -1266,6 +1334,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.phoneAttribute=phone
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.forceVerification=true
+# cas.authn.mfa.authy.trustedDeviceEnabled=true
 ```
 
 ## Authentication Exceptions
@@ -1308,6 +1377,10 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
+
+# cas.authn.samlIdp.metadata.basicAuthnUsername=
+# cas.authn.samlIdp.metadata.basicAuthnPassword=
+# cas.authn.samlIdp.metadata.supportedContentTypes=
 
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
@@ -1860,25 +1933,25 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 Decide how CAS should store authentication events inside a database instance.
 
 ```properties
-# cas.events.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.events.jpa.database.isolateInternalQueries=false
-# cas.events.jpa.database.url=jdbc:hsqldb:mem:cas-events
-# cas.events.jpa.database.failFast=true
-# cas.events.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
-# cas.events.jpa.database.leakThreshold=10
-# cas.events.jpa.database.batchSize=1
-# cas.events.jpa.database.user=sa
-# cas.events.jpa.database.ddlAuto=create-drop
-# cas.events.jpa.database.password=
-# cas.events.jpa.database.autocommit=false
-# cas.events.jpa.database.driverClass=org.hsqldb.jdbcDriver
-# cas.events.jpa.database.idleTimeout=5000
+# cas.events.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.events.jpa.isolateInternalQueries=false
+# cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
+# cas.events.jpa.failFast=true
+# cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.events.jpa.leakThreshold=10
+# cas.events.jpa.batchSize=1
+# cas.events.jpa.user=sa
+# cas.events.jpa.ddlAuto=create-drop
+# cas.events.jpa.password=
+# cas.events.jpa.autocommit=false
+# cas.events.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.events.jpa.idleTimeout=5000
 
-# cas.events.jpa.database.pool.suspension=false
-# cas.events.jpa.database.pool.minSize=6
-# cas.events.jpa.database.pool.maxSize=18
-# cas.events.jpa.database.pool.maxIdleTime=1000
-# cas.events.jpa.database.pool.maxWait=2000
+# cas.events.jpa.pool.suspension=false
+# cas.events.jpa.pool.minSize=6
+# cas.events.jpa.pool.maxSize=18
+# cas.events.jpa.pool.maxIdleTime=1000
+# cas.events.jpa.pool.maxWait=2000
 ```
 
 ### Mongodb
@@ -2344,8 +2417,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-
-
 ## Management Webapp
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
@@ -2354,6 +2425,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.adminRoles=ROLE_ADMIN
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 # cas.mgmt.serverName=https://localhost:8443
+# cas.mgmt.defaultLocale=en
 
 # cas.mgmt.authzAttributes=memberOf,groupMembership
 

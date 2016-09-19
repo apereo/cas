@@ -124,6 +124,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 ```
 
 ## Fail-Open vs Fail-Closed
+
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
@@ -151,7 +152,17 @@ The following failure modes are supported:
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
 
+## Trusted Device/Browser
+
+CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers
+tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers
+are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions
+both for admins and end-users.
+
+[See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
+
 ## Ranking Providers
+
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
 already has established an SSO session with/without a provider and has reached a level of authentication. Another incoming
 request attempts to exercise that SSO session with a different and often competing authentication requirement that may differ
@@ -173,3 +184,5 @@ and override others with a lower value.
 ## Settings
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+
