@@ -4,10 +4,10 @@ title: CAS - Service Management
 ---
 
 # Service Management
+
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
-service registry, provided by the `ServiceRegistryDao` component, that stores one or more registered services
-containing metadata that drives a number of CAS behaviors:
+service registry that stores one or more registered services containing metadata that drives a number of CAS behaviors:
 
 * Authorized services - Control which services may participate in a CAS SSO session.
 * Forced authentication - Provides administrative control for forced authentication.
@@ -18,20 +18,16 @@ containing metadata that drives a number of CAS behaviors:
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
 
-
 ## Demo
+
 The Service Management web application is available for demo at [https://jasigcasmgmt.herokuapp.com/cas-services](https://jasigcasmgmt.herokuapp.com/cas-services)
 
 
 ## Considerations
+
 It is not required to use the service management facility explicitly. CAS ships with a default configuration that is
 suitable for deployments that do not need or want to leverage the capabilities above. The default configuration allows
-any service contacting CAS over https/imaps to use CAS and receive any attribute configured by an `IPersonAttributeDao`
-bean.
-
-A premier consideration around service management is whether to leverage the user interface. If the service management
-webapp is used, then a `ServiceRegistryDao` that provides durable storage (e.g. `JpaServiceRegistryDaoImpl`) must be
-used to preserve state across restarts.
+any service contacting CAS over https/imaps to use CAS.
 
 It is perfectly acceptable to avoid the service management webapp Web application for managing registered service data.
 In fact, configuration-driven methods (e.g. XML, JSON) may be preferable in environments where strict configuration
@@ -74,7 +70,8 @@ Registered services present the following metadata:
 
 ## Persisting Services
 
-###### `InMemoryServiceRegistryDaoImpl`
+### In-Memory
+
 This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
 ```xml
@@ -96,23 +93,24 @@ This component is _NOT_ suitable for use with the service management webapp sinc
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
 service registry data and the UI will not be used.
 
-###### `JsonServiceRegistryDao`
+### JSON
 
 [See this guide](JSON-Service-Management.html) for more info please.
 
-###### `MongoServiceRegistryDao`
+### MongoDb
 
 [See this guide](Mongo-Service-Management.html) for more info please.
 
-###### `LdapServiceRegistryDao`
+### Ldap
 
 [See this guide](LDAP-Service-Management.html) for more info please.
 
-###### `JpaServiceRegistryDaoImpl`
+### Jpa
 
 [See this guide](JPA-Service-Management.html) for more info please.
 
 ## Service Management Webapp
+
 The Services Management web application is a standalone application that helps one manage service registrations and entries via a customizable user interface. The management web application *MUST* share the same registry configuration as
 the CAS server itself so the entire system can load the same services data. To learn more about the management webapp,
 [please see this guide](Installing-ServicesMgmt-Webapp.html).
