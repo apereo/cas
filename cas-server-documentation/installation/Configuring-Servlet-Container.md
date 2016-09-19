@@ -5,7 +5,7 @@ title: CAS - Overlay Installation
 
 # Servlet Container Configuration
 
-A number of options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide describes to build and deploy CAS.
+A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide describes how to build and deploy CAS.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Embedded
@@ -18,7 +18,7 @@ Remember that mostly all aspects of the embedded container can be controlled via
 </p></div>
 
 Other embedded containers such as Jetty and Undertow may also be configured as a Tomcat replacement. To do this, the provided
-tomcat dependency **MUST** be excluded from the final package and substituted with either 
+Tomcat dependency **MUST** be excluded from the final package and substituted with either 
 `spring-boot-starter-undertow` or `spring-boot-starter-jetty` instead.
 
 ### Root Deployments
