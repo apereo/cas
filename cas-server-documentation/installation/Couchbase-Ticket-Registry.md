@@ -25,7 +25,7 @@ server to provide high availability to CAS.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 The Couchbase integration currently assumes that the ticket registries are stored
-in their own buckets. Optionally set passwords for the buckets, optionally setup
+in their own buckets. You may optionally set passwords for the buckets and optionally configure
 redundancy and replication as per normal Couchbase configuration.
 
 The only truly mandatory setting is the list of nodes.
