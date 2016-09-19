@@ -7,7 +7,7 @@ title: CAS - Service Management
 
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
-service registry, provided by the `ServiceRegistryDao` component, that stores one or more registered services
+service registry that stores one or more registered services
 containing metadata that drives a number of CAS behaviors:
 
 * Authorized services - Control which services may participate in a CAS SSO session.
