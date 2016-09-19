@@ -16,11 +16,12 @@ javadoc {
 }
 
 war {
+    def currentTime = java.time.ZonedDateTime.now()
     manifest {
         attributes("Implementation-Title": project.name,
                 "Implementation-Vendor": project.group,
                 "Created-By": project.group,
-                "Implementation-Date": java.time.ZonedDateTime.now(),
+                "Implementation-Date": currentTime,
                 "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
