@@ -164,7 +164,6 @@ To configure your project to inherit from the BOM, simply set the parent:
 ### Maven
 
 ```xml
-<!-- Inherit defaults from Spring Boot -->
 <parent>
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-bom</artifactId>
