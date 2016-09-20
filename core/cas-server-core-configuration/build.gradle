@@ -8,7 +8,7 @@ dependencies {
     compile libraries.persondirectory
     compile libraries.ldaptive
 
-    compileOnly project(":api/cas-server-core-api-authentication")
-    compileOnly project(":core/cas-server-core-util")
-    compileOnly project(":api/cas-server-core-api-webflow")
+    compileOnly project(":api:cas-server-core-api-authentication")
+    compileOnly project(":core:cas-server-core-util")
+    compileOnly project(":api:cas-server-core-api-webflow")
 }

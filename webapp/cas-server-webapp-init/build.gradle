@@ -4,6 +4,6 @@ dependencies {
     compile libraries.springcloud
     compile libraries.springboot
 
-    compile project(":core/cas-server-core-web")
-    compile project(":core/cas-server-core-util")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-util")
 }
