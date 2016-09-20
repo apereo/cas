@@ -91,8 +91,11 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   echo -e "Committing changes...\n"
   git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
-
-  echo -e "Pushing upstream to origin...\n"
+  
+  echo -e "Cleaning up repository"
+  git gc --prune=now && git gc --aggressive --prune=now
+  
+  echo -e "Pushing upstream to origin/gh-pages...\n"
   git push -fq origin gh-pages > /dev/null
 
   echo -e "Successfully published documentation to [gh-pages] branch.\n"

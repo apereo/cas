@@ -4,7 +4,8 @@ title: CAS - User Interface Customization
 ---
 
 # CSS
-The default styles are all contained in a single file located in `css/cas.css`. This location is set in `cas-theme-default.properties`.
+
+The default styles are all contained in a single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`.
 If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
 ```bash
@@ -13,10 +14,12 @@ cas.javascript.file=/js/cas.js
 ```
 
 ## Responsive Design
-CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file.
+
+CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file.
 
 # Javascript
-If you need to add some JavaScript, feel free to append `js/cas.js`.
+
+If you need to add some JavaScript, feel free to append `src/main/resources/static/js/cas.js`.
 
 You can also create your own `custom.js` file, for example, and call it from within `bottom.html` like so:
 
