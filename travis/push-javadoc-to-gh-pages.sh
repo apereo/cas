@@ -50,12 +50,18 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
   git config --global pack.threads "24"
+  
   echo -e "Cloning the repository to push documentation...\n"
   git clone --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
+  
   cd gh-pages
   
+  echo -e "Configuring tracking branches for repository:\n"
+  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+     git branch --track ${branch##*/} $branch
+  done
+
   echo -e "Switching to gh-pages branch\n"
-  
   git checkout gh-pages
   git status
 
@@ -104,7 +110,13 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git count-objects -vH
   
   echo -e "\nCleaning up repository...\n"
-  git gc --prune=now && git gc --aggressive --prune=now --auto
+  # rm -rf .git/refs/original/
+  # rm -Rf .git/logs/
+  # git reflog expire --expire=now --all
+  
+  echo -e "\nRunning garbage collection on the git repository...\n"
+  git gc --prune=now
+  git repack -a -d --depth=500000 --window=500
   
   echo -e "After: Calculating git repository disk usage:\n"
   du -sh .git/
@@ -113,8 +125,8 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git count-objects -vH
   
   echo -e "Pushing upstream to origin/gh-pages...\n"
-  git push -fq origin gh-pages > /dev/null
+  git push -fq origin --all > /dev/null
 
-  echo -e "Successfully published documentation to [gh-pages] branch.\n"
+  echo -e "Successfully published documentation.\n"
 
 fi
