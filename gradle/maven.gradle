@@ -218,7 +218,7 @@ def generatePom() {
                 }
             }
         }
-        
+
     }.whenConfigured { pom ->
         println "POM is fully configured for $project.name"
     }
@@ -234,15 +234,16 @@ uploadArchives {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
         if (publishReleases) {
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            repository(url: "$sonatypeRepositoryUrl") {
                 authentication(userName: sonatypeUsername, password: sonatypePassword);
             }
         }
 
         if (publishSnapshots) {
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+            snapshotRepository(url: "$sonatypeSnapshotsRepositoryUrl") {
                 authentication(userName: sonatypeUsername, password: sonatypePassword);
             }
         }
     }
 }
+
