@@ -1,0 +1,50 @@
+apply plugin: "war"
+apply plugin: "spring-boot"
+
+description = "Apereo CAS Management Web Application"
+
+javadoc {
+    enabled false
+}
+
+bootRun {
+    addResources = true
+    if (Boolean.getBoolean("enableRemoteDebugging")) {
+        jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    }
+}
+
+springBoot  {
+    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+}
+
+bootRepackage {
+    mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
+    enabled = !rootProject.publishReleases
+}
+
+war {
+	def currentTime = java.time.ZonedDateTime.now()
+	
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": currentTime,
+                "Implementation-Version": project.version)
+    }
+    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+}
+
+dependencies {
+    compile libraries.springboot
+    runtime project(":webapp-mgmt:cas-management-webapp-support")
+
+    providedRuntime libraries.springboottomcat
+    runtime libraries.hibernate
+    runtime libraries.groovy
+    compile libraries.spring
+    compile libraries.thmyeleaf
+    compile libraries.thymeleafdialect
+    compile libraries.thmyeleafboot
+}
