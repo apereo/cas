@@ -110,7 +110,12 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git count-objects -vH
   
   echo -e "\nCleaning up repository...\n"
-  git gc --prune=now && git gc --aggressive --prune=now --auto
+  rm -rf .git/refs/original/
+  rm -Rf .git/logs/
+  git reflog expire --expire=now --all
+  
+  echo -e "\nRunning garbage collection on the git repository...\n"
+  git gc --prune=now && git gc --aggressive --prune=now
   
   echo -e "After: Calculating git repository disk usage:\n"
   du -sh .git/
