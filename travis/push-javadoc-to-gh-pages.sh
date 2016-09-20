@@ -92,8 +92,20 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Committing changes...\n"
   git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
   
+  echo -e "Before: Calculating git repository disk usage:\n"
+  du -sh .git/
+
+  echo -e "Before: Counting git objects in the repository:\n"
+  git count-objects -vH
+  
   echo -e "Cleaning up repository"
   git gc --prune=now && git gc --aggressive --prune=now
+  
+  echo -e "After: Calculating git repository disk usage:\n"
+  du -sh .git/
+  
+  echo -e "After: Counting git objects in the repository:\n"
+  git count-objects -vH
   
   echo -e "Pushing upstream to origin/gh-pages...\n"
   git push -fq origin gh-pages > /dev/null
