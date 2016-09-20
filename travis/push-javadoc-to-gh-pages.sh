@@ -116,6 +116,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   
   echo -e "\nRunning garbage collection on the git repository...\n"
   git gc --prune=now && git gc --aggressive --prune=now
+  git repack -a -d --depth=500000 --window=500
   
   echo -e "After: Calculating git repository disk usage:\n"
   du -sh .git/
