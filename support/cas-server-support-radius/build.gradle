@@ -1,9 +1,9 @@
 description = "Apereo CAS RADIUS Support"
 dependencies {
 
-    compile project(":support/cas-server-support-radius-core")
-    compile project(":core/cas-server-core-authentication")
-    compile project(":core/cas-server-core-web")
+    compile project(":support:cas-server-support-radius-core")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-web")
     compile libraries.jradius
     compileOnly libraries.springcloud
 }

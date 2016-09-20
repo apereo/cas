@@ -1,6 +1,6 @@
 description = "Apereo CAS SAML Identity Provider Core"
 dependencies {
-    compile project(":core/cas-server-core-services")
+    compile project(":core:cas-server-core-services")
     compile libraries.commons
     runtime libraries.hibernate
     compileOnly libraries.springcloud

@@ -3,5 +3,5 @@ dependencies {
     compile libraries.springboot
     compile libraries.spring
     compile libraries.springcloudvault
-    compileOnly project(":core/cas-server-core-configuration")
+    compileOnly project(":core:cas-server-core-configuration")
 }

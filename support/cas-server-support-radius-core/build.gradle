@@ -3,7 +3,7 @@ dependencies {
     compile libraries.jradius
     compileOnly libraries.springcloud
     compileOnly libraries.spring
-    compile project(":core/cas-server-core-util")
+    compile project(":core:cas-server-core-util")
 }
 
 configurations.all {
