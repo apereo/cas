@@ -58,7 +58,7 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git checkout gh-pages
   git status
 
-  echo -e "Staring to move project documentation over...\n"
+  echo -e "\nStaring to move project documentation over...\n"
 
   if [ "$invokeDoc" == true ]; then
     echo -e "Removing previous documentation from $branchVersion...\n"
@@ -102,8 +102,9 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Before: Counting git objects in the repository:\n"
   git count-objects -vH
   
-  echo -e "Cleaning up repository"
-  git gc --prune=now && git gc --aggressive --prune=now
+  echo -e "\nCleaning up repository...\n"
+  git config pack.threads "24"
+  git gc --prune=now && git gc --aggressive --prune=now --auto
   
   echo -e "After: Calculating git repository disk usage:\n"
   du -sh .git/
