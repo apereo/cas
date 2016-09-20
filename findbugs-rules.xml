@@ -3,6 +3,6 @@
         <Confidence value="2"/>
         <Rank value="15"/>
         <Bug category="CORRECTNESS,MT_CORRECTNESS,SECURITY,PERFORMANCE,MALICIOUS_CODE,STYLE,BAD_PRACTICE"/>
-        <Package name=".+" />
+        <Package name="~.+" />
     </Match>
 </FindBugsFilter>
