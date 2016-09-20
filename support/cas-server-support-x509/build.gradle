@@ -1,23 +1,23 @@
 description = "Apereo CAS X.509 Client Certificate Support"
 dependencies {
-    compile project(":core/cas-server-core-authentication")
-    compile project(":core/cas-server-core-util")
-    compile project(":core/cas-server-core-web")
-    compile project(":support/cas-server-support-ldap-core")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-ldap-core")
     compile libraries.bouncycastle
     compile libraries.spring
     compile libraries.ehcache
     compile libraries.ldaptive
     compile libraries.hibernate
 
-    testCompile project(":support/cas-server-support-generic")
-    testCompile project(path: ":support/cas-server-support-ldap", configuration: "tests")
+    testCompile project(":support:cas-server-support-generic")
+    testCompile project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testCompile libraries.tests
-    testCompile project(":core/cas-server-core-logout")
-    testCompile project(":core/cas-server-core-services")
-    testCompile project(":core/cas-server-core")
-    testCompile project(":core/cas-server-core-monitor")
-    testCompile project(path: ":core/cas-server-core-authentication", configuration: "tests")
-    testCompile project(path: ":core/cas-server-core", configuration: "tests")
-    testCompile project(":support/cas-server-support-cookie")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":core:cas-server-core-services")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-monitor")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core", configuration: "tests")
+    testCompile project(":support:cas-server-support-cookie")
 }

@@ -3,7 +3,7 @@ dependencies {
     compile libraries.duojava
     compile libraries.jackson
     compile libraries.spring
-    compile project(":core/cas-server-core-authentication")
-    compile project(":core/cas-server-core-webflow")
-    compileOnly project(":support/cas-server-support-trusted-mfa")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-webflow")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 }

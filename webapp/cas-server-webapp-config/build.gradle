@@ -7,15 +7,15 @@ dependencies {
     compile libraries.groovy
     compile libraries.cassecurityfilter
     compile libraries.hibernate
-    compile project(":core/cas-server-core-web")
-    compile project(":support/cas-server-support-actions")
-    testCompile project(":support/cas-server-support-themes")
-    testCompile project(":core/cas-server-core")
-    testCompile project(":core/cas-server-core-audit")
-    testCompile project(":core/cas-server-core-logging")
-    testCompile project(":core/cas-server-core-logout")
-    testCompile project(":core/cas-server-core-validation")
-    testCompile project(":core/cas-server-core")
-    testCompile project(":support/cas-server-support-cookie")
+    compile project(":core:cas-server-core-web")
+    compile project(":support:cas-server-support-actions")
+    testCompile project(":support:cas-server-support-themes")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-audit")
+    testCompile project(":core:cas-server-core-logging")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":core:cas-server-core-validation")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":support:cas-server-support-cookie")
     compileOnly libraries.bouncycastle
 }

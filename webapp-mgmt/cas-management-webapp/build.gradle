@@ -38,7 +38,7 @@ war {
 
 dependencies {
     compile libraries.springboot
-    runtime project(":webapp-mgmt/cas-management-webapp-support")
+    runtime project(":webapp-mgmt:cas-management-webapp-support")
 
     providedRuntime libraries.springboottomcat
     runtime libraries.hibernate
