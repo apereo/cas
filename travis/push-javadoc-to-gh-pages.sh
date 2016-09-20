@@ -49,7 +49,8 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  echo -e "Cloning the gh-pages branch...\n"
+  git config --global pack.threads "24"
+  echo -e "Cloning the repository to push documentation...\n"
   git clone --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
   cd gh-pages
   
@@ -103,7 +104,6 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   git count-objects -vH
   
   echo -e "\nCleaning up repository...\n"
-  git config pack.threads "24"
   git gc --prune=now && git gc --aggressive --prune=now --auto
   
   echo -e "After: Calculating git repository disk usage:\n"
