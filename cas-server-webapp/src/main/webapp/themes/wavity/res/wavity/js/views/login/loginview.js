@@ -45,6 +45,14 @@ define(
 			$("#appIcon").attr("src", $('input[name=appLogo]').val());
 			$("#domainIcon").attr("src", $('input[name=tenantLogo]').val());
 			
+			if($("#domainIcon").width() > 400 || $("#domainIcon").width() <= 0) {
+				$("#domainIcon").width(400);
+			}
+			
+			if($("#domainIcon").height() > 400 || $("#domainIcon").height() <= 0) {
+				$("#domainIcon").height(400);
+			}
+	
 			$('#loginForm input[name=lt]').val($('input[name=loginTicket]').val());
 			$('#loginForm input[name=execution]').val($('input[name=flowExecutionKey]').val());
 			$('#loginForm').attr('action', $('#tempForm').attr('action'));
