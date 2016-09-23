@@ -133,6 +133,17 @@
   border-color: none !important;
 }
 
+.tenant-logo-wrapper {
+	height:400px; 
+	text-align:center
+}
+
+.tenant-logo-wrapper img {
+	position: relative; 
+	top: 50%; 
+	transform: translateY(-50%);
+}
+
 /***********************
   OUTLINE BUTTONS
 ************************/
