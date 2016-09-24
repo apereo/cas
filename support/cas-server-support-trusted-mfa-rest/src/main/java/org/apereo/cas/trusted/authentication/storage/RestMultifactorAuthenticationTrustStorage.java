@@ -26,20 +26,18 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(principal);
-        final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity = 
-                restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
-            return Sets.newHashSet(results);
-        }
-        
-        return Sets.newHashSet();
+        return getResults(url);
     }
 
     @Override
     public void expire(final LocalDate onOrBefore) {
         logger.info("{} does not support expiring trusted authentication records", this.getClass().getSimpleName());
+    }
+
+    @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
+        return getResults(url);
     }
 
     @Override
@@ -50,5 +48,17 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             return record;
         }
         return null;
+    }
+    
+    private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
+        final RestTemplate restTemplate = new RestTemplate();
+        final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity =
+                restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
+            return Sets.newHashSet(results);
+        }
+
+        return Sets.newHashSet();
     }
 }

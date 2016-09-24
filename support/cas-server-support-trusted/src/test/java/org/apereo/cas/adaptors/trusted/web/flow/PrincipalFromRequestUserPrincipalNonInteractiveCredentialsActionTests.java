@@ -1,17 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationService;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
-import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +11,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.util.Collections;
 
 /**
  * @author Scott Battaglia

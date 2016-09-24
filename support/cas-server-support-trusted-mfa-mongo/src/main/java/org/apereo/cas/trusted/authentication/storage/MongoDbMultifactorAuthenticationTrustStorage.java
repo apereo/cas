@@ -75,6 +75,15 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("date").gte(onOrAfterDate));
+        final List<MultifactorAuthenticationTrustRecord> results =
+                this.mongoTemplate.find(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+        return Sets.newHashSet(results);
+    }
+
+    @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         final Query query = new Query();
         query.addCriteria(Criteria.where("principal").is(principal));
