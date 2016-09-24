@@ -19,9 +19,7 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
 
-        final String condition = "externalContext.requestParameterMap['openid.mode'] ne '' "
-                + "&& externalContext.requestParameterMap['openid.mode'] ne null "
-                + "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";
+        final String condition = getOpenIdModeCondition();
 
         final DecisionState decisionState = createDecisionState(flow, "selectFirstAction",
                 condition, OPEN_ID_SINGLE_SIGN_ON_ACTION,
@@ -35,7 +33,15 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
                 CasWebflowConstants.TRANSITION_ID_WARN));
+        actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+        registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
         setStartState(flow, decisionState);
+    }
+
+    private String getOpenIdModeCondition() {
+        return "externalContext.requestParameterMap['openid.mode'] ne '' "
+                + "&& externalContext.requestParameterMap['openid.mode'] ne null "
+                + "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";
     }
 }
