@@ -58,7 +58,7 @@ public final class WebUtils {
     public static final String USER_AGENT_HEADER = "user-agent";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-    
+
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -221,7 +221,7 @@ public final class WebUtils {
     public static void putTicketGrantingTicketInScopes(final RequestContext context, final String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
-        
+
         FlowSession session = context.getFlowExecutionContext().getActiveSession().getParent();
         while (session != null) {
             putTicketGrantingTicketIntoMap(session.getScope(), ticketValue);
@@ -367,8 +367,13 @@ public final class WebUtils {
      * @param c       the c
      */
     public static void putCredential(final RequestContext context, final Credential c) {
-        context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
-        context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
+        if (c == null) {
+            context.getRequestScope().remove(PARAMETER_CREDENTIAL);
+            context.getFlowScope().remove(PARAMETER_CREDENTIAL);
+        } else {
+            context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
+            context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
+        }
     }
 
     /**
