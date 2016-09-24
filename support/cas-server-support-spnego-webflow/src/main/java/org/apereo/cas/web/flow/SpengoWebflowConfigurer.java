@@ -1,7 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.TransitionableState;
+
+import java.util.Map;
 
 /**
  * The {@link SpengoWebflowConfigurer} is responsible for
@@ -33,6 +38,8 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         spnego.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
                 CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+
+        registerMultifactorProvidersStateTransitionsIntoWebflow(spnego);
 
         final ActionState evaluateClientRequest = createActionState(flow, EVALUATE_SPNEGO_CLIENT,
                 createEvaluateAction(casProperties.getAuthn().getSpnego().getHostNameClientActionStrategy()));

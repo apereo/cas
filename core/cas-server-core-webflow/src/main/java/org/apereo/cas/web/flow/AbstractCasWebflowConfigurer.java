@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,7 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -83,6 +86,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     /**
+     * Application context;
+     */
+    @Autowired
+    protected ApplicationContext applicationContext;
+    
+    /**
      * CAS Properties.
      */
     @Autowired
@@ -90,8 +99,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     private FlowBuilderServices flowBuilderServices;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+
 
     @PostConstruct
     @Override
@@ -488,6 +496,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                                     final FlowDefinitionRegistry registry) {
 
         final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
+        
         final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         final String targetStateId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
@@ -590,5 +599,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final Field field = ReflectionUtils.findField(act.getClass(), "expression");
         ReflectionUtils.makeAccessible(field);
         return (Expression) ReflectionUtils.getField(field, act);
+    }
+
+    /**
+     * Register multifactor providers state transitions into webflow.
+     *
+     * @param state the state
+     */
+    protected void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+        providerMap.forEach((k, v) -> {
+            createTransitionForState(state, v.getId(), v.getId());
+        });
     }
 }
