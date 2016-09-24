@@ -5,8 +5,11 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.pac4j.cas.authorization.DefaultCasAuthorizationGenerator;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
+import org.pac4j.core.authorization.authorizer.IsAuthenticatedAuthorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator;
 import org.pac4j.core.config.Config;
@@ -25,6 +28,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -50,6 +54,8 @@ import java.util.regex.Pattern;
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
 
+    private static final String CAS_CLIENT_NAME = "CasClient";
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -64,7 +70,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("acceptUsersAuthenticationHandler")
     private AuthenticationHandler acceptUsersAuthenticationHandler;
-    
+
     @Bean
     public WebContentInterceptor webContentInterceptor() {
         final WebContentInterceptor interceptor = new WebContentInterceptor();
@@ -86,20 +92,29 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     public Config config() {
         try {
             if (StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getLoginUrl())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())
-                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getAdminRoles())) {
+                    && StringUtils.isNotBlank(casProperties.getAdminPagesSecurity().getService())) {
 
                 final CasConfiguration casConfig = new CasConfiguration(casProperties.getAdminPagesSecurity().getLoginUrl());
                 final DirectCasClient client = new DirectCasClient(casConfig);
-                client.setName("CasClient");
-                final Properties properties = new Properties();
-                properties.load(this.casProperties.getAdminPagesSecurity().getUsers().getInputStream());
-                client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
-                
+                client.setName(CAS_CLIENT_NAME);
+
                 final Config cfg = new Config(casProperties.getAdminPagesSecurity().getService(), client);
-                cfg.setAuthorizer(new RequireAnyRoleAuthorizer(
-                        org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                casProperties.getAdminPagesSecurity().getAdminRoles())));
+                if (this.casProperties.getAdminPagesSecurity().getUsers() == null) {
+                    LOGGER.warn("List of authorized users for admin pages security is not defined."
+                            + "Allowing access for all authenticated users");
+                    client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
+                    cfg.setAuthorizer(new IsAuthenticatedAuthorizer());
+                } else {
+                    final Resource file = ResourceUtils.prepareClasspathResourceIfNeeded(this.casProperties.getAdminPagesSecurity().getUsers());
+                    if (file != null && file.exists()) {
+                        final Properties properties = new Properties();
+                        properties.load(file.getInputStream());
+                        client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
+                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(
+                                org.springframework.util.StringUtils.commaDelimitedListToSet(
+                                        casProperties.getAdminPagesSecurity().getAdminRoles())));
+                    }
+                }
                 return cfg;
             }
         } catch (final Exception e) {
@@ -115,14 +130,21 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         if (cfg.getClients() == null) {
             return requiresAuthenticationStatusInterceptor();
         }
-        final SecurityInterceptor interceptor = new SecurityInterceptor(cfg, "CasClient",
-                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
-        interceptor.setSecurityLogic(new DefaultSecurityLogic() {
+        final SecurityInterceptor interceptor = new SecurityInterceptor(cfg,
+                CAS_CLIENT_NAME, "securityHeaders,csrfToken,".concat(getAuthorizerName()));
+        final DefaultSecurityLogic secLogic = new DefaultSecurityLogic() {
             @Override
             protected HttpAction unauthorized(final WebContext context, final List currentClients) {
                 return HttpAction.forbidden("Access Denied", context);
             }
-        });
+
+            @Override
+            protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
+                return true;
+            }
+        };
+        secLogic.setSaveProfileInSession(true);
+        interceptor.setSecurityLogic(secLogic);
         return interceptor;
     }
 
@@ -155,6 +177,13 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         return mapping -> mapping.setInterceptors(new Object[]{statusInterceptor()});
     }
 
+    private String getAuthorizerName() {
+        if (this.casProperties.getAdminPagesSecurity().getUsers() == null) {
+            return IsAuthenticatedAuthorizer.class.getSimpleName();
+        }
+        return RequireAnyRoleAuthorizer.class.getSimpleName();
+    }
+    
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {

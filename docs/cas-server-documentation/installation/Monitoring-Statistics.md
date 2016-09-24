@@ -34,6 +34,10 @@ The `/status` endpoint is always protected by an IP pattern. The other administr
 endpoints however can optionally be protected by the CAS server.
 Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
 
+If you decide to protected other administrative endpoints via CAS itself, you will need to provide
+a reference to the list of authorized users in the CAS configuration. You may also enforce authorization
+rules via [Service-based Access Strategy](Configuring-Service-Access-Strategy.html) features of CAS.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Monitors
