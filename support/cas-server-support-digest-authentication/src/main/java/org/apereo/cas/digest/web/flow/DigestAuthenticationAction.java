@@ -35,7 +35,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
     private String realm = "CAS";
 
     private String authenticationMethod = "auth";
-
+    
     public void setCredentialRetriever(final DigestHashedCredentialRetriever credentialRetriever) {
         this.credentialRetriever = credentialRetriever;
     }

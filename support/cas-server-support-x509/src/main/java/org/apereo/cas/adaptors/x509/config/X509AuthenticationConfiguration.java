@@ -23,11 +23,13 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipa
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.SearchExecutor;
@@ -124,20 +126,19 @@ public class X509AuthenticationConfiguration {
     private ConnectionConfig ldaptiveResourceCRLConnectionConfig;
 
     @Autowired
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    
+    @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired(required = false)
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-
 
     @Bean
     public RevocationPolicy allowRevocationPolicy() {
@@ -229,15 +230,17 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public Action x509Check() {
-        final X509CertificateCredentialsNonInteractiveAction a =
-                new X509CertificateCredentialsNonInteractiveAction();
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setPrincipalFactory(x509PrincipalFactory());
-        a.setWarnCookieGenerator(warnCookieGenerator);
+        final X509CertificateCredentialsNonInteractiveAction a = new X509CertificateCredentialsNonInteractiveAction();
+
+        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
+
+        
         return a;
+        
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
@@ -249,7 +252,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
@@ -260,7 +263,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
@@ -272,7 +275,7 @@ public class X509AuthenticationConfiguration {
         r.setPrincipalFactory(x509PrincipalFactory());
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
@@ -303,7 +306,7 @@ public class X509AuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        
+
         PrincipalResolver resolver = personDirectoryPrincipalResolver;
         if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
             switch (casProperties.getAuthn().getX509().getPrincipalType()) {

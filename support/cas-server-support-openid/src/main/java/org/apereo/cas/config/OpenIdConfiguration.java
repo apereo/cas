@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,9 +25,11 @@ import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.openid4java.server.InMemoryServerAssociationStore;
@@ -59,9 +62,17 @@ public class OpenIdConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
 
     @Autowired
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    
     @Autowired
     @Qualifier("cas3ServiceJsonView")
     private View cas3ServiceJsonView;
@@ -134,6 +145,10 @@ public class OpenIdConfiguration {
     private Map uniqueIdGeneratorsMap;
 
 
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+    
     @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
@@ -224,10 +239,10 @@ public class OpenIdConfiguration {
     public Action openIdSingleSignOnAction() {
         final OpenIdSingleSignOnAction a = new OpenIdSingleSignOnAction();
         a.setExtractor(defaultOpenIdUserNameExtractor());
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setPrincipalFactory(openidPrincipalFactory());
-        a.setWarnCookieGenerator(warnCookieGenerator);
+        a.setTicketRegistrySupport(ticketRegistrySupport);
+        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         return a;
     }
 

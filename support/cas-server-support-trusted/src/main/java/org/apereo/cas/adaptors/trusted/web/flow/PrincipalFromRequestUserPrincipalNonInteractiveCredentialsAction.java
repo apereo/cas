@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -21,10 +22,15 @@ import java.security.Principal;
  * @author Scott Battaglia
  * @since 3.0.5
  */
-public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
-            extends AbstractNonInteractiveCredentialsAction {
+public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private PrincipalFactory principalFactory;
+
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 
     @Override
     protected Credential constructCredentialsFromRequest(

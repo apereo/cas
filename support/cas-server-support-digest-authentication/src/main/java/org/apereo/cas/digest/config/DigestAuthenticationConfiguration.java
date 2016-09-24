@@ -3,6 +3,7 @@ package org.apereo.cas.digest.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -14,6 +15,7 @@ import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,21 +52,9 @@ public class DigestAuthenticationConfiguration {
     private Map authenticationHandlersResolvers;
 
     @Autowired
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-
-    @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
+    
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -72,6 +62,18 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @Autowired
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    
     @Bean
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -93,14 +95,14 @@ public class DigestAuthenticationConfiguration {
             @Qualifier("defaultDigestCredentialRetriever")
             final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         final DigestAuthenticationAction w = new DigestAuthenticationAction();
-        w.setWarnCookieGenerator(warnCookieGenerator);
-        w.setAuthenticationSystemSupport(authenticationSystemSupport);
-        w.setCentralAuthenticationService(centralAuthenticationService);
-        w.setPrincipalFactory(digestAuthenticationPrincipalFactory());
-
         w.setRealm(casProperties.getAuthn().getDigest().getRealm());
         w.setAuthenticationMethod(casProperties.getAuthn().getDigest().getAuthenticationMethod());
         w.setCredentialRetriever(defaultDigestCredentialRetriever);
+        
+        w.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        w.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        w.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
+        
         return w;
     }
 

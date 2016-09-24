@@ -77,23 +77,23 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
     }
 
     @Override
-    protected void onError(final RequestContext context, final Credential credential) {
-        setResponseHeader(context, credential);
+    protected void onError(final RequestContext context) {
+        setResponseHeader(context);
     }
 
     @Override
-    protected void onSuccess(final RequestContext context, final Credential credential) {
-        setResponseHeader(context, credential);
+    protected void onSuccess(final RequestContext context) {
+        setResponseHeader(context);
     }
 
     /**
      * Sets the response header based on the retrieved token.
      *
      * @param context    the context
-     * @param credential the credential
      */
-    private void setResponseHeader(final RequestContext context,
-                                   final Credential credential) {
+    private void setResponseHeader(final RequestContext context) {
+        final Credential credential = WebUtils.getCredential(context);
+        
         if (credential == null) {
             logger.debug("No credential was provided. No response header set.");
             return;
