@@ -31,10 +31,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
             }
             return null;
         }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Certificate found in request.");
-        }
+        logger.debug("Certificate found in request.");
         return new X509CertificateCredential(certificates);
     }
 }
