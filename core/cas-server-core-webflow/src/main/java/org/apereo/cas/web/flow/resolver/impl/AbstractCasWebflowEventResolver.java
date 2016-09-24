@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -511,21 +512,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         }
         return Optional.empty();
     }
-
-    /**
-     * Gets all multifactor authentication providers from application context.
-     *
-     * @return the all multifactor authentication providers from application context
-     */
-    protected Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProvidersFromApplicationContext() {
-        try {
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
-        } catch (final Exception e) {
-            logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
-        }
-        return null;
-    }
-
+    
     /**
      * Put resolved events as attribute.
      *
