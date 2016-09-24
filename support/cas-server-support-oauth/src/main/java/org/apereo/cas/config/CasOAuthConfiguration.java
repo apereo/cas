@@ -45,8 +45,8 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
@@ -233,7 +233,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public UsernamePasswordAuthenticator oAuthClientAuthenticator() {
+    public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         final OAuthClientAuthenticator c = new OAuthClientAuthenticator();
         c.setValidator(oAuthValidator());
         c.setServicesManager(this.servicesManager);
@@ -241,7 +241,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public UsernamePasswordAuthenticator oAuthUserAuthenticator() {
+    public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         final OAuthUserAuthenticator w = new OAuthUserAuthenticator();
         w.setAuthenticationSystemSupport(authenticationSystemSupport);
         return w;
