@@ -31,7 +31,8 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @Override
     public void expire(final LocalDate onOrBefore) {
-        logger.info("{} does not support expiring trusted authentication records", this.getClass().getSimpleName());
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, onOrBefore, Object.class);
     }
 
     @Override
