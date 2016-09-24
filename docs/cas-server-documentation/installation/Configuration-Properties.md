@@ -216,12 +216,21 @@ endpoint of CAS which provides administrative functionality and oversight into t
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
-# cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
+# IP address may be enough to protect all endpoints. 
+# If you wish to protect the admin pages via CAS itself, configure the rest.
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
-# cas.adminPagesSecurity.loginUrl=
-# cas.adminPagesSecurity.service=
-# cas.adminPagesSecurity.users=
+# cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
+# cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
+# cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
+# cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
+
 # cas.adminPagesSecurity.actuatorEndpointsEnabled=true
+```
+
+The format of the `adminusers.properties` file which houses a list of authorized users to access the admin pages via CAS is:
+
+```properties
+# casuser=notused,ROLE_ADMIN
 ```
 
 ## Web Application Session
@@ -229,9 +238,9 @@ endpoint of CAS which provides administrative functionality and oversight into t
 Control the web application session behavior.
 
 ```properties
-server.session.timeout=300
-server.session.cookie.httpOnly=true
-server.session.trackingModes=COOKIE
+# server.session.timeout=300
+# server.session.cookie.httpOnly=true
+# server.session.trackingModes=COOKIE
 ```
 
 ## Views
