@@ -39,6 +39,18 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        expire(onOrAfterDate);
+        return storage.asMap()
+                .values()
+                .stream()
+                .filter(entry -> entry.getDate().isEqual(onOrAfterDate) || entry.getDate().isAfter(onOrAfterDate))
+                .sorted()
+                .distinct()
+                .collect(Collectors.toSet());
+    }
+
+    @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage.asMap()
                 .values()
