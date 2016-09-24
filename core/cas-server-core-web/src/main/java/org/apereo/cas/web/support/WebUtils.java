@@ -356,6 +356,17 @@ public final class WebUtils {
         return credential;
     }
 
+    /**
+     * Gets credential from the context.
+     *
+     * @param context the context
+     * @param c       the c
+     * @return the credential, or null if it cant be found in the context or if it has no id.
+     */
+    public static void putCredential(final RequestContext context, final Credential c) {
+        context.getRequestScope().put(PARAMETER_CREDENTIAL, c);
+        context.getFlowScope().put(PARAMETER_CREDENTIAL, c);
+    }
 
     /**
      * Return the username of the authenticated user (based on pac4j security).

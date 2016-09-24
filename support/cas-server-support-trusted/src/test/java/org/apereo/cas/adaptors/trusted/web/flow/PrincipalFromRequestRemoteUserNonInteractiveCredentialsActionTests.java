@@ -37,22 +37,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
         this.action.setPrincipalFactory(new DefaultPrincipalFactory());
-
-        final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
-                        new PrincipalBearingCredentialsAuthenticationHandler(),
-                        new PrincipalBearingPrincipalResolver()));
-
-        final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
-                getCentralAuthenticationService();
-
-        this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.setAuthenticationSystemSupport(
-                new DefaultAuthenticationSystemSupport(
-                        new DefaultAuthenticationTransactionManager(authenticationManager),
-                        new DefaultPrincipalElectionStrategy()
-                )
-        );
     }
 
     @Test

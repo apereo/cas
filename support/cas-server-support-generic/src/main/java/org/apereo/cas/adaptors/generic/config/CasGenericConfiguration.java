@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -16,6 +17,7 @@ import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,23 +41,9 @@ import java.util.Map;
 @Configuration("casGenericConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGenericConfiguration {
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-
+    
     @Autowired(required = false)
     @Qualifier("shiroPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration shiroPasswordPolicyConfiguration;
@@ -80,6 +68,18 @@ public class CasGenericConfiguration {
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
 
+    @Autowired
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
@@ -92,12 +92,10 @@ public class CasGenericConfiguration {
 
     @Bean
     public Action remoteAddressCheck() {
-        final RemoteAddressNonInteractiveCredentialsAction a =
-                new RemoteAddressNonInteractiveCredentialsAction();
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setPrincipalFactory(remoteAddressPrincipalFactory());
-        a.setWarnCookieGenerator(warnCookieGenerator);
+        final RemoteAddressNonInteractiveCredentialsAction a = new RemoteAddressNonInteractiveCredentialsAction();
+        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         return a;
     }
 

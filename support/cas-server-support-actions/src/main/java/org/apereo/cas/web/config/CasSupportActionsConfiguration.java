@@ -9,7 +9,7 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
-import org.apereo.cas.web.flow.AuthenticationViaFormAction;
+import org.apereo.cas.web.flow.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
@@ -110,7 +110,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action authenticationViaFormAction() {
-        final AuthenticationViaFormAction a = new AuthenticationViaFormAction();
+        final AbstractAuthenticationAction a = new AbstractAuthenticationAction() {};
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         a.setAdaptiveAuthenticationPolicy(this.adaptiveAuthenticationPolicy);
