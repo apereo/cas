@@ -77,10 +77,6 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
-
-        if (1==1) 
-            return success();
-        
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
             LOGGER.warn("User Agent header [{}] is empty, or no browsers are supported", userAgent);
             return error();
