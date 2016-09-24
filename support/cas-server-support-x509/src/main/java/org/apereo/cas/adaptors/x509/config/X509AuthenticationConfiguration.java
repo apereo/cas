@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.config;
 
 import net.sf.ehcache.Cache;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
@@ -22,7 +21,6 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrinci
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
 import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -40,7 +38,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;

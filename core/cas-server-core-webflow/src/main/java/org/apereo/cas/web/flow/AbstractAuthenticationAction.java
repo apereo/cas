@@ -84,10 +84,25 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
             onSuccess(ctx);
         }
     }
-    
+
+    /**
+     * On warn.
+     *
+     * @param context the context
+     */
     protected void onWarn(final RequestContext context) {}
-    
+
+    /**
+     * On success.
+     *
+     * @param context the context
+     */
     protected void onSuccess(final RequestContext context) {}
 
+    /**
+     * On error.
+     *
+     * @param context the context
+     */
     protected void onError(final RequestContext context) {}
 }

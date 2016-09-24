@@ -357,11 +357,10 @@ public final class WebUtils {
     }
 
     /**
-     * Gets credential from the context.
+     * Puts credential into the context.
      *
      * @param context the context
      * @param c       the c
-     * @return the credential, or null if it cant be found in the context or if it has no id.
      */
     public static void putCredential(final RequestContext context, final Credential c) {
         context.getRequestScope().put(PARAMETER_CREDENTIAL, c);

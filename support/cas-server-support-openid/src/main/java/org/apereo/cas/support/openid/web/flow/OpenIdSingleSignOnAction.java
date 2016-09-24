@@ -2,9 +2,7 @@ package org.apereo.cas.support.openid.web.flow;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -12,12 +10,9 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.apereo.cas.support.openid.web.support.OpenIdUserNameExtractor;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import org.springframework.webflow.execution.RequestContext;
 
 /**
