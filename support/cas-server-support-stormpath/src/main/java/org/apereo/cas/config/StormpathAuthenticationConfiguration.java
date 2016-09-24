@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,10 +30,6 @@ public class StormpathAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired(required = false)
-    @Qualifier("stormpathPac4jPasswordEncoder")
-    private org.pac4j.core.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
 
     @Autowired
     @Qualifier("servicesManager")
@@ -63,8 +58,6 @@ public class StormpathAuthenticationConfiguration {
 
         handler.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getStormpath().getPasswordEncoder()));
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getStormpath().getPrincipalTransformation()));
-
-        handler.setStormpathPasswordEncoder(this.stormpathPasswordEncoder);
 
         handler.setPrincipalFactory(stormpathPrincipalFactory());
         handler.setServicesManager(servicesManager);
