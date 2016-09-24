@@ -5,7 +5,8 @@ title: CAS - Overlay Installation
 
 # Servlet Container Configuration
 
-A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide describes how to build and deploy CAS.
+A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide 
+describes how to build and deploy CAS.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Embedded
@@ -46,6 +47,11 @@ While there is no official project support, the following containers should be c
 * [WebSphere](http://www.ibm.com/software/websphere/)
 
 Refer to the servlet container's own documentation for more info.
+
+### Async Support
+
+In the event that an external container is used, you must ensure it's configured correctly to support asynchronous requests.
+This is typically handled by setting `<async-supported>true</async-supported>` inside the container's main `web.xml`  file.
 
 ## Docker
 
