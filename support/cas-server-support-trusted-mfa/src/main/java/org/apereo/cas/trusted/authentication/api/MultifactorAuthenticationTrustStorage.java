@@ -19,6 +19,14 @@ public interface MultifactorAuthenticationTrustStorage {
     void expire(LocalDate onOrBefore);
 
     /**
+     * Get all records by date.
+     *
+     * @param onOrAfterDate the on or after date
+     * @return the records
+     */
+    Set<MultifactorAuthenticationTrustRecord> get(LocalDate onOrAfterDate);
+
+    /**
      * Get record.
      *
      * @param principal the principal id

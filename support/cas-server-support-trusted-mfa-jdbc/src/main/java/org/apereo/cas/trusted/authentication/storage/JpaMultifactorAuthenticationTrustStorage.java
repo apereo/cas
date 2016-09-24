@@ -40,6 +40,19 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+        try {
+            final List<MultifactorAuthenticationTrustRecord> results =
+                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.date >= :date",
+                            MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
+            return Sets.newHashSet(results);
+        } catch (final NoResultException e) {
+            logger.info("No trusted authentication records could be found for {}", onOrAfterDate);
+        }
+        return Sets.newHashSet();
+    }
+
+    @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
             final List<MultifactorAuthenticationTrustRecord> results =

@@ -1,16 +1,7 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.AbstractCentralAuthenticationService;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
-import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,7 +11,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 
 import static org.junit.Assert.*;
 
