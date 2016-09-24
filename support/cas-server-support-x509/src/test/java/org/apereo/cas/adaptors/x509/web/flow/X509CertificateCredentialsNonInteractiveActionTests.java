@@ -36,25 +36,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     @Before
     public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-
         final X509CredentialsAuthenticationHandler handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
-
-        final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
-                        handler, new X509SerialNumberPrincipalResolver()));
-
-        final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
-                getCentralAuthenticationService();
-
-        this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.setAuthenticationSystemSupport(
-                new DefaultAuthenticationSystemSupport(
-                        new DefaultAuthenticationTransactionManager(authenticationManager),
-                        new DefaultPrincipalElectionStrategy()
-                )
-        );
-
     }
 
     @Test

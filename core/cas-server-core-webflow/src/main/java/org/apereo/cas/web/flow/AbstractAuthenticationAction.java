@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptio
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -22,9 +24,14 @@ import java.util.Map;
  * @since 5.0.0
  */
 public abstract class AbstractAuthenticationAction extends AbstractAction {
+
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -41,13 +48,23 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
                     new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
 
         }
-        return doExecuteInternal(requestContext);
+
+
+        final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        if (serviceTicketEvent != null) {
+            fireEventHooks(serviceTicketEvent, requestContext);
+            return serviceTicketEvent;
+        }
+        
+        final Event finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        fireEventHooks(finalEvent, requestContext);
+        return finalEvent;
     }
-    
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+
+    public void setServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolver r) {
+        this.serviceTicketRequestWebflowEventResolver = r;
     }
-    
+
     public void setInitialAuthenticationAttemptWebflowEventResolver(final CasWebflowEventResolver r) {
         this.initialAuthenticationAttemptWebflowEventResolver = r;
     }
@@ -55,4 +72,22 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
     public void setAdaptiveAuthenticationPolicy(final AdaptiveAuthenticationPolicy a) {
         this.adaptiveAuthenticationPolicy = a;
     }
+
+    private void fireEventHooks(final Event e, final RequestContext ctx) {
+        if (e.getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR)) {
+            onError(ctx);
+        }
+        if (e.getId().equals(CasWebflowConstants.TRANSITION_ID_WARN)) {
+            onWarn(ctx);
+        }
+        if (e.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+            onSuccess(ctx);
+        }
+    }
+    
+    protected void onWarn(final RequestContext context) {}
+    
+    protected void onSuccess(final RequestContext context) {}
+
+    protected void onError(final RequestContext context) {}
 }

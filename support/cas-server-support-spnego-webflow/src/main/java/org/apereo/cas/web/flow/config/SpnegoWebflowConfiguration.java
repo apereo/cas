@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.config;
 import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -13,6 +14,7 @@ import org.apereo.cas.web.flow.SpnegoNegociateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -39,22 +41,18 @@ import org.springframework.webflow.execution.Action;
 @Configuration("spnegoWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoWebflowConfiguration {
-    
-    @Autowired
-    @Qualifier("spnegoPrincipalFactory")
-    private PrincipalFactory spnegoPrincipalFactory;
-    
-    @Autowired
-    @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-    
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -78,14 +76,14 @@ public class SpnegoWebflowConfiguration {
     
     @Bean
     @RefreshScope
-    public SpnegoCredentialsAction spnego() {
+    public Action spnego() {
         final SpnegoCredentialsAction a = new SpnegoCredentialsAction();
         a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
         a.setSend401OnAuthenticationFailure(casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
-        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
-        a.setPrincipalFactory(this.spnegoPrincipalFactory);
-        a.setWarnCookieGenerator(this.warnCookieGenerator);
-        a.setCentralAuthenticationService(this.centralAuthenticationService);
+
+        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         return a;
     }
 
