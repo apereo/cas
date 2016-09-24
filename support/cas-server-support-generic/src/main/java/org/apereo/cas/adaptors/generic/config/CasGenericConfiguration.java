@@ -1,14 +1,12 @@
 package org.apereo.cas.adaptors.generic.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -18,15 +16,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
