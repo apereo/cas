@@ -86,7 +86,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     /**
-     * Application context;
+     * Application context.
      */
     @Autowired
     protected ApplicationContext applicationContext;

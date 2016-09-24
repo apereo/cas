@@ -38,7 +38,6 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
-
         }
         return null;
     }
