@@ -19,9 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
@@ -31,16 +32,16 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(classes = {
+@SpringBootTest(classes = {
         HazelcastInstanceConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreLogoutConfiguration.class},
-        locations="classpath:HazelcastInstanceConfigurationTests-config.xml",
-        initializers = ConfigFileApplicationContextInitializer.class)
+        CasCoreLogoutConfiguration.class})
+@ContextConfiguration("classpath:HazelcastInstanceConfigurationTests-config.xml")
+@TestPropertySource(locations = {"classpath:/hazelcast.properties"})
 @DirtiesContext
 public class ProvidedHazelcastInstanceConfigurationTests {
 

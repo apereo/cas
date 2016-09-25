@@ -22,13 +22,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -44,8 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringApplicationConfiguration(
+@SpringBootTest(
         classes = {
                 CasCoreWebflowConfiguration.class,
                 CasCoreWebConfiguration.class,
@@ -56,11 +54,8 @@ import static org.mockito.Mockito.*;
                 CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 CasCookieConfiguration.class,
                 RefreshAutoConfiguration.class,
-                CasCoreServicesConfiguration.class},
-        locations = {
-                "classpath:/core-context.xml"
-        },
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreServicesConfiguration.class})
+@ContextConfiguration(locations = "classpath:/core-context.xml")
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class InitialFlowSetupActionCookieTests {
     private static final String CONST_CONTEXT_PATH = "/test";
@@ -68,7 +63,7 @@ public class InitialFlowSetupActionCookieTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     private InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -85,7 +80,7 @@ public class InitialFlowSetupActionCookieTests {
         this.tgtCookieGenerator.setCookiePath("");
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor(
+        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(
                 new WebApplicationServiceFactory()
         )};
         this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
