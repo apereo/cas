@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -36,7 +38,7 @@ public class DefaultAuthentication implements Authentication {
     private Principal principal;
 
     /** Authentication metadata attributes. */
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes = Maps.newConcurrentMap();
 
     /** Map of handler name to handler authentication success event. */
     private Map<String, HandlerResult> successes;
@@ -75,7 +77,7 @@ public class DefaultAuthentication implements Authentication {
 
         this.authenticationDate = date;
         this.principal = principal;
-        this.attributes = attributes.isEmpty() ? null : attributes;
+        this.attributes = attributes;
         this.successes = successes;
         this.credentials = null;
         this.failures = null;

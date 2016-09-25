@@ -114,8 +114,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      */
     @PreDestroy
     public void destroy() {
-        this.serviceRegistryConfigWatcher.close();
-        this.serviceRegistryWatcherThread.interrupt();
+        if (this.serviceRegistryConfigWatcher != null) {
+            this.serviceRegistryConfigWatcher.close();
+        }
+        if (serviceRegistryWatcherThread != null) {
+            this.serviceRegistryWatcherThread.interrupt();
+        }
     }
 
     @Override
