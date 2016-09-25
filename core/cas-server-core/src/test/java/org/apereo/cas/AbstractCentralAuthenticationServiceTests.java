@@ -56,7 +56,7 @@ import java.util.Map;
 @ContextConfiguration(locations = {"classpath:/core-context.xml"})
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
-@TestPropertySource(locations = {"classpath:/core.properties"}, properties = "spring.aop.proxy-target-class=true")
+@TestPropertySource(locations = {"classpath:/core.properties"})
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
