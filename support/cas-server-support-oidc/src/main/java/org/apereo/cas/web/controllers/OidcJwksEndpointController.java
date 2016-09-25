@@ -75,7 +75,7 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
                                 final OidcRegisteredService service = (OidcRegisteredService) s;
                                 final Resource resource = this.resourceLoader.getResource(service.getJwks());
                                 final JsonWebKeySet set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
-                                set.getJsonWebKeys().forEach(k -> jsonWebKeySet.addJsonWebKey(k));
+                                set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
                             }));
             final String body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
