@@ -2,8 +2,7 @@ package org.apereo.cas.config;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -14,14 +13,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(
+@SpringBootTest(
         classes = {RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CoreSamlConfiguration.class,
                 CasPersonDirectoryAttributeRepositoryConfiguration.class,
-                CasCoreServicesConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreServicesConfiguration.class})
 public class CoreSamlConfigurationTests {
 
     @Test
