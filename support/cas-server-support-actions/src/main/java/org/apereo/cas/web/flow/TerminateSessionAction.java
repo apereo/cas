@@ -1,20 +1,22 @@
 package org.apereo.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
+import org.pac4j.springframework.web.ApplicationLogoutController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Terminates the CAS SSO session by destroying all SSO state data (i.e. TGT, cookies).
@@ -23,7 +25,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 public class TerminateSessionAction extends AbstractAction {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
+    
     /** Webflow event helper component. */
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
     
@@ -32,8 +35,8 @@ public class TerminateSessionAction extends AbstractAction {
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
-    
-    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    private ApplicationLogoutController applicationLogoutController;
     
     /**
      * Creates a new instance with the given parameters.
@@ -55,22 +58,32 @@ public class TerminateSessionAction extends AbstractAction {
     public Event terminate(final RequestContext context) {
         // in login's webflow : we can get the value from context as it has already been stored
         try {
+            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            
             String tgtId = WebUtils.getTicketGrantingTicketId(context);
             // for logout, we need to get the cookie's value
             if (tgtId == null) {
-                final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
                 tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             }
             if (tgtId != null) {
-                
+                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket {}", tgtId);
                 final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
                 WebUtils.putLogoutRequests(context, logoutRequests);
             }
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            LOGGER.debug("Removing CAS cookies");
             this.ticketGrantingTicketCookieGenerator.removeCookie(response);
             this.warnCookieGenerator.removeCookie(response);
-            return this.eventFactorySupport.success(this);
 
+            LOGGER.debug("Destroying application session");
+            this.applicationLogoutController.applicationLogout(request, response);
+            final HttpSession session = request.getSession();
+            if (session != null) {
+                session.invalidate();
+            }
+
+            LOGGER.info("CAS logout successful.");
+            return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -88,7 +101,7 @@ public class TerminateSessionAction extends AbstractAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
+    public void setApplicationLogoutController(final ApplicationLogoutController applicationLogoutController) {
+        this.applicationLogoutController = applicationLogoutController;
     }
 }

@@ -25,6 +25,8 @@ import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.pac4j.core.config.Config;
+import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -203,13 +205,17 @@ public class CasSupportActionsConfiguration {
         return new TicketGrantingTicketCheckAction(this.centralAuthenticationService);
     }
 
+    @Autowired
     @Bean
-    public Action terminateSessionAction() {
+    public Action terminateSessionAction(@Qualifier("config") final Config pac4jSecurityConfig) {
         final TerminateSessionAction a = new TerminateSessionAction();
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
         a.setWarnCookieGenerator(warnCookieGenerator);
+        
+        final ApplicationLogoutController controller = new ApplicationLogoutController();
+        controller.setConfig(pac4jSecurityConfig);
+        a.setApplicationLogoutController(controller);
         return a;
     }
 
