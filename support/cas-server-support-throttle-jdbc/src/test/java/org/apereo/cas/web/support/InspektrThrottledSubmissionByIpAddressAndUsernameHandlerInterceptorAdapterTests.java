@@ -22,9 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -40,15 +42,13 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(locations = {
-        "classpath:/jdbc-audit-context.xml"
-}, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
+@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
         CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
