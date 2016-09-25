@@ -19,7 +19,7 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final Flow flow = getLoginFlow();
         final ActionState state = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         final List<Action> currentActions = new ArrayList<>();
-        state.getActionList().forEach(a -> currentActions.add(a));
+        state.getActionList().forEach(currentActions::add);
         currentActions.forEach(a -> state.getActionList().remove(a));
         
         state.getActionList().add(createEvaluateAction("validateCaptchaAction"));
