@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,14 +31,14 @@ import static org.junit.Assert.*;
  * @since 4.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(
+@SpringBootTest(
         classes = {StormpathAuthenticationConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 CasCoreServicesConfiguration.class,
-                RefreshAutoConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+                RefreshAutoConfiguration.class})
+@TestPropertySource(locations = {"classpath:/stormpath.properties"})
 public class StormpathAuthenticationHandlerTests {
     @Autowired
     @Qualifier("stormpathAuthenticationHandler")
@@ -47,7 +49,7 @@ public class StormpathAuthenticationHandlerTests {
         RequestContextHolder.setRequestAttributes(
                 new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
-    
+
     @Test
     public void verifyAuthentication() throws Exception {
         final HandlerResult result = this.authenticationHandler.authenticate(TestUtils
