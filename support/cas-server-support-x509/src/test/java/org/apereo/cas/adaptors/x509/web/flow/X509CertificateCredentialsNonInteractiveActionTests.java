@@ -1,13 +1,31 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
-import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.junit.Before;
+import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.cert.X509Certificate;
@@ -19,17 +37,28 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {X509AuthenticationConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        AopAutoConfiguration.class,
+        CasCookieConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreValidationConfiguration.class})
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
-
-    private X509CertificateCredentialsNonInteractiveAction action;
-
-    @Before
-    public void setUp() throws Exception {
-        this.action = new X509CertificateCredentialsNonInteractiveAction();
-        final X509CredentialsAuthenticationHandler handler = new X509CredentialsAuthenticationHandler();
-        handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
-    }
-
+    
+    @Autowired
+    @Qualifier("x509Check")
+    private Action action;
+    
     @Test
     public void verifyNoCredentialsResultsInError() throws Exception {
         final MockRequestContext context = new MockRequestContext();

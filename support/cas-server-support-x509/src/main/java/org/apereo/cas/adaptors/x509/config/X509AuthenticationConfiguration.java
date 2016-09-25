@@ -84,23 +84,23 @@ public class X509AuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("x509ResourceUnavailableRevocationPolicy")
-    private RevocationPolicy x509ResourceUnavailableRevocationPolicy;
+    private RevocationPolicy x509ResourceUnavailableRevocationPolicy = new DenyRevocationPolicy();
 
     @Autowired(required = false)
     @Qualifier("x509ResourceExpiredRevocationPolicy")
-    private RevocationPolicy x509ResourceExpiredRevocationPolicy;
+    private RevocationPolicy x509ResourceExpiredRevocationPolicy = new DenyRevocationPolicy();
 
     @Autowired(required = false)
     @Qualifier("x509CrlUnavailableRevocationPolicy")
-    private RevocationPolicy x509CrlUnavailableRevocationPolicy;
+    private RevocationPolicy x509CrlUnavailableRevocationPolicy = new DenyRevocationPolicy();
 
     @Autowired(required = false)
     @Qualifier("x509CrlExpiredRevocationPolicy")
-    private RevocationPolicy x509CrlExpiredRevocationPolicy;
+    private RevocationPolicy x509CrlExpiredRevocationPolicy = new DenyRevocationPolicy();
 
     @Autowired(required = false)
     @Qualifier("x509RevocationChecker")
-    private RevocationChecker revocationChecker;
+    private RevocationChecker revocationChecker = new NoOpRevocationChecker();
 
     @Autowired(required = false)
     @Qualifier("x509CrlResources")
@@ -228,14 +228,10 @@ public class X509AuthenticationConfiguration {
     @Bean
     public Action x509Check() {
         final X509CertificateCredentialsNonInteractiveAction a = new X509CertificateCredentialsNonInteractiveAction();
-
         a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-
-        
         return a;
-        
     }
 
     @Bean
