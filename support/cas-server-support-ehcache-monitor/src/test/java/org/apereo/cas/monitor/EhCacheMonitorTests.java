@@ -8,7 +8,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.stream.IntStream;
 
@@ -20,9 +23,9 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = EhCacheMonitorConfiguration.class, 
-        locations= {"classpath:ehcacheMonitor-test.xml"})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = EhCacheMonitorConfiguration.class)
+@ContextConfiguration(locations = {"classpath:ehcacheMonitor-test.xml"})
 public class EhCacheMonitorTests {
 
     @Autowired
