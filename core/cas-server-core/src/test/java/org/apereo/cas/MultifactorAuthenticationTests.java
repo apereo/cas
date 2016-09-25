@@ -31,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,7 +52,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(locations = {"/mfa-test-context.xml"},
+@SpringBootTest(
         classes = {CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class,
@@ -59,9 +61,9 @@ import static org.junit.Assert.*;
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreTicketsConfiguration.class,
-                CasCoreValidationConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
-@TestPropertySource(properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
+                CasCoreValidationConfiguration.class})
+@ContextConfiguration(locations = {"/mfa-test-context.xml"})
+@TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");

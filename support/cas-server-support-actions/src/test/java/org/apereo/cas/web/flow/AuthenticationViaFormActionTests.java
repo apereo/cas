@@ -4,8 +4,17 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.TestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -14,7 +23,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -33,7 +44,21 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasSupportActionsConfiguration.class, CasCoreWebflowConfiguration.class, CasCookieConfiguration.class})
+@SpringBootTest(classes = {CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasSupportActionsConfiguration.class,
+        CasCookieConfiguration.class,
+        AopAutoConfiguration.class,
+        CasCoreValidationConfiguration.class})
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
