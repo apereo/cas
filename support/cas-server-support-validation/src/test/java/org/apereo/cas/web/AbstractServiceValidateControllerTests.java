@@ -7,8 +7,13 @@ import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -25,8 +30,11 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -41,12 +49,14 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@SpringApplicationConfiguration(
+@SpringBootTest(
         classes = {CasCoreValidationConfiguration.class, CasProtocolViewsConfiguration.class,
                 CasCoreValidationConfiguration.class, CasCoreWebConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
-                CasCoreUtilConfiguration.class, CasValidationConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreAuthenticationConfiguration.class, RefreshAutoConfiguration.class,
+                AopAutoConfiguration.class, CasCoreServicesConfiguration.class,
+                CasCoreConfiguration.class, CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasCoreTicketsConfiguration.class, CasCoreLogoutConfiguration.class,
+                CasCoreUtilConfiguration.class, CasValidationConfiguration.class})
 @RunWith(SpringRunner.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     private static final Service SERVICE = TestUtils.getService();
