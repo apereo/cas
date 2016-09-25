@@ -1,13 +1,34 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -17,16 +38,28 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  *
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(
+        classes = {
+                CasCoreLogoutConfiguration.class,
+                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasCoreConfiguration.class,
+                CasCookieConfiguration.class,
+                RefreshAutoConfiguration.class,
+                CasCoreWebConfiguration.class,
+                CasCoreAuthenticationConfiguration.class,
+                CasCoreValidationConfiguration.class,
+                CasCoreServicesConfiguration.class,
+                CasCoreTicketsConfiguration.class,
+                CasCoreWebflowConfiguration.class,
+                TrustedAuthenticationConfiguration.class,
+                CasCoreUtilConfiguration.class})
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 
-    private PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction action;
-
-    @Before
-    public void setUp() throws Exception {
-        this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
-        this.action.setPrincipalFactory(new DefaultPrincipalFactory());
-    }
-
+    @Autowired
+    @Qualifier("principalFromRemoteUserAction")
+    private Action action;
+    
     @Test
     public void verifyRemoteUserExists() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
