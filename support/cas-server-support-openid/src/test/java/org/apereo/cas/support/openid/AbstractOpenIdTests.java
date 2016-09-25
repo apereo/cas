@@ -25,8 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -36,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 4.2
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/openid-config.xml",
+@SpringBootTest(
         classes = {OpenIdConfiguration.class,
                 CasProtocolViewsConfiguration.class,
                 CasCookieConfiguration.class,
@@ -51,8 +52,8 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreServicesConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreWebflowConfiguration.class,
-                CasCoreUtilConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreUtilConfiguration.class})
+@ContextConfiguration(locations = "classpath:/openid-config.xml")
 public class AbstractOpenIdTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
