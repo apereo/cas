@@ -16,6 +16,7 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
+import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
                 CasCoreValidationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreTicketsConfiguration.class,
+                CasCoreWebflowConfiguration.class,
                 CasCoreUtilConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
 public class AbstractOpenIdTests {
