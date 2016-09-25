@@ -43,11 +43,10 @@ function getLogs() {
 }
 
 function showLogs(message) {
-    var response = document.getElementById('logoutputarea');
     if (message != "") {
-        response.value += message + "\n";
+        $("#logoutputarea").val( $("#logoutputarea").val() + "\n" + message );
+        $("#logoutputarea").scrollTop(document.getElementById("logoutputarea").scrollHeight)
     }
-    response.scrollTop = response.scrollHeight
 }
 
 disconnect();
