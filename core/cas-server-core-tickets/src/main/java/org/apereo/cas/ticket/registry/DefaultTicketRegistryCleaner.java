@@ -62,7 +62,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
            
             final Collection<Ticket> ticketsToRemove = ticketRegistry.getTickets()
                     .stream()
-                    .filter(t -> t.isExpired())
+                    .filter(Ticket::isExpired)
                     .collect(Collectors.toSet());
             LOGGER.debug("{} expired tickets found.", ticketsToRemove.size());
 

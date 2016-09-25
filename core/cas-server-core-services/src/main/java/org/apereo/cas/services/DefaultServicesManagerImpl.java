@@ -89,7 +89,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         final Collection<RegisteredService> c = convertToTreeSet()
                 .stream()
-                .filter(s -> predicate.apply(s))
+                .filter(predicate::apply)
                 .collect(Collectors.toSet());
         return c;
     }

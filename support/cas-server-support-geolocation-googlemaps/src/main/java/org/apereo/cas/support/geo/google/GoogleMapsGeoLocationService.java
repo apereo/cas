@@ -82,7 +82,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
                 final GeoLocationResponse r = new GeoLocationResponse();
                 Arrays.stream(results)
                       .map(result -> result.formattedAddress)
-                      .forEach(result -> r.addAddress(result));
+                      .forEach(r::addAddress);
                 return r;
             }
         } catch (final Exception e) {
