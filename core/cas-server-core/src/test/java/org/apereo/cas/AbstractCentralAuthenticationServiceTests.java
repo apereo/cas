@@ -25,13 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +40,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@SpringApplicationConfiguration(
+@SpringBootTest(
         classes = {CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
@@ -53,13 +52,11 @@ import java.util.Map;
                 RefreshAutoConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 AopAutoConfiguration.class,
-                CasCoreValidationConfiguration.class},
-        locations = {
-                "classpath:/core-context.xml"
-        }, initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreValidationConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/core-context.xml"})
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
+@TestPropertySource(locations = {"classpath:/core.properties"}, properties = "spring.aop.proxy-target-class=true")
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
