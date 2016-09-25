@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html layout:decorator="monitoring/layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
 
-<head th:inline="text">
-    <title>[[#{cas.ssosessions.report.pagetitle}]]</title>
+<head>
+    <title th:text="#{cas.ssosessions.report.pagetitle}"></title>
 </head>
 
 <body id="cas">
@@ -42,7 +42,7 @@
             <div id="loadingMessage"><h3 th:text="#{cas.ssosessions.loading}"/></div>
 
             <div id="no-cas-sessions">
-                <h3 th:text="#{cas.ssosessions.nosessionsfound}"/>
+                <h3 th:text="#{cas.ssosessions.nosessionsfound}"/><p/>
             </div>
 
             <div id="cas-sessions">
