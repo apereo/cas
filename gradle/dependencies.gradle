@@ -8,6 +8,8 @@ ext["tomcat.version"] = "$springBootTomcatVersion"
 ext["infinispan.version"] = "$infinispanVersion"
 ext["spring.version"] = "$springVersion"
 ext["jackson.version"] = "$jacksonDatabindVersion"
+ext["thymeleaf.version"] = "$thymeleafVersion"
+ext["thymeleaf-layout-dialect.version"] = "$thymeleafDialectVersion"
 
 ext.libraries = [
         aspectj                 : [
@@ -344,6 +346,7 @@ ext.libraries = [
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -373,6 +376,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.ldaptive", module: "ldaptive")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
@@ -484,6 +488,7 @@ ext.libraries = [
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.codehaus.groovy", module: "groovy")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf")
                     force = true
                 }
         ],
@@ -1203,6 +1208,7 @@ ext.libraries = [
         springcloudbuskafka     : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-kafka:$springCloudBusVersion") {
                     exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework.retry", module: "spring-retry")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework", module: "spring-messaging")
@@ -1216,13 +1222,26 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
+                    exclude(group: "org.springframework.kafka", module: "spring-kafka")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.scala-lang", module: "scala-library")
                     force = true
                 },
-                dependencies.create("org.apache.zookeeper:zookeeper:3.4.8") {
+                dependencies.create("org.apache.zookeeper:zookeeper:$zookeeperVersion") {
                     exclude(group: "jline", module: "jline")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.springframework.kafka:spring-kafka:$kafkaSpringVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework", module: "spring-messaging")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.scala-lang", module: "scala-library")
                     force = true
                 }
         ],
@@ -1333,6 +1352,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
+                    exclude(group: "commons-logging", module: "commons-logging")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-bus:$springCloudBusVersion") {

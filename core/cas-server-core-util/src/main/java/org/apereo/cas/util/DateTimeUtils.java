@@ -212,8 +212,7 @@ public final class DateTimeUtils {
             case NANOS:
                 return TimeUnit.NANOSECONDS;
             default:
-                //TODO support the rest
-                throw new UnsupportedOperationException("Man, use a real temporal unit");
+                throw new UnsupportedOperationException("Temporal unit is not supported");
         }
     }
 
