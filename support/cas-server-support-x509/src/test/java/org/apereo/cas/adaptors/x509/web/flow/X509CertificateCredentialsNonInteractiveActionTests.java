@@ -23,6 +23,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -53,6 +54,7 @@ import static org.junit.Assert.*;
         CasCookieConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreValidationConfiguration.class})
+@TestPropertySource(locations = {"classpath:/x509.properties"})
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
     
     @Autowired
