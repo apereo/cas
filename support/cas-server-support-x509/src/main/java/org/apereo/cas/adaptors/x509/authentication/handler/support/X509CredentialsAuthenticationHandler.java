@@ -141,6 +141,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             x509Credential.setCertificate(clientCert);
             return new DefaultHandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
+        logger.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
     }
 
