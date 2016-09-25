@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html layout:decorator="monitoring/layout">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
 
-<head th:inline="text">
-    <title>[[#{cas.statistics.pagetitle}]]</title>
-    <!--<link type="text/css" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />-->
+<head>
+    <title th:text="#{cas.statistics.pagetitle}"></title>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 </head>
 
