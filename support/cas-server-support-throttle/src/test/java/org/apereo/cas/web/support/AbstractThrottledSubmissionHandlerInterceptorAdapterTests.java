@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -31,9 +30,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(classes = {RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class, CasThrottlingConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+        AopAutoConfiguration.class, CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling

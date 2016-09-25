@@ -25,9 +25,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apereo.cas.adaptors.ldap.AbstractLdapTests.initDirectoryServer;
 import static org.junit.Assert.*;
 
 /**
@@ -46,9 +48,9 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"},
-        classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class},
-        initializers = {ConfigFileApplicationContextInitializer.class})
+@SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@ContextConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"})
+@TestPropertySource(locations = "classpath:/ldapsvc.properties")
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
