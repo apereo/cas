@@ -16,9 +16,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,9 +39,9 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
-        classes = {RefreshAutoConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";

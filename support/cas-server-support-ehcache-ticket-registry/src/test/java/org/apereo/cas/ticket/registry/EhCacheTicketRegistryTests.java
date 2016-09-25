@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Unit test for {@link EhCacheTicketRegistry}.
@@ -33,9 +34,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ContextConfiguration(locations = "classpath:ticketRegistry.xml", classes = {EhcacheTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {EhcacheTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
+@ContextConfiguration(locations = "classpath:ticketRegistry.xml")
 public class EhCacheTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;

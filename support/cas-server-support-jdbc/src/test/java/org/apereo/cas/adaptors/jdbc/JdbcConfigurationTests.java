@@ -9,8 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * This is {@link JdbcConfigurationTests}.
@@ -18,12 +21,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"},
-        classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
+@RunWith(SpringRunner.class)
+@SpringBootTest(        classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class, CasPersonDirectoryAttributeRepositoryConfiguration.class,
-                CasJdbcConfiguration.class, CasCoreServicesConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasJdbcConfiguration.class, CasCoreServicesConfiguration.class})
+@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class JdbcConfigurationTests {
 
     @Test

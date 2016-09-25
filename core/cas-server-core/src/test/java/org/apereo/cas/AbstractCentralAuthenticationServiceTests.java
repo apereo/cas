@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -56,7 +57,7 @@ import java.util.Map;
         locations = {
                 "classpath:/core-context.xml"
         }, initializers = ConfigFileApplicationContextInitializer.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public abstract class AbstractCentralAuthenticationServiceTests {

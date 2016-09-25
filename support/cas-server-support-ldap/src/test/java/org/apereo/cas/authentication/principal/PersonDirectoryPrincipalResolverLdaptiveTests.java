@@ -9,7 +9,10 @@ import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -19,8 +22,9 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations={"/ldap-context.xml", "/resolver-context.xml"})
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ContextConfiguration(locations={"/ldap-context.xml", "/resolver-context.xml"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
 
     @Autowired

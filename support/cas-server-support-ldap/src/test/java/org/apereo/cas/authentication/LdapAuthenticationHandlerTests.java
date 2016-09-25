@@ -11,6 +11,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -24,8 +25,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/authn-context.xml"},
+@RunWith(SpringRunner.class)
+@SpringApplicationConfiguration(
         classes = {RefreshAutoConfiguration.class}, initializers = {ConfigFileApplicationContextInitializer.class})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 

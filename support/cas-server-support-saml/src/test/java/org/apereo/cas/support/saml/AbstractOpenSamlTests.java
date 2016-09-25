@@ -23,9 +23,12 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.Assert.*;
@@ -36,8 +39,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/opensaml-config.xml",
+@RunWith(SpringRunner.class)
+@SpringBootTest(
         classes = {CoreSamlConfiguration.class,
                 SamlConfiguration.class,
                 RefreshAutoConfiguration.class,
@@ -52,6 +55,7 @@ import static org.junit.Assert.*;
                 CasCoreLogoutConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreConfiguration.class})
+@ContextConfiguration(locations = "classpath:/opensaml-config.xml")
 @WebAppConfiguration
 public abstract class AbstractOpenSamlTests {
 
