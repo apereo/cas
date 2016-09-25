@@ -27,7 +27,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
     private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
-    
+
     /**
      * Instantiates a new Cas cookie value manager.
      *
@@ -46,7 +46,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         builder.append(COOKIE_FIELD_SEPARATOR);
         builder.append(clientInfo.getClientIpAddress());
-
+        
         final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
