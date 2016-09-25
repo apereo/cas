@@ -64,7 +64,7 @@ import static org.junit.Assert.*;
                 SamlConfiguration.class,
                 CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 CasCoreUtilConfiguration.class})
-@TestPropertySource(locations = {"classpath:/mdui.properties"})
+@TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
 @WebAppConfiguration
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
