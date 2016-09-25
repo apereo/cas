@@ -69,9 +69,6 @@ public class CasThemesConfiguration {
         r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
 
         final SpringTemplateEngine engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
-        if (!engine.isInitialized()) {
-            
-        }
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
         r.setServicesManager(this.servicesManager);

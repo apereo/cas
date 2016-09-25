@@ -29,6 +29,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -55,7 +56,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
 
     private static final String CAS_CLIENT_NAME = "CasClient";
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -132,12 +133,12 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         }
         final SecurityInterceptor interceptor = new SecurityInterceptor(cfg,
                 CAS_CLIENT_NAME, "securityHeaders,csrfToken,".concat(getAuthorizerName()));
+        
         final DefaultSecurityLogic secLogic = new DefaultSecurityLogic() {
             @Override
             protected HttpAction unauthorized(final WebContext context, final List currentClients) {
                 return HttpAction.forbidden("Access Denied", context);
             }
-
             @Override
             protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
                 return true;
@@ -183,7 +184,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         }
         return RequireAnyRoleAuthorizer.class.getSimpleName();
     }
-    
+
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
