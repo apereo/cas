@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -15,13 +14,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -34,9 +32,8 @@ import org.springframework.webflow.test.MockRequestContext;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringApplicationConfiguration(
-        classes = {CasSupportActionsConfiguration.class, 
+@SpringBootTest(
+        classes = {CasSupportActionsConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreWebConfiguration.class,
                 CasCoreConfiguration.class,
@@ -46,11 +43,8 @@ import org.springframework.webflow.test.MockRequestContext;
                 CasPersonDirectoryAttributeRepositoryConfiguration.class,
                 CasCookieConfiguration.class,
                 RefreshAutoConfiguration.class,
-                CasCoreServicesConfiguration.class},
-        locations = {
-                "classpath:/core-context.xml"
-        },
-        initializers = ConfigFileApplicationContextInitializer.class)
+                CasCoreServicesConfiguration.class})
+@ContextConfiguration(locations = "classpath:/core-context.xml")
 @TestPropertySource(properties = "cas.sso.missingService=false")
 public class InitialFlowSetupActionSsoTests {
 
