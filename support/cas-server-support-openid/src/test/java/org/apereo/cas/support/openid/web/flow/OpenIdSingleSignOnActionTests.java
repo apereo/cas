@@ -13,10 +13,12 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -29,11 +31,11 @@ import static org.junit.Assert.*;
 public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Autowired
-    private OpenIdSingleSignOnAction action;
+    @Qualifier("openIdSingleSignOnAction")
+    private Action action;
 
     @Autowired
     private TicketRegistry ticketRegistry;
-
 
     @Test
     public void verifyNoTgt() throws Exception {
@@ -92,9 +94,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         final OpenIdService service = new OpenIdServiceFactory().createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
-
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request,
-                new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
     }
 }

@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -26,8 +28,9 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(
-        classes = {RefreshAutoConfiguration.class}, initializers = {ConfigFileApplicationContextInitializer.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@ContextConfiguration(locations = {"/ldap-context.xml", "/authn-context.xml"})
+@TestPropertySource(locations = {"classpath:/ldap.properties"})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
     @Autowired

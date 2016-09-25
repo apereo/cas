@@ -24,9 +24,7 @@ import java.util.Set;
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
-
-    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(false);
-
+    
     protected static class CasX509Certificate extends X509Certificate {
         
         private static final long serialVersionUID = -4449243195531417769L;
