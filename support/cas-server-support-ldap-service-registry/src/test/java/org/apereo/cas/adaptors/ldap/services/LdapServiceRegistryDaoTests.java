@@ -29,6 +29,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"},
         classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class},
         initializers = {ConfigFileApplicationContextInitializer.class})

@@ -31,6 +31,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ import static org.junit.Assert.*;
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class, CasValidationConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     private static final Service SERVICE = TestUtils.getService();
 

@@ -7,9 +7,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -18,8 +20,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(
+@RunWith(SpringRunner.class)
+@SpringBootTest(
         classes = {JpaEventsConfiguration.class, AopAutoConfiguration.class, RefreshAutoConfiguration.class})
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)

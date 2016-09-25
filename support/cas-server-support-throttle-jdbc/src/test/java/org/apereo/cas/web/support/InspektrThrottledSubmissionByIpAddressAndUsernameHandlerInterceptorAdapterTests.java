@@ -26,6 +26,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -39,7 +40,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(locations = {
         "classpath:/jdbc-audit-context.xml"
 }, classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,

@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -29,8 +32,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations = "classpath:/oauth-context.xml",
+@RunWith(SpringRunner.class)
+@SpringBootTest(
         classes = {
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
@@ -41,6 +44,7 @@ import java.util.Map;
                 CasCoreLogoutConfiguration.class,
                 CasCoreUtilConfiguration.class})
 @DirtiesContext
+@ContextConfiguration(locations = "classpath:/oauth-context.xml")
 @ComponentScan(basePackages = {"org.pac4j.springframework", "org.apereo.cas"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOAuth20Tests {

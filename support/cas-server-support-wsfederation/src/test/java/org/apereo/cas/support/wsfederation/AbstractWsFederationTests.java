@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Abstract class, provides resources to run wsfed tests.
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(locations = {"classpath:/applicationContext.xml"},
         classes = {WsFederationAuthenticationConfiguration.class, CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class, CasCoreUtilConfiguration.class})

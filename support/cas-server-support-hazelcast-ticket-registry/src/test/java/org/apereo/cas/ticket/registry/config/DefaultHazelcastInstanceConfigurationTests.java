@@ -20,9 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -30,16 +33,16 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {
         HazelcastInstanceConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class},
-        locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
+        CasCoreLogoutConfiguration.class})
+@ContextConfiguration(locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {

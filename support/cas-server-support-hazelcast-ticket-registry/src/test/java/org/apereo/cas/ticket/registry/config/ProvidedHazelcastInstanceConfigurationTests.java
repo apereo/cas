@@ -23,6 +23,7 @@ import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(classes = {
         HazelcastInstanceConfiguration.class,
         CasCoreTicketsConfiguration.class,

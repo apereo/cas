@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, IgniteTicketRegistryConfiguration.class}) 
 public class IgniteTicketRegistryTests {
 
