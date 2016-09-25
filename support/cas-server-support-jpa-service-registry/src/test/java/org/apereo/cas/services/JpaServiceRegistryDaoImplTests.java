@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
  * @author battags
  * @since 3.1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, JpaServiceRegistryConfiguration.class})
 public class JpaServiceRegistryDaoImplTests {
 

@@ -15,6 +15,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.cert.X509Certificate;
 
@@ -25,7 +26,7 @@ import java.security.cert.X509Certificate;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(locations = "/x509-ldap-context.xml", classes = {RefreshAutoConfiguration.class})
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
 

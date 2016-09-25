@@ -13,7 +13,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,11 +32,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {CasCoreServicesConfiguration.class,
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {CasCoreServicesConfiguration.class,
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasCoreUtilConfiguration.class},
-        locations= {"/services-context.xml"})
+        CasCoreAuthenticationConfiguration.class, CasCoreUtilConfiguration.class})
+@ContextConfiguration(locations= {"/services-context.xml"})
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;

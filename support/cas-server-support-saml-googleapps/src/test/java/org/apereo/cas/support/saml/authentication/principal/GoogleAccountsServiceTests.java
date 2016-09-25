@@ -22,6 +22,7 @@ import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.time.ZoneOffset;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(
         classes = {SamlGoogleAppsConfiguration.class},
         initializers = ConfigFileApplicationContextInitializer.class)

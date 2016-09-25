@@ -17,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
@@ -31,11 +33,10 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @Transactional
-@SpringApplicationConfiguration(
-        classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class},
-        initializers = {ConfigFileApplicationContextInitializer.class})
+@SpringBootTest(
+        classes = {RefreshAutoConfiguration.class, JpaTicketRegistryConfiguration.class})
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);

@@ -15,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,14 +40,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {CasRestAuthenticationConfiguration.class,
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {CasRestAuthenticationConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         RefreshAutoConfiguration.class,
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
-        CasCoreUtilConfiguration.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
+        CasCoreUtilConfiguration.class})
 @TestPropertySource(properties = "cas.authn.rest.uri=http://localhost:8081/authn")
 public class RestAuthenticationHandlerTests {
 

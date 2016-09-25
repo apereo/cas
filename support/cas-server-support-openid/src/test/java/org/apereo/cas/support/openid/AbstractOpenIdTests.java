@@ -27,6 +27,7 @@ import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Bootstrap context for openid tests.
@@ -34,7 +35,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(locations = "classpath:/openid-config.xml",
         classes = {OpenIdConfiguration.class,
                 CasProtocolViewsConfiguration.class,
