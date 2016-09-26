@@ -18,23 +18,18 @@ JWT. Here is an example of how to generate a JWT via [Pac4j](https://github.com/
 final String signingSecret = RandomStringUtils.randomAlphanumeric(256);
 final String encryptionSecret = RandomStringUtils.randomAlphanumeric(48);
 
-final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret, encryptionSecret);
+System.out.println("signingSecret " + signingSecret);
+System.out.println("encryptionSecret " + encryptionSecret);
 
-/*
-// Use the same key for signing and encryption
-final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret);
-
-// Do not execute encryption
-final JwtGenerator<CommonProfile> g = new JwtGenerator<>(signingSecret, false);
- */
-
-g.setEncryptionMethod(EncryptionMethod.A192CBC_HS384);
+final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
+g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, 
+        JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
 final CommonProfile profile = new CommonProfile();
-profile.setId("<PRINCIPAL_ID>");
+profile.setId("casuser");
 final String token = g.generate(profile);
-System.out.println(token);
-...
+System.out.println("token: " + token);
 ```
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:
@@ -67,14 +62,26 @@ Configure the appropriate service in your service registry to hold the secrets:
     "@class" : "java.util.HashMap",
     "jwtSigningSecret" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "<SIGNING_SECRET>" ] ]
+      "values" : [ "java.util.HashSet", [ "<SECRET>" ] ]
     },
     "jwtEncryptionSecret" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
+      "values" : [ "java.util.HashSet", [ "<SECRET>" ] ]
+    },
+    "jwtSigningSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "HS256" ] ]
+    },
+    "jwtEncryptionSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "dir" ] ]
+    },
+    "jwtEncryptionSecretMethod" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "A192CBC-HS384" ] ]
     }
-  }  
+  }
 }
 ```
 
-Note that the configuration of `jwtEncryptionSecret` is optional. 
+Note that the only required property is `jwtSigningSecret`.
