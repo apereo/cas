@@ -9,14 +9,17 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.InternalConfigStateController;
 import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
+import org.apereo.cas.web.report.TrustedDevicesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -68,6 +71,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     public DashboardController dashboardController() {
         return new DashboardController();
     }
+
 
     @RefreshScope
     @Bean
@@ -124,4 +128,15 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
                 .withSockJS();
     }
 
+    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+    @Configuration("TrustedDevicesConfiguration")
+    public class TrustedDevicesConfiguration {
+
+        @Autowired
+        @Bean
+        public TrustedDevicesController trustedDevicesController(@Qualifier("mfaTrustEngine")
+                                                                 final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            return new TrustedDevicesController(mfaTrustEngine);
+        }
+    }
 }

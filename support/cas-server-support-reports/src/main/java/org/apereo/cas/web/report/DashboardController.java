@@ -7,6 +7,7 @@ import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.config.server.config.ConfigServerProperties;
 import org.springframework.cloud.context.restart.RestartEndpoint;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,9 @@ public class DashboardController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     /**
      * Handle request internal model and view.
      *
@@ -86,6 +90,8 @@ public class DashboardController {
         model.put("isNativeProfile", isNativeProfile);
         model.put("isDefaultProfile", isDefaultProfile);
 
+        model.put("trustedDevicesEnabled", 
+                this.applicationContext.containsBean("trustedDevicesController")); 
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }
