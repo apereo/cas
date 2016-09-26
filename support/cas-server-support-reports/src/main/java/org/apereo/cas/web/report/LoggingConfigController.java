@@ -18,6 +18,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
+import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +54,8 @@ import java.util.Set;
 @Controller("loggingConfigController")
 @RequestMapping("/status/logging")
 public class LoggingConfigController {
-    private static StringBuilder LOG_OUTPUT = new StringBuilder();;
+    private static StringBuilder LOG_OUTPUT = new StringBuilder();
+    
     private static final Object LOCK = new Object();
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
@@ -62,7 +65,12 @@ public class LoggingConfigController {
     private Resource logConfigurationFile;
 
     private LoggerContext loggerContext;
-    
+
+    private DelegatingAuditTrailManager auditTrailManager;
+
+    public void setAuditTrailManager(final DelegatingAuditTrailManager auditTrailManager) {
+        this.auditTrailManager = auditTrailManager;
+    }
 
     /**
      * Init.
@@ -97,9 +105,9 @@ public class LoggingConfigController {
                 }
             }
         }
-                
+
         outputFileNames.forEach(s -> {
-            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 1000, false, true);
+            final Tailer t = new Tailer(new File(s), new LogTailerListener(), 100, false, true);
             final Thread thread = new Thread(t);
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setName(s);
@@ -265,6 +273,23 @@ public class LoggingConfigController {
     }
 
     /**
+     * Gets audit log.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the audit log
+     * @throws Exception the exception
+     */
+    @RequestMapping(value = "/getAuditLog", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<AuditActionContext> getAuditLog(
+            final HttpServletRequest request,
+            final HttpServletResponse response)
+            throws Exception {
+        return this.auditTrailManager.get();
+    }
+
+    /**
      * Gets logs.
      *
      * @return the log output
@@ -279,7 +304,7 @@ public class LoggingConfigController {
             return log;
         }
     }
-    
+
     private static class LogTailerListener extends TailerListenerAdapter {
         @Override
         public void handle(final String line) {

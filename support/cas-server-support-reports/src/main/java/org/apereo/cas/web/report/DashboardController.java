@@ -1,7 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.EndpointProperties;
@@ -13,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,10 +59,6 @@ public class DashboardController {
     @RequestMapping("/status/dashboard")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-
-        if (StringUtils.isNotBlank(request.getQueryString()) && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-            return new ModelAndView(new RedirectView(request.getRequestURL().toString()));
-        }
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         if (busProperties != null && busProperties.isEnabled()) {

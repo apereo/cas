@@ -10,7 +10,7 @@ function setConnected(connected) {
     if (!connected) {
         el.innerHTML = "Disconnected!";
     } else {
-        el.innerHTML = "Connected to CAS. Streaming logs from " + logConfigFileLocation + "...";
+        el.innerHTML = "Connected to CAS. Streaming logs based on [" + logConfigFileLocation + "]...";
     }
 }
 
@@ -44,7 +44,7 @@ function getLogs() {
 
 function showLogs(message) {
     if (message != "") {
-        $("#logoutputarea").val( $("#logoutputarea").val() + "\n" + message );
+        $("#logoutputarea").val($("#logoutputarea").val() + "\n" + message);
         $("#logoutputarea").scrollTop(document.getElementById("logoutputarea").scrollHeight)
     }
 }
@@ -53,7 +53,7 @@ disconnect();
 connect();
 setInterval(function () {
     getLogs();
-}, 1000);
+}, 100);
 
 /*************
  *
@@ -98,6 +98,58 @@ var loggingDashboard = (function () {
         });
     };
 
+    var getAuditData = function () {
+        $.getJSON(urls.getAuditLog, function (data) {
+            loggerTableAudit(data);
+        });
+    };
+
+    var loggerTableAudit = function (jsonData) {
+        var t = $('#auditLogTable').DataTable({
+            "order": [[3, "desc"]],
+            retrieve: true,
+            columnDefs: [
+        
+                {"width": "5%", "targets": 0},
+                {"width": "100%", "targets": 1},
+                {
+                    "targets": 2,
+                    render: function (data, type, full, meta) {
+                        var dd = data.toLowerCase();
+                        if (dd.indexOf("created") != -1) {
+                            return '<span class="glyphicon glyphicon-plus" aria-hidden="true">&nbsp;</span>' + data;
+                        }
+                        if (dd.indexOf("validated") != -1) {
+                            return '<span class="glyphicon glyphicon-ok" aria-hidden="true">&nbsp;</span>' + data;
+                        }
+                        if (dd.indexOf("destroyed") != -1 || dd.indexOf("deleted") != -1) {
+                            return '<span class="glyphicon glyphicon-minus" aria-hidden="true">&nbsp;</span>' + data;
+                        }
+
+                        if (dd.indexOf("success") != -1) {
+                            return '<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true">&nbsp;</span>' + data;
+                        }
+                        if (dd.indexOf("failed") != -1) {
+                            return '<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true">&nbsp;</span>' + data;
+                        }
+                        
+                        return data;
+                    }
+                }
+            ]
+        });
+        for (var i = 0; i < jsonData.length; i++) {
+            var rec = jsonData[i];
+            t.row.add([
+                rec.principal,
+                rec.resourceOperatedUpon,
+                rec.actionPerformed,
+                new Date(rec.whenActionWasPerformed),
+                rec.clientIpAddress,
+                rec.serverIpAddress
+            ]).draw(false);
+        }
+    };
 
     var loggerTable = function () {
         $('#loggersTable').DataTable({
@@ -207,7 +259,6 @@ var loggingDashboard = (function () {
 
     /* Formatting function for row details - modify as you need */
     var viewAppenders = function (data) {
-        alert(data.appenders)
         return '<table class="table table-bordered row-detail"><tbody><tr class="">' +
             '<td class="field-label active">Appenders:</td>' +
             '<td><kbd>' + JSON.stringify(data.appenders, null, 2) + '</kbd></td>' +
@@ -270,6 +321,7 @@ var loggingDashboard = (function () {
     (function init() {
         getData();
         addEventHandlers();
+        getAuditData();
     })();
 
     return {

@@ -1,6 +1,8 @@
 package org.apereo.cas.audit.spi.config;
 
 import com.google.common.collect.ImmutableList;
+import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
+import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
 import org.apereo.cas.audit.spi.PrincipalIdProvider;
@@ -62,12 +64,12 @@ public class CasCoreAuditConfiguration {
 
     @ConditionalOnMissingBean(name = "auditTrailManager")
     @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
-    public AuditTrailManager slf4jAuditTrailManager() {
+    public DelegatingAuditTrailManager slf4jAuditTrailManager() {
         final Slf4jLoggingAuditTrailManager mgmr = new Slf4jLoggingAuditTrailManager();
         mgmr.setUseSingleLine(casProperties.getAudit().isUseSingleLine());
         mgmr.setEntrySeparator(casProperties.getAudit().getSinglelineSeparator());
         mgmr.setAuditFormat(casProperties.getAudit().getAuditFormat());
-        return mgmr;
+        return new DefaultDelegatingAuditTrailManager(mgmr);
     }
 
     @Bean
@@ -80,28 +82,29 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public DefaultAuditActionResolver authenticationActionResolver() {
+    public AuditActionResolver authenticationActionResolver() {
         return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     @Bean
-    public DefaultAuditActionResolver ticketCreationActionResolver() {
+    public AuditActionResolver ticketCreationActionResolver() {
         return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
     }
 
     @Bean
-    public DefaultAuditActionResolver ticketValidationActionResolver() {
+    public AuditActionResolver ticketValidationActionResolver() {
         return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
     }
 
     @Bean
-    public ReturnValueAsStringResourceResolver returnValueResourceResolver() {
+    public AuditResourceResolver returnValueResourceResolver() {
         return new ReturnValueAsStringResourceResolver();
     }
 
     @Bean
     public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
+        
         final AuditActionResolver resolver = authenticationActionResolver();
         map.put("AUTHENTICATION_RESOLVER", resolver);
         map.put("SAVE_SERVICE_ACTION_RESOLVER", resolver);
@@ -144,12 +147,12 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public TicketAsFirstParameterResourceResolver ticketResourceResolver() {
+    public AuditResourceResolver ticketResourceResolver() {
         return new TicketAsFirstParameterResourceResolver();
     }
 
     @Bean
-    public MessageBundleAwareResourceResolver messageBundleAwareResourceResolver() {
+    public AuditResourceResolver messageBundleAwareResourceResolver() {
         return new MessageBundleAwareResourceResolver();
     }
 
