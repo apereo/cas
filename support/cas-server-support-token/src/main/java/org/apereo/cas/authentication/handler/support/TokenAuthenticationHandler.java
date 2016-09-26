@@ -1,5 +1,10 @@
 package org.apereo.cas.authentication.handler.support;
 
+import com.google.common.collect.Lists;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.TokenConstants;
 import org.apereo.cas.authentication.Credential;
@@ -11,7 +16,12 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jwt.config.encryption.RSAEncryptionConfiguration;
+import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
+import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
+import org.pac4j.jwt.profile.JwtGenerator;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -41,9 +51,13 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         if (StringUtils.isNotBlank(signingSecret)) {
             if (StringUtils.isBlank(encryptionSecret)) {
                 logger.warn("JWT authentication is configured to share a single key for both signing/encryption");
-                return new JwtAuthenticator(signingSecret);
+                return new JwtAuthenticator(Lists.newArrayList(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256)));
             }
-            return new JwtAuthenticator(signingSecret, encryptionSecret);
+            final JwtAuthenticator a = new JwtAuthenticator();
+            a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
+            a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
+                    JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
+            return a;
         }
         logger.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
                     service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
@@ -94,5 +108,4 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 service.getServiceId(), propName);
         return null;
     }
-
 }

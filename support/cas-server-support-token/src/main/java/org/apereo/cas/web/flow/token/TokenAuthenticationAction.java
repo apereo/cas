@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow.token;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.TokenConstants;
@@ -34,15 +37,20 @@ public class TokenAuthenticationAction extends AbstractAction {
     
     private AuthenticationSystemSupport authenticationSystemSupport;
 
+    private ServicesManager servicesManager;
+    
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         final Service service = WebUtils.getService(context);
-
+        
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
             try {
+                final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+                
                 final Credential credential = new TokenCredential(authTokenValue, service);
                 LOGGER.debug("Received token authentication request {} ", credential);
 
@@ -59,18 +67,14 @@ public class TokenAuthenticationAction extends AbstractAction {
         return error();
     }
 
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-
-    public CentralAuthenticationService getCentralAuthenticationService() {
-        return centralAuthenticationService;
-    }
-
-    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return authenticationSystemSupport;
-    }
-
+    
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
