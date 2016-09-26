@@ -81,8 +81,7 @@ public class TerminateSessionAction extends AbstractAction {
             if (session != null) {
                 session.invalidate();
             }
-
-            LOGGER.info("CAS logout successful.");
+            LOGGER.info("Terminated all CAS sessions successfully.");
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
             throw Throwables.propagate(e);

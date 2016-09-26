@@ -9,4 +9,6 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-monitor")
     compile project(":core:cas-server-core-authentication")
+
+    provided project(":core:cas-server-core-audit")
 }
