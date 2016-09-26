@@ -61,8 +61,10 @@ import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccesso
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -548,6 +550,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return the flow variable
      */
     protected FlowVariable createFlowVariable(final Flow flow, final String id, final Class type) {
+        final Optional<FlowVariable> opt = Arrays.stream(flow.getVariables()).filter(v -> v.getName().equalsIgnoreCase(id)).findFirst();
+        if (opt.isPresent()) {
+            return opt.get();
+        }
         final FlowVariable flowVar = new FlowVariable(id, new BeanFactoryVariableValueFactory(type,
                 applicationContext.getAutowireCapableBeanFactory()));
         flow.addVariable(flowVar);
