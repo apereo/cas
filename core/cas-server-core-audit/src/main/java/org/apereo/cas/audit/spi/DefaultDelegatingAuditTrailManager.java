@@ -34,8 +34,8 @@ public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailM
     private final AuditTrailManager manager;
     private final LoadingCache<String, AuditActionContext> storage;
 
-    private int expirationDuration = 1;
-    private TimeUnit expirationTimeUnit = TimeUnit.DAYS;
+    private int expirationDuration = 2;
+    private TimeUnit expirationTimeUnit = TimeUnit.HOURS;
 
     public DefaultDelegatingAuditTrailManager(final AuditTrailManager manager) {
         this.manager = manager;

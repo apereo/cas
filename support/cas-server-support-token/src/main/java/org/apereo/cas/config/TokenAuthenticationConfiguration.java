@@ -73,6 +73,7 @@ public class TokenAuthenticationConfiguration {
         final TokenAuthenticationAction a = new TokenAuthenticationAction();
         a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
         a.setCentralAuthenticationService(this.centralAuthenticationService);
+        a.setServicesManager(this.servicesManager);
         return a;
     }
 

@@ -75,16 +75,20 @@ public class TerminateSessionAction extends AbstractAction {
             this.ticketGrantingTicketCookieGenerator.removeCookie(response);
             this.warnCookieGenerator.removeCookie(response);
 
-            LOGGER.debug("Destroying application session");
-            this.applicationLogoutController.applicationLogout(request, response);
-            final HttpSession session = request.getSession();
-            if (session != null) {
-                session.invalidate();
-            }
+            destroyApplicationSession(request, response);
             LOGGER.info("Terminated all CAS sessions successfully.");
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
+        }
+    }
+
+    private void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.debug("Destroying application session");
+        this.applicationLogoutController.applicationLogout(request, response);
+        final HttpSession session = request.getSession();
+        if (session != null) {
+            session.invalidate();
         }
     }
 
