@@ -33,6 +33,7 @@
                     <li><a th:href="@{/status/config}">Config Panel</a></li>
                     <li><a th:href="@{/status/ssosessions}">SSO Sessions</a></li>
                     <li><a th:href="@{/status/logging}">Logging</a></li>
+                    <li th:if="${trustedDevicesEnabled}"><a th:href="@{/status/trustedDevs}">Trusted Devices</a></li>
                 </ul>
             </div>
             <div class="app-launcher server-config">
