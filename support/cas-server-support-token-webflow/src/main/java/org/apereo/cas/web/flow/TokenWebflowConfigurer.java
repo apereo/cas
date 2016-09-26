@@ -16,9 +16,9 @@ public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState actionState = createActionState(flow, "tokenAuthenticationCheck",
+        final ActionState actionState = createActionState(flow, "tokenAuthenticationCheck", 
                 createEvaluateAction("tokenAuthenticationAction"));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, 
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
         registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
