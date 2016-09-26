@@ -62,14 +62,26 @@ Configure the appropriate service in your service registry to hold the secrets:
     "@class" : "java.util.HashMap",
     "jwtSigningSecret" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "<SIGNING_SECRET>" ] ]
+      "values" : [ "java.util.HashSet", [ "<SECRET>" ] ]
     },
     "jwtEncryptionSecret" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
+      "values" : [ "java.util.HashSet", [ "<SECRET>" ] ]
+    },
+    "jwtSigningSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "HS256" ] ]
+    },
+    "jwtEncryptionSecretAlg" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "dir" ] ]
+    },
+    "jwtEncryptionSecretMethod" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "A192CBC-HS384" ] ]
     }
-  }  
+  }
 }
 ```
 
-Note that the configuration of `jwtEncryptionSecret` is optional. 
+Note that the only required property is `jwtSigningSecret`.
