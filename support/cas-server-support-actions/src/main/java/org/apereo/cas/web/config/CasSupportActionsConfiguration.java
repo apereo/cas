@@ -190,7 +190,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action gatewayServicesManagementCheck() {
-        return new GatewayServicesManagementCheck();
+        return new GatewayServicesManagementCheck(this.servicesManager);
     }
 
     @Bean
