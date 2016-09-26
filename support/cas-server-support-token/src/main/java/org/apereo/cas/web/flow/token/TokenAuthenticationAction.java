@@ -1,22 +1,17 @@
 package org.apereo.cas.web.flow.token;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.TokenConstants;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.TokenCredential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,52 +25,34 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class TokenAuthenticationAction extends AbstractAction {
+public class TokenAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationAction.class);
-    
-    private CentralAuthenticationService centralAuthenticationService;
-    
-    private AuthenticationSystemSupport authenticationSystemSupport;
 
     private ServicesManager servicesManager;
-    
+
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+    protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
 
         final String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
-        final Service service = WebUtils.getService(context);
-        
+        final Service service = WebUtils.getService(requestContext);
+
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-                
+
                 final Credential credential = new TokenCredential(authTokenValue, service);
                 LOGGER.debug("Received token authentication request {} ", credential);
-
-                final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                return success();
+                return credential;
             } catch (final Exception e) {
                 LOGGER.warn(e.getMessage(), e);
             }
         }
-        return error();
+        return null;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-    
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }
