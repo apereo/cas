@@ -12,8 +12,17 @@ public interface TokenConstants {
 
     /** Jwt signing secret defined for a given service. **/
     String PROPERTY_NAME_TOKEN_SECRET_SIGNING = "jwtSigningSecret";
+    
+    /** Jwt signing secret alg defined for a given service. **/
+    String PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG = "jwtSigningSecretAlg";
 
-    /** Jwt signing secret defined for a given service. **/
+    /** Jwt encryption secret defined for a given service. **/
     String PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION = "jwtEncryptionSecret";
+
+    /** Jwt encryption secret alg defined for a given service. **/
+    String PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG = "jwtEncryptionSecretAlg";
+
+    /** Jwt encryption secret method defined for a given service. **/
+    String PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD = "jwtEncryptionSecretMethod";
 }
 

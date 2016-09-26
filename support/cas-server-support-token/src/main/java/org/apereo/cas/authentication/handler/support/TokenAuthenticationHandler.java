@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.handler.support;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.TokenConstants;
 import org.apereo.cas.authentication.Credential;
@@ -16,12 +16,11 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.jwt.config.encryption.RSAEncryptionConfiguration;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
-import org.pac4j.jwt.profile.JwtGenerator;
+
+import java.util.Set;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -48,22 +47,62 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
         final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
+        final String signingSecretAlg =
+                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING_ALG),
+                        JWSAlgorithm.HS256.getName());
+
+        final String encryptionSecretAlg =
+                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_ALG),
+                        JWEAlgorithm.DIR.getName());
+
+        final String encryptionSecretMethod =
+                StringUtils.defaultString(getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION_METHOD),
+                        EncryptionMethod.A192CBC_HS384.getName());
+
         if (StringUtils.isNotBlank(signingSecret)) {
-            if (StringUtils.isBlank(encryptionSecret)) {
-                logger.warn("JWT authentication is configured to share a single key for both signing/encryption");
-                return new JwtAuthenticator(Lists.newArrayList(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256)));
-            }
+            Set<Algorithm> sets = Sets.newHashSet();
+            sets.addAll(JWSAlgorithm.Family.EC);
+            sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
+            sets.addAll(JWSAlgorithm.Family.RSA);
+            sets.addAll(JWSAlgorithm.Family.SIGNATURE);
+
+            final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg);
+
             final JwtAuthenticator a = new JwtAuthenticator();
-            a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
-            a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
-                    JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
+            a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, signingAlg));
+            
+            if (StringUtils.isNotBlank(encryptionSecret)) {
+                sets = Sets.newHashSet();
+                sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
+                sets.addAll(JWEAlgorithm.Family.AES_KW);
+                sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);
+                sets.addAll(JWEAlgorithm.Family.ECDH_ES);
+                sets.addAll(JWEAlgorithm.Family.PBES2);
+                sets.addAll(JWEAlgorithm.Family.RSA);
+                sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
+                
+                final JWEAlgorithm encAlg = findAlgorithmFamily(sets, encryptionSecretAlg);
+                
+                sets = Sets.newHashSet();
+                sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
+                sets.addAll(EncryptionMethod.Family.AES_GCM);
+
+                final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
+                a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, encAlg, encMethod));
+            } else {
+                logger.warn("JWT authentication is configured to share a single key for both signing/encryption");
+            }
             return a;
         }
         logger.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
-                    service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
+                service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
         return null;
     }
-    
+
+    private <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family, final String alg) {
+        return (T) family.stream().filter(l -> l.getName().equalsIgnoreCase(alg)).findFirst().get();
+    }
+
     /**
      * Gets registered service jwt encryption secret.
      *
@@ -75,11 +114,11 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     /**
-    * Gets registered service jwt signing secret.
-    *
-    * @param service the service
-    * @return the registered service jwt secret
-    */
+     * Gets registered service jwt signing secret.
+     *
+     * @param service the service
+     * @return the registered service jwt secret
+     */
     private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
         return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
     }
