@@ -128,6 +128,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
                 .withSockJS();
     }
 
+    /**
+     * The Trusted devices configuration for the UI.
+     */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("TrustedDevicesConfiguration")
     public class TrustedDevicesConfiguration {
