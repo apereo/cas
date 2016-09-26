@@ -4,10 +4,8 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.test.annotation.IfProfileValue;
 
 import static org.junit.Assert.*;
 

@@ -1,7 +1,7 @@
 @import 'https://fonts.googleapis.com/css?family=PT+Mono';
 
 #trustedDevices {
-
+   
 }
 #trustedDevices .tabsContainer {
     padding: 0 20px;
@@ -16,5 +16,5 @@
 }
 
 #container {
-    width:95%;
+    width:55%;
 }
