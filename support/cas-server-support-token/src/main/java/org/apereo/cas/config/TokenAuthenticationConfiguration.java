@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -10,6 +9,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,9 +31,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenAuthenticationConfiguration {
 
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -47,8 +44,16 @@ public class TokenAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    @Qualifier("adaptiveAuthenticationPolicy")
+    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+
+    @Autowired
+    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -71,8 +76,9 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public Action tokenAuthenticationAction() {
         final TokenAuthenticationAction a = new TokenAuthenticationAction();
-        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
-        a.setCentralAuthenticationService(this.centralAuthenticationService);
+        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
+        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
+        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         a.setServicesManager(this.servicesManager);
         return a;
     }
