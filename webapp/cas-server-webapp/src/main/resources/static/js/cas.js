@@ -48,6 +48,11 @@ function showGeoPosition(position) {
 }
 
 function areCookiesEnabled() {
+    if ($.cookie == undefined) {
+        console.log("JQuery Cookie library is not defined")
+        return;
+    }
+    
     $.cookie('cookiesEnabled', 'true');
     var value = $.cookie('cookiesEnabled');
     if (value != undefined) {

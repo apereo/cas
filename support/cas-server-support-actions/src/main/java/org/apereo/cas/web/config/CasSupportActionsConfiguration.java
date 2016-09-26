@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -205,6 +206,7 @@ public class CasSupportActionsConfiguration {
         return new TicketGrantingTicketCheckAction(this.centralAuthenticationService);
     }
 
+    @Lazy
     @Autowired
     @Bean
     public Action terminateSessionAction(@Qualifier("config") final Config pac4jSecurityConfig) {

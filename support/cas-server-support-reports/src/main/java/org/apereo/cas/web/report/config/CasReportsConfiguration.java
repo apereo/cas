@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
@@ -40,7 +41,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     private ServerProperties serverProperties;
-    
+
     @Autowired
     @Qualifier("healthCheckMonitor")
     private Monitor<HealthStatus> healthCheckMonitor;
@@ -91,11 +92,14 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @RefreshScope
     @Bean
-    public LoggingConfigController loggingConfigController() {
+    @Autowired
+    public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager")
+                                                           final DelegatingAuditTrailManager auditTrailManager) {
         final LoggingConfigController c = new LoggingConfigController();
+        c.setAuditTrailManager(auditTrailManager);
         return c;
     }
-    
+
     @Bean
     public StatisticsController statisticsController() {
         final StatisticsController c = new StatisticsController();

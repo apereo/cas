@@ -1,14 +1,16 @@
 package org.apereo.cas.audit.config;
 
+import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
+import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -37,12 +39,11 @@ public class CasSupportJdbcAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean(name = {"jdbcAuditTrailManager", "auditTrailManager"})
-    public AuditTrailManager jdbcAuditTrailManager() {
-        final JdbcAuditTrailManager t =
-                new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
+    public DelegatingAuditTrailManager jdbcAuditTrailManager() {
+        final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
-        return t;
+        return new DefaultDelegatingAuditTrailManager(t);
     }
 
     @Lazy
@@ -58,6 +59,7 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public WhereClauseMatchCriteria auditCleanupCriteria() {
         return new MaxAgeWhereClauseMatchCriteria(casProperties.getAudit().getJdbc().getMaxAgeDays());
     }
@@ -68,14 +70,14 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
+    @RefreshScope
     public DataSource inspektrAuditTrailDataSource() {
         return Beans.newHickariDataSource(casProperties.getAudit().getJdbc());
     }
 
     @Bean
     public TransactionTemplate inspektrAuditTransactionTemplate() {
-        final TransactionTemplate t =
-                new TransactionTemplate(inspektrAuditTransactionManager());
+        final TransactionTemplate t = new TransactionTemplate(inspektrAuditTransactionManager());
         t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
         t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
         return t;
