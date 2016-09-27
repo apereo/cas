@@ -20,6 +20,15 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
+Add servlet mapping in ```web.xml```
+
+```xml
+<servlet-mapping>
+  <servlet-name>cas</servlet-name>
+  <url-pattern>/oauth2.0/*</url-pattern>
+</servlet-mapping>
+```
+
 After enabling OAuth support, three new urls will be available:
 
 * **/oauth2.0/authorize**  
