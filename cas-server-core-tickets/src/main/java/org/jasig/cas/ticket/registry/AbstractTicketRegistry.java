@@ -146,5 +146,5 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @param ticketId the ticket id
      * @return the boolean
      */
-    public abstract boolean deleteSingleTicket(final String ticketId);
+    public abstract boolean deleteSingleTicket(String ticketId);
 }
