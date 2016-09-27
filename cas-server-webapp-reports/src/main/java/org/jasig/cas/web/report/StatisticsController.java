@@ -81,9 +81,9 @@ public final class StatisticsController implements ServletContextAware {
         modelAndView.addObject("startTime", this.upTimeStartDate);
         final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
 
-        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(
+        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<>(
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
-                        NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
+                                NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
                         new LinkedList<>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
 
         modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
