@@ -1556,7 +1556,7 @@ Delegate authentication to an external OpenID Connect server.
 
 ### SAML
 
-Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` prefixes for the `keystorePath` property).
+Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
 # cas.authn.pac4j.saml.keystorePassword=
