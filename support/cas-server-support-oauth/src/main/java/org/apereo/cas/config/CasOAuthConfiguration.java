@@ -136,7 +136,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         final DirectBasicAuthClient basicAuthClient = new DirectBasicAuthClient(authenticator);
         basicAuthClient.setName("clientBasicAuth");
 
-       
+
         final DirectFormClient directFormClient = new DirectFormClient(authenticator);
         directFormClient.setName("clientForm");
         directFormClient.setUsernameParameter(OAuthConstants.CLIENT_ID);
@@ -186,7 +186,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20ConsentApprovalViewResolver();
     }
 
-    @ConditionalOnMissingBean(name="callbackAuthorizeViewResolver")
+    @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
@@ -259,6 +259,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
     public AccessTokenFactory defaultAccessTokenFactory() {
         final DefaultAccessTokenFactory f = new DefaultAccessTokenFactory();
         f.setAccessTokenIdGenerator(accessTokenIdGenerator());
@@ -291,6 +292,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultOAuthCodeFactory")
     public OAuthCodeFactory defaultOAuthCodeFactory() {
         final DefaultOAuthCodeFactory f = new DefaultOAuthCodeFactory();
         f.setExpirationPolicy(oAuthCodeExpirationPolicy());
@@ -299,6 +301,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     public OAuth20CallbackAuthorizeController callbackAuthorizeController() {
         final OAuth20CallbackAuthorizeController c = new OAuth20CallbackAuthorizeController();
         c.setCallbackController(callbackController());
@@ -307,6 +310,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
     public OAuth20AccessTokenController accessTokenController() {
         final OAuth20AccessTokenController c = new OAuth20AccessTokenController();
@@ -320,6 +324,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "profileController")
     @Bean
     public OAuth20ProfileController profileController() {
         final OAuth20ProfileController c = new OAuth20ProfileController();
@@ -331,6 +336,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "authorizeController")
     @Bean
     public OAuth20AuthorizeController authorizeController() {
         final OAuth20AuthorizeController c = new OAuth20AuthorizeController();
@@ -351,6 +357,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "defaultRefreshTokenFactory")
     public RefreshTokenFactory defaultRefreshTokenFactory() {
         final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();
         f.setExpirationPolicy(refreshTokenExpirationPolicy());
@@ -365,6 +372,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oauth20ValidationServiceSelectionStrategy")
     public ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
         final OAuth20ValidationServiceSelectionStrategy s = new OAuth20ValidationServiceSelectionStrategy();
         s.setServicesManager(servicesManager);
