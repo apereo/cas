@@ -168,37 +168,34 @@ section for further information.
 To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ### CAS Security Filter
+
 The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
 The filters are configured to sanitize authentication request parameters and reject the request if it is not compliant with the CAS protocol in the event that for instance, a parameter is repeated multiple times, includes multiple values, contains unacceptable values, etc.
 
 It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
 #### Security Response Headers
+
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
-These settings are presently off by default, and may be enabled via the following settings:
-
-```xml
-# httpresponse.header.cache=false
-# httpresponse.header.hsts=false
-# httpresponse.header.xframe=false
-# httpresponse.header.xcontent=false
-# httpresponse.header.xss=false
-```
+These settings are presently off by default.To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
 ### Spring Webflow Sessions
+
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryptions
 settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be evaluated prior to production rollouts and regenerate this configuration to prevent attacks.
 
 ## User-Driven Security Features
+
 The following features may be employed to afford some user control of the SSO experience.
 
 
 ### Long Term Authentication
+
 The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the CAS login form to avoid reauthentication for an extended period of time. Long term authentication allows users to elect additional convenience at the expense of reduced security. The extent of reduced security is a function of the characteristics of the device used to establish a CAS SSO session. A long-term SSO session established from a device owned or operated by a single user is marginally less secure than a standard CAS SSO session. The only real concern would be the increased lifetime and resulting increased exposure of the CAS ticket-granting ticket. Establishing a long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
 The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users, even in the face of single sign-out, may increase the likelihood of impersonation. While there are no feasible mitigations for improving security of long-term SSO sessions on a shared device, educating users on the inherent risks may improve overall security.
 
@@ -213,6 +210,7 @@ users may elect to use it via selection on the CAS login form.
 
 
 ### Warn
+
 CAS supports optional notification of service access during an established SSO session. By default CAS
 transparently requests tickets needed for service access and presents them to the target service for validation,
 whereby upon successful validation access to the service is permitted. In most cases this happens nearly instantly
