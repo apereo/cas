@@ -67,6 +67,7 @@ public final class SingleSignOnSessionsReportController {
             return this.type;
         }
     }
+
     /**
      * The enum Sso session attribute keys.
      */
@@ -104,16 +105,12 @@ public final class SingleSignOnSessionsReportController {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @NotNull
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
-
+    
     /**
      * Instantiates a new Single sign on sessions report resource.
      */
-    public SingleSignOnSessionsReportController() {}
+    public SingleSignOnSessionsReportController() {
+    }
 
     /**
      * Gets sso sessions.
@@ -184,7 +181,7 @@ public final class SingleSignOnSessionsReportController {
      * @param type the type
      * @return the sso sessions
      */
-    @RequestMapping(value = "/getSsoSessions", method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/ssosessions/getSsoSessions", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
@@ -233,9 +230,9 @@ public final class SingleSignOnSessionsReportController {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return result map
      */
-    @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
+    @RequestMapping(value = "/statistics/ssosessions/destroySsoSession", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
+    public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -256,9 +253,9 @@ public final class SingleSignOnSessionsReportController {
      * @param type the type
      * @return result map
      */
-    @RequestMapping(value = "/destroySsoSessions", method = RequestMethod.POST)
+    @RequestMapping(value = "/statistics/ssosessions/destroySsoSessions", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
 
@@ -290,7 +287,7 @@ public final class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(value="/statistics/ssosessions", method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/ssosessions", method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }
