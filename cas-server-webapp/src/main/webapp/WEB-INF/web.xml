@@ -103,31 +103,7 @@
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-
-    <servlet>
-        <servlet-name>metrics-health</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.HealthCheckServlet</servlet-class>
-        <async-supported>true</async-supported>
-    </servlet>
-
-    <servlet>
-        <servlet-name>metrics</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.MetricsServlet</servlet-class>
-        <async-supported>true</async-supported>
-    </servlet>
-
-    <servlet>
-        <servlet-name>metrics-ping</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.PingServlet</servlet-class>
-        <async-supported>true</async-supported>
-    </servlet>
-
-    <servlet>
-        <servlet-name>metrics-threads</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.ThreadDumpServlet</servlet-class>
-        <async-supported>true</async-supported>
-    </servlet>
-
+    
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -185,6 +161,26 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ping</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/metrics</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/threads</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/healthcheck</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
         <url-pattern>/statistics/ssosessions/*</url-pattern>
     </servlet-mapping>
 
@@ -202,27 +198,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/status/config</url-pattern>
     </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>metrics-ping</servlet-name>
-        <url-pattern>/statistics/ping</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>metrics</servlet-name>
-        <url-pattern>/statistics/metrics</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>metrics-threads</servlet-name>
-        <url-pattern>/statistics/threads</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>metrics-health</servlet-name>
-        <url-pattern>/statistics/healthcheck</url-pattern>
-    </servlet-mapping>
-
+    
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/authorizationFailure.html</url-pattern>
