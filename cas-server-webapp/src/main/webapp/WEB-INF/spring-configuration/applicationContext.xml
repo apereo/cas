@@ -56,19 +56,50 @@
         <property name="mappings">
             <util:properties>
                 <prop key="/authorizationFailure.html">passThroughController</prop>
+                <prop key="/statistics/ping">pingController</prop>
+                <prop key="/statistics/threads">threadsController</prop>
+                <prop key="/statistics/metrics">metricsController</prop>
+                <prop key="/statistics/healthcheck">healthController</prop>
             </util:properties>
         </property>
-        <!--
-         uncomment this to enable sending PageRequest events.
-         <property
-           name="interceptors">
-           <list>
-             <ref bean="pageRequestHandlerInterceptorAdapter" />
-           </list>
-         </property>
-          -->
     </bean>
 
+    <bean id="healthController" class="org.springframework.web.servlet.mvc.ServletWrappingController">
+        <property name="servletClass">
+            <value>com.codahale.metrics.servlets.HealthCheckServlet</value>
+        </property>
+        <property name="servletName">
+            <value>healthServlet</value>
+        </property>
+    </bean>
+    
+    <bean id="metricsController" class="org.springframework.web.servlet.mvc.ServletWrappingController">
+        <property name="servletClass">
+            <value>com.codahale.metrics.servlets.MetricsServlet</value>
+        </property>
+        <property name="servletName">
+            <value>metricsServlet</value>
+        </property>
+    </bean>
+    
+    <bean id="pingController" class="org.springframework.web.servlet.mvc.ServletWrappingController">
+        <property name="servletClass">
+            <value>com.codahale.metrics.servlets.PingServlet</value>
+        </property>
+        <property name="servletName">
+            <value>ping</value>
+        </property>
+    </bean>
+
+    <bean id="threadsController" class="org.springframework.web.servlet.mvc.ServletWrappingController">
+        <property name="servletClass">
+            <value>com.codahale.metrics.servlets.ThreadDumpServlet</value>
+        </property>
+        <property name="servletName">
+            <value>threads</value>
+        </property>
+    </bean>
+    
     <!-- The Quartz scheduler used by any scheduled tasks -->
     <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
         p:waitForJobsToCompleteOnShutdown="${scheduler.shutdown.wait:true}">

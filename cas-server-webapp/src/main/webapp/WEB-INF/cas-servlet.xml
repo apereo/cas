@@ -92,10 +92,9 @@
 
     <bean id="logoutFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler"
           p:flowExecutionKeyParameter="RelayState"/>
-
-
-
+    
     <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
           p:messageInterpolator-ref="messageInterpolator"/>
+
 
 </beans>
