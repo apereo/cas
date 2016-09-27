@@ -1502,7 +1502,7 @@ To learn more about this topic, [please review this guide](OIDC-Authentication.h
 ## Pac4j
 
 Act as a proxy, and delegate authentication to external identity providers.
-To learn more about this topic, [please review this guide](Delegate-Authentication.html).
+To learn more about this topic, [please review this guide](../integration/Delegate-Authentication.html).
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
