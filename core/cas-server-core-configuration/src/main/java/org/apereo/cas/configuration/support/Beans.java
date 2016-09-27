@@ -377,7 +377,7 @@ public class Beans {
                     registry.getSigning().getKeySize(),
                     registry.getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This may NOT be safe in a "
+        LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets.");

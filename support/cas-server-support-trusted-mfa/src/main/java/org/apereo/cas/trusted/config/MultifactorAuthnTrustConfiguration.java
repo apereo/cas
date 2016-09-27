@@ -108,7 +108,7 @@ public class MultifactorAuthnTrustConfiguration {
                     casProperties.getAuthn().getMfa().getTrusted().getSigningKey());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
-                + "may NOT be safe in a production environment. "
+                + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
         return new NoOpCipherExecutor();
