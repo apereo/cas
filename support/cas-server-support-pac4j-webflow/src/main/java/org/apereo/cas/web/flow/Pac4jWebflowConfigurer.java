@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.support.pac4j.web.flow.ClientAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 
@@ -10,20 +11,18 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
-    private static final String CLIENT_ACTION = "clientAction";
-    private static final String STOP_WEBFLOW = "stopWebflow";
+public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {   
 
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState actionState = createActionState(flow, CLIENT_ACTION, createEvaluateAction(CLIENT_ACTION));
+        final ActionState actionState = createActionState(flow, ClientAction.CLIENT_ACTION, 
+                createEvaluateAction(ClientAction.CLIENT_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
-        actionState.getTransitionSet().add(createTransition("stop", STOP_WEBFLOW));
+        actionState.getTransitionSet().add(createTransition(ClientAction.STOP, ClientAction.STOP_WEBFLOW));
         setStartState(flow, actionState);
-        createViewState(flow, STOP_WEBFLOW, STOP_WEBFLOW);
+        createViewState(flow, ClientAction.STOP_WEBFLOW, "casPac4jStopWebflow");
     }
 }
