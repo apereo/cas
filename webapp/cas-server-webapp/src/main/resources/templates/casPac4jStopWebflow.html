@@ -10,10 +10,32 @@
     <div class="alert alert-danger">
         <h2 th:utext="#{screen.pac4j.unauthz.heading}"/>
         <p th:utext="#{screen.pac4j.unauthz.message}"/>
-        
+
         <div>
             <p/>
-            <pre th:text="'Error: ' + ${error} + ', Code: ' + ${error} + ', Description: ' + ${description} + ', Client: ' + ${client}"/>
+            <table class="table table-bordered table-hover table-responsive">
+                <thead>
+                <tr>
+                    <th>Error</th>
+                    <th>Reason</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Client</th>
+  
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="active">
+                    <td th:text="${error}" />
+                    <td th:text="${reason}" />
+                    <td th:text="${code}" />
+                    <td th:text="${description}" />
+                    <td th:text="${client}" />
+
+                </tr>
+                </tbody>
+            </table>
+
         </div>
     </div>
     <p><a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/></p>
