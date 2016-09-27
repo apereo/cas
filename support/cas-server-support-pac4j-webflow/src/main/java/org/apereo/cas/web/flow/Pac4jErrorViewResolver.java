@@ -3,10 +3,7 @@ package org.apereo.cas.web.flow;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.DefaultErrorViewResolver;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,6 +31,7 @@ public class Pac4jErrorViewResolver implements ErrorViewResolver {
             final Map<String, Object> model = Maps.newHashMap();
             model.put("code", status.value());
             model.put("error", request.getParameter("error"));
+            model.put("reason", request.getParameter("error_reason"));
             model.put("description", request.getParameter("error_description"));
             model.put("client", request.getParameter("client_name"));
             model.putAll(map);
