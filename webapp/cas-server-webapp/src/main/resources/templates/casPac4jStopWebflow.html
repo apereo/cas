@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{screen.pac4j.unauthz.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-danger">
+        <h2 th:utext="#{screen.pac4j.unauthz.heading}"/>
+        <p th:utext="#{screen.pac4j.unauthz.message}"/>
+        
+        <div>
+            <p/>
+            <pre th:text="'Error: ' + ${error} + ', Code: ' + ${error} + ', Description: ' + ${description} + ', Client: ' + ${client}"/>
+        </div>
+    </div>
+    <p><a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/></p>
+</div>
+</body>
+</html>
