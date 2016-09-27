@@ -20,6 +20,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
@@ -61,6 +62,7 @@ public class ClientActionTests {
 
     @Test
     public void verifyStartAuthentication() throws Exception {
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
@@ -71,6 +73,7 @@ public class ClientActionTests {
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
+        when(servletExternalContext.getNativeResponse()).thenReturn(mockResponse);
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
