@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -27,6 +28,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         assertTrue(client.isValidEndPoint("https://www.cacert.org"));
     }
 
+    @Ignore
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
