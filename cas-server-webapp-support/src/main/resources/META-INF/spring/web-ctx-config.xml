@@ -13,7 +13,11 @@
 
     <!-- Scan CAS artifacts to mvc annotations, such as controllers.
         The scan is controlled by the application context config file -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven>
+        <mvc:path-matching path-helper="urlPathHelperWeb" trailing-slash="true" />
+    </mvc:annotation-driven>
+    <bean id="urlPathHelperWeb" class="org.springframework.web.util.UrlPathHelper"
+          p:alwaysUseFullPath="true" />
     <mvc:interceptors>
         <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor"
               p:cacheSeconds="0"

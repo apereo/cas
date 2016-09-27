@@ -1,5 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
+import com.google.common.collect.Lists;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
@@ -11,13 +12,12 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -173,12 +173,11 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
     /**
      * {@inheritDoc}
      * This operation is not supported.
-     *
-     * @throws UnsupportedOperationException if you try and call this operation.
      */
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets not supported.");
+        logger.warn("getTickets() not supported is not supported by {}.", getClass().getSimpleName());
+        return Lists.newArrayList();
     }
 
     /**

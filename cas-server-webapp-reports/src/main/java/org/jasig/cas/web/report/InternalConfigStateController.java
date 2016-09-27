@@ -53,7 +53,7 @@ public final class InternalConfigStateController {
      * Returns the current state of CAS properties.
      * @return properties configured in CAS.
      */
-    @RequestMapping(value = "/getProperties", method = RequestMethod.GET)
+    @RequestMapping(value = "/status/config/getProperties", method = RequestMethod.GET)
     @ResponseBody
     protected Set<Map.Entry<Object, Object>> getProperties() {
         return casProperties.entrySet();
