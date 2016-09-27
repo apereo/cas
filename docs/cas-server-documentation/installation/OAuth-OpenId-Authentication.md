@@ -10,6 +10,7 @@ OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAu
 other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
 ## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -20,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-After enabling OAuth support, three new urls will be available:
+After enabling OAuth support, the following endpoints will be available:
 
 * **/cas/oauth2.0/authorize**  
 It's the url to call to authorize the user: the CAS login page will be displayed and the user will login.
