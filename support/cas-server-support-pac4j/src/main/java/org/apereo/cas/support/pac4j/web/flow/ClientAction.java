@@ -21,6 +21,7 @@ import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
@@ -48,6 +49,18 @@ import java.util.Set;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ClientAction extends AbstractAction {
+
+    /** Stop the webflow for pac4j and route to view. */
+    public static final String STOP_WEBFLOW = "stopWebflow";
+    
+    /** Stop the webflow. */
+    public static final String STOP= "stop";
+    
+    /**
+     * Client action state id in the webflow.
+     */
+    public static final String CLIENT_ACTION = "clientAction";
+    
     /**
      * All the urls and names of the pac4j clients.
      */
@@ -91,19 +104,19 @@ public class ClientAction extends AbstractAction {
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                logger.debug("credentials: {}", credentials);
+                logger.debug("Retrieved credentials: {}", credentials);
             } catch (final Exception e) {
-                logger.debug("requires http action", e);
+                logger.debug("The request requires http action", e);
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
-                return new Event(this, "stop");
+                return new Event(this, STOP_WEBFLOW);
             }
 
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-            logger.debug("retrieve service: {}", service);
+            logger.debug("Retrieve service: {}", service);
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
@@ -126,6 +139,9 @@ public class ClientAction extends AbstractAction {
 
         // no or aborted authentication : go to login page
         prepareForLoginPage(context);
+        if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
+            return new Event(this, STOP);
+        } 
         return error();
     }
 
@@ -161,14 +177,20 @@ public class ClientAction extends AbstractAction {
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 logger.debug("{} -> {}", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
+            } catch (final HttpAction e) {
+                if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
+                    logger.debug("Authentication request was denied from the provider {}", client.getName());
+                } else {
+                    logger.warn(e.getMessage(), e);
+                }
             } catch (final Exception e) {
                 logger.error("Cannot process client {}", client, e);
             }
         }
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
-        } else {
-            logger.warn("No clients could be determined based on the provided configuration");
+        } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
+            logger.info("No clients could be determined based on the provided configuration");
         }
     }
 
