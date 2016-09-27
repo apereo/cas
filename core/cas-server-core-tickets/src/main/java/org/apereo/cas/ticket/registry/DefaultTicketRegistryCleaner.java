@@ -87,7 +87,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
         } finally {
             LOGGER.debug("Releasing ticket cleanup lock.");
             this.lockingStrategy.release();
-            LOGGER.info("Finished ticket cleanup.");
+            LOGGER.debug("Finished ticket cleanup.");
         }
     }
 

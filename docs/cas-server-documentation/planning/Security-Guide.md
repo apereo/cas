@@ -4,6 +4,7 @@ title: CAS - Security Guide
 ---
 
 # Security Guide
+
 CAS is security software that provides secure Web-based single sign-on to Web-based applications. Single sign-on
 provides a win/win in terms of security and convenience: it reduces password exposure to a single, trusted credential
 broker while transparently providing access to multiple services without repetitious logins. The use of CAS generally
@@ -13,8 +14,8 @@ be considered to achieve suitable security.
 
 ## System Security Considerations
 
-
 ### Secure Transport (https)
+
 All communication with the CAS server MUST occur over a secure channel (i.e. TLSv1). There are two primary
 justifications for this requirement:
 
@@ -24,30 +25,37 @@ justifications for this requirement:
 Since the disclosure of either data would allow impersonation attacks, it's vitally important to secure the
 communication channel between CAS clients and the CAS server.
 
-Practically, it means that all CAS urls must use HTTPS, but it **also** means that all connections from the CAS server to the application must be done using HTTPS:
+Practically, it means that all CAS urls must use HTTPS, but it **also** means that all connections 
+from the CAS server to the application must be done using HTTPS:
 
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
 
 ### Connections to Dependent Systems
+
 CAS commonly requires connections to other systems such as LDAP directories, databases, and caching services.
 We generally recommend to use secure transport (SSL/TLS, IPSec) to those systems where possible, but there may
 be compensating controls that make secure transport unnecessary. Private networks and corporate networks with strict
 access controls are common exceptions, but secure transport is recommended nonetheless.
 Client certification validation can be another good solution for LDAP to bring sufficient security.
 
-As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes, the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
+As stated previously, connections to other systems must be secured. But if the CAS server is deployed on several nodes, 
+the same applies to the CAS server itself. If a cache-based ticket registry runs without any security issue on a single 
+CAS server, synchronization can become a security problem when using multiple nodes if the network is not protected.
 
-Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase protection whereas advanced encryption data mechanism should be used for the database disk storage.
+Any disk storage is also vulnerable if not properly secured. EhCache overflow to disk may be turned off to increase 
+protection whereas advanced encryption data mechanism should be used for the database disk storage.
 
 ## Deployment-Driven Security Features
+
 CAS supports a number of features that can be leveraged to implement various security policies.
 The following features are provided through CAS configuration and CAS client integration. Note that many features
 are available out of the box, while others require explicit setup.
 
 
 ### Forced Authentication
+
 Many CAS clients and supported protocols support the concept of forced authentication whereby a user must
 re-authenticate to access a particular service. The CAS protocols support forced authentication via the _renew_
 parameter. Forced authentication provides additional assurance in the identity of
@@ -60,6 +68,7 @@ implement arbitrary service-specific access control policy.
 
 
 ### Passive Authentication
+
 Some CAS protocols support passive authentication where access to a CAS-protected service is granted anonymously
 when requested. The CASv2 and CASv3 protocols support this capability via the _gateway_ feature. Passive authentication
 complements forced authentication; where forced authentication requires authentication to access a service, passive
@@ -67,6 +76,7 @@ authentication permits service access, albeit anonymously, without authenticatio
 
 
 ### Proxy Authentication
+
 Proxy authentication, or delegated authentication, provides a powerful, important, and potentially security-improving
 feature of CAS. Proxy authentication is supported by the CASv2 and CASv3 protocols and is mediated by proxy tickets
 that are requested by a service on behalf of a user; thus the service proxies authentication for the user.
@@ -89,6 +99,7 @@ some centralized control of proxy authentication by exposing a proxy authenticat
 on a per-service basis. By default registered services are not granted proxy authentication capability.
 
 ### Credential Caching and Replay
+
 The _ClearPass_ extension provides a mechanism to capture primary authentication credentials, cache them (encrypted),
 and replay on demand as needed to access legacy services. While [proxy authentication](#proxy-authentication)
 is recommended in lieu of password replay, it may be required to integrate legacy services with CAS. See the
@@ -96,6 +107,7 @@ is recommended in lieu of password replay, it may be required to integrate legac
 
 
 ### Service Management
+
 The service management facility provides a number of service-specific configuration controls that affect security
 policy and provide some support for centralized security policy. (Note that CAS has historically supported the
 decentralized security policy model.) Some highlights of service management controls:
@@ -120,12 +132,27 @@ open for all applications may create an opportunity for security attacks.
 </p></div>
 
 ### SSO Cookie Encryption
+
 A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
- The cookie value is by default encrypted and signed via settings defined in CAS properties.
- While sample data is provided for initial deployments, these keys MUST be regenerated per your specific 
- environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+The cookie value is by default encrypted and signed via settings defined in CAS properties.
+While sample data is provided for initial deployments, these keys MUST be regenerated per your specific 
+environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+
+### Ticket Registry Encryption
+
+Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS
+are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed.
+Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
+
+### Administrative Pages Security
+
+CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
+These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to 
+native command-line interfaces. Needless to say, these endpoints and screens must be be secured and allowed proper access only to 
+authorized parties. Please [see this guide](../installation/Monitoring-Statistics.html) for more info. 
 
 ### Ticket Expiration Policies
+
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
 control of some important aspects of CAS SSO session behavior:
 
@@ -135,8 +162,8 @@ control of some important aspects of CAS SSO session behavior:
 See the [Configuring Ticketing Components](../installation/Configuring-Ticketing-Components.html) section for a
 detailed discussion of the various expiration policies and configuration instructions.
 
-
 ### Single Sign-Out
+
 Single sign-out, or single log-out (SLO), is a feature by which CAS services are notified of the termination of a CAS
 SSO session with the expectation that services terminate access for the SSO session owner. While single sign-out can
 improve security, it is fundamentally a best-effort facility and may not actually terminate access to all services
@@ -154,6 +181,7 @@ Both sizes are critical settings of the CAS system and their values should never
 
 
 ### Login Throttling
+
 CAS supports a policy-driven feature to limit successive failed authentication attempts to help prevent brute force
 and denial of service attacks. The feature is beneficial in environments where back-end authentication stores lack
 equivalent features. In cases where this support is available in underlying systems, we encourage using it instead
@@ -162,17 +190,19 @@ systems including CAS. See the
 [login throttling configuration](../installation/Configuring-Authentication-Components.html#login-throttling)
 section for further information.
 
-
 ### Credential Encryption
 
 To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 
-The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
-The filters are configured to sanitize authentication request parameters and reject the request if it is not compliant with the CAS protocol in the event that for instance, a parameter is repeated multiple times, includes multiple values, contains unacceptable values, etc.
+The CAS project provides a number of a blunt [generic security filters][cas-sec-filter] suitable for patching-in-place Java 
+CAS server and Java CAS client deployments vulnerable to certain request parameter based bad-CAS-protocol-input attacks.
+The filters are configured to sanitize authentication request parameters and reject the request if it is not compliant with 
+the CAS protocol in the event that for instance, a parameter is repeated multiple times, includes multiple values, contains unacceptable values, etc.
 
-It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
+It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent 
+protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
 #### Security Response Headers
 
@@ -186,20 +216,23 @@ To review and learn more about these options, please visit [this guide][cas-sec-
 
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
-process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryptions
-settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be evaluated prior to production rollouts and regenerate this configuration to prevent attacks.
-
-## User-Driven Security Features
-
-The following features may be employed to afford some user control of the SSO experience.
-
+process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be 
+evaluated prior to production rollouts and regenerate this configuration to prevent attacks.
 
 ### Long Term Authentication
 
-The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the CAS login form to avoid reauthentication for an extended period of time. Long term authentication allows users to elect additional convenience at the expense of reduced security. The extent of reduced security is a function of the characteristics of the device used to establish a CAS SSO session. A long-term SSO session established from a device owned or operated by a single user is marginally less secure than a standard CAS SSO session. The only real concern would be the increased lifetime and resulting increased exposure of the CAS ticket-granting ticket. Establishing a long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
-The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users, even in the face of single sign-out, may increase the likelihood of impersonation. While there are no feasible mitigations for improving security of long-term SSO sessions on a shared device, educating users on the inherent risks may improve overall security.
+The long term authentication feature, commonly referred to as "Remember Me", is selected (usually via checkbox) on the CAS login 
+form to avoid re-authentication for an extended period of time. Long term authentication allows users to elect additional convenience at 
+the expense of reduced security. The extent of reduced security is a function of the characteristics of the device used to establish 
+a CAS SSO session. A long-term SSO session established from a device owned or operated by a single user is marginally less secure than 
+a standard CAS SSO session. The only real concern would be the increased lifetime and resulting increased exposure of the 
+CAS ticket-granting ticket. Establishing a long-term CAS SSO session from a shared device, on the other hand, may dramatically reduce security.
+The likelihood of artifacts from previous SSO sessions affecting subsequent SSO sessions established by other users, even in the face 
+of single sign-out, may increase the likelihood of impersonation. While there is no feasible mitigation for improving security 
+of long-term SSO sessions on a shared device, educating users on the inherent risks may improve overall security.
 
-It is important to note that forced authentication supercedes long term authentication, thus if a service were
+It is important to note that forced authentication supersedes long term authentication, thus if a service were
 configured for forced authentication, authentication would be required for service access even in the context of a
 long-term session.
 
