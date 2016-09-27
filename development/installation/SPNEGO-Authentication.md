@@ -136,7 +136,14 @@ URL, e.g. `https://cas.example.com`.
 
 ### Webflow Configuration
 
-Replace instances of `initializeLoginForm` with `startSpnegoAuthenticate`, if any.
+Replace the success transition of `initializeLoginForm` from `viewLoginForm` to `startSpnegoAuthenticate`:
+
+```xml
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="startSpnegoAuthenticate"/>
+    </action-state>
+```
 
 ### Authentication Configuration
 
