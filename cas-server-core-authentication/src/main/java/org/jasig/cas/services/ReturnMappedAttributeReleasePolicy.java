@@ -55,7 +55,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
      * @return the allowed attributes
      */
     public Map<String, String> getAllowedAttributes() {
-        return new TreeMap<String, String>(this.allowedAttributes);
+        return new TreeMap<>(this.allowedAttributes);
     }
     
     @Override

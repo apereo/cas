@@ -313,7 +313,7 @@ public final class WsFederationHelper {
     }
 
     private Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
-        final List<EncryptedKeyResolver> list = new ArrayList<EncryptedKeyResolver>();
+        final List<EncryptedKeyResolver> list = new ArrayList<>();
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());
         list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
