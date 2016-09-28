@@ -10,6 +10,9 @@ import org.apereo.cas.ticket.DefaultServiceTicketFactory;
 import org.apereo.cas.ticket.DefaultTicketFactory;
 import org.apereo.cas.ticket.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -98,20 +101,22 @@ public class CasCoreTicketsConfiguration {
         final DefaultProxyTicketFactory f = new DefaultProxyTicketFactory();
         f.setProxyTicketExpirationPolicy(proxyTicketExpirationPolicy());
         f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
     @Bean
-    public DefaultServiceTicketFactory defaultServiceTicketFactory() {
+    public ServiceTicketFactory defaultServiceTicketFactory() {
         final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
         f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy());
         f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
         f.setTrackMostRecentSession(casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
     @Bean
-    public DefaultTicketFactory defaultTicketFactory() {
+    public TicketFactory defaultTicketFactory() {
         final DefaultTicketFactory f = new DefaultTicketFactory();
         f.setProxyGrantingTicketFactory(defaultProxyGrantingTicketFactory());
         f.setTicketGrantingTicketFactory(defaultTicketGrantingTicketFactory());
@@ -121,7 +126,7 @@ public class CasCoreTicketsConfiguration {
     }
 
     @Bean
-    public DefaultTicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
+    public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
         f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
         f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());

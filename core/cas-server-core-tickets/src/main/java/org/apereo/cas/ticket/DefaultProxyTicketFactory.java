@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -37,6 +38,8 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
+    private CipherExecutor<String, String> cipherExecutor;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -52,7 +55,13 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                     uniqueTicketIdGenKey);
         }
 
-        final String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
+        String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to encode proxy ticket {}", ticketId);
+            ticketId = this.cipherExecutor.encode(ticketId);
+            logger.debug("Encoded proxy ticket id {}", ticketId);
+        }
+        
         final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
                 ticketId,
                 service,
@@ -72,5 +81,9 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
 
     public void setProxyTicketExpirationPolicy(final ExpirationPolicy proxyTicketExpirationPolicy) {
         this.proxyTicketExpirationPolicy = proxyTicketExpirationPolicy;
+    }
+
+    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
     }
 }
