@@ -21,8 +21,12 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class PasswordChangeAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
 
+    /** Password Update Success event. */
+    public static final String PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -38,7 +42,7 @@ public class PasswordChangeAction extends AbstractAction {
             final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
             final PasswordChangeBean bean = requestContext.getFlowScope().get("password", PasswordChangeBean.class);
             if (passwordChangeService.execute(c, bean)) {
-                return new EventFactorySupport().event(this, "passwordUpdateSuccess");
+                return new EventFactorySupport().event(this, PASSWORD_UPDATE_SUCCESS);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
