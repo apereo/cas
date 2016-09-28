@@ -51,7 +51,7 @@ public class PasswordManagementProperties {
              */
             GENERIC,
             /**
-             * Active directory
+             * Active directory.
              */
             AD
         }
