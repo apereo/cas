@@ -138,6 +138,15 @@ The cookie value is by default encrypted and signed via settings defined in CAS 
 While sample data is provided for initial deployments, these keys MUST be regenerated per your specific 
 environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
 
+### Protocol Ticket Encryption
+
+Protocol tickets that are issued by CAS may optionally go through a signing/encryption process. Even though the
+CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check
+to ensure ticket in transit to other applications are not tampered with and remain to be authentic.
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+
+
 ### Ticket Registry Encryption
 
 Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS
@@ -208,7 +217,8 @@ protocol attacks in situations where the CAS container and environment are unabl
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
-These settings are presently off by default.To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+These settings are presently off by default. 
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 
