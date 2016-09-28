@@ -3,7 +3,6 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;

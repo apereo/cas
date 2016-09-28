@@ -11,7 +11,7 @@
         <h2 th:utext="#{screen.pac4j.unauthz.heading}"/>
         <p th:utext="#{screen.pac4j.unauthz.message}"/>
 
-        <div>
+        <div th:if="${error}">
             <p/>
             <table class="table table-bordered table-hover table-responsive">
                 <thead>
@@ -20,8 +20,8 @@
                     <th>Reason</th>
                     <th>Code</th>
                     <th>Description</th>
-                    <th>Client</th>
-  
+                    <th>Provider</th>
+                    <th>Destination</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,6 +31,9 @@
                     <td th:text="${code}" />
                     <td th:text="${description}" />
                     <td th:text="${client}" />
+                    <td>
+                        <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
+                    </td>
 
                 </tr>
                 </tbody>
@@ -38,7 +41,10 @@
 
         </div>
     </div>
-    <p><a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/></p>
+    <p>
+        <a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/>
+        <a class="btn btn-success" th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
+    </p>
 </div>
 </body>
 </html>

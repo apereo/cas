@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.collect.Maps;
+import org.apereo.cas.CasProtocolConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
@@ -33,6 +34,7 @@ public class Pac4jErrorViewResolver implements ErrorViewResolver {
             model.put("error", request.getParameter("error"));
             model.put("reason", request.getParameter("error_reason"));
             model.put("description", request.getParameter("error_description"));
+            model.put("service", request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", request.getParameter("client_name"));
             model.putAll(map);
             return new ModelAndView("casPac4jStopWebflow", model);
