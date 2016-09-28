@@ -2605,6 +2605,7 @@ Allow the user to update their account password, etc in-place.
 ### LDAP
 
 ```properties
+# cas.authn.pm.ldap.type=GENERIC|AD
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false

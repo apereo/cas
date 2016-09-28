@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties.Ldap.LdapType;
 import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
@@ -24,6 +25,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.ad.UnicodePwdAttribute;
 import org.ldaptive.extended.PasswordModifyOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.referral.DeleteReferralHandler;
@@ -218,16 +220,36 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param oldPassword       the old password
      * @param newPassword       the new password
-     * @return true/false
+     * @param type              the type
+     * @return true /false
      */
     public static boolean executePasswordModifyOperation(final String currentDn,
                                                          final ConnectionFactory connectionFactory,
                                                          final String oldPassword,
-                                                         final String newPassword) {
+                                                         final String newPassword,
+                                                         final LdapType type) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
+            if (!modifyConnection.getConnectionConfig().getUseSSL()
+                    && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
+                LOGGER.warn("Executing password modification op under a non-secure LDAP connection; "
+                        + "To modify password attributes, the connection to the LDAP server SHOULD be secured and/or encrypted.");
+            }
+            if (type == LdapType.AD) {
+                LOGGER.debug("Executing password modification op for active directory based on "
+                        + "[https://support.microsoft.com/en-us/kb/269190]");
+                final ModifyOperation operation = new ModifyOperation(modifyConnection);
+                final Response response = operation.execute(new ModifyRequest(currentDn,
+                        new AttributeModification(AttributeModificationType.REPLACE,
+                                new UnicodePwdAttribute(newPassword))));
+                LOGGER.debug("Result code {}, message: {}", response.getResult(), response.getMessage());
+                return response.getResultCode() == ResultCode.SUCCESS;
+            }
+
+            LOGGER.debug("Executing password modification op for generic LDAP");
             final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
                     new Credential(oldPassword), new Credential(newPassword)));
+            LOGGER.debug("Result code {}, message: {}", response.getResult(), response.getMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

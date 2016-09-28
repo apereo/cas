@@ -42,7 +42,9 @@ public class LdapPasswordChangeService implements PasswordChangeService {
             if (LdapUtils.containsResultEntry(response)) {
                 final String dn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating account password for {}", dn);
-                if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword())) {
+                if (LdapUtils.executePasswordModifyOperation(dn, factory, 
+                        c.getPassword(), bean.getPassword(),
+                        casProperties.getAuthn().getPm().getLdap().getType())) {
                     LOGGER.debug("Successfully updated the account password for {}", dn);
                     return true;
                 }
