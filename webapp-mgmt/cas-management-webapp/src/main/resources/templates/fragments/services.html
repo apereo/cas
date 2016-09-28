@@ -1,23 +1,4 @@
 <div class="services-table-container" ng-controller="ServicesTableController as serviceTableCtrl">
-    <div class="row" ng-if="serviceTableCtrl.dataTable &amp;&amp; serviceTableCtrl.dataTable.length == 0">
-        <div class="col-sm-8 col-sm-offset-2">
-            <div id="msg" class="alert alert-warning no-services" role="alert">
-                <div class="row">
-                    <div class="col-xs-2">
-                        <p class="fa fa-5x fa-exclamation-circle pull-right"></p>
-                    </div>
-                    <div class="col-xs-9">
-                        <p th:text="#{management.services.service.warn(${defaultServiceUrl}}"/>
-                    </div>
-                    <div class="col-xs-1">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true"><i class="fa fa-times"></i></span></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div ng-if="serviceTableCtrl.dataTable.length > 0">
         <div class="row">
             <div class="col-sm-12">
