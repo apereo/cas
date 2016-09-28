@@ -15,19 +15,19 @@
                 <ul class="nav navbar-nav navbar-right quicklinks">
                     <li>
                         <a id="manageServices" href="javascript://" ng-click="action.homepage()">
-                            <i class="fa fa-gears"/>
+                            <i class="fa fa-th" aria-hidden="true"></i>
                             <span th:text="#{management.services.header.navbar.navitem.manageService}" />
                         </a>
                     </li>
                     <li>
                         <a href="javascript://" ng-click="action.serviceAdd()">
-                            <i class="fa fa-plus-circle"/>
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
                             <span th:text="#{management.services.header.navbar.navitem.addNewService}" />
                         </a>
                     </li>
                     <li>
                         <a th:href="@{/logout?url=/logout.html}" target="_self" id="logoutUrlLink">
-                            <i class="fa fa-sign-out"/>
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>
                             <span th:text="#{management.services.header.navbar.navitem.logout}" />
                         </a>
                     </li>
