@@ -18,7 +18,7 @@ public class InitPasswordChangeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        
+        requestContext.getFlowScope().put("policyPattern", casProperties.getAuthn().getPm().getPolicyPattern());
         return null;
     }
 }

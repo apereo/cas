@@ -7,12 +7,29 @@ function jqueryReady() {
         4: "Strong ☻"
     }
 
+    var policyPatternRegex = new RegExp(policyPattern);
     var password = document.getElementById('password');
+    var confirmed = document.getElementById('confirmedPassword');
     var meter = document.getElementById('password-strength-meter');
-    var text = document.getElementById('password-strength-text');
+    
+    password.addEventListener('input', validate);
+    confirmed.addEventListener('input', validate)
 
-    password.addEventListener('input', function () {
+    function validate() {
         var val = password.value;
+        var cnf = confirmed.value;
+
+        var disableSubmit = val == "" || cnf == "" || val != cnf || !policyPatternRegex.test(val) || !policyPatternRegex.test(cnf);
+        $('#submit').prop("disabled", disableSubmit)
+        
+        if (disableSubmit) {
+            $('#password-strength-text').show();
+            var responseText = "<div class='alert alert-warning' role='alert'>" +
+                "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>" +
+                "<strong>Password does not match the policy.</strong></div>";
+            $('#password-strength-text').html(responseText);
+            return;
+        }
         var result = zxcvbn(val);
 
         // Update the password strength meter
@@ -20,11 +37,12 @@ function jqueryReady() {
 
         // Update the text indicator
         if (val !== "") {
-            text.innerHTML = "Strength: " + "<strong>" + strength[result.score] 
-                + "</strong>" + "<span class='feedback'>" + result.feedback.warning + " " 
-                + result.feedback.suggestions + "</span>";
+            $('#password-strength-text').show();
+            var responseText = "Strength: <strong>" + strength[result.score] + "</strong>"
+                + "<span class='feedback'>" + result.feedback.warning + " " + result.feedback.suggestions + "</span>";
+            $('#password-strength-text').html(responseText);
         } else {
-            text.innerHTML = "";
+            $('#password-strength-text').hide();
         }
-    });
+    }
 }
