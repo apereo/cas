@@ -2350,6 +2350,16 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
+## Protocol Ticket Security
+
+Controls whether tickets issued by the CAS server should be secured via signing and encryption.
+
+```properties
+# cas.ticket.security.cipherEnabled=true
+# cas.ticket.security.encryptionKey=
+# cas.ticket.security.signingKey=
+```
+
 ## Service Ticket
 
 Controls the expiration policy of service tickets, as well as other properties
