@@ -24,7 +24,7 @@ function jqueryReady() {
         
         if (disableSubmit) {
             $('#password-strength-text').show();
-            var responseText = "<div class='alert alert-warning' role='alert'>" +
+            var responseText = "<div class='alert alert-danger' role='alert'>" +
                 "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>" +
                 "<strong>Password does not match the policy.</strong></div>";
             $('#password-strength-text').html(responseText);
