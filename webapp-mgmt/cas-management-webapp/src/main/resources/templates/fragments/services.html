@@ -59,7 +59,7 @@
                     <thead>
                     <tr>
                         <th class="col-sm-3" th:text="#{management.services.table.header.serviceName}"></th>
-                        <th class="col-sm-3" th:text="#{management.services.table.header.serviceId}"></th>
+                        <th class="col-sm-3" th:utext="#{management.services.table.header.serviceId}"></th>
                         <th class="col-sm-4" th:text="#{management.services.table.header.serviceDesc}"></th>
                         <th class="col-sm-1"></th>
                         <th class="col-sm-1"></th>
@@ -84,7 +84,7 @@
                                     <td class="col-sm-4" ng-bind="item.description | wordCharTrunc:60"></td>
                                     <td class="col-sm-1">
                                         <button class="btn btn-success" ng-click="action.serviceEdit( item.assignedId )">
-                                            <i class="fa fa-lg fa-pencil"/>
+                                            <i class="fa fa-lg fa-pencil"></i>
                                             <span th:remove="tag" th:text="#{management.services.table.button.edit}"/>
                                         </button>
                                     </td>
