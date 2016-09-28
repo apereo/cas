@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -112,7 +113,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 logger.error("Error constructing {}", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
         }
-
         return null;
     }
 
@@ -400,7 +400,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return Collections.emptyMap();  
     }
-
+    
+    
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
@@ -413,7 +414,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-
     
     public void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
@@ -513,4 +513,5 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     public void setAuthnContextAttribute(final String authnContextAttribute) {
         this.authnContextAttribute = authnContextAttribute;
     }
+    
 }

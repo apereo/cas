@@ -102,6 +102,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
+     * Cipher executor to handle ticket validation.
+     */
+    protected CipherExecutor<String, String> cipherExecutor;
+
+    /**
      * Instantiates a new Central authentication service impl.
      */
     protected AbstractCentralAuthenticationService() {
@@ -308,5 +313,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public void setValidationServiceSelectionStrategies(final List list) {
         this.validationServiceSelectionStrategies = list;
     }
-    
+
+    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
+    }
 }

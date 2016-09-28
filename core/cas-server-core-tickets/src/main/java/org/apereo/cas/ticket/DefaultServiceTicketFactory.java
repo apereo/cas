@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -27,6 +28,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     /** ExpirationPolicy for Service Tickets. */
     protected ExpirationPolicy serviceTicketExpirationPolicy;
     
+    private CipherExecutor<String, String> cipherExecutor;
+    
     private boolean trackMostRecentSession = true;
 
     @Override
@@ -46,7 +49,13 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     uniqueTicketIdGenKey);
         }
 
-        final String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
+        String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to encode service ticket {}", ticketId);
+            ticketId = this.cipherExecutor.encode(ticketId);
+            logger.debug("Encoded service ticket id {}", ticketId);
+        }
+        
         final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
                 ticketId,
                 service,
@@ -60,17 +69,17 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
     }
-    
+
+    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
+    }
+
     public void setUniqueTicketIdGeneratorsForService(final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 
     public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
-    public void setDefaultServiceTicketIdGenerator(final UniqueTicketIdGenerator defaultServiceTicketIdGenerator) {
-        this.defaultServiceTicketIdGenerator = defaultServiceTicketIdGenerator;
     }
 
     public void setTrackMostRecentSession(final boolean trackMostRecentSession) {

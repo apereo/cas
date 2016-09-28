@@ -45,6 +45,7 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ import java.util.Map;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
- * central, organizing component of CAS's internal implementation.
+ * central, organizing component of CAS' internal implementation.
  * This class is threadsafe.
  *
  * @author William G. Thompson, Jr.
@@ -287,6 +288,12 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     @Counted(name = "VALIDATE_SERVICE_TICKET_COUNTER", monotonic = true)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
+
+        if (!ticketAuthenticityIsVerified(serviceTicketId)) {
+            logger.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
+            throw new InvalidTicketException(serviceTicketId);
+        }
+        
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
@@ -383,7 +390,6 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         }
 
-
         final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
         final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
@@ -395,4 +401,18 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     }
 
 
+    /**
+     * Verify the ticket id received is actually legitimate
+     * before contacting downstream systems to find and process it.
+     *
+     * @param ticketId the ticket id
+     * @return true/false
+     */
+    private boolean ticketAuthenticityIsVerified(final String ticketId) {
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+        }
+        return !StringUtils.isEmpty(ticketId);
+    }
 }
