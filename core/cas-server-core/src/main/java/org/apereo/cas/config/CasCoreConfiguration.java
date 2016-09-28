@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CentralAuthenticationServiceImpl;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
@@ -80,7 +81,9 @@ public class CasCoreConfiguration {
     public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
                                                                      final List validationServiceSelectionStrategies,
                                                                      @Qualifier("principalFactory")
-                                                                     final PrincipalFactory principalFactory) {
+                                                                     final PrincipalFactory principalFactory,
+                                                                     @Qualifier("protocolTicketCipherExecutor")
+                                                                     final CipherExecutor cipherExecutor) {
         final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
         impl.setTicketRegistry(this.ticketRegistry);
         impl.setServicesManager(this.servicesManager);
@@ -89,6 +92,7 @@ public class CasCoreConfiguration {
         impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
         impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
         impl.setPrincipalFactory(principalFactory);
+        impl.setCipherExecutor(cipherExecutor);
         return impl;
     }
 }
