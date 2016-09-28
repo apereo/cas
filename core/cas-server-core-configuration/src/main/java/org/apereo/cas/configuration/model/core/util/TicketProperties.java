@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketPropert
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.model.core.ticket.TicketSigningEncryptionProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -18,6 +19,9 @@ public class TicketProperties {
     @NestedConfigurationProperty
     private ProxyGrantingTicketProperties pgt = new ProxyGrantingTicketProperties();
 
+    @NestedConfigurationProperty
+    private TicketSigningEncryptionProperties security = new TicketSigningEncryptionProperties();
+    
     @NestedConfigurationProperty
     private ProxyTicketProperties pt = new ProxyTicketProperties();
 
@@ -69,5 +73,12 @@ public class TicketProperties {
     public void setTgt(final TicketGrantingTicketProperties tgt) {
         this.tgt = tgt;
     }
-    
+
+    public TicketSigningEncryptionProperties getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(final TicketSigningEncryptionProperties security) {
+        this.security = security;
+    }
 }
