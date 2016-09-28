@@ -173,7 +173,8 @@ public class Beans {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
             final Map pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
-                pdirMap.put(entry.getKey(), Lists.newArrayList(entry.getValue()));
+                final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
+                pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;
@@ -188,6 +189,7 @@ public class Beans {
      * @param properties the properties
      * @return the password encoder
      */
+
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
             case NONE:
@@ -197,7 +199,7 @@ public class Beans {
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
             default:
-                return new BCryptPasswordEncoder(properties.getStrength(), 
+                return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
         }
     }
