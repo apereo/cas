@@ -26,7 +26,7 @@ function jqueryReady() {
             $('#password-strength-text').show();
             var responseText = "<div class='alert alert-danger' role='alert'>" +
                 "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>" +
-                "<strong>Password does not match the policy.</strong></div>";
+                "<strong>Password does not match the password policy requirement.</strong></div>";
             $('#password-strength-text').html(responseText);
             return;
         }
