@@ -1,3 +1,11 @@
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var policyPattern = /*[[${policyPattern}]]*/ ;
+    
+    /*]]>*/
+</script>
+
 <div class="alert alert-info">
     <h2 th:utext="#{screen.mustchangepass.heading}"/>
     <p/>
@@ -32,16 +40,17 @@
         <div>
             <br/>
             <meter max="4" id="password-strength-meter"/>
-            <p id="password-strength-text"/>
         </div>
         </p>
-
+        <p id="password-strength-text"></p>
+        
         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         <input type="hidden" name="_eventId" value="submit"/>
         <input class="btn btn-success"
                name="submit"
                accesskey="s"
                th:value="#{screen.pm.button.submit}"
+               id="submit"
                type="submit"/>
         <input
                 class="btn-reset"
