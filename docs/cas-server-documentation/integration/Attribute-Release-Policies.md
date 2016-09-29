@@ -137,7 +137,7 @@ attributes as an `attributes` binding variable. The result of the script can be 
 The above configuration will produce a `uid` attribute for the application whose value is a concatenation of
 the original value of `uid` plus the words `something else`. So the final result would be `piper is great`.
 
-### File-based Attributes
+### File-based Groovy Attributes
 
 Identical to inline groovy attribute definitions, except the groovy script can also be externalized to a `.groovy` file:
 
