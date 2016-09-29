@@ -56,7 +56,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
