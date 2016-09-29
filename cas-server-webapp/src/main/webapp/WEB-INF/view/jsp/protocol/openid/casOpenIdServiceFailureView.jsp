@@ -1,1 +1,1 @@
---%><%= "openid.mode:id_res\nis_valid:false\n" %>
+<%= "openid.mode:id_res\nis_valid:false\n" %>
