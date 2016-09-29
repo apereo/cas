@@ -5,8 +5,11 @@ import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.Pair;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The default implementation of the attribute
@@ -40,7 +43,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * Instantiates a new Default cas attribute encoder.
      *
      * @param servicesManager the services manager
-     * @param cipherExecutor the cipher executor
+     * @param cipherExecutor  the cipher executor
      */
     public DefaultCasAttributeEncoder(final ServicesManager servicesManager,
                                       final RegisteredServiceCipherExecutor cipherExecutor) {
@@ -53,10 +56,10 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * and put into the attributes collection again, overwriting
      * the previous value.
      *
-     * @param attributes the attributes
+     * @param attributes               the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cipher the cipher
-     * @param registeredService the registered service
+     * @param cipher                   the cipher
+     * @param registeredService        the registered service
      */
     protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
                                                       final Map<String, String> cachedAttributesToEncode,
@@ -70,10 +73,10 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
     /**
      * Encode and encrypt pgt.
      *
-     * @param attributes the attributes
+     * @param attributes               the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cipher the cipher
-     * @param registeredService the registered service
+     * @param cipher                   the cipher
+     * @param registeredService        the registered service
      */
     protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
                                                        final Map<String, String> cachedAttributesToEncode,
@@ -86,11 +89,11 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
     /**
      * Encrypt, encode and put the attribute into attributes map.
      *
-     * @param attributes the attributes
+     * @param attributes               the attributes
      * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cachedAttributeName the cached attribute name
-     * @param cipher the cipher
-     * @param registeredService the registered service
+     * @param cachedAttributeName      the cached attribute name
+     * @param cipher                   the cipher
+     * @param registeredService        the registered service
      */
     protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
                                                            final Map<String, String> cachedAttributesToEncode,
@@ -118,5 +121,24 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
                                             final RegisteredService registeredService) {
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
+        sanitizeAndTransformAttributeNames(attributes, registeredService);
+    }
+
+    private void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
+                                                    final RegisteredService registeredService) {
+        logger.debug("Sanitizing attribute names in preparation of the final validation response");
+
+        final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
+                .filter(s -> s.contains(":"))
+                .map(s -> new Pair<>(s.replace(':', '_'), attributes.get(s)))
+                .collect(Collectors.toSet());
+        if (!attrs.isEmpty()) {
+            logger.debug("Found {} attribute(s) that need to be sanitized/encoded.");
+            attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
+            attrs.forEach(p -> {
+                logger.debug("Sanitized attribute name to be {}", p.getFirst());
+                attributes.put(p.getFirst(), p.getSecond());
+            });
+        }
     }
 }
