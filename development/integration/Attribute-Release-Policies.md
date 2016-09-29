@@ -108,6 +108,56 @@ release `affiliation` and `group` to the web application configured.
 }
 ```
 
+### Inline Groovy Attributes
+
+Attributes that are mapped may produce their values from an inline groovy script. As an example, if you currently 
+have resolved a `uid` attribute with a value of `piper`, you could then consider the following:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "uid" : "groovy { return attributes['uid'] + ' is great' }"
+    }
+  }
+}
+```
+
+In the above snippet, the value of the `uid` attribute name is mapped to the result of the inline groovy script.
+Inline scripts always begin with the syntax `groovy { ... }` and are passed the current collection of resolved
+attributes as an `attributes` binding variable. The result of the script can be a single/collection of values.
+
+The above configuration will produce a `uid` attribute for the application whose value is a concatenation of
+the original value of `uid` plus the words `something else`. So the final result would be `piper is great`.
+
+### File-based Attributes
+
+Identical to inline groovy attribute definitions, except the groovy script can also be externalized to a `.groovy` file:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 300,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "uid" : "file:/etc/cas/uid-for-sample-service.groovy"
+    }
+  }
+}
+```
+
 ## Groovy Script
 
 Let an external Groovy script decide how attributes should be released.
