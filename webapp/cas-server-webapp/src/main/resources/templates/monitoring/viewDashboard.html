@@ -34,6 +34,7 @@
                     <li><a th:href="@{/status/ssosessions}">SSO Sessions</a></li>
                     <li><a th:href="@{/status/logging}">Logging</a></li>
                     <li th:if="${trustedDevicesEnabled}"><a th:href="@{/status/trustedDevs}">Trusted Devices</a></li>
+                    <li th:if="${authenticationEventsRepositoryEnabled}"><a th:href="@{/status/authnEvents}">AuthN Events</a></li>
                 </ul>
             </div>
             <div class="app-launcher server-config">
