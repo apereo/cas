@@ -1,11 +1,11 @@
 package org.apereo.cas.web.report;
 
+import com.google.common.collect.Sets;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,27 +14,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * This is {@link TrustedDevicesController}.
+ * This is {@link AuthenticationEventsController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("trustedDevicesController")
+@Controller("authenticationEventsController")
 @RequestMapping("/status/authnEvents")
-@ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-public class TrustedDevicesController {
+public class AuthenticationEventsController {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
-    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-        this.mfaTrustEngine = mfaTrustEngine;
+    private final CasEventRepository eventRepository;
+
+    public AuthenticationEventsController(final CasEventRepository eventRepository) {
+        this.eventRepository = eventRepository;
     }
 
     /**
@@ -48,7 +46,7 @@ public class TrustedDevicesController {
     @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        return new ModelAndView("monitoring/viewTrustedDevices");
+        return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
     /**
@@ -59,15 +57,13 @@ public class TrustedDevicesController {
      * @return the records
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getRecords", method = RequestMethod.GET)
+    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
     @ResponseBody
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
-                                                                      final HttpServletResponse response)
+                                                                final HttpServletResponse response)
             throws Exception {
-        final LocalDate onOrAfter = LocalDate.now().minus(casProperties.getAuthn().getMfa().getTrusted().getExpiration(),
-                DateTimeUtils.toChronoUnit(casProperties.getAuthn().getMfa().getTrusted().getTimeUnit()));
-        this.mfaTrustEngine.expire(onOrAfter);
-        return this.mfaTrustEngine.get(onOrAfter);
+
+        return Sets.newHashSet();
     }
 
 }

@@ -91,7 +91,10 @@ public class DashboardController {
         model.put("isDefaultProfile", isDefaultProfile);
 
         model.put("trustedDevicesEnabled", 
-                this.applicationContext.containsBean("trustedDevicesController")); 
+                this.applicationContext.containsBean("trustedDevicesController"));
+        model.put("authenticationEventsRepositoryEnabled",
+                this.applicationContext.containsBean("casEventRepository"));
+
         return new ModelAndView("monitoring/viewDashboard", model);
     }
 }
