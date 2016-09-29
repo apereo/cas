@@ -1,7 +1,6 @@
 package org.apereo.cas.services.web.config;
 
 import com.google.common.collect.Sets;
-import org.apache.velocity.runtime.directive.Macro;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
@@ -117,6 +116,10 @@ public class CasThemesConfiguration {
         return resolver;
     }
 
+    /**
+     * The Cas thymeleaf output template handler which attempts to compress the whitespace
+     * produced by thymeleaf's conditional flags.
+     */
     public static class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
         private boolean writeWhitespace;
         
