@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,6 +10,9 @@ import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,8 +31,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributeReleasePolicy.class);
-    
+
     private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}").get();
+    private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)").get();
 
     private Map<String, String> allowedAttributes;
 
@@ -80,15 +85,31 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 })
                 .filter(entry -> entry[1] != null).forEach(entry -> {
             final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
-            final Matcher matcher = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
-            if (matcher.find()) {
+            final Matcher matcherInline = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
+            final Matcher matcherFile = FILE_GROOVY_PATTERN.matcher(mappedAttributeName);
+
+            if (matcherInline.find()) {
                 LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
-                final Object result = getGroovyAttributeValue(matcher.group(1), resolvedAttributes);
+                final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
                 if (result != null) {
                     LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
                     attributesToRelease.put(entry[0].toString(), result);
                 } else {
                     LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                }
+            } else if (matcherFile.find()) {
+                try {
+                    LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
+                    final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+                    final Object result = getGroovyAttributeValue(script, resolvedAttributes);
+                    if (result != null) {
+                        LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
+                        attributesToRelease.put(entry[0].toString(), result);
+                    } else {
+                        LOGGER.warn("Groovy-scripted attribute returned no value for {}", entry[0]);
+                    }
+                } catch (final IOException e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
             } else {
                 LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
