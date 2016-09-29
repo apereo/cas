@@ -76,11 +76,9 @@ var alertHandler = (function () {
 
     return {
         dismiss: function () {
-            console.log('dismiss the alert');
             destroy();
         },
         show: function (msg, state) {
-            console.log('show the alert', 'msg:', msg, 'state:', state);
             create(msg, state);
         }
     }
