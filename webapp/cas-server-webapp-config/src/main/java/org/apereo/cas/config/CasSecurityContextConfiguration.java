@@ -103,7 +103,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
 
                 final Config cfg = new Config(casProperties.getAdminPagesSecurity().getService(), client);
                 if (this.casProperties.getAdminPagesSecurity().getUsers() == null) {
-                    LOGGER.warn("List of authorized users for admin pages security is not defined."
+                    LOGGER.warn("List of authorized users for admin pages security is not defined. "
                             + "Allowing access for all authenticated users");
                     client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
                     cfg.setAuthorizer(new IsAuthenticatedAuthorizer());
