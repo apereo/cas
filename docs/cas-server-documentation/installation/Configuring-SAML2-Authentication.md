@@ -7,9 +7,8 @@ title: CAS - SAML2 Authentication
 
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
-## Overview
+## SAML Endpoints
 
-### SAML Endpoints
 The following CAS endpoints respond to supported SAML2 profiles:
 
 - `/cas/idp/profile/SAML2/Redirect/SSO`
@@ -26,7 +25,8 @@ SAML2 IdP Unsolicited/Initiated SSO profile supports the following parameters:
 | `target`                          | Optional. Relay state.
 | `time`                            | Optional. Skew the authentication request.
 
-### IdP Metadata
+## IdP Metadata
+
 The following CAS endpoints handle the generation of SAML2 metadata:
  
 - `/cas/idp/metadata`
@@ -84,7 +84,7 @@ mean you use an existing metadata file whose binding endpoints begin with `/idp/
 CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
 `https://sso.example.org/login`).
 
-### SP Metadata
+## SP Metadata
 
 - `/cas/idp/servicemetadatagen`
 
