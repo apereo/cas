@@ -22,7 +22,7 @@ import java.io.IOException;
  * @since 4.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,        MemcachedMonitorConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, MemcachedMonitorConfiguration.class})
 @ContextConfiguration(locations = "/monitor-test.xml")
 public class MemcachedMonitorTests extends AbstractMemcachedTests {
 

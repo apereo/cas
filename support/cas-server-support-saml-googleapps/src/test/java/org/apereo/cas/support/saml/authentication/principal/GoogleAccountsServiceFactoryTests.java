@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * @since 4.2
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SamlGoogleAppsConfiguration.class,CasCoreAuthenticationConfiguration.class,
+@SpringBootTest(classes = {SamlGoogleAppsConfiguration.class, CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         CoreSamlConfiguration.class,
         CasCoreWebConfiguration.class,
