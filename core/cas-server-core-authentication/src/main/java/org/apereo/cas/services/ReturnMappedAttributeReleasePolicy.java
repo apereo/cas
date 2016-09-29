@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -26,6 +27,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReturnMappedAttributeReleasePolicy.class);
+    
+    private static final Pattern INLINE_GROOVY_PATTERN = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}").get();
 
     private Map<String, String> allowedAttributes;
 
@@ -77,7 +80,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 })
                 .filter(entry -> entry[1] != null).forEach(entry -> {
             final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
-            final Matcher matcher = RegexUtils.createPattern("groovy\\s*\\{(.+)\\}").get().matcher(mappedAttributeName);
+            final Matcher matcher = INLINE_GROOVY_PATTERN.matcher(mappedAttributeName);
             if (matcher.find()) {
                 LOGGER.debug("Found inline groovy script to execute for attribute mapping {}", entry[0]);
                 final Object result = getGroovyAttributeValue(matcher.group(1), resolvedAttributes);
