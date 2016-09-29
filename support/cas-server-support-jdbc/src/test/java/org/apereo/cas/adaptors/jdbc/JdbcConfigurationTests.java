@@ -19,14 +19,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 5.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(        classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
-                CasCoreUtilConfiguration.class, CasPersonDirectoryAttributeRepositoryConfiguration.class,
-                CasJdbcConfiguration.class, CasCoreServicesConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
+        CasCoreUtilConfiguration.class, CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasJdbcConfiguration.class, CasCoreServicesConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class JdbcConfigurationTests {
 
     @Test
     public void verifyConfiguration() {
-
     }
 }
