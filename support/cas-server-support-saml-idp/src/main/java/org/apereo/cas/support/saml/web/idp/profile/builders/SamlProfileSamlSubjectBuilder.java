@@ -50,17 +50,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         subject.setNameID(nameID);
         return subject;
     }
-
-    public SamlProfileSamlNameIdBuilder getSsoPostProfileSamlNameIdBuilder() {
-        return ssoPostProfileSamlNameIdBuilder;
-    }
-
+    
     public void setSsoPostProfileSamlNameIdBuilder(final SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder) {
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
-    }
-
-    public int getSkewAllowance() {
-        return skewAllowance;
     }
 
     public void setSkewAllowance(final int skewAllowance) {
