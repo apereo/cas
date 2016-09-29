@@ -31,7 +31,10 @@ public class AuthenticationEventsController {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final CasEventRepository eventRepository;
+    private CasEventRepository eventRepository;
+
+    public AuthenticationEventsController() {
+    }
 
     public AuthenticationEventsController(final CasEventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -64,7 +67,10 @@ public class AuthenticationEventsController {
     public Collection<CasEvent> getRecords(final HttpServletRequest request,
                                            final HttpServletResponse response)
             throws Exception {
-        return this.eventRepository.load();
+        if (this.eventRepository != null) {
+            return this.eventRepository.load();
+        }
+        return Sets.newHashSet();
     }
 
 }
