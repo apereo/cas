@@ -145,6 +145,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         }
     }
 
+    /**
+     * The type Authentication events configuration.
+     */
     @ConditionalOnBean(name = "casEventRepository")
     @Configuration("authenticationEventsConfiguration")
     public class AuthenticationEventsConfiguration {
