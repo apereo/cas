@@ -9,7 +9,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
+import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.web.report.AuthenticationEventsController;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.InternalConfigStateController;
@@ -19,6 +21,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -140,6 +143,18 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         public TrustedDevicesController trustedDevicesController(@Qualifier("mfaTrustEngine")
                                                                  final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
             return new TrustedDevicesController(mfaTrustEngine);
+        }
+    }
+
+    @ConditionalOnBean(name = "casEventRepository")
+    @Configuration("authenticationEventsConfiguration")
+    public class AuthenticationEventsConfiguration {
+
+        @Autowired
+        @Bean
+        public AuthenticationEventsController trustedDevicesController(@Qualifier("casEventRepository")
+                                                                 final CasEventRepository eventRepository) {
+            return new AuthenticationEventsController(eventRepository);
         }
     }
 }

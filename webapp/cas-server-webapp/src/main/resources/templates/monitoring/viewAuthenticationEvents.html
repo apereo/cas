@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title>Authentication Events</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        
+        var urls = {
+            getEvents: /*[[@{/status/authnEvents/getEvents}]]*/
+        };
+
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:inline="javascript">
+
+        function jqueryReady() {
+            head.load(
+                    /*[[@{/css/authnEvents.css}]]*/
+            );
+            head.load(
+                    /*[[@{/js/authnEvents.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+
+    <div id="authnEvents">
+        <h1>Manage Authentication Events</h1>
+        
+        <div class="tabsContainer row">
+            <!-- Nav tabs -->
+            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#authnEvents" aria-controls="authnEvents" role="tab"
+                                                          data-toggle="tab">Authentication Events</a></li>
+            </ul>
+                        
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="authnEventsTab">
+                    <table id="authnEventsTable" class="display table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Principal</th>
+                            <th>Created</th>
+                            <th>Timestamp</th>
+                            <th>User Agent</th>
+                            <th>Client IP</th>
+                            <th>Server IP</th>
+                            <th>Geo Lat.</th>
+                            <th>Geo Long.</th>
+                            <th>Geo Accuracy</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:replace="fragments/footerButtons"/>
+    </div>
+</div>
+</body>
+</html>
