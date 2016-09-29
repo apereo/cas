@@ -76,7 +76,7 @@ public class TerminateSessionAction extends AbstractAction {
             this.warnCookieGenerator.removeCookie(response);
 
             destroyApplicationSession(request, response);
-            LOGGER.info("Terminated all CAS sessions successfully.");
+            LOGGER.debug("Terminated all CAS sessions successfully.");
             return this.eventFactorySupport.success(this);
         } catch (final Exception e) {
             throw Throwables.propagate(e);

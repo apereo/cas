@@ -28,6 +28,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlCondi
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlNameIdBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.http.HttpClient;
@@ -288,6 +289,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder() {
         final SamlProfileSamlAttributeStatementBuilder b = new SamlProfileSamlAttributeStatementBuilder();
+        b.setSamlAttributeEncoder(new SamlAttributeEncoder());
         b.setConfigBean(openSamlConfigBean);
         return b;
     }
