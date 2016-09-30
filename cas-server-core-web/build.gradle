@@ -21,4 +21,8 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile group: 'org.springframework', name: 'spring-web', version: springVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+    provided(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version: dropwizardMetricsVersion) {
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
+    }
 }
