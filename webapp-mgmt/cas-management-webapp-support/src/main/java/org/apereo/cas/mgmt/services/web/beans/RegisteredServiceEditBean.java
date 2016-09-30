@@ -338,7 +338,10 @@ public class RegisteredServiceEditBean implements Serializable {
         public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
             this.customComponent.put(componentName, properties);
         }
-        
+
+        /**
+         * The property bean.
+         */
         public static class PropertyBean {
             private String name;
             private String value;
