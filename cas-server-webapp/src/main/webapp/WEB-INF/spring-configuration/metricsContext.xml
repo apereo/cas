@@ -19,7 +19,7 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
 
-    <metrics:annotation-driven metric-registry="metrics" />
+    <metrics:annotation-driven health-check-registry="healthCheckMetrics" metric-registry="metrics" />
 
     <metrics:reporter type="slf4j" metric-registry="metrics"
                       period="${metrics.refresh.interval:30s}"
