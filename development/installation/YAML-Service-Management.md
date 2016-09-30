@@ -4,6 +4,7 @@ title: CAS - YAML Service Registry
 ---
 
 # YAML Service Registry
+
 This DAO reads services definitions from YAML configuration files at the application context initialization time.
 YAML files are expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant files.
@@ -55,6 +56,7 @@ The naming convention for new files is recommended to be the following:
 YAML fileName = serviceName + "-" + serviceNumericId + ".yml"
 ```
 
+Remember that because files are created based on the `serviceName`, you will need to make sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used as part of the name. 
 
 <div class="alert alert-warning"><strong>Duplicate Services</strong><p>
 As you add more files to the directory, you need to be absolutely sure that no two service definitions
