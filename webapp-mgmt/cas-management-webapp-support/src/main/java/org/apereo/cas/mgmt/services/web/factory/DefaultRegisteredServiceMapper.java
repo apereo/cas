@@ -63,7 +63,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             oauthBean.setClientSecret(oauth.getClientSecret());
             oauthBean.setRefreshToken(oauth.isGenerateRefreshToken());
             oauthBean.setJsonFormat(oauth.isJsonFormat());
-            
+
             if (svc instanceof OidcRegisteredService) {
                 bean.setType(RegisteredServiceTypeEditBean.OIDC.toString());
                 final OidcRegisteredService oidc = (OidcRegisteredService) svc;
@@ -71,7 +71,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 oidcBean.setJwks(oidc.getJwks());
                 oidcBean.setSignToken(oidc.isSignIdToken());
             }
-            
+
         }
 
         if (svc instanceof SamlRegisteredService) {
@@ -86,7 +86,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setSignResp(saml.isSignResponses());
             samlbean.setSignAssert(saml.isSignAssertions());
         }
-        
+
         bean.setTheme(svc.getTheme());
         bean.setEvalOrder(svc.getEvaluationOrder());
         final LogoutType logoutType = svc.getLogoutType();
@@ -112,14 +112,14 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             pBean.setAlgorithm(key.getAlgorithm());
             pBean.setLocation(key.getLocation());
         }
-        
+
         final Map<String, RegisteredServiceProperty> props = svc.getProperties();
-        final Map<String, Set<String>> beanProps = bean.getProps();
-        for (final Map.Entry<String, RegisteredServiceProperty> stringRegisteredServicePropertyEntry : props.entrySet()) {
-            final Set<String> set = stringRegisteredServicePropertyEntry.getValue().getValues();
-            beanProps.put(stringRegisteredServicePropertyEntry.getKey(), set);
+        final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> beanProps = bean.getProperties();
+        for (final Map.Entry<String, RegisteredServiceProperty> p : props.entrySet()) {
+            final String set = org.springframework.util.StringUtils.collectionToCommaDelimitedString(p.getValue().getValues());
+            beanProps.add(new RegisteredServiceEditBean.ServiceData.PropertyBean(p.getKey(), set));
         }
-        
+
     }
 
     @Override
@@ -146,7 +146,7 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 regSvc = new OAuthCallbackAuthorizeService();
             } else if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())
                     || StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OIDC.toString())) {
-                
+
                 if (StringUtils.equalsIgnoreCase(type, RegisteredServiceTypeEditBean.OAUTH.toString())) {
                     regSvc = new OAuthRegisteredService();
                 } else {
@@ -215,21 +215,21 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 regSvc.setPublicKey(new RegisteredServicePublicKeyImpl(publicKey.getLocation(), publicKey
                         .getAlgorithm()));
             }
-            
-            final Map<String, Set<String>> props = data.getProps();
-            for (final Map.Entry<String, Set<String>> stringSetEntry : props.entrySet()) {
+
+            final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> props = data.getProperties();
+            for (final RegisteredServiceEditBean.ServiceData.PropertyBean str : props) {
                 final DefaultRegisteredServiceProperty value = new DefaultRegisteredServiceProperty();
-                value.setValues(stringSetEntry.getValue());
-                regSvc.getProperties().put(stringSetEntry.getKey(), value);
+                value.setValues(org.springframework.util.StringUtils.commaDelimitedListToSet(str.getValue()));
+                regSvc.getProperties().put(str.getName(), value);
             }
-            
-            
+
+
             return regSvc;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     /**
      * Parse raw logout type string to {@link LogoutType}.
      *

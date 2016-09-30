@@ -1,5 +1,9 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,9 +127,9 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
-        private Map<String, Set<String>> properties = new HashMap<>();
+        private Set<PropertyBean> properties = Sets.newLinkedHashSet();
 
-        public void setProperties(final Map<String, Set<String>> properties) {
+        public void setProperties(final Set<PropertyBean> properties) {
             this.properties = properties;
         }
 
@@ -137,7 +141,7 @@ public class RegisteredServiceEditBean implements Serializable {
             return oidc;
         }
 
-        public Map<String, Set<String>> getProperties() {
+        public Set<PropertyBean> getProperties() {
             return properties;
         }
 
@@ -160,14 +164,7 @@ public class RegisteredServiceEditBean implements Serializable {
         public RegisteredServicePublicKeyEditBean getPublicKey() {
             return this.publicKey;
         }
-
-        public Map<String, Set<String>> getProps() {
-            return this.properties;
-        }
         
-        public void setProps(final Map<String, Set<String>> p) {
-            this.properties = p;
-        }
         public void setPublicKey(final RegisteredServicePublicKeyEditBean publicKey) {
             this.publicKey = publicKey;
         }
@@ -340,6 +337,61 @@ public class RegisteredServiceEditBean implements Serializable {
          */
         public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
             this.customComponent.put(componentName, properties);
+        }
+        
+        public static class PropertyBean {
+            private String name;
+            private String value;
+
+            public PropertyBean() {
+            }
+
+            public PropertyBean(final String name, final String value) {
+                this.name = name;
+                this.value = value;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(final String name) {
+                this.name = name;
+            }
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(final String value) {
+                this.value = value;
+            }
+            
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj == null) {
+                    return false;
+                }
+                if (obj == this) {
+                    return true;
+                }
+                if (obj.getClass() != getClass()) {
+                    return false;
+                }
+                final PropertyBean rhs = (PropertyBean) obj;
+                return new EqualsBuilder()
+                        .append(this.name, rhs.name)
+                        .append(this.value, rhs.value)
+                        .isEquals();
+            }
+
+            @Override
+            public int hashCode() {
+                return new HashCodeBuilder()
+                        .append(name)
+                        .append(value)
+                        .toHashCode();
+            }
         }
     }
 }
