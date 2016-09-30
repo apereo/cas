@@ -1,5 +1,7 @@
 package org.jasig.cas.web;
 
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
@@ -21,6 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -36,18 +39,21 @@ import java.util.Map;
  * Parent class for all servlet context initializers
  * that provides commons methods for retrieving beans
  * from the context dynamically.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @Component
 public abstract class AbstractServletContextInitializer
-    implements ApplicationContextInitializer<ConfigurableApplicationContext>,
-    WebApplicationInitializer,
-    ServletContextListener, ApplicationContextAware {
+        implements ApplicationContextInitializer<ConfigurableApplicationContext>,
+        WebApplicationInitializer,
+        ServletContextListener, ApplicationContextAware {
 
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Application context. */
+    /**
+     * Application context.
+     */
     protected ApplicationContext applicationContext;
 
     private final String contextInitializerName = getClass().getSimpleName();
@@ -55,7 +61,8 @@ public abstract class AbstractServletContextInitializer
     /**
      * Instantiates a new servlet context initializer.
      */
-    protected AbstractServletContextInitializer() {}
+    protected AbstractServletContextInitializer() {
+    }
 
 
     @Override
@@ -89,25 +96,38 @@ public abstract class AbstractServletContextInitializer
      *
      * @param servletContext the servlet context
      */
-    protected void onStartupServletContext(final ServletContext servletContext) {}
+    protected void onStartupServletContext(final ServletContext servletContext) {
+    }
 
     /**
      * Instantiates a new Initialize application context.
      *
      * @param configurableApplicationContext the configurable application context
      */
-    protected void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {}
+    protected void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {
+    }
 
     @Override
     public final void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
 
         try {
+
+            if (applicationContext instanceof ConfigurableWebApplicationContext) {
+                final ConfigurableWebApplicationContext web = (ConfigurableWebApplicationContext) applicationContext;
+                web.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, 
+                        this.applicationContext.getBean("metrics"));
+                web.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, 
+                        this.applicationContext.getBean("healthCheckMetrics"));
+            }
+            
             logger.info("Initializing {} root application context", contextInitializerName);
             initializeRootApplicationContext();
             logger.info("Initialized {} root application context successfully", contextInitializerName);
 
             logger.info("Initializing {} servlet application context", contextInitializerName);
+            
+
             initializeServletApplicationContext();
             logger.info("Initialized {} servlet application context successfully", contextInitializerName);
         } catch (final Exception e) {
@@ -118,11 +138,11 @@ public abstract class AbstractServletContextInitializer
     /**
      * Add authentication handler principal resolver.
      *
-     * @param handler the handler
+     * @param handler  the handler
      * @param resolver the resolver
      */
     protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationHandler handler,
-                                                              final PrincipalResolver resolver) {
+                                                                   final PrincipalResolver resolver) {
         logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
                 applicationContext.getBean("authenticationHandlersResolvers", Map.class);
@@ -140,12 +160,13 @@ public abstract class AbstractServletContextInitializer
 
     /**
      * Add authentication metadata populator.
+     *
      * @param populator the populator
      */
     protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
-            applicationContext.getBean("authenticationMetadataPopulators", List.class);
+                applicationContext.getBean("authenticationMetadataPopulators", List.class);
         authenticationMetadataPopulators.add(populator);
     }
 
@@ -161,7 +182,7 @@ public abstract class AbstractServletContextInitializer
      */
     protected final ServletRegistration getCasServletRegistration(final ServletContextEvent sce) {
         final ServletRegistration registration = sce.
-            getServletContext().getServletRegistration(WebUtils.CAS_SERVLET_NAME);
+                getServletContext().getServletRegistration(WebUtils.CAS_SERVLET_NAME);
         if (registration == null) {
             logger.debug("Servlet [{}] is not registered with this context", WebUtils.CAS_SERVLET_NAME);
         }
@@ -198,22 +219,25 @@ public abstract class AbstractServletContextInitializer
     /**
      * Add controller to cas servlet handler mapping.
      *
-     * @param path the path
+     * @param path       the path
      * @param controller the controller
      */
     protected final void addControllerToCasServletHandlerMapping(final String path, final Object controller) {
-        logger.debug("Adding {} to application context for {}", controller, path);
-        final SimpleUrlHandlerMapping handlerMappingC = getCasServletHandlerMapping();
-        final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-        urlMap.put(path, controller);
-        handlerMappingC.initApplicationContext();
-
+        try {
+            logger.debug("Adding {} to application context for {}", controller, path);
+            final SimpleUrlHandlerMapping handlerMappingC = getCasServletHandlerMapping();
+            final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
+            urlMap.put(path, controller);
+            handlerMappingC.initApplicationContext();
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
     /**
      * Add controller to cas servlet handler mapping.
      *
-     * @param path the path
+     * @param path       the path
      * @param controller the controller
      */
     protected final void addControllerToCasServletHandlerMapping(final String path, final String controller) {
@@ -233,7 +257,7 @@ public abstract class AbstractServletContextInitializer
     /**
      * Add endpoint mapping to cas servlet.
      *
-     * @param sce the sce
+     * @param sce     the sce
      * @param mapping the mapping
      */
     protected final void addEndpointMappingToCasServlet(final ServletContextEvent sce, final String mapping) {
@@ -274,7 +298,7 @@ public abstract class AbstractServletContextInitializer
      * Add service ticket unique id generator.
      *
      * @param serviceName the service name
-     * @param gen the gen
+     * @param gen         the gen
      */
     protected final void addServiceTicketUniqueIdGenerator(final String serviceName,
                                                            final UniqueTicketIdGenerator gen) {
@@ -287,24 +311,28 @@ public abstract class AbstractServletContextInitializer
     /**
      * Initialize root application context.
      */
-    protected void initializeRootApplicationContext() {}
+    protected void initializeRootApplicationContext() {
+    }
 
     /**
      * Initialize servlet application context.
      */
-    protected void initializeServletApplicationContext() {}
+    protected void initializeServletApplicationContext() {
+    }
 
     /**
      * Initialize servlet context.
      *
      * @param event the event
      */
-    protected void initializeServletContext(final ServletContextEvent event) {}
+    protected void initializeServletContext(final ServletContextEvent event) {
+    }
 
     /**
      * Destroy servlet context.
      *
      * @param event the event
      */
-    protected void destroyServletContext(final ServletContextEvent event) {}
+    protected void destroyServletContext(final ServletContextEvent event) {
+    }
 }
