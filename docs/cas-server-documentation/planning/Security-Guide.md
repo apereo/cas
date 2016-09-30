@@ -142,7 +142,7 @@ environment. Please [see this guide](../installation/Configuring-SSO-Session-Coo
 
 Protocol tickets that are issued by CAS may optionally go through a signing/encryption process. Even though the
 CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check
-to ensure ticket in transit to other applications are not tampered with and remain to be authentic.
+to ensure tickets in transit to other applications are not tampered with and remain to be authentic.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
@@ -157,7 +157,7 @@ Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.h
 
 CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
 These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to 
-native command-line interfaces. Needless to say, these endpoints and screens must be be secured and allowed proper access only to 
+native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to 
 authorized parties. Please [see this guide](../installation/Monitoring-Statistics.html) for more info. 
 
 ### Ticket Expiration Policies
