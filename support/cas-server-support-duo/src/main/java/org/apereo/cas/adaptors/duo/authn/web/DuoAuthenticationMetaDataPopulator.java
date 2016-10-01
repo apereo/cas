@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo;
+package org.apereo.cas.adaptors.duo.authn.web;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -34,7 +34,6 @@ public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDat
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
     }
-
 
     public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
         this.authenticationContextAttribute = authenticationContextAttribute;

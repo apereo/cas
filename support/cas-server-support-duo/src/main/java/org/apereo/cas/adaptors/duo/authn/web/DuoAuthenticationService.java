@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo;
+package org.apereo.cas.adaptors.duo.authn.web;
 
 import com.duosecurity.duoweb.DuoWeb;
 import com.fasterxml.jackson.databind.JsonNode;
