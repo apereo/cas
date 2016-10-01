@@ -19,7 +19,8 @@ public class MultifactorAuthenticationProperties {
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
     private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
-
+    private String contentType = "application/cas";
+    
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
@@ -99,6 +100,13 @@ public class MultifactorAuthenticationProperties {
         this.authenticationContextAttribute = authenticationContextAttribute;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(final String contentType) {
+        this.contentType = contentType;
+    }
 
     public YubiKey getYubikey() {
         return yubikey;
