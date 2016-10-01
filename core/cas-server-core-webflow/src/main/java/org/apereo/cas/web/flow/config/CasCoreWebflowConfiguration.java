@@ -10,6 +10,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -197,6 +198,13 @@ public class CasCoreWebflowConfiguration {
     @Bean
     public Action clearWebflowCredentialsAction() {
         return new ClearWebflowCredentialAction();
+    }
+
+    @Bean
+    public Action checkWebAuthenticationRequestAction() {
+        final CheckWebAuthenticationRequestAction a = new CheckWebAuthenticationRequestAction();
+        a.setContentType(casProperties.getAuthn().getMfa().getContentType());
+        return a;
     }
     
     private void configureResolver(final AbstractCasWebflowEventResolver r,

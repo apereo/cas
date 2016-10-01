@@ -24,7 +24,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Controller("trustedDevicesController")
-@RequestMapping("/status/authnEvents")
+@RequestMapping("/status/trustedDevs")
 @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
 public class TrustedDevicesController {
 

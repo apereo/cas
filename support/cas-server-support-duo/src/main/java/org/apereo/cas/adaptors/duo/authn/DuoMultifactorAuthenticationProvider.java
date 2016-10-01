@@ -1,5 +1,6 @@
-package org.apereo.cas.adaptors.duo;
+package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
