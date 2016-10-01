@@ -13,7 +13,10 @@ The output of a WAR overlay build is a `cas.war` file that can be deployed to a 
 
 WAR overlay projects are provided for reference and study.
 
-<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch. You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
+<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch. 
+You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code> 
+branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate, 
+use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
 
 ## Gradle
 
@@ -43,7 +46,8 @@ can be used at the same time.
 
 ### XML
 
-There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. Note that in most cases, modifying this file should be unnecessary.
+There is a `deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings. 
+Note that in most cases, modifying this file should be unnecessary.
 
 ### Groovy
 
@@ -203,6 +207,7 @@ by using a `scope=import` dependency:
 
 ### Gradle
 
-To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management) and configure the Gradle build accordingly.
+To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management) 
+and configure the Gradle build accordingly.
 
 *(1) http://maven.apache.org/plugins/maven-war-plugin/overlays.html*
