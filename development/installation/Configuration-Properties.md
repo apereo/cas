@@ -1177,6 +1177,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
+# cas.authn.mfa.contentType=application/cas
 ```
 
 ### Multifactor Trusted Device/Browser
