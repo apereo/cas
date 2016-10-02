@@ -43,5 +43,5 @@ service below is configured in CAS with a special multifactor policy that forces
 to pass through Duo Security as well.
 
 ```bash
-curl --location --header "Content-Type: application/cas" https://mmoayyed.unicon.net:9443/sample -L -u casuser:Mellon
+curl --location --header "Content-Type: application/cas" https://apps.example.org/myapp -L -u casuser:Mellon
 ```
