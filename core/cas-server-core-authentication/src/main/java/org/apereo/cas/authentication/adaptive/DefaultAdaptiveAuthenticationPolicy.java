@@ -77,8 +77,6 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         return true;
     }
     
-
-
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
                 && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
