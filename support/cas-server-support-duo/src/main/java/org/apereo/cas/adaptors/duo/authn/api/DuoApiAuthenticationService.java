@@ -47,7 +47,6 @@ public class DuoApiAuthenticationService {
      *
      * @param credential the authentication
      * @return true/false
-     * @throws Exception if response verification fails
      */
     public boolean authenticate(final DuoApiCredential credential) {
         try {
