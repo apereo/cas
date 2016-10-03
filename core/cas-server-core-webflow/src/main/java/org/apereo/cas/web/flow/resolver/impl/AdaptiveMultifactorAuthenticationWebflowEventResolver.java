@@ -64,6 +64,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
             return providerFound;
         }
         
+        
         return null;
     }
 
