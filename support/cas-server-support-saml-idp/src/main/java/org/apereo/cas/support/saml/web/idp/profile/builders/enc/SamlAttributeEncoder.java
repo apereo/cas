@@ -27,7 +27,7 @@ public class SamlAttributeEncoder {
      * @param authnRequest the authn request
      * @param attributes   the attributes
      * @param service      the service
-     * @param adaptor      @return the map
+     * @param adaptor      the service provider facade
      * @return the map
      */
     public Map<String, Object> encode(final AuthnRequest authnRequest, final Map<String, Object> attributes, 
