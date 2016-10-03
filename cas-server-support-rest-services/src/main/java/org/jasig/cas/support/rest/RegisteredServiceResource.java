@@ -58,7 +58,8 @@ public class RegisteredServiceResource {
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/v1/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
+            .APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
