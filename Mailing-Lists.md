@@ -22,16 +22,44 @@ Post to this list if you have a question about installing, configuring, or troub
 
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-user)
 
+### Data, Data, Data
+
+Always ensure you have enough diagnostics data in your report. Are you reporting the exact version numbers that exhibit the seemingly-faulty behavior? Have you described your deployment/development environment in enough detail? Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? Have you included steps to explain how one might duplicate the problem? Unit tests to recreate the issue?
+
+Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report? Think about that before you press submit.
+
+### Is this a bug?
+
+Research the issue and be sure to do your due diligence. Have you scanned the web archives for similar cases? Have you looked at the project’s documentation to find better explanations? Have you reviewed the project’s mailing lists, chatrooms and other facilities to find possible solutions?
+
+### Should I submit?
+
+CAS considers its issue tracking system as a placeholder to track genuine traceable issues and tasks. If you have a general question about the workings of the software, or if you’re unsure how something is supposed to work and are in need of an analysis and further discussion, consider choosing alternative vessels for contact. Use mailing lists, Gitter, Stackoverflow and other similar tools to engage with the project owners. When the dust has settled and you have arrived at a legitimate theory to explain the root cause of the problem, file a submission.
+
+### Be part of the solution
+
+If you can, always volunteer to post a patch and work up a solution. Be prepared to follow up to test the produced patch in your environment and always try to provide a confirmation. Simply complaining about something and letting it sit in the issue tracker for someone else to handle isn't going to get you much.
+
+If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing.
+
+<div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please avoid contacting individual project members directly.</p></div>
+
+
 ## CAS Developer List (cas-dev)
+
 _Focus_: CAS developer discussion and collaboration.
 
 The developer list is used by CAS committers to discuss CAS development. It's a suitable forum for discussing feature
-requests, software design, and offering contributions. _Please do not post support questions to the developer list._
+requests, software design, and offering contributions. 
+
+
+<div class="alert alert-info"><strong>List Etiquette</strong><p>Please do not post support questions to the developer list. Your question will most likely be ignored.</p></div>
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev)
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-dev)
 
 ## CAS Announcements List (cas-announce)
+
 _Focus_: Release accouncements.
 
 This is a low-traffic list to receive notifications about CAS releases including security patches.
