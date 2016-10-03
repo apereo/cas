@@ -2,10 +2,13 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -33,6 +36,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     public void expire(final LocalDate onOrBefore) {
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForEntity(this.endpoint, onOrBefore, Object.class);
+    }
+
+    @Override
+    public void expire(final String key) {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, key, Object.class);
     }
 
     @Override

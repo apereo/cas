@@ -19,6 +19,13 @@ public interface MultifactorAuthenticationTrustStorage {
     void expire(LocalDate onOrBefore);
 
     /**
+     * Expire device by registration key.
+     *
+     * @param key the key
+     */
+    void expire(String key);
+
+    /**
      * Get all records by date.
      *
      * @param onOrAfterDate the on or after date
