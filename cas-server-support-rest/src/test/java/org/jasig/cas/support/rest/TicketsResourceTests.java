@@ -8,7 +8,6 @@ import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
-import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistrySupport;
@@ -62,11 +61,13 @@ public class TicketsResourceTests {
 
         when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(TestUtils.getAuthentication());
         this.ticketsResourceUnderTest.setTicketRegistrySupport(ticketSupport);
+        
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
-                .servletPath("/v1")
+                .servletPath("/v1/tickets")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .setUseSuffixPatternMatch(true)
                 .build();
     }
 
@@ -121,44 +122,8 @@ public class TicketsResourceTests {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
-
-    @Test
-    public void normalCreationOfST() throws Throwable {
-        configureCasMockToCreateValidST();
-
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(content().string("ST-1"));
-    }
-
-    @Test
-    public void creationOfSTWithInvalidTicketException() throws Throwable {
-        configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
-
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("TicketGrantingTicket could not be found"));
-    }
-
-    @Test
-    public void creationOfSTWithGeneralException() throws Throwable {
-        configureCasMockSTCreationToThrow(new RuntimeException("Other exception"));
-
-        this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
-                .andExpect(status().is5xxServerError())
-                .andExpect(content().string("Other exception"));
-    }
-
-    @Test
-    public void deletionOfTGT() throws Throwable {
-        this.mockMvc.perform(delete("/cas/v1/tickets/TGT-1"))
-                .andExpect(status().isOk());
-    }
-
+    
+        
     private void configureCasMockToCreateValidTGT() throws Throwable {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");

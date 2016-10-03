@@ -150,7 +150,8 @@ public class TicketsResource {
      * @param tgtId ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
+            .APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {

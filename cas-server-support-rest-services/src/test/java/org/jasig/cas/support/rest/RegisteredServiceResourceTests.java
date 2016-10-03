@@ -46,7 +46,7 @@ public class RegisteredServiceResourceTests {
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.registeredServiceResource)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
-                .servletPath("/v1")
+                .servletPath("/v1/services/add/TGT-1")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .build();
     }
@@ -104,20 +104,20 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
         this.registeredServiceResource.setAttributeName("Test");
         this.registeredServiceResource.setAttributeValue("");
-        this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
+        this.mockMvc.perform(post("/cas/v1/services/add/TGT-1"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributeName() throws Exception {
         this.registeredServiceResource.setAttributeValue("Test");
-        this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
+        this.mockMvc.perform(post("/cas/v1/services/add/TGT-1"))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     public void checkRegisteredServiceNoAttributes() throws Exception {
-        this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
+        this.mockMvc.perform(post("/cas/v1/services/add/TGT-1"))
             .andExpect(status().isBadRequest());
     }
 
