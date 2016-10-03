@@ -1,0 +1,12 @@
+description = "Apereo CAS Risk-based Authentication Support"
+dependencies {
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-events")
+    compile libraries.spring
+    compile libraries.guava
+    compile libraries.springcloud
+    compile libraries.springboot
+    compile libraries.hibernate
+}
