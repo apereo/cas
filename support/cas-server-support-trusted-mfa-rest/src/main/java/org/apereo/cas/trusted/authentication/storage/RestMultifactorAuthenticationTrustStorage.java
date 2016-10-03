@@ -2,13 +2,10 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Set;
 
