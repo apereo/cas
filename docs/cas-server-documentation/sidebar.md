@@ -7,6 +7,8 @@
     *   [Security Guide](/$version/planning/Security-Guide.html)
     *   [High Availability Guide](/$version/planning/High-Availability-Guide.html)
     *   [Upgrade Guide](/$version/planning/Upgrade-Guide.html)
+    *   [Release Policy](/cas/developer/Release-Policy.html)
+    *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 * [Installation](#installation)
     *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
@@ -130,7 +132,5 @@
     *   [PMC](/cas/developer/Project-Commitee.html) 
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
-    *   [Release Policy](/cas/developer/Release-Policy.html)
     *   [Release Process](/cas/developer/Release-Process.html)
     *   [Build Process](/cas/developer/Build-Process.html)
-    *   [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
