@@ -39,3 +39,8 @@ authentication requests into a geo-location.
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+# Risk-based Authentication
+
+CAS is able to examine authentication requests for suspicious behavior. 
+To learn more, please [see this guide](Configuring-RiskBased-Authentication.html).

@@ -6,6 +6,7 @@ title: CAS - OIDC Authentication
 # OpenID Connect Authentication
 
 ## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
