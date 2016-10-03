@@ -5,7 +5,6 @@ title: CAS - Adaptive Risk-based Authentication
 
 # Risk-based Authentication
 
-
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml

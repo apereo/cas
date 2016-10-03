@@ -48,6 +48,10 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
 
+    @Autowired(required = false)
+    @Qualifier("riskAwareAuthenticationWebflowEventResolver")
+    private CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver;
+    
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -111,6 +115,11 @@ public class CasCoreWebflowConfiguration {
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
+        
+        if (riskAwareAuthenticationWebflowEventResolver != null) {
+            r.addDelegate(riskAwareAuthenticationWebflowEventResolver);
+        }
+        
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
