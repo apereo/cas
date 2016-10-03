@@ -1,0 +1,95 @@
+package org.apereo.cas.configuration.model.core.authentication;
+
+/**
+ * This is {@link RiskBasedAuthenticationProperties}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.1.0
+ */
+public class RiskBasedAuthenticationProperties {
+
+    private IpAddress ip = new IpAddress();
+    private Agent agent = new Agent();
+    private GeoLocation geoLocation = new GeoLocation();
+    private DateTime dateTime = new DateTime();
+
+    public IpAddress getIp() {
+        return ip;
+    }
+
+    public void setIp(final IpAddress ip) {
+        this.ip = ip;
+    }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(final Agent agent) {
+        this.agent = agent;
+    }
+
+    public GeoLocation getGeoLocation() {
+        return geoLocation;
+    }
+
+    public void setGeoLocation(final GeoLocation geoLocation) {
+        this.geoLocation = geoLocation;
+    }
+
+    public DateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(final DateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public static class IpAddress {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class Agent {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class GeoLocation {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class DateTime {
+        private boolean enabled;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+}
