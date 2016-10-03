@@ -54,6 +54,11 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction("terminateSessionAction"));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
 
+        final ActionState gatewayServicesManagementCheck = createActionState(flow,
+                CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction("gatewayServicesManagementCheck"));
+        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_REDIRECT);
+        
         final ActionState serviceAuthorizationCheck = createActionState(flow,
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK, createEvaluateAction("serviceAuthorizationCheck"));
         createStateDefaultTransition(serviceAuthorizationCheck, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -116,7 +121,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_WARN,
                 "flowScope.warnCookieValue",
                 CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
-                CasWebflowConstants.STATE_ID_REDIR);
+                CasWebflowConstants.STATE_ID_REDIRECT);
 
         createDecisionState(flow, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK,
                 "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null",
