@@ -73,7 +73,6 @@ this release from Maven Central, integrate into your environment, and provide fe
 
 Regards,
 John Smith
-
 ```
 
 ## Update Overlays
