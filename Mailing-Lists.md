@@ -14,6 +14,7 @@ in those circumstances. _Please post in English._
 
 
 ## CAS Community List (cas-user)
+
 _Focus_: support, troubleshooting, general questions.
 
 Post to this list if you have a question about installing, configuring, or troubleshooting CAS.
@@ -89,7 +90,7 @@ This is a private closed-list low-traffic list to  discuss CAS security issues a
 
 _Focus_: Project management committee matters, policy decisions
 
-This is a private closed-list open to the CAS PMC members. PMC bylaws are [published here](https://wiki.jasig.org/display/CAS/CAS+Project+Management+Committee).
+This is a private closed-list open to the CAS PMC members. PMC bylaws are [published here](/cas/developer/Project-Commitee.html).
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-pmc)
 
