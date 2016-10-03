@@ -1,3 +1,8 @@
+---
+layout: default
+title: CAS - Project Management Commitee
+---
+
 CAS is governed by a Project Management Committee (PMC) modeled after Apache-style PMCs. All PMC-related matters, including new nominations of
 members MUST take place on the [mailing list](Mailing-Lists.html).
  
