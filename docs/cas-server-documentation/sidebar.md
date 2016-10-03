@@ -127,6 +127,7 @@
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
+    *   [PMC](/cas/developer/Project-Commitee.html) 
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Policy](/cas/developer/Release-Policy.html)
