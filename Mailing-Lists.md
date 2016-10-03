@@ -28,6 +28,9 @@ Always ensure you have enough diagnostics data in your report. Are you reporting
 
 Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report? Think about that before you press submit.
 
+<div class="alert alert-info"><strong>List Etiquette</strong><p>If your question does not contain enough data, and is described in vague terms, it will likely be ignored. Please try to be as precise as possible.</p></div>
+
+
 ### Is this a bug?
 
 Research the issue and be sure to do your due diligence. Have you scanned the web archives for similar cases? Have you looked at the project’s documentation to find better explanations? Have you reviewed the project’s mailing lists, chatrooms and other facilities to find possible solutions?
@@ -42,7 +45,7 @@ If you can, always volunteer to post a patch and work up a solution. Be prepared
 
 If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing.
 
-<div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please avoid contacting individual project members directly.</p></div>
+<div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
 
 
 ## CAS Developer List (cas-dev)
@@ -53,7 +56,7 @@ The developer list is used by CAS committers to discuss CAS development. It's a 
 requests, software design, and offering contributions. 
 
 
-<div class="alert alert-info"><strong>List Etiquette</strong><p>Please do not post support questions to the developer list. Your question will most likely be ignored.</p></div>
+<div class="alert alert-info"><strong>List Etiquette</strong><p>Please <b>do not</b> post support questions to the developer list. Your question will most likely be ignored.</p></div>
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev)
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-dev)
@@ -74,6 +77,7 @@ This is a low-traffic list to receive notifications about CAS security issues. N
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-public)
 
 ## CAS Private Security List (cas-appsec-private)
+
 _Focus_: Security issues, mitigation strategies and private internal discussions
 
 This is a private closed-list low-traffic list to  discuss CAS security issues amongst trusted members. Note that posts on this list are *private*. To report what you consider to be a security vulnerability, please use the address `security@apereo.org`. 
@@ -82,6 +86,7 @@ This is a private closed-list low-traffic list to  discuss CAS security issues a
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-private)
 
 ## CAS PMC (cas-pmc)
+
 _Focus_: Project management committee matters, policy decisions
 
 This is a private closed-list open to the CAS PMC members. PMC bylaws are [published here](https://wiki.jasig.org/display/CAS/CAS+Project+Management+Committee).
