@@ -9,6 +9,8 @@ import org.apereo.cas.impl.DefaultAuthenticationRiskEngine;
 import org.apereo.cas.impl.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.IpAddressAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.UserAgentAuthenticationRequestRiskCalculator;
+import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,12 @@ public class ElectroFenceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
+        return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEngine());
+    }
+    
     @Bean
     @RefreshScope
     public AuthenticationRiskEngine authenticationRiskEngine() {
