@@ -206,9 +206,13 @@
     <!-- REST support if cas-server-support-rest is included -->
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
-        <url-pattern>/v1/*</url-pattern>
+        <url-pattern>/v1/tickets/*</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/v1/services/*</url-pattern>
+    </servlet-mapping>
+    
     <session-config>
         <!-- Default to 5 minute session timeouts -->
         <session-timeout>5</session-timeout>
