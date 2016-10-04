@@ -2,15 +2,17 @@ package org.apereo.cas.config;
 
 import com.google.common.collect.Sets;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
-import org.apereo.cas.api.AuthenticationRiskEngine;
-import org.apereo.cas.api.AuthenticationRiskMitigationEngine;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
-import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEngine;
-import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigationEngine;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
+import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigator;
+import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
+import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
@@ -40,17 +42,20 @@ public class ElectroFenceConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
-        return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEngine(), authenticationRiskMitigationEngine());
+        return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEvaluator(), authenticationRiskMitigator());
     }
     
     @Bean
     @RefreshScope
-    public AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine() {
-        return new DefaultAuthenticationRiskMitigationEngine();
+    public AuthenticationRiskMitigator authenticationRiskMitigator() {
+        if (casProperties.getAuthn().getAdaptive().getRisk().getResponse().isBlockAttempt()) {
+            return new DefaultAuthenticationRiskMitigator(new BlockAuthenticationContingencyPlan());
+        }
+        return new DefaultAuthenticationRiskMitigator(new MultifactorAuthenticationContingencyPlan()); 
     }
     @Bean
     @RefreshScope
-    public AuthenticationRiskEngine authenticationRiskEngine() {
+    public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
         final Set<AuthenticationRequestRiskCalculator> calcs = Sets.newHashSet();
 
         if (casProperties.getAuthn().getAdaptive().getRisk().getIp().isEnabled()) {
@@ -70,7 +75,7 @@ public class ElectroFenceConfiguration {
             LOGGER.warn("No risk calculators are define to examine authentication requests");
         }
 
-        return new DefaultAuthenticationRiskEngine(calcs);
+        return new DefaultAuthenticationRiskEvaluator(calcs);
     }
 
 }

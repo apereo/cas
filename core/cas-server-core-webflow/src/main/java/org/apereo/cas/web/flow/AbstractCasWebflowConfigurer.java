@@ -614,7 +614,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> {
             createTransitionForState(state, v.getId(), v.getId());
         });

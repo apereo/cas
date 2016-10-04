@@ -1,14 +1,18 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.api.AuthenticationRiskEngine;
-import org.apereo.cas.api.AuthenticationRiskMitigationEngine;
+import com.google.common.collect.Sets;
+import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
+import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,13 +27,16 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    private final AuthenticationRiskEngine authenticationRiskEngine;
-    private final AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationRiskEngine authenticationRiskEngine, 
-                                                       final AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine) {
-        this.authenticationRiskEngine = authenticationRiskEngine;
-        this.authenticationRiskMitigationEngine = authenticationRiskMitigationEngine;
+    private final AuthenticationRiskEvaluator authenticationRiskEvaluator;
+    private final AuthenticationRiskMitigator authenticationRiskMitigator;
+
+    public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationRiskEvaluator authenticationRiskEvaluator,
+                                                       final AuthenticationRiskMitigator authenticationRiskMitigator) {
+        this.authenticationRiskEvaluator = authenticationRiskEvaluator;
+        this.authenticationRiskMitigator = authenticationRiskMitigator;
     }
 
     @Override
@@ -43,16 +50,26 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
-            logger.warn("No multifactor authentication providers are available in the application context");
-            throw new AuthenticationException();
-        }
+        return handlePossibleSuspiciousAttempt(request, authentication, service);
+    }
 
-        final AuthenticationRiskScore score = authenticationRiskEngine.eval(authentication, service, request);
-        authenticationRiskMitigationEngine.mitigate(authentication, service, score, request);
-        
+    /**
+     * Handle possible suspicious attempt.
+     *
+     * @param request        the request
+     * @param authentication the authentication
+     * @param service        the service
+     * @return the set
+     */
+    protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request,
+                                                         final Authentication authentication,
+                                                         final RegisteredService service) {
+        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+
+        if (score.getScore() >= casProperties.getAuthn().getAdaptive().getRisk().getThreshold()) {
+            final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
+            return Sets.newHashSet(res.getResult());
+        }
         return null;
     }
 }
