@@ -1,4 +1,4 @@
-package org.apereo.cas.impl;
+package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskScore;

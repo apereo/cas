@@ -1,5 +1,8 @@
 package org.apereo.cas.api;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.RegisteredService;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
@@ -21,8 +24,10 @@ public interface AuthenticationRiskEngine {
     /**
      * Calculate score authentication risk score.
      *
-     * @param request the request
+     * @param authentication the authentication
+     * @param service        the service
+     * @param request        the request
      * @return the authentication risk score
      */
-    AuthenticationRiskScore eval(HttpServletRequest request);
+    AuthenticationRiskScore eval(Authentication authentication, RegisteredService service, HttpServletRequest request);
 }

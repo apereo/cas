@@ -12,6 +12,15 @@ public class RiskBasedAuthenticationProperties {
     private Agent agent = new Agent();
     private GeoLocation geoLocation = new GeoLocation();
     private DateTime dateTime = new DateTime();
+    private double threshold;
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(final double threshold) {
+        this.threshold = threshold;
+    }
 
     public IpAddress getIp() {
         return ip;
