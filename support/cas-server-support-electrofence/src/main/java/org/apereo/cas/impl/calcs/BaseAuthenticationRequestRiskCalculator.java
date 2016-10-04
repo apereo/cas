@@ -22,14 +22,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     @Autowired
     @Qualifier("casEventRepository")
     protected CasEventRepository casEventRepository;
-
-    /**
-     * Geolocation service.
-     */
-    @Autowired
-    @Qualifier("geoLocationService")
-    protected GeoLocationService geoLocationService;
-
+    
     @Override
     public final AuthenticationRiskScore calculate(final HttpServletRequest request) {
         return new AuthenticationRiskScore(calculateScore(request));        
