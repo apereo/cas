@@ -1,4 +1,4 @@
-package org.apereo.cas.impl;
+package org.apereo.cas.impl.calcs;
 
 /**
  * This is {@link DateTimeAuthenticationRequestRiskCalculator}.

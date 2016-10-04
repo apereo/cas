@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.AuthenticationRiskEngine;
+import org.apereo.cas.api.AuthenticationRiskMitigationEngine;
+import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -10,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,13 +24,17 @@ import java.util.Set;
  */
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
     private final AuthenticationRiskEngine authenticationRiskEngine;
+    private final AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine;
 
-    public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationRiskEngine authenticationRiskEngine) {
+    public RiskAwareAuthenticationWebflowEventResolver(final AuthenticationRiskEngine authenticationRiskEngine, 
+                                                       final AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine) {
         this.authenticationRiskEngine = authenticationRiskEngine;
+        this.authenticationRiskMitigationEngine = authenticationRiskMitigationEngine;
     }
 
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
@@ -42,6 +49,9 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
+
+        final AuthenticationRiskScore score = authenticationRiskEngine.eval(authentication, service, request);
+        authenticationRiskMitigationEngine.mitigate(authentication, service, score, request);
         
         return null;
     }

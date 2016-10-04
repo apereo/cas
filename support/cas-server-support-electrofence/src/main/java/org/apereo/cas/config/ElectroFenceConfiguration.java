@@ -3,12 +3,14 @@ package org.apereo.cas.config;
 import com.google.common.collect.Sets;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEngine;
+import org.apereo.cas.api.AuthenticationRiskMitigationEngine;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.impl.DateTimeAuthenticationRequestRiskCalculator;
-import org.apereo.cas.impl.DefaultAuthenticationRiskEngine;
-import org.apereo.cas.impl.GeoLocationAuthenticationRequestRiskCalculator;
-import org.apereo.cas.impl.IpAddressAuthenticationRequestRiskCalculator;
-import org.apereo.cas.impl.UserAgentAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEngine;
+import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigationEngine;
+import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
@@ -38,9 +40,14 @@ public class ElectroFenceConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
-        return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEngine());
+        return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEngine(), authenticationRiskMitigationEngine());
     }
     
+    @Bean
+    @RefreshScope
+    public AuthenticationRiskMitigationEngine authenticationRiskMitigationEngine() {
+        return new DefaultAuthenticationRiskMitigationEngine();
+    }
     @Bean
     @RefreshScope
     public AuthenticationRiskEngine authenticationRiskEngine() {

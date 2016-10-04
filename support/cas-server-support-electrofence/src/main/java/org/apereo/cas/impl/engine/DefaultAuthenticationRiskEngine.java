@@ -1,9 +1,11 @@
-package org.apereo.cas.impl;
+package org.apereo.cas.impl.engine;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEngine;
 import org.apereo.cas.api.AuthenticationRiskScore;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.RegisteredService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -28,7 +30,9 @@ public class DefaultAuthenticationRiskEngine implements AuthenticationRiskEngine
     }
 
     @Override
-    public AuthenticationRiskScore eval(final HttpServletRequest request) {
+    public AuthenticationRiskScore eval(final Authentication authentication, 
+                                        final RegisteredService service, 
+                                        final HttpServletRequest request) {
         final List<AuthenticationRiskScore> scores = Lists.newArrayList();
         this.calculators.stream().forEach(r -> scores.add(r.calculate(request)));
         final double sum = scores.stream().map(r -> r.getScore()).reduce(0D, (a, b) -> a + b);
