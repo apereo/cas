@@ -52,7 +52,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
         }
         
         final Map<String, MultifactorAuthenticationProvider> providerMap = 
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -79,7 +79,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
         final String agent = WebUtils.getHttpServletRequestUserAgent();
         final Map multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry> entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             final String mfaMethod = entry.getKey().toString();

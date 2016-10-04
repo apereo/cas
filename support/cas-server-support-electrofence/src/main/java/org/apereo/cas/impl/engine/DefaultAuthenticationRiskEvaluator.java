@@ -2,7 +2,7 @@ package org.apereo.cas.impl.engine;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
-import org.apereo.cas.api.AuthenticationRiskEngine;
+import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This is {@link DefaultAuthenticationRiskEngine}.
+ * This is {@link DefaultAuthenticationRiskEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class DefaultAuthenticationRiskEngine implements AuthenticationRiskEngine {
+public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEvaluator {
     private final Set<AuthenticationRequestRiskCalculator> calculators;
 
-    public DefaultAuthenticationRiskEngine(final Set<AuthenticationRequestRiskCalculator> calculators) {
+    public DefaultAuthenticationRiskEvaluator(final Set<AuthenticationRequestRiskCalculator> calculators) {
         this.calculators = calculators;
     }
 

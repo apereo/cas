@@ -12,7 +12,17 @@ public class RiskBasedAuthenticationProperties {
     private Agent agent = new Agent();
     private GeoLocation geoLocation = new GeoLocation();
     private DateTime dateTime = new DateTime();
+    private Response response = new Response();
+    
     private double threshold;
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(final Response response) {
+        this.response = response;
+    }
 
     public double getThreshold() {
         return threshold;
@@ -99,6 +109,27 @@ public class RiskBasedAuthenticationProperties {
 
         public void setEnabled(final boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+    
+    public static class Response {
+        private boolean blockAttempt;
+        private String mfaProvider;
+
+        public boolean isBlockAttempt() {
+            return blockAttempt;
+        }
+
+        public void setBlockAttempt(final boolean blockAttempt) {
+            this.blockAttempt = blockAttempt;
+        }
+
+        public String getMfaProvider() {
+            return mfaProvider;
+        }
+
+        public void setMfaProvider(final String mfaProvider) {
+            this.mfaProvider = mfaProvider;
         }
     }
 }

@@ -649,7 +649,7 @@ public final class WebUtils {
      * @param applicationContext the application context
      * @return the all multifactor authentication providers from application context
      */
-    public static Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProviders(
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
             final ApplicationContext applicationContext) {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
