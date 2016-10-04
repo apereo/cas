@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**
- * This is {@link AuthenticationRiskEngine}.
+ * This is {@link AuthenticationRiskEvaluator}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface AuthenticationRiskEngine {
+public interface AuthenticationRiskEvaluator {
 
     /**
      * Gets calculators.
