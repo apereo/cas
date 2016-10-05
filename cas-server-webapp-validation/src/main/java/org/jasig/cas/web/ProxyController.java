@@ -1,5 +1,6 @@
 package org.jasig.cas.web;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -40,16 +41,24 @@ import javax.validation.constraints.NotNull;
 @Controller
 public class ProxyController {
 
-    /** View for if the creation of a "Proxy" Ticket Fails. */
+    /**
+     * View for if the creation of a "Proxy" Ticket Fails.
+     */
     private static final String CONST_PROXY_FAILURE = "cas2ProxyFailureView";
 
-    /** View for if the creation of a "Proxy" Ticket Succeeds. */
+    /**
+     * View for if the creation of a "Proxy" Ticket Succeeds.
+     */
     private static final String CONST_PROXY_SUCCESS = "cas2ProxySuccessView";
 
-    /** Key to use in model for service tickets. */
+    /**
+     * Key to use in model for service tickets.
+     */
     private static final String MODEL_SERVICE_TICKET = "ticket";
 
-    /** CORE to delegate all non-web tier functionality to. */
+    /**
+     * CORE to delegate all non-web tier functionality to.
+     */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -59,35 +68,36 @@ public class ProxyController {
     /**
      * Instantiates a new proxy controller, with cache seconds set to 0.
      */
-    public ProxyController() {}
+    public ProxyController() {
+    }
 
     /**
      * Handle request internal.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
      * @return ModelAndView containing a view name of either
      * {@code casProxyFailureView} or {@code casProxySuccessView}
      */
-    @RequestMapping(path="/proxy", method = RequestMethod.GET)
+    @RequestMapping(path = "/proxy", method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
         final Service targetService = getTargetService(request);
 
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
-                CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
+                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
 
         try {
             final ProxyTicket proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
             return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET, proxyTicket);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), e.getCode(), new Object[] {proxyGrantingTicket}, request);
+            return generateErrorView(e.getCode(), e.getCode(), new Object[]{proxyGrantingTicket}, request);
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE,
-                CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
-                new Object[] {targetService}, request);
+                    CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
+                    new Object[]{targetService}, request);
         }
     }
 
@@ -105,29 +115,30 @@ public class ProxyController {
      * Generate error view stuffing the code and description
      * of the error into the model. View name is set to {@link #CONST_PROXY_FAILURE}.
      *
-     * @param code the code
+     * @param code        the code
      * @param description the description
-     * @param args the msg args
+     * @param args        the msg args
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code,
-        final String description, final Object[] args, final HttpServletRequest request) {
+                                           final String description, final Object[] args,
+                                           final HttpServletRequest request) {
         final ModelAndView modelAndView = new ModelAndView(CONST_PROXY_FAILURE);
         modelAndView.addObject("code", code);
-        modelAndView.addObject("description", this.context.getMessage(description, args,
-            description, request.getLocale()));
+        modelAndView.addObject("description",
+                StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, description, request.getLocale())));
 
         return modelAndView;
     }
 
     /**
      * @param centralAuthenticationService The centralAuthenticationService to
-     * set.
+     *                                     set.
      */
     @Autowired
     public void setCentralAuthenticationService(
-        @Qualifier("centralAuthenticationService")
-        final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier("centralAuthenticationService")
+            final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
