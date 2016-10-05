@@ -1,5 +1,6 @@
 package org.jasig.cas.web;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
@@ -58,52 +59,72 @@ import java.util.Map;
  */
 @Component("serviceValidateController")
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
-    /** View if Service Ticket Validation Fails. */
+    /**
+     * View if Service Ticket Validation Fails.
+     */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
-    /** View if Service Ticket Validation Succeeds. */
+    /**
+     * View if Service Ticket Validation Succeeds.
+     */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
 
-    /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
+    /**
+     * JSON View if Service Ticket Validation Succeeds and if service requires JSON.
+     */
     public static final String DEFAULT_SERVICE_VIEW_NAME_JSON = "cas3ServiceJsonView";
 
     @Autowired
     private ApplicationContext context;
 
     @NotNull
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
-    /** Implementation of Service Manager. */
+    /**
+     * Implementation of Service Manager.
+     */
     @NotNull
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
-    /** The CORE which we will delegate all requests to. */
+
+    /**
+     * The CORE which we will delegate all requests to.
+     */
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    /** The validation protocol we want to use. */
+    /**
+     * The validation protocol we want to use.
+     */
     @NotNull
     private Class<?> validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
 
-    /** The proxy handler we want to use with the controller. */
+    /**
+     * The proxy handler we want to use with the controller.
+     */
     @NotNull
     private ProxyHandler proxyHandler;
 
-    /** The view to redirect to on a successful validation. */
+    /**
+     * The view to redirect to on a successful validation.
+     */
     @NotNull
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
 
-    /** The view to redirect to on a validation failure. */
+    /**
+     * The view to redirect to on a validation failure.
+     */
     @NotNull
     private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
 
-    /** Extracts parameters from Request object. */
+    /**
+     * Extracts parameters from Request object.
+     */
     @NotNull
     @Autowired
     @Qualifier("defaultArgumentExtractor")
@@ -112,7 +133,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Instantiates a new Service validate controller.
      */
-    public AbstractServiceValidateController() {}
+    public AbstractServiceValidateController() {
+    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -142,7 +164,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Inits the binder with the required fields. {@code renew} is required.
      *
      * @param request the request
-     * @param binder the binder
+     * @param binder  the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         binder.setRequiredFields("renew");
@@ -152,7 +174,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Handle proxy granting ticket delivery.
      *
      * @param serviceTicketId the service ticket id
-     * @param credential the service credential
+     * @param credential      the service credential
      * @return the ticket granting ticket
      */
     private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) {
@@ -165,7 +187,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final AuthenticationTransaction transaction =
                     AuthenticationTransaction.wrap(credential);
             this.authenticationSystemSupport.getAuthenticationTransactionManager()
-                    .handle(transaction,  builder);
+                    .handle(transaction, builder);
             final AuthenticationContext authenticationContext = builder.build(serviceTicket.getService());
 
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
@@ -217,7 +239,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 if (StringUtils.isEmpty(proxyIou)) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[] {serviceCredential.getId()}, request, service);
+                            new Object[]{serviceCredential.getId()}, request, service);
                 }
             }
 
@@ -226,24 +248,25 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
-            return generateErrorView(code, code,
-                    new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
+            return generateErrorView(code, CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                    new Object[]{serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
         } catch (final AbstractTicketException te) {
-            return generateErrorView(te.getCode(), te.getCode(),
-                new Object[] {serviceTicketId}, request, service);
+            return generateErrorView(te.getCode(), CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
+                    new Object[]{serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()}, request, service);
+            return generateErrorView(e.getCode(), CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, 
+                    new Object[]{service.getId()}, request, service);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), null, request, service);
+            return generateErrorView(e.getCode(), CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         }
     }
 
     /**
      * Validate assertion.
      *
-     * @param request the request
+     * @param request         the request
      * @param serviceTicketId the service ticket id
-     * @param assertion the assertion
+     * @param assertion       the assertion
      * @return the boolean
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
@@ -264,7 +287,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * use this as hook to plug in behvior.
      *
      * @param serviceTicketId the service ticket id
-     * @param assertion the assertion
+     * @param assertion       the assertion
      */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
         // template method with nothing to do.
@@ -273,28 +296,28 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate error view, set to {@link #setFailureView(String)}.
      *
-     * @param code the code
-     * @param description the description
-     * @param args the args
-     * @param request the request
+     * @param descCode        the code
+     * @param errorCode the description
+     * @param args        the args
+     * @param request     the request
      * @return the model and view
      */
-    private ModelAndView generateErrorView(final String code, final String description,
+    private ModelAndView generateErrorView(final String descCode, final String errorCode,
                                            final Object[] args,
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
 
         final ModelAndView modelAndView = getModelAndView(false, service);
-        final String convertedDescription = this.context.getMessage(description, args,
-            description, request.getLocale());
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, convertedDescription);
+        final String convertedDescription = this.context.getMessage(descCode, args, descCode, request.getLocale());
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(errorCode));
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION,
+                StringEscapeUtils.escapeHtml4(convertedDescription));
 
         return modelAndView;
     }
 
     private ModelAndView getModelAndView(final boolean isSuccess, final WebApplicationService service) {
-        if (service != null){
+        if (service != null) {
             if (service.getFormat() == ValidationResponseType.JSON) {
                 return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
             }
@@ -305,9 +328,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /**
      * Generate the success view. The result will contain the assertion and the proxy iou.
      *
-     * @param assertion the assertion
-     * @param proxyIou the proxy iou
-     * @param service the validated service
+     * @param assertion           the assertion
+     * @param proxyIou            the proxy iou
+     * @param service             the validated service
      * @param proxyGrantingTicket the proxy granting ticket
      * @return the model and view, pointed to the view name set by
      */
@@ -340,9 +363,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return map of objects each keyed to a name
      */
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
-        return Collections.emptyMap();  
+        return Collections.emptyMap();
     }
-    
+
     /**
      * Gets the command class based on {@link #setValidationSpecificationClass(Class)}.
      *
@@ -363,20 +386,20 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /**
      * @param centralAuthenticationService The centralAuthenticationService to
-     * set.
+     *                                     set.
      */
     public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    
+
     public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
     }
 
     /**
      * @param validationSpecificationClass The authenticationSpecificationClass
-     * to set.
+     *                                     to set.
      */
     public void setValidationSpecificationClass(final Class<?> validationSpecificationClass) {
         this.validationSpecificationClass = validationSpecificationClass;
@@ -414,8 +437,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /**
      * Ensure that the service is found and enabled in the service registry.
+     *
      * @param registeredService the located entry in the registry
-     * @param service authenticating service
+     * @param service           authenticating service
      * @throws UnauthorizedServiceException
      */
     private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
@@ -428,7 +452,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not enabled in service registry.", service.getId());
-            
+
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
