@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -188,23 +189,24 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         if (service == null || serviceTicketId == null) {
             logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
-                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
         }
 
         try {
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
-            return generateErrorView(code, code,
+            return generateErrorView(code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), e.getCode(),
+            return generateErrorView(e.getCode(), 
                 new Object[] {serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()}, request, service);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, 
+                    new Object[] {service.getId()}, request, service);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), null, request, service);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, 
+                    null, request, service);
         }
     }
 
@@ -227,15 +229,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             } catch (final AuthenticationException e) {
                 logger.warn("Failed to authenticate service credential {}", serviceCredential);
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                         new Object[] {serviceCredential.getId()}, request, service);
             } catch (final InvalidTicketException e) {
                 logger.error("Failed to create proxy granting ticket due to an invalid ticket for {}", serviceCredential, e);
-                return generateErrorView(e.getCode(), e.getCode(),
+                return generateErrorView(e.getCode(),
                         new Object[]{serviceTicketId}, request, service);
             } catch (final AbstractTicketException e) {
                 logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
-                return generateErrorView(e.getCode(), e.getCode(),
+                return generateErrorView(e.getCode(), 
                         new Object[]{serviceCredential.getId()}, request, service);
             }
         }
@@ -243,7 +244,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
         if (!validateAssertion(request, serviceTicketId, assertion)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                    CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
                     new Object[] {serviceTicketId}, request, service);
         }
 
@@ -257,7 +257,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
             if (StringUtils.isEmpty(proxyIou)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                        CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                         new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
@@ -313,21 +312,20 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Generate error view.
      *
      * @param code the code
-     * @param description the description
      * @param args the args
      * @param request the request
      * @return the model and view
      */
-    private ModelAndView generateErrorView(final String code, final String description,
+    private ModelAndView generateErrorView(final String code,
                                            final Object[] args,
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
 
         final ModelAndView modelAndView = getModelAndView(request, false, service);
-        final String convertedDescription = this.applicationContext.getMessage(description, args,
-            description, request.getLocale());
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, convertedDescription);
+        final String convertedDescription = this.applicationContext.getMessage(code, args, code, request.getLocale());
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, 
+                StringEscapeUtils.escapeHtml4(convertedDescription));
 
         return modelAndView;
     }
