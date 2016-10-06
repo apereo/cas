@@ -62,7 +62,6 @@ public class ElectroFenceConfiguration {
                 new MultifactorAuthenticationContingencyPlan(casProperties.getAuthn().getAdaptive()));
     }
 
-
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
