@@ -38,6 +38,10 @@ The following SAML SP integrations are provided by CAS:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
+<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
+with a SAML service provider, consider contributing that recipe to the project so its configuration
+can be automated once and for all to use. Let the change become a feature of the project, rather than something you alone have to maintain.</p></div>
+
 ## Google Apps
 
 The Google Apps SAML integration is also provided by CAS natively [based on this guide](Google-Apps-Integration.html).
