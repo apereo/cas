@@ -64,12 +64,20 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
     protected Set<Event> handlePossibleSuspiciousAttempt(final HttpServletRequest request,
                                                          final Authentication authentication,
                                                          final RegisteredService service) {
+
+        logger.debug("Evaluating possible suspicious authentication attempt for {}", authentication.getPrincipal());
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
 
         if (score.getScore() >= casProperties.getAuthn().getAdaptive().getRisk().getThreshold()) {
+            logger.debug("Calculated risk score {} for uthentication request by {} is above the risk threshold {}.",
+                    score.getScore(),
+                    authentication.getPrincipal(),
+                    casProperties.getAuthn().getAdaptive().getRisk().getThreshold());
             final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             return Sets.newHashSet(res.getResult());
         }
+
+        logger.debug("Authentication request for {} is below the risk threshold", authentication.getPrincipal());
         return null;
     }
 }

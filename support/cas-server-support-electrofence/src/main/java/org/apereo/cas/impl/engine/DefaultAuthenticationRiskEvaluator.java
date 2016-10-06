@@ -30,11 +30,15 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
     }
 
     @Override
-    public AuthenticationRiskScore eval(final Authentication authentication, 
-                                        final RegisteredService service, 
+    public AuthenticationRiskScore eval(final Authentication authentication,
+                                        final RegisteredService service,
                                         final HttpServletRequest request) {
+        if (this.calculators.isEmpty()) {
+            return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
+        }
+        
         final List<AuthenticationRiskScore> scores = Lists.newArrayList();
-        this.calculators.stream().forEach(r -> scores.add(r.calculate(request)));
+        this.calculators.stream().forEach(r -> scores.add(r.calculate(authentication, service, request)));
         final double sum = scores.stream().map(r -> r.getScore()).reduce(0D, (a, b) -> a + b);
         return new AuthenticationRiskScore(sum / this.calculators.size());
     }
