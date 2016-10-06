@@ -73,7 +73,9 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationContext authenticationContext = builder.collect(authentication).build(service);
+            final AuthenticationContext authenticationContext =
+                    builder.collect(WebUtils.getCredential(context))
+                           .collect(authentication).build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);

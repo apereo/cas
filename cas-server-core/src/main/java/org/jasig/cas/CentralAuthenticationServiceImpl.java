@@ -144,7 +144,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
-        final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
+        evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
         
         if (ticketGrantingTicket.getCountOfUses() > 0 && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
@@ -175,7 +175,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         }
 
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication != null);
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, 
+                context.isCredentialProvided());
         this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
