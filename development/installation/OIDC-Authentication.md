@@ -5,7 +5,6 @@ title: CAS - OIDC Authentication
 
 # OpenID Connect Authentication
 
-## Configuration
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -44,11 +43,11 @@ OpenID Connect clients can be registered with CAS as such:
 }
 ```
 
-| Field                                | Description
-|--------------------------------------+-----------------------------------------------------------------+
-| `serviceId`                   | The redirect URI for this OIDC client.
-| `signIdToken`                 | Whether ID tokens should be signed.
-| `jwks`                        | Path to the location of the keystore that holds the signing keys. If none defined, default below will be used.
+| Field                   | Description
+|-------------------------+-----------------------------------------------------------------+
+| `serviceId`             | The redirect URI for this OIDC client.
+| `signIdToken`           | Whether ID tokens should be signed.
+| `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
 
 ## Settings
 
@@ -57,7 +56,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Keystores
 
 Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
-a global keystore can be expected and defined via the above property configuration. The format of the keystore
+a global keystore can be expected and defined via CAS properties. The format of the keystore
 file is similar to the following:
 
 ```json
