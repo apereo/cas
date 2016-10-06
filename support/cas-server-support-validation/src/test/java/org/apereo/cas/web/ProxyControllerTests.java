@@ -3,6 +3,7 @@ package org.apereo.cas.web;
 import java.util.Map;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -34,7 +35,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyNoParams() throws Exception {
-        assertEquals("INVALID_REQUEST", this.proxyController
+        assertEquals(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, this.proxyController
                 .handleRequestInternal(new MockHttpServletRequest(),
                         new MockHttpServletResponse()).getModel()
                         .get("code"));
@@ -43,7 +44,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyNonExistentPGT() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("pgt", "TestService");
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, "TestService");
         request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
@@ -58,12 +59,12 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("pgt", ticket.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, ticket.getId());
         request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getModel().containsKey(
-                        "ticket"));
+                CasProtocolConstants.PARAMETER_TICKET));
     }
 
     @Test
@@ -73,11 +74,11 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("pgt", ticket.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, ticket.getId());
         request.addParameter("targetService", "service");
 
         final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getModel();
-        assertTrue(!map.containsKey("ticket"));
+        assertTrue(!map.containsKey(CasProtocolConstants.PARAMETER_TICKET));
     }
 }
