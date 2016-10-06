@@ -36,6 +36,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
+    public void expire(final String key) {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, key, Object.class);
+    }
+
+    @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
         return getResults(url);

@@ -93,7 +93,7 @@ public class InfinispanTicketRegistryTests {
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, true);
 
         this.infinispanTicketRegistry.addTicket(st1);
 

@@ -22,6 +22,11 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
     }
 
     @Override
+    public void expire(final String key) {
+        storage.asMap().keySet().removeIf(k -> k.equalsIgnoreCase(key));
+    }
+
+    @Override
     public void expire(final LocalDate onOrBefore) {
         final Set<MultifactorAuthenticationTrustRecord> results = storage.asMap()
                 .values()
@@ -30,7 +35,7 @@ public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifact
                 .sorted()
                 .distinct()
                 .collect(Collectors.toSet());
-        
+
         logger.info("Found {} expired records", results.size());
         if (!results.isEmpty()) {
             results.forEach(entry -> storage.invalidate(entry.getKey()));
