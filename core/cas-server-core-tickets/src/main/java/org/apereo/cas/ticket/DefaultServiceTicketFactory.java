@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,
-                                       final Authentication currentAuthentication) {
+                                       final boolean credentialProvided) {
 
         final String uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
@@ -60,7 +59,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                 ticketId,
                 service,
                 this.serviceTicketExpirationPolicy,
-                currentAuthentication,
+                credentialProvided,
                 trackMostRecentSession);
         return (T) serviceTicket;
     }

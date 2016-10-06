@@ -179,7 +179,7 @@ public class JpaTicketRegistryTests {
                ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
                new MockService("https://service.example.com"),
                EXP_POLICY_ST,
-               null,
+               false,
                true);
     }
 

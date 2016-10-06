@@ -63,6 +63,18 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
+    public void expire(final String key) {
+        try {
+            final Query query = new Query();
+            query.addCriteria(Criteria.where("key").is(key));
+            final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+            logger.info("Found and removed {} records", res.getN());
+        } catch (final NoResultException e) {
+            logger.info("No trusted authentication records could be found");
+        }
+    }
+
+    @Override
     public void expire(final LocalDate onOrBefore) {
         try {
             final Query query = new Query();

@@ -68,10 +68,7 @@
         </section>
         
         <section class="row" th:if="${recaptchaSiteKey}">
-            <div>
-                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
-                <p/>
-            </div>
+            <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
         </section>
 
         <section class="row btn-row">
