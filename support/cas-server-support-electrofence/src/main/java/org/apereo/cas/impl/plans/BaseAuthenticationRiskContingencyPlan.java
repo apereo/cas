@@ -4,12 +4,10 @@ import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,23 +20,19 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    /**
-     * App context.
-     */
-    @Autowired
-    protected ApplicationContext applicationContext;
-    
-    /**
-     * CAS properties.
-     */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    /** adaptive authn properties. */
+    protected AdaptiveAuthenticationProperties adaptiveProperties;
+
+    public BaseAuthenticationRiskContingencyPlan(final AdaptiveAuthenticationProperties adaptiveProperties) {
+        this.adaptiveProperties = adaptiveProperties;
+    }
 
     @Override
     public final AuthenticationRiskContingencyResponse execute(final Authentication authentication,
                                                          final RegisteredService service,
                                                          final AuthenticationRiskScore score,
                                                          final HttpServletRequest request) {
+        logger.debug("Executing {} to produce a risk response", getClass().getSimpleName());
         return executeInternal(authentication, service, score, request);
     }
 
@@ -49,12 +43,16 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
      * @param service        the service
      * @param score          the score
      * @param request        the request
-     * @return the authentication risk contingency response
+     * @return the authentication risk contingency response. May be null.
      */
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication,
                                                                     final RegisteredService service,
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
         return null;
+    }
+
+    public void setAdaptiveProperties(final AdaptiveAuthenticationProperties adaptiveProperties) {
+        this.adaptiveProperties = adaptiveProperties;
     }
 }

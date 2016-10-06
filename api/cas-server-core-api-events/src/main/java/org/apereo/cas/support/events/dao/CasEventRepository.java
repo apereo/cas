@@ -24,6 +24,15 @@ public interface CasEventRepository {
     Collection<CasEvent> load();
 
     /**
+     * Gets events of type for principal.
+     *
+     * @param type      the type
+     * @param principal the principal
+     * @return the events of type
+     */
+    Collection<CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
+
+    /**
      * Gets events of type.
      *
      * @param type the type
