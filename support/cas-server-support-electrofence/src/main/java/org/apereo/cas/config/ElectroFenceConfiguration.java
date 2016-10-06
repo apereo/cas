@@ -13,11 +13,13 @@ import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigator;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
+import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +39,10 @@ public class ElectroFenceConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElectroFenceConfiguration.class);
 
     @Autowired
+    @Qualifier("casEventRepository")
+    private CasEventRepository casEventRepository;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -44,31 +50,43 @@ public class ElectroFenceConfiguration {
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
         return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEvaluator(), authenticationRiskMitigator());
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationRiskMitigator authenticationRiskMitigator() {
         if (casProperties.getAuthn().getAdaptive().getRisk().getResponse().isBlockAttempt()) {
-            return new DefaultAuthenticationRiskMitigator(new BlockAuthenticationContingencyPlan());
+            return new DefaultAuthenticationRiskMitigator(
+                    new BlockAuthenticationContingencyPlan(casProperties.getAuthn().getAdaptive()));
         }
-        return new DefaultAuthenticationRiskMitigator(new MultifactorAuthenticationContingencyPlan()); 
+        return new DefaultAuthenticationRiskMitigator(
+                new MultifactorAuthenticationContingencyPlan(casProperties.getAuthn().getAdaptive()));
     }
+
+
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
         final Set<AuthenticationRequestRiskCalculator> calcs = Sets.newHashSet();
 
         if (casProperties.getAuthn().getAdaptive().getRisk().getIp().isEnabled()) {
-            calcs.add(new IpAddressAuthenticationRequestRiskCalculator());
+            calcs.add(new IpAddressAuthenticationRequestRiskCalculator(
+                    this.casEventRepository
+            ));
         }
         if (casProperties.getAuthn().getAdaptive().getRisk().getAgent().isEnabled()) {
-            calcs.add(new UserAgentAuthenticationRequestRiskCalculator());
+            calcs.add(new UserAgentAuthenticationRequestRiskCalculator(
+                    this.casEventRepository
+            ));
         }
         if (casProperties.getAuthn().getAdaptive().getRisk().getDateTime().isEnabled()) {
-            calcs.add(new DateTimeAuthenticationRequestRiskCalculator());
+            calcs.add(new DateTimeAuthenticationRequestRiskCalculator(
+                    this.casEventRepository
+            ));
         }
         if (casProperties.getAuthn().getAdaptive().getRisk().getGeoLocation().isEnabled()) {
-            calcs.add(new GeoLocationAuthenticationRequestRiskCalculator());
+            calcs.add(new GeoLocationAuthenticationRequestRiskCalculator(
+                    this.casEventRepository
+            ));
         }
 
         if (calcs.isEmpty()) {
