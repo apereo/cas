@@ -4,6 +4,7 @@ title: CAS - OpenID Protocol
 ---
 
 # OpenID Protocol
+
 OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent 
 themselves using URIs. For more information see the [http://www.openid.net](http://www.openid.net).
 
@@ -46,7 +47,7 @@ if your deployment is available at `https://sso.example.org/cas`, then the `yadi
 </xrds:XRDS>
 ```
 
-# Delegate To an OpenID Provider
+# OpenID Provider Delegation
 
 Using the OpenID protocol, the CAS server can also be configured 
 to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
