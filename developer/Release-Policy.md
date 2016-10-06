@@ -10,6 +10,8 @@ accommodate and how lines of development are managed. CAS adopters can also expe
 for each release type. All new improvements, fixes, enhancements, and changes are weighed against 
 the release strategy for consideration in future release.
 
+The project release schedule is [available here](https://github.com/apereo/cas/releases).
+
 ## SECURITY 
 
 Security releases are a critical minimal change on a release to address a serious confirmed 
