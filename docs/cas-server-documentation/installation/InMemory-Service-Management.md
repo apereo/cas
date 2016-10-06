@@ -17,6 +17,9 @@ This is an in-memory services management tool seeded from registration beans wir
 </util:list>
 ```
 
+Given registered services are injected into the context as Spring bean definitions, you will need to consult the project's javadocs
+to learn more about the CAS service API, and how to inject various other components into the service defintion. 
+
 <div class="alert alert-info"><strong>Caveat</strong><p>
 This component is <strong>NOT</strong> suitable for use with the service management webapp since it does not persist data.
 On the other hand, it is perfectly acceptable for deployments where the XML configuration is authoritative for
