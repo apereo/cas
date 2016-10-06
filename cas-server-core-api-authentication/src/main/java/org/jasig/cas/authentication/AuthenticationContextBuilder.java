@@ -16,6 +16,14 @@ import java.io.Serializable;
 public interface AuthenticationContextBuilder extends Serializable {
 
     /**
+     * Provided credentials immediately by the user.
+     *
+     * @param credential the credential
+     * @return the authentication context builder
+     */
+    AuthenticationContextBuilder collect(Credential credential);
+
+    /**
      * Collect authentication context builder.
      *
      * @param authentication the authentication

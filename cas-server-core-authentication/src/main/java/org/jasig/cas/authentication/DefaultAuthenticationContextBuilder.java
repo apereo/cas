@@ -30,6 +30,8 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
 
     private PrincipalElectionStrategy principalElectionStrategy;
 
+    private Credential providedCredential;
+
     /**
      * Instantiates a new Default authentication context builder.
      *
@@ -37,6 +39,12 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
      */
     public DefaultAuthenticationContextBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
+    }
+
+    @Override
+    public AuthenticationContextBuilder collect(final Credential credential) {
+        this.providedCredential = credential;
+        return this;
     }
 
     @Override
@@ -59,7 +67,9 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
             return null;
         }
         LOGGER.debug("Building an authentication context for authentication {} and service {}", authentication, service);
-        return new DefaultAuthenticationContext(authentication, service);
+        final DefaultAuthenticationContext ctx = new DefaultAuthenticationContext(authentication, service);
+        ctx.setCredentialProvided(this.providedCredential != null);
+        return ctx;
     }
 
     private boolean isEmpty() {
@@ -145,6 +155,7 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
 
     /**
      * Convert the object given into a {@link Collection} instead.
+     *
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */

@@ -23,6 +23,8 @@ public final class DefaultAuthenticationContext implements AuthenticationContext
 
     private final Service service;
 
+    private boolean credentialProvided;
+    
     /**
      * Instantiates a new Default authentication context.
      *
@@ -51,6 +53,15 @@ public final class DefaultAuthenticationContext implements AuthenticationContext
     @Override
     public Service getService() {
         return this.service;
+    }
+
+    @Override
+    public boolean isCredentialProvided() {
+        return this.credentialProvided;
+    }
+
+    public void setCredentialProvided(final boolean credentialProvided) {
+        this.credentialProvided = credentialProvided;
     }
 
     @Override
