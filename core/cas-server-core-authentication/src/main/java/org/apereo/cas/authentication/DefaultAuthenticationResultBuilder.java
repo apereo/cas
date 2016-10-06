@@ -26,6 +26,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 
+    private Credential providedCredential;
+
     private Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
     private PrincipalElectionStrategy principalElectionStrategy;
@@ -55,6 +57,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
+    public AuthenticationResultBuilder collect(final Credential credential) {
+        this.providedCredential = credential;
+        return this;
+    }
+
+
+    @Override
     public AuthenticationResult build() {
         return build(null);
     }
@@ -68,7 +77,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             return null;
         }
         LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
-        return new DefaultAuthenticationResult(authentication, service);
+        final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
+        res.setCredentialProvided(this.providedCredential != null);
+        return res;
     }
 
     private boolean isEmpty() {

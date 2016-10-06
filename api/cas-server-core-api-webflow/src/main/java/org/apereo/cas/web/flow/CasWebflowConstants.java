@@ -176,7 +176,7 @@ public interface CasWebflowConstants {
     /**
      * The state id 'redirect'.
      */
-    String STATE_ID_REDIR = "redirect";
+    String STATE_ID_REDIRECT = "redirect";
 
     /**
      * The state id 'postRedirectDecision'.

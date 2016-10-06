@@ -63,7 +63,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(t.isRoot(), returned.isRoot());
 
         final ServiceTicket s = t.grantServiceTicket("stest", org.apereo.cas.services.TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), null, true);
+                new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
 
         final ServiceTicket sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
@@ -88,7 +88,7 @@ public class DistributedTicketRegistryTests {
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
 
         final ServiceTicket s = returned.grantServiceTicket("test2", org.apereo.cas.services.TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), null, true);
+                new NeverExpiresExpirationPolicy(), false, true);
 
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
@@ -118,7 +118,7 @@ public class DistributedTicketRegistryTests {
         final Service service = TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, true);
 
         this.ticketRegistry.addTicket(st1);
 

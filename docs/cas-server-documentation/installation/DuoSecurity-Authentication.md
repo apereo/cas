@@ -30,7 +30,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Non-Browser MFA
 
-The Duo Security module of CAS is able to also support non-browser based multifactor autheniction requests.
+The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.
 In order to trigger this behavior, applications (i.e. `curl`, REST APIs, etc) need to specify a special
 `Content-Type` to signal to CAS that the request is submitted from a non-web based environment.
 
@@ -43,5 +43,5 @@ service below is configured in CAS with a special multifactor policy that forces
 to pass through Duo Security as well.
 
 ```bash
-curl --location --header "Content-Type: application/cas" https://mmoayyed.unicon.net:9443/sample -L -u casuser:Mellon
+curl --location --header "Content-Type: application/cas" https://apps.example.org/myapp -L -u casuser:Mellon
 ```

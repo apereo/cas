@@ -105,6 +105,8 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
             if (!this.mixedModeAuthentication) {
                 LOGGER.debug("Mixed-mode authentication is disabled. Executing completion of response");
                 context.getExternalContext().recordResponseComplete();
+            } else {
+                LOGGER.debug("Mixed-mode authentication is enabled");
             }
         }
         return success();

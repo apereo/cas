@@ -52,7 +52,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
-        return result("success");
+        return success();
     }
 
     private void configureWebflowContextForService(final RequestContext context) {
