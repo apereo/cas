@@ -29,6 +29,10 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
         logger.debug("Filtering authentication events for ip address {}", remoteAddr);
         final long count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
         logger.debug("Total authentication events found for {}: {}", remoteAddr, count);
+        if (count == events.size()) {
+            logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), remoteAddr);
+            return LOWEST_RISK_SCORE;
+        }
         return Math.ceil(count / events.size());
     }
 }
