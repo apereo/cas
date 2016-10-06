@@ -32,6 +32,14 @@ public interface AuthenticationResultBuilder extends Serializable {
     AuthenticationResultBuilder collect(Authentication authentication);
 
     /**
+     * Provided credentials immediately by the user.
+     *
+     * @param credential the credential
+     * @return the authentication context builder
+     */
+    AuthenticationResultBuilder collect(Credential credential);
+
+    /**
      * Build authentication result.
      *
      * @return the authentication result

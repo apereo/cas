@@ -159,7 +159,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         CurrentCredentialsAndAuthentication.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication);
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, 
+                authenticationResult != null && authenticationResult.isCredentialProvided());
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
