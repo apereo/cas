@@ -149,8 +149,6 @@ function generateToolbarIcons() {
 
         $('#toolbarIcons').append("<a href='" + linkToDev +
             "'><i class='fa fa-cogs' title='See the latest version of this page'></i></a>");
-        var txt = $('#tableOfContents').text();
-        $('#tableOfContents').text(txt + " - CAS v" + activeVersion);
     }
 
     var baseLink = CAS_REPO_URL_GITHUB;
