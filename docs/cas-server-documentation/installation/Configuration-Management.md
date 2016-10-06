@@ -162,7 +162,7 @@ Support is provided via the following dependency:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
 
-### Vault
+### HashiCorp Vault
 
 CAS is also able to use [Vault](https://www.vaultproject.io/) to 
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
