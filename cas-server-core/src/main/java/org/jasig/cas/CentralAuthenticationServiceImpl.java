@@ -175,8 +175,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         }
 
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, 
-                context.isCredentialProvided());
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
+                context != null && context.isCredentialProvided());
         this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
