@@ -117,12 +117,10 @@ public class CasCoreWebflowConfiguration {
     public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
-        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
-        
         if (riskAwareAuthenticationWebflowEventResolver != null) {
             r.addDelegate(riskAwareAuthenticationWebflowEventResolver);
         }
-        
+        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
