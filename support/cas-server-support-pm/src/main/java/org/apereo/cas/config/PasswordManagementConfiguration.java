@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -55,14 +55,14 @@ public class PasswordManagementConfiguration {
         return new PasswordChangeAction(passwordChangeService());
     }
 
-    @ConditionalOnMissingBean(name="passwordChangeService")
+    @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
     public PasswordChangeService passwordChangeService() {
-        if (casProperties.getAuthn().getPm().isEnabled() 
-            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
-            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
-            && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
+        if (casProperties.getAuthn().getPm().isEnabled()
+                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
+                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
+                && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
             return new LdapPasswordChangeService();
         }
         if (casProperties.getAuthn().getPm().isEnabled()) {
@@ -71,7 +71,7 @@ public class PasswordManagementConfiguration {
         return (c, bean) -> false;
     }
 
-    @ConditionalOnMissingBean(name="passwordManagementWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
