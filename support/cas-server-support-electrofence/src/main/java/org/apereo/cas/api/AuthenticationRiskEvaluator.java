@@ -22,7 +22,7 @@ public interface AuthenticationRiskEvaluator {
     Set<AuthenticationRequestRiskCalculator> getCalculators();
 
     /**
-     * Calculate score authentication risk score.
+     * Calculate final authentication risk score.
      *
      * @param authentication the authentication
      * @param service        the service
