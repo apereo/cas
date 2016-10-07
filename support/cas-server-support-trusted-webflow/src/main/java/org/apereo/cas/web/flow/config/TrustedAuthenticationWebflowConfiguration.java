@@ -30,7 +30,7 @@ public class TrustedAuthenticationWebflowConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean(name="trustedWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "trustedWebflowConfigurer")
     @Bean
     @RefreshScope
     public CasWebflowConfigurer trustedWebflowConfigurer() {

@@ -39,7 +39,7 @@ public class CasBasicAuthenticationConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -54,11 +54,11 @@ public class CasBasicAuthenticationConfiguration {
         a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        
+
         return a;
     }
 
-    @ConditionalOnMissingBean(name="basicAuthenticationWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
         final BasicAuthenticationWebflowConfigurer w =
