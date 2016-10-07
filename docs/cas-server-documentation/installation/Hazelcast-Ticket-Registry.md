@@ -17,7 +17,7 @@ so that Hazelcast will use it to make strong data consistency guarantees i.e. th
 live nodes will not occur should any other *primary data owner* members die. The data will be 
 re-partitioned among the remaining live cluster members.
 
-This ticket registry implementation is enabled by simply including the module in the Maven overlay pom:
+Support is enabled by the following module:
 
 ```xml
 <dependency>
