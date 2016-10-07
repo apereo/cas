@@ -103,7 +103,7 @@ public class AuthyConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-    
+
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -164,7 +164,7 @@ public class AuthyConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean(name="authyMultifactorWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         final AuthyMultifactorWebflowConfigurer c =
@@ -188,7 +188,7 @@ public class AuthyConfiguration {
     public AuthyClientInstance authyClientInstance() {
         if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getAuthy().getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
-        }        
+        }
         final AuthyClientInstance i = new AuthyClientInstance(
                 casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
                 casProperties.getAuthn().getMfa().getAuthy().getApiUrl()
