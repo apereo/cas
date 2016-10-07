@@ -74,6 +74,10 @@ dependencies {
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
 
+    compile project(":support:cas-server-support-electrofence")
+    compile project(":core:cas-server-core-events")
+    compile project(":support:cas-server-support-duo")
+
     compile project(":webapp:cas-server-webapp-init")
     compile project(":webapp:cas-server-webapp-config")
 
