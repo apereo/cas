@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -45,12 +46,14 @@ public class ElectroFenceConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @ConditionalOnMissingBean(name="riskAwareAuthenticationWebflowEventResolver")
     @Bean
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
         return new RiskAwareAuthenticationWebflowEventResolver(authenticationRiskEvaluator(), authenticationRiskMitigator());
     }
 
+    @ConditionalOnMissingBean(name="authenticationRiskMitigator")
     @Bean
     @RefreshScope
     public AuthenticationRiskMitigator authenticationRiskMitigator() {
@@ -62,6 +65,7 @@ public class ElectroFenceConfiguration {
                 new MultifactorAuthenticationContingencyPlan(casProperties.getAuthn().getAdaptive()));
     }
 
+    @ConditionalOnMissingBean(name="authenticationRiskEvaluator")
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
