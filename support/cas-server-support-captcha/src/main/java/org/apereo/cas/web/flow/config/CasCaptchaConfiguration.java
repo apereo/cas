@@ -31,11 +31,11 @@ public class CasCaptchaConfiguration {
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name="captchaWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer captchaWebflowConfigurer() {
         final CasCaptchaWebflowConfigurer w = new CasCaptchaWebflowConfigurer();
@@ -43,7 +43,7 @@ public class CasCaptchaConfiguration {
         w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
-    
+
     @RefreshScope
     @Bean
     public Action validateCaptchaAction() {
