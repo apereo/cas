@@ -41,7 +41,6 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
         if (events.isEmpty()) {
             return new AuthenticationRiskScore(HIGHEST_RISK_SCORE);
         }
-
         final AuthenticationRiskScore score = new AuthenticationRiskScore(calculateScore(request, authentication, service, events));
         logger.debug("Calculated authentication risk score by {} is {}", getClass().getSimpleName(), score);
         return score;

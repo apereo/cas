@@ -95,7 +95,9 @@ public final class OAuthUtils {
      */
     public static String jsonify(final Map map) {
         try {
-            final String value = new ObjectMapper()
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            final String value = mapper
                     .writer()
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(map);
