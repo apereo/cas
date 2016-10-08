@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Formatter;
@@ -120,7 +121,7 @@ public class TicketsResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
      *
@@ -223,6 +224,9 @@ public class TicketsResource {
     public void setCredentialFactory(final CredentialFactory credentialFactory) {
         this.credentialFactory = credentialFactory;
     }
-
-
+    
+    @PostConstruct
+    private void init() {
+        this.jacksonObjectMapper.findAndRegisterModules();
+    }
 }

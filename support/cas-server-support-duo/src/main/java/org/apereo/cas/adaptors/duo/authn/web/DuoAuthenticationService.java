@@ -98,6 +98,7 @@ public class DuoAuthenticationService {
                 final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 logger.debug("Received Duo ping response {}", response);
                 final ObjectMapper mapper = new ObjectMapper();
+                mapper.findAndRegisterModules();
                 final JsonNode result = mapper.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                         && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
