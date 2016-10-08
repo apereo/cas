@@ -4,10 +4,12 @@ import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,13 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    /** adaptive authn properties. */
-    protected AdaptiveAuthenticationProperties adaptiveProperties;
-
-    public BaseAuthenticationRiskContingencyPlan(final AdaptiveAuthenticationProperties adaptiveProperties) {
-        this.adaptiveProperties = adaptiveProperties;
-    }
-
+    /** CAS properties. */
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+    
     @Override
     public final AuthenticationRiskContingencyResponse execute(final Authentication authentication,
                                                          final RegisteredService service,
@@ -50,9 +49,5 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
         return null;
-    }
-
-    public void setAdaptiveProperties(final AdaptiveAuthenticationProperties adaptiveProperties) {
-        this.adaptiveProperties = adaptiveProperties;
     }
 }

@@ -16,10 +16,6 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 public class BlockAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
-    public BlockAuthenticationContingencyPlan(final AdaptiveAuthenticationProperties adaptiveProperties) {
-        super(adaptiveProperties);
-    }
-
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication, final RegisteredService service, 
                                                                     final AuthenticationRiskScore score, final HttpServletRequest request) {

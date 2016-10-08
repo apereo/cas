@@ -1,6 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
-import org.apereo.cas.config.ElectroFenceConfiguration;
+import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.impl.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.dao.CasEventRepository;
@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, 
-        ElectroFenceConfiguration.class, CasCoreEventsConfiguration.class})
+        ElectronicFenceConfiguration.class, CasCoreEventsConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ip-calc.properties"})
 @DirtiesContext
 public class IpAddressAuthenticationRequestRiskCalculatorTests {
