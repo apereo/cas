@@ -14,7 +14,16 @@ public class RiskBasedAuthenticationProperties {
     private DateTime dateTime = new DateTime();
     private Response response = new Response();
     
-    private double threshold;
+    private double threshold = 0.6;
+    private long daysInRecentHistory = 30;
+
+    public long getDaysInRecentHistory() {
+        return daysInRecentHistory;
+    }
+
+    public void setDaysInRecentHistory(final long daysInRecentHistory) {
+        this.daysInRecentHistory = daysInRecentHistory;
+    }
 
     public Response getResponse() {
         return response;
