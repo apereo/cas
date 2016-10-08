@@ -1,0 +1,11 @@
+
+description = "Apereo CAS REST Implementation"
+dependencies {
+    provided project(":core:cas-server-core-services")
+    provided project(":core:cas-server-core-authentication")
+    provided project(":core:cas-server-core-tickets")
+    testCompile project(":core:cas-server-core-util")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompile libraries.tests
+}

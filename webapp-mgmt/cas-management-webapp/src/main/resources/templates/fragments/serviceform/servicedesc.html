@@ -1,0 +1,16 @@
+<!-- Service Description -->
+<div class="form-group">
+    <label class="col-sm-3" for="serviceDesc">
+        <span th:remove="tag" th:text="#{services.form.label.description}" />
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
+           th:title="#{services.form.tooltip.description}"></i>
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <textarea class="form-control" rows="5" id="serviceDesc" ng-model="serviceFormCtrl.serviceData.description"></textarea>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+
+description = "Apereo CAS OAuth Webflow Support"
+dependencies {
+    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-oauth")
+}

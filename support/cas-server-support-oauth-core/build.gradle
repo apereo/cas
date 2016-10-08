@@ -1,0 +1,14 @@
+description = "Apereo CAS OAuth Server Support"
+dependencies {
+
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-web")
+    compileOnly project(":core:cas-server-core-tickets")
+    compile libraries.pac4j
+    compile libraries.jackson
+    runtime libraries.hibernate
+    testCompile project(":core:cas-server-core-util")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(path: ":support:cas-server-support-json-service-registry")
+}

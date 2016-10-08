@@ -1,0 +1,7 @@
+description = "Apereo CAS AUP LDAP Support"
+dependencies {
+    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-actions")
+    compile project(":support:cas-server-support-actions-aup-webflow")
+    compile project(":support:cas-server-support-ldap-core")
+}

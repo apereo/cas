@@ -1,0 +1,12 @@
+description = "Apereo CAS Ignite Integration"
+dependencies {
+    compile libraries.ignite
+    compileOnly libraries.springcloud
+    compile project(":api:cas-server-core-api")
+    compile project(":core:cas-server-core-tickets")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(":core:cas-server-core-services")
+    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompile project(":core:cas-server-core-util")
+    testCompile project(":core:cas-server-core-logout")
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{screen.logout.header}"></title>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function redirectToApp() {
+            window.location = /*[[${logoutRedirectUrl}]]*/ ;
+        }
+        
+        function handleCallback(index, status) {
+            if (status == 200) {
+                $("#service" + index).addClass("fa fa-check")
+                $("#service" + index).prop('title', 'Logout request was successfully received.');
+            } else {
+                $("#service" + index).addClass("fa fa-error")
+                $("#service" + index).prop('title', 'Logout notification could not be sent.');
+            }
+        }
+        /*]]>*/
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-success">
+        <h2 th:utext="#{screen.logout.header}"/>
+        <p th:utext="#{screen.logout.fc.success}"/>
+        <br/><br/>
+        <div>
+            <ol start="a">
+                <li th:each="entry,iterStat : ${logoutUrls}">
+                    <script type="text/javascript" th:inline="javascript">
+                        
+                        $.ajax({
+                            url:/*[[${entry.key.logoutUrl.toExternalForm()}]]*/,
+                            dataType: 'jsonp',
+                            async: true,
+                            contentType: /*[[${entry.value.contentType}]]*/
+                            , data: /*[[${entry.value.message}]]*/
+                            , success: function (data) {
+                                var index = /*[[${iterStat.index}]]*/;
+                                handleCallback(index, 200);
+                            },
+                            error: function (err, textStatus, errorThrown) {
+                                var index = /*[[${iterStat.index}]]*/;
+                                handleCallback(index, err.status);
+                            }
+                        });
+                    </script>
+                    <p>
+                        <i data-toggle="tooltip" data-placement="top" th:id="${'service'+iterStat.index}"/> 
+                        <kbd th:text="${entry.key.service}"/>
+                    </p>
+                </li>
+            </ol>
+
+            
+        </div>
+        <p th:utext="#{screen.logout.security}"/>
+        <br/>
+        <input type="button" th:if="${logoutRedirectUrl}"
+                class="btn btn-primary btn-success" onclick="redirectToApp();"
+                th:value="${'Go to ' + logoutRedirectUrl}"/>
+
+    </div>
+</div>
+</body>
+</html>

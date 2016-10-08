@@ -1,0 +1,6 @@
+
+description = "Apereo CAS WS-Federation Webflow Support"
+dependencies {
+    compile project(":core:cas-server-core-webflow")
+    compile project(":support:cas-server-support-wsfederation")
+}

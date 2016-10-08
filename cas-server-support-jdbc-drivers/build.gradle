@@ -1,6 +1,0 @@
-description = "Apereo CAS JDBC Driver Support"
-dependencies {
-    runtime "org.hsqldb:hsqldb:$hsqlVersion"
-    runtime "org.postgresql:postgresql:$postgresqlVersion"
-    runtime "mysql:mysql-connector-java:$mysqlVersion"
-}

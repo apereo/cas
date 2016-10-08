@@ -1,0 +1,14 @@
+apply plugin: "groovy"
+
+dependencies {
+    compile libraries.groovy
+    compile libraries.persondirectory
+    compile libraries.shibidp
+    compile libraries.spring
+    compile libraries.shibattributes
+    compile libraries.springcloud
+
+    compile project(":support:cas-server-support-saml-core")
+    
+    testCompile libraries.tests
+}

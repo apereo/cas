@@ -1,0 +1,8 @@
+description = 'Apereo CAS Authy Support'
+dependencies {
+    compile libraries.authyjava
+    compile libraries.jackson
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-webflow")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+}

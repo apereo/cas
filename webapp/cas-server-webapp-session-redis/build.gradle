@@ -1,0 +1,7 @@
+description = "Apereo CAS Web Application Redis Session Management"
+dependencies {
+    compile project(":core:cas-server-core-configuration")
+    compile libraries.spring
+    compile libraries.springsession
+    compile libraries.springbootredis
+}

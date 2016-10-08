@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-sm-6">
+        <!-- Service Theme -->
+        <div class="form-group">
+            <label class="col-sm-6" for="serviceTheme">
+                <span th:remove="tag" th:text="#{services.form.label.theme}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.theme}"></i>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="serviceTheme" ng-model="serviceFormCtrl.serviceData.theme" />
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <!-- Assigned ID -->
+        <div class="form-group">
+            <label class="col-sm-5" for="assignedId">
+                <span th:remove="tag" th:text="#{services.form.label.assignedId}" />
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                   data-toggle="tooltip"
+                   data-placement="top"
+                   th:title="#{services.form.tooltip.assignedId}"></i>
+            </label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" id="assignedId" ng-disabled="serviceFormCtrl.serviceData.assignedId != ''" ng-model="serviceFormCtrl.serviceData.assignedId" />
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="monitoring/layout">
+
+<head>
+    <title th:text="#{cas.ssosessions.report.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/ssosessions.css}"/> 
+    
+    <div id="content">
+
+        <script type="text/javascript" th:inline="javascript">
+            var urls = {
+                destroy: {
+                    all:  /*[[@{/status/ssosessions/destroySsoSessions}]]*/,
+                    single: /*[[@{/status/ssosessions/destroySsoSession}]]*/
+                },
+                getSessions: /*[[@{/status/ssosessions/getSsoSessions}]]*/
+            };
+
+            function jqueryReady() {
+                head.load(
+                        /*[[@{/js/ssosessions.js}]]*/
+                );
+            }
+        </script>
+
+        <div class="ssoSessions">
+            <div id="loadingMessage"><h3 th:text="#{cas.ssosessions.loading}"/></div>
+
+            <div id="no-cas-sessions">
+                <h3 th:text="#{cas.ssosessions.nosessionsfound}"/><p/>
+            </div>
+
+            <div id="cas-sessions">
+                <div id="alertWrapper"></div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 th:text="#{cas.ssosessions.report.pagetitle}"><span class="glyphicon glyphicon-stats" aria-hidden="true"/></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div id="session-counts" class="container-fluid">
+                            <div class="row adminPanels">
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-xs-3">
+                                                    <i class="fa fa-users fa-5x"></i>
+                                                </div>
+                                                <div class="col-xs-9 text-right">
+                                                    <div class="huge" id="totalUsers">0</div>
+                                                    <div th:text="#{cas.ssosessions.report.panel.totalactiveprincipals}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-xs-3">
+                                                    <i class="fa fa-tasks fa-5x"></i>
+                                                </div>
+                                                <div class="col-xs-9 text-right">
+                                                    <div class="huge" id="totalUsageSessions">0</div>
+                                                    <div th:text="#{cas.ssosessions.report.panel.usagecountsessions}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-xs-3">
+                                                    <i class="fa fa-ticket fa-5x"></i>
+                                                </div>
+                                                <div class="col-xs-9 text-right">
+                                                    <div class="huge" id="totalTGTs">0</div>
+                                                    <div th:text="#{cas.ssosessions.report.panel.totalssosessions}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <div id="filterButtons" class="btn-group btn-group-sm pull-right" data-toggle="buttons">
+                                <label class="btn btn-default active" data-filter="all">
+                                    <input type="radio" name="options" id="optionAll" autocomplete="off"
+                                           th:text="#{cas.ssosessions.buttons.filter.all}"/>
+                                </label>
+                                <label class="btn btn-default" data-filter="proxied">
+                                    <input type="radio" name="options" id="optionProxied" autocomplete="off"
+                                           th:text="#{cas.ssosessions.buttons.filter.proxied}"/>
+                                </label>
+                                <label class="btn btn-default" data-filter="non-proxied">
+                                    <input type="radio" name="options" id="optionDirect" autocomplete="off"
+                                           th:text="#{cas.ssosessions.buttons.filter.nonproxied}"/>
+                                </label>
+                            </div>
+
+                            <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button" value="ALL"
+                                    th:text="#{cas.ssosessions.buttons.removeall}"/>
+
+                        </div>
+
+                        <div id="container-stable" class="container-fluid">
+
+                            <div id="msg" style="display:none"></div>
+                            <table id="ssoSessions" class="display table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th th:text="#{cas.ssosessions.table.header.principal}"/>
+                                    <th th:text="#{cas.ssosessions.table.header.ticketgrantingticket}"/>
+                                    <th th:text="#{cas.ssosessions.table.header.authenticationdate}"/>
+                                    <th th:text="#{cas.ssosessions.table.header.usagecount}"/>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>User</td>
+                                    <td>TGT</td>
+                                    <td>Auth_Date</td>
+                                    <td>Usage_Count</td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <hr/>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:replace="fragments/footerButtons"/>
+    </div>
+
+</div>
+</body>
+</html>

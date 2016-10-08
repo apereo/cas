@@ -1,0 +1,7 @@
+
+description = "Apereo CAS Authentication handler wrapping pac4j"
+dependencies {
+
+    compile project(":core:cas-server-core-authentication")
+    compile libraries.pac4j
+}

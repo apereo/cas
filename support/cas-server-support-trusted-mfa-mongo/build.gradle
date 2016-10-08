@@ -1,0 +1,5 @@
+description = "Apereo CAS Trusted MFA Browser/Device Mongo Support"
+dependencies {
+    compile project(":support:cas-server-support-trusted-mfa")
+    compile libraries.mongo
+}

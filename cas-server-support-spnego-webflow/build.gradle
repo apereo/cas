@@ -1,8 +1,0 @@
-
-description = "Apereo CAS SPNEGO Webflow Support"
-dependencies {
-    compile project(":cas-server-core-webflow")
-    compile project(":cas-server-support-spnego")
-    compile libraries.ldaptive
-    testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
-}

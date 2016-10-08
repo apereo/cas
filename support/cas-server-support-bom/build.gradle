@@ -1,0 +1,108 @@
+description = "Apereo CAS ‌‌Bill of Material"
+
+artifacts {
+    archives(file("cas-server-support-bom.md"))
+}
+
+def generateBom() {
+    def pom = pom {
+    }.whenConfigured {
+        println "Creating BOM with all project dependencies"
+        
+        packaging = "pom"
+        artifactId = project.name
+
+        withXml {
+            def deps = asNode().get("dependencies")
+            asNode().remove(deps)
+
+            asNode().children().last() + {
+                delegate.description(project.description)
+                delegate.name(project.name)
+                delegate.url(project.projectUrl)
+                delegate.inceptionYear(project.projectInceptionYear)
+
+                delegate.issueManagement {
+                    delegate.system(project.projectIssueSystem)
+                    delegate.url(project.projectIssueUrl)
+                }
+
+                delegate.developers {
+                    delegate.developer {
+                        delegate.id("mmoayyed")
+                        delegate.name("Misagh Moayyed")
+                    }
+                }
+                
+                delegate.scm {
+                    delegate.url(project.projectScmUrl)
+                    delegate.connection(project.projectScmUrl)
+                    delegate.developerConnection(project.projectScmUrl)
+                }
+
+                delegate.licenses {
+                    delegate.license {
+                        delegate.name(project.projectLicenseName)
+                        delegate.url(project.projectLicenseUrl)
+                        delegate.distribution(project.projectLicenseDistribution)
+                    }
+                }
+            }
+
+            asNode().children().last() + {
+                delegate.dependencyManagement {
+                    delegate.dependencies {
+                        libraries.each {
+                            if (it.value instanceof List) {
+                                it.value.each { d ->
+                                    delegate.dependency {
+                                        delegate.groupId(d.group)
+                                        delegate.artifactId(d.name)
+                                        delegate.version(d.version)
+                                    }
+                                }
+                            } else {
+                                def d = it.value
+                                delegate.dependency {
+                                    delegate.groupId(d.group)
+                                    delegate.artifactId(d.name)
+                                    delegate.version(d.version)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+install {
+    doFirst {
+        repositories.mavenInstaller.pom = generateBom()
+    }
+}
+
+uploadArchives {
+    doFirst {
+        repositories.mavenDeployer.pom = generateBom()
+    }
+
+    repositories.mavenDeployer {
+        configuration = project.configurations.archives
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        if (publishReleases) {
+            repository(url: "$sonatypeRepositoryUrl") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword);
+            }
+        }
+
+        if (publishSnapshots) {
+            snapshotRepository(url: "$sonatypeSnapshotsRepositoryUrl") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword);
+            }
+        }
+    }
+}

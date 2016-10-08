@@ -1,0 +1,249 @@
+def generatePom() {
+    def pom = pom {
+        project {
+            url "$projectUrl"
+            inceptionYear project.projectInceptionYear
+            name project.name
+            description project.name
+
+            issueManagement {
+                system project.projectIssueSystem
+                url project.projectIssueUrl
+            }
+
+            scm {
+                url project.projectScmUrl
+                connection project.projectScmUrl
+                developerConnection project.projectScmUrl
+            }
+
+            licenses {
+                license {
+                    name project.projectLicenseName
+                    url project.projectLicenseUrl
+                    distribution project.projectLicenseDistribution
+                }
+            }
+
+            developers {
+                developer {
+                    id "leleuj"
+                    name "Jérôme Leleu"
+                }
+                developer {
+                    id "apetro"
+                    name "Andrew Petro"
+                }
+                developer {
+                    id "wgthom"
+                    name "William G. Thompson"
+                }
+                developer {
+                    id "serac"
+                    name "Marvin S. Addison"
+                }
+                developer {
+                    id "battags"
+                    name "Scott Battaglia"
+                }
+                developer {
+                    id "mmoayyed"
+                    name "Misagh Moayyed"
+                }
+                developer {
+                    id "robertoschwald"
+                    name "Robert Oschwald"
+                }
+                developer {
+                    id "frett"
+                    name "Daniel Frett"
+                }
+                developer {
+                    id "dima767"
+                    name "Dmitriy Kopylenko"
+                }
+            }
+
+            contributors {
+                contributor {
+                    name "Adam Rybicki"
+                    email "arybicki@unicon.net"
+                }
+                contributor {
+                    name "Andrew Tillinghast"
+                    email "atilling@conncoll.edu"
+                }
+                contributor {
+                    name "Arnaud Lesueur"
+                    email "arnaud.lesueur@gmail.com"
+                }
+                contributor {
+                    name "Drew Mazurek"
+                    email "dmazurek@unicon.net"
+                }
+                contributor {
+                    name "Eric Dalquist"
+                    email "eric.dalquist@doit.wisc.edu"
+                }
+                contributor {
+                    name "Eric Pierce"
+                    email "epierce@usf.edu"
+                }
+                contributor {
+                    name "Frederic Esnault"
+                    email "esnault.frederic@gmail.com"
+                }
+                contributor {
+                    name "Howard Gilbert"
+                    email "Howard.Gilbert@yale.edu"
+                }
+                contributor {
+                    name "Jan Van der Velpen"
+                    email "velpi@industria.be"
+                }
+                contributor {
+                    name "John Martin"
+                    email "jmartin@unicon.net"
+                }
+                contributor {
+                    name "MarcAntoine Garrigue"
+                    email "marc.antoine.garrigue@gmail.com"
+                }
+                contributor {
+                    name "Mihir Patel"
+                    email "exploremihir@gmail.com"
+                }
+                contributor {
+                    name "Fredrik Jönsson"
+                    email "fjo@kth.se"
+                }
+                contributor {
+                    name "Jeff Sittler"
+                    email "jsittler@unicon.net"
+                }
+            }
+
+
+            mailingLists {
+                mailingList {
+                    name "cas-user"
+                    subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                    unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                    post "cas-user@apereo.org"
+                    archive "https://groups.google.com/forum/#!forum/jasig-cas-user"
+                }
+                mailingList {
+                    name "cas-dev"
+                    subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                    unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                    post "cas-dev@apereo.org"
+                    archive "https://groups.google.com/forum/#!forum/jasig-cas-dev"
+                }
+                mailingList {
+                    name "cas-announce"
+                    subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                    unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                    post "cas-announce@apereo.org"
+                    archive "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                }
+            }
+
+            repositories {
+                repository {
+                    id "shib-release"
+                    url "https://build.shibboleth.net/nexus/content/repositories/releases"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "spring-milestones"
+                    url "https://repo.spring.io/milestone"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "spring-snapshots"
+                    url "https://repo.spring.io/snapshot"
+                    snapshots {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "spring-libs-snapshots"
+                    url "https://repo.spring.io/libs-snapshot"
+                    snapshots {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "jitpack"
+                    url "https://jitpack.io"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "jasig-legacy"
+                    url "http://developer.jasig.org/repo/content/groups/m2-legacy"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "couchbase"
+                    url "http://files.couchbase.com/maven2/"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
+                    id "uniconiam"
+                    url "https://dl.bintray.com/uniconiam/maven"
+                    releases {
+                        enabled true
+                    }
+                }
+
+                repository {
+                    id "ldaptive"
+                    url "https://raw.github.com/vt-middleware/maven-repo/master"
+                    releases {
+                        enabled true
+                    }
+                    snapshots {
+                        enabled true
+                    }
+                }
+            }
+        }
+
+    }.whenConfigured { pom ->
+        println "POM is fully configured for $project.name"
+    }
+}
+
+uploadArchives {
+    doFirst {
+        repositories.mavenDeployer.pom = generatePom()
+    }
+
+    repositories.mavenDeployer {
+        configuration = configurations.archives
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        if (publishReleases) {
+            repository(url: "$sonatypeRepositoryUrl") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword);
+            }
+        }
+
+        if (publishSnapshots) {
+            snapshotRepository(url: "$sonatypeSnapshotsRepositoryUrl") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword);
+            }
+        }
+    }
+}
+

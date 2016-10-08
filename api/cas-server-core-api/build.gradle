@@ -1,0 +1,11 @@
+
+description = "Apereo CAS Core APIs"
+dependencies {
+    compile project(":api:cas-server-core-api-protocol")
+    compile project(":api:cas-server-core-api-authentication")
+    compile project(":api:cas-server-core-api-services")
+    compile project(":api:cas-server-core-api-ticket")
+    compile project(":api:cas-server-core-api-logout")
+    compile project(":api:cas-server-core-api-validation")
+}
+

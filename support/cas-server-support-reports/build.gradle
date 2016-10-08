@@ -1,0 +1,15 @@
+description = "Apereo CAS Web Application Reports"
+dependencies {
+    compile project(":api:cas-server-core-api")
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.metrics
+    compile libraries.jackson
+
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-monitor")
+    compile project(":core:cas-server-core-authentication")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+
+    provided project(":core:cas-server-core-audit")
+}

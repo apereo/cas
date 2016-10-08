@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" ng-app="casmgmt">
+
+<div th:replace="fragments/head"/>
+
+<body class="casmgmt-app" ng-controller="actionsController as action">
+    <div th:replace="fragments/header"/>
+    
+    
+    <div class="container-fluid casmgmt-content">
+        <div class="casmgmt-manage" ng-show="action.isSelected('manage')">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1><i class="fa fa-gears"></i>
+                        <span th:remove="tag" th:text="#{management.services.header.navbar.navitem.manageService}"/>
+                    </h1>
+                </div>
+            </div>
+
+            <div th:replace="fragments/services"/>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-info" ng-click="action.serviceAdd()">
+                        <i class="fa fa-plus-circle"></i>
+                        <span th:remove="tag" th:text="#{management.services.header.navbar.navitem.addNewService}"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="casmgmt-form" ng-show="action.isSelected('add') || action.isSelected('edit')">
+            <div th:replace="fragments/serviceform"/>
+        </div>
+    
+    </div>
+    
+    <div th:replace="fragments/footer"/>
+</body>
+
+
+</html>

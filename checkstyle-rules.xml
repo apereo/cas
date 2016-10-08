@@ -434,13 +434,6 @@
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
-            <metadata name="net.sf.eclipsecs.core.comment" value="Non-static inner class"/>
-            <property name="severity" value="error"/>
-            <property name="format" value="\s+(private|public|protected)*\s+(abstract\s)*class\s+\w+"/>
-            <property name="message"
-                      value="Non-static nested classes are a security compromise. Consider using a static class instead"/>
-        </module>
-        <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
             <property name="severity" value="error"/>
             <property name="format" value=".+InitializingBean.+"/>

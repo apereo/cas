@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title th:text="#{cas.mfa.registerdevice.pagetitle}"></title>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="box fl-panel" id="login">
+        <h2 th:text="#{cas.mfa.registerdevice.label.title}"/>
+        <div th:text="#{cas.mfa.registerdevice.label.intro}"/>
+        <form method="post" id="registerform" class="fm-v clearfix">
+            <div class="row fl-controls-left">
+                <label for="deviceName" class="fl-label" th:utext="#{cas.mfa.registerdevice.label.name}"/>
+
+                <input type="text" class="required" name="deviceName" id="deviceName" size="25" tabindex="1" autocomplete="off"/>
+                <div>
+                    <br/>
+                    <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
+                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"/>
+                </div>
+            </div>
+            <div class="row btn-row">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

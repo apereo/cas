@@ -1,0 +1,7 @@
+description = "Apereo CAS Hazelcast Monitoring Support"
+dependencies {
+    compile libraries.hazelcast
+    compileOnly libraries.springcloud
+    compile project(":core:cas-server-core-monitor")
+    compile project(":support:cas-server-support-hazelcast-ticket-registry")
+}

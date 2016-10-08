@@ -1,0 +1,19 @@
+<div class="form-group">
+    <label class="col-sm-3" for="serviceType">
+        <span th:remove="tag" th:text="#{services.form.label.type}" />
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
+           th:title="#{services.form.tooltip.type}" ></i>
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <select class="form-control" id="serviceType" ng-model="serviceFormCtrl.serviceData.type">
+                <option ng-repeat="opt in serviceFormCtrl.selectOptions.serviceTypeList" ng-attr-value="{{ opt.value }}"
+                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.type)">{{ opt.name }}</option>
+            </select>
+        </div>
+    </div>
+</div>
+    

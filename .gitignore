@@ -32,3 +32,6 @@ classes/
 **/tomcat/
 out
 ajcore.*
+reports
+
+*.asc

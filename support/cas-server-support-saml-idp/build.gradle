@@ -1,0 +1,20 @@
+description = "Apereo CAS SAML Identity Provider Support"
+dependencies {
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-logout")
+    compile project(":support:cas-server-support-saml")
+    compile project(":support:cas-server-support-saml-idp-core")
+    compile libraries.commons
+    compile libraries.casclient
+    compile libraries.shibidp
+    runtime libraries.hibernate
+    runtime libraries.groovy
+    compileOnly libraries.springcloud
+    testCompile libraries.metrics
+    testCompile libraries.log4j
+    testCompile project(":core:cas-server-core-util")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(path: ":support:cas-server-support-json-service-registry")
+}

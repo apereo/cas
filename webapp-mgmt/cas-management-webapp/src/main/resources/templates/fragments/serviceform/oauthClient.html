@@ -1,0 +1,138 @@
+<div class="oauth-only-options-container" ng-show="serviceFormCtrl.serviceData.type=='oauth' || serviceFormCtrl.serviceData.type=='oidc'">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span th:remove="tag" th:text="#{services.form.header.oauthOptions}"/>
+            </h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="form-group">
+                <label class="col-sm-4" for="oidcJwks">
+                    <span th:remove="tag" th:text="#{services.form.label.oidc.jwks}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.oidc.jwks}"></i>
+                </label>
+
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input type="text" autocomplete="off" class="form-control" id="oidcJwks"
+                               ng-model="serviceFormCtrl.serviceData.oidc.jwks"/>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- OAuth Client ID -->
+            <div class="form-group">
+                <label class="col-sm-4" for="oauthClientId">
+                    <span th:remove="tag" th:text="#{services.form.label.oauthClientId}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.oauthClientId}"></i>
+                </label>
+
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input type="text" autocomplete="off" class="form-control" id="oauthClientId"
+                               ng-model="serviceFormCtrl.serviceData.oauth.clientId"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OAuth Client Secret -->
+            <div class="form-group">
+                <label class="col-sm-4" for="oauthClientSecret">
+                    <span th:remove="tag" th:text="#{services.form.label.oauthClientSecret}"/>
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.oauthClientSecret}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <input class="form-control" autocomplete="off" id="oauthClientSecret" type="text"
+                               ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="serviceFormCtrl.showOAuthSecret"/>
+                        <input class="form-control" autocomplete="off" id="oauthClientSecret" type="password"
+                               ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="!serviceFormCtrl.showOAuthSecret"/>
+                    </div>
+                </div>
+                
+                <div class="col-md-8 col-md-offset-4">
+                    <!-- OAuth Show/Hide Client Secret -->
+                    <div class="checkbox">
+                        <label for="oauthShowSecret">
+                            <input type="checkbox" id="oauthShowSecret" ng-model="serviceFormCtrl.showOAuthSecret"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oauthShowSecret}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oauthShowSecret}"></i>
+                        </label>
+                    </div>
+                    <!-- OAuth Bypass Approval Prompt -->
+                    <div class="checkbox">
+                        <label for="oauthBypass">
+                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.serviceData.oauth.bypass"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oauthBypass}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oauthBypass}"></i>
+                        </label>
+                    </div>
+                    <!-- OAuth Refresh token generation -->
+                    <div class="checkbox">
+                        <label for="oauthRefreshToken">
+                            <input type="checkbox" id="oauthRefreshToken" ng-model="serviceFormCtrl.serviceData.oauth.refreshToken"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oauthRefreshToken}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oauthRefreshToken}"></i>
+                        </label>
+                    </div>
+                    <!-- OAuth JSON format -->
+                    <div class="checkbox">
+                        <label for="oauthJsonFormat">
+                            <input type="checkbox" id="oauthJsonFormat" ng-model="serviceFormCtrl.serviceData.oauth.jsonFormat"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oauthJsonFormat}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oauthJsonFormat}"></i>
+                        </label>
+                    </div>
+
+                    <!-- OIDC Options -->
+                    <div class="checkbox" ng-show="serviceFormCtrl.serviceData.type=='oidc'">
+                        <label for="oidcSignToken">
+                            <input type="checkbox" id="oidcSignToken" ng-model="serviceFormCtrl.serviceData.oidc.signToken"/>
+                            <span th:remove="tag" th:text="#{services.form.label.oidc.signToken}"/>
+                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               th:title="#{services.form.tooltip.oidc.signToken}"></i>
+                        </label>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+

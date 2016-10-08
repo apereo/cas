@@ -1,0 +1,8 @@
+description = "Apereo CAS Internet2 Grouper Integration"
+dependencies {
+    compile libraries.grouper
+    compile project(":core:cas-server-core-services")
+    testCompile project(":core:cas-server-core-authentication")
+    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompile project(path: ":support:cas-server-support-json-service-registry")
+}

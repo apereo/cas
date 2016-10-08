@@ -9,7 +9,7 @@ branchVersion="development"
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
-       *\.1) 
+       *\.1)
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
         # Do not deploy javadocs to gh-pages as they are pulled from Maven Central
         # invokeJavadoc=true;
@@ -22,7 +22,7 @@ echo -e "Starting with project documentation...\n"
 if [ "$invokeDoc" == true ]; then
 
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
-  cp -R cas-server-documentation $HOME/docs-latest
+  cp -R docs/cas-server-documentation $HOME/docs-latest
 
 fi
 
@@ -36,7 +36,7 @@ if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Invoking build to generate the project site...\n"
   ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
-  
+
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
 
@@ -49,12 +49,23 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  echo -e "Cloning the gh-pages branch...\n"
-  git clone --depth 1 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
-
+  git config --global pack.threads "24"
+  
+  echo -e "Cloning the repository to push documentation...\n"
+  git clone --quiet https://${GH_TOKEN}@github.com/apereo/cas gh-pages > /dev/null
+  
   cd gh-pages
+  
+  echo -e "Configuring tracking branches for repository:\n"
+  for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+     git branch --track ${branch##*/} $branch
+  done
 
-  echo -e "Staring to move project documentation over...\n"
+  echo -e "Switching to gh-pages branch\n"
+  git checkout gh-pages
+  git status
+
+  echo -e "\nStaring to move project documentation over...\n"
 
   if [ "$invokeDoc" == true ]; then
     echo -e "Removing previous documentation from $branchVersion...\n"
@@ -68,9 +79,9 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
     echo -e "Copied project documentation...\n"
   fi
 
-  echo -e "Staring to move project Javadocs over...\n"
-
   if [ "$invokeJavadoc" == true ]; then
+    echo -e "Staring to move project Javadocs over...\n"
+
     echo -e "Removing previous Javadocs from /$branchVersion/javadocs...\n"
     git rm -rf ./"$branchVersion"/javadocs > /dev/null
 
@@ -91,10 +102,31 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
 
   echo -e "Committing changes...\n"
   git commit -m "Published documentation from $TRAVIS_BRANCH to [gh-pages]. Build $TRAVIS_BUILD_NUMBER " > /dev/null
+  
+  echo -e "Before: Calculating git repository disk usage:\n"
+  du -sh .git/
 
-  echo -e "Pushing upstream to origin...\n"
-  git push -fq origin gh-pages > /dev/null
+  echo -e "Before: Counting git objects in the repository:\n"
+  git count-objects -vH
+  
+  echo -e "\nCleaning up repository...\n"
+  # rm -rf .git/refs/original/
+  # rm -Rf .git/logs/
+  # git reflog expire --expire=now --all
+  
+  echo -e "\nRunning garbage collection on the git repository...\n"
+  git gc --prune=now
+  git repack -a -d --depth=500000 --window=500
+  
+  echo -e "After: Calculating git repository disk usage:\n"
+  du -sh .git/
+  
+  echo -e "After: Counting git objects in the repository:\n"
+  git count-objects -vH
+  
+  echo -e "Pushing upstream to origin/gh-pages...\n"
+  git push -fq origin --all > /dev/null
 
-  echo -e "Successfully published documenetation to [gh-pages] branch.\n"
+  echo -e "Successfully published documentation.\n"
 
 fi

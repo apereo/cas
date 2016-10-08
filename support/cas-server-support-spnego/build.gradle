@@ -1,0 +1,18 @@
+description = "Apereo CAS SPNEGO/NTLM Support"
+dependencies {
+
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile libraries.ldaptive
+    compile libraries.jcifs
+    compile libraries.spring
+    runtime libraries.hibernate
+    compileOnly libraries.springcloud
+
+    testCompile project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":support:cas-server-support-cookie")
+    testCompile libraries.tests
+}

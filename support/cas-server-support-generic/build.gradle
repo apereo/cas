@@ -1,0 +1,10 @@
+description = "Apereo CAS Generic Support"
+dependencies {
+
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-web")
+    compile project(":core:cas-server-core-webflow")
+    compile libraries.shiro
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+}

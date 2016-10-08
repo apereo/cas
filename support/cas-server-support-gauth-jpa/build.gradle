@@ -1,0 +1,11 @@
+
+description = "Apereo CAS Google Authenticator JPA"
+dependencies {
+    compile project(":support:cas-server-support-gauth")
+    compile project(":core:cas-server-core-util")
+    compile project(":support:cas-server-support-jpa-util")
+    compileOnly libraries.springcloud
+    compile libraries.spring
+    runtime libraries.hibernate
+    runtime project(":support:cas-server-support-jdbc-drivers")
+}

@@ -1,0 +1,103 @@
+
+<!-- Rejected Attributes Table-->
+
+<div class="form-group">
+    <label for="unauthorizedRedirectUrl" class="col-sm-12" th:inline="text">
+        [[#{services.form.label.sas.rejectedattributes}]]
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+           data-toggle="tooltip"
+           data-placement="top"
+           th:title="#{services.form.tooltip.sas.rejectedattributes}"></i>
+    </label>
+</div>
+
+<div id="rejectedAttributes" ng-controller="rejectedAttributesController as rejAttr" class="panel panel-default">
+    <table ng-table="rejAttr.tableParams"
+           class="table table-striped table-responsive table-condensed editable-table"
+           show-filter="false"
+           demo-tracked-table="rejAttr.tableTracker"
+           ng-form="rejAttr.tableForm">
+        <colgroup>
+            <col width="45%"/>
+            <col width="45%"/>
+            <col width="10%"/>
+        </colgroup>
+        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">
+            <td th:title="#{services.form.label.sas.rejectedattributes.name}"
+                ng-switch="row.isEditing"
+                ng-class="name.$dirty ? 'bg-warning' : ''"
+                ng-form="name">
+                <span ng-switch-default="ng-switch-default" class="editable-text">{{row.name}}</span>
+                <div class="controls"
+                     ng-class="name.$invalid &amp;&amp; name.$dirty ? 'has-error' : ''"
+                     ng-switch-when="true">
+                    <input class="form-control noresize editable-text"
+                           ng-model="rejAttr.tmpRowData.name"/>
+                </div>
+            </td>
+            <td th:title="#{services.form.label.sas.rejectedattributes.value}"
+                ng-switch="row.isEditing"
+                ng-class="propValue.$dirty ? 'bg-warning' : ''"
+                ng-form="propValue">
+                <span ng-switch-default="ng-switch-default" class="editable-text">{{row.propValue}}</span>
+                <div class="controls"
+                     ng-class="propValue.$invalid &amp;&amp; propValue.$dirty ? 'has-error' : ''"
+                     ng-switch-when="true">
+                    <input class="form-control noresize editable-text"
+                           ng-model="rejAttr.tmpRowData.propValue"/>
+                </div>
+            </td>
+            <td>
+                <!-- Save button -->
+                <button class="btn btn-primary btn-sm" ng-click="rejAttr.save(row, rejAttr.tmpRowData, rowForm)"
+                        ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span
+                        class="glyphicon glyphicon-ok"></span></button>
+
+                <!-- Cancel button -->
+                <button class="btn btn-default btn-sm"
+                        ng-click="rejAttr.cancel(row, rowForm)"
+                        ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
+                <!-- Edit button -->
+                <button class="btn btn-default btn-sm" ng-click="rejAttr.editRow( row )" ng-if="!row.isEditing">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+
+                <!-- Delete button -->
+                <button class="btn btn-danger btn-sm" ng-click="rejAttr.del(row)" ng-if="!row.isEditing"><span
+                        class="glyphicon glyphicon-trash"></span></button>
+            </td>
+        </tr>
+        <tr ng-show="row.isAdding">
+            <td><input name="addRejAttrName" rows="2" class="form-control noresize editable-text"
+                       placeholder="New attribute name"
+                       ng-model="row.name" required="required"/></td>
+            <td><input name="addRejAttrPropertyValue" rows="2" class="form-control noresize editable-text"
+                       placeholder="New attribute value"
+                       ng-model="row.propValue" required="required"/></td>
+            <td>
+                <!-- Add Row toggle -->
+                <button class="btn btn-success btn-sm"
+                        ng-click="rejAttr.addRow(row, rowForm)"
+                        ng-if="row.isAdding" >
+                    <!--ng-if="row.isAdding" ng-disabled="serviceForm.$invalid">-->
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+
+                <!-- cancel add row -->
+                <button class="btn btn-default btn-sm"
+                        ng-click="rejAttr.cancelAdd( row, rowForm )">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </td>
+        </tr>
+        <tr class="addRow" ng-show="!row.isAdding">
+            <td>
+                <button class="btn btn-default btn-sm" ng-click="row.isAdding = true">
+                    <span class="glyphicon glyphicon-plus text-success"></span>
+                </button>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>

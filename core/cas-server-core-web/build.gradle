@@ -1,0 +1,14 @@
+
+description = "Apereo CAS Core Web"
+dependencies {
+    compile project(":api:cas-server-core-api-web")
+    compile project(":api:cas-server-core-api-ticket")
+    compile project(":api:cas-server-core-api-services")
+    compile project(":core:cas-server-core-authentication")
+    compile project(":api:cas-server-core-api-logout")
+    compile project(":core:cas-server-core-util")
+    compile libraries.pac4j
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.thmyeleaf
+}

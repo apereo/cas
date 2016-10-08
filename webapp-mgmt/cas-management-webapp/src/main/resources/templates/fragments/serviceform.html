@@ -1,0 +1,59 @@
+<form class="service-editor form-horizontal" autocomplete="off" id="serviceForm"
+      name="serviceForm"
+      ng-controller="ServiceFormController as serviceFormCtrl"
+      ng-submit="serviceFormCtrl.validateAndSave()" xmlns:th="http://www.w3.org/1999/xhtml"
+      novalidate="novalidate">
+
+    <div th:replace="fragments/serviceform/saveformtop" />
+    
+    <div th:replace="fragments/serviceform/alert" />
+
+    <div class="row col-sm-12">
+        <div class="col-sm-6">
+            <div th:replace="fragments/serviceform/enabled" />
+
+           
+            <div th:replace="fragments/serviceform/serviceid"/>
+
+         
+           <div th:replace="fragments/serviceform/servicename" />
+
+           <div th:replace="fragments/serviceform/servicedesc" />
+
+            
+        <div th:replace="fragments/serviceform/servicetype" />
+
+        <div th:replace="fragments/serviceform/oauthClient" />
+
+            
+        <div th:replace="fragments/serviceform/samlClient" />
+
+        <div th:replace="fragments/serviceform/themeid" />
+
+            
+        <div th:replace="fragments/serviceform/logo" />
+
+        <div th:replace="fragments/serviceform/logout" />
+            
+        <div th:replace="fragments/serviceform/logouttypeeval" />
+
+        <div th:replace="fragments/serviceform/reqhandlers" />
+
+        <div th:replace="fragments/serviceform/accessstrategy" />
+        
+            
+        </div>
+        <div class="col-sm-6">
+            <div th:replace="fragments/serviceform/multiAuthPane" />
+
+            <div th:replace="fragments/serviceform/propertiesPane" />
+
+            <div th:replace="fragments/serviceform/uidattrs" />
+
+            <div th:replace="fragments/serviceform/attrrel" />
+            <div th:replace="fragments/serviceform/pubkey" />
+            <div th:replace="fragments/serviceform/proxy" />
+        </div>
+        <div th:replace="fragments/serviceform/saveform" />
+    </div>
+</form>

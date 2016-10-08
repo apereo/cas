@@ -1,8 +1,0 @@
-description = 'Apereo CAS Authy Support'
-dependencies {
-    compile libraries.authyjava
-    compile libraries.jackson
-    compile project(":cas-server-core-authentication")
-    compile project(":cas-server-core-webflow")
-}
-

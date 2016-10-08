@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
+
+<head>
+    <title>WAH WAH WAH</title>
+    <style>
+        @import 'https://fonts.googleapis.com/css?family=Gloria+Hallelujah';
+
+        .prompt {
+            font-family: 'Gloria Hallelujah', cursive;
+        }
+    </style>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <div class="alert alert-info">
+        <h2 class="prompt">THESE ARE NOT THE PAGES YOU ARE LOOKING FOR!</h2>
+        <div class="prompt">
+            <p/>
+            <p>Really? 404? In this day and age? <strong>REALLY?!</strong></p>
+            <br/>
+            <p>Boy, you must feel so ashamed.</p>
+            <br/>
+            <p>Were you just making up urls or what? I mean, we've seen some pretend urls in our day,
+                but COME ON! It's like you're not even trying.</p>
+
+            <br/>
+            <p>In closing, <a th:href="@{/login}">go away</a>. </p>
+            
+        </div>
+    </div>
+</div>
+</body>
+</html>

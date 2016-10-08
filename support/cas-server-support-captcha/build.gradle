@@ -1,0 +1,11 @@
+
+description = "Apereo CAS Captcha Support"
+dependencies {
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-webflow")
+    compile project(":core:cas-server-core-util")
+    libraries.spring
+    libraries.springboot
+    libraries.springcloud
+    libraries.jackson
+}

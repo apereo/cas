@@ -1,0 +1,22 @@
+description = "Apereo CAS Memcached Integration"
+dependencies {
+    compile libraries.spring
+    compile libraries.memcached
+    compile libraries.hibernate
+    compileOnly libraries.springcloud
+    compile libraries.kryo
+
+    compile project(":core:cas-server-core-logging")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-configuration")
+
+    testCompile project(":core:cas-server-core-util")
+    testCompile libraries.tests
+    testCompile libraries.metrics
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    compileOnly project(":support:cas-server-support-saml")
+    compileOnly project(":support:cas-server-support-saml-googleapps")
+}

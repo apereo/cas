@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <var name="credential" class="org.apereo.cas.adaptors.duo.authn.web.DuoCredential" />
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="initializeLoginForm">
+        <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="determineDuoRequest"/>
+    </action-state>
+
+    <action-state id="determineDuoRequest">
+        <evaluate expression="checkWebAuthenticationRequestAction" />
+        <transition on="yes" to="viewLoginFormDuo"/>
+        <transition on="no" to="doNonWebAuthentication"/>
+    </action-state>
+    
+    <action-state id="doNonWebAuthentication">
+        <evaluate expression="duoNonWebAuthenticationAction"/>
+        <transition on="success" to="finalizeAuthentication" />
+    </action-state>
+    
+    <action-state id="finalizeAuthentication">
+        <evaluate expression="duoAuthenticationWebflowAction"/>
+        <transition on="success" to="success" />
+    </action-state>
+    
+    <view-state id="viewLoginFormDuo" view="casDuoLoginView" model="credential">
+        <binder>
+            <binding property="signedDuoResponse"/>
+        </binder>
+        <on-entry>
+            <set name="credential.username" value="conversationScope.authentication.principal.id"/>
+            <set name="viewScope.sigRequest"
+                 value="duoAuthenticationService.generateSignedRequestToken(conversationScope.authentication.principal.id)" />
+            <set name="viewScope.apiHost" value="duoAuthenticationService.getDuoApiHost()" />
+            <set name="viewScope.commandName" value="'credential'" />
+            <set name="viewScope.principal" value="conversationScope.authentication.principal" />
+        </on-entry>
+        <transition on="submit" bind="true" validate="false" to="realSubmit"/>
+    </view-state>
+
+    <action-state id="realSubmit">
+        <evaluate expression="duoAuthenticationWebflowAction" />
+        <transition on="success" to="success" />
+        <transition on="error" to="initializeLoginForm" />
+    </action-state>
+
+    <end-state id="success" />
+
+</flow>

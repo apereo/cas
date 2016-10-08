@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="form-group">
+            <label class="col-sm-3 important" for="casEnabled" th:text="#{services.form.label.sas.casEnabled}">
+
+                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
+                    th:title="#{services.form.tooltip.sas.casEnabled}"></i>
+            </label>
+            <div class="col-sm-1">
+                <div class="checkbox checkbox-inline">
+                    <input type="checkbox" id="casEnabled" ng-model="serviceFormCtrl.serviceData.supportAccess.casEnabled" />
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="alert alert-danger" role="alert" ng-if="!serviceFormCtrl.serviceData.supportAccess.casEnabled">
+                    <p>
+                        <i class="fa fa-lg fa-info-circle"></i>
+                        <span th:text="#{services.form.warning.casDisabled}" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </Console>
+        <RollingFile name="cas-management" fileName="cas-management.log" append="true"
+                     filePattern="cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="512 KB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <AsyncLogger name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.amqp" level="off" />
+        <AsyncLogger name="org.springframework.webflow" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.context.annotation" level="off" />
+        <AsyncLogger name="org.pac4j" level="info" additivity="false">
+            <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apereo" level="info" additivity="false">
+            <AppenderRef ref="cas-management"/>
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.thymeleaf" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="cas-management"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+            <AppenderRef ref="cas-management"/>
+        </AsyncLogger>
+        <Root level="error">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

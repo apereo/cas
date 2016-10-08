@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label class="col-sm-3" for="serviceName">
+        <span th:remove="tag" th:text="#{services.form.label.name}"/>
+
+        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top"
+            th:title="#{services.form.tooltip.name}"></i>
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <div class="input-group-addon input-group-required" th:title="#{services.form.required}">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <input type="text" class="form-control" id="serviceName" ng-model="serviceFormCtrl.serviceData.name"/>
+        </div>
+    </div>
+</div>

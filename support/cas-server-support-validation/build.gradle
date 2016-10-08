@@ -1,0 +1,21 @@
+description = "Apereo CAS Web Application Protocol Validation"
+dependencies {
+    compile libraries.spring
+    compile libraries.hibernate
+    compile libraries.springboot
+    compile libraries.springcloud
+    compile libraries.thmyeleaf
+    compile project(":core:cas-server-core-services")
+    compile project(":core:cas-server-core-validation")
+    compile project(":core:cas-server-core-tickets")
+    testCompile libraries.javax
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":core:cas-server-core-monitor")
+    testCompile project(path: ":core:cas-server-core", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile "javax.servlet:jstl:$javaxJstlVersion"
+    testCompile project(path: ":core:cas-server-core-validation", configuration: "tests")
+    testCompile project(":support:cas-server-support-cookie")
+    testCompile project(":support:cas-server-support-cookie")
+}

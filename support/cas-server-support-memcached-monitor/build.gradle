@@ -1,0 +1,17 @@
+description = "Apereo CAS Memcached Monitor Integration"
+dependencies {
+    compile project(":core:cas-server-core-monitor")
+    compile libraries.spring
+    compile libraries.memcached
+    compile libraries.kryo
+    compile libraries.hibernate
+    testCompile project(":core:cas-server-core-authentication")
+    testCompile project(path: ":support:cas-server-support-memcached-ticket-registry", configuration: "tests")
+    testCompile project(":support:cas-server-support-cookie")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    compileOnly project(":support:cas-server-support-saml")
+    testCompile libraries.tests
+    testCompile libraries.metrics
+
+}

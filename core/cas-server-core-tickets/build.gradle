@@ -1,0 +1,16 @@
+description = "Apereo CAS Core Tickets"
+dependencies {
+    compile project(":api:cas-server-core-api-ticket")
+    compile libraries.hibernate
+    compile libraries.quartz
+
+    compile project(":core:cas-server-core-authentication")
+    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-web")
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+    testCompile project(":core:cas-server-core-services")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+}
+

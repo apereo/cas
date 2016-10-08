@@ -1,0 +1,16 @@
+description = "Apereo CAS SAML Server Google Apps SAML Support"
+dependencies {
+
+    compile project(":support:cas-server-support-saml")
+    compile project(":core:cas-server-core-services")
+    runtime libraries.hibernate
+
+    testCompile project(":core:cas-server-core-util")
+    testCompile libraries.metrics
+    testCompile libraries.log4j
+    testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":support:cas-server-support-saml", configuration: "tests")
+    testCompile project(":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":support:cas-server-support-cookie")
+}
