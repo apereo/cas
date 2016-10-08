@@ -22,21 +22,21 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 5.1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
-        ElectronicFenceConfiguration.class, CasCoreEventsConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, ElectronicFenceConfiguration.class, CasCoreEventsConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ip-calc.properties"})
 @DirtiesContext
 public class IpAddressAuthenticationRequestRiskCalculatorTests {
-    
+
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
-    
+
     @Before
     public void prepTest() {
-        MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository); 
+        MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
     }
-    
+
     @Test
-    public void verifyTest() {}
+    public void verifyTest() {
+    }
 }
