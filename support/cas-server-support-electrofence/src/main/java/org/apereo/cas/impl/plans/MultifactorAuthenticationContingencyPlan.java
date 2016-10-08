@@ -23,17 +23,13 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
-
-    public MultifactorAuthenticationContingencyPlan(final AdaptiveAuthenticationProperties adaptiveProperties) {
-        super(adaptiveProperties);
-    }
-
+    
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication, 
                                                                     final RegisteredService service,
                                                                     final AuthenticationRiskScore score, 
                                                                     final HttpServletRequest request) {
-        final String id = adaptiveProperties.getRisk().getResponse().getMfaProvider();
+        final String id = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMfaProvider();
         if (StringUtils.isBlank(id)) {
             logger.warn("No multifactor authentication providers are specified to handle risk-based authentication");
             throw new AuthenticationException();
