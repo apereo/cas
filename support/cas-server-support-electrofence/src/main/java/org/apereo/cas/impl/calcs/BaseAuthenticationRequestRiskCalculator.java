@@ -4,14 +4,17 @@ import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 /**
@@ -23,6 +26,9 @@ import java.util.Collection;
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     /**
      * CAS event repository instance.
      */
@@ -71,6 +77,9 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         final String type = CasTicketGrantingTicketCreatedEvent.class.getName();
         logger.debug("Retrieving events of type {} for {}", type, principal);
-        return casEventRepository.getEventsOfTypeForPrincipal(type, principal);
+        
+        final ZonedDateTime date = ZonedDateTime.now()
+                .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
+        return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
 }
