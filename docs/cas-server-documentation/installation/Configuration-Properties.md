@@ -542,6 +542,24 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+## Risk-based Authentication
+
+Evaluate suspicious authentication requests and take action.
+To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+
+```properties
+# cas.authn.adaptive.risk.threshold=0.6
+# cas.authn.adaptive.risk.daysInRecentHistory=30
+
+# cas.authn.adaptive.risk.ip.enabled=true
+# cas.authn.adaptive.risk.agent.enabled=true
+# cas.authn.adaptive.risk.geoLocation.enabled=true
+# cas.authn.adaptive.risk.dateTime.enabled=true
+
+# cas.authn.adaptive.risk.response.blockAttempt=false
+# cas.authn.adaptive.risk.response.mfaProvider=
+```
+
 ## GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.
