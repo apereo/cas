@@ -22,17 +22,12 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
-    
+
     @Override
-    protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication, 
+    protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication,
                                                                     final RegisteredService service,
-                                                                    final AuthenticationRiskScore score, 
+                                                                    final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
-        final String id = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMfaProvider();
-        if (StringUtils.isBlank(id)) {
-            logger.warn("No multifactor authentication providers are specified to handle risk-based authentication");
-            throw new AuthenticationException();
-        }
 
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
@@ -41,6 +36,18 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
+
+        String id = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMfaProvider();
+        if (StringUtils.isBlank(id)) {
+            if (providerMap.size() == 1) {
+                id = providerMap.values().iterator().next().getId();
+            } else {
+                logger.warn("No multifactor authentication providers are specified to handle risk-based authentication");
+                throw new AuthenticationException();
+            }
+        }
+
+
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }
 }

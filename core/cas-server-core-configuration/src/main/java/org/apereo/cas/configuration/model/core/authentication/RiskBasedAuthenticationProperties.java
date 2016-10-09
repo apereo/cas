@@ -125,6 +125,25 @@ public class RiskBasedAuthenticationProperties {
         private boolean blockAttempt;
         private String mfaProvider;
 
+        private Mail mail = new Mail();
+        private Sms sms = new Sms();
+
+        public Sms getSms() {
+            return sms;
+        }
+
+        public void setSms(final Sms sms) {
+            this.sms = sms;
+        }
+
+        public Mail getMail() {
+            return mail;
+        }
+
+        public void setMail(final Mail mail) {
+            this.mail = mail;
+        }
+
         public boolean isBlockAttempt() {
             return blockAttempt;
         }
@@ -139,6 +158,123 @@ public class RiskBasedAuthenticationProperties {
 
         public void setMfaProvider(final String mfaProvider) {
             this.mfaProvider = mfaProvider;
+        }
+        
+        public static class Mail {
+            private String attributeName = "mail";
+            private String text;
+            private String from;
+            private String subject;
+            private String cc;
+            private String bcc;
+
+            public String getAttributeName() {
+                return attributeName;
+            }
+
+            public void setAttributeName(final String attributeName) {
+                this.attributeName = attributeName;
+            }
+
+            public String getBcc() {
+                return bcc;
+            }
+
+            public void setBcc(final String bcc) {
+                this.bcc = bcc;
+            }
+
+            public String getText() {
+                return text;
+            }
+
+            public void setText(final String text) {
+                this.text = text;
+            }
+
+            public String getFrom() {
+                return from;
+            }
+
+            public void setFrom(final String from) {
+                this.from = from;
+            }
+
+            public String getSubject() {
+                return subject;
+            }
+
+            public void setSubject(final String subject) {
+                this.subject = subject;
+            }
+
+            public String getCc() {
+                return cc;
+            }
+
+            public void setCc(final String cc) {
+                this.cc = cc;
+            }
+        }
+        
+        public static class Sms {
+            private String text;
+            private String from;
+            private String attributeName = "phone";
+            private Twilio twilio = new Twilio();
+
+            public String getAttributeName() {
+                return attributeName;
+            }
+
+            public void setAttributeName(final String attributeName) {
+                this.attributeName = attributeName;
+            }
+
+            public String getFrom() {
+                return from;
+            }
+
+            public void setFrom(final String from) {
+                this.from = from;
+            }
+
+            public String getText() {
+                return text;
+            }
+
+            public void setText(final String text) {
+                this.text = text;
+            }
+
+            public Twilio getTwilio() {
+                return twilio;
+            }
+
+            public void setTwilio(final Twilio twilio) {
+                this.twilio = twilio;
+            }
+
+            public static class Twilio {
+                private String accountId;
+                private String token;
+
+                public String getAccountId() {
+                    return accountId;
+                }
+
+                public void setAccountId(final String accountId) {
+                    this.accountId = accountId;
+                }
+
+                public String getToken() {
+                    return token;
+                }
+
+                public void setToken(final String token) {
+                    this.token = token;
+                }
+            }
         }
     }
 }
