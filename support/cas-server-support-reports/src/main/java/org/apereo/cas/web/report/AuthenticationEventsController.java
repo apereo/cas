@@ -1,10 +1,10 @@
 package org.apereo.cas.web.report;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +23,7 @@ import java.util.Collection;
  */
 @Controller("authenticationEventsController")
 @RequestMapping("/status/authnEvents")
+@ConditionalOnClass(value = CasEventRepository.class)
 public class AuthenticationEventsController {
 
     @Autowired
@@ -64,10 +65,7 @@ public class AuthenticationEventsController {
     public Collection<CasEvent> getRecords(final HttpServletRequest request,
                                            final HttpServletResponse response)
             throws Exception {
-        if (this.eventRepository != null) {
-            return this.eventRepository.load();
-        }
-        return Sets.newHashSet();
+        return this.eventRepository.load();
     }
 
 }
