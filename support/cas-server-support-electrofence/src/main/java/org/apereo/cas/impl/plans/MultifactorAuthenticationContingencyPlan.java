@@ -28,10 +28,9 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                                                                     final RegisteredService service,
                                                                     final AuthenticationRiskScore score,
                                                                     final HttpServletRequest request) {
-
-        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+        
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -46,7 +45,6 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                 throw new AuthenticationException();
             }
         }
-
 
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }
