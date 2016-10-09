@@ -4,18 +4,20 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -34,13 +37,17 @@ import java.util.Set;
  * @since 4.1
  */
 @Controller("singleSignOnSessionsReportController")
-@RequestMapping(value="/status/ssosessions")
+@RequestMapping(value = "/status/ssosessions")
 public class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
     private static final String STATUS = "status";
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     private enum SsoSessionReportOptions {
         ALL("all"),
         PROXIED("proxied"),
@@ -66,6 +73,7 @@ public class SingleSignOnSessionsReportController {
             return this.type;
         }
     }
+
     /**
      * The enum Sso session attribute keys.
      */
@@ -98,16 +106,16 @@ public class SingleSignOnSessionsReportController {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     /**
      * Instantiates a new Single sign on sessions report resource.
      */
-    public SingleSignOnSessionsReportController() {}
+    public SingleSignOnSessionsReportController() {
+    }
 
     /**
      * Gets sso sessions.
@@ -177,45 +185,49 @@ public class SingleSignOnSessionsReportController {
      */
     @RequestMapping(value = "/getSsoSessions", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
-        final Map<String, Object> sessionsMap = new HashMap<>(1);
-        final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
+    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
 
-        final Collection<Map<String, Object>> activeSsoSessions = getActiveSsoSessions(option);
-        sessionsMap.put("activeSsoSessions", activeSsoSessions);
+        final Callable<Map<String, Object>> asyncTask = () -> {
+            final Map<String, Object> sessionsMap = new HashMap<>(1);
+            final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
 
-        long totalTicketGrantingTickets = 0;
-        long totalProxyGrantingTickets = 0;
-        long totalUsageCount = 0;
+            final Collection<Map<String, Object>> activeSsoSessions = getActiveSsoSessions(option);
+            sessionsMap.put("activeSsoSessions", activeSsoSessions);
 
-        final Set<String> uniquePrincipals = new HashSet<>();
+            long totalTicketGrantingTickets = 0;
+            long totalProxyGrantingTickets = 0;
+            long totalUsageCount = 0;
 
-        for (final Map<String, Object> activeSsoSession : activeSsoSessions) {
+            final Set<String> uniquePrincipals = new HashSet<>();
 
-            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                final Boolean isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
-                if (isProxied) {
-                    totalProxyGrantingTickets++;
+            for (final Map<String, Object> activeSsoSession : activeSsoSessions) {
+
+                if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
+                    final Boolean isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+                    if (isProxied) {
+                        totalProxyGrantingTickets++;
+                    } else {
+                        totalTicketGrantingTickets++;
+                        final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                        uniquePrincipals.add(principal);
+                    }
                 } else {
                     totalTicketGrantingTickets++;
                     final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
-            } else {
-                totalTicketGrantingTickets++;
-                final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
-                uniquePrincipals.add(principal);
+                totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+
             }
-            totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
 
-        }
-
-        sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
-        sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
-        sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
-        sessionsMap.put("totalPrincipals", uniquePrincipals.size());
-        sessionsMap.put("totalUsageCount", totalUsageCount);
-        return sessionsMap;
+            sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
+            sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
+            sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
+            sessionsMap.put("totalPrincipals", uniquePrincipals.size());
+            sessionsMap.put("totalUsageCount", totalUsageCount);
+            return sessionsMap;
+        };
+        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
     }
 
     /**
