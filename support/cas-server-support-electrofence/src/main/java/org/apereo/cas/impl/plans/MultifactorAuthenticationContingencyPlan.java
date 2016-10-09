@@ -5,7 +5,6 @@ import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ApplicationContextProvider;

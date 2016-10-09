@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.dao;
 
 import com.google.common.cache.LoadingCache;
 
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.UUID;
 

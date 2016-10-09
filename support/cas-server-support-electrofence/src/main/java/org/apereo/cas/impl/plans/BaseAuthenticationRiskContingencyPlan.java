@@ -5,7 +5,6 @@ import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /** CAS properties. */
     @Autowired
