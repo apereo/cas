@@ -8,6 +8,7 @@ title: CAS - Configuring Authentication Components
 The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
 
 ## Authentication Manager
+
 CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
 For each given credential do the following:
@@ -38,6 +39,7 @@ configured via the static authencation handler, and <strong>MUST</strong> be rem
 prior to production rollouts.</p></div>
 
 ## Principal Resolution
+
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
 
 ### Principal Transformation
