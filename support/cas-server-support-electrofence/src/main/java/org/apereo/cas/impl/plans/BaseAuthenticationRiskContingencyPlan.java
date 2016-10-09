@@ -39,6 +39,7 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
 
     private Set<AuthenticationRiskNotifier> notifiers = Sets.newLinkedHashSet();
 
+
     @Override
     public final AuthenticationRiskContingencyResponse execute(final Authentication authentication,
                                                                final RegisteredService service,
@@ -49,7 +50,11 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
         notifiers.forEach(e -> e.notify(authentication, service, score));
         return executeInternal(authentication, service, score, request);
     }
-
+    
+    public Set<AuthenticationRiskNotifier> getNotifiers() {
+        return notifiers;
+    }
+    
     /**
      * Execute authentication risk contingency plan.
      *
