@@ -3,8 +3,6 @@ package org.apereo.cas.impl.plans;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.webflow.execution.Event;
 

@@ -24,16 +24,16 @@ import java.util.Collection;
  * @since 5.1.0
  */
 public abstract class BaseAuthenticationRequestRiskCalculator implements AuthenticationRequestRiskCalculator {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
     /**
      * CAS event repository instance.
      */
     protected CasEventRepository casEventRepository;
-
+    
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     public BaseAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
         this.casEventRepository = casEventRepository;
     }

@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 public class MockTicketGrantingTicketCreatedEventProducer {
+        
     private static final List<String> ALL_USER_AGENTS = Lists.newArrayList(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
@@ -80,6 +81,9 @@ public class MockTicketGrantingTicketCreatedEventProducer {
             new Pair<>("-38.41", "-63.61")
     );
 
+    protected MockTicketGrantingTicketCreatedEventProducer() {
+    }
+    
     private static String getMockUserAgent() {
         final int index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
         return ALL_USER_AGENTS.get(index);
@@ -116,7 +120,10 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         casEventRepository.save(dto);
     }
 
+
+    
     public static void createEvents(final CasEventRepository casEventRepository) {
         IntStream.range(1, 1000).forEach(i -> createEvent(i, casEventRepository));
     }
+
 }

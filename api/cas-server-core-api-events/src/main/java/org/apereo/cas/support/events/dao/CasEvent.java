@@ -119,7 +119,7 @@ public class CasEvent {
 
     /**
      * Gets creation time. Attempts to parse the value
-     * as a {@link ZonedDateTime}. Otherwise, assumes a 
+     * as a {@link ZonedDateTime}. Otherwise, assumes a
      * {@link LocalDateTime} and converts it based on system's
      * default zone.
      *
