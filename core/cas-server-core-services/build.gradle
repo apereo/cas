@@ -9,7 +9,6 @@ dependencies {
     compile libraries.inspektr
     
     compileOnly project(":core:cas-server-core-util")
-    compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-web")
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-configuration")
