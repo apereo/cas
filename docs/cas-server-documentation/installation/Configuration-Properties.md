@@ -558,6 +558,26 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 # cas.authn.adaptive.risk.response.blockAttempt=false
 # cas.authn.adaptive.risk.response.mfaProvider=
+
+# spring.mail.host=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.port=
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.protocol=smtp
+# spring.mail.test-connection=false
+# cas.authn.adaptive.risk.response.mail.from=
+# cas.authn.adaptive.risk.response.mail.text=
+# cas.authn.adaptive.risk.response.mail.subject=
+# cas.authn.adaptive.risk.response.mail.cc=
+# cas.authn.adaptive.risk.response.mail.bcc=
+# cas.authn.adaptive.risk.response.mail.attributeName=mail
+
+# cas.authn.adaptive.risk.response.sms.from=
+# cas.authn.adaptive.risk.response.sms.text=
+# cas.authn.adaptive.risk.response.sms.attributeName=phone
+# cas.authn.adaptive.risk.response.sms.twilio.accountId=
+# cas.authn.adaptive.risk.response.sms.twilio.token=
 ```
 
 ## GoogleMaps GeoTracking
