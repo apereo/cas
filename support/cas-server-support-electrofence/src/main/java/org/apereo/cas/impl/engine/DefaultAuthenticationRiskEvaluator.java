@@ -6,6 +6,7 @@ import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,6 +30,8 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         return calculators;
     }
 
+    @Audit(action = "EVALUATE_RISKY_AUTHENTICATION", actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
+            resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public AuthenticationRiskScore eval(final Authentication authentication,
                                         final RegisteredService service,
