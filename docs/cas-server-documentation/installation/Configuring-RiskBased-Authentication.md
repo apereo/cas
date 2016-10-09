@@ -5,6 +5,8 @@ title: CAS - Adaptive Risk-based Authentication
 
 # Risk-based Authentication
 
+<div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
+
 Risk-based authentication allows CAS to detect suspicious and seemingly-fraudulent authentication requests based on past user behavior
 and collected authentication events, statistics, etc. Once *after* primary authentication where the principal is identified,
 the authentication transaction is analyzed via a number of configurable criteria and fences to determine how *risky* the attempt may be.
