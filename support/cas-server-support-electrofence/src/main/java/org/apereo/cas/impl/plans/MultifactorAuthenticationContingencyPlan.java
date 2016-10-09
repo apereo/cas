@@ -7,9 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
