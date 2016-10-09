@@ -21,6 +21,7 @@ import org.apereo.cas.web.report.StatisticsController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -28,6 +29,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -43,6 +46,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableWebSocketMessageBroker
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
@@ -150,7 +154,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnBean(name = "casEventRepository")
     @Configuration("authenticationEventsConfiguration")
-    public class AuthenticationEventsConfiguration {
+    public static class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean
