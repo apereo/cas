@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,7 @@ public class BlockAuthenticationContingencyPlan extends BaseAuthenticationRiskCo
     @Override
     protected AuthenticationRiskContingencyResponse executeInternal(final Authentication authentication, final RegisteredService service, 
                                                                     final AuthenticationRiskScore score, final HttpServletRequest request) {
-        throw new AuthenticationException("Authentication attempt is blocked");
+        
+        return new AuthenticationRiskContingencyResponse(new Event(this, "blockedAuthentication"));
     }
 }
