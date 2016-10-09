@@ -10,6 +10,10 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.support.events.CasRiskBasedAuthenticationEvaluationStartedEvent;
+import org.apereo.cas.support.events.CasRiskBasedAuthenticationMitigationStartedEvent;
+import org.apereo.cas.support.events.CasRiskyAuthenticationDetectedEvent;
+import org.apereo.cas.support.events.CasRiskyAuthenticationMitigatedEvent;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,15 +69,23 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                          final Authentication authentication,
                                                          final RegisteredService service) {
 
+        this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
+        
         logger.debug("Evaluating possible suspicious authentication attempt for {}", authentication.getPrincipal());
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
                 
         if (score.getScore() >= casProperties.getAuthn().getAdaptive().getRisk().getThreshold()) {
+            this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
+
             logger.debug("Calculated risk score {} for authentication request by {} is above the risk threshold {}.",
                     score.getScore(),
                     authentication.getPrincipal(),
                     casProperties.getAuthn().getAdaptive().getRisk().getThreshold());
+
+            this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
             final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
+            this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
+            
             return Sets.newHashSet(res.getResult());
         }
 
