@@ -6,7 +6,7 @@ title: CAS - Adaptive Risk-based Authentication
 # Risk-based Authentication
 
 Risk-based authentication allows CAS to detect suspicious and seemingly-fraudulent authentication requests based on past user behavior
-and collected authentication events, statistics, etc. Once after primary authentication where the principal is identified,
+and collected authentication events, statistics, etc. Once *after* primary authentication where the principal is identified,
 the authentication transaction is analyzed via a number of configurable criteria and fences to determine how *risky* the attempt may be.
 The result of the evaluation step is a comulative risk score that is then weighed against a risk threshold set by the CAS operator.
 In the event that the authentication attempt is considered risky well beyond the risk threshold, CAS may be allowed to take action and
@@ -21,9 +21,13 @@ Without data, there is nothing to analyze and no risk to detect.
 
 Note that evaluation of attempts and mitigation of risks are all recorded in the CAS audit log.
 
+<div class="alert alert-info"><strong>Adaptive Authentication</strong><p>
+If you need to preemptively evaluate authentication attempts based on various characterisitcs of the request, 
+you may be interested in <a href="Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
+
 ## Risk Calculation
 
-One or more risk calculators may be enabled to allow an analysis of each authentication request:
+One or more risk calculators may be enabled to allow an analysis of authentication requests:
 
 ### IP Address
 
@@ -65,5 +69,3 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 - You **MUST** allow and configure CAS to [geolocate authentication requests](GeoTracking-Authentication-Requests.html).
 - If the selected contingency plan is to force the user into a multifactor authentication flow, you then **MUST** configure CAS for 
 [multifactor authentication](Configuring-Multifactor-Authentication.html).
-
-
