@@ -8,6 +8,7 @@ import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
@@ -155,23 +156,24 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
+        final RiskBasedAuthenticationProperties risk = casProperties.getAuthn().getAdaptive().getRisk();
         final Set<AuthenticationRequestRiskCalculator> calculators = Sets.newHashSet();
 
-        if (casProperties.getAuthn().getAdaptive().getRisk().getIp().isEnabled()) {
+        if (risk.getIp().isEnabled()) {
             calculators.add(ipAddressAuthenticationRequestRiskCalculator());
         }
-        if (casProperties.getAuthn().getAdaptive().getRisk().getAgent().isEnabled()) {
+        if (risk.getAgent().isEnabled()) {
             calculators.add(userAgentAuthenticationRequestRiskCalculator());
         }
-        if (casProperties.getAuthn().getAdaptive().getRisk().getDateTime().isEnabled()) {
+        if (risk.getDateTime().isEnabled()) {
             calculators.add(dateTimeAuthenticationRequestRiskCalculator());
         }
-        if (casProperties.getAuthn().getAdaptive().getRisk().getGeoLocation().isEnabled()) {
+        if (risk.getGeoLocation().isEnabled()) {
             calculators.add(geoLocationAuthenticationRequestRiskCalculator());
         }
 
         if (calculators.isEmpty()) {
-            LOGGER.warn("No risk calculators are define to examine authentication requests");
+            LOGGER.warn("No risk calculators are defined to examine authentication requests");
         }
 
         return new DefaultAuthenticationRiskEvaluator(calculators);
