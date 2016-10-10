@@ -29,7 +29,7 @@ public class GeoLocationResponse {
      *
      * @return the string
      */
-    public String buildAddress() {
+    public String build() {
         final StringBuilder b = new StringBuilder();
         this.addresses.forEach(s -> b.append(s.concat(",")));
         return b.toString();

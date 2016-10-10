@@ -241,4 +241,18 @@ public class CasEvent {
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
     }
+
+    /**
+     * Gets geo location.
+     *
+     * @return the geo location
+     */
+    public GeoLocationRequest getGeoLocation() {
+        final GeoLocationRequest request = new GeoLocationRequest();
+        request.setAccuracy(get("geoAccuracy"));
+        request.setTimestamp(get("geoTimestamp"));
+        request.setLongitude(get("geoLongitude"));
+        request.setLatitude(get("geoLatitude"));
+        return request;
+    }
 }

@@ -111,7 +111,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
             final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
             final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
-                final String address = loc.buildAddress();
+                final String address = loc.build();
                 if (address.matches(pattern)) {
                     logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
                                     + "adaptive authentication and is required to use [{}]",
