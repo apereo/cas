@@ -84,7 +84,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
-                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.buildAddress()).find();
+                && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.build()).find();
     }
     
     private boolean isUserAgentRejected(final String userAgent) {
