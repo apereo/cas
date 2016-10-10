@@ -5,6 +5,7 @@ import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
@@ -44,6 +45,12 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             }
         }
 
+        final String attributeName = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getRiskyAuthenticationAttribute();
+        final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
+                .addAttribute(attributeName, Boolean.TRUE)
+                .build();
+        logger.debug("Updated authentication to remember risk-based authn via {}", attributeName);
+        authentication.update(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }
 }

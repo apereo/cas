@@ -124,6 +124,7 @@ public class RiskBasedAuthenticationProperties {
     public static class Response {
         private boolean blockAttempt;
         private String mfaProvider;
+        private String riskyAuthenticationAttribute = "triggeredRiskBasedAuthentication";
 
         private Mail mail = new Mail();
         private Sms sms = new Sms();
@@ -159,7 +160,15 @@ public class RiskBasedAuthenticationProperties {
         public void setMfaProvider(final String mfaProvider) {
             this.mfaProvider = mfaProvider;
         }
-        
+
+        public String getRiskyAuthenticationAttribute() {
+            return riskyAuthenticationAttribute;
+        }
+
+        public void setRiskyAuthenticationAttribute(final String riskyAuthenticationAttribute) {
+            this.riskyAuthenticationAttribute = riskyAuthenticationAttribute;
+        }
+
         public static class Mail {
             private String attributeName = "mail";
             private String text;
