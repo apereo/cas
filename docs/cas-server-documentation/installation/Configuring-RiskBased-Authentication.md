@@ -31,7 +31,7 @@ you may be interested in <a href="Configuring-Adaptive-Authentication.html">this
 
 One or more risk calculators may be enabled to allow an analysis of authentication requests.
 
-A high level explanation of the risk calculation strategy follows:
+A high-level explanation of the risk calculation strategy follows:
 
 - If there is no recorded event at all present for the principal, consider the request suspicious.
 - If the number of recorded events for the principal based on the active criteria matches the total number of events, consider the 
