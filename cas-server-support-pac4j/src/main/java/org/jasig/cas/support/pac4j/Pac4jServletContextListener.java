@@ -1,5 +1,6 @@
 package org.jasig.cas.support.pac4j;
 
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.jasig.cas.web.AbstractServletContextInitializer;
@@ -19,6 +20,10 @@ import javax.servlet.annotation.WebListener;
 @Component("pac4jServletContextListener")
 public class Pac4jServletContextListener extends AbstractServletContextInitializer {
 
+    @Autowired(required = false)
+    @Qualifier("clientPrincipalResolver")
+    private PrincipalResolver clientPrincipalResolver;
+
     @Autowired
     @Qualifier("clientAuthenticationHandler")
     private ClientAuthenticationHandler clientAuthenticationHandler;
@@ -29,7 +34,7 @@ public class Pac4jServletContextListener extends AbstractServletContextInitializ
 
     @Override
     protected void initializeRootApplicationContext() {
-        addAuthenticationHandler(clientAuthenticationHandler);
+        addAuthenticationHandlerPrincipalResolver(clientAuthenticationHandler, clientPrincipalResolver);
         addAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
     }
 }
