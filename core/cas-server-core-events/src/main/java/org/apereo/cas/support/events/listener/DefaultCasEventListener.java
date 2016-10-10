@@ -13,7 +13,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
  * This is {@link DefaultCasEventListener} that attempts to consume CAS events
