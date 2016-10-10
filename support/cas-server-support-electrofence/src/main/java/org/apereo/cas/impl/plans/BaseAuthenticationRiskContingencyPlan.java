@@ -47,7 +47,9 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
                                                                final HttpServletRequest request) {
         logger.debug("Executing {} to produce a risk response", getClass().getSimpleName());
 
-        notifiers.forEach(e -> e.notify(authentication, service, score));
+        notifiers.forEach(e -> {
+            e.notify(authentication, service, score);
+        });
         return executeInternal(authentication, service, score, request);
     }
     

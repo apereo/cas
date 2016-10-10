@@ -26,7 +26,7 @@ public class AuthenticationRiskTwilioSmsNotifier implements AuthenticationRiskNo
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
     public void notify(final Authentication authentication, final RegisteredService service, final AuthenticationRiskScore score) {
 
@@ -34,12 +34,9 @@ public class AuthenticationRiskTwilioSmsNotifier implements AuthenticationRiskNo
                 casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
 
         final Principal principal = authentication.getPrincipal();
-        
-        if (StringUtils.isBlank(sms.getText())
-                || StringUtils.isBlank(sms.getFrom())
-                || StringUtils.isBlank(sms.getTwilio().getToken())
-                || StringUtils.isBlank(sms.getTwilio().getAccountId())
-                || !principal.getAttributes().containsKey(sms.getAttributeName())) {
+
+        if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom()) || StringUtils.isBlank(sms.getTwilio().getToken())
+                || StringUtils.isBlank(sms.getTwilio().getAccountId()) || !principal.getAttributes().containsKey(sms.getAttributeName())) {
             LOGGER.debug("Could not send sms {} because either no phones could be found or sms settings are not configured.",
                     principal.getId());
             return;
