@@ -18,10 +18,10 @@ Simply put, the story told is:
 
 > If an authentication request is at least [60%] risky, take action to mitigate that risk. 
 
-The functionality of this feature is **ENTIRELY** dependant upon having collected statistics and authentication events in the past.
+The functionality of this feature is **ENTIRELY** dependant upon collected statistics and authentication events in the past.
 Without data, there is nothing to analyze and no risk to detect.
 
-Note that evaluation of attempts and mitigation of risks are all recorded in the CAS audit log.
+Note that evaluation of attempts and mitigation of risks are all recorded in the audit log.
 
 <div class="alert alert-info"><strong>Adaptive Authentication</strong><p>
 If you need to preemptively evaluate authentication attempts based on various characterisitcs of the request, 
@@ -29,7 +29,13 @@ you may be interested in <a href="Configuring-Adaptive-Authentication.html">this
 
 ## Risk Calculation
 
-One or more risk calculators may be enabled to allow an analysis of authentication requests:
+One or more risk calculators may be enabled to allow an analysis of authentication requests.
+
+A high level explanation of the risk calculation strategy follows:
+
+- If there is no recorded event at all present for the principal, consider the request suspicious.
+- If the number of recorded events for the principal based on the active criteria matches the total number of events, consider the 
+request safe.
 
 ### IP Address
 
@@ -41,7 +47,8 @@ One or more risk calculators may be enabled to allow an analysis of authenticati
 
 ## Risk Mitigation
 
-Once an authentication attempt is deemed risky, a contingency plan may be enabled to mitigate risk. 
+Once an authentication attempt is deemed risky, a contingency plan may be enabled to mitigate risk. If configured and allowed,
+CAS may notify both the principal and deployer via both email and sms.
 
 ### Block Authentication
 
