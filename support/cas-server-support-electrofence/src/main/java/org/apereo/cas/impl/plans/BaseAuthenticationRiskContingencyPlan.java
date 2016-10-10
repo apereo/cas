@@ -48,7 +48,11 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
         logger.debug("Executing {} to produce a risk response", getClass().getSimpleName());
 
         notifiers.forEach(e -> {
-            e.notify(authentication, service, score);
+            e.setAuthentication(authentication);
+            e.setAuthenticationRiskScore(score);
+            e.setRegisteredService(service);
+            logger.debug("Executing risk notification {}", e.getClass().getSimpleName());
+            new Thread(e, e.getClass().getSimpleName()).start();
         });
         return executeInternal(authentication, service, score, request);
     }
