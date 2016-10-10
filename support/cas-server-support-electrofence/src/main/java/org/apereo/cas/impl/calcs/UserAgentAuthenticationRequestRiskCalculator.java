@@ -5,7 +5,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.web.support.WebUtils;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
