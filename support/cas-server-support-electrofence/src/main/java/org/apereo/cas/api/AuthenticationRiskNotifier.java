@@ -9,14 +9,31 @@ import org.apereo.cas.services.RegisteredService;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface AuthenticationRiskNotifier {
+public interface AuthenticationRiskNotifier extends Runnable {
+
+    /**
+     * Sets authentication.
+     *
+     * @param authentication the authentication
+     */
+    void setAuthentication(Authentication authentication);
+
+    /**
+     * Sets registered service.
+     *
+     * @param service the service
+     */
+    void setRegisteredService(RegisteredService service);
+
+    /**
+     * Sets authentication risk score.
+     *
+     * @param score the score
+     */
+    void setAuthenticationRiskScore(AuthenticationRiskScore score);
 
     /**
      * Notify in the event that an authentication attempt is considered risky.
-     *
-     * @param authentication the authentication
-     * @param service        the service
-     * @param score          the score
      */
-    void notify(Authentication authentication, RegisteredService service, AuthenticationRiskScore score);
+    void publish();
 }

@@ -1,15 +1,8 @@
 package org.apereo.cas.impl.notify;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.api.AuthenticationRiskNotifier;
-import org.apereo.cas.api.AuthenticationRiskScore;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
-import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,11 +16,7 @@ import javax.mail.internet.MimeMessage;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class AuthenticationRiskEmailNotifier implements AuthenticationRiskNotifier {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationRiskEmailNotifier.class);
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
+public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotifier {
 
     /**
      * Only activated via boot if properties are defined.
@@ -38,7 +27,7 @@ public class AuthenticationRiskEmailNotifier implements AuthenticationRiskNotifi
     private JavaMailSender mailSender;
 
     @Override
-    public void notify(final Authentication authentication, final RegisteredService service, final AuthenticationRiskScore score) {
+    public void publish() {
         final RiskBasedAuthenticationProperties.Response.Mail mail =
                 casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
 
@@ -46,7 +35,7 @@ public class AuthenticationRiskEmailNotifier implements AuthenticationRiskNotifi
 
         if (this.mailSender == null || StringUtils.isBlank(mail.getText()) || StringUtils.isBlank(mail.getFrom())
                 || StringUtils.isBlank(mail.getSubject()) || !principal.getAttributes().containsKey(mail.getAttributeName())) {
-            LOGGER.debug("Could not send email {} because either no addresses could be found or email settings are not configured.",
+            logger.debug("Could not send email {} because either no addresses could be found or email settings are not configured.",
                     principal.getId());
             return;
         }
@@ -70,7 +59,7 @@ public class AuthenticationRiskEmailNotifier implements AuthenticationRiskNotifi
             }
             this.mailSender.send(message);
         } catch (final Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 }
