@@ -558,6 +558,7 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 # cas.authn.adaptive.risk.response.blockAttempt=false
 # cas.authn.adaptive.risk.response.mfaProvider=
+# cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
 
 # spring.mail.host=
 # spring.mail.username=
