@@ -36,19 +36,16 @@ public class AuthenticationRiskEmailNotifier implements AuthenticationRiskNotifi
     @Autowired(required = false)
     @Qualifier("mailSender")
     private JavaMailSender mailSender;
-    
+
     @Override
     public void notify(final Authentication authentication, final RegisteredService service, final AuthenticationRiskScore score) {
         final RiskBasedAuthenticationProperties.Response.Mail mail =
                 casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
 
         final Principal principal = authentication.getPrincipal();
-        
-        if (this.mailSender == null
-                || StringUtils.isBlank(mail.getText())
-                || StringUtils.isBlank(mail.getFrom())
-                || StringUtils.isBlank(mail.getSubject())
-                || !principal.getAttributes().containsKey(mail.getAttributeName())) {
+
+        if (this.mailSender == null || StringUtils.isBlank(mail.getText()) || StringUtils.isBlank(mail.getFrom())
+                || StringUtils.isBlank(mail.getSubject()) || !principal.getAttributes().containsKey(mail.getAttributeName())) {
             LOGGER.debug("Could not send email {} because either no addresses could be found or email settings are not configured.",
                     principal.getId());
             return;
