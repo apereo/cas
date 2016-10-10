@@ -21,6 +21,8 @@ import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.support.events.dao.CasEventRepository;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
@@ -32,6 +34,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.Set;
 
@@ -46,6 +50,13 @@ import java.util.Set;
 public class ElectronicFenceConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElectronicFenceConfiguration.class);
 
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
@@ -130,6 +141,16 @@ public class ElectronicFenceConfiguration {
         return new GeoLocationAuthenticationRequestRiskCalculator(this.casEventRepository);
     }
 
+    @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowConfigurer")
+    @Bean
+    @RefreshScope
+    public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
+        final RiskAwareAuthenticationWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer();
+        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        w.setFlowBuilderServices(flowBuilderServices);
+        return w;
+    }
+    
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
     @Bean
     @RefreshScope
