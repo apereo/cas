@@ -7,15 +7,17 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.B
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
@@ -223,15 +225,38 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final List<MetadataFilter> metadataFilterList = new ArrayList<>();
 
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
-
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
-
+        
+        buildEntityRoleFilterIfNeeded(service, metadataFilterList);
+        buildSchemaValidationFilterIfNeeded(service, metadataFilterList);
+        buildEntityAttributesFilterIfNeeded(service, metadataFilterList);
+        buildPredicateFilterIfNeeded(service, metadataFilterList);
+        
         if (!metadataFilterList.isEmpty()) {
             final MetadataFilterChain metadataFilterChain = new MetadataFilterChain();
             metadataFilterChain.setFilters(metadataFilterList);
 
             logger.debug("Metadata filter chain initialized with [{}] filters", metadataFilterList.size());
             metadataProvider.setMetadataFilter(metadataFilterChain);
+        }
+    }
+
+    private void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection()) 
+            && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
+            && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
+                       
+            final PredicateFilter.Direction dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
+            logger.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
+                    service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
+            
+            final PredicateFilter filter = new PredicateFilter(dir, entityDescriptor -> 
+                    StringUtils.isNotBlank(entityDescriptor.getEntityID()) 
+                    && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+
+            metadataFilterList.add(filter);
+            logger.debug("Added metadata predicate filter configuring with direction [{}] and pattern [{}]",
+                    service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
         }
     }
 
