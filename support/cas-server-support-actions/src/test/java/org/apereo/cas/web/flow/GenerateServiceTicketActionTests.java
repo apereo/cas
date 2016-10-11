@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -68,8 +69,6 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
 
     @Before
     public void onSetUp() throws Exception {
-       
-
         final AuthenticationResult authnResult =
                 getAuthenticationSystemSupport()
                         .handleAndFinalizeSingleAuthenticationTransaction(TestUtils.getService(),
@@ -87,7 +86,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service");
         request.setCookies(new Cookie("TGT", this.ticketGrantingTicket.getId()));
 
         this.action.execute(context);
@@ -102,7 +101,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service");
         WebUtils.putTicketGrantingTicketInScopes(context,
                 this.ticketGrantingTicket);
 
@@ -119,7 +118,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service");
 
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
@@ -135,7 +134,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service");
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
 
         this.ticketGrantingTicket.markTicketExpired();
@@ -149,13 +148,11 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
-        request.addParameter("gateway", "true");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_GATEWAY, "true");
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("bleh");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-
-
-        assertEquals("gateway", this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.STATE_ID_GATEWAY, this.action.execute(context).getId());
     }
 }
