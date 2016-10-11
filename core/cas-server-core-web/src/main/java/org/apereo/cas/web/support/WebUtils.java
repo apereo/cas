@@ -436,9 +436,7 @@ public final class WebUtils {
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
-            } else {
-                warnCookieGenerator.removeCookie(response);
-            }
+            } 
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
