@@ -1563,10 +1563,16 @@ Delegate authentication to an external SAML2 IdP (do not use the `resource:` or 
 # cas.authn.pac4j.saml.keystorePassword=
 # cas.authn.pac4j.saml.privateKeyPassword=
 # cas.authn.pac4j.saml.serviceProviderEntityId=
+# cas.authn.pac4j.saml.serviceProviderMetadataPath=
 # cas.authn.pac4j.saml.keystorePath=
 # cas.authn.pac4j.saml.maximumAuthenticationLifetime=
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
+
+The callback url for the SAML identity provider will be the CAS login page plus the `client_name=SAML2Client` query string.
+If the `serviceProviderEntityId` is not defined, its value will be the CAS login page URL (without any query string).
+
+So you must configure your SAML IdP accordingly.
 
 ### Yahoo
 
