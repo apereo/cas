@@ -1,5 +1,7 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -22,11 +24,11 @@ import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -35,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -44,17 +48,21 @@ import java.util.Set;
  * locale, method and service are saved into the web session.</p>
  * After authentication, appropriate information are expected on this callback url to finish the authentication
  * process with the provider.
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ClientAction extends AbstractAction {
-
-    /** Stop the webflow for pac4j and route to view. */
+    /**
+     * Stop the webflow for pac4j and route to view.
+     */
     public static final String STOP_WEBFLOW = "stopWebflow";
 
-    /** Stop the webflow. */
-    public static final String STOP= "stop";
+    /**
+     * Stop the webflow.
+     */
+    public static final String STOP = "stop";
 
     /**
      * Client action state id in the webflow.
@@ -66,7 +74,12 @@ public class ClientAction extends AbstractAction {
      */
     public static final String PAC4J_URLS = "pac4jUrls";
 
-    private transient Logger logger = LoggerFactory.getLogger(ClientAction.class);
+    /**
+     * View id that stops the webflow.
+     */
+    public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientAction.class);
 
     private Clients clients;
 
@@ -77,7 +90,8 @@ public class ClientAction extends AbstractAction {
     /**
      * Build the ClientAction.
      */
-    public ClientAction() {}
+    public ClientAction() {
+    }
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -90,33 +104,33 @@ public class ClientAction extends AbstractAction {
 
         // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
-        logger.debug("clientName: {}", clientName);
+        LOGGER.debug("clientName: {}", clientName);
 
+        if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
+            return stopWebflow();
+        }
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
             // get client
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
-                    .findClient(clientName);
-            logger.debug("Client: {}", client);
+                            .findClient(clientName);
+            LOGGER.debug("Client: {}", client);
 
             // get credentials
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
-                logger.debug("Retrieved credentials: {}", credentials);
+                LOGGER.debug("Retrieved credentials: {}", credentials);
             } catch (final Exception e) {
-                logger.debug("The request requires http action", e);
-                response.flushBuffer();
-                final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
-                externalContext.recordResponseComplete();
-                return new Event(this, STOP);
+                LOGGER.debug("The request requires http action", e);
+                return stopWebflow();
             }
 
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-            logger.debug("Retrieve service: {}", service);
+            LOGGER.debug("Retrieve service: {}", service);
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
@@ -140,7 +154,7 @@ public class ClientAction extends AbstractAction {
         // no or aborted authentication : go to login page
         prepareForLoginPage(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
-            return new Event(this, STOP);
+            return stopWebflow();
         }
         return error();
     }
@@ -161,7 +175,7 @@ public class ClientAction extends AbstractAction {
 
         // save parameters in web session
         final WebApplicationService service = WebUtils.getService(context);
-        logger.debug("save service: {}", service);
+        LOGGER.debug("save service: {}", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         saveRequestParameter(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
         saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
@@ -173,24 +187,24 @@ public class ClientAction extends AbstractAction {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
                 // clean Client suffix for default names
-                final String name = client.getName().replace("Client", "");
+                final String name = StringUtils.remove(client.getName(), "Client");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
-                logger.debug("{} -> {}", name, redirectionUrl);
+                LOGGER.debug("{} -> {}", name, redirectionUrl);
                 urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, name.toLowerCase()));
             } catch (final HttpAction e) {
                 if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                    logger.debug("Authentication request was denied from the provider {}", client.getName());
+                    LOGGER.debug("Authentication request was denied from the provider {}", client.getName());
                 } else {
-                    logger.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                 }
             } catch (final Exception e) {
-                logger.error("Cannot process client {}", client, e);
+                LOGGER.error("Cannot process client {}", client, e);
             }
         }
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            logger.info("No clients could be determined based on the provided configuration");
+            LOGGER.warn("No clients could be determined based on the provided configuration");
         }
     }
 
@@ -199,10 +213,10 @@ public class ClientAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name The name of the parameter
+     * @param name    The name of the parameter
      */
     private void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
-            final String name) {
+                                         final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -212,10 +226,10 @@ public class ClientAction extends AbstractAction {
      *
      * @param request The HTTP request
      * @param session The HTTP session
-     * @param name The name of the parameter
+     * @param name    The name of the parameter
      */
     private void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
-            final String name) {
+                                      final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -244,6 +258,45 @@ public class ClientAction extends AbstractAction {
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
+    private Event stopWebflow() {
+        return new Event(this, STOP);
+    }
+    
+    /**
+     * Determine if request has errors.
+     *
+     * @param request the request
+     * @param status  the status
+     * @return the optional model and view, if request is an error.
+     */
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
+                                                                    final int status) {
+        final Map<String, String[]> params = request.getParameterMap();
+        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
+                || params.containsKey("error_message")) {
+            final Map<String, Object> model = Maps.newHashMap();
+            if (params.containsKey("error_code")) {
+                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
+            } else {
+                model.put("code", status);
+            }
+            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
+            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
+            
+            if (params.containsKey("error_description")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
+            } else if (params.containsKey("error_message")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
+            }
+            model.put("service", request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
+            
+            LOGGER.debug("Delegation request has failed. Details are {}", model);
+            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
+        }
+        return Optional.empty();
     }
 
     /**
