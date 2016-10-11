@@ -26,6 +26,7 @@ Support is enabled by including the following module in the Overlay:
 
 The following SAML SP integrations are provided by CAS:
 
+* [InCommon](http://www.incommon.org/federation/metadata.html)
 * [Dropbox](https://www.dropbox.com/guide/admin/security/configure-single-sign-on)
 * [SAManage](https://blog.samanage.com/company/saml-single-sign-on-support-samanage/)
 * [Salesforce](https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm)
