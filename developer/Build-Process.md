@@ -4,9 +4,11 @@ title: CAS - Build Process
 ---
 
 # Build Process
+
 This page documents the steps that a CAS developer should take for building a CAS server locally.
 
 ## Source Checkout
+
 The following shell commands may be used to grab the source from the repository:
 
 ```bash
@@ -14,6 +16,7 @@ git clone git@github.com:apereo/cas.git cas-server
 ```
 
 ## Build
+
 The following shell commands may be used to build the source:
 
 ```bash
@@ -27,6 +30,7 @@ The following commandline boolean flags are supported by the build:
 | Flag                              | Description
 |-----------------------------------+----------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks.
+| `enableRemoteDebugging`           | Allows for remote debugging via a pre-definedd port.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
 | `genConfigMetadata`               | Generate CAS configuration metadata for `@ConfigurationProperties` classes.
