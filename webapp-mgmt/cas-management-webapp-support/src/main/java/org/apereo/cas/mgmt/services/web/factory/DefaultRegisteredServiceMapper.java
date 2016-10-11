@@ -85,6 +85,8 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setEncAssert(saml.isEncryptAssertions());
             samlbean.setSignResp(saml.isSignResponses());
             samlbean.setSignAssert(saml.isSignAssertions());
+            samlbean.setRemoveEmptyEntities(saml.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            samlbean.setRemoveRoleless(saml.isMetadataCriteriaRemoveRolelessEntityDescriptors());
         }
 
         bean.setTheme(svc.getTheme());
@@ -175,6 +177,10 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((SamlRegisteredService) regSvc).setMetadataSignatureLocation(samlBean.getMdSigLoc());
                 ((SamlRegisteredService) regSvc).setMetadataMaxValidity(samlBean.getMdMaxVal());
                 ((SamlRegisteredService) regSvc).setRequiredAuthenticationContextClass(samlBean.getAuthCtxCls());
+
+                ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlBean.isRemoveEmptyEntities());
+                ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveRolelessEntityDescriptors(samlBean.isRemoveRoleless());
+                
             } else {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();
