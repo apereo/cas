@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -171,7 +172,7 @@ public class Pac4jConfiguration {
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderMetadataPath());
-        properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect");
+        properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private void configureOidcClient(final Map<String, String> properties) {
