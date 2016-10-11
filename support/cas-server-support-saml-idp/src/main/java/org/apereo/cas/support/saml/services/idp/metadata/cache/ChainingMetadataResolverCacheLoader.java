@@ -233,7 +233,6 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
 
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
-        buildSchemaValidationFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);
 
         if (!metadataFilterList.isEmpty()) {
