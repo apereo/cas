@@ -31,25 +31,31 @@ public class SamlRegisteredService extends RegexRegisteredService {
      * A maximum validity interval of less than 1 means that
      * no restriction is placed on the metadata's validUntil attribute.
      */
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private long metadataMaxValidity;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String requiredAuthenticationContextClass;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    private String metadataCriteriaDirection;
+
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    private String metadataCriteriaPattern;
+    
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String requiredNameIdFormat;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String metadataSignatureLocation;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean signAssertions;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean signResponses = true;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean encryptAssertions;
 
     /**
@@ -115,6 +121,35 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.metadataMaxValidity = metadataMaxValidity;
     }
 
+    public String getMetadataCriteriaDirection() {
+        return metadataCriteriaDirection;
+    }
+
+    public void setMetadataCriteriaDirection(final String metadataCriteriaDirection) {
+        this.metadataCriteriaDirection = metadataCriteriaDirection;
+    }
+
+    public String getMetadataCriteriaPattern() {
+        return metadataCriteriaPattern;
+    }
+
+    public void setMetadataCriteriaPattern(final String metadataCriteriaPattern) {
+        this.metadataCriteriaPattern = metadataCriteriaPattern;
+    }
+    
+    public String getRequiredNameIdFormat() {
+        return requiredNameIdFormat;
+    }
+
+    public void setRequiredNameIdFormat(final String requiredNameIdFormat) {
+        this.requiredNameIdFormat = requiredNameIdFormat;
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new SamlRegisteredService();
+    }
+
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
@@ -128,22 +163,13 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataSignatureLocation(samlRegisteredService.getMetadataSignatureLocation());
             setEncryptAssertions(samlRegisteredService.isEncryptAssertions());
             setRequiredNameIdFormat(samlRegisteredService.getRequiredNameIdFormat());
+
+            setMetadataCriteriaDirection(samlRegisteredService.getMetadataCriteriaDirection());
+            setMetadataCriteriaPattern(samlRegisteredService.getMetadataCriteriaPattern());
+
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    public String getRequiredNameIdFormat() {
-        return requiredNameIdFormat;
-    }
-
-    public void setRequiredNameIdFormat(final String requiredNameIdFormat) {
-        this.requiredNameIdFormat = requiredNameIdFormat;
-    }
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new SamlRegisteredService();
     }
     
     @Override
@@ -168,6 +194,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.signResponses, rhs.signResponses)
                 .append(this.encryptAssertions, rhs.encryptAssertions)
                 .append(this.requiredNameIdFormat, rhs.requiredNameIdFormat)
+                .append(this.metadataCriteriaDirection, rhs.metadataCriteriaDirection)
+                .append(this.metadataCriteriaPattern, rhs.metadataCriteriaPattern)
                 .isEquals();
     }
 
@@ -183,6 +211,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.signResponses)
                 .append(this.encryptAssertions)
                 .append(this.requiredNameIdFormat)
+                .append(this.metadataCriteriaDirection)
+                .append(this.metadataCriteriaPattern)
                 .toHashCode();
     }
 
@@ -198,6 +228,8 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("signResponses", this.signResponses)
                 .append("encryptAssertions", this.encryptAssertions)
                 .append("requiredNameIdFormat", this.requiredNameIdFormat)
+                .append("metadataCriteriaDirection", this.metadataCriteriaDirection)
+                .append("metadataCriteriaPattern", this.metadataCriteriaPattern)
                 .toString();
     }
 }
