@@ -8,8 +8,14 @@
 <body id="cas">
 <div layout:fragment="content" class="confirmView">
     <div class="alert alert-info">
-        <h2 class="h3" th:text="#{screen.confirmation.message}"/>
-        <a class="btn btn-success" th:href="${serviceWarningUrl}"><span th:text="#{screen.button.continue}"/></a>
+        <h4 th:text="#{screen.confirmation.message}"/>
+
+        <form method="post" id="form" class="fm-v clearfix">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input class="btn btn-submit" name="_eventId_success" accesskey="l"
+                   th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+        </form>
+
     </div>
 </div>
 </body>

@@ -188,7 +188,6 @@ public class CasSupportActionsConfiguration {
         a.setCentralAuthenticationService(this.centralAuthenticationService);
         a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
         a.setTicketRegistrySupport(this.ticketRegistrySupport);
-        a.setWarnCookieGenerator(this.warnCookieGenerator);
         return a;
     }
 
@@ -224,6 +223,10 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action serviceWarningAction() {
-        return new ServiceWarningAction();
+        final ServiceWarningAction a = new ServiceWarningAction();
+        a.setCentralAuthenticationService(this.centralAuthenticationService);
+        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
+        return a;
     }
 }
