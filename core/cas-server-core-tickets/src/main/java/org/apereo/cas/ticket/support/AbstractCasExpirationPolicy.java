@@ -2,8 +2,6 @@ package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
