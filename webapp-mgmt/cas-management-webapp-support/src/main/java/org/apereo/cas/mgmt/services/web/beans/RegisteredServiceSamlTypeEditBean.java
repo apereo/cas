@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
-import java.util.List;
 import java.util.Set;
 
 /**

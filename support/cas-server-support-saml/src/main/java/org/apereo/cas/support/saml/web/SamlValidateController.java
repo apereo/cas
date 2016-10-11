@@ -10,8 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.apereo.cas.support.saml.SamlProtocolConstants.ENDPOINT_SAML_VALIDATE;
-
 /**
  * The {@link SamlValidateController} is responsible for
  * validating requests based on the saml1 protocol.
