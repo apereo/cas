@@ -58,6 +58,15 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean encryptAssertions;
 
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    private String metadataCriteriaRole;
+
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
+
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
+        
     /**
      * Instantiates a new Saml registered service.
      */
@@ -145,6 +154,30 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.requiredNameIdFormat = requiredNameIdFormat;
     }
 
+    public String getMetadataCriteriaRole() {
+        return metadataCriteriaRole;
+    }
+
+    public void setMetadataCriteriaRole(final String metadataCriteriaRole) {
+        this.metadataCriteriaRole = metadataCriteriaRole;
+    }
+
+    public boolean isMetadataCriteriaRemoveEmptyEntitiesDescriptors() {
+        return metadataCriteriaRemoveEmptyEntitiesDescriptors;
+    }
+
+    public void setMetadataCriteriaRemoveEmptyEntitiesDescriptors(final boolean metadataCriteriaRemoveEmptyEntitiesDescriptors) {
+        this.metadataCriteriaRemoveEmptyEntitiesDescriptors = metadataCriteriaRemoveEmptyEntitiesDescriptors;
+    }
+
+    public boolean isMetadataCriteriaRemoveRolelessEntityDescriptors() {
+        return metadataCriteriaRemoveRolelessEntityDescriptors;
+    }
+
+    public void setMetadataCriteriaRemoveRolelessEntityDescriptors(final boolean metadataCriteriaRemoveRolelessEntityDescriptors) {
+        this.metadataCriteriaRemoveRolelessEntityDescriptors = metadataCriteriaRemoveRolelessEntityDescriptors;
+    }
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new SamlRegisteredService();
@@ -167,6 +200,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataCriteriaDirection(samlRegisteredService.getMetadataCriteriaDirection());
             setMetadataCriteriaPattern(samlRegisteredService.getMetadataCriteriaPattern());
 
+            setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlRegisteredService.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            setMetadataCriteriaRemoveRolelessEntityDescriptors(samlRegisteredService.isMetadataCriteriaRemoveRolelessEntityDescriptors());
+            setMetadataCriteriaRole(samlRegisteredService.getMetadataCriteriaRole());
+            
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -196,6 +233,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.requiredNameIdFormat, rhs.requiredNameIdFormat)
                 .append(this.metadataCriteriaDirection, rhs.metadataCriteriaDirection)
                 .append(this.metadataCriteriaPattern, rhs.metadataCriteriaPattern)
+                .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors, rhs.metadataCriteriaRemoveEmptyEntitiesDescriptors)
+                .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
+                .append(this.metadataCriteriaRole, rhs.metadataCriteriaRole)
                 .isEquals();
     }
 
@@ -213,6 +253,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.requiredNameIdFormat)
                 .append(this.metadataCriteriaDirection)
                 .append(this.metadataCriteriaPattern)
+                .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
+                .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
+                .append(this.metadataCriteriaRole)
                 .toHashCode();
     }
 
@@ -230,6 +273,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
                 .append("requiredNameIdFormat", this.requiredNameIdFormat)
                 .append("metadataCriteriaDirection", this.metadataCriteriaDirection)
                 .append("metadataCriteriaPattern", this.metadataCriteriaPattern)
+                .append("metadataCriteriaRemoveEmptyEntitiesDescriptors", this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
+                .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
+                .append("metadataCriteriaRole", this.metadataCriteriaRole)
                 .toString();
     }
 }
