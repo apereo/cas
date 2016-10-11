@@ -11,13 +11,14 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.net.URI;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link ServiceWarningAction}. Populates the view
@@ -34,10 +35,14 @@ public class ServiceWarningAction extends AbstractAction {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     private TicketRegistrySupport ticketRegistrySupport;
+
+    private CookieGenerator warnCookieGenerator;
     
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
-
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
@@ -54,6 +59,12 @@ public class ServiceWarningAction extends AbstractAction {
         final ServiceTicket serviceTicketId = this.centralAuthenticationService
                 .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+        
+        if (request.getParameterMap().containsKey("ignorewarn")) {
+            if (Boolean.valueOf(request.getParameter("ignorewarn").toString())) {
+                this.warnCookieGenerator.removeCookie(response);
+            }
+        }
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
@@ -67,5 +78,9 @@ public class ServiceWarningAction extends AbstractAction {
 
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
+    }
+
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
     }
 }
