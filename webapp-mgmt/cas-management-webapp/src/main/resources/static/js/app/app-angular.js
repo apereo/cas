@@ -673,6 +673,14 @@ if (array.length == 3) {
                     {name: 'OPEN', value: 'OPEN'},
                     {name: 'CLOSED', value: 'CLOSED'},
                     {name: 'PHANTOM', value: 'PHANTOM'}
+                ],
+                samlRoleList: [
+                    {name: 'SPSSODescriptor', value: 'SPSSODescriptor'},
+                    {name: 'IDPSSODescriptor', value: 'IDPSSODescriptor'}
+                ],
+                samlDirectionList: [
+                    {name: 'INCLUDE', value: 'INCLUDE'},
+                    {name: 'EXCLUDE', value: 'EXCLUDE'}
                 ]
             };
 
