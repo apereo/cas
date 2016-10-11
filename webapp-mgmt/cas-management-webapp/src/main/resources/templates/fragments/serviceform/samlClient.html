@@ -183,7 +183,8 @@
                 </label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                        <select class="form-control" multiple="true" id="samlMetadataRole" ng-model="serviceFormCtrl.serviceData.saml.role">
+                        <select class="form-control" multiple="true" id="samlMetadataRole" 
+                                ng-model="serviceFormCtrl.serviceData.saml.roles">
                             <option ng-repeat="opt in serviceFormCtrl.selectOptions.samlRoleList" ng-attr-value="{{ opt.value }}"
                                     ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.saml.role)">{{ opt.name 
                                 }}</option>
