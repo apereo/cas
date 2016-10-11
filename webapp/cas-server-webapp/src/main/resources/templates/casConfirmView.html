@@ -12,6 +12,14 @@
 
         <form method="post" id="form" class="fm-v clearfix">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            
+            <input id="ignorewarn"
+                   name="ignorewarn"
+                   value="true"
+                   tabindex="1"
+                   type="checkbox" />
+            <label for="ignorewarn" th:utext="#{screen.welcome.label.warnremove}"/>
+            <br/><br/>
             <input class="btn btn-submit" name="_eventId_success" accesskey="l"
                    th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
         </form>

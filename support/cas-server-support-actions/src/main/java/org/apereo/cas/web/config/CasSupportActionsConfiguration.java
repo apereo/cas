@@ -227,6 +227,7 @@ public class CasSupportActionsConfiguration {
         a.setCentralAuthenticationService(this.centralAuthenticationService);
         a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
         a.setTicketRegistrySupport(this.ticketRegistrySupport);
+        a.setWarnCookieGenerator(this.warnCookieGenerator);
         return a;
     }
 }
