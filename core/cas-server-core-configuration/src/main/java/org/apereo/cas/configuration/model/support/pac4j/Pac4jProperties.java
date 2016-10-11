@@ -187,6 +187,7 @@ public class Pac4jProperties {
         private String identityProviderMetadataPath;
         private String maximumAuthenticationLifetime;
         private String serviceProviderEntityId;
+        private String serviceProviderMetadataPath;
 
         public String getKeystorePassword() {
             return this.keystorePassword;
@@ -234,6 +235,14 @@ public class Pac4jProperties {
 
         public void setServiceProviderEntityId(final String serviceProviderEntityId) {
             this.serviceProviderEntityId = serviceProviderEntityId;
+        }
+
+        public String getServiceProviderMetadataPath() {
+            return serviceProviderMetadataPath;
+        }
+
+        public void setServiceProviderMetadataPath(final String serviceProviderMetadataPath) {
+            this.serviceProviderMetadataPath = serviceProviderMetadataPath;
         }
     }
 
