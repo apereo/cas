@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
@@ -57,6 +58,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
 
         putCasResponseAttributesIntoModel(model, attributes, registeredService);
+
     }
 
     /**
@@ -121,7 +123,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
             values.forEach(value -> {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<cas:".concat(k).concat(">"));
-                builder.append(value.toString().trim());
+                builder.append(StringEscapeUtils.escapeXml(value.toString().trim()));
                 builder.append("</cas:".concat(k).concat(">"));
                 formattedAttributes.add(builder.toString());
             });
