@@ -186,8 +186,9 @@ public class CasSupportActionsConfiguration {
     public Action generateServiceTicketAction() {
         final GenerateServiceTicketAction a = new GenerateServiceTicketAction();
         a.setCentralAuthenticationService(this.centralAuthenticationService);
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setTicketRegistrySupport(ticketRegistrySupport);
+        a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
+        a.setWarnCookieGenerator(this.warnCookieGenerator);
         return a;
     }
 

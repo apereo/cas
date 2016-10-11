@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -15,7 +15,9 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,21 +38,26 @@ public class GenerateServiceTicketAction extends AbstractAction {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
+    private CookieGenerator warnCookieGenerator;
+
+    /**
+     * {@inheritDoc}
+     * 
+     * In the initial primary authentication flow, credentials are cached and available.
+     * Since they are authenticated as part of submission first, there is no need to doubly
+     * authenticate and verify credentials.
+     *
+     * In subsequent authentication flows where a TGT is available and only an ST needs to be
+     * created, there are no cached copies of the credential, since we do have a TGT available.
+     * So we will simply grab the available authentication and produce the final result based on that.
+     */
     @Override
     protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
-            /**
-             * In the initial primary authentication flow, credentials are cached and available.
-             * Since they are authenticated as part of submission first, there is no need to doubly
-             * authenticate and verify credentials.
-             *
-             * In subsequent authentication flows where a TGT is available and only an ST needs to be
-             * created, there are no cached copies of the credential, since we do have a TGT available.
-             * So we will simply grab the available authentication and produce the final result based on that.
-             */
+            
             final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
                 throw new InvalidTicketException(
@@ -70,7 +77,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
-                return result("gateway");
+                return result(CasWebflowConstants.STATE_ID_GATEWAY);
             }
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
@@ -86,6 +93,10 @@ public class GenerateServiceTicketAction extends AbstractAction {
 
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
+    }
+
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
     }
 
     /**
@@ -107,6 +118,6 @@ public class GenerateServiceTicketAction extends AbstractAction {
      * @return the event
      */
     private Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap<>("error", error));
+        return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
     }
 }
