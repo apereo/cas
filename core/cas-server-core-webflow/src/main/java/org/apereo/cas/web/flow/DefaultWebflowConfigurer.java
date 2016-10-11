@@ -79,10 +79,12 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
         state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
 
-        final EndState stateWarning = createEndState(flow,
+        final ViewState stateWarning = createViewState(flow,
                 CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
                 CasWebflowConstants.VIEW_ID_CONFIRM);
-        stateWarning.getEntryActionList().add(createEvaluateAction("serviceWarningAction"));
+        createTransitionForState(stateWarning, CasWebflowConstants.TRANSITION_ID_SUCCESS, "finalizeWarning");
+        final ActionState finalizeWarn = createActionState(flow, "finalizeWarning", createEvaluateAction("serviceWarningAction"));
+        createTransitionForState(finalizeWarn, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
     /**

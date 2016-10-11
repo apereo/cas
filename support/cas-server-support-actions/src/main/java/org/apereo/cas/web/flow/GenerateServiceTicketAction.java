@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -37,8 +36,6 @@ public class GenerateServiceTicketAction extends AbstractAction {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     private TicketRegistrySupport ticketRegistrySupport;
-
-    private CookieGenerator warnCookieGenerator;
 
     /**
      * {@inheritDoc}
@@ -63,6 +60,11 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 throw new InvalidTicketException(
                         new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
             }
+            
+            if (WebUtils.getWarningCookie(context)) {
+                return result(CasWebflowConstants.STATE_ID_WARN);
+            }
+
             final AuthenticationResultBuilder authenticationResultBuilder = this.authenticationSystemSupport
                     .establishAuthenticationContextFromInitial(authentication);
             final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
@@ -71,7 +73,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
-
+            
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -94,11 +96,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
-
-    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
+    
     /**
      * Checks if {@code gateway} is present in the request params.
      *
