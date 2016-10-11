@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -247,15 +248,18 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     private void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         final List<QName> roles = Lists.newArrayList();
 
-        if (StringUtils.isNotBlank(service.getMetadataCriteriaRole())) {
-            if (service.getMetadataCriteriaRole().equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                logger.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-            }
-            if (service.getMetadataCriteriaRole().equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                logger.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-            }
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
+            final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
+            rolesSet.stream().forEach(s -> {
+                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    logger.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    logger.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+            });
         }
         final EntityRoleFilter filter = new EntityRoleFilter(roles);
         filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
