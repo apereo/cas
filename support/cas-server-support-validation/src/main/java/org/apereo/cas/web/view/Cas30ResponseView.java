@@ -58,7 +58,6 @@ public class Cas30ResponseView extends Cas20ResponseView {
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
 
         putCasResponseAttributesIntoModel(model, attributes, registeredService);
-
     }
 
     /**
