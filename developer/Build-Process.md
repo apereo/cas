@@ -15,6 +15,12 @@ The following shell commands may be used to grab the source from the repository:
 git clone git@github.com:apereo/cas.git cas-server
 ```
 
+Or a quicker clone:
+
+```bash
+git clone --depth=1 git@github.com:apereo/cas.git cas-server
+```
+
 ## Build
 
 The following shell commands may be used to build the source:
