@@ -21,13 +21,6 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private static final long serialVersionUID = 8042104336580063690L;
 
     /**
-     * The Logger instance for this class. Using a transient instance field for
-     * the Logger doesn't work; On object
-     * deserialization the field is null.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasExpirationPolicy.class);
-
-    /**
      * Gets the http request based on the
      * {@link org.springframework.web.context.request.RequestContextHolder}.
      * @return the request or null

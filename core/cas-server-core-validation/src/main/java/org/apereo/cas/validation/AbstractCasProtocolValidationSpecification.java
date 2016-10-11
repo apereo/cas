@@ -65,7 +65,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
             logger.warn("{} is not satisfied by the produced assertion", getClass().getSimpleName());
             return false;
         }
-        satisfied = (!this.renew || assertion.isFromNewLogin());
+        satisfied = !this.renew || assertion.isFromNewLogin();
         if (!satisfied) {
             logger.warn("{} is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
                     getClass().getSimpleName(), CasProtocolConstants.PARAMETER_RENEW);
