@@ -14,6 +14,8 @@ public class RegisteredServiceSamlTypeEditBean {
     private String mdLoc;
     private long mdMaxVal;
     private String mdSigLoc;
+    private boolean removeEmptyEntities;
+    private boolean removeRoleless;
 
     public boolean isSignResp() {
         return signResp;
@@ -69,5 +71,21 @@ public class RegisteredServiceSamlTypeEditBean {
 
     public void setMdSigLoc(final String mdSigLoc) {
         this.mdSigLoc = mdSigLoc;
+    }
+
+    public boolean isRemoveEmptyEntities() {
+        return removeEmptyEntities;
+    }
+
+    public void setRemoveEmptyEntities(final boolean removeEmptyEntities) {
+        this.removeEmptyEntities = removeEmptyEntities;
+    }
+
+    public boolean isRemoveRoleless() {
+        return removeRoleless;
+    }
+
+    public void setRemoveRoleless(final boolean removeRoleless) {
+        this.removeRoleless = removeRoleless;
     }
 }
