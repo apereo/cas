@@ -52,15 +52,15 @@ public class ClientAction extends AbstractAction {
 
     /** Stop the webflow for pac4j and route to view. */
     public static final String STOP_WEBFLOW = "stopWebflow";
-    
+
     /** Stop the webflow. */
     public static final String STOP= "stop";
-    
+
     /**
      * Client action state id in the webflow.
      */
     public static final String CLIENT_ACTION = "clientAction";
-    
+
     /**
      * All the urls and names of the pac4j clients.
      */
@@ -110,7 +110,7 @@ public class ClientAction extends AbstractAction {
                 response.flushBuffer();
                 final ExternalContext externalContext = ExternalContextHolder.getExternalContext();
                 externalContext.recordResponseComplete();
-                return new Event(this, STOP_WEBFLOW);
+                return new Event(this, STOP);
             }
 
             // retrieve parameters from web session
@@ -141,7 +141,7 @@ public class ClientAction extends AbstractAction {
         prepareForLoginPage(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return new Event(this, STOP);
-        } 
+        }
         return error();
     }
 
