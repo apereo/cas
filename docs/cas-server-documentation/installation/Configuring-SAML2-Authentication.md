@@ -144,11 +144,11 @@ The following fields are available for SAML services:
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request. 
 | `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
-| `metadataCriteriaPattern`            | If defined, will force an entity id filter based on the `PredicateFilter` on the metadata aggregate to include/exclude specific entity ids based on a valid regex pattern.
-| `metadataCriteriaDirection`          | If defined, will force an entity id filter on the metadata aggregate based on `PredicateFilter`. Allowed values are`INCLUDE`,`EXCLUDE`.
-| `metadataCriteriaRole`               | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`)
+| `metadataCriteriaPattern`            | If defined, will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern.
+| `metadataCriteriaDirection`          | If defined, will force an entity id filter on the metadata aggregate based on `PredicateFilter`. Allowed values are `INCLUDE`,`EXCLUDE`.
+| `metadataCriteriaRole`               | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`)
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
-| `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entity descriptors that contain no roles. Whether assertions should be encrypted. Default is `true`.
+| `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 
 
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
