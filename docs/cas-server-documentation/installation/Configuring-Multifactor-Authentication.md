@@ -127,6 +127,27 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 }
 ```
 
+## Bypass Rules
+
+Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
+has is chosen to honor the authentication request, bypass rules are then consulted to calculate
+whether the provider should ignore the request and skip MFA conditionally. 
+
+Bypass rules allow for the following options for each provider:
+
+- Skip multifactor authentication based on designated **principal** attribute **names**.
+- ...[and optionally] Skip multifactor authentication based on designated **principal** attribute **values**.
+- Skip multifactor authentication based on designated **authentication** attribute **names**.
+- ...[and optionally] Skip multifactor authentication based on designated **authentication** attribute **values**.
+- Skip multifactor authentication depending on method/form of primary authentication execution. 
+
+A few simple examples follow:
+
+- Trigger MFA except when the principal carries a `affiliation` attribute whose value is either `alum` or `member`.
+- Trigger MFA except when the principal carries a `superAdmin` attribute.
+- Trigger MFA except if the method primary authentication is SPNEGO.
+- Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
+
 ## Fail-Open vs Fail-Closed
 
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
@@ -156,15 +177,6 @@ The following failure modes are supported:
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
 
-## Trusted Device/Browser
-
-CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers
-tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers
-are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions
-both for admins and end-users.
-
-[See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
-
 ## Ranking Providers
 
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
@@ -184,6 +196,15 @@ authentication level now satisfied.
 Ranking of authentication methods is done per provider via specific properties for each in CAS settings. Note that
 the higher the rank value is, the higher on the security scale it remains. A provider that ranks higher with a larger weight value trumps 
 and override others with a lower value. 
+
+## Trusted Device/Browser
+
+CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers
+tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers
+are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions
+both for admins and end-users.
+
+[See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
 
 ## Settings
 
