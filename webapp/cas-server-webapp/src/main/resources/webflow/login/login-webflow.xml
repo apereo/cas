@@ -85,7 +85,8 @@
     
     <action-state id="generateServiceTicket">
         <evaluate expression="generateServiceTicketAction"/>
-        <transition on="success" to="warn"/>
+        <transition on="success" to="redirect"/>
+        <transition on="warn" to="warn"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
         <transition on="gateway" to="gatewayServicesManagementCheck"/>
