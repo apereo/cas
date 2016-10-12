@@ -74,7 +74,7 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
+        
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
     @Autowired
     @Bean

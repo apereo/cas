@@ -3,11 +3,13 @@ package org.apereo.cas.services;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.execution.Event;
 
 import java.io.Serializable;
 
@@ -29,7 +31,34 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     protected CasConfigurationProperties casProperties;
 
     @Override
-    public boolean verify(final RegisteredService service) throws AuthenticationException {
+    public final boolean supports(final Event e, 
+                            final Authentication authentication, 
+                            final RegisteredService registeredService) {
+        if (e == null || !e.getId().equals(getId())) {
+            logger.debug("Provided event id {} is not applicable to this provider identified by {}", getId());
+            return false;
+        }
+        
+        return supportsInternal(e, authentication, registeredService);
+    }
+
+    /**
+     * Determine internally if provider is able to support this authentication request
+     * for multifactor, and account for bypass rules..
+     *
+     * @param e                 the event
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @return the boolean
+     */
+    protected boolean supportsInternal(final Event e,
+                                       final Authentication authentication,
+                                       final RegisteredService registeredService) {
+        return true;
+    }
+    
+    @Override
+    public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
         RegisteredServiceMultifactorPolicy.FailureModes failureMode = RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
