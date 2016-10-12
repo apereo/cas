@@ -60,7 +60,7 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 
 ### Vault
 
-```
+```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
 # spring.cloud.vault.connectionTimeout=3000
@@ -124,7 +124,7 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### Kafka
 
-```
+```properties
 # spring.cloud.stream.bindings.output.content-type=application/json
 # spring.cloud.stream.kafka.binder.zkNodes=...
 # spring.cloud.stream.kafka.binder.brokers=...
