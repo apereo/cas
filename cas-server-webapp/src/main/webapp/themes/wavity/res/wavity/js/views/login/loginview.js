@@ -71,12 +71,36 @@ define(
 			$('#tempForm').remove();
 			$('input[name=prevAddressContainer]').remove();
 			$('#list-providers').remove();
+			
+			this.addForgetPasswordLink();
 		},
 		errormsgclose: function() {
     	   $('.notification_inner').hide(500);
     	   $('.ot_username, .ot_password').removeClass('has-error');
     	   $('.ot_username .help-inline, .ot_password .help-inline').removeClass('oneteam-error-msg').text('');
-       }
+       },
+       addForgetPasswordLink: function(){
+    	   var serviceUrl = this.getParam("service");
+    	   var decodedUrl = decodeURIComponent(serviceUrl);
+    	   var serviceLocation = this.createLocation(decodedUrl);
+    	   var forgetPasswordUrl = serviceLocation.origin + "/ics/passwordReset.html";
+    	   $('#forgetPasswordLink').attr("href",forgetPasswordUrl);
+       },
+       getParam: function(sParam) {
+			var sPageURL = window.location.search.substring(1);
+			var sURLVariables = sPageURL.split('&');
+			for (var i = 0; i < sURLVariables.length; i++) {
+				var sParameterName = sURLVariables[i].split('=');
+				if (sParameterName[0] == sParam) {
+					return sParameterName[1];
+				}
+			}
+		},
+		createLocation: function(href){
+			var location = document.createElement("a");
+			location.href = href;
+		    return location;
+		}
 	});
 });
 
