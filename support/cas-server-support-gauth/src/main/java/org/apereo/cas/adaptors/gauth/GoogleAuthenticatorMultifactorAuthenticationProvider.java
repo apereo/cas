@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
 /**
@@ -23,6 +24,10 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
         return casProperties.getAuthn().getMfa().getGauth().getRank();
     }
 
+    @Override
+    protected MultifactorAuthenticationProperties.BaseProvider.Bypass getMultifactorProviderBypassProperties() {
+        return casProperties.getAuthn().getMfa().getGauth().getBypass();
+    }
 
     @Override
     protected boolean isAvailable() {
