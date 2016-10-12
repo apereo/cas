@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
 /**
@@ -34,10 +33,5 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
     @Override
     protected boolean isAvailable() {
         return this.duoAuthenticationService.canPing();
-    }
-
-    @Override
-    protected MultifactorAuthenticationProperties.BaseProvider.Bypass getMultifactorProviderBypassProperties() {
-        return casProperties.getAuthn().getMfa().getDuo().getBypass();
     }
 }

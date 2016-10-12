@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.authy.config;
 
 import com.google.common.base.Throwables;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
@@ -20,6 +19,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -148,9 +149,19 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public AbstractMultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
-        return new AuthyMultifactorAuthenticationProvider();
+        final AuthyMultifactorAuthenticationProvider p = new AuthyMultifactorAuthenticationProvider();
+        p.setBypassEvaluator(authyBypassEvaluator());
+        return p;
     }
 
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getAuthy().getBypass()
+        );
+    }
+    
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {

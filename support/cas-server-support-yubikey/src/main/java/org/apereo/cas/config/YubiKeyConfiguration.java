@@ -14,7 +14,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -163,10 +165,20 @@ public class YubiKeyConfiguration {
 
     @Bean
     @RefreshScope
+    public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getYubikey().getBypass()
+        );
+    }
+    
+    @Bean
+    @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        return new YubiKeyMultifactorAuthenticationProvider(
+        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(
                 yubikeyAuthenticationHandler(),
                 this.httpClient);
+        p.setBypassEvaluator(yubikeyBypassEvaluator());
+        return p;
     }
 
     @RefreshScope
