@@ -54,7 +54,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
                     .findFirst();
 
             if (providerFound.isPresent()) {
-                if (providerFound.get().verify(service)) {
+                if (providerFound.get().isAvailable(service)) {
                     logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                             providerFound.get(), service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
