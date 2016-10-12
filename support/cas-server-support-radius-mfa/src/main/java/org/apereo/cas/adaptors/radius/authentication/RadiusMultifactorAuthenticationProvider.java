@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
 /**
@@ -34,9 +33,5 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     public void setRadiusAuthenticationHandler(final RadiusTokenAuthenticationHandler radiusAuthenticationHandler) {
         this.radiusAuthenticationHandler = radiusAuthenticationHandler;
     }
-
-    @Override
-    protected MultifactorAuthenticationProperties.BaseProvider.Bypass getMultifactorProviderBypassProperties() {
-        return casProperties.getAuthn().getMfa().getRadius().getBypass();
-    }
+    
 }

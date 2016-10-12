@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
@@ -39,11 +38,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     public int getOrder() {
         return casProperties.getAuthn().getMfa().getGauth().getRank();
     }
-
-    @Override
-    protected MultifactorAuthenticationProperties.BaseProvider.Bypass getMultifactorProviderBypassProperties() {
-        return casProperties.getAuthn().getMfa().getYubikey().getBypass();
-    }
+    
     
     @Override
     protected boolean isAvailable() {

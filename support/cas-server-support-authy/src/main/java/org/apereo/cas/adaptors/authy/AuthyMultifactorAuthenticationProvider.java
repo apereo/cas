@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.authy;
 
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
 /**
@@ -22,11 +21,6 @@ public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorA
     @Override
     public int getOrder() {
         return casProperties.getAuthn().getMfa().getGauth().getRank();
-    }
-
-    @Override
-    protected MultifactorAuthenticationProperties.BaseProvider.Bypass getMultifactorProviderBypassProperties() {
-        return casProperties.getAuthn().getMfa().getAuthy().getBypass();
     }
 
     @Override

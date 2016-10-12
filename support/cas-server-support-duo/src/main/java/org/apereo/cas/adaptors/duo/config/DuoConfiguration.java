@@ -20,7 +20,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -174,12 +176,21 @@ public class DuoConfiguration {
         s.setHttpClient(this.httpClient);
         return s;
     }
+
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypass duoBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getDuo().getBypass()
+        );
+    }
     
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider duoAuthenticationProvider() {
         final DuoMultifactorAuthenticationProvider p = new DuoMultifactorAuthenticationProvider();
         p.setDuoAuthenticationService(duoAuthenticationService());
+        p.setBypassEvaluator(duoBypassEvaluator());
         return p;
     }
 
