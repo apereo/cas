@@ -1,7 +1,7 @@
 package org.apereo.cas.web.view;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -122,7 +122,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
             values.forEach(value -> {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<cas:".concat(k).concat(">"));
-                builder.append(StringEscapeUtils.escapeXml(value.toString().trim()));
+                builder.append(StringEscapeUtils.escapeXml10(value.toString().trim()));
                 builder.append("</cas:".concat(k).concat(">"));
                 formattedAttributes.add(builder.toString());
             });
