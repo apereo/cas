@@ -107,7 +107,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
     private Set<Event> buildEvent(final RequestContext context, final RegisteredService service, 
                                   final Authentication authentication, 
                                   final MultifactorAuthenticationProvider provider) {
-        if (provider.verify(service)) {
+        if (provider.isAvailable(service)) {
             logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                     provider, service.getName());
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
