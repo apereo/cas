@@ -1173,6 +1173,7 @@ To learn more about this topic, [please review this guide](../integration/ADFS-I
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
 
 ```properties
+# cas.authn.mfa.globalProviderId=mfa-duo
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
