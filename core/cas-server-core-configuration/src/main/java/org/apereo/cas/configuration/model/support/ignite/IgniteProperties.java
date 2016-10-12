@@ -23,9 +23,82 @@ public class IgniteProperties {
     private String keyAlgorithm;
     private String trustStoreFilePath;
     private String trustStorePassword;
-
+    
+    private int heartbeatFrequency = 2000;
+    private int joinTimeout = 1000;
+    private String localAddress;
+    private int localPort = -1;
+    private int networkTimeout = 5000;
+    private int socketTimeout = 5000;
+    private int threadPriority = 10;
+    private boolean forceServerMode;
+    
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
+
+    public int getHeartbeatFrequency() {
+        return heartbeatFrequency;
+    }
+
+    public void setHeartbeatFrequency(final int heartbeatFrequency) {
+        this.heartbeatFrequency = heartbeatFrequency;
+    }
+
+    public int getJoinTimeout() {
+        return joinTimeout;
+    }
+
+    public void setJoinTimeout(final int joinTimeout) {
+        this.joinTimeout = joinTimeout;
+    }
+
+    public String getLocalAddress() {
+        return localAddress;
+    }
+
+    public void setLocalAddress(final String localAddress) {
+        this.localAddress = localAddress;
+    }
+
+    public int getLocalPort() {
+        return localPort;
+    }
+
+    public void setLocalPort(final int localPort) {
+        this.localPort = localPort;
+    }
+
+    public int getNetworkTimeout() {
+        return networkTimeout;
+    }
+
+    public void setNetworkTimeout(final int networkTimeout) {
+        this.networkTimeout = networkTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(final int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public int getThreadPriority() {
+        return threadPriority;
+    }
+
+    public void setThreadPriority(final int threadPriority) {
+        this.threadPriority = threadPriority;
+    }
+
+    public boolean isForceServerMode() {
+        return forceServerMode;
+    }
+
+    public void setForceServerMode(final boolean forceServerMode) {
+        this.forceServerMode = forceServerMode;
+    }
 
     public CryptographyProperties getCrypto() {
         return crypto;
@@ -114,21 +187,7 @@ public class IgniteProperties {
     public void setTicketsCache(final TicketsCache ticketsCache) {
         this.ticketsCache = ticketsCache;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("igniteAddresses", igniteAddresses)
-                .append("ticketsCache", ticketsCache)
-                .append("keyStoreType", keyStoreType)
-                .append("keyStoreFilePath", keyStoreFilePath)
-                .append("trustStoreType", trustStoreType)
-                .append("protocol", protocol)
-                .append("keyAlgorithm", keyAlgorithm)
-                .append("trustStoreFilePath", trustStoreFilePath)
-                .toString();
-    }
-
+        
     public static class TicketsCache {
         private String cacheName = "TicketsCache";
         private String cacheMode = "REPLICATED";
@@ -167,8 +226,6 @@ public class IgniteProperties {
             this.writeSynchronizationMode = writeSynchronizationMode;
         }
     }
-    
-    
 }
 
 

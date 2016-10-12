@@ -2327,6 +2327,14 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.trustStoreType=
 # cas.ticket.registry.ignite.igniteAddresses=localhost:47500
 # cas.ticket.registry.ignite.trustStoreFilePath=
+# cas.ticket.registry.ignite.heartbeatFrequency=2000
+# cas.ticket.registry.ignite.joinTimeout=1000
+# cas.ticket.registry.ignite.localAddress=
+# cas.ticket.registry.ignite.localPort=-1
+# cas.ticket.registry.ignite.networkTimeout=5000
+# cas.ticket.registry.ignite.socketTimeout=5000
+# cas.ticket.registry.ignite.threadPriority=10
+# cas.ticket.registry.ignite.forceServerMode=false
 
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL
