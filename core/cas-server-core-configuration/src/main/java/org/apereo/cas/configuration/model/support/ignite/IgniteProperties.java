@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
