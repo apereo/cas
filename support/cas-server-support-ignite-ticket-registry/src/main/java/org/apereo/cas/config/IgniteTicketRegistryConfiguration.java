@@ -8,6 +8,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -36,7 +37,7 @@ public class IgniteTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     /**
      * Ignite configuration ignite configuration.
      *
@@ -45,10 +46,28 @@ public class IgniteTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public IgniteConfiguration igniteConfiguration() {
+
+        final IgniteProperties ignite = casProperties.getTicket().getRegistry().getIgnite();
+
         final IgniteConfiguration config = new IgniteConfiguration();
         final TcpDiscoverySpi spi = new TcpDiscoverySpi();
+
+        spi.setHeartbeatFrequency(ignite.getHeartbeatFrequency());
+        spi.setJoinTimeout(ignite.getJoinTimeout());
+
+        if (!StringUtils.isEmpty(ignite.getLocalAddress())) {
+            spi.setLocalAddress(ignite.getLocalAddress());
+        }
+        if (ignite.getLocalPort() != -1) {
+            spi.setLocalPort(ignite.getLocalPort());
+        }
+        spi.setNetworkTimeout(ignite.getNetworkTimeout());
+        spi.setSocketTimeout(ignite.getSocketTimeout());
+        spi.setThreadPriority(ignite.getThreadPriority());
+        spi.setForceServerMode(ignite.isForceServerMode());
+
         final TcpDiscoveryVmIpFinder finder = new TcpDiscoveryVmIpFinder();
-        finder.setAddresses(StringUtils.commaDelimitedListToSet(casProperties.getTicket().getRegistry().getIgnite().getIgniteAddresses()));
+        finder.setAddresses(StringUtils.commaDelimitedListToSet(ignite.getIgniteAddresses()));
         spi.setIpFinder(finder);
         config.setDiscoverySpi(spi);
 
@@ -56,14 +75,13 @@ public class IgniteTicketRegistryConfiguration {
 
         final CacheConfiguration ticketsCache = new CacheConfiguration();
         ticketsCache.setName(
-                casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
-        ticketsCache.setCacheMode(
-                CacheMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheMode()));
+                ignite.getTicketsCache().getCacheName());
+        ticketsCache.setCacheMode(CacheMode.valueOf(ignite.getTicketsCache().getCacheMode()));
         ticketsCache.setAtomicityMode(
-                CacheAtomicityMode.valueOf(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getAtomicityMode()));
+                CacheAtomicityMode.valueOf(ignite.getTicketsCache().getAtomicityMode()));
         ticketsCache.setWriteSynchronizationMode(
                 CacheWriteSynchronizationMode.valueOf(
-                        casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getWriteSynchronizationMode()));
+                        ignite.getTicketsCache().getWriteSynchronizationMode()));
         ticketsCache.setExpiryPolicyFactory(
                 CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS,
                         casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())));
@@ -75,7 +93,7 @@ public class IgniteTicketRegistryConfiguration {
         return config;
     }
 
-    
+
     @Bean(name = {"igniteTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry igniteTicketRegistry() {
