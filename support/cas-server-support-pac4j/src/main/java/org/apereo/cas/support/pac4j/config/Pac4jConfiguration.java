@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -61,7 +62,7 @@ public class Pac4jConfiguration {
     @Autowired(required = false)
     @Qualifier("indirectClients")
     private IndirectClient[] clients;
-    
+
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
@@ -170,7 +171,8 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
+                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private void configureOidcClient(final Map<String, String> properties) {

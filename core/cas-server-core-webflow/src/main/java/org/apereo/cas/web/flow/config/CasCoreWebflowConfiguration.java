@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.GlobalAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.PrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
@@ -78,7 +79,7 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
+        
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
     @Autowired
     @Bean
@@ -121,6 +122,7 @@ public class CasCoreWebflowConfiguration {
             r.addDelegate(riskAwareAuthenticationWebflowEventResolver);
         }
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(globalAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
@@ -141,6 +143,17 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "globalAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+        final GlobalAuthenticationPolicyWebflowEventResolver r = new GlobalAuthenticationPolicyWebflowEventResolver();
+        configureResolver(r, selector);
+        return r;
+    }
+    
     @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
     @Autowired
     @Bean

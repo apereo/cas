@@ -29,6 +29,7 @@ public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolVal
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
+        logger.debug("Assertion is always satisfied");
         return true;
     }
 }

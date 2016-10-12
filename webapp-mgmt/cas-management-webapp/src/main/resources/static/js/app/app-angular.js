@@ -673,6 +673,14 @@ if (array.length == 3) {
                     {name: 'OPEN', value: 'OPEN'},
                     {name: 'CLOSED', value: 'CLOSED'},
                     {name: 'PHANTOM', value: 'PHANTOM'}
+                ],
+                samlRoleList: [
+                    {name: 'SPSSODescriptor', value: 'SPSSODescriptor'},
+                    {name: 'IDPSSODescriptor', value: 'IDPSSODescriptor'}
+                ],
+                samlDirectionList: [
+                    {name: 'INCLUDE', value: 'INCLUDE'},
+                    {name: 'EXCLUDE', value: 'EXCLUDE'}
                 ]
             };
 
@@ -817,7 +825,7 @@ if (array.length == 3) {
                     type: serviceForm.selectOptions.serviceTypeList[0].value,
                     logoutType: serviceForm.selectOptions.logoutTypeList[0].value,
                     attrRelease: {
-                        attrOption: 'default',
+                        attrOption: 'DEFAULT',
                         attrPolicy: {type: 'all'},
                         cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value

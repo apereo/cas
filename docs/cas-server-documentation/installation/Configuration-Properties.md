@@ -60,7 +60,7 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 
 ### Vault
 
-```
+```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
 # spring.cloud.vault.connectionTimeout=3000
@@ -124,7 +124,7 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### Kafka
 
-```
+```properties
 # spring.cloud.stream.bindings.output.content-type=application/json
 # spring.cloud.stream.kafka.binder.zkNodes=...
 # spring.cloud.stream.kafka.binder.brokers=...
@@ -984,7 +984,7 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 ## OpenID Authentication
 
-Allow CAS to become am OpenID authentication provider.
+Allow CAS to become an OpenID authentication provider.
 To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
 
 ```properties
@@ -1212,6 +1212,7 @@ To learn more about this topic, [please review this guide](../integration/ADFS-I
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
 
 ```properties
+# cas.authn.mfa.globalProviderId=mfa-duo
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
@@ -1530,7 +1531,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 ## OpenID Connect
 
-Allow CAS to become am OpenID Connect provider (OP).
+Allow CAS to become an OpenID Connect provider (OP).
 To learn more about this topic, [please review this guide](OIDC-Authentication.html).
 
 ```properties
@@ -1602,10 +1603,16 @@ Delegate authentication to an external SAML2 IdP (do not use the `resource:` or 
 # cas.authn.pac4j.saml.keystorePassword=
 # cas.authn.pac4j.saml.privateKeyPassword=
 # cas.authn.pac4j.saml.serviceProviderEntityId=
+# cas.authn.pac4j.saml.serviceProviderMetadataPath=
 # cas.authn.pac4j.saml.keystorePath=
 # cas.authn.pac4j.saml.maximumAuthenticationLifetime=
 # cas.authn.pac4j.saml.identityProviderMetadataPath=
 ```
+
+The callback url for the SAML identity provider will be the CAS login page plus the `client_name=SAML2Client` query string.
+If the `serviceProviderEntityId` is not defined, its value will be the CAS login page URL (without any query string).
+
+So you must configure your SAML IdP accordingly.
 
 ### Yahoo
 
@@ -2360,6 +2367,14 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.trustStoreType=
 # cas.ticket.registry.ignite.igniteAddresses=localhost:47500
 # cas.ticket.registry.ignite.trustStoreFilePath=
+# cas.ticket.registry.ignite.heartbeatFrequency=2000
+# cas.ticket.registry.ignite.joinTimeout=1000
+# cas.ticket.registry.ignite.localAddress=
+# cas.ticket.registry.ignite.localPort=-1
+# cas.ticket.registry.ignite.networkTimeout=5000
+# cas.ticket.registry.ignite.socketTimeout=5000
+# cas.ticket.registry.ignite.threadPriority=10
+# cas.ticket.registry.ignite.forceServerMode=false
 
 # cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_SYNC
 # cas.ticket.registry.ignite.ticketsCache.atomicityMode=TRANSACTIONAL

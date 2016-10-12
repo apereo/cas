@@ -62,6 +62,10 @@ Configure authentication per instructions [here](GoogleAuthenticator-Authenticat
 
 Multifactor authentication can be activated based on the following triggers:
 
+### Global
+
+MFA can be triggered for all applications and users regardless of individual settings.
+
 ### Applications
 
 MFA can be triggered for a specific application registered inside the CAS service registry.

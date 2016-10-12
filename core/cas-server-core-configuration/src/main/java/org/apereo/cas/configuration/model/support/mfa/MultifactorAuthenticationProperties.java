@@ -20,6 +20,7 @@ public class MultifactorAuthenticationProperties {
     private String requestParameter = "authn_method";
     private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
     private String contentType = "application/cas";
+    private String globalProviderId;
     
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
@@ -106,6 +107,14 @@ public class MultifactorAuthenticationProperties {
 
     public void setContentType(final String contentType) {
         this.contentType = contentType;
+    }
+
+    public String getGlobalProviderId() {
+        return globalProviderId;
+    }
+
+    public void setGlobalProviderId(final String globalProviderId) {
+        this.globalProviderId = globalProviderId;
     }
 
     public YubiKey getYubikey() {

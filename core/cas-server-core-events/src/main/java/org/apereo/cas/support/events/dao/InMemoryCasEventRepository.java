@@ -29,3 +29,8 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     }
     
 }
+    @Override
+    public Collection<CasEvent> getEventsForPrincipal(final String id) {
+        return cache.asMap().values().stream().filter(e -> e.getPrincipalId().equalsIgnoreCase(id)).collect(Collectors.toSet());
+    }
+}

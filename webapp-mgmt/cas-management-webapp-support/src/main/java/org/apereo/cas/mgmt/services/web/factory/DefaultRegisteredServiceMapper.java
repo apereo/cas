@@ -85,6 +85,19 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
             samlbean.setEncAssert(saml.isEncryptAssertions());
             samlbean.setSignResp(saml.isSignResponses());
             samlbean.setSignAssert(saml.isSignAssertions());
+            samlbean.setRemoveEmptyEntities(saml.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            samlbean.setRemoveRoleless(saml.isMetadataCriteriaRemoveRolelessEntityDescriptors());
+            
+            if (StringUtils.isNotBlank(saml.getMetadataCriteriaDirection())) {
+                samlbean.setDir(saml.getMetadataCriteriaDirection().toUpperCase());
+            }
+            if (StringUtils.isNotBlank(saml.getMetadataCriteriaPattern())) {
+                samlbean.setMdPattern(saml.getMetadataCriteriaPattern());
+            }
+            if (StringUtils.isNotBlank(saml.getMetadataCriteriaRoles())) {
+                samlbean.setRoles(org.springframework.util.StringUtils.commaDelimitedListToSet(saml.getMetadataCriteriaRoles()));
+            }
+            
         }
 
         bean.setTheme(svc.getTheme());
@@ -175,6 +188,22 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
                 ((SamlRegisteredService) regSvc).setMetadataSignatureLocation(samlBean.getMdSigLoc());
                 ((SamlRegisteredService) regSvc).setMetadataMaxValidity(samlBean.getMdMaxVal());
                 ((SamlRegisteredService) regSvc).setRequiredAuthenticationContextClass(samlBean.getAuthCtxCls());
+
+                ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveEmptyEntitiesDescriptors(samlBean.isRemoveEmptyEntities());
+                ((SamlRegisteredService) regSvc).setMetadataCriteriaRemoveRolelessEntityDescriptors(samlBean.isRemoveRoleless());
+
+                if (StringUtils.isNotBlank(samlBean.getDir())) {
+                    ((SamlRegisteredService) regSvc).setMetadataCriteriaDirection(samlBean.getDir().toUpperCase());
+                }
+                if (StringUtils.isNotBlank(samlBean.getMdPattern()) && RegexUtils.isValidRegex(samlBean.getMdPattern())) {
+                    ((SamlRegisteredService) regSvc).setMetadataCriteriaPattern(samlBean.getMdPattern());
+                }
+
+                if (samlBean.getRoles() != null && !samlBean.getRoles().isEmpty()) {
+                    ((SamlRegisteredService) regSvc).setMetadataCriteriaRoles(
+                            org.springframework.util.StringUtils.collectionToCommaDelimitedString(samlBean.getRoles())
+                    );
+                }
             } else {
                 if (RegexUtils.isValidRegex(data.getServiceId())) {
                     regSvc = new RegexRegisteredService();
