@@ -80,7 +80,10 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
-        ticketRegistry.deleteTicket(serviceTicket.getId());
+        String usingForPT = request.getHeader("usingForPT");
+        if(usingForPT == null || !Boolean.parseBoolean(usingForPT)) {
+        	ticketRegistry.deleteTicket(serviceTicket.getId());
+        }
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
