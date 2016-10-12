@@ -67,6 +67,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_AUTHENTICATION_FAILURE = "authenticationFailure";
 
     /**
+     * 'gateway' state id.
+     */
+    String STATE_ID_GATEWAY = "gateway";
+    
+    /**
      * The transition state 'warn'.
      */
     String TRANSITION_ID_WARN = "warn";
