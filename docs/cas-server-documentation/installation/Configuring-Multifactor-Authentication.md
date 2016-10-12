@@ -18,6 +18,8 @@ interface with the authentication subsystem accept one or more credentials to au
 
 ## Supported Providers
 
+The following multifactor providers are supported by CAS.
+
 ### Duo Security
 
 Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
