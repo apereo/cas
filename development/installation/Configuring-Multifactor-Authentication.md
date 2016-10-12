@@ -146,7 +146,7 @@ Bypass rules allow for the following options for each provider:
 A few simple examples follow:
 
 - Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
-- Trigger MFA except when the principal carries an `superAdmin` attribute.
+- Trigger MFA except when the principal carries a `superAdmin` attribute.
 - Trigger MFA except if the method primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
