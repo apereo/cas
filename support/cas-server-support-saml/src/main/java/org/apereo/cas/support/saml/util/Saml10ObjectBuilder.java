@@ -3,9 +3,9 @@ package org.apereo.cas.support.saml.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
+import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -26,7 +26,6 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -143,14 +142,15 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the authentication statement
      */
     public AuthenticationStatement newAuthenticationStatement(final ZonedDateTime authenticationDate,
-                                                              final String authenticationMethod,
+                                                              final Collection<Object> authenticationMethod,
                                                               final String subjectId) {
 
         final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
         authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
+        
         authnStatement.setAuthenticationMethod(
-                authenticationMethod != null
-                        ? authenticationMethod
+                authenticationMethod != null && !authenticationMethod.isEmpty()
+                        ? authenticationMethod.iterator().next().toString()
                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
         authnStatement.setSubject(newSubject(subjectId));
         return authnStatement;
