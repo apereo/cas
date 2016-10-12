@@ -47,4 +47,9 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         builder.append(getId());
         return builder.toHashCode();
     }
+
+    @Override
+    public Class<? extends Credential> getCredentialClass() {
+        return this.getClass();
+    }
 }
