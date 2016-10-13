@@ -12,7 +12,6 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
 
 import javax.validation.constraints.NotNull;
@@ -161,9 +160,4 @@ public interface CentralAuthenticationService {
      */
     ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException;
-    
-    
-    
-    /* test */
-    TicketRegistry getTicketRegister();
 }

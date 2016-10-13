@@ -395,10 +395,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
 
     }
-
-
+    
     public TicketRegistry getTicketRegistry() {
-    	return this.ticketRegistry;
+        return this.ticketRegistry;
     }
-
 }

@@ -223,9 +223,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             }
 
             //remove service ticket
-            String isUsed = request.getHeader("STIsUsedForAccessToken");
-            if(isUsed != null && Boolean.parseBoolean(isUsed)) {
-            	this.centralAuthenticationService.getTicketRegister().deleteTicket(serviceTicketId);
+            // Deletes ST in case it's not deleted during the process of creating an access token.
+            String xCommand = request.getHeader("x-command");
+            if (xCommand != null && "rm-st".equals(xCommand)) {
+            	((CentralAuthenticationServiceImpl)this.centralAuthenticationService).getTicketRegistry().deleteTicket(serviceTicketId);
             }
             
             onSuccessfulValidation(serviceTicketId, assertion);
