@@ -1034,6 +1034,7 @@ ext.libraries = [
                 },
                 dependencies.create("com.nimbusds:oauth2-oidc-sdk:$nimbusOidcVersion") {
                     exclude(group: "net.minidev", module: "json-smart")
+                    exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     force = true
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
