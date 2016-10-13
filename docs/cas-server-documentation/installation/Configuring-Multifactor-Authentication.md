@@ -132,7 +132,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 ## Bypass Rules
 
 Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
-has is chosen to honor the authentication request, bypass rules are then consulted to calculate
+is chosen to honor the authentication request, bypass rules are then consulted to calculate
 whether the provider should ignore the request and skip MFA conditionally. 
 
 Bypass rules allow for the following options for each provider:
@@ -145,7 +145,7 @@ Bypass rules allow for the following options for each provider:
 
 A few simple examples follow:
 
-- Trigger MFA except when the principal carries a `affiliation` attribute whose value is either `alum` or `member`.
+- Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
 - Trigger MFA except when the principal carries a `superAdmin` attribute.
 - Trigger MFA except if the method primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
