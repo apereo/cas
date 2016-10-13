@@ -1174,7 +1174,10 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ```properties
 # cas.authn.mfa.globalProviderId=mfa-duo
+
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+# cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
+
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
