@@ -292,7 +292,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final RegisteredService service,
                                                                     final RequestContext context,
                                                                     final MultifactorAuthenticationProvider provider,
-                                                                    final Predicate predicate) {
+                                                                    final Predicate<Object> predicate) {
         final ImmutableSet.Builder<Event> builder = ImmutableSet.builder();
         if (attributeValue instanceof Collection) {
             logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
@@ -339,7 +339,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 if (predicate.apply(attributeValue)) {
                     logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
 
-                    logger.debug("Attempting to isAvailable mutlifactor authentication provider {} for {}",
+                    logger.debug("Attempting to isAvailable multifactor authentication provider {} for {}",
                             provider, service);
 
                     if (provider.isAvailable(service)) {
