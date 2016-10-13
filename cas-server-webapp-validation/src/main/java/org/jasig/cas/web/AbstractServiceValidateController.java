@@ -2,6 +2,7 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.CentralAuthenticationServiceExtended;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
@@ -86,7 +87,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private CentralAuthenticationServiceExtended centralAuthenticationService;
 
     /** The validation protocol we want to use. */
     @NotNull
@@ -226,7 +227,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             // Deletes ST in case it's not deleted during the process of creating an access token.
             String xCommand = request.getHeader("x-command");
             if (xCommand != null && "rm-st".equals(xCommand)) {
-            	((CentralAuthenticationServiceImpl)this.centralAuthenticationService).getTicketRegistry().deleteTicket(serviceTicketId);
+            	this.centralAuthenticationService.getTicketRegistry().deleteTicket(serviceTicketId);
             }
             
             onSuccessfulValidation(serviceTicketId, assertion);
@@ -373,7 +374,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
      */
-    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationServiceExtended centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

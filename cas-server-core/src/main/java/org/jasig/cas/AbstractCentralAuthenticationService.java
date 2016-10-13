@@ -49,7 +49,7 @@ import java.util.Iterator;
  * @see CentralAuthenticationServiceImpl
  * @since 4.2.0
  */
-public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
+public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationServiceExtended, Serializable,
         ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
@@ -293,5 +293,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
+    }
+    
+    public TicketRegistry getTicketRegistry() {
+        return this.ticketRegistry;
     }
 }
