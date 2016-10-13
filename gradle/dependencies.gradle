@@ -265,6 +265,37 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
                 },
+                dependencies.create("net.shibboleth.liberty:idwsfconsumer:$idpLibertyIdwsConsumerVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    force = true
+                },
+                dependencies.create("net.shibboleth.idp:idp-attribute-api:$idpVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework.webflow", module: "spring-webflow")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.ldaptive", module: "ldaptive")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    force = true
+                },
                 dependencies.create("net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion") {
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
@@ -357,6 +388,26 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.ldaptive", module: "ldaptive")
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    force = true
+                },
+                dependencies.create("net.shibboleth.idp:idp-saml-api:$idpVersion") {
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework.webflow", module: "spring-webflow")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.ldaptive", module: "ldaptive")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     force = true
