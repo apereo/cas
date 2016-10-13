@@ -86,13 +86,21 @@ MFA can be triggered for a specific application registered inside the CAS servic
 
 ### Principal Attribute
 
-MFA can be triggered for all users/subjects carrying a specific attribute that matches configured attribute value. The attribute
-value is a regex pattern and must match the provider
-id of an available MFA provider described above. See below to learn about how to configure MFA settings. 
+MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
+
+- If you wish to trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern of your own design,
+you can define both a list of attribute names and a regex pattern where a successful match on the attribute value would trigger MFA.
+**Note that this behavior is only applicable if there is only a single MFA provider configured and there is a regex pattern defined as the trigger.
+
+- If you wish to trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider id, than that MFA provider
+will be activated. This option is more applicable if you have more than one provider configured, or if you have the flexibilty of assigning
+provider ids to attributes as values.
+
+Needless to say, the attributes need to have been resolved for the principal prior to this step. 
 
 ### Adaptive
 
-MFA can be triggered based on the specific nature of a request that may be considered suspicious. For instance,
+MFA can be triggered based on the specific nature of a request that may be considered outlawed. For instance,
 you may want all requests that are submitted from a specific IP pattern, or from a particular geographical location
 to be forced to go through MFA. CAS is able to adapt itself to various properties of the incoming request
 and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Authentication.html) for more info.

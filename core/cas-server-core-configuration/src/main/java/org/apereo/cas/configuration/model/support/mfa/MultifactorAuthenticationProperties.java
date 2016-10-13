@@ -18,7 +18,8 @@ public class MultifactorAuthenticationProperties {
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
-    private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
+    private String globalPrincipalAttributeNameTriggers;
+    private String globalPrincipalAttributeValueRegex;
     private String contentType = "application/cas";
     private String globalProviderId;
     
@@ -51,6 +52,14 @@ public class MultifactorAuthenticationProperties {
 
     public void setRequestParameter(final String requestParameter) {
         this.requestParameter = requestParameter;
+    }
+
+    public String getGlobalPrincipalAttributeValueRegex() {
+        return globalPrincipalAttributeValueRegex;
+    }
+
+    public void setGlobalPrincipalAttributeValueRegex(final String globalPrincipalAttributeValueRegex) {
+        this.globalPrincipalAttributeValueRegex = globalPrincipalAttributeValueRegex;
     }
 
     public String getGlobalPrincipalAttributeNameTriggers() {
