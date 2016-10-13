@@ -2,6 +2,7 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
@@ -221,6 +222,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 }
             }
 
+            //remove service ticket
+            // Deletes ST in case it's not deleted during the process of creating an access token.
+            String xCommand = request.getHeader("x-command");
+            if (xCommand != null && "rm-st".equals(xCommand)) {
+            	((CentralAuthenticationServiceImpl)this.centralAuthenticationService).getTicketRegistry().deleteTicket(serviceTicketId);
+            }
+            
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);

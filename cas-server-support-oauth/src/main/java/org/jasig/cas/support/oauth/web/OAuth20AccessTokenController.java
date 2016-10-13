@@ -79,9 +79,13 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
+        
         // remove service ticket
-        ticketRegistry.deleteTicket(serviceTicket.getId());
-
+        // Commented out below since we can't create PT w/o ST
+        // In more detail, we needed to prevent this method from deleting ST for we need it to create PT.
+        // ST is deleted in another class method once PT is created successfully.
+        //ticketRegistry.deleteTicket(serviceTicket.getId());
+        
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
         final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
