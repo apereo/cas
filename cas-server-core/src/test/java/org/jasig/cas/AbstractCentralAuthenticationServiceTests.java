@@ -34,7 +34,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired(required = true)
-    private CentralAuthenticationService centralAuthenticationService;
+    private CentralAuthenticationServiceExtended centralAuthenticationService;
 
     @Autowired(required = true)
     private TicketRegistry ticketRegistry;
@@ -61,11 +61,11 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         return this.authenticationManager;
     }
 
-    public CentralAuthenticationService getCentralAuthenticationService() {
+    public CentralAuthenticationServiceExtended getCentralAuthenticationService() {
         return this.centralAuthenticationService;
     }
 
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationServiceExtended centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
