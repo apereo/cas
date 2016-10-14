@@ -52,6 +52,7 @@ public class RestEndpointAuthenticationPolicyWebflowEventResolver extends Abstra
             return null;
         }
 
+        logger.debug("Contacting {} to inquire about {}", casProperties.getAuthn().getMfa().getRestEndpoint(), principal.getId());
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity(casProperties.getAuthn().getMfa().getRestEndpoint(), principal.getId(), String.class);
