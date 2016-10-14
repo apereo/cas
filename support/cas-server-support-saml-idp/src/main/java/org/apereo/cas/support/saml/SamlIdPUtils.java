@@ -57,22 +57,21 @@ public final class SamlIdPUtils {
             throws SamlException {
         final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
         if (assertionConsumerServices.isEmpty()) {
-            throw new SamlException(SamlException.CODE, "No assertion consumer service could be found for entity " + adaptor.getEntityId());
+            throw new SamlException("No assertion consumer service could be found for entity " + adaptor.getEntityId());
         }
 
         final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
         if (peerEntityContext == null) {
-            throw new SamlException(SamlException.CODE, "SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
         }
 
         final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
-            throw new SamlException(SamlException.CODE, "SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
+            throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
         }
         final Endpoint endpoint = assertionConsumerServices.get(0);
         if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException(SamlException.CODE, "Assertion consumer service does not define a binding or location for "
-                    + adaptor.getEntityId());
+            throw new SamlException("Assertion consumer service does not define a binding or location for " + adaptor.getEntityId());
         }
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
@@ -87,7 +86,7 @@ public final class SamlIdPUtils {
      * @return the chaining metadata resolver for all saml services
      */
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
-                                         final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                                         final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final Predicate p = Predicates.instanceOf(SamlRegisteredService.class);
             final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(p);
@@ -118,8 +117,8 @@ public final class SamlIdPUtils {
      * @param resolver        the resolver
      * @return the assertion consumer service for
      */
-    public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest, 
-                final ServicesManager servicesManager, final SamlRegisteredServiceCachingMetadataResolver resolver) {
+    public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
+                                                                          final ServicesManager servicesManager, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
             if (authnRequest.getAssertionConsumerServiceIndex() != null) {
@@ -129,7 +128,7 @@ public final class SamlIdPUtils {
                 criteriaSet.add(new EntityIdCriterion(issuer));
                 criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
                 criteriaSet.add(new BindingCriterion(Lists.newArrayList(SAMLConstants.SAML2_POST_BINDING_URI)));
-                
+
                 final Iterable<EntityDescriptor> it = samlResolver.resolve(criteriaSet);
                 it.forEach(entityDescriptor -> {
                     final SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
@@ -156,7 +155,7 @@ public final class SamlIdPUtils {
                 acs.setIndex(0);
                 acs.setIsDefault(Boolean.TRUE);
             }
-            
+
             LOGGER.debug("Resolved AssertionConsumerService from the request is {}", acs);
             if (StringUtils.isBlank(acs.getBinding())) {
                 throw new SamlException("AssertionConsumerService has no protocol binding defined");
