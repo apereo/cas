@@ -1178,6 +1178,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
+# cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
+
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
