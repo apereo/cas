@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link CasSamlSPWebexConfiguration}.
+ * This is {@link CasSamlSPTestShibConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casSamlSPWebexConfiguration")
+@Configuration("casSamlSPTestShibConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSamlSPWebexConfiguration {
+public class CasSamlSPTestShibConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,11 +35,10 @@ public class CasSamlSPWebexConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getWebex(),
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getTestShib(),
                 samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
-            service.setSignResponses(false);
-            service.setSignAssertions(true);
+            service.setSignResponses(true);
             SamlSPUtils.saveService(service, this.servicesManager);
         }
     }

@@ -1430,6 +1430,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
    
+### TestShib
+
+```properties
+# cas.samlSP.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
+# cas.samlSP.testShib.name=TestShib
+# cas.samlSP.testShib.description=TestShib Integration
+# cas.samlSP.testShib.attributes=eduPersonPrincipalName
+```
+
 ### Office365
 
 ```properties
