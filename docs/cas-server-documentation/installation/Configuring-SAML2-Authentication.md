@@ -150,15 +150,6 @@ The following fields are available for SAML services:
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private String metadataCriteriaRole;
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors;
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private boolean metadataCriteriaRemoveRolelessEntityDescriptors;
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format. 
