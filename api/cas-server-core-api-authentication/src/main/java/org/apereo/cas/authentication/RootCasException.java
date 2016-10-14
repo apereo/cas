@@ -16,7 +16,7 @@ public abstract class RootCasException extends RuntimeException {
     /**
      * The code description of the exception.
      */
-    private String code;
+    private final String code;
 
     /**
      * Constructor that takes a {@code code} description of the error along with the exception
@@ -69,14 +69,5 @@ public abstract class RootCasException extends RuntimeException {
     @Override
     public String toString() {
         return this.getCode();
-    }
-
-    /**
-     * Sets code.
-     *
-     * @param code the code
-     */
-    protected void setCode(final String code) {
-        this.code = code;
     }
 }
