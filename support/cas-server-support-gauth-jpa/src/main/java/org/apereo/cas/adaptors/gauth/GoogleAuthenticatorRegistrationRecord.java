@@ -25,13 +25,13 @@ public class GoogleAuthenticatorRegistrationRecord {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String username;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String secretKey;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private Integer validationCode;
 
     @ElementCollection
