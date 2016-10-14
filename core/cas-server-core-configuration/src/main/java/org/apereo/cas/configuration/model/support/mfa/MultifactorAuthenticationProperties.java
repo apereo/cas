@@ -18,8 +18,12 @@ public class MultifactorAuthenticationProperties {
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
+    
+    private String restEndpoint;
+    
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
+    
     private String contentType = "application/cas";
     private String globalProviderId;
     
@@ -44,6 +48,14 @@ public class MultifactorAuthenticationProperties {
 
     public void setAuthy(final Authy authy) {
         this.authy = authy;
+    }
+
+    public String getRestEndpoint() {
+        return restEndpoint;
+    }
+
+    public void setRestEndpoint(final String restEndpoint) {
+        this.restEndpoint = restEndpoint;
     }
 
     public String getRequestParameter() {

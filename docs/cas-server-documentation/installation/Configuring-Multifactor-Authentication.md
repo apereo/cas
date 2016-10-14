@@ -84,13 +84,13 @@ MFA can be triggered for a specific application registered inside the CAS servic
 }
 ```
 
-### Principal Attribute
+### Global Principal Attribute
 
 MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
 
-- If you wish to trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern of your own design,
-you can define both a list of attribute names and a regex pattern where a successful match on the attribute value would trigger MFA.
-**Note that this behavior is only applicable if there is only a single MFA provider configured and there is a regex pattern defined as the trigger.
+- If you wish to trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
+**Note** that this behavior is only applicable if there is only a single MFA provider configured, since that would allow CAS
+to know what provider to next activate.
 
 - If you wish to trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider id, than that MFA provider
 will be activated. This option is more applicable if you have more than one provider configured, or if you have the flexibilty of assigning
@@ -104,6 +104,12 @@ MFA can be triggered based on the specific nature of a request that may be consi
 you may want all requests that are submitted from a specific IP pattern, or from a particular geographical location
 to be forced to go through MFA. CAS is able to adapt itself to various properties of the incoming request
 and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Authentication.html) for more info.
+
+### REST
+
+MFA can be triggered based on the results of a remote REST endpoint of your design. If the endpoint is configured,
+CAS shall issue a `POST`, providing the principal id. The body of the response in the event of a successful `200`
+status code is expected to be the MFA provider id which CAS should activate.
 
 ### Opt-In Request Parameter
 
