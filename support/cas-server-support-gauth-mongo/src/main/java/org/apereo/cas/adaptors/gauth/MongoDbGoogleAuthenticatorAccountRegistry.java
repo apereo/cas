@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
