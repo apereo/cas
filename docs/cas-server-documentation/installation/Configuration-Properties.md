@@ -208,6 +208,7 @@ If none is specified, one is automatically detected and used by CAS.
 
 The following properties describe access controls and settings for the `/status`
 endpoint of CAS which provides administrative functionality and oversight into the CAS software.
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # endpoints.enabled=true
