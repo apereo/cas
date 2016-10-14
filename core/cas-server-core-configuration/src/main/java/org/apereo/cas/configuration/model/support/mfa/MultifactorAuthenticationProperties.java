@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -705,36 +706,12 @@ public class MultifactorAuthenticationProperties {
         public static class Jpa extends AbstractJpaProperties {
         }
 
-        public static class Mongodb {
-            private String clientUri = "";
-            private String collection = "MongoDbCasTrustedAuthnMfaRepository";
-            private boolean dropCollection;
-
-            public String getClientUri() {
-                return clientUri;
-            }
-
-            public void setClientUri(final String clientUri) {
-                this.clientUri = clientUri;
-            }
-
-            public String getCollection() {
-                return collection;
-            }
-
-            public void setCollection(final String collection) {
-                this.collection = collection;
-            }
-
-            public boolean isDropCollection() {
-                return dropCollection;
-            }
-
-            public void setDropCollection(final boolean dropCollection) {
-                this.dropCollection = dropCollection;
+        public static class Mongodb extends AbstractMongoProperties {
+            public Mongodb() {
+                setCollection("MongoDbCasTrustedAuthnMfaRepository");
             }
         }
-
+        
         public static class Cleaner {
             private boolean enabled = true;
             private long startDelay = 10000;
@@ -775,7 +752,17 @@ public class MultifactorAuthenticationProperties {
         private long timeStepSize = 30;
         private int windowSize = 3;
 
+        private Mongodb mongodb = new Mongodb();
+        
         private Jpa jpa = new Jpa();
+
+        public Mongodb getMongodb() {
+            return mongodb;
+        }
+
+        public void setMongodb(final Mongodb mongodb) {
+            this.mongodb = mongodb;
+        }
 
         public Jpa getJpa() {
             return jpa;
@@ -833,6 +820,12 @@ public class MultifactorAuthenticationProperties {
             this.label = label;
         }
 
+        public static class Mongodb extends AbstractMongoProperties {
+            public Mongodb() {
+                setCollection("MongoDbGoogleAuthenticatorRepository");
+            }
+        }
+        
         public static class Jpa {
             private Database database = new Database();
 
