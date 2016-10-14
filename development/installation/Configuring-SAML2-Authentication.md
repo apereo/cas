@@ -146,19 +146,10 @@ The following fields are available for SAML services:
 | `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
 | `metadataCriteriaPattern`            | If defined, will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern.
 | `metadataCriteriaDirection`          | If defined, will force an entity id filter on the metadata aggregate based on `PredicateFilter`. Allowed values are `INCLUDE`,`EXCLUDE`.
-| `metadataCriteriaRoles`              | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`)
+| `metadataCriteriaRoles`              | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`). Default is `SPSSODescriptor`.
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private String metadataCriteriaRole;
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors;
-
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private boolean metadataCriteriaRemoveRolelessEntityDescriptors;
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format. 
