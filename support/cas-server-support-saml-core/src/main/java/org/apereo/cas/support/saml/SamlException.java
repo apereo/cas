@@ -30,6 +30,5 @@ public class SamlException extends RootCasException {
      */
     public SamlException(final String msg, final Throwable throwable) {
         super(msg, throwable);
-        setCode(CODE);
     }
 }

@@ -118,7 +118,8 @@ public final class SamlIdPUtils {
      * @return the assertion consumer service for
      */
     public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest,
-                                                                          final ServicesManager servicesManager, final SamlRegisteredServiceCachingMetadataResolver resolver) {
+                                                                          final ServicesManager servicesManager, 
+                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
             final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
             if (authnRequest.getAssertionConsumerServiceIndex() != null) {

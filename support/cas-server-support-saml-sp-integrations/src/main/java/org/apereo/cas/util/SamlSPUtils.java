@@ -26,8 +26,6 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
-import static jline.internal.Log.debug;
-
 /**
  * This is {@link SamlSPUtils}.
  *
