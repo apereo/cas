@@ -41,4 +41,14 @@ Registration records may be kept inside a database instance, via the following m
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+### MongoDb
+
+Registration records may be kept inside a mongo db instance, via the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-gauth-mongo</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
