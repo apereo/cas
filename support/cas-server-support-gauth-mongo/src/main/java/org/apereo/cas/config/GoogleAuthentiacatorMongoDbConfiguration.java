@@ -38,13 +38,13 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     
     @RefreshScope
     @Bean
-    public MongoTemplate mongoEventsTemplate() {
-        return new MongoTemplate(mongoAuthNEventsDbFactory());
+    public MongoTemplate mongoDbGoogleAuthenticatorTemplate() {
+        return new MongoTemplate(mongoDbGoogleAuthenticatorFactory());
     }
     
     @RefreshScope
     @Bean
-    public MongoDbFactory mongoAuthNEventsDbFactory() {
+    public MongoDbFactory mongoDbGoogleAuthenticatorFactory() {
         try {
             return new SimpleMongoDbFactory(new MongoClientURI(
                     casProperties.getAuthn().getMfa().getGauth().getMongodb().getClientUri()));
@@ -56,7 +56,7 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     @Bean
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
         return new MongoDbGoogleAuthenticatorAccountRegistry(
-                mongoEventsTemplate(),
+                mongoDbGoogleAuthenticatorTemplate(),
                 casProperties.getAuthn().getMfa().getGauth().getMongodb().getCollection(),
                 casProperties.getAuthn().getMfa().getGauth().getMongodb().isDropCollection()
         );
