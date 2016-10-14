@@ -32,7 +32,7 @@ Ignite supports replication over TLS for distributed caches composed of two or m
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-## Troubleshooting Guidelines
+## Troubleshooting
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic.
 * If nodes external to CAS instances are utilized, ensure that each cache manager specifies a name that matches the Ignite configuration
