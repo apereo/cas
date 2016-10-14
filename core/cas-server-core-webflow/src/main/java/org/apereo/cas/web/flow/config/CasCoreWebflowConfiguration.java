@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflow
 import org.apereo.cas.web.flow.resolver.impl.RegisteredServiceAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.RequestParameterAuthenticationPolicyWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RestEndpointAuthenticationPolicyWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,7 @@ public class CasCoreWebflowConfiguration {
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(globalAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
+        r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
         r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver(selector));
@@ -125,6 +127,17 @@ public class CasCoreWebflowConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "restEndpointAuthenticationPolicyWebflowEventResolver")
+    @Autowired
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver(
+            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+        final RestEndpointAuthenticationPolicyWebflowEventResolver r = new RestEndpointAuthenticationPolicyWebflowEventResolver();
+        configureResolver(r, selector);
+        return r;
+    }
+    
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Autowired
     @Bean
