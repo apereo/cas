@@ -65,6 +65,8 @@ Registered services present the following metadata:
 
 ## Persisting Services
 
+The following options may be used to store services in CAS.
+
 ### Memory
 
 [See this guide](InMemory-Service-Management.html) for more info please.
