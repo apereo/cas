@@ -292,7 +292,8 @@ Set of authentication attributes that are retrieved by the principal resolution 
 typically via some component of [Person Directory](..\integration\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
-If no other attribute source is defined, the below attributes are used to create
+If no other attribute source is defined and if attributes are not retrieved
+as part of primary authentication via LDAP, etc then the below attributes may be used to create
 a static/stub attribute repository.
 
 ```properties
