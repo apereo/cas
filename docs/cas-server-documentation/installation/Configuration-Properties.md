@@ -1265,7 +1265,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
 ```
 
-### Google Authenticator MongoDb
+#### Google Authenticator MongoDb
 
 ```properties
 # cas.authn.mfa.gauth.mongodb.clientUri=
