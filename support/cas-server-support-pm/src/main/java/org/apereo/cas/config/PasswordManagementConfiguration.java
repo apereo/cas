@@ -66,7 +66,7 @@ public class PasswordManagementConfiguration {
             return new LdapPasswordChangeService();
         }
         if (casProperties.getAuthn().getPm().isEnabled()) {
-            LOGGER.warn("No backend is configured to handle the account update operation. Verify your settings");
+            LOGGER.warn("No backend is configured to handle the account update operation.s Verify your settings");
         }
         return (c, bean) -> false;
     }
