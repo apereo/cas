@@ -207,4 +207,19 @@ public interface CasWebflowConstants {
      * The flow var id 'credential'.
      */
     String VAR_ID_CREDENTIAL = "credential";
+
+    /**
+     * View id 'casResetPasswordSendInstructions'.
+     */
+    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructions";
+
+    /**
+     * View id 'casResetPasswordSentInstructions'.
+     */
+    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructions";
+    
+    /**
+     * Transition id 'resetPassword'.
+     */
+    String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
 }
