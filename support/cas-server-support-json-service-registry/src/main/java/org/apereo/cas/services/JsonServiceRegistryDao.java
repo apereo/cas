@@ -10,7 +10,7 @@ import java.nio.file.Path;
 /**
  * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
  * configuration file at the Spring Application Context initialization time. JSON files are
- * expected to be found inside a directory location and this DAO will recursively look through
+ * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the
  * {@value JsonServiceRegistryDao#FILE_EXTENSION} extension. An example of the JSON file is included here:
  * <pre>

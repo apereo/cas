@@ -32,7 +32,6 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     public GoogleAuthenticatorAuthenticationHandler() {
     }
     
-
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
@@ -41,10 +40,13 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new PreventedException("Invalid non-numeric OTP format specified.", new IllegalArgumentException());
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
-
+        logger.debug("Received OTP {}", otp);
+        
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
+        logger.debug("Received principal id {}", uid);
+        
         final String secKey = this.googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
         if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");

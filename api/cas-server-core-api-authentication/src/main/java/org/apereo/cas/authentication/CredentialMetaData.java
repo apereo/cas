@@ -15,4 +15,11 @@ public interface CredentialMetaData {
      * @return Unique identifier for the given type of credential.
      */
     String getId();
+
+    /**
+     * Gets the type of the original credential.
+     *
+     * @return Non-null credential class.
+     */
+    Class<? extends Credential> getCredentialClass();
 }

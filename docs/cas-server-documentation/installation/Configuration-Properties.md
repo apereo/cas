@@ -208,6 +208,7 @@ If none is specified, one is automatically detected and used by CAS.
 
 The following properties describe access controls and settings for the `/status`
 endpoint of CAS which provides administrative functionality and oversight into the CAS software.
+To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # endpoints.enabled=true
@@ -291,7 +292,8 @@ Set of authentication attributes that are retrieved by the principal resolution 
 typically via some component of [Person Directory](..\integration\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
-If no other attribute source is defined, the below attributes are used to create
+If no other attribute source is defined and if attributes are not retrieved
+as part of primary authentication via LDAP, etc then the below attributes may be used to create
 a static/stub attribute repository.
 
 ```properties
@@ -869,12 +871,12 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with sAMAccountName.
+- Active Directory - Users authenticate with `sAMAccountName`.
 - Authenticated Search - Manager bind/search
-  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
   - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 - Anonymous Search - Anonymous search
-  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
   - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 - Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
@@ -885,9 +887,14 @@ Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
 
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
+will simply deactivate LDAP authentication altogether silently.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
 
 ```properties
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
@@ -906,8 +913,6 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
 # cas.authn.ldap[0].credentialCriteria=
-
-# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
 # cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
 # cas.authn.ldap[0].saslRealm=EXAMPLE.COM
@@ -1213,7 +1218,12 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ```properties
 # cas.authn.mfa.globalProviderId=mfa-duo
+
 # cas.authn.mfa.globalPrincipalAttributeNameTriggers=memberOf,eduPersonPrimaryAffiliation
+# cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
+
+# cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
+
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
@@ -1296,6 +1306,14 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
+```
+
+#### Google Authenticator MongoDb
+
+```properties
+# cas.authn.mfa.gauth.mongodb.clientUri=
+# cas.authn.mfa.gauth.mongodb.dropCollection=false
+# cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
 ```
 
 #### Google Authenticator JPA
@@ -1456,6 +1474,15 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
    
+### TestShib
+
+```properties
+# cas.samlSP.testShib.metadata=http://www.testshib.org/metadata/testshib-providers.xml
+# cas.samlSP.testShib.name=TestShib
+# cas.samlSP.testShib.description=TestShib Integration
+# cas.samlSP.testShib.attributes=eduPersonPrincipalName
+```
+
 ### Office365
 
 ```properties

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,9 +29,14 @@ public class CasSamlSPNetPartnerConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getNetPartner());
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(casProperties.getSamlSP().getNetPartner(),
+                samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             service.setSignResponses(true);
             SamlSPUtils.saveService(service, this.servicesManager);

@@ -23,7 +23,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -131,6 +133,14 @@ public class GoogleAuthentiacatorConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getGauth().getBypass()
+        );
+    }
+    
+    @Bean
     public PrincipalFactory googlePrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
@@ -173,7 +183,9 @@ public class GoogleAuthentiacatorConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
-        return new GoogleAuthenticatorMultifactorAuthenticationProvider();
+        final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
+        p.setBypassEvaluator(googleBypassEvaluator());
+        return p;
     }
 
     @Bean

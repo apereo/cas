@@ -246,9 +246,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     }
 
     private void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
-        final List<QName> roles = Lists.newArrayList();
-
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
+            final List<QName> roles = Lists.newArrayList();
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
             rolesSet.stream().forEach(s -> {
                 if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
@@ -260,13 +259,13 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
                     roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
                 }
             });
-        }
-        final EntityRoleFilter filter = new EntityRoleFilter(roles);
-        filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
-        filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
+            final EntityRoleFilter filter = new EntityRoleFilter(roles);
+            filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
 
-        metadataFilterList.add(filter);
-        logger.debug("Added entity role filter with roles [{}]", roles);
+            metadataFilterList.add(filter);
+            logger.debug("Added entity role filter with roles [{}]", roles);
+        }
     }
 
 
