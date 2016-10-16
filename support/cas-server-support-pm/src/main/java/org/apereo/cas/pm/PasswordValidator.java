@@ -1,4 +1,4 @@
-package org.apereo.cas.web;
+package org.apereo.cas.pm;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;

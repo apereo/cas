@@ -1,8 +1,10 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.pm.web.flow;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -60,7 +62,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         final Flow flow = getLoginFlow();
         final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(state, "resetPassword", "getPasswordAccountInfo");
-        createViewState(flow, "getPasswordAccountInfo", "casResetPasswordAccountInfo");
+        final ViewState accountInfo = createViewState(flow, "getPasswordAccountInfo", "casResetPasswordAccountInfo");
+        createTransitionForState(accountInfo, "findAccount", "sendInstructions");
+        createActionState(flow, "sendInstructions", createEvaluateAction("sendAccountInstructionsAction"));
     }
 
     private void configure(final String id) {

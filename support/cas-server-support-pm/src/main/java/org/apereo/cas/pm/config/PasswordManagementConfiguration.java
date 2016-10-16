@@ -1,14 +1,17 @@
-package org.apereo.cas.config;
+package org.apereo.cas.pm.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.PasswordChangeService;
-import org.apereo.cas.web.PasswordValidator;
+import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordService;
+import org.apereo.cas.pm.PasswordValidator;
+import org.apereo.cas.pm.ldap.LdapPasswordService;
+import org.apereo.cas.pm.web.flow.PasswordChangeAction;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.SendAccountInstructionsAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.InitPasswordChangeAction;
-import org.apereo.cas.web.flow.PasswordChangeAction;
-import org.apereo.cas.web.flow.PasswordManagementWebflowConfigurer;
-import org.apereo.cas.web.ldap.LdapPasswordChangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,17 +61,24 @@ public class PasswordManagementConfiguration {
     @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
-    public PasswordChangeService passwordChangeService() {
+    public PasswordService passwordChangeService() {
         if (casProperties.getAuthn().getPm().isEnabled()
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
-            return new LdapPasswordChangeService();
+            return new LdapPasswordService();
         }
         if (casProperties.getAuthn().getPm().isEnabled()) {
-            LOGGER.warn("No backend is configured to handle the account update operation.s Verify your settings");
+            LOGGER.warn("No backend is configured to handle the account update operations. Verify your settings");
         }
-        return (c, bean) -> false;
+        return new PasswordService() {
+        };
+    }
+
+    @Autowired
+    @Bean
+    public Action sendAccountInstructionsAction(@Qualifier("passwordChangeService") final PasswordService passwordService) {
+        return new SendAccountInstructionsAction(passwordService);
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
