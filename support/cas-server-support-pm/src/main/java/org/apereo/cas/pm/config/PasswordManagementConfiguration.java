@@ -3,13 +3,13 @@ package org.apereo.cas.pm.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
-import org.apereo.cas.pm.web.flow.SendAccountInstructionsAction;
+import org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.InitPasswordChangeAction;
@@ -59,24 +59,28 @@ public class PasswordManagementConfiguration {
         return new PasswordChangeAction(passwordChangeService());
     }
 
+    @RefreshScope
+    @Bean
+    public CipherExecutor<String, String> passwordManagementCipherExecutor() {
+        if (casProperties.getAuthn().getPm().getReset().getSecurity().isCipherEnabled()) {
+            return new PasswordResetTokenCipherExecutor(
+                    casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
+                    casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
+        }
+        return new NoOpCipherExecutor();
+    }
+
     @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        CipherExecutor<String, String> cipher = new NoOpCipherExecutor();
-        if (casProperties.getAuthn().getPm().getReset().getSecurity().isCipherEnabled()) {
-            cipher = new PasswordResetTokenCipherExecutor(
-                    casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
-                    casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
-        }
-
         if (casProperties.getAuthn().getPm().isEnabled()
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getLdapUrl())
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getBaseDn())
                 && StringUtils.isNotBlank(casProperties.getAuthn().getPm().getLdap().getUserFilter())) {
-            return new LdapPasswordManagementService(cipher);
+            return new LdapPasswordManagementService(passwordManagementCipherExecutor());
         }
-        
+
         if (casProperties.getAuthn().getPm().isEnabled()) {
             LOGGER.warn("No backend is configured to handle the account update operations. Verify your settings");
         }
@@ -86,8 +90,9 @@ public class PasswordManagementConfiguration {
 
     @Autowired
     @Bean
-    public Action sendAccountInstructionsAction(@Qualifier("passwordChangeService") final PasswordManagementService passwordManagementService) {
-        return new SendAccountInstructionsAction(passwordManagementService);
+    public Action sendPasswordResetInstructionsAction(@Qualifier("passwordChangeService")
+                                                      final PasswordManagementService passwordManagementService) {
+        return new SendPasswordResetInstructionsAction(passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")

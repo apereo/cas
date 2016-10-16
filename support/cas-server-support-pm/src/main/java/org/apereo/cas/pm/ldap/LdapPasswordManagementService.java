@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.ldap;
 
+import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -20,7 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This is {@link LdapPasswordManagementService}.
@@ -63,16 +66,28 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
     @Override
     public String createToken(final String to) {
-        final String token = UUID.randomUUID().toString();
-        final JwtClaims claims = new JwtClaims();
-        claims.setJwtId(token);
-        claims.setIssuer(casProperties.getServer().getPrefix());
-        claims.setAudience(casProperties.getServer().getPrefix());
-        claims.setExpirationTimeMinutesInTheFuture(casProperties.getAuthn().getPm().getReset().getExpirationMinutes());
-        claims.setIssuedAtToNow();
-        claims.setSubject(to);
-        final String json = claims.toJson();
-        return this.cipherExecutor.encode(json);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             Base64OutputStream b64os = new Base64OutputStream(out);
+             GZIPOutputStream gzip = new GZIPOutputStream(b64os)) {
+
+            final String token = UUID.randomUUID().toString();
+            final JwtClaims claims = new JwtClaims();
+            claims.setJwtId(token);
+            claims.setIssuer(casProperties.getServer().getPrefix());
+            claims.setAudience(casProperties.getServer().getPrefix());
+            claims.setExpirationTimeMinutesInTheFuture(casProperties.getAuthn().getPm().getReset().getExpirationMinutes());
+            claims.setIssuedAtToNow();
+            claims.setSubject(to);
+            final String json = claims.toJson();
+            final String encoded = this.cipherExecutor.encode(json);
+
+            gzip.write(encoded.getBytes());
+            final String result = out.toString();
+            return result;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

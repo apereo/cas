@@ -18,13 +18,13 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link SendAccountInstructionsAction}.
+ * This is {@link SendPasswordResetInstructionsAction}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SendAccountInstructionsAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendAccountInstructionsAction.class);
+public class SendPasswordResetInstructionsAction extends AbstractAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendPasswordResetInstructionsAction.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,7 +35,7 @@ public class SendAccountInstructionsAction extends AbstractAction {
 
     private PasswordManagementService passwordManagementService;
 
-    public SendAccountInstructionsAction(final PasswordManagementService passwordManagementService) {
+    public SendPasswordResetInstructionsAction(final PasswordManagementService passwordManagementService) {
         this.passwordManagementService = passwordManagementService;
     }
 
