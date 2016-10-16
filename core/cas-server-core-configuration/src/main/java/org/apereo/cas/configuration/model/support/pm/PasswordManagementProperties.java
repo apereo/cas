@@ -15,7 +15,16 @@ public class PasswordManagementProperties {
     private String policyPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}";
     
     private Ldap ldap = new Ldap();
-    
+    private Reset reset = new Reset();
+
+    public Reset getReset() {
+        return reset;
+    }
+
+    public void setReset(final Reset reset) {
+        this.reset = reset;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -81,6 +90,36 @@ public class PasswordManagementProperties {
 
         public void setType(final LdapType type) {
             this.type = type;
+        }
+    }
+    
+    public static class Reset {
+        private String text = "Reset your password via this link: %s";
+        private String subject = "Password Reset";
+        private String from;
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(final String text) {
+            this.text = text;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(final String subject) {
+            this.subject = subject;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(final String from) {
+            this.from = from;
         }
     }
 }
