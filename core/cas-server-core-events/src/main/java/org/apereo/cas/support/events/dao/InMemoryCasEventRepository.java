@@ -4,6 +4,7 @@ import com.google.common.cache.LoadingCache;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link InMemoryCasEventRepository}.
@@ -28,7 +29,6 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
         return cache.asMap().values();
     }
     
-}
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
         return cache.asMap().values().stream().filter(e -> e.getPrincipalId().equalsIgnoreCase(id)).collect(Collectors.toSet());

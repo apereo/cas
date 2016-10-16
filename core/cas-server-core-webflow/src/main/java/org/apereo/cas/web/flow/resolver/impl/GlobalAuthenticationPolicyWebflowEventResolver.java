@@ -44,7 +44,7 @@ public class GlobalAuthenticationPolicyWebflowEventResolver extends AbstractCasW
         logger.debug("Attempt to globally activate {}", mfaId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
