@@ -1,6 +1,9 @@
 package org.apereo.cas.pm;
 
+import com.google.common.collect.Sets;
 import org.apereo.cas.authentication.Credential;
+
+import java.util.Collection;
 
 /**
  * This is {@link PasswordManagementService}.
@@ -26,6 +29,27 @@ public interface PasswordManagementService {
      * @return the string
      */
     default String findEmail(String username) { return null; }
-    
+
+    /**
+     * Create token string.
+     *
+     * @param username the username
+     * @return the string
+     */
     default String createToken(final String username) { return null; }
+
+    /**
+     * Parse token string.
+     *
+     * @param token the token
+     * @return the username
+     */
+    default String parseToken(String token) { return null; }
+
+    /**
+     * Gets security questions.
+     *
+     * @return the security questions
+     */
+    default Collection<String> getSecurityQuestions() { return Sets.newHashSet(); }
 }

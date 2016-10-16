@@ -59,7 +59,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         
         final String token = passwordManagementService.createToken(username);
-        final String url = casProperties.getServer().getPrefix().concat("/passwordReset?t=").concat(token);
+        final String url = casProperties.getServer().getPrefix().concat("/passwordReset/").concat(token);
         
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();
