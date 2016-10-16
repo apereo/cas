@@ -41,7 +41,7 @@ public class GlobalAuthenticationPolicyWebflowEventResolver extends AbstractCasW
             logger.debug("No value could be found for request parameter {}", mfaId);
             return null;
         }
-        logger.debug("Activating {}", mfaId);
+        logger.debug("Attempt to globally activate {}", mfaId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);

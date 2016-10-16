@@ -37,8 +37,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public AbstractCasProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
-
-
+    
     /**
      * Method to set the renew requirement.
      *
@@ -47,7 +46,6 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public void setRenew(final boolean renew) {
         this.renew = renew;
     }
-
 
     /**
      * Method to determine if we require renew to be true.
@@ -72,6 +70,11 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void reset() {
+        setRenew(false);
     }
 
     /**

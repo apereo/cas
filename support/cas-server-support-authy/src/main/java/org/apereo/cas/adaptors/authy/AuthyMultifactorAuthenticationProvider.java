@@ -23,7 +23,6 @@ public class AuthyMultifactorAuthenticationProvider extends AbstractMultifactorA
         return casProperties.getAuthn().getMfa().getGauth().getRank();
     }
 
-
     @Override
     protected boolean isAvailable() {
         return true;

@@ -38,8 +38,8 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     public int getOrder() {
         return casProperties.getAuthn().getMfa().getGauth().getRank();
     }
-
-
+    
+    
     @Override
     protected boolean isAvailable() {
         try {

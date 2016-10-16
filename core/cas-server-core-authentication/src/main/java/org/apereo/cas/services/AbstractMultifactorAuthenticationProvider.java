@@ -26,19 +26,27 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** CAS Properties. */
+    /**
+     * CAS Properties.
+     */
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    private MultifactorAuthenticationProviderBypass bypassEvaluator;
+
     @Override
-    public final boolean supports(final Event e, 
-                            final Authentication authentication, 
-                            final RegisteredService registeredService) {
+    public final boolean supports(final Event e,
+                                  final Authentication authentication,
+                                  final RegisteredService registeredService) {
         if (e == null || !e.getId().equals(getId())) {
             logger.debug("Provided event id {} is not applicable to this provider identified by {}", getId());
             return false;
         }
-        
+        if (!bypassEvaluator.eval(authentication)) {
+            logger.debug("Request cannot be supported by provider {}", getId());
+            return false;
+        }
+
         return supportsInternal(e, authentication, registeredService);
     }
 
@@ -56,7 +64,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                                        final RegisteredService registeredService) {
         return true;
     }
-    
+
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
         RegisteredServiceMultifactorPolicy.FailureModes failureMode = RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
@@ -68,13 +76,13 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
             logger.debug("Using global multifactor failure mode for {} defined as {}", service.getServiceId(), failureMode);
         }
-        
+
         if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
             if (isAvailable()) {
                 return true;
             }
             if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
-                logger.warn("{} could not be reached. Authentication shall fail for {}", 
+                logger.warn("{} could not be reached. Authentication shall fail for {}",
                         getClass().getSimpleName(), service.getServiceId());
                 throw new AuthenticationException();
             }
@@ -94,6 +102,10 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      * @return the true/false
      */
     protected abstract boolean isAvailable();
+    
+    public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
+        this.bypassEvaluator = bypassEvaluator;
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -120,7 +132,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 .append(getId())
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

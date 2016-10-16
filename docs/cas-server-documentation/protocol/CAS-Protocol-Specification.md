@@ -28,7 +28,7 @@ Release Date: 2015-01-13
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2015, Apereo, Inc.
+Copyright &copy; 2016, Apereo, Inc.
 
 <a name="head1"/>
 
@@ -713,7 +713,7 @@ The proxy callback mechanism works as follows:
 
 [CAS 3.0] The response document MAY include an optional \<cas:attributes\>
 element for additional authentication and/or user attributes. See [Appendix
-A](<#head_appdx_b>) for details.
+A](<#head_appdx_a>) for details.
 
 <a name="head2.5.6"/>
 

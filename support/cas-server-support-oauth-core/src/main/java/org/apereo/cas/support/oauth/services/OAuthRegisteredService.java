@@ -23,19 +23,19 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String clientSecret;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String clientId;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private Boolean bypassApprovalPrompt = Boolean.FALSE;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private Boolean generateRefreshToken = Boolean.FALSE;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private Boolean jsonFormat = Boolean.FALSE;
 
     public String getClientId() {

@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
 /**
- * Configuration properties class for svcreg.mongodb.
+ * Configuration properties class mongodb service registry.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 public class MongoServiceRegistryProperties {
 
     private String host = "localhost";

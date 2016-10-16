@@ -43,11 +43,8 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
         return this.id;
     }
 
-    /**
-     * Gets the type of the original credential.
-     *
-     * @return Non-null credential class.
-     */
+
+    @Override
     public Class<? extends Credential> getCredentialClass() {
         return this.credentialClass;
     }

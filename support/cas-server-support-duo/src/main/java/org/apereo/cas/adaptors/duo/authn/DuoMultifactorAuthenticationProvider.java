@@ -13,9 +13,9 @@ import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
-    
+
     private DuoAuthenticationService duoAuthenticationService;
-    
+
     @Override
     public String getId() {
         return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;

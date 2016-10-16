@@ -33,4 +33,5 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     public void setRadiusAuthenticationHandler(final RadiusTokenAuthenticationHandler radiusAuthenticationHandler) {
         this.radiusAuthenticationHandler = radiusAuthenticationHandler;
     }
+    
 }
