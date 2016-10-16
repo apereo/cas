@@ -26,17 +26,18 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private static final String CAS_MUST_CHANGE_PASS_VIEW = "casMustChangePassView";
     private static final String CAS_EXPIRED_PASS_VIEW = "casExpiredPassView";
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
+    private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("initPasswordChangeAction")
     private Action passwordChangeAction;
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -47,7 +48,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
         createViewState(flow, "casAccountDisabledView", "casAccountDisabledView");
         createEndState(flow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
-        
+
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configure(CAS_MUST_CHANGE_PASS_VIEW);
             configure(CAS_EXPIRED_PASS_VIEW);
@@ -61,27 +62,35 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void configurePasswordReset() {
         final Flow flow = getLoginFlow();
         final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-        createTransitionForState(state, "resetPassword", "getPasswordAccountInfo");
-        final ViewState accountInfo = createViewState(flow, "getPasswordAccountInfo", "casResetPasswordAccountInfo");
-        createTransitionForState(accountInfo, "findAccount", "sendInstructions");
-        createActionState(flow, "sendInstructions", createEvaluateAction("sendAccountInstructionsAction"));
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD, 
+                CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
+        final ViewState accountInfo = createViewState(flow, CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO, 
+                CasWebflowConstants.VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO);
+        createTransitionForState(accountInfo, "findAccount", SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION);
+        final ActionState sendInst = createActionState(flow, SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION,
+                createEvaluateAction("sendPasswordResetInstructionsAction"));
+        createTransitionForState(sendInst, CasWebflowConstants.TRANSITION_ID_SUCCESS, 
+                CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
+        createTransitionForState(sendInst, CasWebflowConstants.TRANSITION_ID_ERROR, accountInfo.getId());
+        createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO, 
+                CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
     }
 
     private void configure(final String id) {
         final Flow flow = getLoginFlow();
         createFlowVariable(flow, "password", PasswordChangeBean.class);
-        
+
         final BinderConfiguration binder = createStateBinderConfiguration(Lists.newArrayList("password", "confirmedPassword"));
         final ViewState viewState = createViewState(flow, id, id, binder);
         createStateModelBinding(viewState, "password", PasswordChangeBean.class);
-        
+
         viewState.getEntryActionList().add(this.passwordChangeAction);
         final Transition transition = createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, PASSWORD_CHANGE_ACTION);
         transition.getAttributes().put("bind", Boolean.TRUE);
         transition.getAttributes().put("validate", Boolean.TRUE);
-        
+
         createStateDefaultTransition(viewState, id);
-        
+
         final ActionState pswChangeAction = createActionState(flow, PASSWORD_CHANGE_ACTION, createEvaluateAction(PASSWORD_CHANGE_ACTION));
         pswChangeAction.getTransitionSet().add(
                 createTransition(PasswordChangeAction.PASSWORD_UPDATE_SUCCESS, "casPasswordUpdateSuccess"));
