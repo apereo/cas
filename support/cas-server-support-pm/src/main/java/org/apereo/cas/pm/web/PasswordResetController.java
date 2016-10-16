@@ -54,6 +54,9 @@ public class PasswordResetController {
         }
         final Collection<String> questions = passwordManagementService.getSecurityQuestions();
         
+        if (questions.isEmpty()) {
+            throw new RuntimeException("No security questions could be found for " + username);
+        }
         final Map<String, Object> model = Maps.newHashMap();
         model.put("questions", questions);
         model.put("username", username);

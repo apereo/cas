@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -162,6 +163,10 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
     @Override
     public Collection<String> getSecurityQuestions() {
-        return Sets.newHashSet("This is the first question?", "this is the second question?", "third question added here");
+        final Set<String> set = Sets.newLinkedHashSet();
+        set.add("This is the first question?");
+        set.add("this is the second question?");
+        set.add("third question added here");
+        return set;
     }
 }
