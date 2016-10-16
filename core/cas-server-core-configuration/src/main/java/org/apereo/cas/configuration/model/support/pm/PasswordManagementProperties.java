@@ -102,6 +102,9 @@ public class PasswordManagementProperties {
         private String text = "Reset your password via this link: %s";
         private String subject = "Password Reset";
         private String from;
+        private String emailAttribute = "mail";
+        
+        private float expirationMinutes = 15;
 
         public Reset() {
             security.setCipherEnabled(true);
@@ -109,6 +112,14 @@ public class PasswordManagementProperties {
 
         public SigningEncryptionProperties getSecurity() {
             return security;
+        }
+
+        public String getEmailAttribute() {
+            return emailAttribute;
+        }
+
+        public void setEmailAttribute(final String emailAttribute) {
+            this.emailAttribute = emailAttribute;
         }
 
         public void setSecurity(final SigningEncryptionProperties security) {
@@ -137,6 +148,14 @@ public class PasswordManagementProperties {
 
         public void setFrom(final String from) {
             this.from = from;
+        }
+
+        public float getExpirationMinutes() {
+            return expirationMinutes;
+        }
+
+        public void setExpirationMinutes(final float expirationMinutes) {
+            this.expirationMinutes = expirationMinutes;
         }
     }
 }
