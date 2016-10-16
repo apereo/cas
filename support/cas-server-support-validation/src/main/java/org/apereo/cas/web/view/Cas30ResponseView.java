@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -78,7 +79,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
-        final Optional<MultifactorAuthenticationProvider> contextProvider = 
+        final Optional<MultifactorAuthenticationProvider> contextProvider =
                 getSatisfiedMultifactorAuthenticationProvider(model);
         if (contextProvider.isPresent() && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute,
@@ -95,7 +96,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      * @return the cas principal attributes
      */
-    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, 
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model,
                                                             final RegisteredService registeredService) {
         return super.getPrincipalAttributesAsMultiValuedAttributes(model);
     }
@@ -121,7 +122,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
             values.forEach(value -> {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<cas:".concat(k).concat(">"));
-                builder.append(value.toString().trim());
+                builder.append(StringEscapeUtils.escapeXml10(value.toString().trim()));
                 builder.append("</cas:".concat(k).concat(">"));
                 formattedAttributes.add(builder.toString());
             });

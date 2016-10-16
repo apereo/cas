@@ -11,6 +11,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
@@ -45,7 +46,7 @@ public class MongoDbEventsConfiguration {
 
     @RefreshScope
     @Bean
-    public SimpleMongoDbFactory mongoAuthNEventsDbFactory() {
+    public MongoDbFactory mongoAuthNEventsDbFactory() {
         try {
             return new SimpleMongoDbFactory(new MongoClientURI(casProperties.getEvents().getMongodb().getClientUri()));
         } catch (final Exception e) {

@@ -22,10 +22,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private String jwks;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean signIdToken = true;
 
     public OidcRegisteredService() {

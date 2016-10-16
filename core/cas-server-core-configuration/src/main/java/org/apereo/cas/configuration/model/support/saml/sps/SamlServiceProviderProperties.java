@@ -18,6 +18,15 @@ public class SamlServiceProviderProperties {
     private NetPartner netPartner = new NetPartner();
     private Webex webex = new Webex();
     private Office365 office365 = new Office365();
+    private TestShib testShib = new TestShib();
+
+    public TestShib getTestShib() {
+        return testShib;
+    }
+
+    public void setTestShib(final TestShib testShib) {
+        this.testShib = testShib;
+    }
 
     public Office365 getOffice365() {
         return office365;
@@ -140,6 +149,12 @@ public class SamlServiceProviderProperties {
         public Webex() {
             setNameIdAttribute("email");
             setAttributes(Lists.newArrayList("firstName,lastName"));
+        }
+    }
+    public static class TestShib extends AbstractSamlSPProperties {
+        public TestShib() {
+            setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
+            setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
         }
     }
 }

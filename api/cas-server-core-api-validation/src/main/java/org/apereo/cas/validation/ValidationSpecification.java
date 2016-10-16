@@ -19,4 +19,9 @@ public interface ValidationSpecification {
      * @return true if it is, false otherwise.
      */
     boolean isSatisfiedBy(Assertion assertion, HttpServletRequest request);
+
+    /**
+     * Reset.
+     */
+    default void reset() {}
 }

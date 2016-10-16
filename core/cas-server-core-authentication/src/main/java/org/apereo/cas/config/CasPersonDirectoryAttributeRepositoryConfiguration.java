@@ -108,7 +108,18 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
         if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty() && list.isEmpty()) {
-            list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
+
+            final boolean foundAttrs = casProperties.getAuthn().getLdap().stream().filter(p -> 
+                       (p.getPrincipalAttributeList() != null && !p.getPrincipalAttributeList().isEmpty())
+                       || (p.getAdditionalAttributes() != null && !p.getAdditionalAttributes().isEmpty())
+            ).findAny().isPresent();
+            
+            if (foundAttrs) {
+                LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");   
+            } else {
+                LOGGER.warn("Found and added static attributes in the attribute repository");
+                list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
+            }
         }
     }
 

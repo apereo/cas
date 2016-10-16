@@ -33,6 +33,7 @@ The following SAML SP integrations are provided by CAS:
 * [Box](https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263)
 * [ServiceNow](http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile)
 * [Workday](http://www.workday.com/)
+* [TestShib](http://www.testshib.org)
 * [Webex](https://help.webex.com/docs/DOC-1067)
 * [PowerFAIDS Net Partner](https://www.collegeboard.org/powerfaids/net-partner)
 * [Office365](https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx)

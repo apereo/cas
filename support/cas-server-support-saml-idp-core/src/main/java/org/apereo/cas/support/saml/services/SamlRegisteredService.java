@@ -59,7 +59,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean encryptAssertions;
 
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
-    private String metadataCriteriaRoles;
+    private String metadataCriteriaRoles = "SPSSODescriptor";
 
     @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;

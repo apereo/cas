@@ -284,11 +284,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return true/false
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
-
+        this.validationSpecification.reset();
         final ServletRequestDataBinder binder = new ServletRequestDataBinder(this.validationSpecification, "validationSpecification");
         initBinder(request, binder);
         binder.bind(request);
-
+        
         if (!this.validationSpecification.isSatisfiedBy(assertion, request)) {
             logger.warn("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
             return false;
