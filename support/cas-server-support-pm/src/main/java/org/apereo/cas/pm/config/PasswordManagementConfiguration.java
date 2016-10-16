@@ -7,6 +7,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
+import org.apereo.cas.pm.web.PasswordResetController;
 import org.apereo.cas.pm.web.flow.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction;
@@ -62,7 +63,7 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor<String, String> passwordManagementCipherExecutor() {
-        if (casProperties.getAuthn().getPm().getReset().getSecurity().isCipherEnabled()) {
+        if (casProperties.getAuthn().getPm().isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
                     casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
                     casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
@@ -95,6 +96,12 @@ public class PasswordManagementConfiguration {
         return new SendPasswordResetInstructionsAction(passwordManagementService);
     }
 
+    @Bean
+    public PasswordResetController passwordResetController(@Qualifier("passwordChangeService")
+                                                      final PasswordManagementService passwordManagementService) {
+        return new PasswordResetController(passwordManagementService);
+    }
+    
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
