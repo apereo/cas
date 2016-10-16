@@ -49,12 +49,20 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         if (casProperties.getAuthn().getPm().isEnabled()) {
             configure(CAS_MUST_CHANGE_PASS_VIEW);
             configure(CAS_EXPIRED_PASS_VIEW);
+            configurePasswordReset();
         } else {
             createViewState(flow, CAS_MUST_CHANGE_PASS_VIEW, CAS_MUST_CHANGE_PASS_VIEW);
             createViewState(flow, CAS_EXPIRED_PASS_VIEW, CAS_EXPIRED_PASS_VIEW);
         }
     }
-    
+
+    private void configurePasswordReset() {
+        final Flow flow = getLoginFlow();
+        final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+        createTransitionForState(state, "resetPassword", "getPasswordAccountInfo");
+        createViewState(flow, "getPasswordAccountInfo", "casResetPasswordAccountInfo");
+    }
+
     private void configure(final String id) {
         final Flow flow = getLoginFlow();
         createFlowVariable(flow, "password", PasswordChangeBean.class);
