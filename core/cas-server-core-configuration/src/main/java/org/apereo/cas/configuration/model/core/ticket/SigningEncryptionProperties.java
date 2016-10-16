@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
 /**
- * This is {@link TicketSigningEncryptionProperties}.
+ * This is {@link SigningEncryptionProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class TicketSigningEncryptionProperties {
+public class SigningEncryptionProperties {
     private String encryptionKey = "";
 
     private String signingKey = "";
