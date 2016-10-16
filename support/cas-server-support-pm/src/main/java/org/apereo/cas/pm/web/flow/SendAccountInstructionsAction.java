@@ -58,11 +58,10 @@ public class SendAccountInstructionsAction extends AbstractAction {
             return error();
         }
         
-        final String token = passwordManagementService.createToken();
-        final String url = passwordManagementService.createResetUrl(token);
-
+        final String token = passwordManagementService.createToken(username);
+        final String url = casProperties.getServer().getPrefix().concat("/passwordReset?t=").concat(token);
+        
         if (sendPasswordResetEmailToAccount(to, url)) {
-            passwordManagementService.trackToken(username, token);
             return success();
         }
         LOGGER.error("Failed to notify account {}", to);

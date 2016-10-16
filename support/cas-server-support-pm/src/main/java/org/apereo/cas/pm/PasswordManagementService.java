@@ -27,15 +27,5 @@ public interface PasswordManagementService {
      */
     default String findEmail(String username) { return null; }
     
-    /**
-     * Track token issued for password reset.
-     *
-     * @param username the username
-     * @param token    the token
-     */
-    default void trackToken(String username, String token) {}
-
-    default String createResetUrl(String token) { return null; }
-
-    default String createToken() { return null; }
+    default String createToken(final String username) { return null; }
 }
