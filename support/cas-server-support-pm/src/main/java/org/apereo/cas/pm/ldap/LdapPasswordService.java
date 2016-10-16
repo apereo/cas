@@ -1,13 +1,13 @@
-package org.apereo.cas.web.ldap;
+package org.apereo.cas.pm.ldap;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.pm.PasswordService;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.web.PasswordChangeBean;
-import org.apereo.cas.web.PasswordChangeService;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
@@ -17,19 +17,39 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * This is {@link LdapPasswordChangeService}.
+ * This is {@link LdapPasswordService}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class LdapPasswordChangeService implements PasswordChangeService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapPasswordChangeService.class);
+public class LdapPasswordService implements PasswordService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapPasswordService.class);
     
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Override
-    public boolean execute(final Credential credential, final PasswordChangeBean bean) {
+    public String findEmail(final String username) {
+        return null;
+    }
+
+    @Override
+    public void trackToken(final String username, final String token) {
+
+    }
+
+    @Override
+    public String createResetUrl(final String token) {
+        return null;
+    }
+
+    @Override
+    public String createToken() {
+        return null;
+    }
+
+    @Override
+    public boolean change(final Credential credential, final PasswordChangeBean bean) {
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
