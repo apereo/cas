@@ -2,7 +2,7 @@ package org.apereo.cas.pm.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.PasswordService;
+import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,10 @@ public class SendAccountInstructionsAction extends AbstractAction {
     @Qualifier("mailSender")
     private JavaMailSender mailSender;
 
-    private PasswordService passwordService;
+    private PasswordManagementService passwordManagementService;
 
-    public SendAccountInstructionsAction(final PasswordService passwordService) {
-        this.passwordService = passwordService;
+    public SendAccountInstructionsAction(final PasswordManagementService passwordManagementService) {
+        this.passwordManagementService = passwordManagementService;
     }
 
     @Override
@@ -52,17 +52,17 @@ public class SendAccountInstructionsAction extends AbstractAction {
             return error();
         }
 
-        final String to = passwordService.findEmail(username);
+        final String to = passwordManagementService.findEmail(username);
         if (StringUtils.isBlank(to)) {
             LOGGER.warn("No recipient is provided");
             return error();
         }
         
-        final String token = passwordService.createToken();
-        final String url = passwordService.createResetUrl(token);
+        final String token = passwordManagementService.createToken();
+        final String url = passwordManagementService.createResetUrl(token);
 
         if (sendPasswordResetEmailToAccount(to, url)) {
-            passwordService.trackToken(username, token);
+            passwordManagementService.trackToken(username, token);
             return success();
         }
         LOGGER.error("Failed to notify account {}", to);

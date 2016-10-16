@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link PasswordManagementProperties}.
@@ -94,9 +96,24 @@ public class PasswordManagementProperties {
     }
     
     public static class Reset {
+        @NestedConfigurationProperty
+        private SigningEncryptionProperties security = new SigningEncryptionProperties();
+        
         private String text = "Reset your password via this link: %s";
         private String subject = "Password Reset";
         private String from;
+
+        public Reset() {
+            security.setCipherEnabled(true);
+        }
+
+        public SigningEncryptionProperties getSecurity() {
+            return security;
+        }
+
+        public void setSecurity(final SigningEncryptionProperties security) {
+            this.security = security;
+        }
 
         public String getText() {
             return text;
