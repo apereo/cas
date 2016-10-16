@@ -3,12 +3,12 @@ package org.apereo.cas.pm;
 import org.apereo.cas.authentication.Credential;
 
 /**
- * This is {@link PasswordService}.
+ * This is {@link PasswordManagementService}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface PasswordService {
+public interface PasswordManagementService {
 
     /**
      * Execute op to change password.
