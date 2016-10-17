@@ -36,7 +36,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
-                this.cipherExecutor.getClass());
+                this.cipherExecutor.getClass().getSimpleName());
     }
 
     @Override
