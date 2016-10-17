@@ -2,7 +2,6 @@ package org.apereo.cas.web.controllers;
 
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
