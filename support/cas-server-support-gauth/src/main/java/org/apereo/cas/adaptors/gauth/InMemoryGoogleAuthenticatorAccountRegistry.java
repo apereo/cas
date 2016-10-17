@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
