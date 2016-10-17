@@ -26,11 +26,14 @@ import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.c;
 
 /**
  * This is {@link LdapPasswordManagementService}.
@@ -100,6 +103,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
     @Override
     public boolean change(final Credential credential, final PasswordChangeBean bean) {
+        Assert.notNull(credential, "Credential cannot be null");
+        Assert.notNull(bean, "PasswordChangeBean cannot be null");
+
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;

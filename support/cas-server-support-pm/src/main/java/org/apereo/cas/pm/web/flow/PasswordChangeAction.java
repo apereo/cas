@@ -14,6 +14,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD;
+
 /**
  * This is {@link PasswordChangeAction}.
  *
@@ -22,11 +24,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class PasswordChangeAction extends AbstractAction {
 
-    /** Password Update Success event. */
+    /**
+     * Password Update Success event.
+     */
     public static final String PASSWORD_UPDATE_SUCCESS = "passwordUpdateSuccess";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,7 +44,8 @@ public class PasswordChangeAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         try {
             final UsernamePasswordCredential c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            final PasswordChangeBean bean = requestContext.getFlowScope().get("password", PasswordChangeBean.class);
+            final PasswordChangeBean bean = requestContext.getFlowScope()
+                    .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
             if (passwordManagementService.change(c, bean)) {
                 return new EventFactorySupport().event(this, PASSWORD_UPDATE_SUCCESS);
             }
