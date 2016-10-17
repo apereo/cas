@@ -80,7 +80,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO,
                 CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
 
-        final Flow pswdFlow = buildFlow("classpath:/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
+        final Flow pswdFlow = buildFlow("classpath:/webflow/pswdreset/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
         createViewState(pswdFlow, "passwordResetErrorView", "casResetPasswordErrorView");
         createEndState(pswdFlow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
         configure(pswdFlow, CAS_MUST_CHANGE_PASS_VIEW);
