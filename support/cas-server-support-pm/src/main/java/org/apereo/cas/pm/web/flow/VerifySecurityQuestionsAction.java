@@ -26,7 +26,7 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-        final String username = requestContext.getFlowScope().get("username").toString();
+        final String username = requestContext.getFlowScope().getString("username");
 
         final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
 
