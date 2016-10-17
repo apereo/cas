@@ -19,8 +19,7 @@
     
     <action-state id="verifySecurityQuestions">
         <evaluate expression="verifySecurityQuestionsAction"/>
-        <transition on="success" to="changePassword" />
+        <transition on="success" to="casMustChangePassView" />
         <transition on="error" to="passwordResetErrorView" />
     </action-state>
-    <view-state id="changePassword" view="casMustChangePassView" />
 </flow>
