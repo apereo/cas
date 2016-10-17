@@ -81,7 +81,7 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 
 ## Configuration Security
 
-Encrypt and decrypt configuration via Spring Cloud. 
+Encrypt and decrypt configuration via Spring Cloud.
 
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
@@ -217,7 +217,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
-# IP address may be enough to protect all endpoints. 
+# IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
@@ -832,12 +832,12 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with sAMAccountName.
+- Active Directory - Users authenticate with `sAMAccountName`.
 - Authenticated Search - Manager bind/search
-  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
   - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 - Anonymous Search - Anonymous search
-  - if `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
   - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 - Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
 no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
@@ -848,9 +848,14 @@ Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
 
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
+will simply deactivate LDAP authentication altogether silently.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
 
 ```properties
+# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
+
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
@@ -869,8 +874,6 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
 # cas.authn.ldap[0].credentialCriteria=
-
-# cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
 # cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
 # cas.authn.ldap[0].saslRealm=EXAMPLE.COM
@@ -1431,7 +1434,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
-   
+
 ### TestShib
 
 ```properties
@@ -1450,7 +1453,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
 # cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
 ```
-     
+
 ### SAManage
 
 ```properties
@@ -1459,7 +1462,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.saManage.description=SAManage Integration
 # cas.samlSP.saManage.nameIdAttribute=mail
 ```
-        
+
 ### Workday
 
 ```properties
@@ -2644,12 +2647,35 @@ connections and queries.
 
 ## Password Management
 
-Allow the user to update their account password, etc in-place. 
+Allow the user to update their account password, etc in-place.
+To learn more about this topic, [please review this guide](Password-Policy-Enforcement.html).
 
 ```properties
 # cas.authn.pm.enabled=true
+
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
+
+# cas.authn.pm.reset.text=Reset your password with this link: %s
+# cas.authn.pm.reset.subject=Password Reset Request
+# cas.authn.pm.reset.from=
+# cas.authn.pm.reset.expirationMinutes=1
+# cas.authn.pm.reset.emailAttribute=mail
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+
+# Used to sign/encrypt the password-reset link
+# cas.authn.pm.reset.security.encryptionKey=
+# cas.authn.pm.reset.security.signingKey=
+
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
 ### LDAP
