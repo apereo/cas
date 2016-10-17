@@ -8,6 +8,7 @@ import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
 import org.apereo.cas.pm.web.flow.InitPasswordChangeAction;
+import org.apereo.cas.pm.web.flow.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction;
@@ -75,6 +76,14 @@ public class PasswordManagementConfiguration {
     @Bean
     public Action initPasswordChangeAction() {
         return new InitPasswordChangeAction();
+    }
+
+    @Autowired
+    @RefreshScope
+    @Bean
+    public Action initPasswordResetAction(@Qualifier("passwordChangeService")
+                                          final PasswordManagementService passwordManagementService) {
+        return new InitPasswordResetAction(passwordManagementService);
     }
 
     @RefreshScope
