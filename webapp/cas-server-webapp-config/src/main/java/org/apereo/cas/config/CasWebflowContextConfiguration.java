@@ -53,7 +53,6 @@ import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.apereo.cas.web.flow.CasWebflowConfigurer.*;
 
 /**
  * This is {@link CasWebflowContextConfiguration} that attempts to create Spring-managed beans
@@ -128,7 +127,8 @@ public class CasWebflowContextConfiguration {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(FLOW_ID_LOGOUT);
+                return super.supports(handler) && ((FlowHandler) handler)
+                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
             }
         };
         handler.setFlowExecutor(logoutFlowExecutor());
@@ -192,7 +192,8 @@ public class CasWebflowContextConfiguration {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(FLOW_ID_LOGIN);
+                return super.supports(handler) && ((FlowHandler) handler)
+                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
             }
         };
         handler.setFlowExecutor(loginFlowExecutor());
