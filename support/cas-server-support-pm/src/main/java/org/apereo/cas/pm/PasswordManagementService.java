@@ -1,9 +1,9 @@
 package org.apereo.cas.pm;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.Credential;
 
-import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is {@link PasswordManagementService}.
@@ -49,7 +49,8 @@ public interface PasswordManagementService {
     /**
      * Gets security questions.
      *
+     * @param username the username
      * @return the security questions
      */
-    default Collection<String> getSecurityQuestions() { return Sets.newHashSet(); }
+    default Map<String, String> getSecurityQuestions(final String username) { return Maps.newLinkedHashMap(); }
 }
