@@ -17,6 +17,8 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET;
+
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
  *
@@ -24,6 +26,9 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 public class SendPasswordResetInstructionsAction extends AbstractAction {
+    /** Param name for the token. */
+    public static final String PARAMETER_NAME_TOKEN = "t";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(SendPasswordResetInstructionsAction.class);
 
     @Autowired
@@ -59,7 +64,8 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         
         final String token = passwordManagementService.createToken(username);
-        final String url = casProperties.getServer().getPrefix().concat("/passwordReset/").concat(token);
+        final String url = casProperties.getServer().getPrefix()
+                .concat("/" + FLOW_ID_PASSWORD_RESET + "?" + PARAMETER_NAME_TOKEN + "=").concat(token);
         
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();

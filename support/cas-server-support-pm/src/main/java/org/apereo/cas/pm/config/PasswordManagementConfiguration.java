@@ -7,10 +7,11 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidator;
 import org.apereo.cas.pm.ldap.LdapPasswordManagementService;
-import org.apereo.cas.pm.web.PasswordResetController;
 import org.apereo.cas.pm.web.flow.PasswordChangeAction;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction;
+import org.apereo.cas.pm.web.flow.VerifyPasswordResetRequestAction;
+import org.apereo.cas.pm.web.flow.VerifySecurityQuestionsAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.InitPasswordChangeAction;
@@ -23,9 +24,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.executor.FlowExecutor;
+import org.springframework.webflow.mvc.servlet.FlowHandler;
+import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -47,6 +52,24 @@ public class PasswordManagementConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    @Qualifier("loginFlowExecutor")
+    private FlowExecutor loginFlowExecutor;
+
+    @RefreshScope
+    @Bean
+    public HandlerAdapter passwordResetHandlerAdapter() {
+        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
+            @Override
+            public boolean supports(final Object handler) {
+                return super.supports(handler) && ((FlowHandler) handler)
+                        .getFlowId().equals(PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+            }
+        };
+        handler.setFlowExecutor(loginFlowExecutor);
+        return handler;
+    }
 
     @RefreshScope
     @Bean
@@ -97,11 +120,17 @@ public class PasswordManagementConfiguration {
     }
 
     @Bean
-    public PasswordResetController passwordResetController(@Qualifier("passwordChangeService")
-                                                      final PasswordManagementService passwordManagementService) {
-        return new PasswordResetController(passwordManagementService);
+    public Action verifyPasswordResetRequestAction(@Qualifier("passwordChangeService")
+                                                   final PasswordManagementService passwordManagementService) {
+        return new VerifyPasswordResetRequestAction(passwordManagementService);
     }
-    
+
+    @Bean
+    public Action verifySecurityQuestionsAction(@Qualifier("passwordChangeService")
+                                                final PasswordManagementService passwordManagementService) {
+        return new VerifySecurityQuestionsAction(passwordManagementService);
+    }
+
     @ConditionalOnMissingBean(name = "passwordManagementWebflowConfigurer")
     @RefreshScope
     @Bean
