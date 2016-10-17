@@ -14,8 +14,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD;
-
 /**
  * This is {@link PasswordChangeAction}.
  *
