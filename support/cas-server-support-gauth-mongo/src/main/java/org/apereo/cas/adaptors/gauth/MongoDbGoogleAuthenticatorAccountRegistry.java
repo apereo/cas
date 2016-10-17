@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -18,7 +17,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class MongoDbGoogleAuthenticatorAccountRegistry implements ICredentialRepository {
+public class MongoDbGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbGoogleAuthenticatorAccountRegistry.class);
 
     private String collectionName;
