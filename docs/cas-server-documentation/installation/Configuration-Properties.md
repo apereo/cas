@@ -81,7 +81,7 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 
 ## Configuration Security
 
-Encrypt and decrypt configuration via Spring Cloud. 
+Encrypt and decrypt configuration via Spring Cloud.
 
 ```properties
 # spring.cloud.config.server.encrypt.enabled=true
@@ -217,7 +217,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # endpoints.restart.enabled=false
 # endpoints.shutdown.enabled=false
 
-# IP address may be enough to protect all endpoints. 
+# IP address may be enough to protect all endpoints.
 # If you wish to protect the admin pages via CAS itself, configure the rest.
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
@@ -1434,7 +1434,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
 ```
-   
+
 ### TestShib
 
 ```properties
@@ -1453,7 +1453,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
 # cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
 ```
-     
+
 ### SAManage
 
 ```properties
@@ -1462,7 +1462,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.saManage.description=SAManage Integration
 # cas.samlSP.saManage.nameIdAttribute=mail
 ```
-        
+
 ### Workday
 
 ```properties
@@ -2647,12 +2647,26 @@ connections and queries.
 
 ## Password Management
 
-Allow the user to update their account password, etc in-place. 
+Allow the user to update their account password, etc in-place.
+To learn more about this topic, [please review this guide](Password-Policy-Enforcement.html).
 
 ```properties
 # cas.authn.pm.enabled=true
+
 # Minimum 8 and Maximum 10 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
+
+# cas.authn.pm.reset.text=Reset your password with this link: %s
+# cas.authn.pm.reset.subject=Password Reset
+# cas.authn.pm.reset.from=
+# cas.authn.pm.reset.expirationMinutes=1
+# cas.authn.pm.reset.emailAttribute=mail
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion1=attrAnswer1
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion2=attrAnswer2
+# cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion3=attrAnswer3
+
+# cas.authn.pm.reset.security.encryptionKey=
+# cas.authn.pm.reset.security.signingKey=
 ```
 
 ### LDAP
