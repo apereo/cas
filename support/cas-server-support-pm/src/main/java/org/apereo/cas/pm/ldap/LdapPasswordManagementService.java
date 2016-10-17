@@ -1,7 +1,9 @@
 package org.apereo.cas.pm.ldap;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,7 +61,10 @@ public class LdapPasswordManagementService implements PasswordManagementService 
                 final LdapEntry entry = response.getResult().getEntry();
                 final LdapAttribute attr = entry.getAttribute(casProperties.getAuthn().getPm().getReset().getEmailAttribute());
                 if (attr != null) {
-                    return attr.getStringValue();
+                    final String email = attr.getStringValue();
+                    if (EmailValidator.getInstance().isValid(email)) {
+                        return email;
+                    }
                 }
                 return null;
             }
@@ -150,10 +156,12 @@ public class LdapPasswordManagementService implements PasswordManagementService 
                 LOGGER.error("Token client does not match CAS");
                 return null;
             }
+            
             if (claims.getExpirationTime().isBefore(NumericDate.now())) {
                 LOGGER.error("Token has expired.");
                 return null;
             }
+            
             return claims.getSubject();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -162,12 +170,11 @@ public class LdapPasswordManagementService implements PasswordManagementService 
     }
 
     @Override
-    public Collection<String> getSecurityQuestions() {
-        final Set<String> set = Sets.newLinkedHashSet();
-        set.add("This is the first question?");
-        set.add("this is the second question?");
-        set.add("third question added here");
-        set.add("4th question added here");
+    public Map<String, String> getSecurityQuestions(final String username) {
+        final Map<String, String> set = Maps.newLinkedHashMap();
+        set.put("This is the first question?", "1");
+        set.put("This is the 2nd question?", "1");
+        set.put("This is the 3rd question?", "1");
         return set;
     }
 }
