@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.ldap;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -28,12 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.c;
 
 /**
  * This is {@link LdapPasswordManagementService}.
@@ -87,11 +82,11 @@ public class LdapPasswordManagementService implements PasswordManagementService 
             claims.setAudience(casProperties.getServer().getPrefix());
             claims.setExpirationTimeMinutesInTheFuture(casProperties.getAuthn().getPm().getReset().getExpirationMinutes());
             claims.setIssuedAtToNow();
-            
+
             final ClientInfo holder = ClientInfoHolder.getClientInfo();
             claims.setStringClaim("origin", holder.getServerIpAddress());
             claims.setStringClaim("client", holder.getClientIpAddress());
-            
+
             claims.setSubject(to);
             final String json = claims.toJson();
             return this.cipherExecutor.encode(json);
@@ -162,12 +157,12 @@ public class LdapPasswordManagementService implements PasswordManagementService 
                 LOGGER.error("Token client does not match CAS");
                 return null;
             }
-            
+
             if (claims.getExpirationTime().isBefore(NumericDate.now())) {
                 LOGGER.error("Token has expired.");
                 return null;
             }
-            
+
             return claims.getSubject();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -178,9 +173,28 @@ public class LdapPasswordManagementService implements PasswordManagementService 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
         final Map<String, String> set = Maps.newLinkedHashMap();
-        set.put("This is the first question?", "1");
-        set.put("This is the 2nd question?", "1");
-        set.put("This is the 3rd question?", "1");
+
+        try {
+            final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
+            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), username);
+            final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
+            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            if (LdapUtils.containsResultEntry(response)) {
+                final LdapEntry entry = response.getResult().getEntry();
+                final Map<String, String> qs = casProperties.getAuthn().getPm().getReset().getSecurityQuestionsAttributes();
+                qs.forEach((k, v) -> {
+                    final LdapAttribute q = entry.getAttribute(k);
+                    final LdapAttribute a = entry.getAttribute(v);
+                    if (q != null && a != null
+                            && StringUtils.isNotBlank(q.getStringValue())
+                            && StringUtils.isNotBlank(a.getStringValue())) {
+                        set.put(q.getStringValue(), a.getStringValue());
+                    }
+                });
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
         return set;
     }
 }
