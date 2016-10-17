@@ -64,7 +64,8 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime creationTime = ticketState.getCreationTime();
-
+        final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
+        
         // Ticket has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
         if (currentSystemTime.isAfter(expirationTime)) {
@@ -72,9 +73,8 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             return true;
         }
 
-        // Ticket is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
-        if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
+        expirationTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;
         }
