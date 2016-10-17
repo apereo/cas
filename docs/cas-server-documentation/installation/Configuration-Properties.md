@@ -2657,7 +2657,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.policyPattern=^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&]{8,10}
 
 # cas.authn.pm.reset.text=Reset your password with this link: %s
-# cas.authn.pm.reset.subject=Password Reset
+# cas.authn.pm.reset.subject=Password Reset Request
 # cas.authn.pm.reset.from=
 # cas.authn.pm.reset.expirationMinutes=1
 # cas.authn.pm.reset.emailAttribute=mail
@@ -2665,8 +2665,17 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion2=attrAnswer2
 # cas.authn.pm.reset.securityQuestionsAttributes.attrQuestion3=attrAnswer3
 
+# Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.security.encryptionKey=
 # cas.authn.pm.reset.security.signingKey=
+
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
 ```
 
 ### LDAP
