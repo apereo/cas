@@ -211,12 +211,12 @@ public interface CasWebflowConstants {
     /**
      * View id 'casResetPasswordSendInstructions'.
      */
-    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructions";
+    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
 
     /**
      * View id 'casResetPasswordSentInstructions'.
      */
-    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructions";
+    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
     
     /**
      * Transition id 'resetPassword'.

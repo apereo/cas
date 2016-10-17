@@ -28,6 +28,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
+import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -100,9 +101,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected CasConfigurationProperties casProperties;
 
     private FlowBuilderServices flowBuilderServices;
-
-
-
+    
     @PostConstruct
     @Override
     public void initialize() {
@@ -125,6 +124,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected abstract void doInitialize() throws Exception;
 
+    @Override
+    public Flow buildFlow(final String location, final String id) {
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        builder.setParent(this.loginFlowDefinitionRegistry);
+        builder.addFlowLocation(location, id);
+        final FlowDefinitionRegistry registry = builder.build();
+        return (Flow) registry.getFlowDefinition(id);
+    }
+    
     @Override
     public Flow getLoginFlow() {
         return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);

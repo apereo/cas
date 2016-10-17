@@ -104,7 +104,7 @@ public class PasswordManagementProperties {
         private String from;
         private String emailAttribute = "mail";
         
-        private float expirationMinutes = 1;
+        private float expirationMinutes = 30;
 
         public Reset() {
             security.setCipherEnabled(true);
