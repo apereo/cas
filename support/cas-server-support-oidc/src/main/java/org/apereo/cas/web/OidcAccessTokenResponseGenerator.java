@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
