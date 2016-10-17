@@ -13,6 +13,7 @@ import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationWebflowEventResolver;
@@ -112,7 +113,7 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver(
+    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver();
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));

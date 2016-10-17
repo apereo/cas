@@ -1,7 +1,6 @@
-package org.apereo.cas.config;
+package org.apereo.cas;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apereo.cas.OidcConstants;
 import org.apereo.cas.support.oauth.OAuthConstants;
 
 import java.util.List;

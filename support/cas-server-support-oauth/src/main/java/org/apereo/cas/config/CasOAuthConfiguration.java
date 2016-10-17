@@ -72,6 +72,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static org.apereo.cas.support.oauth.OAuthConstants.*;
+
 /**
  * This this {@link CasOAuthConfiguration}.
  *
@@ -145,13 +147,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         final DirectFormClient userFormClient = new DirectFormClient(oAuthUserAuthenticator());
         userFormClient.setName("userForm");
 
-        final String callbackUrl = casProperties.getServer().getPrefix().concat("/oauth2.0/callbackAuthorize");
+        final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL);
         return new Config(callbackUrl, oauthCasClient, basicAuthClient, directFormClient, userFormClient);
     }
 
     private CallbackUrlResolver buildOAuthCasCallbackUrlResolver() {
         return (url, context) -> {
-            final String callbackUrl = casProperties.getServer().getPrefix().concat("/oauth2.0/callbackAuthorize");
+            final String callbackUrl = casProperties.getServer().getPrefix().concat(BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL);
             if (url.startsWith(callbackUrl)) {
                 final URIBuilder builder = new URIBuilder(url);
                 final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
@@ -164,6 +166,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                 }
                 parameter = builderContext.getQueryParams()
                         .stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI))
+                        .findFirst();
+                if (parameter.isPresent()) {
+                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
+                }
+
+                parameter = builderContext.getQueryParams()
+                        .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
                         .findFirst();
                 if (parameter.isPresent()) {
                     builder.addParameter(parameter.get().getName(), parameter.get().getValue());
@@ -224,7 +233,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor())
-                .addPathPatterns(OAuthConstants.BASE_OAUTH20_URL.concat("/").concat("*"));
+                .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
     }
 
     @Bean
@@ -395,7 +404,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @PostConstruct
     public void initializeServletApplicationContext() {
-        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + OAuthConstants.BASE_OAUTH20_URL + '/'
+        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/'
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
