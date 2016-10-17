@@ -8,12 +8,20 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.util.Arrays;
+
+import static org.reflections.util.ConfigurationBuilder.build;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.
@@ -22,19 +30,20 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
+    /**
+     * Flow id for password reset.
+     */
+    public static final String FLOW_ID_PASSWORD_RESET = "pswdreset";
+    
     private static final String CAS_MUST_CHANGE_PASS_VIEW = "casMustChangePassView";
     private static final String CAS_EXPIRED_PASS_VIEW = "casExpiredPassView";
     private static final String PASSWORD_CHANGE_ACTION = "passwordChangeAction";
     private static final String SEND_PASSWORD_RESET_INSTRUCTIONS_ACTION = "sendInstructions";
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Autowired
     @Qualifier("initPasswordChangeAction")
     private Action passwordChangeAction;
-
+    
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -50,8 +59,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createEndState(flow, "casPasswordUpdateSuccess", "casPasswordUpdateSuccessView");
 
         if (casProperties.getAuthn().getPm().isEnabled()) {
-            configure(CAS_MUST_CHANGE_PASS_VIEW);
-            configure(CAS_EXPIRED_PASS_VIEW);
+            configure(flow, CAS_MUST_CHANGE_PASS_VIEW);
+            configure(flow, CAS_EXPIRED_PASS_VIEW);
             configurePasswordReset();
         } else {
             createViewState(flow, CAS_MUST_CHANGE_PASS_VIEW, CAS_MUST_CHANGE_PASS_VIEW);
@@ -74,10 +83,14 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         createTransitionForState(sendInst, CasWebflowConstants.TRANSITION_ID_ERROR, accountInfo.getId());
         createViewState(flow, CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO, 
                 CasWebflowConstants.VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO);
+        
+        final Flow pswdFlow = buildFlow("classpath:/pswdreset-webflow.xml", FLOW_ID_PASSWORD_RESET);
+        createViewState(pswdFlow, "passwordResetErrorView", "casResetPasswordErrorView");
+        configure(pswdFlow, CAS_MUST_CHANGE_PASS_VIEW);
+        loginFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
     }
 
-    private void configure(final String id) {
-        final Flow flow = getLoginFlow();
+    private void configure(final Flow flow, final String id) {
         createFlowVariable(flow, "password", PasswordChangeBean.class);
 
         final BinderConfiguration binder = createStateBinderConfiguration(Lists.newArrayList("password", "confirmedPassword"));

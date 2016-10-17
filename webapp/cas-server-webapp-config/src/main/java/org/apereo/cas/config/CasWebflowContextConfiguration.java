@@ -8,14 +8,15 @@ import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.DefaultWebflowConfigurer;
 import org.apereo.cas.web.flow.LogoutConversionService;
-import org.apereo.cas.web.flow.SelectiveFlowHandlerAdapter;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
+import org.apereo.spring.webflow.plugin.Transcoder;
 import org.cryptacular.bean.CipherBean;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -23,7 +24,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
+import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
@@ -32,6 +36,7 @@ import org.springframework.webflow.config.FlowExecutorBuilder;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
 import org.springframework.webflow.execution.repository.impl.DefaultFlowExecutionRepository;
@@ -40,11 +45,15 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
+import org.springframework.webflow.mvc.servlet.FlowHandler;
+import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static org.apereo.cas.web.flow.CasWebflowConfigurer.*;
 
 /**
  * This is {@link CasWebflowContextConfiguration} that attempts to create Spring-managed beans
@@ -80,7 +89,7 @@ public class CasWebflowContextConfiguration {
     private HandlerInterceptor authenticationThrottle;
     
     @Bean
-    public WebFlowSpringELExpressionParser expressionParser() {
+    public ExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
                 new SpelExpressionParser(),
                 logoutConversionService());
@@ -95,14 +104,14 @@ public class CasWebflowContextConfiguration {
 
     @RefreshScope
     @Bean
-    public MvcViewFactoryCreator viewFactoryCreator() {
+    public ViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
         resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
         return resolver;
     }
 
     @Bean
-    public CasDefaultFlowUrlHandler loginFlowUrlHandler() {
+    public FlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
     }
     
@@ -115,9 +124,13 @@ public class CasWebflowContextConfiguration {
     
     @RefreshScope
     @Bean
-    public SelectiveFlowHandlerAdapter logoutHandlerAdapter() {
-        final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
-        handler.setSupportedFlowId("logout");
+    public HandlerAdapter logoutHandlerAdapter() {
+        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
+            @Override
+            public boolean supports(final Object handler) {
+                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(FLOW_ID_LOGOUT);
+            }
+        };
         handler.setFlowExecutor(logoutFlowExecutor());
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
@@ -166,7 +179,7 @@ public class CasWebflowContextConfiguration {
     }
     
     @Bean
-    public EncryptedTranscoder loginFlowStateTranscoder() {
+    public Transcoder loginFlowStateTranscoder() {
         try {
             return new EncryptedTranscoder(loginFlowCipherBean());
         } catch (final Exception e) {
@@ -175,21 +188,25 @@ public class CasWebflowContextConfiguration {
     }
     
     @Bean
-    public SelectiveFlowHandlerAdapter loginHandlerAdapter() {
-        final SelectiveFlowHandlerAdapter handler = new SelectiveFlowHandlerAdapter();
-        handler.setSupportedFlowId("login");
+    public HandlerAdapter loginHandlerAdapter() {
+        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
+            @Override
+            public boolean supports(final Object handler) {
+                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(FLOW_ID_LOGIN);
+            }
+        };
         handler.setFlowExecutor(loginFlowExecutor());
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
     
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
+    public AsyncHandlerInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
     }
     
     @Bean
-    public FlowHandlerMapping logoutFlowHandlerMapping() {
+    public HandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
         handler.setFlowRegistry(logoutFlowRegistry());
@@ -199,7 +216,7 @@ public class CasWebflowContextConfiguration {
     }
     
     @Bean
-    public FlowHandlerMapping loginFlowHandlerMapping() {
+    public HandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
         handler.setFlowRegistry(loginFlowRegistry());
