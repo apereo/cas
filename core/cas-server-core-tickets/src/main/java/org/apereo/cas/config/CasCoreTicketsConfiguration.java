@@ -258,7 +258,7 @@ public class CasCoreTicketsConfiguration {
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
                 casProperties.getTicket().getSt().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getTicket().getSt().getTimeToKillInSeconds()));
+                casProperties.getTicket().getSt().getTimeToKillInSeconds());
 
     }
 
@@ -266,7 +266,7 @@ public class CasCoreTicketsConfiguration {
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
                 casProperties.getTicket().getPt().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getTicket().getPt().getTimeToKillInSeconds()));
+                casProperties.getTicket().getPt().getTimeToKillInSeconds());
     }
 
     @Bean
