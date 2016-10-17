@@ -19,7 +19,7 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorAccountRegistry implements ICredentialRepository {
+public class JpaGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorAccountRegistry.class);
     
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
