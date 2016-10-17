@@ -20,7 +20,9 @@ public interface PasswordManagementService {
      * @param bean the bean
      * @return true /false
      */
-    default boolean change(Credential c, PasswordChangeBean bean) { return false; }
+    default boolean change(Credential c, PasswordChangeBean bean) {
+        return false;
+    }
 
     /**
      * Find email associated with username.
@@ -28,7 +30,9 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String findEmail(String username) { return null; }
+    default String findEmail(String username) {
+        return null;
+    }
 
     /**
      * Create token string.
@@ -36,7 +40,9 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String createToken(final String username) { return null; }
+    default String createToken(final String username) {
+        return null;
+    }
 
     /**
      * Parse token string.
@@ -44,7 +50,9 @@ public interface PasswordManagementService {
      * @param token the token
      * @return the username
      */
-    default String parseToken(String token) { return null; }
+    default String parseToken(String token) {
+        return null;
+    }
 
     /**
      * Gets security questions.
@@ -52,5 +60,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the security questions
      */
-    default Map<String, String> getSecurityQuestions(final String username) { return Maps.newLinkedHashMap(); }
+    default Map<String, String> getSecurityQuestions(final String username) {
+        return Maps.newLinkedHashMap();
+    }
 }
