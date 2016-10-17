@@ -1,8 +1,11 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import com.google.common.collect.Maps;
 import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.Map;
 
 /**
  * This is {@link PasswordManagementProperties}.
@@ -103,8 +106,9 @@ public class PasswordManagementProperties {
         private String subject = "Password Reset";
         private String from;
         private String emailAttribute = "mail";
+        private Map<String, String> securityQuestionsAttributes = Maps.newLinkedHashMap();
         
-        private float expirationMinutes = 30;
+        private float expirationMinutes = 1;
 
         public Reset() {
             security.setCipherEnabled(true);
@@ -124,6 +128,14 @@ public class PasswordManagementProperties {
 
         public void setSecurity(final SigningEncryptionProperties security) {
             this.security = security;
+        }
+
+        public Map<String, String> getSecurityQuestionsAttributes() {
+            return securityQuestionsAttributes;
+        }
+
+        public void setSecurityQuestionsAttributes(final Map<String, String> s) {
+            this.securityQuestionsAttributes = s;
         }
 
         public String getText() {
