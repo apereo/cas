@@ -2,13 +2,9 @@ package org.apereo.cas.web.flow;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
@@ -18,7 +14,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;

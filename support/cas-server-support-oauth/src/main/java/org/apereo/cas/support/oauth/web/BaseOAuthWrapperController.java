@@ -16,9 +16,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
+import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
@@ -29,8 +29,6 @@ import org.springframework.stereotype.Controller;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Map;
-
-import static org.apache.coyote.http11.Constants.a;
 
 /**
  * This controller is the base controller for wrapping OAuth protocol in CAS.
