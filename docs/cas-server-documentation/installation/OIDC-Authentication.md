@@ -21,8 +21,8 @@ The current implementation provides support for:
 
 - Authorization code workflow
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
-- Administration and registration of OIDC relying parties.
-- Ability to resolve, consume and release [custom] claims via attribute release.
+- Administration and registration of [OIDC relying parties](Service-Management.html).
+- Ability to [resolve and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure an expiration policy for various tokens.
 
 
