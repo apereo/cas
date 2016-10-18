@@ -34,7 +34,10 @@ and syntax. **BE CAREFUL** with the distinction.
 
 - Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
-ignored by CAS and likely the feature it controls will never be activated in the way you intended.
+ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+
+- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it out without hesitation.
+Review the codebase, or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
 ## Configuration Storage
 
