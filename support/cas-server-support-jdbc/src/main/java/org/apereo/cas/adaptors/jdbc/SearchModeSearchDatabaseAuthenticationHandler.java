@@ -19,72 +19,53 @@ import java.security.GeneralSecurityException;
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-    private static final String SQL_PREFIX = "Select count('x') from ";
     
     private String fieldUser;
-    
-    private String fieldPassword;
-    
-    private String tableUsers;
 
-    private String sql;
+    private String fieldPassword;
+
+    private String tableUsers;
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
-        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
+        String sql = null;
+        if (StringUtils.isNotBlank(tableUsers) || StringUtils.isNotBlank(fieldUser) || StringUtils.isNotBlank(fieldPassword)) {
+            sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
+                    .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");
+        }
+
+        if (StringUtils.isBlank(sql) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly. "
                     + "No SQL statement or JDBC template found");
         }
 
         final String username = credential.getUsername();
-        final int count;
         try {
-            count = getJdbcTemplate().queryForObject(this.sql, Integer.class, username, credential.getPassword());
+            logger.debug("Executing SQL query {}", sql);
+
+            final int count = getJdbcTemplate().queryForObject(sql, Integer.class, username, credential.getPassword());
+            if (count == 0) {
+                throw new FailedLoginException(username + " not found with SQL query.");
+            }
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        if (count == 0) {
-            throw new FailedLoginException(username + " not found with SQL query.");
-        }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
-    /**
-     * After properties set.
-     */
-    @PostConstruct
-    public void afterPropertiesSet() {
-        if (StringUtils.isNotBlank(this.tableUsers) || StringUtils.isNotBlank(this.fieldUser)
-                || StringUtils.isNotBlank(this.fieldPassword)) {
-            this.sql = SQL_PREFIX + this.tableUsers + " WHERE " + this.fieldUser + " = ? AND " + this.fieldPassword
-                    + " = ?";
-        }
-    }
-
-    /**
-     * @param fieldPassword The fieldPassword to set.
-     */
     public void setFieldPassword(final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
-
-    /**
-     * @param fieldUser The fieldUser to set.
-     */
+    
     public void setFieldUser(final String fieldUser) {
         this.fieldUser = fieldUser;
     }
-
-    /**
-     * @param tableUsers The tableUsers to set.
-     */
+    
     public void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
     }
