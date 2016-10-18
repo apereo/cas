@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * This is {@link RestMultifactorAuthenticationTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("restMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

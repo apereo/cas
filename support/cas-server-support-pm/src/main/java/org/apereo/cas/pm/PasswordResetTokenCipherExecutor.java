@@ -6,7 +6,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * This is {@link PasswordResetTokenCipherExecutor}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     /**

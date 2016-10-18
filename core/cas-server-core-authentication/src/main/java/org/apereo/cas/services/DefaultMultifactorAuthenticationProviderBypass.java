@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * This is {@link DefaultMultifactorAuthenticationProviderBypass}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMultifactorAuthenticationProviderBypass.class);

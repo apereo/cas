@@ -4,7 +4,7 @@ package org.apereo.cas.util.cipher;
  * This is {@link ProtocolTicketCipherExecutor}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
     /**
