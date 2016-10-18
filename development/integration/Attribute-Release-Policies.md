@@ -131,11 +131,11 @@ have resolved a `uid` attribute with a value of `piper`, you could then consider
 ```
 
 In the above snippet, the value of the `uid` attribute name is mapped to the result of the inline groovy script.
-Inline scripts always begin with the syntax `groovy { ... }` and are passed the current collection of resolved
-attributes as an `attributes` binding variable. The result of the script can be a single/collection of values.
+Inline scripts always begin with the syntax `groovy {...}` and are passed the current collection of resolved
+attributes as an `attributes` binding variable. The result of the script can be a single/collection of value(s).
 
 The above configuration will produce a `uid` attribute for the application whose value is a concatenation of
-the original value of `uid` plus the words ` is great`. So the final result would be `piper is great`.
+the original value of `uid` plus the words ` is great`, so the final result would be `piper is great`.
 
 ### File-based Groovy Attributes
 
