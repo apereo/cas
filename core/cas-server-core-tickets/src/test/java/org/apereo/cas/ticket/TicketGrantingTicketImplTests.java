@@ -1,36 +1,27 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import org.apache.commons.io.FileUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.jackson.JsonObjectSerializer;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.*;
 
 /**
@@ -39,36 +30,34 @@ import static org.junit.Assert.*;
  */
 public class TicketGrantingTicketImplTests {
 
-    public String JSON;
+    private static final File TGT_JSON_FILE = new File("tgt.json");
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper;
 
     @Before
     public void setUp() throws Exception {
-        JSON = Resources.toString(Resources.getResource("tgt.json"), UTF_8);
+        // needed in order to serialize ZonedDateTime class
+        mapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
         mapper.findAndRegisterModules();
     }
 
     @Test
-    public void verifySerializeToJson() throws JsonProcessingException {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null, TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+    public void verifySerializeToJson() throws IOException {
+        Authentication authenticationWitten = TestUtils.getAuthentication();
+        NeverExpiresExpirationPolicy expirationPolicyWritten = new NeverExpiresExpirationPolicy();
+        final TicketGrantingTicket tgtWritten = new TicketGrantingTicketImpl("test", null, null, authenticationWitten, expirationPolicyWritten);
 
-        final String json = mapper.writeValueAsString(t);
+        mapper.writeValue(TGT_JSON_FILE, tgtWritten);
 
-        System.out.println("json = " + json);
+        final TicketGrantingTicketImpl tgtRead = mapper.readValue(TGT_JSON_FILE, TicketGrantingTicketImpl.class);
 
-        assertTrue(JSON.equals(json));
-    }
-
-    @Test
-    public void verifyDeserializeFromJson() throws IOException {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null, TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-
-        final TicketGrantingTicketImpl tgtRead = mapper.readValue(JSON, TicketGrantingTicketImpl.class);
-
-        assertEquals(tgtRead, t);
+        assertEquals(tgtWritten, tgtRead);
+        assertEquals(authenticationWitten, tgtRead.getAuthentication());
+        assertEquals(expirationPolicyWritten, tgtRead.getExpirationPolicy());
     }
 
     @Test
