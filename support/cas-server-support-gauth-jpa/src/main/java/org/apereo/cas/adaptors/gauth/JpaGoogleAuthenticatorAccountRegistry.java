@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,7 +18,7 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerGoogleAuthenticator")
-public class JpaGoogleAuthenticatorAccountRegistry implements ICredentialRepository {
+public class JpaGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JpaGoogleAuthenticatorAccountRegistry.class);
     
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")

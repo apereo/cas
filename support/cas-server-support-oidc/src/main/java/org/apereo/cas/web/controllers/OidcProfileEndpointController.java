@@ -3,8 +3,10 @@ package org.apereo.cas.web.controllers;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,9 @@ import java.util.Map;
  */
 public class OidcProfileEndpointController extends OAuth20ProfileController {
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
@@ -39,9 +44,7 @@ public class OidcProfileEndpointController extends OAuth20ProfileController {
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());
         }
-
         map.put(OidcConstants.CLAIM_AUTH_TIME, authentication.getAuthenticationDate().toEpochSecond());
-
         return map;
     }
 }

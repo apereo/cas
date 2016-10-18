@@ -14,7 +14,17 @@ import java.util.Set;
  * @since 5.0.0
  */
 public interface OidcConstants {
+    
+    /**
+     * ACR passed in the id token.
+     */
+    String ACR = "acr";
 
+    /**
+     * Authentication method reference passed in the id token.
+     */
+    String AMR = "amr";
+    
     /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */

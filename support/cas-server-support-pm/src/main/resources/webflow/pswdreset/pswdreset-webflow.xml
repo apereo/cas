@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.springframework.org/schema/webflow"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <on-start>
+        <evaluate expression="initialFlowSetupAction"/>
+    </on-start>
+    <action-state id="verifyPasswordResetRequest">
+        <evaluate expression="verifyPasswordResetRequestAction"/>
+        <transition on="success" to="getSecurityQuestionsView" />
+        <transition on="error" to="passwordResetErrorView" />
+    </action-state>
+           
+    <view-state id="getSecurityQuestionsView" view="casResetPasswordVerifyQuestionsView">
+        <transition on="submit" to="verifySecurityQuestions" bind="false" validate="false"/>
+    </view-state>
+    
+    <action-state id="verifySecurityQuestions">
+        <evaluate expression="verifySecurityQuestionsAction"/>
+        <transition on="success" to="initPasswordReset" />
+        <transition on="error" to="passwordResetErrorView" />
+    </action-state>
+    
+    <action-state id="initPasswordReset">
+        <evaluate expression="initPasswordResetAction" />
+        <transition to="casMustChangePassView" />
+    </action-state>
+</flow>

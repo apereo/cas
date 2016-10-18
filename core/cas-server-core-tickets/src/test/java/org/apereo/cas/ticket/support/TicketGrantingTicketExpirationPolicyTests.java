@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
  */
 public class TicketGrantingTicketExpirationPolicyTests {
 
-    private static final long HARD_TIMEOUT = 100L;
+    private static final long HARD_TIMEOUT = 500L;
 
     private static final long SLIDING_TIMEOUT = 60L; 
 

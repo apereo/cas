@@ -2,7 +2,7 @@ package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.OidcConstants;
-import org.apereo.cas.config.OidcServerDiscoverySettings;
+import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.springframework.beans.factory.annotation.Autowired;

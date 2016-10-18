@@ -1,4 +1,4 @@
-package org.apereo.cas.web;
+package org.apereo.cas.pm;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
