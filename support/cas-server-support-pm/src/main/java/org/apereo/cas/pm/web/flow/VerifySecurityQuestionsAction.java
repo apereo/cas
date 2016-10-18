@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This is {@link VerifySecurityQuestionsAction}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class VerifySecurityQuestionsAction extends AbstractAction {
     private final PasswordManagementService passwordManagementService;

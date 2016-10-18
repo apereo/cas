@@ -18,7 +18,7 @@ import java.util.Set;
  * This is {@link BaseMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")

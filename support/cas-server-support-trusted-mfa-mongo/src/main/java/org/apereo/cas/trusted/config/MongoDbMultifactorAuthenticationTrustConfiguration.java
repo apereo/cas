@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
  * This is {@link MongoDbMultifactorAuthenticationTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("mongoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

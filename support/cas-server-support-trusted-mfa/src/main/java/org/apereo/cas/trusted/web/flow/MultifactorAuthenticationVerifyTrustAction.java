@@ -21,7 +21,7 @@ import java.util.Set;
  * This is {@link MultifactorAuthenticationVerifyTrustAction}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
     

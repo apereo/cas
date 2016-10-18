@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.Authentication;
  * This is {@link MultifactorAuthenticationProviderBypass}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public interface MultifactorAuthenticationProviderBypass {
     /**

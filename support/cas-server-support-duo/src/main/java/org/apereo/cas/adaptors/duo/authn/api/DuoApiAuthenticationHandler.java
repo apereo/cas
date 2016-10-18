@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * This is {@link DuoApiAuthenticationHandler}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private DuoApiAuthenticationService duoApiAuthenticationService;

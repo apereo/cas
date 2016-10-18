@@ -21,7 +21,7 @@ import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.PAR
  * This is {@link VerifyPasswordResetRequestAction}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class VerifyPasswordResetRequestAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(VerifyPasswordResetRequestAction.class);
