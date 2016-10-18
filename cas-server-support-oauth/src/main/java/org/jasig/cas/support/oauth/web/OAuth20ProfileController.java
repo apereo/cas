@@ -12,10 +12,6 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.Pair;
 import org.pac4j.core.context.HttpConstants;
-/*import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.util.CommonHelper;*/
-/*import org.pac4j.jwt.JwtConstants;
-import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +19,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
-/*import javax.annotation.PostConstruct;*/
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-/*import java.util.Date;
-import java.util.HashMap;*/
 import java.util.Map;
 
 /**
@@ -63,14 +56,6 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
     public OAuth20ProfileController() {
     }
 
-    /**
-     * Ensure the encryption secret has been set.
-     */
-    /*@PostConstruct
-    public void postConstruct() {
-        CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtAuthenticator.getEncryptionSecret());
-    }*/
-
     @SuppressWarnings("deprecation")
 	@Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
@@ -96,26 +81,6 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
                 jsonGenerator.writeEndObject();
                 return null;
             }
-            /*try {
-
-                final UserProfile profile = this.accessTokenJwtAuthenticator.validateToken(accessToken);
-                final Date expirationDate = (Date) profile.getAttribute(JwtConstants.EXPIRATION_TIME);
-                final Date now = new Date();
-                if (expirationDate == null || expirationDate.before(now)) {
-                    LOGGER.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
-                    jsonGenerator.writeStartObject();
-                    jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
-                    jsonGenerator.writeEndObject();
-                    return null;
-                }
-
-                writeOutProfileResponse(jsonGenerator, profile);
-            } catch (final Exception e) {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
-                jsonGenerator.writeEndObject();
-            }
-            return null;*/
             try {
                 final Pair<String, Service> pair = this.accessTokenGenerator.degenerate(accessToken);
                 accessToken = pair.getFirst();
@@ -146,27 +111,6 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
             response.flushBuffer();
         }
     }
-
-    /*private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final UserProfile profile) throws IOException {
-        final String id = profile.getId();
-        final Map<String, Object> attributes = new HashMap<>(profile.getAttributes());
-        attributes.remove(JwtConstants.SUBJECT);
-        attributes.remove(JwtConstants.ISSUE_TIME);
-        attributes.remove(JwtConstants.AUDIENCE);
-        attributes.remove(JwtConstants.EXPIRATION_TIME);
-        attributes.remove(JwtConstants.ISSUER);
-
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField(ID, id);
-        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
-        for (final String key : attributes.keySet()) {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeObjectField(key, attributes.get(key));
-            jsonGenerator.writeEndObject();
-        }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
-    }*/
     
     private void writeOutProfileResponse(final JsonGenerator jsonGenerator, 
     		final RegisteredService service, final Principal principal, final String tgtId) throws IOException {
