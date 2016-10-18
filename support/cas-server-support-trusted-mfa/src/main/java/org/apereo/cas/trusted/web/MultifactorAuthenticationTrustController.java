@@ -18,7 +18,7 @@ import java.util.Set;
  * This is {@link MultifactorAuthenticationTrustController}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @RestController("mfaTrustController")
 @RequestMapping(value="/status/trustedDevices")

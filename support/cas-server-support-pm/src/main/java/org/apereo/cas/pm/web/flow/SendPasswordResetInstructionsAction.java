@@ -23,7 +23,7 @@ import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.FLO
  * This is {@link SendPasswordResetInstructionsAction}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
