@@ -12,10 +12,10 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.Pair;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.util.CommonHelper;
-import org.pac4j.jwt.JwtConstants;
-import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
+/*import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.util.CommonHelper;*/
+/*import org.pac4j.jwt.JwtConstants;
+import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
+/*import javax.annotation.PostConstruct;*/
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
+/*import java.util.Date;
+import java.util.HashMap;*/
 import java.util.Map;
 
 /**
@@ -71,7 +71,8 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
         CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtAuthenticator.getEncryptionSecret());
     }*/
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
 
@@ -134,7 +135,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
                     return null;
                 }
 
-                writeOutProfileResponse(jsonGenerator, service, principal);
+                writeOutProfileResponse(jsonGenerator, service, principal, ticketGrantingTicket.getId());
             } catch (final Exception e) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
@@ -146,7 +147,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
     }
 
-    private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final UserProfile profile) throws IOException {
+    /*private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final UserProfile profile) throws IOException {
         final String id = profile.getId();
         final Map<String, Object> attributes = new HashMap<>(profile.getAttributes());
         attributes.remove(JwtConstants.SUBJECT);
@@ -165,32 +166,34 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
+    }*/
+    
+    private void writeOutProfileResponse(final JsonGenerator jsonGenerator, 
+    		final RegisteredService service, final Principal principal, final String tgtId) throws IOException {
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeStringField(ID, principal.getId());
+        jsonGenerator.writeStringField("tgtId", tgtId);
+        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+        final Map<String, Object> attributes = service.getAttributeReleasePolicy().getAttributes(principal);
+        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
+            jsonGenerator.writeEndObject();
+        }
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
     }
     
-    private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final RegisteredService service, final Principal principal) throws IOException {
-		jsonGenerator.writeStartObject();
-		jsonGenerator.writeStringField(ID, principal.getId());
-		jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
-		final Map<String, Object> attributes = service.getAttributeReleasePolicy().getAttributes(principal);
-		for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-			jsonGenerator.writeStartObject();
-			jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
-			jsonGenerator.writeEndObject();
-		}
-		jsonGenerator.writeEndArray();
-		jsonGenerator.writeEndObject();
-	}
-    
     private boolean verifyPrincipalServiceAccess(final JsonGenerator jsonGenerator, final RegisteredService service, final Principal principal) throws IOException {
-		if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principal.getAttributes())) {
-			logger.warn("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
-			jsonGenerator.writeStartObject();
-			jsonGenerator.writeStringField("error", UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE);
-			jsonGenerator.writeEndObject();
-			return false;
-		}
-		return true;
-	}
+        if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principal.getAttributes())) {
+            logger.warn("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("error", UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE);
+            jsonGenerator.writeEndObject();
+            return false;
+        }
+        return true;
+    }
     
     private RegisteredService verifyRegisteredService(final JsonGenerator jsonGenerator, final Pair<String, Service> pair)
             throws IOException {
