@@ -278,7 +278,7 @@
                                 <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
                             </label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.evalOrder" readonly />
+                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.evalOrder" />
                             </div>
                         </div>
                     </div>
