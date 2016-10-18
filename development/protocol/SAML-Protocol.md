@@ -21,12 +21,6 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 CAS provides support for [SAML2 Authentication](../installation/Configuring-SAML2-Authentication.html). 
 
-## SAML2 IdP Delegation
-
-Using the SAML2 protocol, the CAS server can also be configured 
-to [delegate the authentication](../integration/Delegate-Authentication.html) to an external SAML2 IdP.
-
-
 ## Google Apps
 
 CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
@@ -42,7 +36,6 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 
 ## Sample Request
-
 ```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
