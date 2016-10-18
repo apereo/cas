@@ -5,7 +5,7 @@ title: CAS - OIDC Authentication
 
 # OpenID Connect Authentication
 
-Support is enabled by including the following dependency in the WAR overlay:
+Allow CAS to act as an OpenId Connect Provider (OP). Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
@@ -14,6 +14,17 @@ Support is enabled by including the following dependency in the WAR overlay:
   <version>${cas.version}</version>
 </dependency>
 ```
+
+To lean more about OpenId Connect, please [review this guide](http://openid.net/specs/openid-connect-basic-1_0.html).
+
+The current implementation provides support for:
+
+- Authorization code workflow
+- Dynamic discovery
+- Administration and registration of OIDC relying parties.
+- Ability to resolve, consume and release [custom] claims via attribute release.
+- Ability to configure an expiration policy for various tokens.
+
 
 ## Endpoints
 
@@ -39,19 +50,26 @@ OpenID Connect clients can be registered with CAS as such:
   "signIdToken": true,
   "name": "OIDC",
   "id": 1000,
+  "evaluationOrder": 100,
   "jwks": "..."
 }
 ```
 
 | Field                   | Description
 |-------------------------+-----------------------------------------------------------------+
-| `serviceId`             | The redirect URI for this OIDC client.
-| `signIdToken`           | Whether ID tokens should be signed.
+| `serviceId`             | The authorized redirect URI for this OIDC client.
+| `signIdToken`           | Whether ID tokens should be signed. Default is `true`.
 | `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
 
 ## Settings
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Authentication Context Class
+
+Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
+which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
+Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Keystores
 
