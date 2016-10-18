@@ -4,18 +4,9 @@ title: CAS - CAS SAML Protocol
 ---
 
 # SAML Protocol
+
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. 
 This document deals with CAS-specific concerns.
-
-Support is enabled by including the following dependency in the WAR overlay:
-
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
 
 ## SAML2
 
@@ -34,6 +25,15 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-saml</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
 
 ## Sample Request
 ```xml
@@ -58,6 +58,7 @@ Content-Type: text/xml
 
 
 ## Sample Response
+
 ```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />

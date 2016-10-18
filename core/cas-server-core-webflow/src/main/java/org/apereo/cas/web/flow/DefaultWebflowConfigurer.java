@@ -55,7 +55,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
 
         final ActionState gatewayServicesManagementCheck = createActionState(flow,
-                CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction("gatewayServicesManagementCheck"));
+                CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
         createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_REDIRECT);
         
