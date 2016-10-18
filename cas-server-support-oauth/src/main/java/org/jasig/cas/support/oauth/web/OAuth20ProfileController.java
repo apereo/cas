@@ -4,7 +4,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.Pair;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
@@ -41,9 +47,13 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ATTRIBUTES = "attributes";
 
-    @Autowired
+    /*@Autowired
     @Qualifier("accessTokenJwtAuthenticator")
-    private JwtAuthenticator accessTokenJwtAuthenticator;
+    private JwtAuthenticator accessTokenJwtAuthenticator;*/
+    
+    @Autowired
+    @Qualifier("defaultAccessTokenGenerator")
+    private AccessTokenGenerator accessTokenGenerator;
 
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
@@ -56,10 +66,10 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
     /**
      * Ensure the encryption secret has been set.
      */
-    @PostConstruct
+    /*@PostConstruct
     public void postConstruct() {
         CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtAuthenticator.getEncryptionSecret());
-    }
+    }*/
 
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
@@ -85,7 +95,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
                 jsonGenerator.writeEndObject();
                 return null;
             }
-            try {
+            /*try {
 
                 final UserProfile profile = this.accessTokenJwtAuthenticator.validateToken(accessToken);
                 final Date expirationDate = (Date) profile.getAttribute(JwtConstants.EXPIRATION_TIME);
@@ -99,6 +109,32 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
                 }
 
                 writeOutProfileResponse(jsonGenerator, profile);
+            } catch (final Exception e) {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
+                jsonGenerator.writeEndObject();
+            }
+            return null;*/
+            try {
+                final Pair<String, Service> pair = this.accessTokenGenerator.degenerate(accessToken);
+                accessToken = pair.getFirst();
+
+                final TicketGrantingTicket ticketGrantingTicket = verifyAccessToken(accessToken, jsonGenerator);
+                if (ticketGrantingTicket == null) {
+                    return null;
+                }
+
+                final RegisteredService service = verifyRegisteredService(jsonGenerator, pair);
+                if (service == null) {
+                    return null;
+                }
+
+                final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
+                if (!verifyPrincipalServiceAccess(jsonGenerator, service, principal)) {
+                    return null;
+                }
+
+                writeOutProfileResponse(jsonGenerator, service, principal);
             } catch (final Exception e) {
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST + ". " + e.getMessage());
@@ -129,5 +165,55 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
+    }
+    
+    private void writeOutProfileResponse(final JsonGenerator jsonGenerator, final RegisteredService service, final Principal principal) throws IOException {
+		jsonGenerator.writeStartObject();
+		jsonGenerator.writeStringField(ID, principal.getId());
+		jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+		final Map<String, Object> attributes = service.getAttributeReleasePolicy().getAttributes(principal);
+		for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+			jsonGenerator.writeStartObject();
+			jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
+			jsonGenerator.writeEndObject();
+		}
+		jsonGenerator.writeEndArray();
+		jsonGenerator.writeEndObject();
+	}
+    
+    private boolean verifyPrincipalServiceAccess(final JsonGenerator jsonGenerator, final RegisteredService service, final Principal principal) throws IOException {
+		if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principal.getAttributes())) {
+			logger.warn("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
+			jsonGenerator.writeStartObject();
+			jsonGenerator.writeStringField("error", UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE);
+			jsonGenerator.writeEndObject();
+			return false;
+		}
+		return true;
+	}
+    
+    private RegisteredService verifyRegisteredService(final JsonGenerator jsonGenerator, final Pair<String, Service> pair)
+            throws IOException {
+        final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(pair.getSecond().getId()));
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+            logger.warn("Service {}] is not found in the registry or it is disabled.", service);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST);
+            jsonGenerator.writeEndObject();
+            return null;
+        }
+        return service;
+    }
+
+    private TicketGrantingTicket verifyAccessToken(final String accessToken, final JsonGenerator jsonGenerator) throws IOException {
+        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(accessToken);
+        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+            LOGGER.error("expired accessToken : {}", accessToken);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("error", OAuthConstants.INVALID_REQUEST);
+            jsonGenerator.writeEndObject();
+            return null;
+        }
+        return ticketGrantingTicket;
     }
 }

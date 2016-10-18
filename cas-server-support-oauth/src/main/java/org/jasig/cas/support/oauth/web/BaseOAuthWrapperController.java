@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The login url. */
     @NotNull

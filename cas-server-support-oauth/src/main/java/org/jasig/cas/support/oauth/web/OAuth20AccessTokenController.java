@@ -1,33 +1,25 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpStatus;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.OAuthWebApplicationService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.pac4j.core.util.CommonHelper;
-import org.pac4j.http.profile.HttpProfile;
-import org.pac4j.jwt.JwtConstants;
-import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This controller returns an access token according to the service and code (service ticket) given.
+ * This controller returns an access token which is the CAS
+ * granting ticket according to the service and code (service ticket) given.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -36,36 +28,28 @@ import java.util.concurrent.TimeUnit;
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
-    @Qualifier("accessTokenJwtGenerator")
-    private JwtGenerator accessTokenJwtGenerator;
+    @Qualifier("defaultAccessTokenGenerator")
+    private AccessTokenGenerator accessTokenGenerator;
 
     /**
      * Instantiates a new o auth20 access token controller.
      */
     public OAuth20AccessTokenController() {}
 
-    /**
-     * Ensure the encryption secret has been set.
-     */
-    @PostConstruct
-    public void postConstruct() {
-        CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtGenerator.getEncryptionSecret());
-    }
-
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        logger.debug("{}: {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        logger.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        logger.debug("{}: {}", OAuthConstants.CLIENT_ID, clientId);
+        logger.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
 
         final String code = request.getParameter(OAuthConstants.CODE);
-        logger.debug("{}: {}", OAuthConstants.CODE, code);
+        logger.debug("{} : {}", OAuthConstants.CODE, code);
 
         final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
         if (!isVerified) {
@@ -75,45 +59,23 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            logger.error("Code expired: {}", code);
+            logger.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
-        
         // remove service ticket
         // Commented out below since we can't create PT w/o ST
         // In more detail, we needed to prevent this method from deleting ST for we need it to create PT.
         // ST is deleted in another class method once PT is created successfully.
         //ticketRegistry.deleteTicket(serviceTicket.getId());
-        
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
-        final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
-        final String id = principal.getId();
-        if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(id, attributes)) {
-            logger.error("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
-        }
 
-        if (attributes.containsKey(JwtConstants.SUBJECT) || attributes.containsKey(JwtConstants.ISSUE_TIME)
-         || attributes.containsKey(JwtConstants.ISSUER) || attributes.containsKey(JwtConstants.AUDIENCE)
-         || attributes.containsKey(JwtConstants.EXPIRATION_TIME)) {
-            logger.error("Current profile: {} has forbidden attributes.", principal);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_PROFILE, HttpStatus.SC_BAD_REQUEST);
-        }
-
-        attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$", OAuthConstants.ENDPOINT_OAUTH2));
-        attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
+        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthWebApplicationService service = new OAuthWebApplicationService(registeredService.getId());
+        final String accessTokenEncoded = this.accessTokenGenerator.generate(service, ticketGrantingTicket);
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-        attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
-
-        final HttpProfile profile = new HttpProfile();
-        profile.setId(id);
-        profile.addAttributes(attributes);
-        final String accessToken = this.accessTokenJwtGenerator.generate(profile);
-
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken, OAuthConstants.EXPIRES, expires);
+        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, 
+                accessTokenEncoded, OAuthConstants.EXPIRES, expires);
         logger.debug("OAuth access token response: {}", text);
         response.setContentType("text/plain");
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
@@ -155,19 +117,19 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.error("Service {} is not found in the registry or it is disabled.", clientId);
+        if (service == null) {
+            logger.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return false;
         }
 
         final String serviceId = service.getServiceId();
         if (!redirectUri.matches(serviceId)) {
-            logger.error("Unsupported {}: {} for serviceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            logger.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return false;
         }
 
         if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service: {}", service);
+            logger.error("Wrong client secret for service {}", service);
             return false;
         }
         return true;
