@@ -11,7 +11,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ```xml
 <dependency>
-  <groupId>org.aapereo.cas</groupId>
+  <groupId>org.apereo.cas</groupId>
   <artifactId>cas-server-support-basic</artifactId>
   <version>${cas.version}</version>
 </dependency>
