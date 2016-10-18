@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.DefaultOAuthCasClientRedirectActionBuilder;

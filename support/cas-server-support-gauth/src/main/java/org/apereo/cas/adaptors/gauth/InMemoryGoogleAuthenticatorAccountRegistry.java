@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.ICredentialRepository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class InMemoryGoogleAuthenticatorAccountRegistry implements ICredentialRepository {
+public class InMemoryGoogleAuthenticatorAccountRegistry extends BaseGoogleAuthenticatorCredentialRepository {
 
     private Map<String, GoogleAuthenticatorAccount> accounts;
 

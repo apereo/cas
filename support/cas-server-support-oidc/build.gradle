@@ -5,6 +5,7 @@ dependencies {
     compile project(":support:cas-server-support-oidc-core")
     compile libraries.jose4j
     compileOnly project(":support:cas-server-support-cookie")
+    compileOnly project(":core:cas-server-core-webflow")
     testCompile project(":core:cas-server-core-util")
     
 }

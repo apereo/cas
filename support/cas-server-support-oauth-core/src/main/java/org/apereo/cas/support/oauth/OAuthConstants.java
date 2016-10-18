@@ -8,9 +8,11 @@ package org.apereo.cas.support.oauth;
  */
 public interface OAuthConstants {
 
-    /** OAuth 2 endpoint in CAS. */
-    String ENDPOINT_OAUTH2 = "/oauth2.0/*";
-
+    /**
+     * Authentication context reference values.
+     */
+    String ACR_VALUES = "acr_values";
+    
     /** Base OAuth 2.0 url. */
     String BASE_OAUTH20_URL = "/oauth2.0";
 

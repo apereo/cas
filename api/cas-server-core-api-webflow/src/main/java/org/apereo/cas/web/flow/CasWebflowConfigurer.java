@@ -246,4 +246,14 @@ public interface CasWebflowConfigurer {
      * @return the subflow state
      */
     SubflowState createSubflowState(Flow flow, String id, String subflow);
+
+
+    /**
+     * Build flow.
+     *
+     * @param location the location
+     * @param id       the id
+     * @return the flow
+     */
+    Flow buildFlow(String location, String id);
 }

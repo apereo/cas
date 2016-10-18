@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.TicketState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -9,7 +8,6 @@ import org.springframework.util.Assert;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -20,7 +18,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
     private static final long serialVersionUID = -5704993954986738308L;
 
     /**
@@ -29,12 +26,14 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
-    private long timeToKillInMilliSeconds;
+    private long timeToKillInSeconds;
     private int numberOfUses;
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     private MultiTimeUseOrTimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
+        this.timeToKillInSeconds = 0;
         this.numberOfUses = 0;
     }
 
@@ -42,30 +41,18 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * Instantiates a new multi time use or timeout expiration policy.
      *
-     * @param numberOfUses the number of uses
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param numberOfUses             the number of uses
+     * @param timeToKillInSeconds the time to kill in seconds
      */
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
-        final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+                                                 final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
-        Assert.isTrue(this.timeToKillInMilliSeconds > 0, "timeToKillInMilliseconds must be greater than 0.");
+        Assert.isTrue(this.timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
 
     }
-
-    /**
-     * Instantiates a new multi time use or timeout expiration policy.
-     *
-     * @param numberOfUses the number of uses
-     * @param timeToKill the time to kill
-     * @param timeUnit the time unit
-     */
-    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill,
-            final TimeUnit timeUnit) {
-        this(numberOfUses, timeUnit.toMillis(timeToKill));
-    }
-
+    
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
@@ -80,12 +67,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
         final ZonedDateTime systemTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
 
         if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket has expired because the difference between current time [{}] "
-                + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
-                this.timeToKillInMilliSeconds);
+                            + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
+                    this.timeToKillInSeconds);
             return true;
         }
         return false;
@@ -93,7 +80,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
     @Override
     public Long getTimeToLive() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
     @Override
@@ -111,12 +98,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         /**
          * Instantiates a new proxy ticket expiration policy.
          *
-         * @param numberOfUses             the number of uses
-         * @param timeToKillInMilliSeconds the time to kill in milli seconds
+         * @param numberOfUses        the number of uses
+         * @param timeToKillInSeconds the time to kill in seconds
          */
         public ProxyTicketExpirationPolicy(final int numberOfUses,
-                                           final long timeToKillInMilliSeconds) {
-            super(numberOfUses, timeToKillInMilliSeconds);
+                                           final long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
         }
     }
 
@@ -130,12 +117,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         /**
          * Instantiates a new Service ticket expiration policy.
          *
-         * @param numberOfUses             the number of uses
-         * @param timeToKillInMilliSeconds the time to kill in milli seconds
+         * @param numberOfUses        the number of uses
+         * @param timeToKillInSeconds the time to kill in seconds
          */
         public ServiceTicketExpirationPolicy(final int numberOfUses,
-                                             final long timeToKillInMilliSeconds) {
-            super(numberOfUses, timeToKillInMilliSeconds);
+                                             final long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
         }
     }
 }

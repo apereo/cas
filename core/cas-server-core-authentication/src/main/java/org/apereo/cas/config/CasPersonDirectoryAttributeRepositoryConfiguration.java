@@ -117,7 +117,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             if (foundAttrs) {
                 LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");   
             } else {
-                LOGGER.warn("Found and added static attributes in the attribute repository");
+                LOGGER.warn("Found and added static attributes to the attribute repository");
                 list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
             }
         }

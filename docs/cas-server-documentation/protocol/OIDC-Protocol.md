@@ -4,6 +4,7 @@ title: CAS - OIDC Protocol
 ---
 
 # OpenID Connect Protocol
+
 You can configure the CAS server with:
 
 * [OIDC client support](../integration/Delegate-Authentication.html), which means authentication can be delegated through a link on the 

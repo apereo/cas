@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CredentialMetaData;
@@ -15,9 +16,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
+import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
@@ -49,14 +50,14 @@ public abstract class BaseOAuthWrapperController {
      * The ticket registry.
      */
     protected TicketRegistry ticketRegistry;
-    
+
     /**
      * The OAuth validator.
      */
     protected OAuthValidator validator;
-    
+
     private AccessTokenFactory accessTokenFactory;
-    
+
     private PrincipalFactory principalFactory;
 
     /**
@@ -109,7 +110,7 @@ public abstract class BaseOAuthWrapperController {
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), "");
         final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), "");
 
-        return DefaultAuthenticationBuilder.newInstance()
+        final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())
                 .addAttribute("roles", profile.getRoles())
                 .addAttribute(OAuthConstants.STATE, state)
@@ -117,8 +118,13 @@ public abstract class BaseOAuthWrapperController {
                 .addCredential(metadata)
                 .setPrincipal(newPrincipal)
                 .setAuthenticationDate(ZonedDateTime.now())
-                .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
-                .build();
+                .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
+        profile.getAttributes().forEach((k, v) -> {
+            if (!newPrincipal.getAttributes().containsKey(k)) {
+                bldr.addAttribute(k, v);
+            }
+        });
+        return bldr.build();
     }
 
     public ServicesManager getServicesManager() {
@@ -136,7 +142,7 @@ public abstract class BaseOAuthWrapperController {
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }
-    
+
     public AccessTokenFactory getAccessTokenFactory() {
         return this.accessTokenFactory;
     }
