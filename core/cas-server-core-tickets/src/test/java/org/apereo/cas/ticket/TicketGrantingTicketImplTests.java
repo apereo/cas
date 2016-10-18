@@ -1,5 +1,14 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -8,14 +17,20 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.jackson.JsonObjectSerializer;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.*;
 
 /**
@@ -24,7 +39,37 @@ import static org.junit.Assert.*;
  */
 public class TicketGrantingTicketImplTests {
 
+    public String JSON;
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Before
+    public void setUp() throws Exception {
+        JSON = Resources.toString(Resources.getResource("tgt.json"), UTF_8);
+        mapper.findAndRegisterModules();
+    }
+
+    @Test
+    public void verifySerializeToJson() throws JsonProcessingException {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null, TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        final String json = mapper.writeValueAsString(t);
+
+        System.out.println("json = " + json);
+
+        assertTrue(JSON.equals(json));
+    }
+
+    @Test
+    public void verifyDeserializeFromJson() throws IOException {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null, TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        final TicketGrantingTicketImpl tgtRead = mapper.readValue(JSON, TicketGrantingTicketImpl.class);
+
+        assertEquals(tgtRead, t);
+    }
 
     @Test
     public void verifyEquals() {

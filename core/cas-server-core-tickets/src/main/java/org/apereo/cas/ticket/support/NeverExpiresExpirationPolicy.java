@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apereo.cas.ticket.TicketState;
 
 /**
@@ -10,6 +11,7 @@ import org.apereo.cas.ticket.TicketState;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
