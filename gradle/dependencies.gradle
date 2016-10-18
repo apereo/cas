@@ -47,6 +47,14 @@ ext.libraries = [
                 dependencies.create("commons-io:commons-io:$commonsIoVersion") {
                     force = true
                 },
+                dependencies.create("commons-validator:commons-validator:$commonsValidatorVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-collections", module: "commons-collections")
+                    exclude(group: "commons-beanutils", module: "commons-beanutils")
+                    exclude(group: "commons-digester", module: "commons-digester")
+                    force = true
+                },
                 dependencies.create("commons-codec:commons-codec:$commonsCodecVersion") {
                     force = true
                 },

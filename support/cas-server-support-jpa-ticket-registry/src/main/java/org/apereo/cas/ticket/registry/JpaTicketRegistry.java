@@ -95,7 +95,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         this.lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
-            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
+            }
+
+            if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)
                     || ticketId.startsWith(RefreshToken.PREFIX)) {
                 return this.entityManager.find(OAuthCodeImpl.class, ticketId);
             }
@@ -126,7 +128,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         return tickets;
     }
-    
+
     @Override
     public long sessionCount() {
         return countToLong(this.entityManager.createQuery(
@@ -227,18 +229,18 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
                 "select s from "
-                + TABLE_SERVICE_TICKETS
-                + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
+                        + TABLE_SERVICE_TICKETS
+                        + " s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
         failureCount += deleteTicketsFromResultList(serviceTicketImpls);
 
         List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
                 "select t from " + TABLE_TICKET_GRANTING_TICKETS
-                + " t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
+                        + " t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
                 "select t from " + TABLE_TICKET_GRANTING_TICKETS
-                + " t where t.id = :id", TicketGrantingTicketImpl.class);
+                        + " t where t.id = :id", TicketGrantingTicketImpl.class);
         failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
 
         return failureCount;
