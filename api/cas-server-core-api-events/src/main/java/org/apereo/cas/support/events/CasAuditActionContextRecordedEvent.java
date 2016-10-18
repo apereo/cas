@@ -26,6 +26,6 @@ public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
     }
 
     public AuditActionContext getAuditActionContext() {
-        return auditActionContext;
+        return this.auditActionContext;
     }
 }
