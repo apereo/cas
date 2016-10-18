@@ -49,7 +49,6 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         handler.setTableUsers("cassearchusers");
         handler.setFieldUser("username");
         handler.setFieldPassword("password");
-        handler.afterPropertiesSet();
 
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
