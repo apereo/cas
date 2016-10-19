@@ -57,7 +57,6 @@ public class TicketGrantingTicketImplTests {
 
         assertEquals(tgtWritten, tgtRead);
         assertEquals(authenticationWitten, tgtRead.getAuthentication());
-        assertEquals(expirationPolicyWritten, tgtRead.getExpirationPolicy());
     }
 
     @Test

@@ -1,13 +1,13 @@
 package org.apereo.cas.authentication;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -150,12 +150,26 @@ public class DefaultHandlerResult implements HandlerResult {
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);
         builder.append(this.principal, other.principal);
-        builder.append(this.warnings, other.warnings);
+        builder.append(wrap(this.warnings), other.warnings);
         return builder.isEquals();
     }
 
     @Override
     public String toString() {
         return this.handlerName + ':' + this.credentialMetaData;
+    }
+
+    /**
+     * Wraps a possibly null list in an immutable wrapper.
+     *
+     * @param source Nullable list to wrap.
+     * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise
+     * {@link java.util.Collections#EMPTY_LIST}.
+     */
+    private static List wrap(final List<MessageDescriptor> source) {
+        if (source != null) {
+            return Collections.unmodifiableList(source);
+        }
+        return Collections.EMPTY_LIST;
     }
 }
