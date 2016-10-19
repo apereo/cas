@@ -2355,8 +2355,6 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
 # cas.ticket.registry.ehcache.maxElementsInMemory=10000
-# cas.ticket.registry.ehcache.maxElementsOnDisk=0
-# cas.ticket.registry.ehcache.maxElementsInCache=0
 # cas.ticket.registry.ehcache.cacheManagerName=ticketRegistryCacheManager
 # cas.ticket.registry.ehcache.replicatePuts=true
 # cas.ticket.registry.ehcache.replicateUpdates=true
@@ -2369,6 +2367,8 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.diskExpiryThreadIntervalSeconds=0
 # cas.ticket.registry.ehcache.replicateRemovals=true
 # cas.ticket.registry.ehcache.maxChunkSize=5000000
+# cas.ticket.registry.ehcache.maxElementsOnDisk=0
+# cas.ticket.registry.ehcache.maxElementsInCache=10000
 # cas.ticket.registry.ehcache.cacheName=org.apereo.cas.ticket.TicketCache
 # cas.ticket.registry.ehcache.eternal=false
 # cas.ticket.registry.ehcache.loaderAsync=true
