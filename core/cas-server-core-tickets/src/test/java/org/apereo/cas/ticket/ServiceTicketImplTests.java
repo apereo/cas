@@ -55,6 +55,7 @@ public class ServiceTicketImplTests {
 
         assertEquals(stWritten, stRead);
     }
+
     @Test(expected = Exception.class)
     public void verifyNoService() {
         new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, null, false, new NeverExpiresExpirationPolicy());
