@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.springframework.dao.DataAccessException;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
