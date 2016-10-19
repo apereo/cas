@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.logout.SingleLogoutService;
@@ -73,6 +75,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.artifactId;
     }
 
+    @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
         return EMPTY_MAP;
@@ -154,10 +157,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.loggedOutAlready = loggedOutAlready;
     }
 
+    @JsonProperty("responseBuilder")
     protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
         return this.responseBuilder;
     }
 
+    @JsonIgnore
     @Override
     public ValidationResponseType getFormat() {
         return this.format;

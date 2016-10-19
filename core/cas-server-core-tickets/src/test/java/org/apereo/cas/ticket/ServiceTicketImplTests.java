@@ -2,6 +2,9 @@ package org.apereo.cas.ticket;
 
 import static org.junit.Assert.*;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -9,7 +12,12 @@ import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Scott Battaglia
@@ -20,8 +28,35 @@ public class ServiceTicketImplTests {
     private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private static final File ST_JSON_FILE = new File("st.json");
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
+    private ObjectMapper mapper;
+
+    @Before
+    public void setUp() throws Exception {
+        // needed in order to serialize ZonedDateTime class
+        mapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+        mapper.findAndRegisterModules();
+    }
+
+    @Test
+    public void verifySerializeToJson() throws IOException {
+        final ServiceTicket stWritten = new ServiceTicketImpl("stest1", this.ticketGrantingTicket,
+                org.apereo.cas.services.TestUtils.getService(), true,
+                new NeverExpiresExpirationPolicy());
+
+
+        mapper.writeValue(ST_JSON_FILE, stWritten);
+
+        final ServiceTicketImpl stRead = mapper.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
+
+        assertEquals(stWritten, stRead);
+//        assertEquals(authenticationWitten, tgtRead.getAuthentication());
+    }
     @Test(expected = Exception.class)
     public void verifyNoService() {
         new ServiceTicketImpl("stest1", this.ticketGrantingTicket, null, false, new NeverExpiresExpirationPolicy());

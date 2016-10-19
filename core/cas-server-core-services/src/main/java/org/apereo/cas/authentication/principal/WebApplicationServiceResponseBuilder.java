@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.util.StringUtils;
 
@@ -13,14 +15,18 @@ import java.util.Map;
  * @since 4.2
  */
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
+
     private static final long serialVersionUID = -851233878780818494L;
+
+    @JsonProperty("responseType")
     private Response.ResponseType responseType;
 
     /**
      * Instantiates a new Web application service response builder.
      * @param type the type
      */
-    public WebApplicationServiceResponseBuilder(final Response.ResponseType type) {
+    @JsonCreator
+    public WebApplicationServiceResponseBuilder(@JsonProperty("responseType") final Response.ResponseType type) {
         this.responseType = type;
     }
 
