@@ -110,7 +110,7 @@ public final class ResourceUtils {
             if (isDirectory) {
                 FileUtils.forceMkdir(destination);
                 FileUtils.cleanDirectory(destination);
-            } else {
+            } else if (destination.exists()) {
                 FileUtils.forceDelete(destination);
             }
 
