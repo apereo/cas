@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class TicketGrantingTicketImplTests {
 
     private static final File TGT_JSON_FILE = new File("tgt.json");
-    public static final String TGT_ID = "test";
+    private static final String TGT_ID = "test";
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     private ObjectMapper mapper;
@@ -72,16 +72,14 @@ public class TicketGrantingTicketImplTests {
 
     @Test(expected=Exception.class)
     public void verifyNullAuthentication() {
-        new TicketGrantingTicketImpl(TGT_ID, null, null, null,
-                new NeverExpiresExpirationPolicy());
+        new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy());
     }
 
     @Test
     public void verifyGetAuthentication() {
         final Authentication authentication = TestUtils.getAuthentication();
 
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null,
-            authentication, new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(TGT_ID, null, null, authentication, new NeverExpiresExpirationPolicy());
 
         Assert.assertEquals(t.getAuthentication(), authentication);
         assertEquals(t.getId(), t.toString());
