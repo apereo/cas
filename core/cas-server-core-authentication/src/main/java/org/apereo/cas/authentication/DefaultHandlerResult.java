@@ -83,10 +83,10 @@ public class DefaultHandlerResult implements HandlerResult {
             final CredentialMetaData metaData,
             final Principal p,
             final List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), 
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(),
                 metaData, p, warnings);
     }
-    
+
     /**
      * Instantiates a new Default handler result.
      *
@@ -105,6 +105,7 @@ public class DefaultHandlerResult implements HandlerResult {
         this.principal = p;
         this.warnings = warnings;
     }
+
     @Override
     public String getHandlerName() {
         return this.handlerName;
@@ -166,10 +167,10 @@ public class DefaultHandlerResult implements HandlerResult {
      * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise
      * {@link java.util.Collections#EMPTY_LIST}.
      */
-    private static List wrap(final List<MessageDescriptor> source) {
+    private static <T> List<T> wrap(final List<T> source) {
         if (source != null) {
             return Collections.unmodifiableList(source);
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }
