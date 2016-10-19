@@ -25,7 +25,7 @@ public interface AccessTokenResponseGenerator {
      * @param service           the service
      * @param accessTokenId     the access token
      * @param refreshTokenId    the refresh token id
-     * @param timeout           the timeout
+     * @param timeoutMinutes           the timeout in minutes
      */
     void generate(HttpServletRequest request, 
                   HttpServletResponse response, 
@@ -33,5 +33,5 @@ public interface AccessTokenResponseGenerator {
                   Service service,
                   AccessToken accessTokenId, 
                   RefreshToken refreshTokenId, 
-                  long timeout);
+                  long timeoutMinutes);
 }

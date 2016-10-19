@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This controller returns an access token according to the given
@@ -133,7 +134,7 @@ public class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
         this.accessTokenResponseGenerator.generate(request, response, registeredService, service,
                 accessToken, refreshToken,
-                casProperties.getTicket().getTgt().getTimeToKillInSeconds());
+                TimeUnit.SECONDS.toMinutes(casProperties.getTicket().getTgt().getTimeToKillInSeconds()));
 
         response.setStatus(HttpServletResponse.SC_OK);
         return null;
