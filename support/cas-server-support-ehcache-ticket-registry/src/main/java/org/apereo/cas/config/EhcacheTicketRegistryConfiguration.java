@@ -59,7 +59,6 @@ public class EhcacheTicketRegistryConfiguration {
         bean.setConfigLocation(casProperties.getTicket().getRegistry().getEhcache().getConfigLocation());
         bean.setShared(casProperties.getTicket().getRegistry().getEhcache().isShared());
         bean.setCacheManagerName(casProperties.getTicket().getRegistry().getEhcache().getCacheManagerName());
-
         return bean;
     }
 
