@@ -20,6 +20,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -94,7 +95,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
         claims.setAudience(service.getClientId());
-        claims.setExpirationTimeMinutesInTheFuture(timeout);
+        claims.setExpirationTime(NumericDate.now().addSeconds(timeout));
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(this.skew);
         claims.setSubject(principal.getId());
