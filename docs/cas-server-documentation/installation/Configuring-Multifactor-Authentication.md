@@ -88,7 +88,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
 
 MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
 
--Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
+- Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
 **Note** that this behavior is only applicable if there is only a **single MFA provider** configured, since that would allow CAS
 to know what provider to next activate.
 
@@ -126,7 +126,7 @@ https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ### Principal Attribute Per Application
 
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
-the authenticated principal carries an attribute that matches configured attribute value. The attribute
+the authenticated principal carries an attribute that matches a configured attribute value. The attribute
 value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
 
 ```json
@@ -161,7 +161,7 @@ A few simple examples follow:
 
 - Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
 - Trigger MFA except when the principal carries a `superAdmin` attribute.
-- Trigger MFA except if the method primary authentication is SPNEGO.
+- Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
 ## Fail-Open vs Fail-Closed
