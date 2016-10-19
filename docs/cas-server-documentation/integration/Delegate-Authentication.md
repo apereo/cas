@@ -129,7 +129,7 @@ final FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileH
 
 ## Troubleshooting
 
-To enable additional logging for the registry, configure the log4j configuration file to add the following
+To enable additional logging, configure the log4j configuration file to add the following
 levels:
 
 ```xml
