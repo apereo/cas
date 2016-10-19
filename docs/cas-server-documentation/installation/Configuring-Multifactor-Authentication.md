@@ -88,7 +88,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
 
 MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
 
--Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
+- Trigger MFA based on a principal attribute(s) whose value(s) matches a regex pattern.
 **Note** that this behavior is only applicable if there is only a **single MFA provider** configured, since that would allow CAS
 to know what provider to next activate.
 
