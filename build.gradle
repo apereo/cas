@@ -228,7 +228,7 @@ subprojects {
     }
 
     findbugsMain {
-        enabled = false
+        enabled = !Boolean.getBoolean("skipFindbugs")
         reports {
             xml.enabled = false
             html.enabled = true
