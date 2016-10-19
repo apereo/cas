@@ -40,7 +40,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      */
     @Autowired
     protected CasConfigurationProperties casProperties;
-
+    
     @Override
     public void generate(final HttpServletRequest request,
                          final HttpServletResponse response,
@@ -48,21 +48,21 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                          final Service service,
                          final AccessToken accessTokenId,
                          final RefreshToken refreshTokenId,
-                         final long timeoutMinutes) {
+                         final long timeout) {
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
-            try (JsonGenerator jsonGenerator = jsonFactory.createGenerator(response.getWriter())) {
+            try(JsonGenerator jsonGenerator = jsonFactory.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                        refreshTokenId, timeoutMinutes, service, registeredService);
+                        refreshTokenId, timeout, service, registeredService);
                 jsonGenerator.writeEndObject();
             } catch (final Exception e) {
                 throw new IllegalArgumentException(e);
             }
         } else {
-            generateTextInternal(request, response, accessTokenId, refreshTokenId, timeoutMinutes);
+            generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);
         }
     }
 
@@ -101,7 +101,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
      * @param jsonGenerator     the json generator
      * @param accessTokenId     the access token id
      * @param refreshTokenId    the refresh token id
-     * @param timeoutMinutes    the timeout in minutes
+     * @param timeout           the timeout
      * @param service           the service
      * @param registeredService the registered service
      * @throws Exception the exception
@@ -111,12 +111,12 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
                                         final JsonGenerator jsonGenerator,
                                         final AccessToken accessTokenId,
                                         final RefreshToken refreshTokenId,
-                                        final long timeoutMinutes,
+                                        final long timeout,
                                         final Service service,
                                         final OAuthRegisteredService registeredService) throws Exception {
         jsonGenerator.writeStringField(OAuthConstants.ACCESS_TOKEN, accessTokenId.getId());
         jsonGenerator.writeStringField(OAuthConstants.TOKEN_TYPE, OAuthConstants.TOKEN_TYPE_BEARER);
-        jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeoutMinutes);
+        jsonGenerator.writeNumberField(OAuthConstants.EXPIRES_IN, timeout);
         if (refreshTokenId != null) {
             jsonGenerator.writeStringField(OAuthConstants.REFRESH_TOKEN, refreshTokenId.getId());
         }
