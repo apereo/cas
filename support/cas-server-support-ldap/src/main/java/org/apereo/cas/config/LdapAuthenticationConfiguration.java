@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -34,6 +35,7 @@ import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -88,7 +90,12 @@ public class LdapAuthenticationConfiguration {
 
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                     handler.setServicesManager(servicesManager);
-                    handler.setAdditionalAttributes(l.getAdditionalAttributes());
+
+                    final List<String> additionalAttrs = Lists.newArrayList(l.getAdditionalAttributes());
+                    if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
+                        additionalAttrs.add(l.getPrincipalAttributeId());
+                    }
+                    handler.setAdditionalAttributes(additionalAttrs);
                     handler.setAllowMultiplePrincipalAttributeValues(l.isAllowMultiplePrincipalAttributeValues());
                     handler.setPasswordEncoder(Beans.newPasswordEncoder(l.getPasswordEncoder()));
                     handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(l.getPrincipalTransformation()));
@@ -130,7 +137,7 @@ public class LdapAuthenticationConfiguration {
                     handler.initialize();
 
                     if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
-                        LOGGER.debug("Ldap authentication for {} is will delegate to principal resolvers for attributes", l.getLdapUrl());
+                        LOGGER.debug("Ldap authentication for {} is to delegate to principal resolvers for attributes", l.getLdapUrl());
                         this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
                     } else {
                         LOGGER.debug("Ldap authentication for {} is to directly retrieve attributes", l.getLdapUrl());
@@ -193,7 +200,7 @@ public class LdapAuthenticationConfiguration {
             LOGGER.debug("Creating authenticated authenticator for {}", l.getLdapUrl());
             return getAuthenticatedOrAnonSearchAuthenticator(l);
         }
-        
+
         LOGGER.debug("Creating anonymous authenticator for {}", l.getLdapUrl());
         return getAuthenticatedOrAnonSearchAuthenticator(l);
     }

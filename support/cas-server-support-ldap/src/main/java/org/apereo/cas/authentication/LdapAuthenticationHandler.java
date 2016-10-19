@@ -267,17 +267,17 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 logger.warn("The principal id attribute [{}] is not found. CAS cannot construct the final authenticated principal "
                             + "if it's unable to locate the attribute that is designated as the principal id. "
                             + "Attributes available on the LDAP entry are [{}]. Since principal id attribute is not available, CAS will "
-                            + "fallback to construct the principal based on the provided user id: {}.",
+                            + "fallback to construct the principal based on the provided user id: {}",
                         this.principalIdAttribute, ldapEntry.getAttributes(), username);
                 return username;
             }
 
             if (principalAttr.size() > 1) {
                 if (!this.allowMultiplePrincipalAttributeValues) {
-                    throw new LoginException("Multiple principal values not allowed: " + principalAttr);
+                    throw new LoginException("Multiple principal values are not allowed: " + principalAttr);
                 }
                 logger.warn(
-                        "Found multiple values for principal ID attribute: {}. Using first value={}.",
+                        "Found multiple values for principal id attribute: {}. Using first value={}.",
                         principalAttr,
                         principalAttr.getStringValue());
             }
@@ -299,7 +299,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
          */
         final Set<String> attributes = new HashSet<>();
 
-        logger.debug("Initializing LDAP attribute configuration.");
+        logger.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             logger.debug("Configured to retrieve principal id attribute {}", this.principalIdAttribute);
             attributes.add(this.principalIdAttribute);
