@@ -126,7 +126,7 @@ https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ### Principal Attribute Per Application
 
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided
-the authenticated principal carries an attribute that matches configured attribute value. The attribute
+the authenticated principal carries an attribute that matches a configured attribute value. The attribute
 value can be an arbitrary regex pattern. See below to learn about how to configure MFA settings.
 
 ```json
