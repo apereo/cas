@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
@@ -35,6 +36,7 @@ public class CasBanner implements Banner {
         try (Formatter formatter = new Formatter()) {
             formatter.format("CAS Version: %s%n", CasVersion.getVersion());
             formatter.format("Build Date/Time: %s%n", CasVersion.getDateTime());
+            formatter.format("System Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
             formatter.format("Java Home: %s%n", properties.get("java.home"));
             formatter.format("Java Vendor: %s%n", properties.get("java.vendor"));
             formatter.format("Java Version: %s%n", properties.get("java.version"));
@@ -42,7 +44,6 @@ public class CasBanner implements Banner {
             formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
             formatter.format("OS Name: %s%n", properties.get("os.name"));
             formatter.format("OS Version: %s%n", properties.get("os.version"));
-
             return formatter.toString();
         }
     }
