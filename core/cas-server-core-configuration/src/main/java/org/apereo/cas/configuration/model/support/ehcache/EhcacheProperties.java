@@ -48,7 +48,7 @@ public class EhcacheProperties {
     
     private int maxElementsInMemory = 10_000;
     
-    private int maxElementsInCache = 10_000;
+    private int maxElementsInCache;
 
     private int maxElementsOnDisk;
     
