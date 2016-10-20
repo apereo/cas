@@ -9,7 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
  * This is {@link MultifactorAuthenticationTrustUtils}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public final class MultifactorAuthenticationTrustUtils {
 

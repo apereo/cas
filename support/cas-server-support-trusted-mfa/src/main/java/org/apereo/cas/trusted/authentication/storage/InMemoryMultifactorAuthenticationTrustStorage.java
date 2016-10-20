@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * This is {@link InMemoryMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 

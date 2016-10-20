@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,11 +56,9 @@ public class EhcacheTicketRegistryConfiguration {
     @Bean
     public EhCacheManagerFactoryBean cacheManager() {
         final EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-        bean.setConfigLocation(ResourceUtils.prepareClasspathResourceIfNeeded(
-                casProperties.getTicket().getRegistry().getEhcache().getConfigLocation()));
+        bean.setConfigLocation(casProperties.getTicket().getRegistry().getEhcache().getConfigLocation());
         bean.setShared(casProperties.getTicket().getRegistry().getEhcache().isShared());
         bean.setCacheManagerName(casProperties.getTicket().getRegistry().getEhcache().getCacheManagerName());
-
         return bean;
     }
 

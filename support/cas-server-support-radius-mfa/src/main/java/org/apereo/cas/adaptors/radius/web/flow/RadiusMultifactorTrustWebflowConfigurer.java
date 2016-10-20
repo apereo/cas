@@ -6,7 +6,7 @@ import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer
  * This is {@link RadiusMultifactorTrustWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
     @Override

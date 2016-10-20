@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This is {@link MultifactorAuthenticationSetTrustAction}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationSetTrustAction.class);

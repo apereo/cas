@@ -14,7 +14,7 @@ import java.util.Arrays;
  * This is {@link AbstractMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**

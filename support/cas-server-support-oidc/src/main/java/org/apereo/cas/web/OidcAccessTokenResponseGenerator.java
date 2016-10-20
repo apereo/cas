@@ -6,20 +6,23 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.OidcRegisteredService;
-import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+import org.apereo.cas.util.CollectionUtils;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -29,6 +32,7 @@ import org.springframework.core.io.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -94,11 +98,25 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setJwtId(UUID.randomUUID().toString());
         claims.setIssuer(this.issuer);
         claims.setAudience(service.getClientId());
-        claims.setExpirationTimeMinutesInTheFuture(timeout);
+        
+        final NumericDate expirationDate = NumericDate.now();
+        expirationDate.addSeconds(timeout);
+        claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(this.skew);
         claims.setSubject(principal.getId());
 
+        if (authentication.getAttributes().containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
+            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+                    authentication.getAttributes().get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()));
+            claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
+        }
+        if (authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
+            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+                    authentication.getAttributes().get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+            claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[] {}));
+        }
+        
         claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
 

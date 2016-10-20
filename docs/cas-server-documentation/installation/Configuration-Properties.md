@@ -34,7 +34,10 @@ and syntax. **BE CAREFUL** with the distinction.
 
 - Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
-ignored by CAS and likely the feature it controls will never be activated in the way you intended.
+ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+
+- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it out without hesitation.
+Review the codebase, or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
 ## Configuration Storage
 
@@ -1267,6 +1270,14 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
+
+# cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.gauth.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.gauth.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.gauth.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
 ```
 
 #### Google Authenticator MongoDb
@@ -1311,6 +1322,14 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=true
+
+# cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.yubikey.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Radius OTP
@@ -1338,6 +1357,14 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.server.nasPort=-1
 # cas.authn.mfa.radius.server.nasIpAddress=
 # cas.authn.mfa.radius.server.nasIpv6Address=
+
+# cas.authn.mfa.radius.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.radius.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.radius.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.radius.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.radius.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.radius.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.radius.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### DuoSecurity
@@ -1351,6 +1378,14 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo.duoIntegrationKey=
 # cas.authn.mfa.duo.duoApiHost=
 # cas.authn.mfa.duo.trustedDeviceEnabled=true
+
+# cas.authn.mfa.duo.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.duo.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.duo.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.duo.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.duo.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.duo.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.duo.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Authy
@@ -1364,6 +1399,14 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=true
+
+# cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.authy.bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.authy.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.authy.bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.authy.bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
 ```
 
 ## Authentication Exceptions
@@ -2311,7 +2354,6 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
-# cas.ticket.registry.ehcache.maxElementsInMemory=10000
 # cas.ticket.registry.ehcache.cacheManagerName=ticketRegistryCacheManager
 # cas.ticket.registry.ehcache.replicatePuts=true
 # cas.ticket.registry.ehcache.replicateUpdates=true
@@ -2325,7 +2367,8 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.replicateRemovals=true
 # cas.ticket.registry.ehcache.maxChunkSize=5000000
 # cas.ticket.registry.ehcache.maxElementsOnDisk=0
-# cas.ticket.registry.ehcache.maxElementsInCache=10000
+# cas.ticket.registry.ehcache.maxElementsInCache=0
+# cas.ticket.registry.ehcache.maxElementsInMemory=10000
 # cas.ticket.registry.ehcache.cacheName=org.apereo.cas.ticket.TicketCache
 # cas.ticket.registry.ehcache.eternal=false
 # cas.ticket.registry.ehcache.loaderAsync=true

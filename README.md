@@ -8,10 +8,11 @@
 [![JavaDoc](https://javadoc-emblem.rhcloud.com/doc/org.apereo.cas/cas-server/badge.svg)](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
 [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas)
+[![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas)
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](http://www.apereo.org/cas), more commonly referred to as CAS. 
+Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/cas), more commonly referred to as CAS. 
 CAS provides enterprise single sign-on for the web and attempts to be a comprehensive platform for your authentication and authorization needs. 
 
 CAS provides an extensive list of features for most application requirements and integrations, offers community documentation 
@@ -43,7 +44,7 @@ The foundations of CAS are built upon: Spring Framework, Spring Boot, Spring Clo
 - [Release Notes][releasenotes]
 - [Support] [cassupport]
 
-## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/pr?style=flat)](http://www.issuestats.com/github/apereo/cas) [![Issue Stats](http://www.issuestats.com/github/apereo/cas/badge/issue?style=flat)](http://www.issuestats.com/github/apereo/cas)
+## Deployment [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
 
 It is recommended to build and deploy CAS locally using the [WAR Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
@@ -55,6 +56,7 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 
 
 ## Contributions
+
 - [How to contribute][contribute]
 
 [wiki]: http://apereo.github.io/cas

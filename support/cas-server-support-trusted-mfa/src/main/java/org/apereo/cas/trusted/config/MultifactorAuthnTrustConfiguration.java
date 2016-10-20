@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

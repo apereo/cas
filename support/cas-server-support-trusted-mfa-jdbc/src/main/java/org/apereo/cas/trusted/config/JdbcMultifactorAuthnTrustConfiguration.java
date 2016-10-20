@@ -26,7 +26,7 @@ import javax.sql.DataSource;
  * This is {@link JdbcMultifactorAuthnTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("jdbcMultifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

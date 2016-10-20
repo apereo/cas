@@ -80,7 +80,6 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
-
         
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
