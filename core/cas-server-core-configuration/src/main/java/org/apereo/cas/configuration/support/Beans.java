@@ -256,7 +256,7 @@ public class Beans {
     /**
      * New pooled connection factory pooled connection factory.
      *
-     * @param l the l
+     * @param l the ldap properties
      * @return the pooled connection factory
      */
     public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
@@ -323,8 +323,7 @@ public class Beans {
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
-                    new Credential(l.getBindCredential())));
+            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
 
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
@@ -349,6 +348,8 @@ public class Beans {
         cp.setPruneStrategy(strategy);
         cp.setValidator(new SearchValidator());
         cp.setFailFastInitialize(l.isFailFast());
+
+        LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
         return new PooledConnectionFactory(cp);
     }
