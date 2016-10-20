@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.authy;
 
 import com.authy.api.Token;
 import com.authy.api.User;
-import org.apache.commons.collections.ArrayStack;
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -52,7 +52,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
-        return createHandlerResult(tokenCredential, principal, new ArrayStack());
+        return createHandlerResult(tokenCredential, principal, Lists.newArrayList());
     }
     
     public void setForceVerification(final Boolean forceVerification) {
