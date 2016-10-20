@@ -74,7 +74,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[]{
             HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
             HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-            HttpURLConnection.HTTP_ACCEPTED};
+            HttpURLConnection.HTTP_ACCEPTED, HttpURLConnection.HTTP_NO_CONTENT};
 
     /**
      * 20% of the total of threads in the pool to handle overhead.
