@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.Ticket;
 import org.infinispan.Cache;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -24,16 +25,19 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     public InfinispanTicketRegistry() {
     }
 
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        logger.info("Setting up Infinispan Ticket Registry...");
+    }
+    
     @Override
     public void updateTicket(final Ticket ticket) {
         this.cache.put(ticket.getId(), ticket);
     }
     
-    /**
-     * Add a ticket to the registry. Ticket storage is based on the ticket id.
-     *
-     * @param ticketToAdd The ticket we wish to add to the cache.
-     */
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
@@ -41,13 +45,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
                 ticket.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
                 ticket.getExpirationPolicy().getTimeToIdle(), TimeUnit.SECONDS);
     }
-
-    /**
-     * Retrieve a ticket from the registry.
-     *
-     * @param ticketId the id of the ticket we wish to retrieve
-     * @return the requested ticket.
-     */
+    
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
