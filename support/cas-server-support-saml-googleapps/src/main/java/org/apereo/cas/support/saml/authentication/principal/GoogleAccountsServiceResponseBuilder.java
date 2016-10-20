@@ -1,5 +1,9 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -10,6 +14,9 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.ApplicationContextProvider;
 
+import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -20,7 +27,10 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.Assert;
+import org.springframework.util.ResourceUtils;
 
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -32,6 +42,7 @@ import java.util.Map;
 
 /**
  * Builds the google accounts service response.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -39,28 +50,72 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -4584732364007702423L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
-    
+
+    /**
+     * Logger instance.
+     */
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @JsonIgnore
     private PrivateKey privateKey;
+    @JsonIgnore
     private PublicKey publicKey;
+
+    @JsonProperty
+    private String publicKeyLocation;
+    @JsonProperty
+    private String privateKeyLocation;
+    @JsonProperty
+    private String keyAlgorithm;
+
+    @JsonProperty
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
+    @JsonProperty
     private int skewAllowance;
 
     /**
      * Instantiates a new Google accounts service response builder.
      *
-     * @param privateKey the private key
-     * @param publicKey the public key
-     * @param samlObjectBuilder the saml object builder
+     * @param privateKeyLocation the private key
+     * @param publicKeyLocation  the public key
+     * @param samlObjectBuilder  the saml object builder
      */
-    public GoogleAccountsServiceResponseBuilder(final PrivateKey privateKey,
-                                                final PublicKey publicKey,
+    public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
+                                                final String publicKeyLocation,
+                                                final String keyAlgorithm,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder) {
-        Assert.notNull(privateKey);
-        Assert.notNull(publicKey);
+
+        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, samlObjectBuilder, 0);
+    }
+
+    /**
+     * Instantiates a new Google accounts service response builder.
+     *
+     * @param privateKeyLocation the private key
+     * @param publicKeyLocation  the public key
+     * @param samlObjectBuilder  the saml object builder
+     */
+    @JsonCreator
+    public GoogleAccountsServiceResponseBuilder(@JsonProperty("privateKeyLocation") final String privateKeyLocation,
+                                                @JsonProperty("publicKeyLocation") final String publicKeyLocation,
+                                                @JsonProperty("keyAlgorithm") final String keyAlgorithm,
+                                                @JsonProperty("samlObjectBuilder") final GoogleSaml20ObjectBuilder samlObjectBuilder,
+                                                @JsonProperty("skewAllowance") int skewAllowance) {
+        Assert.notNull(privateKeyLocation);
+        Assert.notNull(publicKeyLocation);
         Assert.notNull(samlObjectBuilder);
-        
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
+
+        this.privateKeyLocation = privateKeyLocation;
+        this.publicKeyLocation = publicKeyLocation;
+        this.keyAlgorithm = keyAlgorithm;
+        this.skewAllowance = skewAllowance;
+        try {
+            createGoogleAppsPrivateKey();
+            createGoogleAppsPublicKey();
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+
         this.samlObjectBuilder = samlObjectBuilder;
     }
 
@@ -71,7 +126,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final Map<String, String> parameters = new HashMap<>();
         final String samlResponse = constructSamlResponse(service);
         final String signedResponse = this.samlObjectBuilder.signSamlResponse(samlResponse,
-            this.privateKey, this.publicKey);
+                this.privateKey, this.publicKey);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, service.getRelayState());
 
@@ -81,6 +136,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     /**
      * Construct SAML response.
      * <a href="http://bit.ly/1uI8Ggu">See this reference for more info.</a>
+     *
      * @param service the service
      * @return the SAML response
      */
@@ -100,24 +156,24 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         final String userId = registeredService.getUsernameAttributeProvider()
-                    .resolveUsername(service.getPrincipal(), service);
+                .resolveUsername(service.getPrincipal(), service);
 
         final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
                 this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, service.getId(), service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
         final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(
-            AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
+                AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement,
-            "https://www.opensaml.org/IDP",
-            notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
+                "https://www.opensaml.org/IDP",
+                notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
                 currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
         final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-            service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
+                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
@@ -142,5 +198,78 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     public void setSkewAllowance(final int skewAllowance) {
         LOGGER.debug("Using {} seconds as skew allowance.", skewAllowance);
         this.skewAllowance = skewAllowance;
+    }
+
+    /**
+     * Create the private key.
+     *
+     * @throws Exception if key creation ran into an error
+     */
+    protected void createGoogleAppsPrivateKey() throws Exception {
+        if (!isValidConfiguration()) {
+            logger.debug("Google Apps private key bean will not be created, because it's not configured");
+            return;
+        }
+
+        final PrivateKeyFactoryBean bean = new PrivateKeyFactoryBean();
+
+        if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            bean.setLocation(new ClassPathResource(
+                    org.apache.commons.lang3.StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+        } else if (this.privateKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+            bean.setLocation(new FileSystemResource(
+                    org.apache.commons.lang3.StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+        } else {
+            bean.setLocation(new FileSystemResource(this.privateKeyLocation));
+        }
+
+        bean.setAlgorithm(this.keyAlgorithm);
+        logger.debug("Loading Google Apps private key from {} with key algorithm {}",
+                bean.getLocation(), bean.getAlgorithm());
+
+        bean.afterPropertiesSet();
+
+
+        logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
+        this.privateKey = bean.getObject();
+    }
+
+    /**
+     * Create the public key.
+     *
+     * @throws Exception if key creation ran into an error
+     */
+    protected void createGoogleAppsPublicKey() throws Exception {
+        if (!isValidConfiguration()) {
+            logger.debug("Google Apps public key bean will not be created, because it's not configured");
+            return;
+        }
+
+        final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
+        if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            bean.setLocation(new ClassPathResource(
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+        } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+            bean.setLocation(new FileSystemResource(
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+        } else {
+            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+        }
+
+        bean.setAlgorithm(this.keyAlgorithm);
+
+        logger.debug("Loading Google Apps public key from {} with key algorithm {}",
+                bean.getResource(), bean.getAlgorithm());
+
+        bean.afterPropertiesSet();
+
+        logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
+        this.publicKey = bean.getObject();
+    }
+
+    private boolean isValidConfiguration() {
+        return StringUtils.isNotBlank(this.privateKeyLocation)
+                || StringUtils.isNotBlank(this.publicKeyLocation)
+                || StringUtils.isNotBlank(this.keyAlgorithm);
     }
 }
