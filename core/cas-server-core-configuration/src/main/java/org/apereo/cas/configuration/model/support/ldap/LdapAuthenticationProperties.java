@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -55,9 +54,9 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
 
     private String credentialCriteria;
     private String dnFormat;
-    private String principalAttributeId = "uid";
+    private String principalAttributeId;
     private String principalAttributePassword;
-    private List principalAttributeList = Lists.newArrayList("cn,sn,givenName,displayName");
+    private List principalAttributeList = new ArrayList();
     private boolean allowMultiplePrincipalAttributeValues;
     private List additionalAttributes = new ArrayList();
     private AuthenticationTypes type;
