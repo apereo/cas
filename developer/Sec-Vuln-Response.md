@@ -25,6 +25,15 @@ To review the old archives of the application security working group, [please se
 
 <div class="alert alert-warning"><strong>List Etiquette</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to address the problem. There is no good sense in creating panic and chaos. All community members <strong>SHOULD</strong> ignore all such public announcements and reports.</p></div>
 
+## CVEs
+
+The CAS project does not request or provide CVEs when handling security issues. This is a task that must entirely be handled by you,
+should you need to obtain a CVE in order to justify an unplanned upgrade, etc. The CAS project, generally speaking, moves much quicker
+to announce and disclose security issues than any CVE procurement process; we simply cannot delay security notifications and announcements
+for as long as it could take to receive a CVE. 
+
+If you wish to volunteer to become a point person to get CVE creation process going, by all means, speak up.
+
 ## Community Notification
 
 Once the release is made available, the following procedure may be observed:
@@ -37,8 +46,12 @@ Once the release is made available, the following procedure may be observed:
   - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a two-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
+### Trusted Contacts
+
 Please note that the CAS project cannot disclose details about the security issue and effects to private individuals without first verifying
-their identity and Apereo foundation membership status. If you consider yourself is a trusted contact for your institution who is registered and vetted
+their identity and Apereo foundation membership status. If you consider yourself a trusted contact for your institution who is registered and vetted
 by the Apereo foundation, please provide the project with enough background information so we can happily proceed to explain the details in a relaxed
-and trusted environment. To learn more about how to become an Apereo foundation member and a registered trusted contact, please [contact Apereo directly](https://www.apereo.org)
+and trusted environment. 
+
+To learn more about how to become an Apereo foundation member and a registered trusted contact, please [contact Apereo directly](https://www.apereo.org)
 
