@@ -46,6 +46,8 @@ Once the release is made available, the following procedure may be observed:
   - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a two-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
+<div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from trusted project contacts and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
+
 ### Trusted Contacts
 
 Please note that the CAS project cannot disclose details about the security issue and its effects to private individuals without first verifying
