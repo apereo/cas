@@ -1,0 +1,33 @@
+
+/*
+  Override the version used by Spring boot to match CAS.
+  As boot is upgraded, some of these enforcements below
+  may become unnecessary when/if version numbers match.
+ */
+
+ext["hibernateVersion"] = "5.2.2.Final"
+ext["hibernate.version"] = ext["hibernateVersion"]
+
+ext["hazelcastVersion"] = "3.7.2"
+ext["hazelcast.version"] = ext["hazelcastVersion"]
+
+ext["springBootTomcatVersion"] = "8.5.5"
+ext["tomcat.version"] = ext["springBootTomcatVersion"]
+
+ext["infinispanVersion"] = "8.2.2.Final"
+ext["infinispan.version"] = ext["infinispanVersion"]
+
+ext["springVersion"] = "4.3.3.RELEASE"
+ext["spring.version"] = ext["springVersion"]
+
+ext["jacksonDatabindVersion"] = "2.8.3"
+ext["jackson.version"] = ext["jacksonDatabindVersion"]
+
+ext["thymeleafVersion"] = "3.0.1.RELEASE"
+ext["thymeleaf.version"] = ext["thymeleafVersion"]
+
+ext["thymeleafDialectVersion"] = "2.0.3"
+ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
+
+ext["springSessionVersion"] = "1.2.2.RELEASE"
+ext["spring-session.version"] = ext["springSessionVersion"]

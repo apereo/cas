@@ -1,16 +1,3 @@
-/*
-  Override the version used by Spring boot to match ours.
- */
-ext["hibernate.version"] = "$hibernateVersion"
-ext["hazelcast.version"] = "$hazelcastVersion"
-ext["spring-session.version"] = "$springSessionVersion"
-ext["tomcat.version"] = "$springBootTomcatVersion"
-ext["infinispan.version"] = "$infinispanVersion"
-ext["spring.version"] = "$springVersion"
-ext["jackson.version"] = "$jacksonDatabindVersion"
-ext["thymeleaf.version"] = "$thymeleafVersion"
-ext["thymeleaf-layout-dialect.version"] = "$thymeleafDialectVersion"
-
 ext.libraries = [
         aspectj                 : [
                 dependencies.create("org.aspectj:aspectjrt:$aspectjVersion") {
