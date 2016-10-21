@@ -48,9 +48,11 @@ Once the release is made available, the following procedure may be observed:
 
 An example notification messages follows:
 
-> CAS x.y.z has been released. This release addresses a rather serious security issue where successfully exercising this vulnerability 
-> may allow an adversary to gain insight into the running CAS server. If you have deployed **any version** of CAS x.y.z, you **MUST** 
-> take action to upgrade. If you have deployed any **other** versions of CAS, disregard this issue.
+```
+CAS x.y.z has been released. This release addresses a rather serious security issue where successfully exercising this vulnerability 
+may allow an adversary to gain insight into the running CAS server. If you have deployed **any version** of CAS x.y.z, you **MUST** 
+take action to upgrade. If you have deployed any **other** versions of CAS, disregard this issue.
+```
 
 <div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from trusted project contacts and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
 
