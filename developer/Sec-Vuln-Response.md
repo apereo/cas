@@ -44,7 +44,7 @@ Once the release is made available, the following procedure may be observed:
   - The severity of the security issue and nature of the patch release.
   - Affected CAS versions
   - Recommended guidelines for upgrades and applications of the patch.
-- At the end of a two-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
+- At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
 <div class="alert alert-info"><strong>Be Careful</strong><p>At the risk of stating the obvious, remember to only heed and accept community notifications about security fixes from trusted project contacts and members. Posts detailing <i>security fixes</i> from random folks should entirely be ignored.</p></div>
 
