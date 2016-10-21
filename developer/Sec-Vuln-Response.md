@@ -15,7 +15,7 @@ Members involved in [CAS application security](/cas/Mailing-Lists.html):
 
 To review the old archives of the application security working group, [please see this guide](https://wiki.jasig.org/display/CAS/CAS+AppSec+Working+Group).
 
-## Zero Day Response Model
+## Response Model
 
 - Security issues are [privately reported to Apereo](/cas/Mailing-Lists.html).
 - Project members acknowledge the issue and ascertain its merits. All discussion **MUST** happen privately on the [appropriate mailing list](/cas/Mailing-Lists.html).
@@ -48,7 +48,7 @@ Once the release is made available, the following procedure may be observed:
 
 ### Trusted Contacts
 
-Please note that the CAS project cannot disclose details about the security issue and effects to private individuals without first verifying
+Please note that the CAS project cannot disclose details about the security issue and its effects to private individuals without first verifying
 their identity and Apereo foundation membership status. If you consider yourself a trusted contact for your institution who is registered and vetted
 by the Apereo foundation, please provide the project with enough background information so we can happily proceed to explain the details in a relaxed
 and trusted environment. 
