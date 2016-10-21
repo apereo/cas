@@ -16,6 +16,7 @@ def isArtifactSigningRequired = {
     return false
 }
 
+apply from: rootProject.file("gradle/versions.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.gradle.build-scan"
 
