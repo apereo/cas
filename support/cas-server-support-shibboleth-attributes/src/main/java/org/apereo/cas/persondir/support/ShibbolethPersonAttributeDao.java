@@ -9,6 +9,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.apereo.services.persondir.support.BasePersonAttributeDao;
 import org.apereo.services.persondir.support.NamedPersonImpl;
 
 import javax.annotation.PostConstruct;
@@ -24,12 +25,12 @@ import java.util.stream.Collectors;
  * @author Jonathan Johnson
  * @since 5.0.0
  */
-public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
+public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
     
     private AttributeResolver attributeResolver;
 
     /**
-     * Initializes the component. Right now, all it does is makes sure that the attribute resolver is initialized
+     * Initializes the component. Right now, all it does is makes sure that the attribute resolver is initialized.
      */
     @PostConstruct
     public void init() {
@@ -76,40 +77,16 @@ public class ShibbolethPersonAttributeDao implements IPersonAttributeDao {
         throw new UnsupportedOperationException();
     }
 
-
     @Override
     public Set<String> getPossibleUserAttributeNames() {
         throw new UnsupportedOperationException();
     }
-
-
+    
     @Override
     public Set<String> getAvailableQueryAttributes() {
         throw new UnsupportedOperationException();
     }
-
-
-    @Override
-    public Map<String, List<Object>> getMultivaluedUserAttributes(final Map<String, List<Object>> seed) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, List<Object>> getMultivaluedUserAttributes(final String uid) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public Map<String, Object> getUserAttributes(final Map<String, Object> seed) {
-        throw new UnsupportedOperationException();
-    }
     
-    @Override
-    public Map<String, Object> getUserAttributes(final String uid) {
-        throw new UnsupportedOperationException();
-    }
-
     public void setAttributeResolver(final AttributeResolver attributeResolver) {
         this.attributeResolver = attributeResolver;
     }
