@@ -11,8 +11,12 @@ broker while transparently providing access to multiple services without repetit
 improves the security environment, but there are several CAS configuration, policy, and deployment concerns that should
 be considered to achieve suitable security.
 
+<div class="alert alert-info"><strong>Reporing Issues</strong><p>The security team asks that you please <strong>DO NOT</strong> create publicly-viewable issues or posts to discuss what you may consider a security vulnerability. To report issues properly and learn about how responses are produced, please <a href="/cas/developer/Sec-Vuln-Response.html">see this guide</a>.</p></div>
+
 
 ## System Security Considerations
+
+Infrastructure security matters to consider may include the following.
 
 ### Secure Transport (https)
 
@@ -51,8 +55,7 @@ protection whereas advanced encryption data mechanism should be used for the dat
 
 CAS supports a number of features that can be leveraged to implement various security policies.
 The following features are provided through CAS configuration and CAS client integration. Note that many features
-are available out of the box, while others require explicit setup.
-
+are available out of the box, while others require explicit setup
 
 ### Forced Authentication
 

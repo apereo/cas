@@ -34,17 +34,17 @@ The goal of the resolver is to construct a final authenticated principal for CAS
 Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
 authenticates via `sAMAccountName`.
 
-| Attribute                                     | Value
-|------------+------------------------------------------------------+
-| `sAMAccountName`     | `johnsmith`.
+| Attribute            | Value
+|------------+-------------------------------+
+| `sAMAccountName`     | `johnsmith`
 | `cn`                 | `John Smith`
 
-Example #1:
+### Example #1
 
 If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then When authentication is complete the resolver attempts to construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `sAMAccoutName`. So it would remove the `sAMAccoutName` from the attributes.
 The final result is is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
 
-Example #2:
+### Example #2
 
 If the resolver is configured to use `cn` as the attribute for the principal id, then When authentication is complete the resolver attempts to construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`. So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
@@ -90,12 +90,6 @@ CAS overlay to be able to resolve dependencies:
     </repository>
     ...
 </repositories>
-```
-
-Then add the following to your configuration:
-
-```xml
-<alias name="shibbolethPersonAttributeDao" alias="attributeRepository" />
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
