@@ -45,7 +45,7 @@ public class ShibbolethAttributeResolverConfiguration {
     @RefreshScope
     @Bean
     @Scope("singleton")
-    AttributeResolver attributeResolver() {
+    public AttributeResolver shibbolethAttributeResolver() {
         final ApplicationContext tempApplicationContext = SpringSupport.newContext(
                 "shibbolethAttributeResolverContext",
                 casProperties.getShibAttributeResolver().getResources(),
@@ -66,7 +66,7 @@ public class ShibbolethAttributeResolverConfiguration {
     @Bean(name={"shibbolethPersonAttributeDao", "attributeRepository"})
     public IPersonAttributeDao shibbolethPersonAttributeDao() {
         final ShibbolethPersonAttributeDao d = new ShibbolethPersonAttributeDao();
-        d.setAttributeResolver(attributeResolver());
+        d.setAttributeResolver(shibbolethAttributeResolver());
         return d;
     }
 }
