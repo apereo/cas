@@ -5,7 +5,20 @@ title: CAS - Project Management Commitee
 
 CAS is governed by a Project Management Committee (PMC) modeled after Apache-style PMCs. All PMC-related matters, including new nominations of
 members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
- 
+
+## Members
+
+- Daniel Frett
+- Scott Battaglia
+- Andrew Petro
+- Bill Thompson
+- Robert Oschwald
+- Dmitriy Kopylenko
+- Marvin Addison
+- Jérôme Leleu
+- Misagh Moayyed
+- Ian Dolphin
+
 ## Structure
 
 The PMC is composed of members and a chair who has executive authority over the committee and reports to the Apereo board. 
@@ -19,7 +32,9 @@ repository are automatically PMC members; thus a committer is a PMC member. The 
 All voting MUST be conducted over a period of at least 72 hours on a project mailing list; more time SHOULD be allotted for special 
 situations such as holidays and other occasions where large numbers of PMC members may be offline for longer-than-normal periods. 
 Voting is by lazy consensus where at least two +1 votes is sufficient to move forward and a single -1 vote is sufficient to block a 
-proposal. All PMC member votes are equal; the chair has no veto power. Voting SHOULD strive for consensus.
+proposal. Voting SHOULD strive for consensus.
+
+All PMC member votes are equal; the chair has no veto power.
 
 ### Timespan
 
@@ -31,7 +46,9 @@ which is the most important aspect.
 
 ## Committer Nomination
 
-The nomination of a committer requires a vote: a majority of +1 is required and no -1. The vote must happen **privately** on the cas-pmc mailing list.
+The nomination of a committer requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
+The vote is proposed by one of the current committers. All members of the community have the right to become a committer, solely and exclusively
+on the grounds of the meritocracy. 
 
 ## Communication
 
