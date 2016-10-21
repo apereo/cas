@@ -35,7 +35,7 @@ Suppose CAS is configured to authenticate against Active Directory. The account 
 authenticates via `sAMAccountName`.
 
 | Attribute            | Value
-|------------+-------------------------------+
+|------------|--------------------------------
 | `sAMAccountName`     | `johnsmith`
 | `cn`                 | `John Smith`
 

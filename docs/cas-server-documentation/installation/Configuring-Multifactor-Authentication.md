@@ -25,7 +25,7 @@ The following multifactor providers are supported by CAS.
 Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `id`                 | `mfa-duo`
 
 ### Authy Authenticator
@@ -33,7 +33,7 @@ Configure authentication per instructions [here](DuoSecurity-Authentication.html
 Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `id`                 | `mfa-authy`
 
 ### YubiKey
@@ -41,7 +41,7 @@ Configure authentication per instructions [here](AuthyAuthenticator-Authenticati
 Configure authentication per instructions [here](YubiKey-Authentication.html). 
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `id`                 | `mfa-yubikey`
 
 ### RSA/RADIUS
@@ -49,7 +49,7 @@ Configure authentication per instructions [here](YubiKey-Authentication.html).
 Configure authentication per instructions [here](RADIUS-Authentication.html). 
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `id`                 | `mfa-radius`
 
 ### Google Authenticator
@@ -57,7 +57,7 @@ Configure authentication per instructions [here](RADIUS-Authentication.html).
 Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `id`                 | `mfa-gauth`
 
 ## Triggers
@@ -187,7 +187,7 @@ functionality, if that provider cannot respond.
 The following failure modes are supported:
 
 | Field                | Description
-|----------------------+---------------------------------+
+|----------------------|----------------------------------
 | `CLOSED`                  | Authentication is blocked if the provider cannot be reached. 
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
