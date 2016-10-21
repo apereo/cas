@@ -19,7 +19,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 SAML2 IdP Unsolicited/Initiated SSO profile supports the following parameters:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `providerId`                      | Required. Entity ID of the service provider.
 | `shire`                           | Optional. Response location (ACS URL) of the service provider.
 | `target`                          | Optional. Relay state.
@@ -92,7 +92,7 @@ This endpoint will attempt to generate metadata for relying party upon receiving
 service providers that do not publish a defined metadata. The following parameters are expected by this point:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `entityId`                        | Required.
 | `authnRequestSigned`              | Optional. Defaults to `false`.
 | `wantAssertionsSigned`            | Optional. Defaults to `false`.
@@ -149,7 +149,7 @@ the <code>serviceId</code> field. </p></div>
 The following fields are available for SAML services:
 
 | Field                                | Description
-|--------------------------------------+-----------------------------------------------------------------+
+|--------------------------------------|------------------------------------------------------------------
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath or URL resources. 
 | `metadataSignatureLocation`          | Location of the metadata *public key* to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
