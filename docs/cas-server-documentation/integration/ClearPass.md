@@ -5,7 +5,7 @@ title: CAS - ClearPass
 
 # ClearPass: Credential Caching and Replay
 
-To enable single sign-on into some legacy application it may be necessary to provide them with the actual password.
+To enable single sign-on into some legacy applications it may be necessary to provide them with the actual password.
 While such approach inevitably increases security risk, at times this may be a necessary evil in order to integrate
 applications with CAS.
 
