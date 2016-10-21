@@ -77,15 +77,17 @@ This is a low-traffic list to receive notifications about CAS releases including
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce)
 
-## CAS Public Security List (cas-appsec-public)
+## Security Lists
+
+### CAS Public Security List (cas-appsec-public)
 
 _Focus_: Security issues, mitigation strategies and announcements
 
-This is a low-traffic list to receive notifications about CAS security issues. Note that posts on this list are **public**. To report what you consider to be a security vulnerability, please use the `cas-appsec-private` mailing list. 
+This is a low-traffic list to receive notifications about CAS security issues. Note that posts on this list are **public**. To report what you consider to be a security vulnerability, use the `security@apereo.org` mailing list. 
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-public)
 
-## CAS Private Security List (cas-appsec-private)
+### CAS Private Security List (cas-appsec-private)
 
 _Focus_: Security issues, mitigation strategies and private internal discussions
 
@@ -93,6 +95,10 @@ This is a private closed low-traffic list to  discuss CAS security issues amongs
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/security)
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-private)
+
+### Security Vulnerability Response
+
+Once reported via the appropriate channels, please [review this guide](/cas/developer/Sec-Vuln-Response.html) to learn how CAS responds to security vulnerabilities.
 
 ## CAS PMC (cas-pmc)
 
