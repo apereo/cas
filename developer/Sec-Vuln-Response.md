@@ -32,7 +32,7 @@ should you need to obtain a CVE in order to justify an unplanned upgrade, etc. T
 to announce and disclose security issues than any CVE procurement process; we simply cannot delay security notifications and announcements
 for as long as it could take to receive a CVE. 
 
-If you wish to volunteer to become a point person to get CVE creation process going, by all means, speak up.
+If you wish to volunteer to become a point person to get the CVE creation process going, by all means, speak up.
 
 ## Community Notification
 
