@@ -35,7 +35,7 @@ You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installati
 ## Internet Connectivity
 
 Internet connectivity is generally required for the build phase of any Maven-based project, including the recommended
-Maven WAR overlays used to install CAS. Maven resolves dependencies by searching online repositories containing
+WAR overlays used to install CAS. Maven resolves dependencies by searching online repositories containing
 artifacts (jar files in most cases) that are downloaded and installed locally. While it is possible to override this
 behavior by altering Maven configuration settings, it is considered advanced usage and not supported.
 
