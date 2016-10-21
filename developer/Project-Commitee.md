@@ -10,6 +10,8 @@ members MUST take place on the [mailing list](/cas/Mailing-Lists.html).
 
 ## Members
 
+The current members of the PMC are:
+
 - Daniel Frett
 - Scott Battaglia
 - Andrew Petro
@@ -45,6 +47,10 @@ Does voting stop after two +1 or one -1 or is it not tallied until the voting pe
 Voting is open for at least 72h. Any measure is effectively dead with a -1 vote, so if a -1 comes in a minute after voting starts there's really no point 
 in waiting any longer. The value of a 72h window is that it affords more time for dissenters. The voting process is intended to emphasize and produce consensus, 
 which is the most important aspect.
+
+## PMC Chair Nomination
+
+The nomination of a PMC chair requires a vote: a majority of +1 is required and no -1. The vote **MUST** happen **PRIVATELY** on the cas-pmc mailing list.
 
 ## Committer Nomination
 
