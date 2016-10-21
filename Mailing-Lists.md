@@ -79,6 +79,8 @@ This is a low-traffic list to receive notifications about CAS releases including
 
 ## Security Lists
 
+The following mailing lists handle security announcements and vulnerabilities.
+
 ### CAS Public Security List (cas-appsec-public)
 
 _Focus_: Security issues, mitigation strategies and announcements
