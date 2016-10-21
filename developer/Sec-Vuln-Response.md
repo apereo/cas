@@ -7,7 +7,7 @@ title: CAS - Vulnerability Response
 
 Members involved in [CAS application security](/cas/Mailing-Lists.html):
 
-- Proactively work to improve the security of CAS focusing on the Apereo CAS server, the protocols and various CAS clients
+- Proactively work to improve the security of CAS focusing on the Apereo CAS server, the protocols and various CAS clients.
 - Respond to potential vulnerabilities and create, maintain, and execute on vulnerability triage and notification policy, fielding handoffs from the Apereo security and otherwise. 
 - Issue vulnerability reports and work to coordinate workarounds and fix responses to security concerns that arise.
 - Produce artifacts that help potential CAS adopters to evaluate the security of CAS both as open source product and as they intend to locally implement the product. This includes threat modeling, data flow diagrams, etc.
@@ -55,5 +55,5 @@ their identity and Apereo foundation membership status. If you consider yourself
 by the Apereo foundation, please provide the project with enough background information so we can happily proceed to explain the details in a relaxed
 and trusted environment. 
 
-To learn more about how to become an Apereo foundation member and a registered trusted contact, please [contact Apereo directly](https://www.apereo.org)
+To learn more about how to become an Apereo foundation member and a registered trusted contact, please [contact Apereo directly](https://www.apereo.org).
 
