@@ -27,3 +27,18 @@ To review the old archives of the application security working group, [please se
 
 ## Community Notification
 
+Once the release is made available, the following procedure may be observed:
+
+- Community members [are notified](/cas/Mailing-Lists.html) about the release availability. 
+- The notification message SHOULD discuss:
+  - The security issue in generic terms providing only enough detail to cause concern and attract community attention, but not to cause chaos or create an opportunity for adversaries to take advantage of the issue.
+  - The severity of the security issue and nature of the patch release.
+  - Affected CAS versions
+  - Recommended guidelines for upgrades and applications of the patch.
+- At the end of a two-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
+
+Please note that the CAS project cannot disclose details about the security issue and effects to private individuals without first verifying
+their identity and Apereo foundation membership status. If you consider yourself is a trusted contact for your institution who is registered and vetted
+by the Apereo foundation, please provide the project with enough background information so we can happily proceed to explain the details in a relaxed
+and trusted environment. To learn more about how to become an Apereo foundation member and a registered trusted contact, please [contact Apereo directly](https://www.apereo.org)
+
