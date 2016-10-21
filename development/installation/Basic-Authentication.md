@@ -7,7 +7,7 @@ title: CAS - Basic Authentication
 
 Verify and authenticate credentials using Basic Authentication.
 
-Support is enabled by including the following dependency in the Maven WAR overlay:
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>
