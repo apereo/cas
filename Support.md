@@ -7,7 +7,7 @@ title: CAS - Support
 
 CAS is open source software supported primarily by an open and friendly community.
 Our premier support channel is community discussion mediated primarily via
-[Mailing Lists](Mailing-Lists.html)
+[Mailing Lists](Mailing-Lists.html).
 
 ## Free Support
 
