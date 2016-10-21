@@ -29,7 +29,7 @@ The current implementation provides support for:
 ## Endpoints
 
 | Field                                     | Description
-|-------------------------------------------+------------------------------------------------------+
+|-------------------------------------------|-------------------------------------------------------
 | `/cas/oidc/.well-known`                       | Discovery endpoint.
 | `/cas/oidc/.well-known/openid-configuration`  | Discovery endpoint.
 | `/cas/oidc/jwks`                              | Provides an aggregate of all keystores.
@@ -56,7 +56,7 @@ OpenID Connect clients can be registered with CAS as such:
 ```
 
 | Field                   | Description
-|-------------------------+-----------------------------------------------------------------+
+|-------------------------|------------------------------------------------------------------
 | `serviceId`             | The authorized redirect URI for this OIDC client.
 | `signIdToken`           | Whether ID tokens should be signed. Default is `true`.
 | `jwks`                  | Path to the location of the keystore that holds the signing keys for this application. If none defined, defaults will be used.
