@@ -27,10 +27,17 @@ Post to this list if you have a question about installing, configuring, or troub
 
 Always ensure you have enough diagnostics data in your report. Are you reporting the exact version numbers that exhibit the seemingly-faulty behavior? Have you described your deployment/development environment in enough detail? Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? Have you included steps to explain how one might duplicate the problem? Unit tests to recreate the issue?
 
-Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report? Think about that before you press submit.
+Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report?
 
 <div class="alert alert-info"><strong>List Etiquette</strong><p>If your question does not contain enough data and is described in vague terms, it will likely be ignored. Please try to be as precise as possible.</p></div>
 
+### Be Patient
+
+Once you have posted to a mailing list, please be patient and allow members to read your post and respond. Messages submitted in quick succession or to multiple mailing lists at the same time will eventually
+be considered spam by the mail server and the sender will be blocked. Remember that all acitivity on the mailing list is **entirely voluntary**. There are no SLAs. If you find the mailing list responses
+are not quick enough, you may seek [other options for support](/cas/Support.html).
+
+If you find that your messages are not reaching the mailing list in due time, please contact the project members and/or Apereo to resolve the issue.
 
 ### Is this a bug?
 
@@ -71,11 +78,14 @@ This is a low-traffic list to receive notifications about CAS releases including
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce)
 
 ## CAS Public Security List (cas-appsec-public)
+
 _Focus_: Security issues, mitigation strategies and announcements
 
 This is a low-traffic list to receive notifications about CAS security issues. Note that posts on this list are *public*. To report what you consider to be a security vulnerability, please use the `cas-appsec-private` mailing list. 
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-public)
+
+
 
 ## CAS Private Security List (cas-appsec-private)
 
