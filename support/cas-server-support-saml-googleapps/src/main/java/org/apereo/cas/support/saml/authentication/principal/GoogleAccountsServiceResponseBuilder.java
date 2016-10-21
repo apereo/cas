@@ -272,4 +272,28 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 || StringUtils.isNotBlank(this.publicKeyLocation)
                 || StringUtils.isNotBlank(this.keyAlgorithm);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GoogleAccountsServiceResponseBuilder that = (GoogleAccountsServiceResponseBuilder) o;
+
+        if (skewAllowance != that.skewAllowance) return false;
+        if (publicKeyLocation != null ? !publicKeyLocation.equals(that.publicKeyLocation) : that.publicKeyLocation != null)
+            return false;
+        if (privateKeyLocation != null ? !privateKeyLocation.equals(that.privateKeyLocation) : that.privateKeyLocation != null)
+            return false;
+        return keyAlgorithm != null ? keyAlgorithm.equals(that.keyAlgorithm) : that.keyAlgorithm == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = publicKeyLocation != null ? publicKeyLocation.hashCode() : 0;
+        result = 31 * result + (privateKeyLocation != null ? privateKeyLocation.hashCode() : 0);
+        result = 31 * result + (keyAlgorithm != null ? keyAlgorithm.hashCode() : 0);
+        result = 31 * result + skewAllowance;
+        return result;
+    }
 }

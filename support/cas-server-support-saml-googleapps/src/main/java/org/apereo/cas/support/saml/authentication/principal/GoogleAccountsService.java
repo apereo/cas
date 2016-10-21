@@ -39,11 +39,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     @JsonCreator
     public GoogleAccountsService(@JsonProperty("id") String id, @JsonProperty("originalUrl") String originalUrl, @JsonProperty("artifactId") String artifactId, @JsonProperty("responseBuilder") ResponseBuilder<WebApplicationService> responseBuilder,
-                                 @JsonProperty("relayState") String relayState, @JsonProperty("requestId") String requestId, @JsonProperty("loggedOutAlready") boolean loggedOutAlready) {
+                                 @JsonProperty("relayState") String relayState, @JsonProperty("requestId") String requestId) {
         super(id, originalUrl, artifactId, responseBuilder);
         this.relayState = relayState;
         this.requestId = requestId;
-        super.setLoggedOutAlready(loggedOutAlready);
     }
 
     /**
@@ -55,7 +54,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     public boolean isLoggedOutAlready() {
         return true;
     }
-
 
     public String getRelayState() {
         return this.relayState;

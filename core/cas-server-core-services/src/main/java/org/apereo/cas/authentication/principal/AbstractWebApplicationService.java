@@ -38,7 +38,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @JsonProperty
     private Principal principal;
 
-    @JsonProperty
     private boolean loggedOutAlready;
 
     @JsonProperty
@@ -60,19 +59,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
         this.responseBuilder = responseBuilder;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractWebApplicationService{" +
-                "id='" + id + '\'' +
-                ", originalUrl='" + originalUrl + '\'' +
-                ", artifactId='" + artifactId + '\'' +
-                ", principal=" + principal +
-                ", loggedOutAlready=" + loggedOutAlready +
-                ", responseBuilder=" + responseBuilder +
-                ", format=" + format +
-                '}';
     }
 
     @Override
@@ -164,7 +150,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @Override
     public Response getResponse(final String ticketId) {
         return this.responseBuilder.build(this, ticketId);
-
     }
 
     @Override
@@ -174,7 +159,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
         AbstractWebApplicationService that = (AbstractWebApplicationService) o;
 
-        if (loggedOutAlready != that.loggedOutAlready) return false;
+        if (isLoggedOutAlready() != that.isLoggedOutAlready()) return false;
         if (logger != null ? !logger.equals(that.logger) : that.logger != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (originalUrl != null ? !originalUrl.equals(that.originalUrl) : that.originalUrl != null) return false;
@@ -183,7 +168,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         if (responseBuilder != null ? !responseBuilder.equals(that.responseBuilder) : that.responseBuilder != null)
             return false;
         return format == that.format;
-
     }
 
     @Override

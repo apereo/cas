@@ -69,19 +69,15 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
+    private static final File FILE = new File("service.json");
+
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;
 
     private GoogleAccountsService googleAccountsService;
 
-    @Autowired
-    private ApplicationContextProvider applicationContextProvider;
-
-    @Before
-    public void init() {
-        this.applicationContextProvider.setApplicationContext(this.applicationContext);
-    }
+    private ObjectMapper mapper = new ObjectMapper();
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -134,16 +130,12 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         return CompressionUtils.deflate(xmlString);
     }
 
-
-    ObjectMapper mapper = new ObjectMapper();
-
     @Test
     public void serializeGoogleAccountService() throws Exception {
         GoogleAccountsService service = getGoogleAccountsService();
-        Assert.isTrue(!service.isLoggedOutAlready());
-        mapper.writeValue(new File("/tmp/service.json"), service);
+        mapper.writeValue(FILE, service);
 
-        GoogleAccountsService service2 = mapper.readValue(new File("/tmp/service.json"), GoogleAccountsService.class);
+        GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
 
         Assert.equals(service, service2);
     }
