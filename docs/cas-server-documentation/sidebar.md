@@ -130,6 +130,7 @@
 * [Developer](#developer)
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
+    *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
     *   [PMC](/cas/developer/Project-Commitee.html) 
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
