@@ -45,7 +45,7 @@ Research the issue and be sure to do your due diligence. Have you scanned the we
 
 ### Should I submit?
 
-CAS considers its issue tracking system as a placeholder to track genuine traceable issues and tasks. If you have a general question about the workings of the software, or if you’re unsure how something is supposed to work and are in need of an analysis and further discussion, consider choosing alternative vessels for contact. Use mailing lists, Gitter, Stackoverflow and other similar tools to engage with the project owners. When the dust has settled and you have arrived at a legitimate theory to explain the root cause of the problem, file a submission.
+CAS considers its issue tracking system as a placeholder to track genuine traceable issues and tasks. If you have a general question about the workings of the software, or if you’re unsure how something is supposed to work and are in need of an analysis and further discussion, consider choosing alternative vessels for contact. Use mailing lists, Gitter, Stackoverflow and other similar tools to engage with the project. When the dust has settled and you have arrived at a legitimate theory to explain the root cause of the problem, file a submission.
 
 ### Be part of the solution
 
