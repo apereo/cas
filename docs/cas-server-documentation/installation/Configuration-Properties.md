@@ -296,22 +296,46 @@ typically via some component of [Person Directory](..\integration\Attribute-Reso
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
 If multiple attribute repository sources are defined, they are added into a list
-and their results are cached and merged per the following settings:
+and their results are cached and merged.
 
 ```properties
 # cas.authn.attributeRepository.expireInMinutes=30
 # cas.authn.attributeRepository.maximumCacheSize=10000
 # cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
 
+# Attributes that you wish to resolve for the principal
 # cas.authn.attributeRepository.attributes.uid=uid
 # cas.authn.attributeRepository.attributes.displayName=displayName
 # cas.authn.attributeRepository.attributes.cn=commonName
 # cas.authn.attributeRepository.attributes.affiliation=groupMembership
 ```
 
+Since all attributes for all sources are defined in the same common block,
+that means all sources will attempt to resolve the same block of defined attributes equally.
+CAS does not care about the source owner of attributes. It finds them where they can be found and otherwise, it moves on.
+This means that certain number of attributes can be resolved via one source, and the remaining attributes
+may be resolved via another. If there are commonalities across sources, the merger shall decide the final result and behavior.
+
+The story in plain english is:
+
+- I have a bunch of attributes that I wish to resolve for final authenticated user.
+- I have a bunch of sources whence said attributes are.
+- Figure it out.
+
+Note that attribute repository sources, if/when defined, execute in a specific order.
+This is important to take into account when attribute merging may take place. The order is:
+
+1. LDAP
+2. JDBC
+3. JSON
+4. Groovy
+5. Static Stub
+
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
 based on the defined attributes, if any.
+
+### LDAP
 
 If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
@@ -342,6 +366,8 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 ```
 
+### Groovy
+
 If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
@@ -369,6 +395,8 @@ class SampleGroovyPersonAttributeDao {
 }
 ```
 
+### JSON
+
 If you wish to directly and separately retrieve attributes from a static JSON source,
 the following settings are then relevant:
 
@@ -390,6 +418,8 @@ The format of the file may be:
     }
 }
 ```
+
+### JDBC
 
 If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
@@ -429,7 +459,11 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc.pool.maxWait=2000
 ```
 
-If you wish to release a default bundle of attributes to all applications, the following settings are relevant:
+### Default Bundle
+
+If you wish to release a default bundle of attributes to all applications,
+and you would rather not duplicate the same attribute per every service definition,
+then the following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.defaultAttributesToRelease=cn,givenName,uid,affiliation
