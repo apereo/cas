@@ -72,7 +72,7 @@ More about the Person Directory and its configurable sources [can be found here]
 ### JDBC
 
 CAS does allow for attributes to be retrieved from a variety of SQL databases.
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
 JDBC attribute sources can be defined based on the following mechanics:
 
