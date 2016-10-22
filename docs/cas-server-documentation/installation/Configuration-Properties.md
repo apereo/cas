@@ -327,8 +327,8 @@ may be resolved via another. If there are commonalities across sources, the merg
 
 The story in plain english is:
 
-- I have a bunch of attributes that I wish to resolve for final authenticated user.
-- I have a bunch of sources whence said attributes are.
+- I have a bunch of attributes that I wish to resolve for the final authenticated user.
+- I have a bunch of sources from which said attributes are retrieved.
 - Figure it out.
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
