@@ -24,7 +24,7 @@ but merely to demonstrate how the framework is used by CAS to carry out various 
 
 See [this guide](Webflow-Customization-Sessions.html) for more info.
 
-## Webflow Autoconfiguration
+## Webflow Auto Configuration
 
 Most CAS modules, when declared as a dependency, attempt to autoconfigure the CAS webflow to suit their needs.
 This practically means that the CAS adopter would no longer have to manually massage the CAS webflow configuration,
