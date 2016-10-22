@@ -26,7 +26,7 @@ Support is enabled by adding the following module into the Maven overlay:
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value
-|-----------------------------------+--------------------------------------------------+
+|-----------------------------------|---------------------------------------------------
 | `objectClass`                     | casRegisteredService
 | `serviceDefinitionAttribute`      | description
 | `idAttribute`                     | uid
