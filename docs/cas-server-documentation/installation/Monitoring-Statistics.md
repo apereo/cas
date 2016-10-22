@@ -8,7 +8,7 @@ title: CAS - Monitoring & Statistics
 The following endpoints are secured and available:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
 | `/status`                         | [Monitor status information](Configuring-Monitoring.html).
 | `/status/autoconfig`              | Describes how the application context is auto configured.
