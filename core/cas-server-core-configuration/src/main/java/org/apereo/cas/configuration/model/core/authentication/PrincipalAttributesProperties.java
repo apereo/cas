@@ -23,7 +23,8 @@ public class PrincipalAttributesProperties {
 
     private int expireInMinutes = 30;
     private int maximumCacheSize = 10000;
-
+    private String merger = "REPLACE";
+    
     private Set<String> defaultAttributesToRelease = new HashSet<>();
     private Map<String, String> attributes = new HashMap();
 
@@ -54,6 +55,14 @@ public class PrincipalAttributesProperties {
 
     public void setLdap(final Ldap ldap) {
         this.ldap = ldap;
+    }
+
+    public String getMerger() {
+        return merger;
+    }
+
+    public void setMerger(final String merger) {
+        this.merger = merger;
     }
 
     public int getExpireInMinutes() {

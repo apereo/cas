@@ -295,16 +295,23 @@ Set of authentication attributes that are retrieved by the principal resolution 
 typically via some component of [Person Directory](..\integration\Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
-If no other attribute source is defined and if attributes are not retrieved
-as part of primary authentication via LDAP, etc then the below attributes may be used to create
-a static/stub attribute repository.
+If multiple attribute repository sources are defined, they are added into a list
+and their results are cached and merged per the following settings:
 
 ```properties
+# cas.authn.attributeRepository.expireInMinutes=30
+# cas.authn.attributeRepository.maximumCacheSize=10000
+# cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
+
 # cas.authn.attributeRepository.attributes.uid=uid
 # cas.authn.attributeRepository.attributes.displayName=displayName
 # cas.authn.attributeRepository.attributes.cn=commonName
 # cas.authn.attributeRepository.attributes.affiliation=groupMembership
 ```
+
+Note that if no other attribute source is defined and if attributes are not directly retrieved
+as part of primary authentication, then a stub/static source will be created
+based on the defined attributes, if any.
 
 If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
