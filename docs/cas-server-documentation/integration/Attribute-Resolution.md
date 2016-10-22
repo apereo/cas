@@ -35,10 +35,10 @@ eliminate the need for configuring a separate resolver specially if both the aut
 Using separate resolvers should only be required when sources are different, or when there is a need to tackle more advanced attribute
 resolution use cases such as cascading, merging, etc. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
-The goal of the resolver is to construct a final identifiable authenticated principal for CAS which carries a number of attributes inside it. 
-The behavior of the person-directory resolver is such that it attempts to locate the principal id, which in most cases is the same thing as the credential 
-id provided during authentication or it could be a noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined. 
-If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes, 
+The goal of the resolver is to construct a final identifiable authenticated principal for CAS which carries a number of attributes inside it.
+The behavior of the person-directory resolver is such that it attempts to locate the principal id, which in most cases is the same thing as the credential
+id provided during authentication or it could be a noted by a custom attribute. Then the resolver starts to construct attributes from attribute repositories defined.
+If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes,
 it will then remove that attribute from the final collection.
 
 Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
@@ -51,15 +51,15 @@ authenticates via `sAMAccountName`.
 
 ### Example #1
 
-If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then when authentication is complete the resolver attempts 
-to construct attributes from attribute repository sources, it sees `sAMAccoutName` as the attribute and sees the principal id is to 
+If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then when authentication is complete the resolver attempts
+to construct attributes from attribute repository sources, it sees `sAMAccoutName` as the attribute and sees the principal id is to
 be created by `sAMAccoutName`. So it would remove the `sAMAccoutName` from the attributes.
 The final result is is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
 
 ### Example #2
 
-If the resolver is configured to use `cn` as the attribute for the principal id, then when authentication is complete the resolver attempts to 
-construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`. 
+If the resolver is configured to use `cn` as the attribute for the principal id, then when authentication is complete the resolver attempts to
+construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
 So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
 
@@ -101,9 +101,7 @@ in your configuration to map the `attr_name` column to the `attr_value` column
 
 ## Shibboleth
 
-<div class="alert alert-warning"><strong>Tread Lightly!</strong><p>Note that this module is <strong>EXPERIMENTAL</strong>.</p></div>
-
-Uses a Shibboleth `attribute-resolver.xml` style file to define and populate person attributes.
+Uses a Shibboleth IdP `attribute-resolver.xml` style file to [define and populate person attributes](https://wiki.shibboleth.net/confluence/display/IDP30/AttributeResolverConfiguration).
 
 Support is enabled by including the following dependency in the WAR overlay:
 
@@ -130,3 +128,38 @@ CAS overlay to be able to resolve dependencies:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+
+An example `attribue-resolver.xml` file could be:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<resolver:AttributeResolver
+        xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+        xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc"
+        xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+        xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
+        xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder"
+        xmlns:sec="urn:mace:shibboleth:2.0:security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                            urn:mace:shibboleth:2.0:resolver:pc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd
+                            urn:mace:shibboleth:2.0:resolver:ad http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd
+                            urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
+                            urn:mace:shibboleth:2.0:attribute:encoder http://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd
+                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+
+    <resolver:AttributeDefinition id="eduPersonPrincipalName" xsi:type="ad:Scoped" scope="example.org" sourceAttributeID="uid">
+        <resolver:Dependency ref="uid" />
+    </resolver:AttributeDefinition>
+    <resolver:AttributeDefinition id="uid" xsi:type="ad:PrincipalName" />
+    <resolver:AttributeDefinition id="eduPersonScopedAffiliation" xsi:type="ad:Scoped" scope="example.org" sourceAttributeID="affiliation">
+        <resolver:Dependency ref="staticAttributes" />
+    </resolver:AttributeDefinition>
+    <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
+        <dc:Attribute id="affiliation">
+            <dc:Value>member</dc:Value>
+        </dc:Attribute>
+    </resolver:DataConnector>
+</resolver:AttributeResolver>
+
+```
