@@ -62,6 +62,36 @@ eliminate the need for configuring a separate DAO specially if both the authenti
 Using separate resolvers should only be required when sources are different, or when there is a need to tackle more advanced attribute
 resolution use cases such as cascading, merging, etc. <a href="../installation/Configuring-Principal-Resolution.html">See this guide</a> for more info.</p></div>
 
+### JDBC
+
+CAS does allow for attributes to be retrieved from a variety of SQL databases.
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+
+JDBC attribute sources can be defined based on the following mechanics:
+
+#### Single Row
+
+Designed to work against a table where there is a mapping of one row to one user.
+An example of this table format would be:
+
+| uid      | first_name | last_name | email
+|----------|------------|-----------|----------------------
+| `jsmith` | `John`     | `Smith`   | `jsmith@example.org`
+
+#### Multi Row
+
+Designed to work against a table where there is a mapping of one row to one user.
+An example of this table format would be:
+
+| uid      | attr_name    | attr_value
+|----------|--------------|-----------------------------
+| `jsmith` | `first_name` | `John`
+| `jsmith` | `last_name`  | `Smith`
+| `jsmith` | `email`      | `jsmith@example.org`
+
+You will need to define column mappings
+in your configuration map the `attr_name` column to the `attr_value` column
+
 ## Shibboleth
 
 <div class="alert alert-warning"><strong>Tread Lightly!</strong><p>Note that this module is <strong>EXPERIMENTAL</strong>.</p></div>
