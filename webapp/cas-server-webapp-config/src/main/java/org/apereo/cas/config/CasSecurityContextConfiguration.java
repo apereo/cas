@@ -179,9 +179,9 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         }
 
         @Override
-        public void postHandle(final HttpServletRequest request, final HttpServletResponse response, 
+        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
                                final Object handler, final ModelAndView modelAndView) throws Exception {
-            if (StringUtils.isNotBlank(request.getQueryString()) 
+            if (StringUtils.isNotBlank(request.getQueryString())
                     && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
                 final RedirectView v = new RedirectView(request.getRequestURL().toString());
                 v.setExposeModelAttributes(false);
@@ -195,7 +195,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
      * The Cas admin pages security interceptor.
      */
     public static class CasAdminPagesSecurityInterceptor extends SecurityInterceptor {
-        
+
         public CasAdminPagesSecurityInterceptor(final Config config, final String clients, final String authorizers) {
             super(config, clients, authorizers);
 
@@ -204,6 +204,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                 protected HttpAction unauthorized(final WebContext context, final List currentClients) {
                     return HttpAction.forbidden("Access Denied", context);
                 }
+
                 @Override
                 protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
                     return true;
@@ -213,7 +214,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
             setSecurityLogic(secLogic);
         }
     }
-    
+
     @PostConstruct
     public void init() {
         if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())) {
@@ -223,8 +224,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                             + "that you DISABLE this authentication method (by SETTING 'cas.authn.accept.users'\n"
                             + "to a blank value) and switch to a mode that is more suitable for production. \n";
             AsciiArtUtils.printAsciiArt(LOGGER, "STOP!", header);
-            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler,
-                    personDirectoryPrincipalResolver);
+            this.authenticationHandlersResolvers.put(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver);
         }
     }
 }
