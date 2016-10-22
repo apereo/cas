@@ -36,15 +36,18 @@ and syntax. **BE CAREFUL** with the distinction.
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
 
-- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it out without hesitation.
-Review the codebase, or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
+- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
+Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
 ## Configuration Storage
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
 the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`.
+See [this guide](Configuration-Management.html) for more info.
 
 ### Native
+
+Load settings from external properties/yaml configuration files.
 
 ```properties
 # spring.profiles.active=native
@@ -52,6 +55,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### Git Repository
+
+Load settings from an internal/external Git repository.
 
 ```properties
 # spring.profiles.active=default
@@ -62,6 +67,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### Vault
+
+Load settings from HasiCorp's Vault.
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -77,6 +84,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### MongoDb
+
+Load settings from MongoDb.
 
 ```properties
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
@@ -808,9 +817,9 @@ A JDBC querying handler that will pull back the password and the private salt va
 password using the public salt value. Assumes everything is inside the same database table. Supports settings for
 number of iterations as well as private salt.
 
-This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing.
-If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values. The final hash
-is converted to Hex before comparing it to the database value.
+This password encoding method combines the private Salt and the public salt which it prepends to the password before hashing.
+If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
+is converted to hex before comparing it to the database value.
 
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
