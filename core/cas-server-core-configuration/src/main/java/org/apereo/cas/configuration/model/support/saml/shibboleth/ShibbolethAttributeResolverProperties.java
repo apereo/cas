@@ -12,7 +12,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class ShibbolethAttributeResolverProperties {
     
     private List<Resource> resources = Lists.newArrayList(new ClassPathResource("attribute-resolver.xml"));
