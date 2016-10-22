@@ -16,7 +16,7 @@ validated when an authentication request from the application arrives.
 The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
 
 | Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------|---------------------------------------------------------------------------------
 | `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
 | `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
 | `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes **MUST** be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
@@ -36,7 +36,7 @@ The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension o
 allows one to configure a service with the following properties:
 
 | Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------|---------------------------------------------------------------------------------
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
@@ -45,7 +45,7 @@ The `RemoteEndpointServiceAccessStrategy` is an extension of the default which a
 allows one to configure a service with the following properties:
 
 | Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------|---------------------------------------------------------------------------------
 | `endpointUrl`                | Endpoint that receives the authorization request from CAS for the authenticated principal. 
 | `acceptableResponseCodes`    | Comma-separated response codes that are considered accepted for service access.
 
@@ -70,7 +70,7 @@ are collected as CAS attributes and examined against the list of required attrib
 The following properties are available:
 
 | Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
+|-----------------------------------|---------------------------------------------------------------------------------
 | `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`.
 
 You will also need to ensure `grouper.client.properties` is available on the classpath

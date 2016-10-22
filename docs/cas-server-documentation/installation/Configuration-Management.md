@@ -59,7 +59,7 @@ The configuration server is controlled and defined by the `bootstrap.properties`
 The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `/encrypt`           | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
 | `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
