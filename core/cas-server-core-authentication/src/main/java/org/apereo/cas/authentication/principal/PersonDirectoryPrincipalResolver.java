@@ -61,21 +61,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
         this.returnNullIfNoAttributes = returnNullIfNoAttributes;
     }
-
-    /**
-     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
-     *
-     * @param attribute Name of attribute containing principal ID.
-     */
+    
     public void setPrincipalAttributeName(final String attribute) {
         this.principalAttributeName = attribute;
     }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
+    
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
