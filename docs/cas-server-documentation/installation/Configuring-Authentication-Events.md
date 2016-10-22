@@ -16,7 +16,7 @@ By default, no events are recorded by this functionality.
 The following metadata is captured and recorded by the event machinery when enabled:
 
 | Field                             | Description
-|-----------------------------------+----------------------------------------------------------------+
+|-----------------------------------|-----------------------------------------------------------------
 | `principalId`                              | The principal id of the authenticated subject
 | `timestamp`                                | Timestamp of this event
 | `creationTime`                             | Timestamp of this authentication event
