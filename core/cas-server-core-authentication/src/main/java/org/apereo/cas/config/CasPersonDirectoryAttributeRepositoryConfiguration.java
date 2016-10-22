@@ -20,6 +20,8 @@ import org.apereo.services.persondir.support.jdbc.AbstractJdbcPersonAttributeDao
 import org.apereo.services.persondir.support.jdbc.MultiRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +91,21 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     private IPersonAttributeDao composeMergedAndCachedAttributeRepositories(final List<IPersonAttributeDao> list) {
         final MergingPersonAttributeDaoImpl mergingDao = new MergingPersonAttributeDaoImpl();
-        mergingDao.setMerger(new ReplacingAttributeAdder());
+        
+        final String merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
+        switch (merger.toLowerCase()) {
+            case "merge":
+                mergingDao.setMerger(new MultivaluedAttributeMerger());
+                break;
+            case "add":
+                mergingDao.setMerger(new NoncollidingAttributeAdder());
+                break;
+            case "replace":
+            default:
+                mergingDao.setMerger(new ReplacingAttributeAdder());
+                break;
+        }
+                
         mergingDao.setPersonAttributeDaos(list);
 
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
