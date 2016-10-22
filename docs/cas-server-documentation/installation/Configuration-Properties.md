@@ -43,8 +43,11 @@ Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to c
 
 The following settings are to be loaded by the CAS configuration server, which bootstraps
 the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`.
+See [this guide](Configuration-Management.html) for more info.
 
 ### Native
+
+Load settings from external properties/yaml configuration files.
 
 ```properties
 # spring.profiles.active=native
@@ -52,6 +55,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### Git Repository
+
+Load settings from an internal/external Git repository.
 
 ```properties
 # spring.profiles.active=default
@@ -62,6 +67,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### Vault
+
+Load settings from HasiCorp's Vault.
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -77,6 +84,8 @@ the entire CAS running context. They are to be put inside the `src/main/resource
 ```
 
 ### MongoDb
+
+Load settings from MongoDb.
 
 ```properties
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds061954.mongolab.com:61954/jasigcas
