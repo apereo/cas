@@ -3,6 +3,10 @@ package org.apereo.cas.configuration.model.support.x509;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 /**
  * This is {@link X509Properties}.
  *
@@ -60,14 +64,21 @@ public class X509Properties {
 
     private String serialNumberPrefix = "SERIALNUMBER=";
     private String valueDelimiter = ", ";
-    private int revocationPolicyThreshold = 172800;
+    private int revocationPolicyThreshold = 172_800;
     private boolean checkAll;
-    private int refreshIntervalSeconds = 3600;
+    private int refreshIntervalSeconds = 3_600;
     private String principalDescriptor;
     private boolean throwOnFetchFailure;
     private PrincipalTypes principalType;
-    
-    
+    private String revocationChecker = "NONE";
+    private String crlFetcher;
+    private List<String> crlResources = new ArrayList<>();
+    private int cacheMaxElementsInMemory = 1_000;
+    private boolean cacheDiskOverflow;
+    private boolean cacheEternal;
+    private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
+    private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
+
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
     
@@ -103,14 +114,61 @@ public class X509Properties {
 
     private String trustedIssuerDnPattern = ".+";
 
+    public int getCacheMaxElementsInMemory() {
+        return cacheMaxElementsInMemory;
+    }
+
+    public void setCacheMaxElementsInMemory(final int cacheMaxElementsInMemory) {
+        this.cacheMaxElementsInMemory = cacheMaxElementsInMemory;
+    }
+
+    public boolean isCacheDiskOverflow() {
+        return cacheDiskOverflow;
+    }
+
+    public void setCacheDiskOverflow(final boolean cacheDiskOverflow) {
+        this.cacheDiskOverflow = cacheDiskOverflow;
+    }
+
+    public boolean isCacheEternal() {
+        return cacheEternal;
+    }
+
+    public void setCacheEternal(final boolean cacheEternal) {
+        this.cacheEternal = cacheEternal;
+    }
+
+    public long getCacheTimeToLiveSeconds() {
+        return cacheTimeToLiveSeconds;
+    }
+
+    public void setCacheTimeToLiveSeconds(final long cacheTimeToLiveSeconds) {
+        this.cacheTimeToLiveSeconds = cacheTimeToLiveSeconds;
+    }
+
+    public long getCacheTimeToIdleSeconds() {
+        return cacheTimeToIdleSeconds;
+    }
+
+    public void setCacheTimeToIdleSeconds(final long cacheTimeToIdleSeconds) {
+        this.cacheTimeToIdleSeconds = cacheTimeToIdleSeconds;
+    }
+
+    public String getCrlFetcher() {
+        return crlFetcher;
+    }
+
+    public void setCrlFetcher(final String crlFetcher) {
+        this.crlFetcher = crlFetcher;
+    }
+
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
     }
-
+    
     public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
         this.principal = principal;
     }
-
     
     public String getTrustedIssuerDnPattern() {
         return trustedIssuerDnPattern;
@@ -126,6 +184,14 @@ public class X509Properties {
 
     public void setRegExTrustedIssuerDnPattern(final String regExTrustedIssuerDnPattern) {
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
+    }
+
+    public List<String> getCrlResources() {
+        return crlResources;
+    }
+
+    public void setCrlResources(final List<String> crlResources) {
+        this.crlResources = crlResources;
     }
 
     public int getMaxPathLength() {
@@ -208,8 +274,15 @@ public class X509Properties {
         this.valueDelimiter = valueDelimiter;
     }
 
-    public String getSerialNumberPrefix() {
+    public String getRevocationChecker() {
+        return revocationChecker;
+    }
 
+    public void setRevocationChecker(final String revocationChecker) {
+        this.revocationChecker = revocationChecker;
+    }
+
+    public String getSerialNumberPrefix() {
         return serialNumberPrefix;
     }
 
