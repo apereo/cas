@@ -29,7 +29,6 @@ import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ldaptive.ConnectionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -72,27 +71,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired(required = false)
-    @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
-    private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
-
-    @Autowired(required = false)
-    @Qualifier("x509ResourceUnavailableRevocationPolicy")
-    private RevocationPolicy x509ResourceUnavailableRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509ResourceExpiredRevocationPolicy")
-    private RevocationPolicy x509ResourceExpiredRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlUnavailableRevocationPolicy")
-    private RevocationPolicy x509CrlUnavailableRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlExpiredRevocationPolicy")
-    private RevocationPolicy x509CrlExpiredRevocationPolicy = new DenyRevocationPolicy();
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -124,8 +103,8 @@ public class X509AuthenticationConfiguration {
         final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker(cache, getCrlFetcher());
         c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
-        c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
-        c.setExpiredCRLPolicy(x509CrlExpiredRevocationPolicy);
+        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlExpiredPolicy()));
+        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlUnavailablePolicy()));
         return c;
     }
 
@@ -146,8 +125,8 @@ public class X509AuthenticationConfiguration {
 
         c.setRefreshInterval(x509.getRefreshIntervalSeconds());
         c.setCheckAll(x509.isCheckAll());
-        c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
-        c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
+        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlResourceExpiredPolicy()));
+        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()));
 
         final Set<Resource> x509CrlResources = Sets.newLinkedHashSet();
         x509.getCrlResources()
@@ -161,6 +140,19 @@ public class X509AuthenticationConfiguration {
         return c;
     }
 
+    private RevocationPolicy getRevocationPolicy(final String policy) {
+        switch (policy.toLowerCase()) {
+            case "allow":
+                return new AllowRevocationPolicy();
+            case "threshold":
+                return new ThresholdExpiredCRLRevocationPolicy();
+            case "deny":
+            default:
+                return new DenyRevocationPolicy();
+        }
+    }
+
+    
     private CRLFetcher getCrlFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {

@@ -80,6 +80,12 @@ public class X509Properties {
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
 
+    private String crlResourceUnavailablePolicy = "DENY";
+    private String crlResourceExpiredPolicy = "DENY";
+
+    private String crlUnavailablePolicy = "DENY";
+    private String crlExpiredPolicy = "DENY";
+    
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
     
@@ -315,6 +321,38 @@ public class X509Properties {
 
     public void setRevocationPolicyThreshold(final int revocationPolicyThreshold) {
         this.revocationPolicyThreshold = revocationPolicyThreshold;
+    }
+
+    public String getCrlResourceUnavailablePolicy() {
+        return crlResourceUnavailablePolicy;
+    }
+
+    public void setCrlResourceUnavailablePolicy(final String crlResourceUnavailablePolicy) {
+        this.crlResourceUnavailablePolicy = crlResourceUnavailablePolicy;
+    }
+
+    public String getCrlResourceExpiredPolicy() {
+        return crlResourceExpiredPolicy;
+    }
+
+    public void setCrlResourceExpiredPolicy(final String crlResourceExpiredPolicy) {
+        this.crlResourceExpiredPolicy = crlResourceExpiredPolicy;
+    }
+
+    public String getCrlUnavailablePolicy() {
+        return crlUnavailablePolicy;
+    }
+
+    public void setCrlUnavailablePolicy(final String crlUnavailablePolicy) {
+        this.crlUnavailablePolicy = crlUnavailablePolicy;
+    }
+
+    public String getCrlExpiredPolicy() {
+        return crlExpiredPolicy;
+    }
+
+    public void setCrlExpiredPolicy(final String crlExpiredPolicy) {
+        this.crlExpiredPolicy = crlExpiredPolicy;
     }
 
     public class Ldap extends AbstractLdapProperties {
