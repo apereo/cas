@@ -40,7 +40,7 @@
         <property name="maxPathLength" value="2147483647" />
         <property name="maxPathLengthAllowUnspecified" value="true" />
         <property name="revocationChecker">
-            <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
+            <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker">
                 <constructor-arg>
                     <!-- Cache CRL fetches for 6h -->
                     <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
@@ -62,10 +62,10 @@
                         Use AllowRevocationPolicy
                         to allow auth on unavailable CRL data.
                     -->
-                    <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
+                    <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy" />
                 </property>
                 <property name="expiredCRLPolicy">
-                    <bean class="org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
+                    <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy">
                         <!--
                                 Allow expired CRL data up to 48h after expiration.
                                 Set to 0 to prevent expired CRL data.

@@ -1,7 +1,10 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;

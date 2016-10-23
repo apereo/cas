@@ -2,16 +2,8 @@ package org.apereo.cas.adaptors.x509.config;
 
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.NoOpRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.RevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.RevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher;
@@ -20,16 +12,21 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPri
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
-import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.SearchExecutor;
@@ -40,7 +37,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -123,18 +119,6 @@ public class X509AuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("ldaptiveResourceCRLConnectionConfig")
     private ConnectionConfig ldaptiveResourceCRLConnectionConfig;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -231,16 +215,7 @@ public class X509AuthenticationConfiguration {
         f.setConnectionConfig(this.poolingLdaptiveResourceCRLConnectionConfig);
         return f;
     }
-
-    @Bean
-    public Action x509Check() {
-        final X509CertificateCredentialsNonInteractiveAction a = new X509CertificateCredentialsNonInteractiveAction();
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
-    }
-
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {

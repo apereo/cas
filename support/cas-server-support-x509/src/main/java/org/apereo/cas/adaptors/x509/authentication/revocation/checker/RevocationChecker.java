@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;

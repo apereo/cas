@@ -1,5 +1,6 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication;
 
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

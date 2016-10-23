@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.adaptors.x509.util.MockX509CRL;
 

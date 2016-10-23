@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication;
 
 import java.security.GeneralSecurityException;
 import java.time.Instant;

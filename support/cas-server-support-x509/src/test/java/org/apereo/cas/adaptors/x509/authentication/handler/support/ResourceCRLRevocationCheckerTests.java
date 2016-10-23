@@ -1,5 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
