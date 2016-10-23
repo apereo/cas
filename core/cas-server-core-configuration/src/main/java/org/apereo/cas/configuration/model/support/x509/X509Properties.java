@@ -72,7 +72,7 @@ public class X509Properties {
     private boolean throwOnFetchFailure;
     private PrincipalTypes principalType;
     private String revocationChecker = "NONE";
-    private String crlFetcher;
+    private String crlFetcher = "RESOURCE";
     private List<String> crlResources = new ArrayList<>();
     private int cacheMaxElementsInMemory = 1_000;
     private boolean cacheDiskOverflow;

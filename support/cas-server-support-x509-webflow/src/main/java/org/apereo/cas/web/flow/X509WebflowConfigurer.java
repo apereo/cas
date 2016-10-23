@@ -20,8 +20,10 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, 
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, 
+                CasWebflowConstants.TRANSITION_ID_WARN));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, 
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
         actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
         registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
