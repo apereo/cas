@@ -46,7 +46,7 @@ Once the release is made available, the following procedure may be observed:
   - Recommended guidelines for upgrades and applications of the patch.
 - At the end of a four-week grace period, a public security announcement is posted that should fully disclose the issue and nuances of the security patch or workarounds.
 
-An example notification messages follows:
+An example notification message follows:
 
 ```
 CAS x.y.z has been released. This release addresses a rather serious security issue where successfully exercising this vulnerability 
