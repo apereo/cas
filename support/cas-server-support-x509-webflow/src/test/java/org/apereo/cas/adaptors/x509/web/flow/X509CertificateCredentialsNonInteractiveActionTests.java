@@ -13,6 +13,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ import static org.junit.Assert.*;
         CasPersonDirectoryAttributeRepositoryConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
+        X509AuthenticationConfiguration.class,
+        X509AuthenticationWebflowConfiguration.class,
         AopAutoConfiguration.class,
         CasCookieConfiguration.class,
         CasCoreWebflowConfiguration.class,
