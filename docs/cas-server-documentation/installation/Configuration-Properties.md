@@ -1834,6 +1834,11 @@ To learn more about this topic, [please review this guide](Logout-Single-Signout
 Capture and cache user credentials and optionally release them to trusted applications.
 To learn more about this topic, [please review this guide](../integration/ClearPass.html).
 
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>ClearPass is turned off by default.
+Think <strong>VERY CAREFULLY</strong> before turning on this feature, as it <strong>MUST</strong> be
+the last resort in getting an integration to work...maybe not even then.</p></div>
+
 ```properties
 # cas.clearpass.cacheCredential=false
 ```
