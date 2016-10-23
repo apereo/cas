@@ -37,15 +37,15 @@ public class X509AuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
-    @Autowired
+
+    @Autowired(required = false)
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
-    @Autowired
+    @Autowired(required = false)
     private FlowBuilderServices flowBuilderServices;
 
-    @ConditionalOnMissingBean(name="x509WebflowConfigurer")
+    @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
     public CasWebflowConfigurer x509WebflowConfigurer() {
         final X509WebflowConfigurer w = new X509WebflowConfigurer();
