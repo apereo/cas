@@ -10,13 +10,11 @@ import org.springframework.webflow.engine.Flow;
  * @author Misagh Moayyed
  * @since 4.2
  */
-
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-
         final ActionState actionState = createActionState(flow, "startX509Authenticate", createEvaluateAction("x509Check"));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
@@ -25,6 +23,5 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
         registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
-
     }
 }
