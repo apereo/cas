@@ -99,12 +99,9 @@ public class X509Properties {
      */
     private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
 
-    /**
-     * The compiled pattern for trusted DN's supplied by the deployer.
-     */
-    private String regExSubjectDnPattern = ".*";
+    private String regExSubjectDnPattern = ".+";
 
-    private String trustedIssuerDnPattern;
+    private String trustedIssuerDnPattern = ".+";
 
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
