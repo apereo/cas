@@ -1143,21 +1143,92 @@ prior to production rollouts.</p></div>
 
 To learn more about this topic, [please review this guide](X509-Authentication.html).
 
+### CRL Fetching / Revocation
+
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
+configurability in the revocation machinery built into the JSSE.
+
+Available policies cover the following events:
+
+- CRL Expiration
+- CRL Unavailability
+
+In either event, the following options are available:
+
+- Allow authentication to proceed.
+- Deny authentication and block.
+- Applicable to CRL expiration, throttle the request whereby expired data is permitted up
+to a threshold period of time but not afterward.
+
+Revocation certificate checking can be carried out in one of the following ways:
+
+- None.
+- A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
+- The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive
+IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+
+To fetch CRLs, the following options are available:
+
+- By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
+- A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.
+
 ```properties
+# cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlUnavailablePolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlResourceExpiredPolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlResourceUnavailablePolicy=DENY|ALLOW|THRESHOLD
+
+# cas.authn.x509.revocationChecker=NONE|CRL|RESOURCE
+# cas.authn.x509.crlFetcher=RESOURCE|LDAP
+
+# cas.authn.x509.crlResources[0]=file:/...
+
+# cas.authn.x509.cacheMaxElementsInMemory=1000
+# cas.authn.x509.cacheDiskOverflow=false
+# cas.authn.x509.cacheEternal=false
+# cas.authn.x509.cacheTimeToLiveSeconds=7200
+# cas.authn.x509.cacheTimeToIdleSeconds=1800
+
 # cas.authn.x509.checkKeyUsage=false
 # cas.authn.x509.revocationPolicyThreshold=172800
-# cas.authn.x509.regExSubjectDnPattern=.*
+
+# cas.authn.x509.regExSubjectDnPattern=.+
+# cas.authn.x509.regExTrustedIssuerDnPattern=.+
+# cas.authn.x509.trustedIssuerDnPattern=.+
+
 # cas.authn.x509.principalDescriptor=
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
-# cas.authn.x509.regExTrustedIssuerDnPattern=
 # cas.authn.x509.valueDelimiter=,
 # cas.authn.x509.checkAll=false
 # cas.authn.x509.requireKeyUsage=false
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
-# cas.authn.x509.trustedIssuerDnPattern=
+
+# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.useSsl=true
+# cas.authn.x509.ldap.useStartTls=false
+# cas.authn.x509.ldap.connectTimeout=5000
+# cas.authn.x509.ldap.baseDn=dc=example,dc=org
+# cas.authn.x509.ldap.searchFilter=cn=X509
+# cas.authn.x509.ldap.subtreeSearch=true
+# cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.x509.ldap.bindCredential=Password
+# cas.authn.x509.ldap.trustCertificates=
+# cas.authn.x509.ldap.keystore=
+# cas.authn.x509.ldap.keystorePassword=
+# cas.authn.x509.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.x509.ldap.minPoolSize=3
+# cas.authn.x509.ldap.maxPoolSize=10
+# cas.authn.x509.ldap.validateOnCheckout=true
+# cas.authn.x509.ldap.validatePeriodically=true
+# cas.authn.x509.ldap.validatePeriod=600
+# cas.authn.x509.ldap.failFast=true
+# cas.authn.x509.ldap.idleTime=500
+# cas.authn.x509.ldap.prunePeriod=600
+# cas.authn.x509.ldap.blockWaitTime=5000
+# cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
