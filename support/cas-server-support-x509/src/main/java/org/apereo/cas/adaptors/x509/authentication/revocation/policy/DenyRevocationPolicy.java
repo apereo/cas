@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
-import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
-
 import java.security.GeneralSecurityException;
 
 
