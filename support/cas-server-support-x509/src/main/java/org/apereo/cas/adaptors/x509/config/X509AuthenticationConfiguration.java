@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.config;
 
 import net.sf.ehcache.Cache;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
@@ -26,6 +27,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -193,15 +195,20 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
 
-        h.setCheckKeyUsage(casProperties.getAuthn().getX509().isCheckKeyUsage());
-        h.setMaxPathLength(casProperties.getAuthn().getX509().getMaxPathLength());
-        h.setMaxPathLengthAllowUnspecified(casProperties.getAuthn().getX509().isMaxPathLengthAllowUnspecified());
-        h.setRequireKeyUsage(casProperties.getAuthn().getX509().isRequireKeyUsage());
+        h.setCheckKeyUsage(x509.isCheckKeyUsage());
+        h.setMaxPathLength(x509.getMaxPathLength());
+        h.setMaxPathLengthAllowUnspecified(x509.isMaxPathLengthAllowUnspecified());
+        h.setRequireKeyUsage(x509.isRequireKeyUsage());
         h.setRevocationChecker(this.revocationChecker);
-        h.setSubjectDnPattern(casProperties.getAuthn().getX509().getRegExSubjectDnPattern());
-        h.setTrustedIssuerDnPattern(casProperties.getAuthn().getX509().getRegExTrustedIssuerDnPattern());
+        if (StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())) {
+            h.setTrustedIssuerDnPattern(x509.getRegExTrustedIssuerDnPattern());
+        }
+        if (StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())) {
+            h.setTrustedIssuerDnPattern(x509.getRegExSubjectDnPattern());
+        }
         h.setPrincipalFactory(x509PrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
