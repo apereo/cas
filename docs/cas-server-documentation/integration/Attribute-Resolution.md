@@ -47,31 +47,6 @@ If you need something more, you will need to resort to more elaborate measures o
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
-## Examples
-
-Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
-authenticates via `sAMAccountName`.
-
-| Attribute            | Value
-|--------------------- |-----------------------
-| `sAMAccountName`     | `johnsmith`
-| `cn`                 | `John Smith`
-
-### Example #1
-
-If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then when authentication is complete the resolver attempts
-to construct attributes from attribute repository sources, it sees `sAMAccoutName` as the attribute and sees the principal id is to
-be created by `sAMAccoutName`. So it would remove the `sAMAccoutName` from the attributes.
-The final result is is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
-
-### Example #2
-
-If the resolver is configured to use `cn` as the attribute for the principal id, then when authentication is complete the resolver attempts to
-construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
-So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
-who has a `sAMAccountName` attribute of `johnsmith`.
-
-
 ### JDBC
 
 CAS does allow for attributes to be retrieved from a variety of SQL databases.
@@ -101,6 +76,31 @@ An example of this table format would be:
 
 You will need to define column mappings
 in your configuration to map the `attr_name` column to the `attr_value` column
+
+## Examples
+
+Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
+authenticates via `sAMAccountName`.
+
+| Attribute            | Value
+|--------------------- |-----------------------
+| `sAMAccountName`     | `johnsmith`
+| `cn`                 | `John Smith`
+
+### Example #1
+
+If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then when authentication is complete the resolver attempts
+to construct attributes from attribute repository sources, it sees `sAMAccoutName` as the attribute and sees the principal id is to
+be created by `sAMAccoutName`. So it would remove the `sAMAccoutName` from the attributes.
+The final result is is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
+
+### Example #2
+
+If the resolver is configured to use `cn` as the attribute for the principal id, then when authentication is complete the resolver attempts to
+construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
+So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
+who has a `sAMAccountName` attribute of `johnsmith`.
+
 
 ## Shibboleth
 
