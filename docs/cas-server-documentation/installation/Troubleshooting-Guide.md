@@ -7,13 +7,20 @@ title: CAS - Troubleshooting Guide
 
 A number of commons questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
 
-## How do I tune up MongoDb, MySql, Spring Webflow, etc?
+## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
 
-If you have a question about tuning and configuration of external components used and utilized by CAS,
-and how you may achieve more advanced use cases other than what the defaults offer, your question is best
-answered and catered by the community in charge of that component's development and support. As a general rule,
+If you have a question about tuning and configuration of external components utilized by CAS
+and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
+addressed by the community in charge of that component's development and support. As a general rule,
 you should always pick a technology with which you are most familiar, or otherwise, shoot a question to
 the Spring Webflow, MongoDb, Hazelcast, etc forums to have experts review and recommend ideas.
+
+Typical questions in this category that are best answered elsewhere are:
+
+- How do configure SSL for the web server?
+- How do I pass variables from one flow to the next in Spring webflow?
+- How do I tune up a hazelcast cluster?
+- What is the recommended strategy for making MongoDb highly available? 
 
 ## Application X "redirected you too many times" 
 
