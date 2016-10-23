@@ -1137,7 +1137,7 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 ```properties
 
 # cas.authn.x509.revocationChecker=NONE|CRL|RESOURCE
-# cas.authn.x509.crlFetcher=RESOURCE|LDAP|LDAPPOOL
+# cas.authn.x509.crlFetcher=RESOURCE|LDAP
 
 # cas.authn.x509.crlResources[0]=file:/...
 
@@ -1163,6 +1163,30 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+
+# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.useSsl=true
+# cas.authn.x509.ldap.useStartTls=false
+# cas.authn.x509.ldap.connectTimeout=5000
+# cas.authn.x509.ldap.baseDn=dc=example,dc=org
+# cas.authn.x509.ldap.searchFilter=cn=X509
+# cas.authn.x509.ldap.subtreeSearch=true
+# cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.x509.ldap.bindCredential=Password
+# cas.authn.x509.ldap.trustCertificates=
+# cas.authn.x509.ldap.keystore=
+# cas.authn.x509.ldap.keystorePassword=
+# cas.authn.x509.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.x509.ldap.minPoolSize=3
+# cas.authn.x509.ldap.maxPoolSize=10
+# cas.authn.x509.ldap.validateOnCheckout=true
+# cas.authn.x509.ldap.validatePeriodically=true
+# cas.authn.x509.ldap.validatePeriod=600
+# cas.authn.x509.ldap.failFast=true
+# cas.authn.x509.ldap.idleTime=500
+# cas.authn.x509.ldap.prunePeriod=600
+# cas.authn.x509.ldap.blockWaitTime=5000
+# cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false

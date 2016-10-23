@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
@@ -82,6 +83,8 @@ public class X509Properties {
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
     
+    private Ldap ldap = new Ldap();
+    
     /**
      * The compiled pattern supplied by the deployer.
      */
@@ -120,6 +123,14 @@ public class X509Properties {
 
     public void setCacheMaxElementsInMemory(final int cacheMaxElementsInMemory) {
         this.cacheMaxElementsInMemory = cacheMaxElementsInMemory;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
     }
 
     public boolean isCacheDiskOverflow() {
@@ -304,5 +315,26 @@ public class X509Properties {
 
     public void setRevocationPolicyThreshold(final int revocationPolicyThreshold) {
         this.revocationPolicyThreshold = revocationPolicyThreshold;
+    }
+
+    public class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String searchFilter;
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support.ldap;
+package org.apereo.cas.adaptors.x509.authentication.ldap;
 
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
@@ -25,38 +25,44 @@ import java.security.cert.X509CRL;
 
 /**
  * Fetches a CRL from an LDAP instance.
+ *
  * @author Daniel Fisher
  * @since 4.1
  */
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
 
-    /** Search exec that looks for the attribute. */
+    /**
+     * Search exec that looks for the attribute.
+     */
     protected SearchExecutor searchExecutor;
 
-    /** The connection config to prep for connections. **/
+    /**
+     * The connection config to prep for connections.
+     **/
     protected ConnectionConfig connectionConfig;
 
-    /** Serialization support. */
-    public LdaptiveResourceCRLFetcher() {}
+    /**
+     * Serialization support.
+     */
+    public LdaptiveResourceCRLFetcher() {
+    }
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
-
+     *
      * @param connectionConfig the connection configuration
-     * @param searchExecutor the search executor
+     * @param searchExecutor   the search executor
      */
-    public LdaptiveResourceCRLFetcher(
-             final ConnectionConfig connectionConfig,
-             final SearchExecutor searchExecutor) {
+    public LdaptiveResourceCRLFetcher(final ConnectionConfig connectionConfig, final SearchExecutor searchExecutor) {
         this.connectionConfig = connectionConfig;
         this.searchExecutor = searchExecutor;
     }
-    
+
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
         if (LdapUtils.isLdapConnectionUrl(crl.toString())) {
-                return fetchCRLFromLdap(crl);
+            return fetchCRLFromLdap(crl);
         }
         return super.fetch(crl);
     }
@@ -84,13 +90,14 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         }
         return super.fetch(crl);
     }
+
     /**
      * Downloads a CRL from given LDAP url.
      *
      * @param r the resource that is the ldap url.
      * @return the x 509 cRL
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
     protected X509CRL fetchCRLFromLdap(final Object r) throws CertificateException, IOException, CRLException {
@@ -124,8 +131,8 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
      *
      * @param aval the attribute, which may be null if it's not found
      * @return the x 509 cRL from attribute
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException if connection to ldap fails, or attribute to get the revocation list is unavailable
      */
     protected X509CRL fetchX509CRLFromAttribute(final LdapAttribute aval) throws CertificateException, IOException, CRLException {
@@ -167,11 +174,11 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
     }
-    
+
     public void setSearchExecutor(final SearchExecutor searchExecutor) {
         this.searchExecutor = searchExecutor;
     }
-    
+
     public void setConnectionConfig(final ConnectionConfig connectionConfig) {
         this.connectionConfig = connectionConfig;
     }

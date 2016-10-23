@@ -22,12 +22,12 @@
     <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <bean id="ldapCertFetcher"
-          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"/>
 
     <bean id="poolingLdapCertFetcher"
-          class="org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher"
+          class="org.apereo.cas.adaptors.x509.authentication.ldap.PoolingLdaptiveResourceCRLFetcher"
           c:connectionConfig-ref="provisioningConnectionConfig"
           c:searchExecutor-ref="searchExecutor"
           c:connectionPool-ref="connectionPool"/>
