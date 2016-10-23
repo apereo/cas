@@ -1134,7 +1134,40 @@ prior to production rollouts.</p></div>
 
 To learn more about this topic, [please review this guide](X509-Authentication.html).
 
+### CRL Fetching / Revocation
+
+CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
+configurability in the revocation machinery built into the JSSE.
+
+Available policies cover the following events:
+
+- CRL Expiration
+- CRL Unavailability
+
+In either event, the following options are available:
+
+- Allow authentication to proceed.
+- Deny authentication and block.
+- Applicable to CRL expiration, throttle the request whereby expired data is permitted up
+to a threshold period of time but not afterward.
+
+Revocation certificate checking can be carried out in one of the following ways:
+
+- None.
+- A CRL hosted at a fixed location. The CRL is fetched at periodic intervals and cached.
+- The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive
+IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
+
+To fetch CRLs, the following options are available:
+
+- By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
+- A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI.
+
 ```properties
+# cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlUnavailablePolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlResourceExpiredPolicy=DENY|ALLOW|THRESHOLD
+# cas.authn.x509.crlResourceUnavailablePolicy=DENY|ALLOW|THRESHOLD
 
 # cas.authn.x509.revocationChecker=NONE|CRL|RESOURCE
 # cas.authn.x509.crlFetcher=RESOURCE|LDAP
