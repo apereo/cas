@@ -121,7 +121,3 @@ Requiring client certificates prevents SSL negotiation in cases where the certif
 user-friendly server-side error messages.
 * Accept certificates only from trusted issuers, generally those within your PKI.
 * Specify all certificates in the certificate chain(s) of allowed issuers.
-
-## X.509 Webflow
-
-Replace all instances of the `initializeLoginForm` transition in other states with `startX509Authenticate`.

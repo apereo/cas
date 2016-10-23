@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support.ldap;
 
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionConfig;
