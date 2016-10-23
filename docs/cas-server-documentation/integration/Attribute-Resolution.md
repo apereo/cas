@@ -41,6 +41,14 @@ id provided during authentication or it could be a noted by a custom attribute. 
 If it realizes that a custom attribute is used to determine the principal id AND the same attribute is also set to be collected into the final set of attributes,
 it will then remove that attribute from the final collection.
 
+Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
+If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
+
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
+
+## Examples
+
 Suppose CAS is configured to authenticate against Active Directory. The account whose details are defined below
 authenticates via `sAMAccountName`.
 
@@ -63,11 +71,6 @@ construct attributes from attribute repository sources. It then sees `sAMAccoutN
 So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
 
-Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
-If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
-
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
-More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
 ### JDBC
 
