@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication.revocation;
 
 import org.apereo.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
