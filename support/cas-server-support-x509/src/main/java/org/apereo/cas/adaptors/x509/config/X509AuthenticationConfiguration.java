@@ -6,8 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
@@ -27,11 +26,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,7 +76,7 @@ public class X509AuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
     private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
-    
+
     @Autowired(required = false)
     @Qualifier("x509ResourceUnavailableRevocationPolicy")
     private RevocationPolicy x509ResourceUnavailableRevocationPolicy = new DenyRevocationPolicy();
@@ -94,7 +92,7 @@ public class X509AuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("x509CrlExpiredRevocationPolicy")
     private RevocationPolicy x509CrlExpiredRevocationPolicy = new DenyRevocationPolicy();
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -119,10 +117,10 @@ public class X509AuthenticationConfiguration {
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final Cache cache = new Cache("CRL".concat(UUID.randomUUID().toString()), 
-                x509.getCacheMaxElementsInMemory(), x509.isCacheDiskOverflow(), 
+        final Cache cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
+                x509.getCacheMaxElementsInMemory(), x509.isCacheDiskOverflow(),
                 x509.isCacheEternal(), x509.getCacheTimeToLiveSeconds(), x509.getCacheTimeToIdleSeconds());
-        
+
         final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker(cache, getCrlFetcher());
         c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
@@ -166,8 +164,6 @@ public class X509AuthenticationConfiguration {
     private CRLFetcher getCrlFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
-            case "ldappool":
-                return poolingLdaptiveResourceCRLFetcher();
             case "ldap":
                 return ldaptiveResourceCRLFetcher();
             case "resource":
@@ -213,22 +209,13 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final LdaptiveResourceCRLFetcher r = new LdaptiveResourceCRLFetcher();
-        r.setConnectionConfig(this.ldaptiveResourceCRLConnectionConfig);
-        r.setSearchExecutor(this.ldaptiveResourceCRLSearchExecutor);
+        r.setConnectionConfig(Beans.newConnectionConfig(x509.getLdap()));
+        r.setSearchExecutor(Beans.newSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()));
         return r;
     }
-
-    @Bean
-    public CRLFetcher poolingLdaptiveResourceCRLFetcher() {
-        final PoolingLdaptiveResourceCRLFetcher f = new PoolingLdaptiveResourceCRLFetcher();
-
-        f.setSearchExecutor(this.poolingLdaptiveResourceCRLSearchExecutor);
-        f.setConnectionPool(this.poolingLdaptiveConnectionPool);
-        f.setConnectionConfig(this.poolingLdaptiveResourceCRLConnectionConfig);
-        return f;
-    }
-
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
