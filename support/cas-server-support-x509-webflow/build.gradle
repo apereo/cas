@@ -1,4 +1,3 @@
-
 description = "Apereo CAS X509 Webflow Support"
 dependencies {
     compile project(":core:cas-server-core-webflow")

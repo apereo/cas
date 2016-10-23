@@ -1,10 +1,12 @@
-package org.apereo.cas.adaptors.x509.authentication.handler.support;
+package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
