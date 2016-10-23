@@ -70,6 +70,10 @@ h6:hover .header-link {
   opacity: 1;
 }
 
+pre {
+ white-space: pre-wrap;  
+}
+
 @import "navbar";
 
 #toolbarIcons {
