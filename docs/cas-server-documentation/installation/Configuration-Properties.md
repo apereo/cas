@@ -1135,20 +1135,34 @@ prior to production rollouts.</p></div>
 To learn more about this topic, [please review this guide](X509-Authentication.html).
 
 ```properties
+
+# cas.authn.x509.revocationChecker=NONE|CRL|RESOURCE
+# cas.authn.x509.crlFetcher=RESOURCE|LDAP|LDAPPOOL
+
+# cas.authn.x509.crlResources[0]=file:/...
+
+# cas.authn.x509.cacheMaxElementsInMemory=1000
+# cas.authn.x509.cacheDiskOverflow=false
+# cas.authn.x509.cacheEternal=false
+# cas.authn.x509.cacheTimeToLiveSeconds=7200
+# cas.authn.x509.cacheTimeToIdleSeconds=1800
+
 # cas.authn.x509.checkKeyUsage=false
 # cas.authn.x509.revocationPolicyThreshold=172800
-# cas.authn.x509.regExSubjectDnPattern=.*
+
+# cas.authn.x509.regExSubjectDnPattern=.+
+# cas.authn.x509.regExTrustedIssuerDnPattern=.+
+# cas.authn.x509.trustedIssuerDnPattern=.+
+
 # cas.authn.x509.principalDescriptor=
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
-# cas.authn.x509.regExTrustedIssuerDnPattern=
 # cas.authn.x509.valueDelimiter=,
 # cas.authn.x509.checkAll=false
 # cas.authn.x509.requireKeyUsage=false
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
-# cas.authn.x509.trustedIssuerDnPattern=
 
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
