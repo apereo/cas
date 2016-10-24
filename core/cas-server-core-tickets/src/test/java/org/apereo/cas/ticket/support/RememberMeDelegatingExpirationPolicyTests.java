@@ -1,17 +1,23 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
@@ -22,10 +28,11 @@ import static org.junit.Assert.*;
  */
 public class RememberMeDelegatingExpirationPolicyTests {
 
-    /** Factory to create the principal type. **/
-    
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private static final File JSON_FILE = new File("rememberMeDelegatingExpirationPolicy.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
 
+    /** Factory to create the principal type. **/
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private RememberMeDelegatingExpirationPolicy p;
 
@@ -46,7 +53,6 @@ public class RememberMeDelegatingExpirationPolicyTests {
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
         assertTrue(t.isExpired());
-
     }
 
     @Test
@@ -56,6 +62,14 @@ public class RememberMeDelegatingExpirationPolicyTests {
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());
+    }
 
+    @Test
+    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+        mapper.writeValue(JSON_FILE, p);
+
+        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+
+        assertEquals(p, policyRead);
     }
 }

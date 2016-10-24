@@ -1,5 +1,8 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
     private long timeToKillInSeconds;
+
+    @JsonProperty
     private int numberOfUses;
 
     /**
@@ -37,20 +42,18 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         this.numberOfUses = 0;
     }
 
-
     /**
      * Instantiates a new multi time use or timeout expiration policy.
      *
      * @param numberOfUses             the number of uses
      * @param timeToKillInSeconds the time to kill in seconds
      */
-    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
-                                                 final long timeToKillInSeconds) {
+    @JsonCreator
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
         Assert.isTrue(this.timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
-
     }
     
     @Override
@@ -83,6 +86,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         return this.timeToKillInSeconds;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         return 0L;
@@ -124,5 +128,23 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
                                              final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MultiTimeUseOrTimeoutExpirationPolicy that = (MultiTimeUseOrTimeoutExpirationPolicy) o;
+
+        if (timeToKillInSeconds != that.timeToKillInSeconds) return false;
+        return numberOfUses == that.numberOfUses;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (timeToKillInSeconds ^ (timeToKillInSeconds >>> 32));
+        result = 31 * result + numberOfUses;
+        return result;
     }
 }
