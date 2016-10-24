@@ -48,6 +48,18 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         throw new IllegalArgumentException("Response type is valid. Only POST/REDIRECT are supported");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        WebApplicationServiceResponseBuilder that = (WebApplicationServiceResponseBuilder) o;
 
+        return responseType == that.responseType;
+    }
+
+    @Override
+    public int hashCode() {
+        return responseType != null ? responseType.hashCode() : 0;
+    }
 }
