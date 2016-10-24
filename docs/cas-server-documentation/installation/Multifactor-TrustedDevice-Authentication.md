@@ -71,6 +71,8 @@ Support is provided via the following module:
 </dependency>
 ```
 
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+
 ### Mongo
 
 User decisions may also be kept inside a MongoDb instance.

@@ -15,7 +15,8 @@ Support is enabled by adding the following module into the Maven overlay:
     <version>${cas.version}</version>
 </dependency>
 ```
-
+ 
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Auto Initialization
