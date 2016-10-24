@@ -124,6 +124,8 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### RabbitMQ
 
+Broadcast CAS configuration updates to other nodes in the cluster via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
+
 ```properties
 # spring.rabbitmq.host=
 # spring.rabbitmq.port=
@@ -135,6 +137,8 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 ```
 
 ### Kafka
+
+Broadcast CAS configuration updates to other nodes in the cluster via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
 
 ```properties
 # spring.cloud.stream.bindings.output.content-type=application/json
