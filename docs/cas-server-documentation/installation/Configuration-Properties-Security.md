@@ -5,6 +5,8 @@ title: CAS - Securing Configuration Properties
 
 # Configuration Security
 
+This document describes how to retrieve and secure CAS configuration and properties. 
+
 ## Spring Cloud
 
 Securing CAS settings and decrypting them is entirely handled by the [Spring Cloud](https://github.com/spring-cloud/spring-cloud-config) project.
