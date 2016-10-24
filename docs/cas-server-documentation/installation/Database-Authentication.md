@@ -15,6 +15,8 @@ Database authentication is enabled by including the following dependencies in th
 </dependency>
 ```
 
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
