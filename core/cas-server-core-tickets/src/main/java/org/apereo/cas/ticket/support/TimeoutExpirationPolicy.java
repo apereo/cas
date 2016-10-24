@@ -1,5 +1,9 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.TicketState;
 
 import java.time.ZoneOffset;
@@ -17,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -36,7 +41,8 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      *
      * @param timeToKillInMilliSeconds the time to kill in milli seconds
      */
-    public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
+    @JsonCreator
+    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
@@ -57,6 +63,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return ticketState == null || now.isAfter(expirationTime);
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToLive() {
         return new Long(Integer.MAX_VALUE);
@@ -65,5 +72,20 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TimeoutExpirationPolicy that = (TimeoutExpirationPolicy) o;
+
+        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
     }
 }

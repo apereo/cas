@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.TicketState;
 
 import org.slf4j.Logger;
@@ -50,6 +52,11 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
     }
 
+    @JsonCreator
+    public TicketGrantingTicketExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
+        this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
+        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    }
 
     /**
      * After properties set.
@@ -92,4 +99,21 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         return this.timeToKillInMilliSeconds;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TicketGrantingTicketExpirationPolicy that = (TicketGrantingTicketExpirationPolicy) o;
+
+        if (maxTimeToLiveInMilliSeconds != that.maxTimeToLiveInMilliSeconds) return false;
+        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (maxTimeToLiveInMilliSeconds ^ (maxTimeToLiveInMilliSeconds >>> 32));
+        result = 31 * result + (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
+        return result;
+    }
 }
