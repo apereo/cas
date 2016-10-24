@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,7 +24,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.MessageInterpolator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -39,20 +37,14 @@ import java.util.Map;
 @Configuration("casWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
-
-    @Autowired
-    @Qualifier("messageInterpolator")
-    private MessageInterpolator messageInterpolator;
-
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Lazy
     @Bean
     public LocalValidatorFactoryBean credentialsValidator() {
-        final LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-        bean.setMessageInterpolator(this.messageInterpolator);
-        return bean;
+        return new LocalValidatorFactoryBean();
     }
 
     @RefreshScope
