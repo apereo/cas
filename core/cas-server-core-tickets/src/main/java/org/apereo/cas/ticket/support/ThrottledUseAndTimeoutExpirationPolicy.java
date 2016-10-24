@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.TicketState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +39,13 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
      */
     public ThrottledUseAndTimeoutExpirationPolicy(){}
 
-    public void setTimeInBetweenUsesInMilliSeconds(
-        final long timeInBetweenUsesInMilliSeconds) {
+    @JsonCreator
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInMilliSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInMilliSeconds) {
+        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+        this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
+    }
+
+    public void setTimeInBetweenUsesInMilliSeconds(final long timeInBetweenUsesInMilliSeconds) {
         this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
     }
 
@@ -81,5 +87,23 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     @Override
     public Long getTimeToIdle() {
         return this.timeInBetweenUsesInMilliSeconds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ThrottledUseAndTimeoutExpirationPolicy that = (ThrottledUseAndTimeoutExpirationPolicy) o;
+
+        if (timeToKillInMilliSeconds != that.timeToKillInMilliSeconds) return false;
+        return timeInBetweenUsesInMilliSeconds == that.timeInBetweenUsesInMilliSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
+        result = 31 * result + (int) (timeInBetweenUsesInMilliSeconds ^ (timeInBetweenUsesInMilliSeconds >>> 32));
+        return result;
     }
 }

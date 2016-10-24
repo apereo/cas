@@ -90,7 +90,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+    public void verifySerializeAnExpirationPolicyToJson() throws IOException {
         mapper.writeValue(JSON_FILE, expirationPolicy);
 
         final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);

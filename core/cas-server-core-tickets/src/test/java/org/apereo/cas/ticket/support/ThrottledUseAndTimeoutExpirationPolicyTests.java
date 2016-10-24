@@ -1,10 +1,15 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -13,6 +18,9 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class ThrottledUseAndTimeoutExpirationPolicyTests {
+
+    private static final File JSON_FILE = new File("throttleUseAndTimeoutExpirationPolicy.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final long TIMEOUT = 2000;
 
@@ -59,5 +67,14 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         assertTrue(this.ticket.isExpired());
+    }
+
+    @Test
+    public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+        mapper.writeValue(JSON_FILE, expirationPolicy);
+
+        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, ThrottledUseAndTimeoutExpirationPolicy.class);
+
+        assertEquals(expirationPolicy, policyRead);
     }
 }
