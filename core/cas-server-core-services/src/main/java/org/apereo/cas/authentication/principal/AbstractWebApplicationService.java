@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.logout.SingleLogoutService;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
@@ -36,10 +35,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private String artifactId;
 
+    @JsonProperty
     private Principal principal;
 
     private boolean loggedOutAlready;
 
+    @JsonProperty
     private ResponseBuilder<WebApplicationService> responseBuilder;
 
     private ValidationResponseType format = ValidationResponseType.XML;
@@ -58,11 +59,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
         this.responseBuilder = responseBuilder;
-    }
-
-    @Override
-    public String toString() {
-        return this.id;
     }
 
     @Override
@@ -92,27 +88,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.originalUrl;
     }
 
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (object instanceof Service) {
-            final Service service = (Service) object;
-
-            return getId().equals(service.getId());
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.id)
-                .toHashCode();
-    }
 
     public Principal getPrincipal() {
         return this.principal;
@@ -175,6 +150,36 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @Override
     public Response getResponse(final String ticketId) {
         return this.responseBuilder.build(this, ticketId);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AbstractWebApplicationService that = (AbstractWebApplicationService) o;
+
+        if (isLoggedOutAlready() != that.isLoggedOutAlready()) return false;
+        if (logger != null ? !logger.equals(that.logger) : that.logger != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (originalUrl != null ? !originalUrl.equals(that.originalUrl) : that.originalUrl != null) return false;
+        if (artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null) return false;
+        if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
+        if (responseBuilder != null ? !responseBuilder.equals(that.responseBuilder) : that.responseBuilder != null)
+            return false;
+        return format == that.format;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = logger != null ? logger.hashCode() : 0;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        result = 31 * result + (originalUrl != null ? originalUrl.hashCode() : 0);
+        result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
+        result = 31 * result + (principal != null ? principal.hashCode() : 0);
+        result = 31 * result + (loggedOutAlready ? 1 : 0);
+        result = 31 * result + (responseBuilder != null ? responseBuilder.hashCode() : 0);
+        result = 31 * result + (format != null ? format.hashCode() : 0);
+        return result;
     }
 }
