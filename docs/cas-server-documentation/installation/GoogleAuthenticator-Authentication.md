@@ -41,6 +41,8 @@ Registration records may be kept inside a database instance, via the following m
 </dependency>
 ```
 
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+
 ### MongoDb
 
 Registration records may be kept inside a mongo db instance, via the following module:
