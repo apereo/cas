@@ -22,7 +22,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Wavity Login</title>
+		<title>Wavity Logout</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<spring:theme code="standard.login.css.bootstrap" var="loginCssBootstrap" />
@@ -36,6 +36,7 @@
 		<link rel="stylesheet" href="<c:url value="${loginCssLogin}" />" />
 		<link rel="stylesheet" href="<c:url value="${loginCssStickyFooter}" />" />
 		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<spring:theme code="cas.login.javascript.require" var="loginJsRequire" />
 		<script type="text/javascript" src="<c:url value="${loginJsRequire}" />"></script>
 	</head>
@@ -55,6 +56,8 @@
 								<h2><spring:message code="screen.logout.header" /></h2>
 								<p><spring:message code="screen.logout.success" /></p>
 								<p><spring:message code="screen.logout.security" /></p>
+								<p>This page will be redirected to <span id="service-url"></span> after 5 seconds.</p>
+								<p>If you go to the service instantly, click <a id="service-url-link">this link.</a></p>
 							</div>
 						</div>
 					</div>
@@ -64,5 +67,30 @@
 		<footer role="contentinfo" id="ot-footer" class="footer">
 			<!-- footer region -->
 		</footer>
+		<script type="text/javascript">
+			window.onload = function(e){ 
+			    var serviceUrl = getQueryParams(window.location.search).service;
+			    var serviceUrlElement = document.getElementById("service-url");
+			    serviceUrlElement.innerHTML = serviceUrl;
+			    
+			    var linkElement = document.getElementById("service-url-link");
+			    linkElement.href = serviceUrl;
+			    
+			    setTimeout(function(){ window.location.replace(serviceUrl); }, 5000);
+			}
+			function getQueryParams(qs) {
+			    qs = qs.split('+').join(' ');
+
+			    var params = {},
+			        tokens,
+			        re = /[?&]?([^=]+)=([^&]*)/g;
+
+			    while (tokens = re.exec(qs)) {
+			        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+			    }
+
+			    return params;
+			}
+		</script>
 	</body>
 </html>
