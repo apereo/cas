@@ -25,7 +25,14 @@ Post to this list if you have a question about installing, configuring, or troub
 
 ### Data, Data, Data
 
-Always ensure you have enough diagnostics data in your report. Are you reporting the exact version numbers that exhibit the seemingly-faulty behavior? Have you described your deployment/development environment in enough detail? Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? Have you included steps to explain how one might duplicate the problem? Unit tests to recreate the issue?
+Always ensure you have enough diagnostics data in your report:
+
+- Have you reported the exact version numbers that exhibit the seemingly-faulty behavior? 
+- Have you described your deployment/development environment in enough detail? 
+- Have you included error logs, screenshots and other useful snippets of your configuration to demonstrate the issue? 
+- Have you included steps to explain how one might duplicate the problem? 
+- Have you prepapred unit tests to recreate the issue?
+- Have you prepared an overlay project that might allow the project to duplicate the issue? 
 
 Put another way; readers of your case aren’t necessarily housed in your head! They don’t know what you know. Help them out. Would you want to respond to your own report?
 
@@ -41,7 +48,12 @@ If you find that your messages are not reaching the mailing list in due time, pl
 
 ### Is this a bug?
 
-Research the issue and be sure to do your due diligence. Have you scanned the web archives for similar cases? Have you looked at the project’s documentation to find better explanations? Have you reviewed the project’s mailing lists, chatrooms and other facilities to find possible solutions?
+Research the issue and be sure to do your due diligence:
+
+- Have you scanned the web archives for similar cases? 
+- Have you looked at the project’s documentation to find better explanations? 
+- Have you reviewed the project’s mailing lists, chatrooms and other facilities to find possible solutions? 
+- Have you considered upgrading to the latest maintenance release to see if the problem has been fixed?
 
 ### Should I submit?
 
