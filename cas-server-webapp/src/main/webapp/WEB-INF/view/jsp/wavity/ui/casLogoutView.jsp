@@ -36,7 +36,6 @@
 		<link rel="stylesheet" href="<c:url value="${loginCssLogin}" />" />
 		<link rel="stylesheet" href="<c:url value="${loginCssStickyFooter}" />" />
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<spring:theme code="cas.login.javascript.require" var="loginJsRequire" />
 		<script type="text/javascript" src="<c:url value="${loginJsRequire}" />"></script>
 	</head>
