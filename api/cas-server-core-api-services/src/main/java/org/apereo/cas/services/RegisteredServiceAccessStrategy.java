@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
 public interface RegisteredServiceAccessStrategy extends Serializable {
 
     /**

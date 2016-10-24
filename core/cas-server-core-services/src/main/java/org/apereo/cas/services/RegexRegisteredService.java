@@ -37,9 +37,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     public boolean matches(final Service service) {
         if (this.servicePattern == null) {
             final Optional<Pattern> parsedPattern = RegexUtils.createPattern(this.serviceId);
-            if (parsedPattern.isPresent()) {
-                this.servicePattern = parsedPattern.get();
-            }
+            parsedPattern.ifPresent(pattern -> this.servicePattern = pattern);
         }
         return service != null && this.servicePattern != null
                 && this.servicePattern.matcher(service.getId()).matches();
@@ -49,5 +47,4 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
-    
 }

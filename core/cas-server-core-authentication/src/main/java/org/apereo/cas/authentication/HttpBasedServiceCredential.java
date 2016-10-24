@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.RegisteredService;
 
@@ -49,7 +50,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         this.service = service;
     }
 
-
+    @JsonIgnore
     @Override
     public String getId() {
         return this.callbackUrlAsString;
@@ -102,5 +103,12 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         return this.service.equals(other.getService());
     }
 
-
+    @Override
+    public String toString() {
+        return "HttpBasedServiceCredential{" +
+                "callbackUrl='" + callbackUrl + "'" +
+                ", callbackUrlAsString='" + callbackUrlAsString + "'" +
+                ", service=" + service +
+                '}';
+    }
 }

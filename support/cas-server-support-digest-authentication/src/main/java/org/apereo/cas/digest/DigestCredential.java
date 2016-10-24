@@ -47,7 +47,6 @@ public class DigestCredential extends AbstractCredential {
         this.hash = hash;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -77,7 +76,6 @@ public class DigestCredential extends AbstractCredential {
                 .append(id)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

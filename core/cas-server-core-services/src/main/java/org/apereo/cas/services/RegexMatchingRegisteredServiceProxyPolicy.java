@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,15 +38,11 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
         this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
     }
 
-    /**
-     * Gets the pattern.
-     *
-     * @return the pattern
-     */
     public Pattern getPattern() {
         return this.pattern;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAllowedToProxy() {
         return true;
@@ -80,5 +77,4 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
     public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
         return this.pattern.matcher(pgtUrl.toExternalForm()).find();
     }
-
 }

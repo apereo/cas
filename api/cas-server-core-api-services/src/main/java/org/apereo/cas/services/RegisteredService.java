@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
 public interface RegisteredService extends Cloneable, Serializable {
 
     /**
