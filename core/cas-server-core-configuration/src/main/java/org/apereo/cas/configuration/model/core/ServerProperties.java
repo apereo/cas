@@ -178,7 +178,7 @@ public class ServerProperties {
         private boolean enabled;
         private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
         private String suffix = ".log";
-        private String prefix = "local_host_extended";
+        private String prefix = "localhost_access_extended";
         private String directory;
 
         public String getDirectory() {
