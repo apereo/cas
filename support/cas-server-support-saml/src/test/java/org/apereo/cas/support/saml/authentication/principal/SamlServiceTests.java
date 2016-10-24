@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -9,6 +10,9 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -17,6 +21,10 @@ import static org.junit.Assert.*;
  * @since 3.1
  */
 public class SamlServiceTests extends AbstractOpenSamlTests {
+
+    private static final File JSON_FILE = new File("samlService.json");
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void verifyResponse() {
@@ -87,5 +95,23 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         final WebApplicationService service = new DefaultArgumentExtractor(new SamlServiceFactory()).extractService(request2);
 
         assertFalse(impl.matches(service));
+    }
+
+    @Test
+    public void verifySerializeASamlServiceToJson() throws IOException {
+        final String body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
+                + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
+                + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContent(body.getBytes());
+
+        final SamlService serviceWritten = new SamlServiceFactory().createService(request);
+
+        mapper.writeValue(JSON_FILE, serviceWritten);
+
+        final SamlService serviceRead = mapper.readValue(JSON_FILE, SamlService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }

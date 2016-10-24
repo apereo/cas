@@ -28,9 +28,11 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The id of the service. */
+    @JsonProperty
     private String id;
 
     /** The original url provided, used to reconstruct the redirect url. */
+    @JsonProperty
     private String originalUrl;
 
     private String artifactId;
