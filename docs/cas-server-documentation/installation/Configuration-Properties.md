@@ -68,7 +68,7 @@ Load settings from an internal/external Git repository.
 
 ### Vault
 
-Load settings from HasiCorp's Vault.
+Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
