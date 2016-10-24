@@ -14,6 +14,15 @@ public class ServerProperties {
     private String prefix = name.concat("/cas");
     private Ajp ajp = new Ajp();
     private Http http = new Http();
+    private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
+
+    public ExtendedAccessLog getExtAccessLog() {
+        return extAccessLog;
+    }
+
+    public void setExtAccessLog(final ExtendedAccessLog extAccessLog) {
+        this.extAccessLog = extAccessLog;
+    }
 
     public Http getHttp() {
         return http;
@@ -162,6 +171,54 @@ public class ServerProperties {
 
         public void setRedirectPort(final int redirectPort) {
             this.redirectPort = redirectPort;
+        }
+    }
+    
+    public static class ExtendedAccessLog {
+        private boolean enabled;
+        private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
+        private String suffix = ".log";
+        private String prefix = "local_host_extended";
+        private String directory;
+
+        public String getDirectory() {
+            return directory;
+        }
+
+        public void setDirectory(final String directory) {
+            this.directory = directory;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(final String pattern) {
+            this.pattern = pattern;
+        }
+
+        public String getSuffix() {
+            return suffix;
+        }
+
+        public void setSuffix(final String suffix) {
+            this.suffix = suffix;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(final String prefix) {
+            this.prefix = prefix;
         }
     }
     
