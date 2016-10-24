@@ -15,7 +15,7 @@ Database authentication is enabled by including the following dependencies in th
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 
 ## Configuration
 
