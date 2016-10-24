@@ -38,13 +38,13 @@ import java.nio.charset.StandardCharsets;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasEmbeddedContainerConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerConfiguration.class);
-    
+
     @Autowired
     private ServerProperties serverProperties;
-    
+
     @Value("${server.tomcat.valve.rewrite.config:classpath:/container/tomcat/rewrite.config}")
     private Resource rewriteValveConfig;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -101,21 +101,28 @@ public class CasEmbeddedContainerConfiguration {
                     handler.setConnectionTimeout(casProperties.getServer().getConnectionTimeout());
                 });
 
-        if (casProperties.getServer().getExtAccessLog().isEnabled() 
-                && StringUtils.isNotBlank(casProperties.getServer().getExtAccessLog().getPattern())
-                && StringUtils.isNotBlank(casProperties.getServer().getExtAccessLog().getDirectory())) {
+        if (casProperties.getServer().getExtAccessLog().isEnabled()
+            && StringUtils.isNotBlank(casProperties.getServer().getExtAccessLog().getPattern())) {
 
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
             final ExtendedAccessLogValve valve = new ExtendedAccessLogValve();
             valve.setPattern(casProperties.getServer().getExtAccessLog().getPattern());
-            valve.setDirectory(casProperties.getServer().getExtAccessLog().getDirectory());
+
+            if (StringUtils.isBlank(casProperties.getServer().getExtAccessLog().getDirectory())) {
+                valve.setDirectory(serverProperties.getTomcat().getAccesslog().getDirectory());
+            } else {
+                valve.setDirectory(casProperties.getServer().getExtAccessLog().getDirectory());
+            }
             valve.setPrefix(casProperties.getServer().getExtAccessLog().getPrefix());
             valve.setSuffix(casProperties.getServer().getExtAccessLog().getSuffix());
             valve.setAsyncSupported(true);
             valve.setEnabled(true);
+            valve.setRotatable(true);
+            valve.setBuffered(true);
             tomcat.addContextValves(valve);
+            tomcat.addEngineValves(valve);
         }
-        
+
         if (StringUtils.isBlank(serverProperties.getContextPath())) {
             final RewriteValve valve = new RewriteValve() {
                 @Override
