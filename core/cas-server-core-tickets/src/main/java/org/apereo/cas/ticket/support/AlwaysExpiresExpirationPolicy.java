@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.ticket.TicketState;
 
 /**
@@ -24,11 +25,13 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToLive() {
         return 0L;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         return 0L;

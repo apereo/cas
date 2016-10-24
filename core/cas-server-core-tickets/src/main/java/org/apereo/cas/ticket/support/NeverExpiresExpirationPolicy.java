@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apereo.cas.ticket.TicketState;
 
@@ -27,13 +28,20 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToLive() {
         return new Long(Integer.MAX_VALUE);
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         return new Long(Integer.MAX_VALUE);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.getClass().equals(obj.getClass());
     }
 }

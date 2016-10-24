@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
@@ -41,6 +43,12 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
     }
 
+    @JsonCreator
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
+        this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
+        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    }
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
@@ -71,5 +79,23 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OAuthAccessTokenExpirationPolicy that = (OAuthAccessTokenExpirationPolicy) o;
+
+        if (maxTimeToLiveInMilliSeconds != that.maxTimeToLiveInMilliSeconds) return false;
+        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (maxTimeToLiveInMilliSeconds ^ (maxTimeToLiveInMilliSeconds >>> 32));
+        result = 31 * result + (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
+        return result;
     }
 }

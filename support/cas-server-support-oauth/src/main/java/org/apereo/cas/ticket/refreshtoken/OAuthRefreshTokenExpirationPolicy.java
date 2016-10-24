@@ -1,5 +1,8 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 
@@ -29,7 +32,8 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      *
      * @param timeToKillInMilliSeconds the time to kill in milli seconds
      */
-    public OAuthRefreshTokenExpirationPolicy(final long timeToKillInMilliSeconds) {
+    @JsonCreator
+    public OAuthRefreshTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
@@ -44,8 +48,24 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         return this.timeToKillInMilliSeconds;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         return 0L;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OAuthRefreshTokenExpirationPolicy that = (OAuthRefreshTokenExpirationPolicy) o;
+
+        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
     }
 }
