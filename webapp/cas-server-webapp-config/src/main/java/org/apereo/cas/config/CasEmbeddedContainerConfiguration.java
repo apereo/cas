@@ -107,8 +107,6 @@ public class CasEmbeddedContainerConfiguration {
 
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
             final ExtendedAccessLogValve valve = new ExtendedAccessLogValve();
-            valve.setAsyncSupported(true);
-            valve.setEnabled(true);
             valve.setPattern(casProperties.getServer().getExtAccessLog().getPattern());
             valve.setDirectory(casProperties.getServer().getExtAccessLog().getDirectory());
             valve.setPrefix(casProperties.getServer().getExtAccessLog().getPrefix());
