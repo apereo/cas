@@ -1,19 +1,27 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
+
+    private static final File JSON_FILE = new File("principalAttributeRegisteredServiceUsernameProvider.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @Test
     public void verifyUsernameByPrincipalAttribute() {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
@@ -29,7 +37,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         
         final String id = provider.resolveUsername(p, TestUtils.getService("usernameAttributeProviderService"));
         assertEquals(id, "TheName");
-        
     }
     
     @Test
@@ -46,7 +53,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         
         final String id = provider.resolveUsername(p, TestUtils.getService("usernameAttributeProviderService"));
         assertEquals(id, p.getId());
-        
     }
 
     @Test
@@ -60,4 +66,15 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         assertEquals(provider, provider2);
     }
 
+    @Test
+    public void verifySerializeAPrincipalAttributeRegisteredServiceUsernameProviderToJson() throws IOException {
+        final PrincipalAttributeRegisteredServiceUsernameProvider providerWritten =
+                new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
+
+        mapper.writeValue(JSON_FILE, providerWritten);
+
+        final RegisteredServiceUsernameAttributeProvider providerRead = mapper.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
+
+        assertEquals(providerWritten, providerRead);
+    }
 }
