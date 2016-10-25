@@ -16,6 +16,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,9 +38,11 @@ import java.util.Map;
 @Configuration("casGenericConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGenericConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasGenericConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired(required = false)
     @Qualifier("shiroPasswordPolicyConfiguration")
     private PasswordPolicyConfiguration shiroPasswordPolicyConfiguration;
@@ -74,7 +78,7 @@ public class CasGenericConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Bean
     @RefreshScope
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
@@ -159,12 +163,10 @@ public class CasGenericConfiguration {
         h.setRequiredPermissions(casProperties.getAuthn().getShiro().getRequiredPermissions());
         h.loadShiroConfiguration(casProperties.getAuthn().getShiro().getConfig().getLocation());
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getShiro().getPasswordEncoder()));
-
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getShiro().getPrincipalTransformation()));
-
         return h;
     }
 
@@ -176,21 +178,18 @@ public class CasGenericConfiguration {
     @PostConstruct
     public void initializeAuthenticationHandler() {
         if (casProperties.getAuthn().getShiro().getConfig().getLocation() != null) {
-            this.authenticationHandlersResolvers.put(
-                    shiroAuthenticationHandler(),
-                    personDirectoryPrincipalResolver);
+            LOGGER.debug("Injecting shiro authentication handler");
+            this.authenticationHandlersResolvers.put(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
 
         if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
-            this.authenticationHandlersResolvers.put(
-                    rejectUsersAuthenticationHandler(),
-                    personDirectoryPrincipalResolver);
+            LOGGER.debug("Added rejecting authentication handler");
+            this.authenticationHandlersResolvers.put(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
 
         if (casProperties.getAuthn().getFile().getFilename() != null) {
-            this.authenticationHandlersResolvers.put(
-                    fileAuthenticationHandler(),
-                    personDirectoryPrincipalResolver);
+            LOGGER.debug("Added file-based authentication handler");
+            this.authenticationHandlersResolvers.put(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
     }
 
