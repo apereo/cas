@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.apereo.cas.authentication.AbstractCredential;
@@ -46,6 +47,7 @@ public class X509CertificateCredential extends AbstractCredential {
         return this.certificate;
     }
 
+    @JsonIgnore
     @Override
     public String getId() {
         X509Certificate cert = null;
