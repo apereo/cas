@@ -208,7 +208,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
-## Embedded Tomcat HTTP/AJP
+## Embedded Tomcat Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
@@ -264,6 +264,12 @@ The format of the `adminusers.properties` file which houses a list of authorized
 ```properties
 # casuser=notused,ROLE_ADMIN
 ```
+
+The format of the file is as such:
+
+- `casuser`: This is the authenticated user id received from CAS
+- `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
+- `ROLE_ADMIN`: Role assigned to the authorized user, which is then cross checked against CAS configuration.
 
 ## Web Application Session
 
