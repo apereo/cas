@@ -17,6 +17,7 @@ import java.util.Map;
  * @since 4.1
  */
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
+
     private static final long serialVersionUID = -4535358847021241725L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalAttributesRepository.class);
@@ -33,7 +34,6 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
                 this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
     }
-
 
     @Override
     public String toString() {
