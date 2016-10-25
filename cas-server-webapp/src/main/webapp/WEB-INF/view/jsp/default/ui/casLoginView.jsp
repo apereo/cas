@@ -71,12 +71,8 @@
         StringBuilder casLoginUrl = new StringBuilder()
         		.append(request.getScheme())
         		.append("://")
-        		.append(request.getServerName());
-        if(request.getServerPort() != 80) {
-        	casLoginUrl.append(":")
-    					.append(request.getServerPort());
-        }
-        casLoginUrl.append("/auth/login");
+        		.append(request.getServerName())
+        		.append("/auth/login");
         response.addHeader("Cas-Server-Login-Url", casLoginUrl.toString());
 
 		String tenantName = "";
