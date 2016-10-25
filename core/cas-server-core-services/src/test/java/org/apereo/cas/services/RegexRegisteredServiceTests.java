@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
@@ -7,9 +8,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link RegexRegisteredService}.
@@ -19,6 +22,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
+
+    private static final File JSON_FILE = new File("regexRegisteredService.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private RegexRegisteredService service;
 
@@ -103,10 +109,20 @@ public class RegexRegisteredServiceTests {
         assertEquals(expected, service.matches(testService));
     }
 
-
     private static RegexRegisteredService newService(final String id) {
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
+    }
+
+    @Test
+    public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
+        final RegexRegisteredService serviceWritten = newService("serviceId");
+
+        mapper.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, RegexRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }

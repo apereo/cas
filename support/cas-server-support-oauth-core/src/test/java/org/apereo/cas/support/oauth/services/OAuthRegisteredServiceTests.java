@@ -1,17 +1,19 @@
 package org.apereo.cas.support.oauth.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.JsonServiceRegistryDao;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Misagh Moayyed
@@ -19,6 +21,8 @@ import static org.mockito.Mockito.*;
  */
 public class OAuthRegisteredServiceTests {
 
+    private static final File JSON_FILE = new File("oAuthRegisteredService.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     private ServiceRegistryDao dao;
@@ -61,5 +65,23 @@ public class OAuthRegisteredServiceTests {
         assertTrue(r3 instanceof OAuthRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifySerializeAOAuthRegisteredServiceToJson() throws IOException {
+        final OAuthRegisteredService serviceWritten = new OAuthRegisteredService();
+        serviceWritten.setName("checkSaveMethod");
+        serviceWritten.setServiceId("testId");
+        serviceWritten.setTheme("theme");
+        serviceWritten.setDescription("description");
+        serviceWritten.setClientId("clientid");
+        serviceWritten.setServiceId("secret");
+        serviceWritten.setBypassApprovalPrompt(true);
+
+        mapper.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, OAuthRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }

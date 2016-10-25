@@ -1,19 +1,27 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 public class OidcRegisteredServiceTests {
+
+    private static final File JSON_FILE = new File("oidcRegisteredService.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -43,5 +51,21 @@ public class OidcRegisteredServiceTests {
         assertTrue(r3 instanceof OidcRegisteredService);
         assertEquals(r, r2);
         assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
+        final OidcRegisteredService serviceWritten = new OidcRegisteredService();
+        serviceWritten.setName("checkSaveMethod");
+        serviceWritten.setServiceId("testId");
+        serviceWritten.setJwks("file:/etc/cas/thekeystorehere.jwks");
+        serviceWritten.setSignIdToken(true);
+        serviceWritten.setBypassApprovalPrompt(true);
+
+        mapper.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, OidcRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }
