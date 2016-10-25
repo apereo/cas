@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +21,9 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategyTests {
+
+    private static final File JSON_FILE = new File("x509CertificateCredential.json");
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
      public void checkDefaultAuthzStrategyConfig() {
@@ -140,7 +146,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         authz.setRequiredAttributes(reqs);
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
-                
+
         final Map<String, Object> pAttrs = getPrincipalAttributes();
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
@@ -149,7 +155,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkRejectedAttributesAvailable() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        
+
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
 
@@ -184,7 +190,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         pAttrs.put("role", "nomatch");
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
-    
+
     @Test
     public void checkRejectedAttributesAvailableRequireAll2() {
         final DefaultRegisteredServiceAccessStrategy authz =
@@ -198,7 +204,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         pAttrs.put("role", "staff");
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
-    
+
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseInsensitiveComparison() {
         final DefaultRegisteredServiceAccessStrategy authz =
@@ -228,6 +234,24 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = getPrincipalAttributes();
 
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
+    }
+
+    @Test
+    public void verifySerializeADefaultRegisteredServiceAccessStrategyToJson() throws IOException {
+        final DefaultRegisteredServiceAccessStrategy strategyWritten = new DefaultRegisteredServiceAccessStrategy();
+
+        final Map<String, Set<String>> reqs = getRequiredAttributes();
+        reqs.remove("cn");
+        reqs.remove("givenName");
+
+        strategyWritten.setRequiredAttributes(reqs);
+        strategyWritten.setRejectedAttributes(getRejectedAttributes());
+
+        mapper.writeValue(JSON_FILE, strategyWritten);
+
+        final RegisteredServiceAccessStrategy strategyRead = mapper.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
+
+        assertEquals(strategyWritten, strategyRead);
     }
 
     private static Map<String, Set<String>> getRequiredAttributes() {
