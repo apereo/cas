@@ -65,6 +65,11 @@ OpenID Connect clients can be registered with CAS as such:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## Claims
+
+OpenID connect claims are simply treated as normal CAS attributes that need to 
+be [resolved and released](../integration/Attribute-Release-Policies.html).
+
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
