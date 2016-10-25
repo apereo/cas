@@ -68,7 +68,7 @@
 		</footer>
 		<script type="text/javascript">
 			window.onload = function(e){ 
-			    var serviceUrl = getQueryParams(window.location.search, "service");
+			    var serviceUrl = getQueryParams(window.location.search);
 			    if(serviceUrl != null && serviceUrl != "" && validateUrl(serviceUrl)) {
 				    var serviceUrlElement = document.getElementById("service-url");
 				    serviceUrlElement.textContent = serviceUrl;
@@ -101,6 +101,7 @@
 					return "";
 				}
 				
+				var parameterName="service";
 				var value = decodeURIComponent((new RegExp('[?|&]' + parameterName + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
 				return value;
 			}
