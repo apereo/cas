@@ -1,10 +1,10 @@
 ---
 layout: default
-title: CAS - Delegate authentication
+title: CAS - Delegate Authentication
 ---
 
 <p align="center">
-  <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
+  <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="150" />
 </p>
 
 # Delegate Authentication
@@ -53,7 +53,7 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 
 ## Demo
 
-Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) 
+Take a look at [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) 
 to see this authentication delegation mechanism in action.
 
 ## Returned Payload
