@@ -17,7 +17,40 @@ to learn about registering services in the registry.
 Disabling proxy authentication components is recommended for deployments that wish to strategically avoid proxy
 authentication as a matter of security policy.
 
+## Use Case
+
+One of the more common use cases of proxy authentication is the ability to obtain a ticket for
+a back-end [REST-based] service that is also protected by CAS. The scenario usually is:
+
+- User is faced with application A which is protected by CAS.
+- Application A on the backend needs to contact a service S to produce data.
+- Service S itself is protected by CAS itself.
+
+Because A contacts S via a server-to-service method where no browser is involved, 
+service would not be able to recognize that an SSO session already exists. In these cases,
+application A needs to exercise proxying in order to obtain a ticket for service S. The ticket
+is passed to the relevant endpoint of service S so it can retrieve and validate it via CAS 
+and finally produce a response.
+
+The trace route may look like this:
+
+1. Browser navigates to A.
+2. A redirects to CAS.
+3. CAS authenticates and redirects back to A with an `ST`.
+4. A attempts to validate the `ST`, and asks for a `PGT`.
+5. CAS confirms `ST` validation, and issues a proxy-granting ticket `PGT`.
+6. A asks CAS to produce a `PT` for service S, supplying the `PGT` in its request.
+7. CAS produces a PT for service S.
+8. A contacts the service S endpoint, passing along `PT` in the request.
+9. Service S attempts to validate the `PT` via CAS.
+10. CAS validates the `PT` and produces a successful response.
+11. Service S receives the response, and produces data for A.
+12. A receives and displays the data in the browser.
+
+See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
+
 ## Handling SSL-enabled Proxy URLs
+
 By default, CAS ships with a bundled HTTP client that is partly responsible to callback the URL
 for proxy authentication. Note that this URL need also be authorized by the CAS service registry
 before the callback can be made. [See this guide](Service-Management.md) for more info.
