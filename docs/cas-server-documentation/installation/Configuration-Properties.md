@@ -346,7 +346,7 @@ may be resolved via another. If there are commonalities across sources, the merg
 
 The story in plain english is:
 
-- I have a bunch of attributes that I wish to resolve for the final authenticated user.
+- I have a bunch of attributes that I wish to resolve for the authenticated principal.
 - I have a bunch of sources from which said attributes are retrieved.
 - Figure it out.
 
@@ -362,6 +362,10 @@ This is important to take into account when attribute merging may take place. Th
 Note that if no other attribute source is defined and if attributes are not directly retrieved
 as part of primary authentication, then a stub/static source will be created
 based on the defined attributes, if any.
+
+Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
+may be retrieved by CAS from the attribute repository and made available to the principal. On the other hand,
+if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
 
 ### LDAP
 
