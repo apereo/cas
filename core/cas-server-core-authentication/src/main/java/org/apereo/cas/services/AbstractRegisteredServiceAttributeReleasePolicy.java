@@ -154,7 +154,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Default attributes for release are: {}", defaultAttrs);
 
             final Map<String, Object> defaultAttributesToRelease = newTreeMap(String.CASE_INSENSITIVE_ORDER);
-            defaultAttrs.stream().forEach(key -> {
+            defaultAttrs.forEach(key -> {
                 if (attributes.containsKey(key)) {
                     LOGGER.debug("Found and added default attribute for release: {}", key);
                     defaultAttributesToRelease.put(key, attributes.get(key));
