@@ -169,9 +169,11 @@ server.ssl.keyPassword=changeit
 # server.ssl.trustStoreType=
 
 server.tomcat.basedir=build/tomcat
+
 server.tomcat.accesslog.enabled=true
 server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 server.tomcat.accesslog.suffix=.log
+
 server.tomcat.maxHttpHeaderSize=20971520
 server.tomcat.maxThreads=5
 server.tomcat.portHeader=X-Forwarded-Port
@@ -204,6 +206,19 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.enableLookups=false
 # cas.server.ajp.redirectPort=-1
 # cas.server.ajp.allowTrace=false
+```
+
+## Embedded Tomcat HTTP/AJP
+
+Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
+for the embedded Tomcat container.
+
+```properties
+# cas.server.extAccessLog.enabled=false
+# cas.server.extAccessLog.pattern=c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)
+# cas.server.extAccessLog.suffix=.log
+# cas.server.extAccessLog.prefix=localhost_access_extended
+# cas.server.extAccessLog.directory=
 ```
 
 ## CAS Server
