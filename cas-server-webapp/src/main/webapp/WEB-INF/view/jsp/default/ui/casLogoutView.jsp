@@ -55,8 +55,8 @@
 								<h2><spring:message code="screen.logout.header" /></h2>
 								<p><spring:message code="screen.logout.success" /></p>
 								<p><spring:message code="screen.logout.security" /></p>
-								<p>This page will be redirected to <span id="service-url"></span> after 5 seconds.</p>
-								<p>If you go to the service instantly, click <a id="service-url-link">this link.</a></p>
+								<p id="service-url-container">This page will be redirected to <span id="service-url"></span> after <span id="counter"></span> seconds.</p>
+								<p id="service-url-link-container">If you want go to the service instantly, click <a id="service-url-link">this link.</a></p>
 							</div>
 						</div>
 					</div>
@@ -68,27 +68,44 @@
 		</footer>
 		<script type="text/javascript">
 			window.onload = function(e){ 
-			    var serviceUrl = getQueryParams(window.location.search).service;
-			    var serviceUrlElement = document.getElementById("service-url");
-			    serviceUrlElement.innerHTML = serviceUrl;
-			    
-			    var linkElement = document.getElementById("service-url-link");
-			    linkElement.href = serviceUrl;
-			    
-			    setTimeout(function(){ window.location.replace(serviceUrl); }, 5000);
-			}
-			function getQueryParams(qs) {
-			    qs = qs.split('+').join(' ');
-
-			    var params = {},
-			        tokens,
-			        re = /[?&]?([^=]+)=([^&]*)/g;
-
-			    while (tokens = re.exec(qs)) {
-			        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+			    var serviceUrl = getQueryParams(window.location.search, "service");
+			    if(serviceUrl != null && serviceUrl != "" && validateUrl(serviceUrl)) {
+				    var serviceUrlElement = document.getElementById("service-url");
+				    serviceUrlElement.textContent = serviceUrl;
+				    
+				    var linkElement = document.getElementById("service-url-link");
+				    linkElement.href = serviceUrl;
+				    
+				    var counter = 5;
+				    var counterElement = document.getElementById("counter");
+				    counterElement.textContent = counter
+				    setInterval(function(){ 
+				    	--counter;
+				    	if(counter >= 0) {
+				    		counterElement.textContent = counter;
+				    	}
+				    	if(counter == 0) {
+				    		window.location.replace(serviceUrl);
+				    	}
+				    }, 1000);
 			    }
-
-			    return params;
+			    else {
+			    	var serviceUrlContainerElement = document.getElementById("service-url-container");
+			    	serviceUrlContainerElement.remove();
+				    var serviceUrlLinkContainerElement = document.getElementById("service-url-link-container");
+				    serviceUrlLinkContainerElement.remove();
+			    }
+			}
+			function getQueryParams(qs, parameterName) {
+				if(qs == null || qs == "" || qs.substring(0) === "?") {
+					return "";
+				}
+				
+				var value = decodeURIComponent((new RegExp('[?|&]' + parameterName + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+				return value;
+			}
+			function validateUrl(value){
+				return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
 			}
 		</script>
 	</body>
