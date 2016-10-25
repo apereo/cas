@@ -28,7 +28,7 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy regex = (RegexMatchingRegisteredServiceProxyPolicy) policy;
             cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX);
-            cBean.setValue(regex.getPattern().toString());
+            cBean.setValue(regex.getPattern());
         }
     }
 
@@ -41,7 +41,7 @@ public class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
             proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX);
-            proxyPolicyBean.setValue(option.getPattern().toString());
+            proxyPolicyBean.setValue(option.getPattern());
         }
     }
 

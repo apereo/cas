@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -34,12 +36,13 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
      * The matching by default is done in a case insensitive manner.
      * @param pgtUrlPattern the pgt url pattern
      */
-    public RegexMatchingRegisteredServiceProxyPolicy(final String pgtUrlPattern) {
+    @JsonCreator
+    public RegexMatchingRegisteredServiceProxyPolicy(@JsonProperty("pattern") final String pgtUrlPattern) {
         this.pattern = Pattern.compile(pgtUrlPattern, Pattern.CASE_INSENSITIVE);
     }
 
-    public Pattern getPattern() {
-        return this.pattern;
+    public String getPattern() {
+        return this.pattern.toString();
     }
 
     @JsonIgnore
