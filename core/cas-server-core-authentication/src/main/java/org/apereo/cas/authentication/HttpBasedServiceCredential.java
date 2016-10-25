@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.RegisteredService;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -47,6 +50,14 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     public HttpBasedServiceCredential(final URL callbackUrl, final RegisteredService service) {
         this.callbackUrl = callbackUrl;
         this.callbackUrlAsString = callbackUrl.toExternalForm();
+        this.service = service;
+    }
+
+    @JsonCreator
+    public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl, @JsonProperty("service") final RegisteredService service) throws MalformedURLException {
+        URL url = new URL(callbackUrl);
+        this.callbackUrl = url;
+        this.callbackUrlAsString = url.toExternalForm();
         this.service = service;
     }
 
@@ -101,14 +112,5 @@ public class HttpBasedServiceCredential extends AbstractCredential {
         }
 
         return this.service.equals(other.getService());
-    }
-
-    @Override
-    public String toString() {
-        return "HttpBasedServiceCredential{" +
-                "callbackUrl='" + callbackUrl + "'" +
-                ", callbackUrlAsString='" + callbackUrlAsString + "'" +
-                ", service=" + service +
-                '}';
     }
 }
