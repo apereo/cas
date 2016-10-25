@@ -143,13 +143,15 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                 LOGGER.warn("Found and added static attributes to the attribute repository");
                 list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
             }
+        } else {
+            LOGGER.debug("No attributes are defined for attribute repositories, or other attribute repository sources are defined");
         }
     }
 
     private void addJdbcAttributeRepository(final List<IPersonAttributeDao> list) {
         final PrincipalAttributesProperties attrs = casProperties.getAuthn().getAttributeRepository();
         final PrincipalAttributesProperties.Jdbc jdbc = attrs.getJdbc();
-        if (StringUtils.isNotBlank(jdbc.getSql())) {
+        if (StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl())) {
             final AbstractJdbcPersonAttributeDao jdbcDao;
 
             if (jdbc.isSingleRow()) {
@@ -185,7 +187,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
         final PrincipalAttributesProperties attrs = casProperties.getAuthn().getAttributeRepository();
         final PrincipalAttributesProperties.Ldap ldap = attrs.getLdap();
         
-        if (!attrs.getAttributes().isEmpty() && StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
+        if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
             final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
             LOGGER.debug("Configured LDAP attribute source for {} and baseDn {}", ldap.getLdapUrl(), ldap.getBaseDn());
@@ -196,7 +198,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             ldapDao.setSearchFilter(ldap.getUserFilter());
 
             final SearchControls constraints = new SearchControls();
-            if (attrs.getAttributes() != null && attrs.getAttributes().isEmpty()) {
+            if (attrs.getAttributes() != null && !attrs.getAttributes().isEmpty()) {
                 LOGGER.debug("Configured result attribute mapping for {} to be {}", ldap.getLdapUrl(), attrs.getAttributes());
                 ldapDao.setResultAttributeMapping(attrs.getAttributes());
                 final String[] attributes = attrs.getAttributes().keySet().toArray(new String[attrs.getAttributes().keySet().size()]);
