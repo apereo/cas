@@ -68,7 +68,14 @@
 		<form:form method="post" id="tempForm" commandName="${commandName}" htmlEscape="true"></form:form>
         <%
 		String serviceUrl = request.getParameter("service");
-        response.addHeader("Cas-Server-Login-Url", request.getRequestURL().toString());
+        StringBuilder casLoginUrl = new StringBuilder()
+        		.append(request.getScheme())
+        		.append("://")
+        		.append(request.getServerName())
+        		.append(":")
+        		.append(request.getServerPort())
+        		.append(request.getRequestURI());
+        response.addHeader("Cas-Server-Login-Url", casLoginUrl.toString());
 
 		String tenantName = "";
 		String appName = "";
