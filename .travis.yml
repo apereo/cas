@@ -51,7 +51,7 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 install:
-- mvn -T 10 install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dcheckstyle.skip=true -Dfindbugs.skip=true
+- mvn -T 10 install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dmaven.compiler.aspectj.skip=true
 after_success:
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
 - ./travis/deploy-to-sonatype.sh
