@@ -19,7 +19,7 @@ To learn more about OpenId Connect, please [review this guide](http://openid.net
 
 The current implementation provides support for:
 
-- Authorization code workflow
+- [Authorization Code workflow](http://openid.net/specs/openid-connect-basic-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
 - Administration and registration of [OIDC relying parties](Service-Management.html).
 - Ability to [resolve and release claims](../integration/Attribute-Release-Policies.html).
