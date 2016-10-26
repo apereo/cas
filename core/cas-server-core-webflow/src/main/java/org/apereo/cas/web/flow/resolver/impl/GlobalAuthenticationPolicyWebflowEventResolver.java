@@ -32,8 +32,8 @@ public class GlobalAuthenticationPolicyWebflowEventResolver extends AbstractCasW
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        if (service == null || authentication == null) {
-            logger.debug("No service or authentication is available to determine event for principal");
+        if (authentication == null) {
+            logger.debug("No authentication is available to determine event for principal");
             return null;
         }
         final String mfaId = casProperties.getAuthn().getMfa().getGlobalProviderId();
@@ -41,7 +41,7 @@ public class GlobalAuthenticationPolicyWebflowEventResolver extends AbstractCasW
             logger.debug("No value could be found for request parameter {}", mfaId);
             return null;
         }
-        logger.debug("Attempt to globally activate {}", mfaId);
+        logger.debug("Attempting to globally activate {}", mfaId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
