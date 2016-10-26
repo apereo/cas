@@ -16,6 +16,7 @@ def isArtifactSigningRequired = {
     return false
 }
 
+apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.gradle.build-scan"
 
@@ -228,8 +229,7 @@ subprojects {
     }
 
     findbugsMain {
-//        enabled = !Boolean.getBoolean("skipFindbugs")
-        enabled = false
+        enabled = !Boolean.getBoolean("skipFindbugs")
         reports {
             xml.enabled = false
             html.enabled = true

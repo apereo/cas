@@ -126,7 +126,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", resolvedAttributes);
-            return shell.evaluate(groovyScript);
+            final Object res = shell.evaluate(groovyScript);
+            return res;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

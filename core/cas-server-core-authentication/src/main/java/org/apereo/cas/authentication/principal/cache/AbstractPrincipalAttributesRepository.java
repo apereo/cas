@@ -73,20 +73,24 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
          * @return the attribute merger
          */
         public IAttributeMerger getAttributeMerger() {
-            switch (this) {
-                case REPLACE:
+            final String name = this.name().toUpperCase();
+
+            switch (name.toUpperCase()) {
+                case "REPLACE":
                     return new ReplacingAttributeAdder();
-                case ADD:
+                case "ADD":
                     return new NoncollidingAttributeAdder();
-                case MULTIVALUED:
+                case "MULTIVALUED":
                     return new MultivaluedAttributeMerger();
                 default:
                     return null;
             }
         }
+
     }
 
     private transient IPersonAttributeDao attributeRepository;
+
 
     /**
      * Instantiates a new principal attributes repository.
@@ -141,7 +145,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         final Map<String, List<Object>> convertedAttributes = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
 
-        principalAttributes.entrySet().forEach(entry -> {
+        principalAttributes.entrySet().stream().forEach(entry -> {
             final Object values = entry.getValue();
             final String key = entry.getKey();
             if (values instanceof List) {

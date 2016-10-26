@@ -56,7 +56,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
-    public MockTicketGrantingTicket(final String principal, final Credential c, final Map<String, Object> attributes) {
+    public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(
@@ -70,7 +70,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, TestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), Collections.emptyMap());
+        this(principal, TestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
     }
 
     @Override

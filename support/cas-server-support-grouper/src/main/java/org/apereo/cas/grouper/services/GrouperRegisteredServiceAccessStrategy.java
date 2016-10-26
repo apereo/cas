@@ -74,7 +74,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             return false;
         }
 
-        final boolean denied = Arrays.stream(results).anyMatch(groupsResult -> {
+        final boolean denied = Arrays.stream(results).filter(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return true;
@@ -86,7 +86,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
                 grouperGroups.add(groupName);
             });
             return false;
-        });
+        }).findFirst().isPresent();
 
         if (denied) {
             return false;
@@ -126,4 +126,5 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
                 return group.getName();
         }
     }
+
 }

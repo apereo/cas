@@ -58,5 +58,6 @@ for auditing functionality, enable the following module in your configuration:
 </dependency>
 ```
 
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

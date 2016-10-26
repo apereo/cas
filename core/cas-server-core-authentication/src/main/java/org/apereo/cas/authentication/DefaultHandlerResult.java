@@ -9,6 +9,8 @@ import org.springframework.util.Assert;
 import java.util.Collections;
 import java.util.List;
 
+import static jdk.nashorn.api.scripting.ScriptUtils.wrap;
+
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
  * Handler results are naturally immutable since they contain sensitive information that should not be modified outside
@@ -19,28 +21,41 @@ import java.util.List;
  */
 public class DefaultHandlerResult implements HandlerResult {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -3113998493287982485L;
 
-    /** The name of the authentication handler that successfully authenticated a credential. */
+    /**
+     * The name of the authentication handler that successfully authenticated a credential.
+     */
     private String handlerName;
 
-    /** Credential meta data. */
+    /**
+     * Credential meta data.
+     */
     private CredentialMetaData credentialMetaData;
 
-    /** Resolved principal for authenticated credential. */
+    /**
+     * Resolved principal for authenticated credential.
+     */
     private Principal principal;
 
-    /** List of warnings issued by the authentication source while authenticating the credential. */
+    /**
+     * List of warnings issued by the authentication source while authenticating the credential.
+     */
     private List<MessageDescriptor> warnings;
 
-    /** No-arg constructor for serialization support. */
-    private DefaultHandlerResult() {}
+    /**
+     * No-arg constructor for serialization support.
+     */
+    private DefaultHandlerResult() {
+    }
 
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
      */
     public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
@@ -50,9 +65,9 @@ public class DefaultHandlerResult implements HandlerResult {
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
-     * @param p the p
+     * @param p        the p
      */
     public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, null);
@@ -61,21 +76,21 @@ public class DefaultHandlerResult implements HandlerResult {
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
      * @param warnings the warnings
      */
-    public DefaultHandlerResult(
-            final AuthenticationHandler source, final CredentialMetaData metaData, final List<MessageDescriptor> warnings) {
+    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, 
+                                final List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
     /**
      * Instantiates a new handler result.
      *
-     * @param source the source
+     * @param source   the source
      * @param metaData the meta data
-     * @param p the p
+     * @param p        the p
      * @param warnings the warnings
      */
     public DefaultHandlerResult(
@@ -151,26 +166,12 @@ public class DefaultHandlerResult implements HandlerResult {
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);
         builder.append(this.principal, other.principal);
-        builder.append(wrap(this.warnings), other.warnings);
+        builder.append(this.warnings, other.warnings);
         return builder.isEquals();
     }
 
     @Override
     public String toString() {
         return this.handlerName + ':' + this.credentialMetaData;
-    }
-
-    /**
-     * Wraps a possibly null list in an immutable wrapper.
-     *
-     * @param source Nullable list to wrap.
-     * @return {@link Collections#unmodifiableList(List)} if given list is not null, otherwise
-     * {@link java.util.Collections#EMPTY_LIST}.
-     */
-    private static <T> List<T> wrap(final List<T> source) {
-        if (source != null) {
-            return Collections.unmodifiableList(source);
-        }
-        return Collections.emptyList();
     }
 }

@@ -20,6 +20,7 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
         return resolvedAttributes;
     }
 
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -43,6 +44,7 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
                 .appendSuper(super.hashCode())
                 .toHashCode();
     }
+
 
     @Override
     public String toString() {

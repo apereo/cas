@@ -45,6 +45,8 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -73,7 +75,8 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
+    
     private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
 
     @Autowired
@@ -153,7 +156,6 @@ public class CasCoreAuthenticationConfiguration {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
-
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;

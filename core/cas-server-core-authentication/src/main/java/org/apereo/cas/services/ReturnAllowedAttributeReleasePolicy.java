@@ -75,6 +75,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return attributesToRelease;
     }
 
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -100,6 +101,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
                 .append(this.allowedAttributes)
                 .toHashCode();
     }
+
 
     @Override
     public String toString() {

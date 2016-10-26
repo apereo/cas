@@ -1,7 +1,12 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link X509Properties}.
@@ -60,16 +65,31 @@ public class X509Properties {
 
     private String serialNumberPrefix = "SERIALNUMBER=";
     private String valueDelimiter = ", ";
-    private int revocationPolicyThreshold = 172800;
+    private int revocationPolicyThreshold = 172_800;
     private boolean checkAll;
-    private int refreshIntervalSeconds = 3600;
+    private int refreshIntervalSeconds = 3_600;
     private String principalDescriptor;
     private boolean throwOnFetchFailure;
     private PrincipalTypes principalType;
-    
+    private String revocationChecker = "NONE";
+    private String crlFetcher = "RESOURCE";
+    private List<String> crlResources = new ArrayList<>();
+    private int cacheMaxElementsInMemory = 1_000;
+    private boolean cacheDiskOverflow;
+    private boolean cacheEternal;
+    private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
+    private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
+
+    private String crlResourceUnavailablePolicy = "DENY";
+    private String crlResourceExpiredPolicy = "DENY";
+
+    private String crlUnavailablePolicy = "DENY";
+    private String crlExpiredPolicy = "DENY";
     
     @NestedConfigurationProperty
     private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    
+    private Ldap ldap = new Ldap();
     
     /**
      * The compiled pattern supplied by the deployer.
@@ -99,21 +119,73 @@ public class X509Properties {
      */
     private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
 
-    /**
-     * The compiled pattern for trusted DN's supplied by the deployer.
-     */
-    private String regExSubjectDnPattern = ".*";
+    private String regExSubjectDnPattern = ".+";
 
-    private String trustedIssuerDnPattern;
+    private String trustedIssuerDnPattern = ".+";
+
+    public int getCacheMaxElementsInMemory() {
+        return cacheMaxElementsInMemory;
+    }
+
+    public void setCacheMaxElementsInMemory(final int cacheMaxElementsInMemory) {
+        this.cacheMaxElementsInMemory = cacheMaxElementsInMemory;
+    }
+
+    public Ldap getLdap() {
+        return ldap;
+    }
+
+    public void setLdap(final Ldap ldap) {
+        this.ldap = ldap;
+    }
+
+    public boolean isCacheDiskOverflow() {
+        return cacheDiskOverflow;
+    }
+
+    public void setCacheDiskOverflow(final boolean cacheDiskOverflow) {
+        this.cacheDiskOverflow = cacheDiskOverflow;
+    }
+
+    public boolean isCacheEternal() {
+        return cacheEternal;
+    }
+
+    public void setCacheEternal(final boolean cacheEternal) {
+        this.cacheEternal = cacheEternal;
+    }
+
+    public long getCacheTimeToLiveSeconds() {
+        return cacheTimeToLiveSeconds;
+    }
+
+    public void setCacheTimeToLiveSeconds(final long cacheTimeToLiveSeconds) {
+        this.cacheTimeToLiveSeconds = cacheTimeToLiveSeconds;
+    }
+
+    public long getCacheTimeToIdleSeconds() {
+        return cacheTimeToIdleSeconds;
+    }
+
+    public void setCacheTimeToIdleSeconds(final long cacheTimeToIdleSeconds) {
+        this.cacheTimeToIdleSeconds = cacheTimeToIdleSeconds;
+    }
+
+    public String getCrlFetcher() {
+        return crlFetcher;
+    }
+
+    public void setCrlFetcher(final String crlFetcher) {
+        this.crlFetcher = crlFetcher;
+    }
 
     public PersonDirPrincipalResolverProperties getPrincipal() {
         return principal;
     }
-
+    
     public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
         this.principal = principal;
     }
-
     
     public String getTrustedIssuerDnPattern() {
         return trustedIssuerDnPattern;
@@ -129,6 +201,14 @@ public class X509Properties {
 
     public void setRegExTrustedIssuerDnPattern(final String regExTrustedIssuerDnPattern) {
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
+    }
+
+    public List<String> getCrlResources() {
+        return crlResources;
+    }
+
+    public void setCrlResources(final List<String> crlResources) {
+        this.crlResources = crlResources;
     }
 
     public int getMaxPathLength() {
@@ -211,8 +291,15 @@ public class X509Properties {
         this.valueDelimiter = valueDelimiter;
     }
 
-    public String getSerialNumberPrefix() {
+    public String getRevocationChecker() {
+        return revocationChecker;
+    }
 
+    public void setRevocationChecker(final String revocationChecker) {
+        this.revocationChecker = revocationChecker;
+    }
+
+    public String getSerialNumberPrefix() {
         return serialNumberPrefix;
     }
 
@@ -234,5 +321,58 @@ public class X509Properties {
 
     public void setRevocationPolicyThreshold(final int revocationPolicyThreshold) {
         this.revocationPolicyThreshold = revocationPolicyThreshold;
+    }
+
+    public String getCrlResourceUnavailablePolicy() {
+        return crlResourceUnavailablePolicy;
+    }
+
+    public void setCrlResourceUnavailablePolicy(final String crlResourceUnavailablePolicy) {
+        this.crlResourceUnavailablePolicy = crlResourceUnavailablePolicy;
+    }
+
+    public String getCrlResourceExpiredPolicy() {
+        return crlResourceExpiredPolicy;
+    }
+
+    public void setCrlResourceExpiredPolicy(final String crlResourceExpiredPolicy) {
+        this.crlResourceExpiredPolicy = crlResourceExpiredPolicy;
+    }
+
+    public String getCrlUnavailablePolicy() {
+        return crlUnavailablePolicy;
+    }
+
+    public void setCrlUnavailablePolicy(final String crlUnavailablePolicy) {
+        this.crlUnavailablePolicy = crlUnavailablePolicy;
+    }
+
+    public String getCrlExpiredPolicy() {
+        return crlExpiredPolicy;
+    }
+
+    public void setCrlExpiredPolicy(final String crlExpiredPolicy) {
+        this.crlExpiredPolicy = crlExpiredPolicy;
+    }
+
+    public class Ldap extends AbstractLdapProperties {
+        private String baseDn;
+        private String searchFilter;
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
     }
 }

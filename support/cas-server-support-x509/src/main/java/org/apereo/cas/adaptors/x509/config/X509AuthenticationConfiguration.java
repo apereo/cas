@@ -1,48 +1,47 @@
 package org.apereo.cas.adaptors.x509.config;
 
+import com.google.common.collect.Sets;
 import net.sf.ehcache.Cache;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.NoOpRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.RevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.RevocationPolicy;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.LdaptiveResourceCRLFetcher;
-import org.apereo.cas.adaptors.x509.authentication.handler.support.ldap.PoolingLdaptiveResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.ldap.LdaptiveResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberAndIssuerDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolver;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver;
-import org.apereo.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.x509.X509Properties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.ldaptive.ConnectionConfig;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * This is {@link X509AuthenticationConfiguration}.
@@ -53,6 +52,9 @@ import java.util.Set;
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class X509AuthenticationConfiguration {
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -69,70 +71,6 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-
-    @Autowired(required = false)
-    @Qualifier("poolingLdaptiveResourceCRLConnectionConfig")
-    private ConnectionConfig poolingLdaptiveResourceCRLConnectionConfig;
-
-    @Autowired(required = false)
-    @Qualifier("poolingLdaptiveConnectionPool")
-    private BlockingConnectionPool poolingLdaptiveConnectionPool;
-
-    @Autowired(required = false)
-    @Qualifier("poolingLdaptiveResourceCRLSearchExecutor")
-    private SearchExecutor poolingLdaptiveResourceCRLSearchExecutor;
-
-    @Autowired(required = false)
-    @Qualifier("x509ResourceUnavailableRevocationPolicy")
-    private RevocationPolicy x509ResourceUnavailableRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509ResourceExpiredRevocationPolicy")
-    private RevocationPolicy x509ResourceExpiredRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlUnavailableRevocationPolicy")
-    private RevocationPolicy x509CrlUnavailableRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlExpiredRevocationPolicy")
-    private RevocationPolicy x509CrlExpiredRevocationPolicy = new DenyRevocationPolicy();
-
-    @Autowired(required = false)
-    @Qualifier("x509RevocationChecker")
-    private RevocationChecker revocationChecker = new NoOpRevocationChecker();
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlResources")
-    private Set x509CrlResources;
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlFetcher")
-    private CRLFetcher x509CrlFetcher;
-
-    @Autowired(required = false)
-    @Qualifier("x509CrlCache")
-    private Cache x509CrlCache;
-
-    @Autowired(required = false)
-    @Qualifier("ldaptiveResourceCRLSearchExecutor")
-    private SearchExecutor ldaptiveResourceCRLSearchExecutor;
-
-    @Autowired(required = false)
-    @Qualifier("ldaptiveResourceCRLConnectionConfig")
-    private ConnectionConfig ldaptiveResourceCRLConnectionConfig;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -157,12 +95,16 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
-        final CRLDistributionPointRevocationChecker c =
-                new CRLDistributionPointRevocationChecker(this.x509CrlCache, this.x509CrlFetcher);
+        final X509Properties x509 = casProperties.getAuthn().getX509();
+        final Cache cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
+                x509.getCacheMaxElementsInMemory(), x509.isCacheDiskOverflow(),
+                x509.isCacheEternal(), x509.getCacheTimeToLiveSeconds(), x509.getCacheTimeToIdleSeconds());
+
+        final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker(cache, getCrlFetcher());
         c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
         c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
-        c.setUnavailableCRLPolicy(x509CrlUnavailableRevocationPolicy);
-        c.setExpiredCRLPolicy(x509CrlExpiredRevocationPolicy);
+        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlExpiredPolicy()));
+        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlUnavailablePolicy()));
         return c;
     }
 
@@ -178,30 +120,80 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final ResourceCRLRevocationChecker c = new ResourceCRLRevocationChecker();
 
-        c.setRefreshInterval(casProperties.getAuthn().getX509().getRefreshIntervalSeconds());
-        c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
-        c.setExpiredCRLPolicy(this.x509ResourceExpiredRevocationPolicy);
-        c.setUnavailableCRLPolicy(this.x509ResourceUnavailableRevocationPolicy);
+        c.setRefreshInterval(x509.getRefreshIntervalSeconds());
+        c.setCheckAll(x509.isCheckAll());
+        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlResourceExpiredPolicy()));
+        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()));
+
+        final Set<Resource> x509CrlResources = Sets.newLinkedHashSet();
+        x509.getCrlResources()
+                .stream()
+                .map(s -> this.resourceLoader.getResource(s))
+                .forEach(r -> x509CrlResources.add(r));
         c.setResources(x509CrlResources);
-        c.setFetcher(this.x509CrlFetcher);
+
+        c.setFetcher(getCrlFetcher());
 
         return c;
+    }
+
+    private RevocationPolicy getRevocationPolicy(final String policy) {
+        switch (policy.toLowerCase()) {
+            case "allow":
+                return new AllowRevocationPolicy();
+            case "threshold":
+                return new ThresholdExpiredCRLRevocationPolicy();
+            case "deny":
+            default:
+                return new DenyRevocationPolicy();
+        }
+    }
+
+    
+    private CRLFetcher getCrlFetcher() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
+        switch (x509.getCrlFetcher().toLowerCase()) {
+            case "ldap":
+                return ldaptiveResourceCRLFetcher();
+            case "resource":
+            default:
+                return resourceCrlFetcher();
+        }
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
 
-        h.setCheckKeyUsage(casProperties.getAuthn().getX509().isCheckKeyUsage());
-        h.setMaxPathLength(casProperties.getAuthn().getX509().getMaxPathLength());
-        h.setMaxPathLengthAllowUnspecified(casProperties.getAuthn().getX509().isMaxPathLengthAllowUnspecified());
-        h.setRequireKeyUsage(casProperties.getAuthn().getX509().isRequireKeyUsage());
-        h.setRevocationChecker(this.revocationChecker);
-        h.setSubjectDnPattern(casProperties.getAuthn().getX509().getRegExSubjectDnPattern());
-        h.setTrustedIssuerDnPattern(casProperties.getAuthn().getX509().getRegExTrustedIssuerDnPattern());
+        h.setCheckKeyUsage(x509.isCheckKeyUsage());
+        h.setMaxPathLength(x509.getMaxPathLength());
+        h.setMaxPathLengthAllowUnspecified(x509.isMaxPathLengthAllowUnspecified());
+        h.setRequireKeyUsage(x509.isRequireKeyUsage());
+
+        switch (x509.getRevocationChecker().toLowerCase()) {
+            case "resource":
+                h.setRevocationChecker(resourceCrlRevocationChecker());
+                break;
+            case "crl":
+                h.setRevocationChecker(crlDistributionPointRevocationChecker());
+                break;
+            case "none":
+            default:
+                h.setRevocationChecker(noOpRevocationChecker());
+                break;
+        }
+
+        if (StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())) {
+            h.setTrustedIssuerDnPattern(x509.getRegExTrustedIssuerDnPattern());
+        }
+        if (StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())) {
+            h.setTrustedIssuerDnPattern(x509.getRegExSubjectDnPattern());
+        }
         h.setPrincipalFactory(x509PrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
@@ -209,31 +201,13 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
+        final X509Properties x509 = casProperties.getAuthn().getX509();
         final LdaptiveResourceCRLFetcher r = new LdaptiveResourceCRLFetcher();
-        r.setConnectionConfig(this.ldaptiveResourceCRLConnectionConfig);
-        r.setSearchExecutor(this.ldaptiveResourceCRLSearchExecutor);
+        r.setConnectionConfig(Beans.newConnectionConfig(x509.getLdap()));
+        r.setSearchExecutor(Beans.newSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()));
         return r;
     }
-
-    @Bean
-    public CRLFetcher poolingLdaptiveResourceCRLFetcher() {
-        final PoolingLdaptiveResourceCRLFetcher f = new PoolingLdaptiveResourceCRLFetcher();
-
-        f.setSearchExecutor(this.poolingLdaptiveResourceCRLSearchExecutor);
-        f.setConnectionPool(this.poolingLdaptiveConnectionPool);
-        f.setConnectionConfig(this.poolingLdaptiveResourceCRLConnectionConfig);
-        return f;
-    }
-
-    @Bean
-    public Action x509Check() {
-        final X509CertificateCredentialsNonInteractiveAction a = new X509CertificateCredentialsNonInteractiveAction();
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
-    }
-
+    
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
