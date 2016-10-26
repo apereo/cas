@@ -8,19 +8,24 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Scott Battaglia
+ * @since 3.0
+ */
 public class BasicCredentialMetaDataTest {
 
     private static final File JSON_FILE = new File("basicCredentialMetaData.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeABasicCredentialMetaDataToJson() throws IOException {
-        BasicCredentialMetaData credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        final BasicCredentialMetaData credentialMetaDataWritten = new BasicCredentialMetaData(new UsernamePasswordCredential());
 
-        mapper.writeValue(JSON_FILE, credentialMetaDataWritten);
+        MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);
 
-        final CredentialMetaData credentialMetaDataRead = mapper.readValue(JSON_FILE, BasicCredentialMetaData.class);
+        final CredentialMetaData credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetaData.class);
 
         assertEquals(credentialMetaDataWritten, credentialMetaDataRead);
     }
 }
+

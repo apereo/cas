@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File("x509CertificateCredential.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
      public void checkDefaultAuthzStrategyConfig() {
@@ -247,9 +247,9 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         strategyWritten.setRequiredAttributes(reqs);
         strategyWritten.setRejectedAttributes(getRejectedAttributes());
 
-        mapper.writeValue(JSON_FILE, strategyWritten);
+        MAPPER.writeValue(JSON_FILE, strategyWritten);
 
-        final RegisteredServiceAccessStrategy strategyRead = mapper.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
+        final RegisteredServiceAccessStrategy strategyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceAccessStrategy.class);
 
         assertEquals(strategyWritten, strategyRead);
     }

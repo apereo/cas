@@ -7,20 +7,24 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class OAuthAccessTokenExpirationPolicyTest {
 
     private static final File JSON_FILE = new File("oAuthAccessTokenExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws IOException {
-        OAuthAccessTokenExpirationPolicy policyWritten = new OAuthAccessTokenExpirationPolicy(1234L, 5678L);
+        final OAuthAccessTokenExpirationPolicy policyWritten = new OAuthAccessTokenExpirationPolicy(1234L, 5678L);
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, OAuthAccessTokenExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthAccessTokenExpirationPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

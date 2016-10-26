@@ -29,7 +29,7 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
 
     @Test
     public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws IOException {
-        AbstractPrincipalAttributesRepository repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
+        final AbstractPrincipalAttributesRepository repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
 
         mapper.writeValue(JSON_FILE, repositoryWritten);
 

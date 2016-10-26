@@ -10,19 +10,23 @@ import java.security.cert.X509Certificate;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Scott Battaglia
+ * @since 3.0.
+ */
 public class X509CertificateCredentialTest {
 
     private static final File JSON_FILE = new File("x509CertificateCredential.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         final X509Certificate certificate = new AbstractX509CertificateTests.CasX509Certificate(true);
         final X509CertificateCredential credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});
 
-        mapper.writeValue(JSON_FILE, credentialWritten);
+        MAPPER.writeValue(JSON_FILE, credentialWritten);
 
-        final CredentialMetaData credentialRead = mapper.readValue(JSON_FILE, X509CertificateCredential.class);
+        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, X509CertificateCredential.class);
 
         assertEquals(credentialWritten, credentialRead);
     }

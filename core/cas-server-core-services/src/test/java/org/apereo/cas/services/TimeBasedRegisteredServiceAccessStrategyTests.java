@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File("timeBasedRegisteredServiceAccessStrategy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void checkAuthorizationByRangePass() {
@@ -56,9 +56,9 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
         final TimeBasedRegisteredServiceAccessStrategy authWritten =
                 new TimeBasedRegisteredServiceAccessStrategy(true, true);
 
-        mapper.writeValue(JSON_FILE, authWritten);
+        MAPPER.writeValue(JSON_FILE, authWritten);
 
-        final RegisteredServiceAccessStrategy credentialRead = mapper.readValue(JSON_FILE, TimeBasedRegisteredServiceAccessStrategy.class);
+        final RegisteredServiceAccessStrategy credentialRead = MAPPER.readValue(JSON_FILE, TimeBasedRegisteredServiceAccessStrategy.class);
 
         assertEquals(authWritten, credentialRead);
     }

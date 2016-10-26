@@ -17,7 +17,7 @@ public class OAuthRefreshTokenExpirationPolicyTest {
 
     @Test
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws IOException {
-        OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
+        final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
 
         mapper.writeValue(JSON_FILE, policyWritten);
 

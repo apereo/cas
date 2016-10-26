@@ -7,22 +7,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class ReturnMappedAttributeReleasePolicyTest {
 
     private static final File JSON_FILE = new File("returnMappedAttributeReleasePolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAReturnMappedAttributeReleasePolicyToJson() throws IOException {
-        HashMap<String, String> allowedAttributes = new HashMap<>();
+        final HashMap<String, String> allowedAttributes = new HashMap<>();
         allowedAttributes.put("keyOne", "valueOne");
         final ReturnMappedAttributeReleasePolicy policyWritten = new ReturnMappedAttributeReleasePolicy(allowedAttributes);
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceAttributeReleasePolicy policyRead = mapper.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
+        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

@@ -132,10 +132,10 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void serializeGoogleAccountService() throws Exception {
-        GoogleAccountsService service = getGoogleAccountsService();
+        final GoogleAccountsService service = getGoogleAccountsService();
         mapper.writeValue(FILE, service);
 
-        GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
+        final GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
 
         Assert.equals(service, service2);
     }

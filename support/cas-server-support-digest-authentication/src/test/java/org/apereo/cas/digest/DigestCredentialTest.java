@@ -16,7 +16,7 @@ public class DigestCredentialTest {
 
     @Test
     public void verifySerializeADigestCredentialToJson() throws IOException {
-        DigestCredential credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
+        final DigestCredential credentialMetaDataWritten = new DigestCredential("uid", "realm", "hash");
 
         mapper.writeValue(JSON_FILE, credentialMetaDataWritten);
 

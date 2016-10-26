@@ -17,7 +17,7 @@ public class OAuthCallbackAuthorizeServiceTest {
 
     @Test
     public void verifySerializeAnOAuthCallbackAuthorizeServiceToJson() throws IOException {
-        OAuthCallbackAuthorizeService serviceWritten = new OAuthCallbackAuthorizeService();
+        final OAuthCallbackAuthorizeService serviceWritten = new OAuthCallbackAuthorizeService();
         serviceWritten.setServiceId("id" + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
 
         mapper.writeValue(JSON_FILE, serviceWritten);

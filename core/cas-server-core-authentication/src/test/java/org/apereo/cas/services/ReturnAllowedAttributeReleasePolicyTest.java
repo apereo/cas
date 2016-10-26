@@ -10,20 +10,24 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class ReturnAllowedAttributeReleasePolicyTest {
 
     private static final File JSON_FILE = new File("returnAllowedAttributeReleasePolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAReturnAllowedAttributeReleasePolicyToJson() throws IOException {
-        List<String> allowedAttributes = new ArrayList<>();
+        final List<String> allowedAttributes = new ArrayList<>();
         allowedAttributes.add("attributeOne");
         final ReturnAllowedAttributeReleasePolicy policyWritten = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceAttributeReleasePolicy policyRead = mapper.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
+        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnAllowedAttributeReleasePolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

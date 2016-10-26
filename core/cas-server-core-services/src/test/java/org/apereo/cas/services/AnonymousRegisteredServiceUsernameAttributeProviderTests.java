@@ -9,10 +9,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -21,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
     private static final File JSON_FILE = new File("anonymousRegisteredServiceUsernameAttributeProvider.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyPrincipalResolution() {
@@ -56,9 +54,9 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
                 new AnonymousRegisteredServiceUsernameAttributeProvider(
                         new ShibbolethCompatiblePersistentIdGenerator("casrox"));
 
-        mapper.writeValue(JSON_FILE, providerWritten);
+        MAPPER.writeValue(JSON_FILE, providerWritten);
 
-        final RegisteredServiceUsernameAttributeProvider providerRead = mapper.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
+        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
         assertEquals(providerWritten, providerRead);
     }

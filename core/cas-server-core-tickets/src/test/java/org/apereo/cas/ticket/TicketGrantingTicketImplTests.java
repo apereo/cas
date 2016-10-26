@@ -48,16 +48,17 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifySerializeToJson() throws IOException {
-        Authentication authenticationWitten = TestUtils.getAuthentication();
-        NeverExpiresExpirationPolicy expirationPolicyWritten = new NeverExpiresExpirationPolicy();
-        final TicketGrantingTicket tgtWritten = new TicketGrantingTicketImpl(TGT_ID, null, null, authenticationWitten, expirationPolicyWritten);
+        final Authentication authenticationWritten = TestUtils.getAuthentication();
+        final NeverExpiresExpirationPolicy expirationPolicyWritten = new NeverExpiresExpirationPolicy();
+        final TicketGrantingTicket tgtWritten = new TicketGrantingTicketImpl(TGT_ID, null, null, 
+                authenticationWritten, expirationPolicyWritten);
 
         mapper.writeValue(TGT_JSON_FILE, tgtWritten);
 
         final TicketGrantingTicketImpl tgtRead = mapper.readValue(TGT_JSON_FILE, TicketGrantingTicketImpl.class);
 
         assertEquals(tgtWritten, tgtRead);
-        assertEquals(authenticationWitten, tgtRead.getAuthentication());
+        assertEquals(authenticationWritten, tgtRead.getAuthentication());
     }
 
     @Test

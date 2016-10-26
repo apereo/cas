@@ -16,10 +16,10 @@ public class DefaultRegisteredServiceMultifactorPolicyTest {
 
     @Test
     public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
-        DefaultRegisteredServiceMultifactorPolicy policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
+        final DefaultRegisteredServiceMultifactorPolicy policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
-        HashSet<String> providers = new HashSet<>();
+        final HashSet<String> providers = new HashSet<>();
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 

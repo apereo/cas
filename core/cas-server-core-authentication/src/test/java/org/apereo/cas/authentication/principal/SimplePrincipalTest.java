@@ -18,9 +18,9 @@ public class SimplePrincipalTest {
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
-        HashMap<String, Object> attributes = new HashMap<>();
+        final HashMap<String, Object> attributes = new HashMap<>();
         attributes.put("attribute", "value");
-        SimplePrincipal principalWritten = new SimplePrincipal("id", attributes);
+        final SimplePrincipal principalWritten = new SimplePrincipal("id", attributes);
 
         mapper.writeValue(JSON_FILE, principalWritten);
 
@@ -31,7 +31,7 @@ public class SimplePrincipalTest {
 
     @Test
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
-        SimplePrincipal principalWritten = new SimplePrincipal("id", Collections.emptyMap());
+        final SimplePrincipal principalWritten = new SimplePrincipal("id", Collections.emptyMap());
 
         mapper.writeValue(JSON_FILE, principalWritten);
 

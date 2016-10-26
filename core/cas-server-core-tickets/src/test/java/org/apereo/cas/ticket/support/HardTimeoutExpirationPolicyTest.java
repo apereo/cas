@@ -16,7 +16,7 @@ public class HardTimeoutExpirationPolicyTest {
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
-        HardTimeoutExpirationPolicy policyWritten = new HardTimeoutExpirationPolicy();
+        final HardTimeoutExpirationPolicy policyWritten = new HardTimeoutExpirationPolicy();
 
         mapper.writeValue(JSON_FILE, policyWritten);
 

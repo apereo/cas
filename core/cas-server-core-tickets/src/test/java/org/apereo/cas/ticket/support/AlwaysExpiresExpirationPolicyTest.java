@@ -7,20 +7,24 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.0
+ */
 public class AlwaysExpiresExpirationPolicyTest {
 
     private static final File JSON_FILE = new File("alwaysExpiresExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        AlwaysExpiresExpirationPolicy policyWritten = new AlwaysExpiresExpirationPolicy();
+        final AlwaysExpiresExpirationPolicy policyWritten = new AlwaysExpiresExpirationPolicy();
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

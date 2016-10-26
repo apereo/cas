@@ -7,8 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link DefaultPrincipalAttributesRepository}.
@@ -18,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class DefaultPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File("defaultPrincipalAttributesRepository.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private PrincipalFactory factory = new DefaultPrincipalFactory();
 
@@ -41,9 +40,9 @@ public class DefaultPrincipalAttributesRepositoryTests {
     public void verifySerializeADefaultPrincipalAttributesRepositoryToJson() throws IOException {
         final PrincipalAttributesRepository repositoryWritten = new DefaultPrincipalAttributesRepository();
 
-        mapper.writeValue(JSON_FILE, repositoryWritten);
+        MAPPER.writeValue(JSON_FILE, repositoryWritten);
 
-        final PrincipalAttributesRepository repositoryRead = mapper.readValue(JSON_FILE, DefaultPrincipalAttributesRepository.class);
+        final PrincipalAttributesRepository repositoryRead = MAPPER.readValue(JSON_FILE, DefaultPrincipalAttributesRepository.class);
 
         assertEquals(repositoryWritten, repositoryRead);
     }

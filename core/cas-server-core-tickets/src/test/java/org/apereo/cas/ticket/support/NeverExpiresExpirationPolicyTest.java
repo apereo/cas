@@ -16,7 +16,7 @@ public class NeverExpiresExpirationPolicyTest {
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
-        NeverExpiresExpirationPolicy policyWritten = new NeverExpiresExpirationPolicy();
+        final NeverExpiresExpirationPolicy policyWritten = new NeverExpiresExpirationPolicy();
 
         mapper.writeValue(JSON_FILE, policyWritten);
 

@@ -15,7 +15,7 @@ public class RegisteredServicePublicKeyImplTest {
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        RegisteredServicePublicKeyImpl publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
+        final RegisteredServicePublicKeyImpl publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
 
         mapper.writeValue(JSON_FILE, publicKeyWritten);
 
