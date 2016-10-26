@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.accesstoken;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
@@ -82,21 +84,32 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         return this.timeToKillInMilliSeconds;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OAuthAccessTokenExpirationPolicy that = (OAuthAccessTokenExpirationPolicy) o;
-
-        if (maxTimeToLiveInMilliSeconds != that.maxTimeToLiveInMilliSeconds) return false;
-        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.maxTimeToLiveInMilliSeconds, rhs.maxTimeToLiveInMilliSeconds)
+                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (maxTimeToLiveInMilliSeconds ^ (maxTimeToLiveInMilliSeconds >>> 32));
-        result = 31 * result + (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(maxTimeToLiveInMilliSeconds)
+                .append(timeToKillInMilliSeconds)
+                .toHashCode();
     }
 }

@@ -3,6 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +95,34 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         return 0L;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final MultiTimeUseOrTimeoutExpirationPolicy rhs = (MultiTimeUseOrTimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .append(this.numberOfUses, rhs.numberOfUses)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(timeToKillInSeconds)
+                .append(numberOfUses)
+                .toHashCode();
+    }
+
     /**
      * The Proxy ticket expiration policy.
      */
@@ -129,23 +159,5 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
                                              final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        MultiTimeUseOrTimeoutExpirationPolicy that = (MultiTimeUseOrTimeoutExpirationPolicy) o;
-
-        if (timeToKillInSeconds != that.timeToKillInSeconds) return false;
-        return numberOfUses == that.numberOfUses;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (timeToKillInSeconds ^ (timeToKillInSeconds >>> 32));
-        result = 31 * result + numberOfUses;
-        return result;
     }
 }

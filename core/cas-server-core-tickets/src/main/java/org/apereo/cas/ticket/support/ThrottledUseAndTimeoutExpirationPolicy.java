@@ -42,7 +42,8 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     public ThrottledUseAndTimeoutExpirationPolicy(){}
 
     @JsonCreator
-    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInMilliSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInMilliSeconds) {
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInMilliSeconds, 
+                                                  @JsonProperty("timeToIdle") final long timeInBetweenUsesInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
         this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
     }

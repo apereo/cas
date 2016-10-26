@@ -3,6 +3,8 @@ package org.apereo.cas.ticket.refreshtoken;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 
@@ -54,18 +56,30 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         return 0L;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OAuthRefreshTokenExpirationPolicy that = (OAuthRefreshTokenExpirationPolicy) o;
-
-        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthRefreshTokenExpirationPolicy rhs = (OAuthRefreshTokenExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(timeToKillInMilliSeconds)
+                .toHashCode();
     }
 }

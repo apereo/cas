@@ -18,11 +18,12 @@ import javax.annotation.PostConstruct;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -2735975347698196127L;
 
     /**
@@ -40,9 +41,17 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
     /**
      * Instantiates a new Remember me delegating expiration policy.
      */
-    public RememberMeDelegatingExpirationPolicy() {}
+    public RememberMeDelegatingExpirationPolicy() {
+    }
 
-    public RememberMeDelegatingExpirationPolicy(ExpirationPolicy rememberMeExpirationPolicy, ExpirationPolicy sessionExpirationPolicy) {
+    /**
+     * Instantiates a new Remember me delegating expiration policy.
+     *
+     * @param rememberMeExpirationPolicy the remember me expiration policy
+     * @param sessionExpirationPolicy    the session expiration policy
+     */
+    public RememberMeDelegatingExpirationPolicy(final ExpirationPolicy rememberMeExpirationPolicy,
+                                                final ExpirationPolicy sessionExpirationPolicy) {
         this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
         this.sessionExpirationPolicy = sessionExpirationPolicy;
     }

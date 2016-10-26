@@ -40,12 +40,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     @JsonCreator
-    public GoogleAccountsService(@JsonProperty("id") String id,
-                                 @JsonProperty("originalUrl") String originalUrl, 
-                                 @JsonProperty("artifactId") String artifactId,
-                                 @JsonProperty("responseBuilder") ResponseBuilder<WebApplicationService> responseBuilder,
-                                 @JsonProperty("relayState") String relayState, 
-                                 @JsonProperty("requestId") String requestId) {
+    public GoogleAccountsService(@JsonProperty("id") final String id,
+                                 @JsonProperty("originalUrl") final String originalUrl, 
+                                 @JsonProperty("artifactId") final String artifactId,
+                                 @JsonProperty("responseBuilder") final ResponseBuilder<WebApplicationService> responseBuilder,
+                                 @JsonProperty("relayState") final String relayState, 
+                                 @JsonProperty("requestId") final String requestId) {
         super(id, originalUrl, artifactId, responseBuilder);
         this.relayState = relayState;
         this.requestId = requestId;

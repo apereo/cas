@@ -52,12 +52,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -4584732364007702423L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
-
-    /**
-     * Logger instance.
-     */
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     @JsonIgnore
     private PrivateKey privateKey;
     
@@ -213,7 +208,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     protected void createGoogleAppsPrivateKey() throws Exception {
         if (!isValidConfiguration()) {
-            logger.debug("Google Apps private key bean will not be created, because it's not configured");
+            LOGGER.debug("Google Apps private key bean will not be created, because it's not configured");
             return;
         }
 
@@ -230,13 +225,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         bean.setAlgorithm(this.keyAlgorithm);
-        logger.debug("Loading Google Apps private key from {} with key algorithm {}",
+        LOGGER.debug("Loading Google Apps private key from {} with key algorithm {}",
                 bean.getLocation(), bean.getAlgorithm());
-
         bean.afterPropertiesSet();
-
-
-        logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
+        LOGGER.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
         this.privateKey = bean.getObject();
     }
 
@@ -247,7 +239,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     protected void createGoogleAppsPublicKey() throws Exception {
         if (!isValidConfiguration()) {
-            logger.debug("Google Apps public key bean will not be created, because it's not configured");
+            LOGGER.debug("Google Apps public key bean will not be created, because it's not configured");
             return;
         }
 
@@ -263,13 +255,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         }
 
         bean.setAlgorithm(this.keyAlgorithm);
-
-        logger.debug("Loading Google Apps public key from {} with key algorithm {}",
+        LOGGER.debug("Loading Google Apps public key from {} with key algorithm {}",
                 bean.getResource(), bean.getAlgorithm());
-
         bean.afterPropertiesSet();
-
-        logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
+        LOGGER.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
         this.publicKey = bean.getObject();
     }
 
