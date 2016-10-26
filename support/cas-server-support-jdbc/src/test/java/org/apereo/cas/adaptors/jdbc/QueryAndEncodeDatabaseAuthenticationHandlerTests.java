@@ -6,7 +6,7 @@ import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
@@ -93,7 +93,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -103,7 +103,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql("makesNoSenseInSql"));
-        q.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -114,7 +114,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
         q.authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
     }
 
@@ -128,7 +128,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setStaticSalt(STATIC_SALT);
         q.setSaltFieldName("salt");
 
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
+        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final HandlerResult r = q.authenticate(c);
 
         assertNotNull(r);
@@ -159,7 +159,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
         final HandlerResult r = q.authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");

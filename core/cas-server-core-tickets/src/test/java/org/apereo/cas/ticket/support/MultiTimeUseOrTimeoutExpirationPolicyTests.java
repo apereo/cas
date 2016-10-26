@@ -2,7 +2,8 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -38,7 +39,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), this.expirationPolicy);
+        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), this.expirationPolicy);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     @Test
     public void verifyTicketIsExpiredByCount() {
         IntStream.range(0, NUMBER_OF_USES)
-                .forEach(i -> this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(),
+                .forEach(i -> this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(),
                         new NeverExpiresExpirationPolicy(), false, true));
         assertTrue(this.ticket.isExpired());
     }
@@ -68,9 +69,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
-
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, MultiTimeUseOrTimeoutExpirationPolicy.class);
-
         assertEquals(expirationPolicy, policyRead);
     }
 }

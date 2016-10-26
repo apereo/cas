@@ -27,7 +27,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
 
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final String id = provider.resolveUsername(principal, TestUtils.getService());
+        final String id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService());
         assertEquals(id, principal.getId());
     }
 

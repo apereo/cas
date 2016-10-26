@@ -2,8 +2,9 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import com.google.common.collect.Lists;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -103,12 +104,12 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.registry.addTicket(new TicketGrantingTicketImpl(
                 "TGT",
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
         final Service service =
-                org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+                RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
@@ -137,13 +138,13 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.registry.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, true);

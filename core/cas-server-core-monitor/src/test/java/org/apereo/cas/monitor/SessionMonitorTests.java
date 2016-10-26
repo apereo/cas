@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -69,7 +69,7 @@ public class SessionMonitorTests {
         IntStream.range(0, tgtCount).forEach(i -> {
             ticket[0] = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.getAuthentication(),
+                    CoreAuthenticationTestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket[0]);
         });

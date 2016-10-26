@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultHandlerResult;
@@ -49,7 +49,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyWithoutRememberMeCredentials() {
-        final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationBuilder builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
@@ -58,7 +58,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(TestUtils.getPrincipal())
+        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new DefaultHandlerResult(handler, meta));
 

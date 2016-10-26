@@ -2,7 +2,8 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -43,7 +44,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
         this.expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT,
             TimeUnit.MILLISECONDS);
         this.ticketGrantingTicket = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
+                CoreAuthenticationTestUtils.getAuthentication(),
                 this.expirationPolicy);
     }
 
@@ -53,7 +54,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
         final ZonedDateTime creationTime = ticketGrantingTicket.getCreationTime();
          while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
              ticketGrantingTicket.grantServiceTicket("test",
-                     org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
+                     RegisteredServiceTestUtils.getService(), expirationPolicy, false,
                      true);
              Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
              assertFalse(this.ticketGrantingTicket.isExpired());
@@ -61,7 +62,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
          // final sliding window extension past the HARD_TIMEOUT
          ticketGrantingTicket.grantServiceTicket("test",
-                 org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
+                 RegisteredServiceTestUtils.getService(), expirationPolicy, false,
                  true);
          Thread.sleep(SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER);
          assertTrue(ticketGrantingTicket.isExpired());
@@ -71,19 +72,19 @@ public class TicketGrantingTicketExpirationPolicyTests {
     @Test
     public void verifyTgtIsExpiredBySlidingWindow() throws InterruptedException {
         ticketGrantingTicket.grantServiceTicket("test",
-                org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
+                RegisteredServiceTestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket("test",
-                org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
+                RegisteredServiceTestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket("test",
-                org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
+                RegisteredServiceTestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT + TIMEOUT_BUFFER);
         assertTrue(ticketGrantingTicket.isExpired());

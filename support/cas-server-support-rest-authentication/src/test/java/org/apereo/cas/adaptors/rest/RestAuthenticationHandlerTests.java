@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.rest;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -61,7 +61,7 @@ public class RestAuthenticationHandlerTests {
         server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess("{ \"id\" : \"casuser\", \"attributes\" : {} }", MediaType.APPLICATION_JSON));
         final HandlerResult res =
-                authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+                authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals(res.getPrincipal().getId(), "casuser");
     }
 
@@ -70,7 +70,7 @@ public class RestAuthenticationHandlerTests {
         final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
         server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.FORBIDDEN));
-        authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected= FailedLoginException.class)
@@ -78,7 +78,7 @@ public class RestAuthenticationHandlerTests {
         final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
         server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
-        authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected= AccountNotFoundException.class)
@@ -86,7 +86,7 @@ public class RestAuthenticationHandlerTests {
         final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
         server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
-        authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 }
 

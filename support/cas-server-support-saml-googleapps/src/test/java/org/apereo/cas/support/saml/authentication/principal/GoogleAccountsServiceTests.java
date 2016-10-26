@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.util.Assert;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
@@ -108,7 +108,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
-        this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
+        this.googleAccountsService.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
     }
 
     @Test

@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,7 +27,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
         final Principal p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
-        final String value = generator.generate(p, TestUtils.getService());
+        final String value = generator.generate(p, RegisteredServiceTestUtils.getService());
 
         assertNotNull(value);
     }

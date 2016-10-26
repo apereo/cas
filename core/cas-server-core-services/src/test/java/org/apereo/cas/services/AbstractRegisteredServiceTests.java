@@ -162,14 +162,14 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
-        final RegisteredService svc2 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         assertEquals(svc1, svc2);
     }
 
     @Test
     public void verifyServiceCopy() throws Exception {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
     }

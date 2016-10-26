@@ -2,7 +2,8 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -35,7 +36,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
         this.expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(TIMEOUT / 5);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
             .getAuthentication(), this.expirationPolicy);
 
     }
@@ -53,7 +54,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketUsedButWithTimeout() throws InterruptedException {
-        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInMilliSeconds(-10);
@@ -62,7 +63,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     @Test
     public void verifyNotWaitingEnoughTime() {
-        this.ticket.grantServiceTicket("test", org.apereo.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         assertTrue(this.ticket.isExpired());

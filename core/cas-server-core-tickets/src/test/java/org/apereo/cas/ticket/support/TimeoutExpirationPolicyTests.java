@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -32,7 +32,7 @@ public class TimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
             .getAuthentication(), this.expirationPolicy);
     }
 
@@ -48,7 +48,7 @@ public class TimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpired() throws InterruptedException {
-        ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }
 

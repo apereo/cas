@@ -98,7 +98,6 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         }
         final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.maxTimeToLiveInMilliSeconds, rhs.maxTimeToLiveInMilliSeconds)
                 .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
                 .isEquals();
@@ -107,7 +106,6 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(maxTimeToLiveInMilliSeconds)
                 .append(timeToKillInMilliSeconds)
                 .toHashCode();

@@ -54,14 +54,12 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
             return false;
         }
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .toHashCode();
     }
 }

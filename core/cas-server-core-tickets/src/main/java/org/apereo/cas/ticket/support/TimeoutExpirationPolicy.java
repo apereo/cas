@@ -90,7 +90,6 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         }
         final TimeoutExpirationPolicy rhs = (TimeoutExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
                 .isEquals();
     }
@@ -98,7 +97,6 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(timeToKillInMilliSeconds)
                 .toHashCode();
     }

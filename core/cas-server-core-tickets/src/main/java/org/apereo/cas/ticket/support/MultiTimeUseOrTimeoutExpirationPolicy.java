@@ -108,7 +108,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         }
         final MultiTimeUseOrTimeoutExpirationPolicy rhs = (MultiTimeUseOrTimeoutExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
                 .append(this.numberOfUses, rhs.numberOfUses)
                 .isEquals();
@@ -117,7 +116,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(timeToKillInSeconds)
                 .append(numberOfUses)
                 .toHashCode();

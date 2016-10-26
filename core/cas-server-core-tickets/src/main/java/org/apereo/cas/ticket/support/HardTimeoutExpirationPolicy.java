@@ -3,6 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 
 import javax.annotation.PostConstruct;
@@ -72,5 +74,30 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public Long getTimeToIdle() {
         return 0L;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final HardTimeoutExpirationPolicy rhs = (HardTimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(timeToKillInMilliSeconds)
+                .toHashCode();
     }
 }

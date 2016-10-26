@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
@@ -43,22 +44,22 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifyTicketExpirationWithRememberMe() {
-        final Authentication authentication = TestUtils.getAuthentication(
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.<String, Object>singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
         assertTrue(t.isExpired());
     }
 
     @Test
     public void verifyTicketExpirationWithoutRememberMe() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.apereo.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());
     }
 

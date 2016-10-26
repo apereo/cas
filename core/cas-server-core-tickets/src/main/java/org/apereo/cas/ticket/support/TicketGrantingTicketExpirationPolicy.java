@@ -116,7 +116,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         }
         final TicketGrantingTicketExpirationPolicy rhs = (TicketGrantingTicketExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.maxTimeToLiveInMilliSeconds, rhs.maxTimeToLiveInMilliSeconds)
                 .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
                 .isEquals();
@@ -125,7 +124,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(maxTimeToLiveInMilliSeconds)
                 .append(timeToKillInMilliSeconds)
                 .toHashCode();

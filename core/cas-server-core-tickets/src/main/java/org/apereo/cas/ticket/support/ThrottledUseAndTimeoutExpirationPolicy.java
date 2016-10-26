@@ -106,7 +106,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         }
         final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
                 .append(this.timeInBetweenUsesInMilliSeconds, rhs.timeInBetweenUsesInMilliSeconds)
                 .isEquals();
@@ -115,7 +114,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(timeToKillInMilliSeconds)
                 .append(timeInBetweenUsesInMilliSeconds)
                 .toHashCode();

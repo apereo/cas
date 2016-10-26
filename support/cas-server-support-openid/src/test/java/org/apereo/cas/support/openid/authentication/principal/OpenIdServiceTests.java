@@ -3,7 +3,7 @@ package org.apereo.cas.support.openid.authentication.principal;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -61,7 +61,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -89,7 +89,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);

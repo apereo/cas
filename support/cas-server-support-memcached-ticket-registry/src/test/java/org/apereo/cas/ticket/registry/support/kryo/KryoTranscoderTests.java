@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -93,12 +93,12 @@ public class KryoTranscoderTests {
 
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,
-                        TestUtils.getService(),
+                        RegisteredServiceTestUtils.getService(),
                         null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
-                TestUtils.getService(),
+                RegisteredServiceTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         CachedData result = transcoder.encode(expectedTGT);
         final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
@@ -113,7 +113,7 @@ public class KryoTranscoderTests {
     @Test
     public void verifyEncodeDecode() throws Exception {
         final TicketGrantingTicket tgt = new MockTicketGrantingTicket(USERNAME);
-        final ServiceTicket expectedST = new MockServiceTicket(ST_ID, TestUtils.getService(), tgt);
+        final ServiceTicket expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
 
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
@@ -126,7 +126,7 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), TestUtils.getRegisteredService("https://.+"));
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(USERNAME);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
@@ -205,7 +205,7 @@ public class KryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeRegisteredService() throws Exception {
-        final RegisteredService service = TestUtils.getRegisteredService("helloworld");
+        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("helloworld");
         assertEquals(service, transcoder.decode(transcoder.encode(service)));
     }
 

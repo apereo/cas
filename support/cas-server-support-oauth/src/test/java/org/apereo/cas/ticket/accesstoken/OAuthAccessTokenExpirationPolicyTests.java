@@ -22,11 +22,8 @@ public class OAuthAccessTokenExpirationPolicyTests {
     @Test
     public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws IOException {
         final OAuthAccessTokenExpirationPolicy policyWritten = new OAuthAccessTokenExpirationPolicy(1234L, 5678L);
-
         MAPPER.writeValue(JSON_FILE, policyWritten);
-
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthAccessTokenExpirationPolicy.class);
-
         assertEquals(policyWritten, policyRead);
     }
 }
