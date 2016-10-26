@@ -9,8 +9,9 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 
 /**
- * @author Misagh Moayyed
- * @since 4.1
+ * Test for JSON Serialization
+ * @author David Rodriguez
+ * @since 5.0.0
  */
 public class DefaultAuthenticationTests {
 
@@ -21,11 +22,8 @@ public class DefaultAuthenticationTests {
     @Test
     public void verifySerializeADefaultAuthenticationToJson() throws IOException {
         final Authentication serviceWritten = TestUtils.getAuthentication();
-
         mapper.writeValue(JSON_FILE, serviceWritten);
-
         final Authentication serviceRead = mapper.readValue(JSON_FILE, Authentication.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }

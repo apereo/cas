@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategyTests;
 import org.apereo.cas.authentication.HttpBasedServiceCredentialTests;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandlerTests;
 import org.apereo.cas.authentication.principal.ResponseTests;
@@ -31,7 +32,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({HttpBasedServiceCredentialsAuthenticationHandlerTests.class, 
-        DefaultMultifactorTriggerSelectionStrategyTest.class,
+        DefaultMultifactorTriggerSelectionStrategyTests.class,
         HttpBasedServiceCredentialTests.class,
         AnonymousRegisteredServiceUsernameAttributeProviderTests.class,
         DefaultRegisteredServiceAccessStrategyTests.class,
