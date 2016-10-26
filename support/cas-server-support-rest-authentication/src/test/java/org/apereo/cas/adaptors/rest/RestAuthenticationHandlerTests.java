@@ -3,11 +3,10 @@ package org.apereo.cas.adaptors.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -29,9 +28,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.io.StringWriter;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.client.ExpectedCount.*;

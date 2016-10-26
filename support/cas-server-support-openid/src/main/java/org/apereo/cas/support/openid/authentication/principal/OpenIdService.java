@@ -3,12 +3,9 @@ package org.apereo.cas.support.openid.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 
 /**
  * @author Scott Battaglia

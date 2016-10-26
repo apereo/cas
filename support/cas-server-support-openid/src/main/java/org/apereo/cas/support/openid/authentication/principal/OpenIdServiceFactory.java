@@ -3,8 +3,6 @@ package org.apereo.cas.support.openid.authentication.principal;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;

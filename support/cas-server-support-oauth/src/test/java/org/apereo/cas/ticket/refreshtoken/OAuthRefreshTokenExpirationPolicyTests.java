@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.refreshtoken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.junit.Test;
 
 import java.io.File;
