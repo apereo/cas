@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
@@ -164,7 +165,7 @@ public class DefaultHandlerResult implements HandlerResult {
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);
         builder.append(this.principal, other.principal);
-        builder.append(this.warnings, other.warnings);
+        builder.append(CollectionUtils.wrap(this.warnings), other.warnings);
         return builder.isEquals();
     }
 
