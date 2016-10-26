@@ -3,6 +3,8 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.logout.SingleLogoutService;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
@@ -154,34 +156,40 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.responseBuilder.build(this, ticketId);
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AbstractWebApplicationService that = (AbstractWebApplicationService) o;
-
-        if (isLoggedOutAlready() != that.isLoggedOutAlready()) return false;
-        if (logger != null ? !logger.equals(that.logger) : that.logger != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (originalUrl != null ? !originalUrl.equals(that.originalUrl) : that.originalUrl != null) return false;
-        if (artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null) return false;
-        if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
-        if (responseBuilder != null ? !responseBuilder.equals(that.responseBuilder) : that.responseBuilder != null)
+    public boolean equals(final Object obj) {
+        if (obj == null) {
             return false;
-        return format == that.format;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AbstractWebApplicationService rhs = (AbstractWebApplicationService) obj;
+        return new EqualsBuilder()
+                .append(this.id, rhs.id)
+                .append(this.originalUrl, rhs.originalUrl)
+                .append(this.artifactId, rhs.artifactId)
+                .append(this.principal, rhs.principal)
+                .append(this.loggedOutAlready, rhs.loggedOutAlready)
+                .append(this.responseBuilder, rhs.responseBuilder)
+                .append(this.format, rhs.format)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = logger != null ? logger.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (originalUrl != null ? originalUrl.hashCode() : 0);
-        result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
-        result = 31 * result + (principal != null ? principal.hashCode() : 0);
-        result = 31 * result + (loggedOutAlready ? 1 : 0);
-        result = 31 * result + (responseBuilder != null ? responseBuilder.hashCode() : 0);
-        result = 31 * result + (format != null ? format.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(id)
+                .append(originalUrl)
+                .append(artifactId)
+                .append(principal)
+                .append(loggedOutAlready)
+                .append(responseBuilder)
+                .append(format)
+                .toHashCode();
     }
 }

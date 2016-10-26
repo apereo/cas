@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -24,9 +26,28 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
         return buildRedirect(service, parameters);
     }
 
+
     @Override
-    public boolean equals(Object obj) {
-        return this.getClass().equals(obj.getClass());
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 }
 

@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
@@ -100,21 +102,32 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
         this.sessionExpirationPolicy = sessionExpirationPolicy;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RememberMeDelegatingExpirationPolicy that = (RememberMeDelegatingExpirationPolicy) o;
-
-        if (rememberMeExpirationPolicy != null ? !rememberMeExpirationPolicy.equals(that.rememberMeExpirationPolicy) : that.rememberMeExpirationPolicy != null) return false;
-        return sessionExpirationPolicy != null ? sessionExpirationPolicy.equals(that.sessionExpirationPolicy) : that.sessionExpirationPolicy == null;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final RememberMeDelegatingExpirationPolicy rhs = (RememberMeDelegatingExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.rememberMeExpirationPolicy, rhs.rememberMeExpirationPolicy)
+                .append(this.sessionExpirationPolicy, rhs.sessionExpirationPolicy)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = rememberMeExpirationPolicy != null ? rememberMeExpirationPolicy.hashCode() : 0;
-        result = 31 * result + (sessionExpirationPolicy != null ? sessionExpirationPolicy.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(rememberMeExpirationPolicy)
+                .append(sessionExpirationPolicy)
+                .toHashCode();
     }
 }

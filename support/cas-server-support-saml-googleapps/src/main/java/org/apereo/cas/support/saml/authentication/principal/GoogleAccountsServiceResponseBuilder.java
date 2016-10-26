@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -58,18 +60,22 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     @JsonIgnore
     private PrivateKey privateKey;
+    
     @JsonIgnore
     private PublicKey publicKey;
 
     @JsonProperty
     private String publicKeyLocation;
+    
     @JsonProperty
     private String privateKeyLocation;
+    
     @JsonProperty
     private String keyAlgorithm;
 
     @JsonProperty
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
+    
     @JsonProperty
     private int skewAllowance;
 
@@ -100,7 +106,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 @JsonProperty("publicKeyLocation") final String publicKeyLocation,
                                                 @JsonProperty("keyAlgorithm") final String keyAlgorithm,
                                                 @JsonProperty("samlObjectBuilder") final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                @JsonProperty("skewAllowance") int skewAllowance) {
+                                                @JsonProperty("skewAllowance") final int skewAllowance) {
         Assert.notNull(privateKeyLocation);
         Assert.notNull(publicKeyLocation);
         Assert.notNull(samlObjectBuilder);
@@ -273,27 +279,38 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 || StringUtils.isNotBlank(this.keyAlgorithm);
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        GoogleAccountsServiceResponseBuilder that = (GoogleAccountsServiceResponseBuilder) o;
-
-        if (skewAllowance != that.skewAllowance) return false;
-        if (publicKeyLocation != null ? !publicKeyLocation.equals(that.publicKeyLocation) : that.publicKeyLocation != null)
+    public boolean equals(final Object obj) {
+        if (obj == null) {
             return false;
-        if (privateKeyLocation != null ? !privateKeyLocation.equals(that.privateKeyLocation) : that.privateKeyLocation != null)
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
             return false;
-        return keyAlgorithm != null ? keyAlgorithm.equals(that.keyAlgorithm) : that.keyAlgorithm == null;
+        }
+        final GoogleAccountsServiceResponseBuilder rhs = (GoogleAccountsServiceResponseBuilder) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.publicKeyLocation, rhs.publicKeyLocation)
+                .append(this.privateKeyLocation, rhs.privateKeyLocation)
+                .append(this.keyAlgorithm, rhs.keyAlgorithm)
+                .append(this.samlObjectBuilder, rhs.samlObjectBuilder)
+                .append(this.skewAllowance, rhs.skewAllowance)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = publicKeyLocation != null ? publicKeyLocation.hashCode() : 0;
-        result = 31 * result + (privateKeyLocation != null ? privateKeyLocation.hashCode() : 0);
-        result = 31 * result + (keyAlgorithm != null ? keyAlgorithm.hashCode() : 0);
-        result = 31 * result + skewAllowance;
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(publicKeyLocation)
+                .append(privateKeyLocation)
+                .append(keyAlgorithm)
+                .append(skewAllowance)
+                .append(samlObjectBuilder)
+                .toHashCode();
     }
 }

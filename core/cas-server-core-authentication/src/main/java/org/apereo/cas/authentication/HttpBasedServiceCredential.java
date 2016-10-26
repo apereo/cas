@@ -54,8 +54,9 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     }
 
     @JsonCreator
-    public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl, @JsonProperty("service") final RegisteredService service) throws MalformedURLException {
-        URL url = new URL(callbackUrl);
+    public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl, 
+                                      @JsonProperty("service") final RegisteredService service) throws MalformedURLException {
+        final URL url = new URL(callbackUrl);
         this.callbackUrl = url;
         this.callbackUrlAsString = url.toExternalForm();
         this.service = service;

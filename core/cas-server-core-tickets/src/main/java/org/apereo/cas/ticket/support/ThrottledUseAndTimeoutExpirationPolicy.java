@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,21 +91,32 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         return this.timeInBetweenUsesInMilliSeconds;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ThrottledUseAndTimeoutExpirationPolicy that = (ThrottledUseAndTimeoutExpirationPolicy) o;
-
-        if (timeToKillInMilliSeconds != that.timeToKillInMilliSeconds) return false;
-        return timeInBetweenUsesInMilliSeconds == that.timeInBetweenUsesInMilliSeconds;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .append(this.timeInBetweenUsesInMilliSeconds, rhs.timeInBetweenUsesInMilliSeconds)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
-        result = 31 * result + (int) (timeInBetweenUsesInMilliSeconds ^ (timeInBetweenUsesInMilliSeconds >>> 32));
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(timeToKillInMilliSeconds)
+                .append(timeInBetweenUsesInMilliSeconds)
+                .toHashCode();
     }
 }

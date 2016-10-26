@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 
 import java.time.ZoneOffset;
@@ -74,18 +76,30 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return this.timeToKillInMilliSeconds;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TimeoutExpirationPolicy that = (TimeoutExpirationPolicy) o;
-
-        return timeToKillInMilliSeconds == that.timeToKillInMilliSeconds;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final TimeoutExpirationPolicy rhs = (TimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return (int) (timeToKillInMilliSeconds ^ (timeToKillInMilliSeconds >>> 32));
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(timeToKillInMilliSeconds)
+                .toHashCode();
     }
 }

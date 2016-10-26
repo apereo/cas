@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -38,8 +40,12 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     @JsonCreator
-    public GoogleAccountsService(@JsonProperty("id") String id, @JsonProperty("originalUrl") String originalUrl, @JsonProperty("artifactId") String artifactId, @JsonProperty("responseBuilder") ResponseBuilder<WebApplicationService> responseBuilder,
-                                 @JsonProperty("relayState") String relayState, @JsonProperty("requestId") String requestId) {
+    public GoogleAccountsService(@JsonProperty("id") String id,
+                                 @JsonProperty("originalUrl") String originalUrl, 
+                                 @JsonProperty("artifactId") String artifactId,
+                                 @JsonProperty("responseBuilder") ResponseBuilder<WebApplicationService> responseBuilder,
+                                 @JsonProperty("relayState") String relayState, 
+                                 @JsonProperty("requestId") String requestId) {
         super(id, originalUrl, artifactId, responseBuilder);
         this.relayState = relayState;
         this.requestId = requestId;
@@ -63,24 +69,32 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return this.requestId;
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        GoogleAccountsService that = (GoogleAccountsService) o;
-
-        if (relayState != null ? !relayState.equals(that.relayState) : that.relayState != null) return false;
-        return requestId != null ? requestId.equals(that.requestId) : that.requestId == null;
-
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final GoogleAccountsService rhs = (GoogleAccountsService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.relayState, rhs.relayState)
+                .append(this.requestId, rhs.requestId)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (relayState != null ? relayState.hashCode() : 0);
-        result = 31 * result + (requestId != null ? requestId.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(relayState)
+                .append(requestId)
+                .toHashCode();
     }
 }

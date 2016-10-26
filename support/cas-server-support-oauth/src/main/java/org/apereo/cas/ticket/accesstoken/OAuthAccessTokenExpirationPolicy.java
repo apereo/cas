@@ -44,7 +44,8 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     }
 
     @JsonCreator
-    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, 
+                                            @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
         this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }

@@ -2,6 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.util.StringUtils;
 
@@ -48,18 +50,30 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         throw new IllegalArgumentException("Response type is valid. Only POST/REDIRECT are supported");
     }
 
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WebApplicationServiceResponseBuilder that = (WebApplicationServiceResponseBuilder) o;
-
-        return responseType == that.responseType;
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final WebApplicationServiceResponseBuilder rhs = (WebApplicationServiceResponseBuilder) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.responseType, rhs.responseType)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return responseType != null ? responseType.hashCode() : 0;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(responseType)
+                .toHashCode();
     }
 }
