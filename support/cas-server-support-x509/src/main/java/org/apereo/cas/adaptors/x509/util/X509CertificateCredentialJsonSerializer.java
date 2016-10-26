@@ -5,14 +5,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jooq.lambda.Unchecked;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import static com.fasterxml.jackson.core.Base64Variants.*;
 
 /**
  * This is {@link X509CertificateCredentialJsonSerializer}.

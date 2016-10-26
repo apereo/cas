@@ -27,9 +27,7 @@ public class X509CertificateCredentialTests {
         final X509CertificateCredential credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});
 
         MAPPER.writeValue(JSON_FILE, credentialWritten);
-        System.out.println(credentialWritten.getId());
         final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, X509CertificateCredential.class);
-        System.out.println(credentialRead.getId());
         assertEquals(credentialWritten, credentialRead);
     }
 }
