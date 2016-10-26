@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 public class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File("registeredServiceRegexAttributeFilter.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegisteredServiceAttributeFilter filter;
     private Map<String, Object> givenAttributesMap;
@@ -127,9 +126,9 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @Test
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, filter);
+        MAPPER.writeValue(JSON_FILE, filter);
 
-        final RegisteredServiceAttributeFilter filterRead = mapper.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
+        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
 
         assertEquals(filter, filterRead);
     }

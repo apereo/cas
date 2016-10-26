@@ -9,9 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File("principalAttributeRegisteredServiceUsernameProvider.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyUsernameByPrincipalAttribute() {
@@ -71,9 +70,9 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final PrincipalAttributeRegisteredServiceUsernameProvider providerWritten =
                 new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
-        mapper.writeValue(JSON_FILE, providerWritten);
+        MAPPER.writeValue(JSON_FILE, providerWritten);
 
-        final RegisteredServiceUsernameAttributeProvider providerRead = mapper.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
+        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, PrincipalAttributeRegisteredServiceUsernameProvider.class);
 
         assertEquals(providerWritten, providerRead);
     }

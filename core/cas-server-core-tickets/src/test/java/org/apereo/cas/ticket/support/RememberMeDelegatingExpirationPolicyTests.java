@@ -15,21 +15,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("rememberMeDelegatingExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /** Factory to create the principal type. **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
@@ -66,9 +63,9 @@ public class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, p);
+        MAPPER.writeValue(JSON_FILE, p);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
 
         assertEquals(p, policyRead);
     }

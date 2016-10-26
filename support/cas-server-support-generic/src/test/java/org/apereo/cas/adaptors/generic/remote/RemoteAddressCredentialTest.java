@@ -7,20 +7,24 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class RemoteAddressCredentialTest {
 
     private static final File JSON_FILE = new File("remoteAddressCredential.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeARemoteAddressCredentialToJson() throws IOException {
         final RemoteAddressCredential credentialWritten = new RemoteAddressCredential("80.123.456.78");
 
-        mapper.writeValue(JSON_FILE, credentialWritten);
+        MAPPER.writeValue(JSON_FILE, credentialWritten);
 
-        final CredentialMetaData credentialRead = mapper.readValue(JSON_FILE, RemoteAddressCredential.class);
+        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, RemoteAddressCredential.class);
 
         assertEquals(credentialWritten, credentialRead);
     }

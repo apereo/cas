@@ -8,6 +8,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class NullPrincipalTest {
 
     private static final File JSON_FILE = new File("nullPrincipal.json");

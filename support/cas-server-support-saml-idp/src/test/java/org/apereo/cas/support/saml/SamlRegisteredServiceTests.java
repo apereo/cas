@@ -17,9 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.mock;
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File("samlRegisteredService.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -75,9 +74,9 @@ public class SamlRegisteredServiceTests {
         serviceWritten.setServiceId("http://mmoayyed.unicon.net");
         serviceWritten.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        mapper.writeValue(JSON_FILE, serviceWritten);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
 
-        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, SamlRegisteredService.class);
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, SamlRegisteredService.class);
 
         assertEquals(serviceWritten, serviceRead);
     }

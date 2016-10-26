@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class TimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("timeoutExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final long TIMEOUT = 1;
 
     private ExpirationPolicy expirationPolicy;
@@ -53,9 +53,9 @@ public class TimeoutExpirationPolicyTests {
 
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, expirationPolicy);
+        MAPPER.writeValue(JSON_FILE, expirationPolicy);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
 
         assertEquals(expirationPolicy, policyRead);
     }

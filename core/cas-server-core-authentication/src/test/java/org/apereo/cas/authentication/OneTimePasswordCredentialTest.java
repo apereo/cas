@@ -8,18 +8,22 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class OneTimePasswordCredentialTest {
 
     private static final File JSON_FILE = new File("oneTimePasswordCredential.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAnOneTimePasswordCredentialToJson() throws IOException {
         final OneTimePasswordCredential credentialWritten = new OneTimePasswordCredential("id", "password");
 
-        mapper.writeValue(JSON_FILE, credentialWritten);
+        MAPPER.writeValue(JSON_FILE, credentialWritten);
 
-        final CredentialMetaData credentialRead = mapper.readValue(JSON_FILE, OneTimePasswordCredential.class);
+        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);
 
         assertEquals(credentialWritten, credentialRead);
     }

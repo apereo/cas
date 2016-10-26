@@ -8,18 +8,22 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Misagh Moayyed
+ * @since 5.0
+ */
 public class DenyAllAttributeReleasePolicyTest {
 
     private static final File JSON_FILE = new File("denyAllAttributeReleasePolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeADenyAllAttributeReleasePolicyToJson() throws IOException {
         final DenyAllAttributeReleasePolicy policyWritten = new DenyAllAttributeReleasePolicy();
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceAttributeReleasePolicy policyRead = mapper.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);
+        final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, DenyAllAttributeReleasePolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

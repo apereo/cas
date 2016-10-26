@@ -7,10 +7,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -19,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final File JSON_FILE = new File("shibbolethCompatiblePersistentIdGenerator.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyGenerator() {
@@ -38,9 +36,9 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
         final ShibbolethCompatiblePersistentIdGenerator generatorWritten =
                 new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
-        mapper.writeValue(JSON_FILE, generatorWritten);
+        MAPPER.writeValue(JSON_FILE, generatorWritten);
 
-        final PersistentIdGenerator credentialRead = mapper.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
+        final PersistentIdGenerator credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
 
         assertEquals(generatorWritten, credentialRead);
     }
