@@ -125,7 +125,6 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
         }
         final RememberMeDelegatingExpirationPolicy rhs = (RememberMeDelegatingExpirationPolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
                 .append(this.rememberMeExpirationPolicy, rhs.rememberMeExpirationPolicy)
                 .append(this.sessionExpirationPolicy, rhs.sessionExpirationPolicy)
                 .isEquals();
@@ -134,7 +133,6 @@ public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationP
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
                 .append(rememberMeExpirationPolicy)
                 .append(sessionExpirationPolicy)
                 .toHashCode();

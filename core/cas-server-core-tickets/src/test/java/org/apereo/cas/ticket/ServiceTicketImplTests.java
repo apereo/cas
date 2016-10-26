@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -48,12 +49,10 @@ public class ServiceTicketImplTests {
     @Test
     public void verifySerializeToJson() throws IOException {
         final ServiceTicket stWritten = new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, 
-                CoreAuthenticationTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+                RegisteredServiceTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
 
         mapper.writeValue(ST_JSON_FILE, stWritten);
-
         final ServiceTicketImpl stRead = mapper.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
-
         assertEquals(stWritten, stRead);
     }
 
