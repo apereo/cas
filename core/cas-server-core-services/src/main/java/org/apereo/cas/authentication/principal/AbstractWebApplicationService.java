@@ -14,6 +14,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static org.thymeleaf.util.StringUtils.append;
+
 /**
  * Abstract implementation of a WebApplicationService.
  *
@@ -169,15 +171,16 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
             return false;
         }
         final AbstractWebApplicationService rhs = (AbstractWebApplicationService) obj;
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder
                 .append(this.id, rhs.id)
                 .append(this.originalUrl, rhs.originalUrl)
                 .append(this.artifactId, rhs.artifactId)
                 .append(this.principal, rhs.principal)
                 .append(this.loggedOutAlready, rhs.loggedOutAlready)
                 .append(this.responseBuilder, rhs.responseBuilder)
-                .append(this.format, rhs.format)
-                .isEquals();
+                .append(this.format, rhs.format);
+        return builder.isEquals();
     }
 
     @Override
