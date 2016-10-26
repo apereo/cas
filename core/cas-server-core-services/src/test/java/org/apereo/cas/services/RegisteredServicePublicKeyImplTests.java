@@ -8,18 +8,22 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class RegisteredServicePublicKeyImplTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class RegisteredServicePublicKeyImplTests {
 
     private static final File JSON_FILE = new File("registeredServicePublicKeyImpl.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAX509CertificateCredentialToJson() throws IOException {
         final RegisteredServicePublicKeyImpl publicKeyWritten = new RegisteredServicePublicKeyImpl("location", "algorithm");
 
-        mapper.writeValue(JSON_FILE, publicKeyWritten);
+        MAPPER.writeValue(JSON_FILE, publicKeyWritten);
 
-        final RegisteredServicePublicKey credentialRead = mapper.readValue(JSON_FILE, RegisteredServicePublicKeyImpl.class);
+        final RegisteredServicePublicKey credentialRead = MAPPER.readValue(JSON_FILE, RegisteredServicePublicKeyImpl.class);
 
         assertEquals(publicKeyWritten, credentialRead);
     }

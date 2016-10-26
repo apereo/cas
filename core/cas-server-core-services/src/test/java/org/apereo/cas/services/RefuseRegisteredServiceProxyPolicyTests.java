@@ -8,18 +8,22 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class RefuseRegisteredServiceProxyPolicyTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class RefuseRegisteredServiceProxyPolicyTests {
 
     private static final File JSON_FILE = new File("refuseRegisteredServiceProxyPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeARefuseRegisteredServiceProxyPolicyToJson() throws IOException {
         final RefuseRegisteredServiceProxyPolicy policyWritten = new RefuseRegisteredServiceProxyPolicy();
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceProxyPolicy policyRead = mapper.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
+        final RegisteredServiceProxyPolicy policyRead = MAPPER.readValue(JSON_FILE, RefuseRegisteredServiceProxyPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

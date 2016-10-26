@@ -10,9 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.mock;
 public class OidcRegisteredServiceTests {
 
     private static final File JSON_FILE = new File("oidcRegisteredService.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -62,9 +61,9 @@ public class OidcRegisteredServiceTests {
         serviceWritten.setSignIdToken(true);
         serviceWritten.setBypassApprovalPrompt(true);
 
-        mapper.writeValue(JSON_FILE, serviceWritten);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
 
-        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, OidcRegisteredService.class);
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
 
         assertEquals(serviceWritten, serviceRead);
     }

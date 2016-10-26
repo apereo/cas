@@ -8,20 +8,24 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class OAuthRefreshTokenExpirationPolicyTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class OAuthRefreshTokenExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("oAuthRefreshTokenExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws IOException {
         final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, RememberMeDelegatingExpirationPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

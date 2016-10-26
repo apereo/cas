@@ -7,12 +7,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class DefaultRegisteredServiceMultifactorPolicyTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File("defaultRegisteredServiceMultifactorPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
@@ -23,9 +27,9 @@ public class DefaultRegisteredServiceMultifactorPolicyTest {
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceMultifactorPolicy policyRead = mapper.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
+        final RegisteredServiceMultifactorPolicy policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

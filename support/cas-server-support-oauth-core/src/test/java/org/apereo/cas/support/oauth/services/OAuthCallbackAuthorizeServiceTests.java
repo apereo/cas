@@ -10,19 +10,23 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class OAuthCallbackAuthorizeServiceTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class OAuthCallbackAuthorizeServiceTests {
 
     private static final File JSON_FILE = new File("oAuthCallbackAuthorizeService.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeAnOAuthCallbackAuthorizeServiceToJson() throws IOException {
         final OAuthCallbackAuthorizeService serviceWritten = new OAuthCallbackAuthorizeService();
         serviceWritten.setServiceId("id" + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
 
-        mapper.writeValue(JSON_FILE, serviceWritten);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
 
-        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, OAuthCallbackAuthorizeService.class);
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, OAuthCallbackAuthorizeService.class);
 
         assertEquals(serviceWritten, serviceRead);
     }

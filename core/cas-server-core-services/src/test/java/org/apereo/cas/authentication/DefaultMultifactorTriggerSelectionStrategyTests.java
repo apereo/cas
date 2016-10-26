@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.0.0
  */
-public class DefaultMultifactorTriggerSelectionStrategyTest {
+public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final String MFA_INVALID = "mfaInvalid";
     private static final String MFA_PROVIDER_ID_1 = "mfa-id1";
     private static final String MFA_PROVIDER_ID_2 = "mfa-id2";

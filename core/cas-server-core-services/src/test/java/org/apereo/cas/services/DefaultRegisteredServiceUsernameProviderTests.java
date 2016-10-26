@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class DefaultRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File("defaultRegisteredServiceUsernameProvider.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyRegServiceUsername() {
@@ -45,9 +45,9 @@ public class DefaultRegisteredServiceUsernameProviderTests {
     public void verifySerializeADefaultRegisteredServiceUsernameProviderToJson() throws IOException {
         final DefaultRegisteredServiceUsernameProvider providerWritten = new DefaultRegisteredServiceUsernameProvider();
 
-        mapper.writeValue(JSON_FILE, providerWritten);
+        MAPPER.writeValue(JSON_FILE, providerWritten);
 
-        final RegisteredServiceUsernameAttributeProvider providerRead = mapper.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);
+        final RegisteredServiceUsernameAttributeProvider providerRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceUsernameProvider.class);
 
         assertEquals(providerWritten, providerRead);
     }

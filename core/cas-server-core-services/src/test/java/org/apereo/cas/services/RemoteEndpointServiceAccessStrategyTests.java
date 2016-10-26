@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  * @author Misagh Moayyed
  * @since 5.0
  */
-public class RemoteEndpointServiceAccessStrategyTest {
+public class RemoteEndpointServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File("remoteEndpointServiceAccessStrategy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

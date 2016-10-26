@@ -9,18 +9,22 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
 public class HardTimeoutExpirationPolicyTest {
 
     private static final File JSON_FILE = new File("hardTimeoutExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
         final HardTimeoutExpirationPolicy policyWritten = new HardTimeoutExpirationPolicy();
 
-        mapper.writeValue(JSON_FILE, policyWritten);
+        MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

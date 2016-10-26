@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * The {@link GrouperRegisteredServiceAccessStrategyTests} provides
@@ -25,10 +25,10 @@ import static org.junit.Assert.assertEquals;
  * @since 4.2
  */
 public class GrouperRegisteredServiceAccessStrategyTests {
+    private static final File JSON_FILE = new File("grouperRegisteredServiceAccessStrategy.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static final File JSON_FILE = new File("grouperRegisteredServiceAccessStrategy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void checkGrouperAttributes() {
@@ -52,9 +52,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         strategyWritten.setRequiredAttributes(requiredAttributes);
         strategyWritten.doPrincipalAttributesAllowServiceAccess("banderson", (Map) TestUtils.getTestAttributes());
 
-        mapper.writeValue(JSON_FILE, strategyWritten);
+        MAPPER.writeValue(JSON_FILE, strategyWritten);
 
-        final RegisteredServiceAccessStrategy credentialRead = mapper.readValue(JSON_FILE, GrouperRegisteredServiceAccessStrategy.class);
+        final RegisteredServiceAccessStrategy credentialRead = MAPPER.readValue(JSON_FILE, GrouperRegisteredServiceAccessStrategy.class);
 
         assertEquals(strategyWritten, credentialRead);
     }

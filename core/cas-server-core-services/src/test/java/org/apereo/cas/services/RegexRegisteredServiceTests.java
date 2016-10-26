@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File("regexRegisteredService.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegexRegisteredService service;
 
@@ -119,9 +119,9 @@ public class RegexRegisteredServiceTests {
     public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
         final RegexRegisteredService serviceWritten = newService("serviceId");
 
-        mapper.writeValue(JSON_FILE, serviceWritten);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
 
-        final RegisteredService serviceRead = mapper.readValue(JSON_FILE, RegexRegisteredService.class);
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
 
         assertEquals(serviceWritten, serviceRead);
     }

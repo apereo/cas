@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link CachingPrincipalAttributesRepository}.
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File("cachingPrincipalAttributesRepository.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
@@ -31,9 +31,9 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
     public void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws IOException {
         final AbstractPrincipalAttributesRepository repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
 
-        mapper.writeValue(JSON_FILE, repositoryWritten);
+        MAPPER.writeValue(JSON_FILE, repositoryWritten);
 
-        final PrincipalAttributesRepository repositoryRead = mapper.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
+        final PrincipalAttributesRepository repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
 
         assertEquals(repositoryWritten, repositoryRead);
     }

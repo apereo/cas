@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("tgtExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final long HARD_TIMEOUT = 500L;
 
@@ -91,9 +91,9 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifySerializeAnExpirationPolicyToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, expirationPolicy);
+        MAPPER.writeValue(JSON_FILE, expirationPolicy);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TicketGrantingTicketExpirationPolicy.class);
 
         assertEquals(expirationPolicy, policyRead);
     }

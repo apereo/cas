@@ -8,6 +8,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
 public class DefaultAuthenticationTest {
 
     private static final File JSON_FILE = new File("defaultAuthentication.json");

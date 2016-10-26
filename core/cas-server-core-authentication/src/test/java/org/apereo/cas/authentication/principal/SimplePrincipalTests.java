@@ -10,7 +10,11 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
-public class SimplePrincipalTest {
+/**
+ * @author Misagh Moayyed
+ * @since 4.1
+ */
+public class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File("simplePrincipal.json");
 

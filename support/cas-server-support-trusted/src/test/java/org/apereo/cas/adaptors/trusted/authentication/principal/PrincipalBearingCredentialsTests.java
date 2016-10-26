@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class PrincipalBearingCredentialsTests {
 
     private static final File JSON_FILE = new File("principalBearingCredential.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private PrincipalBearingCredential principalBearingCredentials;
 
@@ -34,9 +34,9 @@ public class PrincipalBearingCredentialsTests {
 
     @Test
     public void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, principalBearingCredentials);
+        MAPPER.writeValue(JSON_FILE, principalBearingCredentials);
 
-        final CredentialMetaData credentialRead = mapper.readValue(JSON_FILE, PrincipalBearingCredential.class);
+        final CredentialMetaData credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
 
         assertEquals(principalBearingCredentials, credentialRead);
     }
