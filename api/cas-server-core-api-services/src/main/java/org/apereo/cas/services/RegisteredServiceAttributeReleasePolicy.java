@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**

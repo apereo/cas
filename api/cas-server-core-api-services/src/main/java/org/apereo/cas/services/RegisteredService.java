@@ -15,7 +15,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredService extends Cloneable, Serializable {
 
     /**

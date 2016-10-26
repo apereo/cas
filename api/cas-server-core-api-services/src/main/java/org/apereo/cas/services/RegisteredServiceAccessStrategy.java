@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceAccessStrategy extends Serializable {
 
     /**

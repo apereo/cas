@@ -10,7 +10,7 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServicePublicKey extends Serializable {
 
     /**

@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
 @JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class X509CertificateCredential extends AbstractCredential {
 
     /**
