@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
  * The primary difference between this component and {@link UsernamePasswordCredential} is that the username/ID is optional
@@ -42,7 +45,8 @@ public class OneTimePasswordCredential extends AbstractCredential {
      * @param id Identifier that is commonly used to look up one-time password in system of record.
      * @param password Non-null cleartext one-time password value.
      */
-    public OneTimePasswordCredential(final String id, final String password) {
+    @JsonCreator
+    public OneTimePasswordCredential(@JsonProperty("id") final String id, @JsonProperty("password") final String password) {
         this(password);
         this.id = id;
     }

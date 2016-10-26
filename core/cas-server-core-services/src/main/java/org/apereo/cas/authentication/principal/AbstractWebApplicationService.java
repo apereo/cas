@@ -14,8 +14,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.thymeleaf.util.StringUtils.append;
-
 /**
  * Abstract implementation of a WebApplicationService.
  *

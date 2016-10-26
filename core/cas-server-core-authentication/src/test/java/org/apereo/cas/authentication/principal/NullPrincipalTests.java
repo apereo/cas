@@ -22,11 +22,8 @@ public class NullPrincipalTests {
     @Test
     public void verifySerializeANullPrincipalToJson() throws IOException {
         final NullPrincipal serviceWritten = NullPrincipal.getInstance();
-
         mapper.writeValue(JSON_FILE, serviceWritten);
-
         final NullPrincipal serviceRead = mapper.readValue(JSON_FILE, NullPrincipal.class);
-
         assertEquals(serviceWritten, serviceRead);
     }
 }
