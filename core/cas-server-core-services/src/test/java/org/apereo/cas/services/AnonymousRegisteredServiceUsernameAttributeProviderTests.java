@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.*;
  */
 public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
 
-    private static final File JSON_FILE = new File("anonymousRegisteredServiceUsernameAttributeProvider.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "anonymousRegisteredServiceUsernameAttributeProvider.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 public class OAuthRegisteredServiceTests {
 
-    private static final File JSON_FILE = new File("oAuthRegisteredService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 

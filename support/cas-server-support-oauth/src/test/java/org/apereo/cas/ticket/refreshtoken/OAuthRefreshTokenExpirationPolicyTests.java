@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class OAuthRefreshTokenExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File("oAuthRefreshTokenExpirationPolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRefreshTokenExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

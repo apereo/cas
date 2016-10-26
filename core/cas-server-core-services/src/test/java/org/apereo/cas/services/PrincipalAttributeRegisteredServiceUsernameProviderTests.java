@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.*;
  */
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
-    private static final File JSON_FILE = new File("principalAttributeRegisteredServiceUsernameProvider.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

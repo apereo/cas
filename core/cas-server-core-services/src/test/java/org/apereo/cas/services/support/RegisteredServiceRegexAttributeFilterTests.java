@@ -2,6 +2,7 @@ package org.apereo.cas.services.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private static final File JSON_FILE = new File("registeredServiceRegexAttributeFilter.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegisteredServiceAttributeFilter filter;

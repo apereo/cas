@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class PrincipalBearingCredentialsTests {
 
-    private static final File JSON_FILE = new File("principalBearingCredential.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalBearingCredential.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private PrincipalBearingCredential principalBearingCredentials;

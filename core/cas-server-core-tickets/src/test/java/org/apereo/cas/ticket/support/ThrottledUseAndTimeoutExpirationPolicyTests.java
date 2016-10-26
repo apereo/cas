@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
  */
 public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File("throttleUseAndTimeoutExpirationPolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "throttleUseAndTimeoutExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final long TIMEOUT = 2000;

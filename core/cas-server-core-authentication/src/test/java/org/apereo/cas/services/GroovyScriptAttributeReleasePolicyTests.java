@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class GroovyScriptAttributeReleasePolicyTests {
 
-    private static final File JSON_FILE = new File("groovyScriptAttributeReleasePolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "groovyScriptAttributeReleasePolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

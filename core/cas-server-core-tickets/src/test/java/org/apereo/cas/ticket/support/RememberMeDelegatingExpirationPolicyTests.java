@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.TestUtils;
@@ -25,7 +26,7 @@ import static org.junit.Assert.*;
  */
 public class RememberMeDelegatingExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File("rememberMeDelegatingExpirationPolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /** Factory to create the principal type. **/

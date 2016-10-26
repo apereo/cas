@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.TestUtils;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.*;
  */
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
-    private static final File JSON_FILE = new File("shibbolethCompatiblePersistentIdGenerator.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

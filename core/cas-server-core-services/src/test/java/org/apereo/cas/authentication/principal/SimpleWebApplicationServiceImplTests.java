@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import static org.junit.Assert.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
  */
 public class SimpleWebApplicationServiceImplTests {
 
-    private static final File JSON_FILE = new File("simpleWebApplicationServiceImpl.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 
     private ObjectMapper mapper = new ObjectMapper();
 

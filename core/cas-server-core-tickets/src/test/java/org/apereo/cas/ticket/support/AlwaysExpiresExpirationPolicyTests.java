@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class AlwaysExpiresExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File("alwaysExpiresExpirationPolicy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "alwaysExpiresExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

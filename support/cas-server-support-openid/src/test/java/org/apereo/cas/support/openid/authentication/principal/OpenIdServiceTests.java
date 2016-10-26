@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Response;
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class OpenIdServiceTests extends AbstractOpenIdTests {
 
-    private static final File JSON_FILE = new File("openIdService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
     private ObjectMapper mapper = new ObjectMapper();
 
     private OpenIdService openIdService;

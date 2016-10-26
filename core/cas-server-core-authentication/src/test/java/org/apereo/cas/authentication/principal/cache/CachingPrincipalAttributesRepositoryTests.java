@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
-    private static final File JSON_FILE = new File("cachingPrincipalAttributesRepository.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override

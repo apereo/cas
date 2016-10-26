@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
  */
 public class TimeBasedRegisteredServiceAccessStrategyTests {
 
-    private static final File JSON_FILE = new File("timeBasedRegisteredServiceAccessStrategy.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

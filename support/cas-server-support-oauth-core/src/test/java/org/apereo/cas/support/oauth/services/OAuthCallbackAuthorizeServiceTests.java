@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class OAuthCallbackAuthorizeServiceTests {
 
-    private static final File JSON_FILE = new File("oAuthCallbackAuthorizeService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthCallbackAuthorizeService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

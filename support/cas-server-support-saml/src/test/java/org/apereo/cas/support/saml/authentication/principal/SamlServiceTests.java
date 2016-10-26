@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class SamlServiceTests extends AbstractOpenSamlTests {
 
-    private static final File JSON_FILE = new File("samlService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");
 
     private ObjectMapper mapper = new ObjectMapper();
 

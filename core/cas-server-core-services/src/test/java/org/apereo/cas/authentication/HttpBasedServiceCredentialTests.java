@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class HttpBasedServiceCredentialTests {
 
-    private static final File JSON_FILE = new File("httpBasedServiceCredential.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "httpBasedServiceCredential.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

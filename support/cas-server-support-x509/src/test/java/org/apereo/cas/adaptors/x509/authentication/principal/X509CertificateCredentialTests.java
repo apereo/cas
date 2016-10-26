@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class X509CertificateCredentialTests {
 
-    private static final File JSON_FILE = new File("x509CertificateCredential.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test

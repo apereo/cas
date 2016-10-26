@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
 import org.junit.Test;
@@ -23,7 +24,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
-    private static final File JSON_FILE = new File("regexRegisteredService.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegexRegisteredService service;
