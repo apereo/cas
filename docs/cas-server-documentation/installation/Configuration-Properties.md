@@ -736,9 +736,10 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 
 ### Query
 
-Authenticates a user by comparing the (hashed) user password against the password on record determined by a configurable database query.
+Authenticates a user by comparing the user password (which can be encoded with a password encoder) against the password on record determined by a configurable database query.
 
 ```properties
+# cas.authn.jdbc.query[0].sql=SELECT password FROM table WHERE name=?
 # cas.authn.jdbc.query[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
 # cas.authn.jdbc.query[0].isolateInternalQueries=false
 # cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
@@ -748,14 +749,13 @@ Authenticates a user by comparing the (hashed) user password against the passwor
 # cas.authn.jdbc.query[0].leakThreshold=10
 # cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
 # cas.authn.jdbc.query[0].batchSize=1
-# cas.authn.jdbc.query[0].user=sa
+# cas.authn.jdbc.query[0].user=user
 # cas.authn.jdbc.query[0].ddlAuto=create-drop
 # cas.authn.jdbc.query[0].maxAgeDays=180
-# cas.authn.jdbc.query[0].password=
+# cas.authn.jdbc.query[0].password=secret
 # cas.authn.jdbc.query[0].autocommit=false
 # cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.query[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].sql=
 # cas.authn.jdbc.query[0].credentialCriteria=
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
