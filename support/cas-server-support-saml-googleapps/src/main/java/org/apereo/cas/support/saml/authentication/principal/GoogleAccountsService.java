@@ -50,17 +50,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.relayState = relayState;
         this.requestId = requestId;
     }
-
-    /**
-     * Return true if the service is already logged out.
-     *
-     * @return true if the service is already logged out.
-     */
-    @Override
-    public boolean isLoggedOutAlready() {
-        return true;
-    }
-
+    
     public String getRelayState() {
         return this.relayState;
     }

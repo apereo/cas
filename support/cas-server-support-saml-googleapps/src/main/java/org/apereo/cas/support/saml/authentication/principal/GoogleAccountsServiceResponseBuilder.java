@@ -281,7 +281,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             return false;
         }
         final GoogleAccountsServiceResponseBuilder rhs = (GoogleAccountsServiceResponseBuilder) obj;
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder();
+        return builder
                 .appendSuper(super.equals(obj))
                 .append(this.publicKeyLocation, rhs.publicKeyLocation)
                 .append(this.privateKeyLocation, rhs.privateKeyLocation)

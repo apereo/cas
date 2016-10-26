@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.util.Assert;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.Response;
@@ -75,7 +76,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
-    private static final File FILE = new File("service.json");
+    private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -140,9 +141,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     public void serializeGoogleAccountService() throws Exception {
         final GoogleAccountsService service = getGoogleAccountsService();
         mapper.writeValue(FILE, service);
-
         final GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
-
         Assert.equals(service, service2);
     }
 }

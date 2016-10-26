@@ -18,9 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
     
     private String openIdPrefixUrl;
-    
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public String getOpenIdPrefixUrl() {
         return this.openIdPrefixUrl;
@@ -42,12 +39,12 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
         final String id = cleanupUrl(service);
         final String artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
         final ParameterList paramList = new ParameterList(request.getParameterMap());
-
-
         final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(
                 paramList, this.openIdPrefixUrl);
 
-        return new OpenIdService(id, service, artifactId, openIdIdentity, builder);
+        final OpenIdService s = new OpenIdService(id, service, artifactId, openIdIdentity, builder);
+        s.setLoggedOutAlready(true);
+        return s;
     }
 
     @Override

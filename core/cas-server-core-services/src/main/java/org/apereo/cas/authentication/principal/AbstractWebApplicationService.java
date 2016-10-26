@@ -137,7 +137,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     @JsonProperty("responseBuilder")
-    protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
+    public ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
         return this.responseBuilder;
     }
 

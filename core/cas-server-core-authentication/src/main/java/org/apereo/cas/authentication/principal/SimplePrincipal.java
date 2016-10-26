@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,14 +21,17 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SimplePrincipal implements Principal {
     /** Serialization support. */
     private static final long serialVersionUID = -1255260750151385796L;
 
     /** The unique identifier for the principal. */
+    @JsonProperty
     private String id;
 
     /** Principal attributes. **/
+    @JsonProperty
     private Map<String, Object> attributes;
 
     /** No-arg constructor for serialization support. */
@@ -49,7 +55,9 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      * @param attributes the attributes
      */
-    protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
+    @JsonCreator
+    protected SimplePrincipal(@JsonProperty("id") final String id,
+                              @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         this.attributes = attributes;
     }

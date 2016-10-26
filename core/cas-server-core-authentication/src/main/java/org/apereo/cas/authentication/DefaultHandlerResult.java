@@ -165,7 +165,7 @@ public class DefaultHandlerResult implements HandlerResult {
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);
         builder.append(this.principal, other.principal);
-        builder.append(CollectionUtils.wrap(this.warnings), other.warnings);
+        builder.append(CollectionUtils.wrap(this.warnings), CollectionUtils.wrap(other.warnings));
         return builder.isEquals();
     }
 

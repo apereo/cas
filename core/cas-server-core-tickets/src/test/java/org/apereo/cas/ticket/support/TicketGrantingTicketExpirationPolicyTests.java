@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author William G. Thompson, Jr.
-
  * @since 3.4.10
  */
 public class TicketGrantingTicketExpirationPolicyTests {

@@ -46,11 +46,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
         openIdService = openIdServiceFactory.createService(request);
-
         mapper.writeValue(JSON_FILE, openIdService);
-
         final OpenIdService serviceRead = mapper.readValue(JSON_FILE, OpenIdService.class);
-
         assertEquals(openIdService, serviceRead);
     }
 

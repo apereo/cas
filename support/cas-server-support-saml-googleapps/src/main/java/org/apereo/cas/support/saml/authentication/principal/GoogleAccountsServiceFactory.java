@@ -60,7 +60,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final GoogleAccountsServiceResponseBuilder responseBuilder =
                 new GoogleAccountsServiceResponseBuilder(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm, this.builder);
         responseBuilder.setSkewAllowance(this.skewAllowance);
-        return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, responseBuilder);
+        final GoogleAccountsService s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, responseBuilder);
+        s.setLoggedOutAlready(true);
+        return s;
     }
 
     @Override

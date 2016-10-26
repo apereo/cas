@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -27,7 +28,7 @@ import java.io.IOException;
 public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
-    private static final File ST_JSON_FILE = new File("st.json");
+    private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
     
     private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
