@@ -1,8 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
+import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
 import org.apereo.cas.authentication.AbstractCredential;
 
 import java.security.cert.X509Certificate;
@@ -13,17 +19,26 @@ import java.security.cert.X509Certificate;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.0.0
- *
  */
+@JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
+@JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
 public class X509CertificateCredential extends AbstractCredential {
 
-    /** Unique Id for serialization. */
+    /**
+     * Unique Id for serialization.
+     */
     private static final long serialVersionUID = 631753409512746474L;
 
-    /** The collection of certificates sent with the request. */
+    /**
+     * The collection of certificates sent with the request.
+     */
     private X509Certificate[] certificates;
 
-    /** The certificate that we actually use. */
+    /**
+     * The certificate that we actually use.
+     */
     private X509Certificate certificate;
 
     /**
@@ -47,7 +62,6 @@ public class X509CertificateCredential extends AbstractCredential {
         return this.certificate;
     }
 
-    @JsonIgnore
     @Override
     public String getId() {
         X509Certificate cert = null;
