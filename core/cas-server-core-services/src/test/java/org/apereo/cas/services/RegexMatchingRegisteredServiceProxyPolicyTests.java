@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class RegexMatchingRegisteredServiceProxyPolicyTest {
+public class RegexMatchingRegisteredServiceProxyPolicyTests {
 
     private static final File JSON_FILE = new File("regexMatchingRegisteredServiceProxyPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
