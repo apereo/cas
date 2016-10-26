@@ -7,13 +7,13 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class DigestCredentialTest {
+public class DigestCredentialTests {
 
     private static final File JSON_FILE = new File("digestCredential.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

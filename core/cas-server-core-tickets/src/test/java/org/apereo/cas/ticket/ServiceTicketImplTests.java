@@ -77,12 +77,10 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsFromNewLoginFalse() {
-        ServiceTicket s = this.ticketGrantingTicket.grantServiceTicket(ST_ID, getService(), new NeverExpiresExpirationPolicy(), false, false);
-
+        ServiceTicket s = this.ticketGrantingTicket.grantServiceTicket(ST_ID, 
+                TestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
         assertTrue(s.isFromNewLogin());
-        
         s = this.ticketGrantingTicket.grantServiceTicket(ST_ID, TestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
-
         assertFalse(s.isFromNewLogin());
     }
 

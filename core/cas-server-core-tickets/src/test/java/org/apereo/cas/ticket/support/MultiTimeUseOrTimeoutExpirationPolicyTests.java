@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("multiTimeUseOrTimeoutExpirationPolicy.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final long TIMEOUT_SECONDS = 1;
 
@@ -66,9 +66,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
-        mapper.writeValue(JSON_FILE, expirationPolicy);
+        MAPPER.writeValue(JSON_FILE, expirationPolicy);
 
-        final ExpirationPolicy policyRead = mapper.readValue(JSON_FILE, MultiTimeUseOrTimeoutExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, MultiTimeUseOrTimeoutExpirationPolicy.class);
 
         assertEquals(expirationPolicy, policyRead);
     }

@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0
  */
-public class ReturnMappedAttributeReleasePolicyTest {
+public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File("returnMappedAttributeReleasePolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

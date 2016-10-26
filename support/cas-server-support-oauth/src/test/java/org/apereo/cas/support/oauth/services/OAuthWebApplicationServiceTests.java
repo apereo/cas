@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class OAuthWebApplicationServiceTest {
+public class OAuthWebApplicationServiceTests {
 
     private static final File JSON_FILE = new File("oAuthWebApplicationService.json");
 

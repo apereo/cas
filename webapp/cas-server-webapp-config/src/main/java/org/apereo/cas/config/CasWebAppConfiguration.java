@@ -134,10 +134,4 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
     }
-
-
-    @Bean
-    public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
-        return new SimpleControllerHandlerAdapter();
-    }
 }

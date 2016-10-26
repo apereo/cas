@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategyTest;
 import org.apereo.cas.authentication.HttpBasedServiceCredentialTests;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandlerTests;
 import org.apereo.cas.authentication.principal.ResponseTests;

@@ -9,8 +9,6 @@ import org.springframework.util.Assert;
 import java.util.Collections;
 import java.util.List;
 
-import static jdk.nashorn.api.scripting.ScriptUtils.wrap;
-
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
  * Handler results are naturally immutable since they contain sensitive information that should not be modified outside

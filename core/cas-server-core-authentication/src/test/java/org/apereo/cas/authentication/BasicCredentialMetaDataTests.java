@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0
  */
-public class BasicCredentialMetaDataTest {
+public class BasicCredentialMetaDataTests {
 
     private static final File JSON_FILE = new File("basicCredentialMetaData.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

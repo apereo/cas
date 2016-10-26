@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0
  */
-public class OAuthAccessTokenExpirationPolicyTest {
+public class OAuthAccessTokenExpirationPolicyTests {
 
     private static final File JSON_FILE = new File("oAuthAccessTokenExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

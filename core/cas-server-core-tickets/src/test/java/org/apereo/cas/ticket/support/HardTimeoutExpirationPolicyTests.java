@@ -11,20 +11,20 @@ import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 4.1
  */
-public class AlwaysExpiresExpirationPolicyTest {
+public class HardTimeoutExpirationPolicyTests {
 
-    private static final File JSON_FILE = new File("alwaysExpiresExpirationPolicy.json");
+    private static final File JSON_FILE = new File("hardTimeoutExpirationPolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    public void verifySerializeAnAlwaysExpiresExpirationPolicyToJson() throws IOException {
-        final AlwaysExpiresExpirationPolicy policyWritten = new AlwaysExpiresExpirationPolicy();
+    public void verifySerializeANeverExpiresExpirationPolicyToJson() throws IOException {
+        final HardTimeoutExpirationPolicy policyWritten = new HardTimeoutExpirationPolicy();
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, AlwaysExpiresExpirationPolicy.class);
+        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, HardTimeoutExpirationPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

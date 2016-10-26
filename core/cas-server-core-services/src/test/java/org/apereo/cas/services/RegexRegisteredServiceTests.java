@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link RegexRegisteredService}.

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class GroovyScriptAttributeReleasePolicyTest {
+public class GroovyScriptAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File("groovyScriptAttributeReleasePolicy.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

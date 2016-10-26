@@ -8,13 +8,13 @@ import java.io.File;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.
  */
-public class X509CertificateCredentialTest {
+public class X509CertificateCredentialTests {
 
     private static final File JSON_FILE = new File("x509CertificateCredential.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();

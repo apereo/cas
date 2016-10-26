@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class DefaultAuthenticationTest {
+public class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File("defaultAuthentication.json");
 
