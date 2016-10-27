@@ -20,6 +20,7 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
+import org.jasig.cas.web.flow.AuthenticationExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,13 +42,11 @@ import javax.validation.constraints.NotNull;
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
-    private static final int DEFAULT_FAILURE_THRESHOLD = 100;
+    private static final int DEFAULT_FAILURE_THRESHOLD = 5;
 
-    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
+    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 2;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
-
-    private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     /** Logger object. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,7 +72,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
         // we only care about post because that's the only instance where we can get anything useful besides IP address.
-        if (!"POST".equals(request.getMethod())) {
+        if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return true;
         }
 
@@ -96,11 +95,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-                && response.getStatus() != HttpStatus.SC_OK;
+        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
 
-        if (recordEvent) {
-            logger.debug("Recording submission failure for {}", request.getRequestURI());
+        if (context == null || context.getCurrentEvent() == null) {
+            return;
+        }
+        final String handleErrorName = (String) context.getFlowScope().get("handleErrorName");
+
+        if (AuthenticationExceptionHandler.isSubmissionFailure(handleErrorName)) {
             recordSubmissionFailure(request);
         }
     }
