@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.*;
@@ -57,7 +58,7 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
+    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.
@@ -107,10 +108,7 @@ public class TicketsResource {
             LOGGER.error(e.getMessage(), e);
             LOGGER.error(String.format("Caused by: %s", authnExceptions));
             try {
-                return new ResponseEntity<>(this.jacksonObjectMapper
-                        .writer()
-                        .withDefaultPrettyPrinter()
-                        .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
             } catch (JsonProcessingException e1) {
                 LOGGER.error(e.getMessage(), e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
