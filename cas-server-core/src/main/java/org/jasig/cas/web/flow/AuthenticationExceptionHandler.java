@@ -23,11 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.webflow.execution.RequestContext;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -55,6 +58,9 @@ public class AuthenticationExceptionHandler {
     private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
             new ArrayList<>();
 
+    /** A set of errors/exceptions that should trigger submission failure record for login throttle. */
+    private static final Set<String> THROTTLE_TRIGGER_SET = new HashSet<>();
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     static {
@@ -66,6 +72,11 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginTimeException.class);
+    }
+
+    static {
+        THROTTLE_TRIGGER_SET.add(javax.security.auth.login.AccountNotFoundException.class.getSimpleName());
+        THROTTLE_TRIGGER_SET.add(javax.security.auth.login.FailedLoginException.class.getSimpleName());
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
@@ -101,15 +112,16 @@ public class AuthenticationExceptionHandler {
     /**
      * Maps an authentication exception onto a state name equal to the simple class name of the.
      *
+     * @param context The request context.
      * @param e Authentication error to handle.
-     * @param messageContext the spring message context
+     * @param messageContext The spring message context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      * {@link org.jasig.cas.authentication.AuthenticationException#getHandlerErrors()} with highest precedence.
      * Also sets an ERROR severity message in the message context of the form
      * <code>[messageBundlePrefix][exceptionClassSimpleName]</code> for each handler error that is
      * configured. If not match is found, {@value #UNKNOWN} is returned.
      */
-    public String handle(final AuthenticationException e, final MessageContext messageContext) {
+    public String handle(final RequestContext context, final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {
             final MessageBuilder builder = new MessageBuilder();
             for (final Class<? extends Exception> kind : this.errors) {
@@ -118,6 +130,9 @@ public class AuthenticationExceptionHandler {
                         final String handlerErrorName = handlerError.getSimpleName();
                         final String messageCode = this.messageBundlePrefix + handlerErrorName;
                         messageContext.addMessage(builder.error().code(messageCode).build());
+                        if (THROTTLE_TRIGGER_SET.contains(handlerErrorName)) {
+                            context.getFlowScope().put("RecordSubmissionFailure", handlerErrorName);
+                        }
                         return handlerErrorName;
                     }
                 }
@@ -128,5 +143,15 @@ public class AuthenticationExceptionHandler {
         logger.trace("Unable to translate handler errors of the authentication exception {}. Returning {} by default...", e, messageCode);
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
         return UNKNOWN;
+    }
+
+    /**
+     * Check if the authentication exception should trigger submission failure record for login throttle.
+     *
+     * @param handleErrorName the simple name of the exception
+     * @return true if trigger, false otherwise
+     */
+    public static Boolean isSubmissionFailure(final String handleErrorName) {
+        return THROTTLE_TRIGGER_SET.contains(handleErrorName);
     }
 }

@@ -140,7 +140,7 @@
     </view-state>
 
     <action-state id="handleAuthenticationFailure">
-        <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)"/>
+        <evaluate expression="authenticationExceptionHandler.handle(flowRequestContext, currentEvent.attributes.error, messageContext)"/>
         <transition on="AccountDisabledException" to="casAccountDisabledView"/>
         <transition on="AccountLockedException" to="casAccountLockedView"/>
         <transition on="AccountPasswordMustChangeException" to="casMustChangePassView"/>
