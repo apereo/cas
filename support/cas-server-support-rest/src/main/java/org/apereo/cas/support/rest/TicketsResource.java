@@ -47,6 +47,9 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
+    private static final String CLOSE_TITLE_AND_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
+    private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>";
 
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -93,12 +96,10 @@ public class TicketsResource {
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-            // TODO: all this could be a constant
-            String response = new StringBuilder("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>")
+            String response = new StringBuilder(DOCTYPE_AND_TITLE)
                     .append(HttpStatus.CREATED).append(' ').append(HttpStatus.CREATED.getReasonPhrase())
-                    .append("</title></head><body><h1>TGT Created</h1><form action=\"").append(ticketReference.toString())
-                    .append("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                    .append("<br><input type=\"submit\" value=\"Submit\"></form></body></html>")
+                    .append(CLOSE_TITLE_AND_FORM).append(ticketReference.toString())
+                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
                     .toString();
             return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
