@@ -15,12 +15,12 @@ You will need to sign up for a [Sonatype account](http://central.sonatype.org/pa
 
 - Load your SSH key and ensure this SSH key is also referenced in Github.
 - Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
-- Load your `~/.gradle/gradle.properties` file with the following:
+- Load your `~/.gradle/gradle.properties` file with the following *as an example*:
 
 ```bash
-signing.keyId=
-signing.password=
-signing.secretKeyRingFile=
+signing.keyId=7A24P9QB
+signing.password=P@$$w0rd
+signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
 org.gradle.daemon=false
 ```
 
