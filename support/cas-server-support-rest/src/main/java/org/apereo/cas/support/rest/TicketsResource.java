@@ -82,7 +82,7 @@ public class TicketsResource {
     }
 
     private ResponseEntity<String> getResponseEntity(@RequestBody MultiValueMap<String, String> requestBody, HttpServletRequest request) {
-        try (Formatter fmt = new Formatter()) {
+        try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
@@ -92,12 +92,13 @@ public class TicketsResource {
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
-                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+            String response = new StringBuilder("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>")
+                    .append(HttpStatus.CREATED).append(' ').append(HttpStatus.CREATED.getReasonPhrase())
+                    .append("</title></head><body><h1>TGT Created</h1><form action=\"").append(ticketReference.toString())
+                    .append("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                    .append("<br><input type=\"submit\" value=\"Submit\"></form></body></html>")
+                    .toString();
+            return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
         } catch (final AuthenticationException e) {
             final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
