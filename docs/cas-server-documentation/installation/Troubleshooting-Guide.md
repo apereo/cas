@@ -5,7 +5,7 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
-A number of commons questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
+A number of common questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
 
 ## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
 
@@ -17,7 +17,7 @@ the Spring Webflow, MongoDb, Hazelcast, etc forums to have experts review and re
 
 Typical questions in this category that are best answered elsewhere are:
 
-- How do configure SSL for the web server?
+- How do I configure SSL for Apache Tomcat, Jetty, etc?
 - How do I pass variables from one flow to the next in Spring webflow?
 - How do I tune up a hazelcast cluster?
 - What is the recommended strategy for making MongoDb highly available? 
