@@ -13,10 +13,9 @@ You will need to sign up for a [Sonatype account](http://central.sonatype.org/pa
 
 ## Environment Review
 
-- Set up your environment:
-	- Load your SSH key and ensure this SSH key is also referenced in Github.
-	- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
-	- Load your `~/.gradle/gradle.properties` file with the following:
+- Load your SSH key and ensure this SSH key is also referenced in Github.
+- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
+- Load your `~/.gradle/gradle.properties` file with the following:
 
 ```bash
 signing.keyId=
@@ -26,6 +25,7 @@ org.gradle.daemon=false
 ```
 
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
+- Make sure you have the latest version of JDK 8 installed via `java -version`. 
 
 ## Preparing the Release
 
