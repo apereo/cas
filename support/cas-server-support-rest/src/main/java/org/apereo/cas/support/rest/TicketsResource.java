@@ -88,10 +88,12 @@ public class TicketsResource {
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
 
             final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+            // TODO: find a better way to create the URI
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
+            // TODO: all this could be a constant
             String response = new StringBuilder("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>")
                     .append(HttpStatus.CREATED).append(' ').append(HttpStatus.CREATED.getReasonPhrase())
                     .append("</title></head><body><h1>TGT Created</h1><form action=\"").append(ticketReference.toString())
@@ -112,6 +114,7 @@ public class TicketsResource {
                 return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
             } catch (JsonProcessingException e1) {
                 LOGGER.error(e.getMessage(), e);
+                // TODO: could we create constants ResponseEntity?
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (final BadRequestException e) {
