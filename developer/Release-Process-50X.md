@@ -9,7 +9,9 @@ This page documents the steps that a release engineer should take for cutting a 
 
 ## Account Setup
 
-You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask to be authorized to publish releases to the `org.apereo` package.
+You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask 
+to be authorized to publish releases to the `org.apereo` package. Once you have, you may be asked to have one of the
+current project members *vouch* for you. 
 
 ## Environment Review
 
