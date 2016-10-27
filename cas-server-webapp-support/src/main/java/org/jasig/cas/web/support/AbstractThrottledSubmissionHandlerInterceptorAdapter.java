@@ -44,7 +44,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 5;
 
-    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 2;
+    private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 3;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
 
