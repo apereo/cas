@@ -30,7 +30,7 @@ org.gradle.daemon=false
 ## Preparing the Release
 
 - If necessary, create an appropriate branch for the next release. Generally, you should do this only for major or minor releases. (i.e. `4.2.x`, `5.0.x`)
-- In the project's `gradle.properties`, change the project version to the release version. (i.e. `4.2.0-RC1`)
+- In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`)
 - Build the project using the following command:
 
 ```bash
@@ -54,8 +54,8 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 
 ## Finalizing the Release
 
-- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v4.2.0-RC1`).
-- Switch to the release branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `4.3.0-SNAPSHOT`). 
+- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
+- Switch to the release branch and in the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-RC2-SNAPSHOT`). 
 - Push your changes to the upstream repository. 
 
 ## Housekeeping
