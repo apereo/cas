@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -74,10 +73,10 @@ public class TicketsResource {
 
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>();
 
-        getResponseEntity(requestBody, request);
         CompletableFuture
                 .supplyAsync(() -> getResponseEntity(requestBody, request))
-                .thenApply((Function<ResponseEntity<String>, Object>) deferredResult::setResult);
+                .whenComplete((stringResponseEntity, throwable) -> deferredResult.setResult(stringResponseEntity));
+
         return deferredResult;
     }
 
