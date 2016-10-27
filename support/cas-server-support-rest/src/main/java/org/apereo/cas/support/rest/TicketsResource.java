@@ -4,13 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.*;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -24,19 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +60,6 @@ public class TicketsResource {
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
-
     /**
      * Create new ticket granting ticket.
      *
@@ -81,8 +69,19 @@ public class TicketsResource {
      * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request) throws JsonProcessingException {
+    public DeferredResult<ResponseEntity<String>> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                                            final HttpServletRequest request) throws JsonProcessingException {
+
+        DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>();
+
+        getResponseEntity(requestBody, request);
+        CompletableFuture
+                .supplyAsync(() -> getResponseEntity(requestBody, request))
+                .thenApply((Function<ResponseEntity<String>, Object>) deferredResult::setResult);
+        return deferredResult;
+    }
+
+    private ResponseEntity<String> getResponseEntity(@RequestBody MultiValueMap<String, String> requestBody, HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
@@ -108,10 +107,15 @@ public class TicketsResource {
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.error(e.getMessage(), e);
             LOGGER.error(String.format("Caused by: %s", authnExceptions));
-            return new ResponseEntity<>(this.jacksonObjectMapper
-                    .writer()
-                    .withDefaultPrettyPrinter()
-                    .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            try {
+                return new ResponseEntity<>(this.jacksonObjectMapper
+                        .writer()
+                        .withDefaultPrettyPrinter()
+                        .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            } catch (JsonProcessingException e1) {
+                LOGGER.error(e.getMessage(), e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -120,7 +124,7 @@ public class TicketsResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
      *
