@@ -59,13 +59,16 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         final Ticket ticket = encodeTicket(ticketToAdd);
         final Element element = new Element(ticket.getId(), ticket);
         
-        final int idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        int idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        if (idleValue <= 0) {
+            idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        }
         element.setTimeToIdle(idleValue);
-        
         final int aliveValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
         element.setTimeToLive(aliveValue);
 
-        logger.debug("Adding ticket {} to the cache {}", ticket.getId(), this.ehcacheTicketsCache.getName());
+        logger.debug("Adding ticket {} to the cache {} to live {} seconds and stay idle for {} seconds",
+                ticket.getId(), this.ehcacheTicketsCache.getName(), aliveValue, idleValue);
         this.ehcacheTicketsCache.put(element);
     }
 
