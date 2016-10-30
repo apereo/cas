@@ -16,7 +16,7 @@ you may need to also include the following module to account for various databas
 </dependency>
 ```
 
-Automatic support for database drivers include:
+Automatic support for database drivers includes:
 
 1. HSQLDB
 2. MySQL
