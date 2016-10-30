@@ -65,6 +65,13 @@ OpenID Connect clients can be registered with CAS as such:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## Server Configuration
+
+Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
+as the authorization responses throughout the login flow
+are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers
+accordinngly.
+
 ## Claims
 
 OpenID connect claims are simply treated as normal CAS attributes that need to 
