@@ -160,6 +160,21 @@ Support is provided via the following dependency:
 </dependency>
 ```
 
+Note that to access and review the collection of CAS properties, 
+you will need to use [the CAS administrative interfaces](Monitoring-Statistics.html), or you may
+also use your own native tooling for MongoDB to configure and inject settings.
+
+MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
+
+```json
+{
+	"id": "kfhf945jegnsd45sdg93452",
+	"name": "the-setting-name",
+	"value": "the-setting-value"
+} 
+```
+
+
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
 
 ### HashiCorp Vault
