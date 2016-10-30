@@ -236,7 +236,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
                 } catch (final CertificateException e) {
-                    LOGGER.debug(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                     return false;
                 }
             });

@@ -30,7 +30,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
         this.client = clientFactory.getObject();
     }
 
-    @Ignore
+    @Test
     public void verifySuccessfulConnection() {
         final boolean valid = client.isValidEndPoint("https://www.github.com");
         assertTrue(valid);
@@ -38,7 +38,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifySuccessfulConnectionWithCustomSSLCert() {
-        final boolean valid = client.isValidEndPoint("https://www.cacert.org");
+        final boolean valid = client.isValidEndPoint("https://self-signed.badssl.com");
         assertTrue(valid);
     }
 
