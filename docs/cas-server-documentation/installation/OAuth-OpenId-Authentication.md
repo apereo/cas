@@ -99,6 +99,14 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 The expiration policy for OAuth tokens is controlled by CAS settings and properties.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
+## Server Configuration
+
+Remember that OAuth support features of CAS require session affinity (and optionally session replication),
+as the authorization responses throughout the login flow
+are stored via server-backed session storage mechanisms. You will need to configure your deployment environment and load balancers
+accordinngly.
+
+
 # OpenID Authentication
 
 To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
