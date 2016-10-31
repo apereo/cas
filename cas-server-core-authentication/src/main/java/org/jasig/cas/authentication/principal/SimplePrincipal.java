@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -69,7 +70,7 @@ public final class SimplePrincipal implements Principal {
     @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id);
+        builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
 
@@ -90,8 +91,6 @@ public final class SimplePrincipal implements Principal {
             return false;
         }
         final SimplePrincipal rhs = (SimplePrincipal) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
 }

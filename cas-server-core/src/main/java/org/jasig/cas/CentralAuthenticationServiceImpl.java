@@ -79,10 +79,10 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry                              the tickets registry.
-     * @param ticketFactory                               the ticket factory
-     * @param servicesManager                             the services manager.
-     * @param logoutManager                               the logout manager.
+     * @param ticketRegistry  the tickets registry.
+     * @param ticketFactory   the ticket factory
+     * @param servicesManager the services manager.
+     * @param logoutManager   the logout manager.
      */
     public CentralAuthenticationServiceImpl(
             final TicketRegistry ticketRegistry,
@@ -103,12 +103,12 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
      * @return the logout requests.
      */
     @Audit(
-            action="TICKET_GRANTING_TICKET_DESTROYED",
-            actionResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
-            resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
+            action = "TICKET_GRANTING_TICKET_DESTROYED",
+            actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
+            resourceResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Timed(name = "DESTROY_TICKET_GRANTING_TICKET_TIMER")
-    @Metered(name="DESTROY_TICKET_GRANTING_TICKET_METER")
-    @Counted(name="DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
+    @Metered(name = "DESTROY_TICKET_GRANTING_TICKET_METER")
+    @Counted(name = "DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic = true)
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId) {
         try {
@@ -128,24 +128,25 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     }
 
     @Audit(
-        action="SERVICE_TICKET",
-        actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
-        resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Timed(name="GRANT_SERVICE_TICKET_TIMER")
-    @Metered(name="GRANT_SERVICE_TICKET_METER")
-    @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
+            action = "SERVICE_TICKET",
+            actionResolverName = "GRANT_SERVICE_TICKET_RESOLVER",
+            resourceResolverName = "GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
+    @Timed(name = "GRANT_SERVICE_TICKET_TIMER")
+    @Metered(name = "GRANT_SERVICE_TICKET_METER")
+    @Counted(name = "GRANT_SERVICE_TICKET_COUNTER", monotonic = true)
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId,
             final Service service, final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
+        logger.debug("Attempting to get ticket id {} to create service ticket", ticketGrantingTicketId);
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
         evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
-        
+
         if (ticketGrantingTicket.getCountOfUses() > 0 && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
@@ -155,10 +156,13 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
+        logger.debug("Checking for authentication policy satisfaction...");
         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket.getRoot(), new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
+
+        logger.debug("Located principal {} for service ticket creation", principal);
 
         final RegisteredServiceAttributeReleasePolicy releasePolicy = registeredService.getAttributeReleasePolicy();
         final Map<String, Object> principalAttrs;
@@ -177,10 +181,12 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
                 context != null && context.isCredentialProvided());
-        this.ticketRegistry.addTicket(serviceTicket);
-
         logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
+
+        this.ticketRegistry.addTicket(serviceTicket);
+        logger.debug("Added service ticket {} to ticket registry", serviceTicket.getId());
+
 
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
 
@@ -192,13 +198,14 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
      * as opposed to keeping a history of all. This helps with
      * memory consumption. Note that supplemental authentications
      * are to be removed.
-     * @param context authentication context
+     *
+     * @param context              authentication context
      * @param ticketGrantingTicket the tgt
      * @return the processed authentication in the current context
-     * @throws MixedPrincipalException in case there is a principal mismatch between TGT and the current authN. 
+     * @throws MixedPrincipalException in case there is a principal mismatch between TGT and the current authN.
      */
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
-                                                                final TicketGrantingTicket ticketGrantingTicket)
+    private Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
+                                                                       final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;
         if (context != null) {
@@ -206,23 +213,27 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             if (currentAuthentication != null) {
                 final Authentication original = ticketGrantingTicket.getAuthentication();
                 if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                    logger.debug("Principal associated with current authentication {} does not match "
+                            + " the principal {} associated with the original authentication",
+                            currentAuthentication.getPrincipal(), original.getPrincipal());
                     throw new MixedPrincipalException(
                             currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
                 }
                 ticketGrantingTicket.getSupplementalAuthentications().clear();
                 ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
+                logger.debug("Added authentication to the collection of supplemental authentications");
             }
         }
         return currentAuthentication;
     }
 
     @Audit(
-            action="PROXY_TICKET",
-            actionResolverName="GRANT_PROXY_TICKET_RESOLVER",
-            resourceResolverName="GRANT_PROXY_TICKET_RESOURCE_RESOLVER")
-    @Timed(name="GRANT_PROXY_TICKET_TIMER")
-    @Metered(name="GRANT_PROXY_TICKET_METER")
-    @Counted(name="GRANT_PROXY_TICKET_COUNTER", monotonic=true)
+            action = "PROXY_TICKET",
+            actionResolverName = "GRANT_PROXY_TICKET_RESOLVER",
+            resourceResolverName = "GRANT_PROXY_TICKET_RESOURCE_RESOLVER")
+    @Timed(name = "GRANT_PROXY_TICKET_TIMER")
+    @Metered(name = "GRANT_PROXY_TICKET_METER")
+    @Counted(name = "GRANT_PROXY_TICKET_COUNTER", monotonic = true)
     @Override
     public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
             throws AbstractTicketException {
@@ -272,17 +283,17 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     }
 
     @Audit(
-            action="PROXY_GRANTING_TICKET",
-            actionResolverName="CREATE_PROXY_GRANTING_TICKET_RESOLVER",
-            resourceResolverName="CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
+            action = "PROXY_GRANTING_TICKET",
+            actionResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOLVER",
+            resourceResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Timed(name = "CREATE_PROXY_GRANTING_TICKET_TIMER")
     @Metered(name = "CREATE_PROXY_GRANTING_TICKET_METER")
-    @Counted(name="CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
+    @Counted(name = "CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic = true)
     @Override
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
-        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
             logger.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
@@ -293,7 +304,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
                 .findServiceBy(serviceTicket.getService());
 
         verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
-        
+
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
@@ -313,18 +324,18 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
     }
 
     @Audit(
-        action="SERVICE_TICKET_VALIDATE",
-        actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
-        resourceResolverName="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Timed(name="VALIDATE_SERVICE_TICKET_TIMER")
-    @Metered(name="VALIDATE_SERVICE_TICKET_METER")
-    @Counted(name="VALIDATE_SERVICE_TICKET_COUNTER", monotonic=true)
+            action = "SERVICE_TICKET_VALIDATE",
+            actionResolverName = "VALIDATE_SERVICE_TICKET_RESOLVER",
+            resourceResolverName = "VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
+    @Timed(name = "VALIDATE_SERVICE_TICKET_TIMER")
+    @Metered(name = "VALIDATE_SERVICE_TICKET_METER")
+    @Counted(name = "VALIDATE_SERVICE_TICKET_COUNTER", monotonic = true)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         verifyRegisteredServiceProperties(registeredService, service);
 
-        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
             logger.info("Service ticket [{}] does not exist.", serviceTicketId);
@@ -352,11 +363,11 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
 
             final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
             logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
-            
+
             @SuppressWarnings("unchecked")
             final Map<String, Object> attributesToRelease = attributePolicy != null
                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
-            
+
             final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
@@ -378,14 +389,14 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             }
         }
     }
-    
+
     @Audit(
-        action="TICKET_GRANTING_TICKET",
-        actionResolverName="CREATE_TICKET_GRANTING_TICKET_RESOLVER",
-        resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
+            action = "TICKET_GRANTING_TICKET",
+            actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER",
+            resourceResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Timed(name = "CREATE_TICKET_GRANTING_TICKET_TIMER")
     @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
-    @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
+    @Counted(name = "CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic = true)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
