@@ -108,9 +108,9 @@ public class TicketsResource {
             return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
         } catch (final AuthenticationException e) {
-            final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
-                    .map(handlerErrorEntry -> handlerErrorEntry.getValue().getSimpleName())
-                    .collect(Collectors.toCollection(LinkedList::new));
+            final List<String> authnExceptions = e.getHandlerErrors().values().stream()
+                    .map(Class::getSimpleName)
+                    .collect(Collectors.toList());
             final Map<String, List<String>> errorsMap = new HashMap<>();
             errorsMap.put("authentication_exceptions", authnExceptions);
             LOGGER.error(e.getMessage(), e);
