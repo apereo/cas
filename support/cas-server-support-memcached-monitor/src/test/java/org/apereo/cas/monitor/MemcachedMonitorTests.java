@@ -30,15 +30,6 @@ public class MemcachedMonitorTests extends AbstractMemcachedTests {
     @Qualifier("memcachedMonitor")
     private MemcachedMonitor monitor;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
-        bootstrap();
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        shutdown();
-    }
 
     @Test
     public void verifyMonitorRunning() {
