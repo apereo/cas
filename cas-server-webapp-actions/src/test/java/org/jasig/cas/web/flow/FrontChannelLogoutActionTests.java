@@ -1,7 +1,6 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutManager;
@@ -9,6 +8,7 @@ import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
