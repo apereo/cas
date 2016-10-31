@@ -38,7 +38,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     public void updateTicket(final Ticket ticket) {
         this.cache.put(ticket.getId(), ticket);
     }
-    
+
     @Override
     public void addTicket(final Ticket ticketToAdd) {
         final Ticket ticket = encodeTicket(ticketToAdd);
@@ -67,7 +67,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        this.cache.evict(ticketId);
+        this.cache.remove(ticketId);
         return getTicket(ticketId) == null;
     }
 
