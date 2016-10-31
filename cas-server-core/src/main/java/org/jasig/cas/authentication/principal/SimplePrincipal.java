@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,7 +68,9 @@ public final class SimplePrincipal implements Principal {
      * @param id the id
      * @param attributes the attributes
      */
-    protected SimplePrincipal(final String id, final Map<String, Object> attributes) {
+    public SimplePrincipal(final String id, final Map<String, Object> attributes) {
+        Assert.notNull(id, "principal id cannot be null");
+        Assert.notNull(id, "principal attributes cannot be null");
         this.id = id;
         this.attributes = attributes;
     }
@@ -86,7 +90,7 @@ public final class SimplePrincipal implements Principal {
     @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id);
+        builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
 
@@ -106,8 +110,6 @@ public final class SimplePrincipal implements Principal {
             return false;
         }
         final SimplePrincipal rhs = (SimplePrincipal) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return StringUtils.equalsIgnoreCase(this.id, rhs.id);
     }
 }
