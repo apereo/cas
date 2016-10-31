@@ -176,7 +176,7 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      */
     @Override
     public Collection<Ticket> getTickets() {
-        logger.warn("getTickets() not supported is not supported by {}.", getClass().getSimpleName());
+        logger.warn("getTickets() is not supported by {}.", getClass().getSimpleName());
         return Lists.newArrayList();
     }
 
