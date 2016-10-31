@@ -25,7 +25,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public abstract class AbstractMemcachedTests {
 
-    private static final int PORT = 11211;
+    private static final int PORT = 14938;
 
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
@@ -53,13 +53,12 @@ public abstract class AbstractMemcachedTests {
     }
 
     public boolean isMemcachedListening() {
-        try (Socket socket = new Socket("127.0.0.1", PORT)) {
+        try (Socket socket = new Socket("memcached-14938.c10.us-east-1-3.ec2.cloud.redislabs.com", PORT)) {
             return true;
         } catch (final Exception e) {
             return false;
         }
     }
-
     private static class CasRuntimeConfigBuilder extends RuntimeConfigBuilder {
         @Override
         public RuntimeConfigBuilder defaults(final Command command) {

@@ -42,29 +42,18 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private String registryBean;
 
-    public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
+    public MemCacheTicketRegistryTests(final String beanName) {
         registryBean = beanName;
     }
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        return Lists.newArrayList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
+        return Lists.newArrayList(new Object[] {"testCase1"}, new Object[] {"testCase2"});
     }
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
-        bootstrap();
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        shutdown();
-    }
 
     @Before
     public void setUp() throws IOException {
-
-        // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
             logger.warn("Aborting test since no memcached server is available on localhost.");
@@ -143,7 +132,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, true);
@@ -154,9 +143,13 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
 
         final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        this.registry.addTicket(pgt);
+        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertNotNull(this.registry.getTicket("PGT-1", ProxyGrantingTicket.class));
         assertEquals(a, pgt.getAuthentication());
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
         
-        assertSame(3, this.registry.deleteTicket(tgt.getId()));
+        assertTrue(this.registry.deleteTicket(tgt.getId()) > 0);
         
         assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
