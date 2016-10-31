@@ -180,7 +180,7 @@ public class MemCacheTicketRegistryTests {
     }
 
     private boolean isMemcachedListening() {
-        try (final Socket socket = new Socket("127.0.0.1", PORT)) {
+        try (Socket socket = new Socket("127.0.0.1", PORT)) {
             return true;
         } catch (final Exception e) {
             return false;

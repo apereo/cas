@@ -207,7 +207,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     @Override
     public CachedData encode(final Object obj) {
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        try (final Output output = new Output(byteStream)) {
+        try (Output output = new Output(byteStream)) {
             kryo.writeClassAndObject(output, obj);
             output.flush();
             final byte[] bytes = byteStream.toByteArray();
@@ -218,7 +218,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     @Override
     public Object decode(final CachedData d) {
         final byte[] bytes = d.getData();
-        try (final Input input = new Input(new ByteArrayInputStream(bytes))) {
+        try (Input input = new Input(new ByteArrayInputStream(bytes))) {
             final Object obj =  kryo.readClassAndObject(input);
             return obj;
         }

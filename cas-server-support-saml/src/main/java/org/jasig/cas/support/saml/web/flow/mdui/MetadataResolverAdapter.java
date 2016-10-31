@@ -35,5 +35,5 @@ public interface MetadataResolverAdapter {
      * @param entityId the entity id
      * @return the entity descriptor for entity id
      */
-    EntityDescriptor getEntityDescriptorForEntityId(final String entityId);
+    EntityDescriptor getEntityDescriptorForEntityId(String entityId);
 }

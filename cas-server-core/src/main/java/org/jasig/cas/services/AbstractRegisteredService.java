@@ -285,7 +285,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param id the new service id
      */
-    public abstract void setServiceId(final String id);
+    public abstract void setServiceId(String id);
 
     public void setId(final long id) {
         this.id = id;

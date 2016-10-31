@@ -93,7 +93,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
     }
 
 
-    protected abstract MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception;
+    protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
 
     protected abstract AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle();
 }

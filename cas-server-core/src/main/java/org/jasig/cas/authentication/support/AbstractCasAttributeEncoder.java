@@ -101,10 +101,10 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param cipher the cipher object initialized per service public key
      * @param registeredService the registered service
      */
-    protected abstract void encodeAttributesInternal(final Map<String, Object> attributes,
-                                            final Map<String, String> cachedAttributesToEncode,
-                                            final RegisteredServiceCipherExecutor cipher,
-                                            final RegisteredService registeredService);
+    protected abstract void encodeAttributesInternal(Map<String, Object> attributes,
+                                            Map<String, String> cachedAttributesToEncode,
+                                            RegisteredServiceCipherExecutor cipher,
+                                            RegisteredService registeredService);
 
 
     /**

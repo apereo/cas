@@ -96,7 +96,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * {@link #authenticate(org.jasig.cas.authentication.Credential)}.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult doAuthentication(final Credential credential)
+    protected abstract HandlerResult doAuthentication(Credential credential)
             throws GeneralSecurityException, PreventedException;
 
     /**

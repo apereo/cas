@@ -83,5 +83,5 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      * @param assertion the assertion
      * @return true, if the subclass implementation is satisfied by the assertion
      */
-    protected abstract boolean isSatisfiedByInternal(final Assertion assertion);
+    protected abstract boolean isSatisfiedByInternal(Assertion assertion);
 }

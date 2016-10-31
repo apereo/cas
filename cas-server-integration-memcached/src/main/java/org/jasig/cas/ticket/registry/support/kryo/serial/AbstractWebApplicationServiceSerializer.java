@@ -71,6 +71,6 @@ public abstract class AbstractWebApplicationServiceSerializer<T extends Abstract
      * @param artifactId the artifact id
      * @return the created service instance.
      */
-    protected abstract T createService(final Kryo kryo, final Input input, final String id,
-            final String originalUrl, final String artifactId);
+    protected abstract T createService(Kryo kryo, Input input, String id,
+            String originalUrl, String artifactId);
 }
