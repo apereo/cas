@@ -8,7 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the {@code FileTrustStoreSslSocketFactory} class, checking for self-signed
@@ -19,13 +19,13 @@ import static org.junit.Assert.*;
 public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
-     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
-        assertTrue(client.isValidEndPoint("https://www.cacert.org"));
+        assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
 
     @Ignore

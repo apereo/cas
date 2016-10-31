@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Misagh Moayyed
@@ -38,7 +38,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifySuccessfulConnectionWithCustomSSLCert() {
-        final boolean valid = client.isValidEndPoint("https://www.cacert.org");
+        final boolean valid = client.isValidEndPoint("https://self-signed.badssl.com");
         assertTrue(valid);
     }
 
