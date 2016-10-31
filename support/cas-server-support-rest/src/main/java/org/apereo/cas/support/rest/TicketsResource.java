@@ -94,7 +94,6 @@ public class TicketsResource {
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
 
             final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-            // TODO: find a better way to create the URI
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
