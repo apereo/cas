@@ -4,6 +4,7 @@ title: CAS - Shibboleth Integration
 ---
 
 # Overview
+
 CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple different strategies. 
 It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP. With such a setup, when user is routed to the IdP, the following may take place:
 
@@ -11,9 +12,18 @@ It is possible to designate CAS to serve as the authentication provider for the 
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must authenticate before the IDP proceeds with the requested action.
 
 
+## SSO for Shibboleth IdP (External)
+This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
+this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
+
+The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) 
+and [v3](https://github.com/Unicon/shib-cas-authn3).
+
 ## SSO for Shibboleth IdP (RemoteUser)
 
 ### Configuration
+
+Note that the below instructions apply only to Shibboleth IdP v2.x.
 
 #### Include CAS Client Libraries in IdP Deployable
 
@@ -117,14 +127,6 @@ Ensure the following is defined:
   <url-pattern>/Authn/RemoteUser</url-pattern>
 </servlet-mapping>
 ```
-
-
-## SSO for Shibboleth IdP (External)
-This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
-this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
-
-The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) 
-and [v3](https://github.com/Unicon/shib-cas-authn3).
 
 ### Relying Party EntityId
 The authentication plugin is able to pass the relying party's entity ID over to the CAS server upon authentication requests. 
