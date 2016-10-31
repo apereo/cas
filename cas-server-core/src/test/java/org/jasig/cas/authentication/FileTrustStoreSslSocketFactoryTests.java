@@ -20,6 +20,7 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -42,11 +43,10 @@ public class FileTrustStoreSslSocketFactoryTests {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(factory);
         final HttpClient client = clientFactory.getObject();
-        assertTrue(client.isValidEndPoint("https://www.cacert.org"));
+        assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
 
-    /*
-    @Test
+    @Ignore
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
         final ClassPathResource resource = new ClassPathResource("truststore.jks");
         final FileTrustStoreSslSocketFactory factory = new FileTrustStoreSslSocketFactory(resource.getFile(), "changeit");
@@ -55,7 +55,7 @@ public class FileTrustStoreSslSocketFactoryTests {
         final HttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://test.scaldingspoon.org/idp/shibboleth"));
     }
-    */
+
 
     @Test(expected = RuntimeException.class)
      public void verifyTrustStoreNotFound() throws Exception {
