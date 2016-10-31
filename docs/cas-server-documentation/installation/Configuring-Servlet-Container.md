@@ -15,7 +15,7 @@ Note that CAS itself ships with an embedded Tomcat container that allows the pla
 NOT** need to configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Note</strong><p>
-Remember that mostly all aspects of the embedded container can be controlled via the CAS properties.
+Remember that mostly all aspects of the embedded container can be controlled via the CAS properties. See <a href="Configuration-Properties.html">this guide</a> for more info.
 </p></div>
 
 Other embedded containers such as Jetty and Undertow may also be configured as a Tomcat replacement. To do this, the provided
