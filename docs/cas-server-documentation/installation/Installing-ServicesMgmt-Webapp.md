@@ -31,6 +31,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Authorization
 
+Learn how to control access to the management web application. 
+
 ### Static List of Users
 
 By default, access is limited to a static list of users whose credentials may be 
