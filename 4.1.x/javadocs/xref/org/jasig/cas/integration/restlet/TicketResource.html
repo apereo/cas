@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Formatter fmt = <strong class="jxr_keyword">new</strong> Formatter()) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">try</strong> (Formatter fmt = <strong class="jxr_keyword">new</strong> Formatter()) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticketGrantingTicketId = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.createTicketGrantingTicket(c);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>              getResponse().setStatus(determineStatus());
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId.getId());

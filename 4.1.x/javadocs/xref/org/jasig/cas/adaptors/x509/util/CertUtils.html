@@ -87,7 +87,7 @@
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">     * @return the x 509 certificate</em>
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> X509Certificate readCertificate(<strong class="jxr_keyword">final</strong> Resource resource) {
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> InputStream in = resource.getInputStream()) {
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">try</strong> (InputStream in = resource.getInputStream()) {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">return</strong> CertUtil.readCertificate(in);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Error reading certificate "</span> + resource, e);

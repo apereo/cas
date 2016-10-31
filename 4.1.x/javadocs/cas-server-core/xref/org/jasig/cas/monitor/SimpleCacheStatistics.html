@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.name != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>              builder.append(<strong class="jxr_keyword">this</strong>.name).append(':');
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         }
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Formatter formatter = <strong class="jxr_keyword">new</strong> Formatter(builder)) {
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         <strong class="jxr_keyword">try</strong> (Formatter formatter = <strong class="jxr_keyword">new</strong> Formatter(builder)) {
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>             formatter.format(<span class="jxr_string">"%.2f"</span>, <strong class="jxr_keyword">this</strong>.size / BYTES_PER_MB);
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>             builder.append(<span class="jxr_string">"MB used, "</span>);
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             builder.append(getPercentFree()).append(<span class="jxr_string">"% free, "</span>);

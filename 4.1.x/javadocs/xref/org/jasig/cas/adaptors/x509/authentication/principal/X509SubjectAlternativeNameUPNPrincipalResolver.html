@@ -159,8 +159,8 @@
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     <strong class="jxr_keyword">private</strong> ASN1Sequence getAltnameSequence(<strong class="jxr_keyword">final</strong> byte[] sanValue) {
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         ASN1Primitive oct = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> ByteArrayInputStream bInput = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(sanValue)) {
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> ASN1InputStream input = <strong class="jxr_keyword">new</strong> ASN1InputStream(bInput)) {
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">try</strong> (ByteArrayInputStream bInput = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(sanValue)) {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">try</strong> (ASN1InputStream input = <strong class="jxr_keyword">new</strong> ASN1InputStream(bInput)) {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                 oct = input.readObject();
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException e) {
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>                 logger.error(<span class="jxr_string">"Error on getting Alt Name as a DERSEquence: {}"</span>, e.getMessage(), e);

@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../org/jasig/cas/adaptors/x509/authentication/handler/support/WiringTests.html">WiringTests</a> {
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      @Test
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyWiring() {
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> ClassPathXmlApplicationContext context = <strong class="jxr_keyword">new</strong> ClassPathXmlApplicationContext(<span class="jxr_string">"deployerConfigContext.xml"</span>)) {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">try</strong> (ClassPathXmlApplicationContext context = <strong class="jxr_keyword">new</strong> ClassPathXmlApplicationContext(<span class="jxr_string">"deployerConfigContext.xml"</span>)) {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>              Assert.assertTrue(context.getBeanDefinitionCount() &gt; 0);
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          }
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      }

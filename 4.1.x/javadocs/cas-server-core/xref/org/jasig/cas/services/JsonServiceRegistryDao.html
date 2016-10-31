@@ -174,7 +174,7 @@
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>             ((<a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a>) service).setId(System.nanoTime());
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         <strong class="jxr_keyword">final</strong> File f = makeFile(service);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> LockedOutputStream out = <strong class="jxr_keyword">new</strong> LockedOutputStream(<strong class="jxr_keyword">new</strong> FileOutputStream(f))) {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">try</strong> (LockedOutputStream out = <strong class="jxr_keyword">new</strong> LockedOutputStream(<strong class="jxr_keyword">new</strong> FileOutputStream(f))) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>             <strong class="jxr_keyword">this</strong>.registeredServiceJsonSerializer.toJson(out, service);
 <a class="jxr_linenumber" name="L171" href="#L171">171</a> 
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceMap.containsKey(service.getId())) {
@@ -262,7 +262,7 @@
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L255" href="#L255">255</a>         }
 <a class="jxr_linenumber" name="L256" href="#L256">256</a> 
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> BufferedInputStream in = <strong class="jxr_keyword">new</strong> BufferedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(file))) {
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">try</strong> (BufferedInputStream in = <strong class="jxr_keyword">new</strong> BufferedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(file))) {
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.registeredServiceJsonSerializer.fromJson(in);
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
 <a class="jxr_linenumber" name="L260" href="#L260">260</a>             LOGGER.error(<span class="jxr_string">"Error reading configuration file "</span> + file.getName(), e);

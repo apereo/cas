@@ -104,7 +104,7 @@
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">final</strong> KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">char</strong>[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> FileInputStream casStream = <strong class="jxr_keyword">new</strong> FileInputStream(trustStoreFile)) {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">try</strong> (FileInputStream casStream = <strong class="jxr_keyword">new</strong> FileInputStream(trustStoreFile)) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>                 casTrustStore.load(casStream, trustStorePasswordCharArray);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>             }
 <a class="jxr_linenumber" name="L102" href="#L102">102</a> 

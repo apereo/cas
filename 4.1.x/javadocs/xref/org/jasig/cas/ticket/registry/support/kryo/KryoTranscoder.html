@@ -215,7 +215,7 @@
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>     @Override
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>     <strong class="jxr_keyword">public</strong> CachedData encode(<strong class="jxr_keyword">final</strong> Object obj) {
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream byteStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Output output = <strong class="jxr_keyword">new</strong> Output(byteStream)) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">try</strong> (Output output = <strong class="jxr_keyword">new</strong> Output(byteStream)) {
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>             kryo.writeClassAndObject(output, obj);
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>             output.flush();
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>             <strong class="jxr_keyword">final</strong> byte[] bytes = byteStream.toByteArray();
@@ -226,7 +226,7 @@
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>     @Override
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>     <strong class="jxr_keyword">public</strong> Object decode(<strong class="jxr_keyword">final</strong> CachedData d) {
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">final</strong> byte[] bytes = d.getData();
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Input input = <strong class="jxr_keyword">new</strong> Input(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes))) {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">try</strong> (Input input = <strong class="jxr_keyword">new</strong> Input(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes))) {
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">final</strong> Object obj =  kryo.readClassAndObject(input);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>             <strong class="jxr_keyword">return</strong> obj;
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>         }

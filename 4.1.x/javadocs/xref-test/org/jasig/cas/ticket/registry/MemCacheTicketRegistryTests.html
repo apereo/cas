@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>     }
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> 
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> isMemcachedListening() {
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Socket socket = <strong class="jxr_keyword">new</strong> Socket(<span class="jxr_string">"127.0.0.1"</span>, PORT)) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">try</strong> (Socket socket = <strong class="jxr_keyword">new</strong> Socket(<span class="jxr_string">"127.0.0.1"</span>, PORT)) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>             <strong class="jxr_keyword">return</strong> false;

@@ -186,7 +186,7 @@
 <a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> String getRequestBody(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">final</strong> StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> BufferedReader reader = request.getReader()) {
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">try</strong> (BufferedReader reader = request.getReader()) {
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>             <strong class="jxr_keyword">if</strong> (reader == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>                 LOGGER.debug(<span class="jxr_string">"Request body could not be read because it's empty."</span>);

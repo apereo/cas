@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     * @throws TicketException if the ticket could not be created.</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     <a href="../../../org/jasig/cas/ticket/ServiceTicket.html">ServiceTicket</a> grantServiceTicket(
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>             @NotNull <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId, @NotNull <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service, <strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             @NotNull String ticketGrantingTicketId, @NotNull <a href="../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service, Credential... credentials)
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     <em class="jxr_javadoccomment">/**</em>
@@ -157,7 +157,7 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> <em class="jxr_javadoccomment">     * @throws TicketException if there was an error validating the ticket.</em>
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>     <a href="../../../org/jasig/cas/validation/Assertion.html">Assertion</a> validateServiceTicket(@NotNull <strong class="jxr_keyword">final</strong> String serviceTicketId, @NotNull <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) <strong class="jxr_keyword">throws</strong> TicketException;
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     <a href="../../../org/jasig/cas/validation/Assertion.html">Assertion</a> validateServiceTicket(@NotNull String serviceTicketId, @NotNull <a href="../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) <strong class="jxr_keyword">throws</strong> TicketException;
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> 
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any</em>
@@ -167,7 +167,7 @@
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">     * @param ticketGrantingTicketId the id of the ticket we want to destroy</em>
 <a class="jxr_linenumber" name="L160" href="#L160">160</a> <em class="jxr_javadoccomment">     * @return the logout requests.</em>
 <a class="jxr_linenumber" name="L161" href="#L161">161</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>     List&lt;LogoutRequest&gt; destroyTicketGrantingTicket(@NotNull <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     List&lt;LogoutRequest&gt; destroyTicketGrantingTicket(@NotNull String ticketGrantingTicketId);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> 
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     * Delegate a TicketGrantingTicket to a Service for proxying authentication</em>
@@ -183,7 +183,7 @@
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">     * @throws AuthenticationException on errors authenticating the credentials</em>
 <a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">     * @throws TicketException if there was an error creating the ticket</em>
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <a href="../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> delegateTicketGrantingTicket(@NotNull <strong class="jxr_keyword">final</strong> String serviceTicketId, @NotNull <strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <a href="../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> delegateTicketGrantingTicket(@NotNull String serviceTicketId, @NotNull Credential... credentials)
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException;
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> }
 </pre>
