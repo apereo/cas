@@ -8,7 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the {@code FileTrustStoreSslSocketFactory} class, checking for self-signed
