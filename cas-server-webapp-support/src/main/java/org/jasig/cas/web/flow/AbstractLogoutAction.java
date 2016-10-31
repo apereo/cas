@@ -65,8 +65,8 @@ public abstract class AbstractLogoutAction extends AbstractAction {
      * @return the event triggered by this actions.
      * @throws Exception exception returned by this action.
      */
-    protected abstract Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-            final RequestContext context) throws Exception;
+    protected abstract Event doInternalExecute(HttpServletRequest request, HttpServletResponse response,
+            RequestContext context) throws Exception;
 
     /**
      * Prevent caching by adding the appropriate headers.

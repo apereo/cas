@@ -136,7 +136,7 @@ public interface CentralAuthenticationService {
      * @throws TicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-            @NotNull final String ticketGrantingTicketId, @NotNull final Service service, final Credential... credentials)
+            @NotNull String ticketGrantingTicketId, @NotNull Service service, Credential... credentials)
             throws AuthenticationException, TicketException;
 
     /**
@@ -149,7 +149,7 @@ public interface CentralAuthenticationService {
      *
      * @throws TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(@NotNull final String serviceTicketId, @NotNull final Service service) throws TicketException;
+    Assertion validateServiceTicket(@NotNull String serviceTicketId, @NotNull Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
@@ -159,7 +159,7 @@ public interface CentralAuthenticationService {
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      * @return the logout requests.
      */
-    List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId);
+    List<LogoutRequest> destroyTicketGrantingTicket(@NotNull String ticketGrantingTicketId);
 
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
@@ -175,6 +175,6 @@ public interface CentralAuthenticationService {
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if there was an error creating the ticket
      */
-    TicketGrantingTicket delegateTicketGrantingTicket(@NotNull final String serviceTicketId, @NotNull final Credential... credentials)
+    TicketGrantingTicket delegateTicketGrantingTicket(@NotNull String serviceTicketId, @NotNull Credential... credentials)
             throws AuthenticationException, TicketException;
 }

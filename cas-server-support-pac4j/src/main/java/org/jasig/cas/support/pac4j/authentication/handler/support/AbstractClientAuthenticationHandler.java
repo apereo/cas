@@ -113,7 +113,7 @@ public abstract class AbstractClientAuthenticationHandler extends AbstractPreAnd
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
+    protected abstract HandlerResult createResult(ClientCredential credentials, UserProfile profile)
         throws GeneralSecurityException, PreventedException;
 
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {

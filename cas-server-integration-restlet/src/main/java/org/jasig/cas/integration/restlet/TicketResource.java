@@ -85,7 +85,7 @@ public class TicketResource extends ServerResource {
             return;
         }
 
-        try (final Formatter fmt = new Formatter()) {
+        try (Formatter fmt = new Formatter()) {
             final TicketGrantingTicket ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
             final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId.getId());

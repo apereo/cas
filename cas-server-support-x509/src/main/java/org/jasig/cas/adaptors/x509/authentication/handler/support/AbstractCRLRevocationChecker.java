@@ -165,7 +165,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * @return true if the entry was added successfully.
      * @since 4.1
      */
-    protected abstract boolean addCRL(final Object id, final X509CRL crl);
+    protected abstract boolean addCRL(Object id, X509CRL crl);
 
     /**
      * Gets the collection of CRLs for the given certificate.
@@ -173,5 +173,5 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * @param cert Certificate for which the CRL of the issuing CA should be retrieved.
      * @return CRLs for given cert.
      */
-    protected abstract Collection<X509CRL> getCRLs(final X509Certificate cert);
+    protected abstract Collection<X509CRL> getCRLs(X509Certificate cert);
 }

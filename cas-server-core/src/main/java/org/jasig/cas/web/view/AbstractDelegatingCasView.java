@@ -62,7 +62,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
      * @param response the response
      * @throws Exception the exception
      */
-    protected abstract void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                                final HttpServletResponse response) throws Exception;
+    protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+                                                HttpServletResponse response) throws Exception;
 
 }

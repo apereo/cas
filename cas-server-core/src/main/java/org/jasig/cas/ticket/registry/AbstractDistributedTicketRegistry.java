@@ -42,7 +42,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
      *
      * @param ticket the ticket
      */
-    protected abstract void updateTicket(final Ticket ticket);
+    protected abstract void updateTicket(Ticket ticket);
 
     /**
      * Whether or not a callback to the TGT is required when checking for expiration.

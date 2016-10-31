@@ -112,7 +112,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
      * @param attributes the principal attributes
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(final Map<String, Object> attributes);
+    protected abstract Map<String, Object> getAttributesInternal(Map<String, Object> attributes);
 
     @Override
     public int hashCode() {

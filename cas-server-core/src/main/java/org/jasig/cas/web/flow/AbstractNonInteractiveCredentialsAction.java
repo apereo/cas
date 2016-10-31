@@ -162,6 +162,5 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return the constructed credential or null if none could be constructed
      * from the request.
      */
-    protected abstract Credential constructCredentialsFromRequest(
-        final RequestContext context);
+    protected abstract Credential constructCredentialsFromRequest(RequestContext context);
 }
