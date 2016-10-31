@@ -40,16 +40,13 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private final String registryBean;
 
-    private final boolean binaryProtocol;
-
-    public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
+    public MemCacheTicketRegistryTests(final String beanName) {
         registryBean = beanName;
-        binaryProtocol = binary;
     }
 
     @Parameterized.Parameters
     public static Collection getTestParameters() throws Exception {
-        return Arrays.asList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
+        return Arrays.asList(new Object[] {"testCase1"}, new Object[] {"testCase2"});
     }
 
     @BeforeClass
@@ -143,7 +140,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
@@ -155,8 +152,9 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
         final TicketGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
         assertEquals(a, pgt.getAuthentication());
-        
-        assertTrue("TGT and children were deleted", this.registry.deleteTicket(tgt.getId()) == 3);
+
+        final int count = this.registry.deleteTicket(tgt.getId());
+        assertTrue("TGT and children were not deleted", count == 3);
         
         assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
