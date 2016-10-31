@@ -83,11 +83,15 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         try {
             Assert.notNull(this.client, "No memcached client is defined.");
-            return this.client.delete(ticketId).get();
+            if (this.client.delete(ticketId).get()) {
+                logger.debug("Removed ticket {} from the cache", ticketId);
+            } else {
+                logger.info("Ticket {} not found or is already removed.", ticketId);
+            }
         } catch (final Exception e) {
             logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
         }
-        return false;
+        return true;
     }
 
     @Override
