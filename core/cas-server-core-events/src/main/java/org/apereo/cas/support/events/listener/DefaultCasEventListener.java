@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
@@ -21,8 +19,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
  * @since 5.0.0
  */
 public class DefaultCasEventListener {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
     private CasEventRepository casEventRepository;
 
     /**

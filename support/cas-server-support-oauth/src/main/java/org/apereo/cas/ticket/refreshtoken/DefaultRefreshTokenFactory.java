@@ -7,8 +7,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default OAuth refresh token factory.
@@ -17,8 +15,6 @@ import org.slf4j.LoggerFactory;
  * @since 5.0.0
  */
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
-
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Default instance for the ticket id generator. */
     protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();

@@ -7,7 +7,6 @@ import com.mongodb.DBObject;
 import org.apache.commons.logging.Log;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
 import java.lang.ref.ReferenceQueue;
@@ -31,11 +30,6 @@ public abstract class BaseConverters {
      * @param <O>  the type parameter
      */
     public static class NullConverter<I, O> implements Converter<I, O> {
-        /**
-         * The Logger.
-         */
-        protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
         @Override
         public O convert(final I i) {
             return null;

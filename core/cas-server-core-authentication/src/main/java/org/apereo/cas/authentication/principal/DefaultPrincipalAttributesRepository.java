@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * Default implementation of {@link PrincipalAttributesRepository}
  * that just returns the attributes as it receives them.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -20,7 +21,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final long serialVersionUID = -4535358847021241725L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalAttributesRepository.class);
-    
+
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         LOGGER.debug("Using {}, no caching takes place for {} to add attributes.", id,
@@ -51,17 +52,15 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final DefaultPrincipalAttributesRepository rhs = (DefaultPrincipalAttributesRepository) obj;
-        return new EqualsBuilder()
-                .isEquals();
+        return new EqualsBuilder().isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 133)
-                .toHashCode();
+        return new HashCodeBuilder(13, 133).toHashCode();
     }
 
     @Override
-    public void close() throws IOException {}
+    public void close() throws IOException {
+    }
 }

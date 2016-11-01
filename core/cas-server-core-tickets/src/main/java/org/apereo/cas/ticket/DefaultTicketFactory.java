@@ -4,8 +4,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -19,8 +17,6 @@ import java.util.Map;
  * @since 4.2
  */
 public class DefaultTicketFactory implements TicketFactory {
-
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Map<String, Object> factoryMap;
 
