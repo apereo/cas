@@ -142,8 +142,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20CallbackAuthorizeViewResolver() {
             @Override
             public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-                final Set<String> prompts = oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url);
-                if (prompts.contains(OidcConstants.PROMPT_NONE)) {
+                if (oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url)
+                        .contains(OidcConstants.PROMPT_NONE)) {
                     if (manager.get(true) != null) {
                         return new ModelAndView(url);
                     }

@@ -135,7 +135,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("trustedDevicesConfiguration")
-    public class TrustedDevicesConfiguration {
+    public static class TrustedDevicesConfiguration {
 
         @Autowired
         @Bean
@@ -150,7 +150,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnBean(name = "casEventRepository")
     @Configuration("authenticationEventsConfiguration")
-    public class AuthenticationEventsConfiguration {
+    public static class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean

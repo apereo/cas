@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Container for password policy configuration.
@@ -12,8 +10,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class PasswordPolicyConfiguration {
-    
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private PasswordPolicyProperties passwordPolicyProperties;
 

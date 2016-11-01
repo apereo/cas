@@ -5,8 +5,6 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
