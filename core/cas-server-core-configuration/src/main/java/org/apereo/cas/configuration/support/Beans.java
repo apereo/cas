@@ -214,11 +214,12 @@ public class Beans {
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
 
-        PrincipalNameTransformer res = null;
+        final PrincipalNameTransformer res;
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
+            res = t;
         } else {
             res = formUserId -> formUserId;
         }

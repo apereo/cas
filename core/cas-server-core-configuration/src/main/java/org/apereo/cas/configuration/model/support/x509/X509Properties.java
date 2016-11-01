@@ -355,7 +355,7 @@ public class X509Properties {
         this.crlExpiredPolicy = crlExpiredPolicy;
     }
 
-    public class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapProperties {
         private String baseDn;
         private String searchFilter;
 
