@@ -110,7 +110,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     }
 
-    private void buildAuthenticationHistory(final Set<Authentication> authentications,
+    private static void buildAuthenticationHistory(final Set<Authentication> authentications,
                                             final Map<String, Object> authenticationAttributes,
                                             final Map<String, Object> principalAttributes,
                                             final AuthenticationBuilder authenticationBuilder) {

@@ -40,7 +40,7 @@ public class SamlAttributeEncoder {
         return finalAttributes;
     }
     
-    private void transformUniformResourceNames(final Map<String, Object> attributes) {
+    private static void transformUniformResourceNames(final Map<String, Object> attributes) {
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.toLowerCase().startsWith("urn_"))
                 .map(s -> new Pair<>(s.replace('_', ':'), attributes.get(s)))

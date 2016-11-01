@@ -120,7 +120,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return attributesToRelease;
     }
 
-    private Object getGroovyAttributeValue(final String groovyScript,
+    private static Object getGroovyAttributeValue(final String groovyScript,
                                            final Map<String, Object> resolvedAttributes) {
         try {
             final Binding binding = new Binding();

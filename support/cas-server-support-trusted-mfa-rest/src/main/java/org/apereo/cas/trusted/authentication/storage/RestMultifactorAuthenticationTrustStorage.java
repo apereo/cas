@@ -57,7 +57,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return null;
     }
     
-    private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
+    private static Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity =
                 restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);

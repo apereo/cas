@@ -262,7 +262,7 @@ public class WsFederationHelper {
      * @param wsFederationConfiguration the ws federation configuration
      * @return the signature trust engine
      */
-    private SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
+    private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
         try {
             final CredentialResolver resolver = new
                     StaticCredentialResolver(wsFederationConfiguration.getSigningCertificates());
@@ -279,7 +279,7 @@ public class WsFederationHelper {
         this.configBean = configBean;
     }
 
-    private Credential getEncryptionCredential(final WsFederationConfiguration config) {
+    private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
         try {
             // This will need to contain the private keypair in PEM format
             LOGGER.debug("Locating encryption credential private key {}", config.getEncryptionPrivateKey());
@@ -322,7 +322,7 @@ public class WsFederationHelper {
     }
 
 
-    private Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
+    private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
         final List<EncryptedKeyResolver> list = new ArrayList<>();
         list.add(new InlineEncryptedKeyResolver());
         list.add(new EncryptedElementTypeEncryptedKeyResolver());

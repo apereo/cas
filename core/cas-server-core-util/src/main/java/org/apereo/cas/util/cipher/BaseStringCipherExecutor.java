@@ -117,7 +117,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @param secret the secret
      * @return the key
      */
-    private Key prepareJsonWebTokenKey(final String secret) {
+    private static Key prepareJsonWebTokenKey(final String secret) {
 
         try {
             final Map<String, Object> keys = new HashMap<>(2);
