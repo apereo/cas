@@ -29,8 +29,8 @@ Cache instance can be integrated with
 - Spring Cache 3.x and 4.x
 - CDI
 - OSGi
-- Apache Spark
-- Apache Hadoop
+- [Apache Spark](https://github.com/infinispan/infinispan-spark)
+- [Apache Hadoop](https://github.com/infinispan/infinispan-hadoop)
 
 There are a variety of cache stores available to choose from, some of which are:
 
