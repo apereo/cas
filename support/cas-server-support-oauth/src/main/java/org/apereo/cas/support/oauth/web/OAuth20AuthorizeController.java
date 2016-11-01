@@ -85,7 +85,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     }
 
-    private boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
+    private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
         final Optional<CommonProfile> opt = manager.get(true);
         return opt.isPresent();
     }

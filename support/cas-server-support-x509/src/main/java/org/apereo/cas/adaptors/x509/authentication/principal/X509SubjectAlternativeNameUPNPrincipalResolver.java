@@ -68,7 +68,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      *            First element is the object identifier, second is the object itself.
      * @return UPN string or null
      */
-    private String getUPNStringFromSequence(final ASN1Sequence seq) {
+    private static String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
             final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));

@@ -99,7 +99,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         return null;
     }
 
-    private <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family, final String alg) {
+    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family, final String alg) {
         return (T) family.stream().filter(l -> l.getName().equalsIgnoreCase(alg)).findFirst().get();
     }
 
