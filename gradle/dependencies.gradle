@@ -1066,6 +1066,7 @@ ext.libraries = [
         },
         shiro                   : dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "commons-beanutils", module: "commons-beanutils")
             force = true
         },
         springbootconfigmetadata: [
