@@ -1,0 +1,21 @@
+
+description = "Apereo CAS Cassandra ticket registry"
+dependencies {
+    compile project(":core:cas-server-core")
+    compile project(":core:cas-server-core-tickets")
+    compile project(":core:cas-server-core-configuration")
+
+    compile 'com.datastax.cassandra:cassandra-driver-core:3.1.1'
+
+    compile libraries.spring
+    compile libraries.quartz
+    compile libraries.jodatime
+    compile libraries.log4j
+    compile libraries.jackson
+
+    testCompile(
+            'junit:junit:4.12',
+            'org.codehaus.groovy:groovy-all:2.4.7',
+            'org.spockframework:spock-core:1.0-groovy-2.4'
+    )
+}

@@ -129,6 +129,7 @@ include "support:cas-server-support-validation"
 include "support:cas-server-support-actions"
 include "support:cas-server-support-actions-aup-ldap"
 include "support:cas-server-support-actions-aup-webflow"
+include "support:cas-server-support-cassandra-ticket-registry"
 
 include "webapp:cas-server-webapp-init"
 include "webapp:cas-server-webapp-session-redis"
