@@ -5,7 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.*;
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -19,12 +25,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -47,11 +59,12 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
-    private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
     private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
+    private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
     private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
     private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
-    private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>";
+    private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
+            + "type=\"submit\" value=\"Submit\"></form></body></html>";
     private static final int SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH = DOCTYPE_AND_OPENING_FORM.length() + REST_OF_THE_FORM_AND_CLOSING_TAGS.length();
 
     private CentralAuthenticationService centralAuthenticationService;
@@ -78,7 +91,7 @@ public class TicketsResource {
     public DeferredResult<ResponseEntity<String>> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                             final HttpServletRequest request) throws JsonProcessingException {
 
-        DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>();
+        final DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>();
 
         CompletableFuture
                 .supplyAsync(() -> getResponseEntity(requestBody, request))
@@ -87,7 +100,7 @@ public class TicketsResource {
         return deferredResult;
     }
 
-    private ResponseEntity<String> getResponseEntity(@RequestBody MultiValueMap<String, String> requestBody, HttpServletRequest request) {
+    private ResponseEntity<String> getResponseEntity(@RequestBody final MultiValueMap<String, String> requestBody, final HttpServletRequest request) {
         try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
@@ -98,8 +111,8 @@ public class TicketsResource {
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-            String tgtUrl = ticketReference.toString();
-            String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+            final String tgtUrl = ticketReference.toString();
+            final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
                     .append(DOCTYPE_AND_OPENING_FORM)
                     .append(tgtUrl)
                     .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
@@ -115,9 +128,9 @@ public class TicketsResource {
             LOGGER.error("{} Caused by: {}", e.getMessage(), authnExceptions, e);
             try {
                 return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-            } catch (JsonProcessingException e1) {
+            } catch (final JsonProcessingException exception) {
                 LOGGER.error(e.getMessage(), e);
-                // TODO: could we create constants ResponseEntity?
+                // could we create constants ResponseEntity?
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (final BadRequestException e) {

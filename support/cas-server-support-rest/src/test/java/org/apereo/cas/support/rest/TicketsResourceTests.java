@@ -88,7 +88,7 @@ public class TicketsResourceTests {
 
         configureCasMockToCreateValidTGT();
 
-        MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
                 .andExpect(request().asyncStarted())
@@ -105,7 +105,7 @@ public class TicketsResourceTests {
     public void creationOfTGTWithAuthenticationException() throws Throwable {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
-        MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
                 .andExpect(request().asyncStarted())
@@ -120,7 +120,7 @@ public class TicketsResourceTests {
     public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
 
-        MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
                 .andExpect(request().asyncStarted())
@@ -135,7 +135,7 @@ public class TicketsResourceTests {
     public void creationOfTGTWithBadPayload() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
 
-        MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("no_username_param", "test")
                 .param("no_password_param", "test"))
                 .andExpect(request().asyncStarted())
