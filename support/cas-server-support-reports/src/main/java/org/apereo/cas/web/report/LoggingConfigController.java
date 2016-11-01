@@ -222,7 +222,7 @@ public class LoggingConfigController {
         return new HashMap<>();
     }
 
-    private ILoggerFactory getCasLoggerFactoryInstance() {
+    private static  ILoggerFactory getCasLoggerFactoryInstance() {
         return LoggerFactory.getILoggerFactory();
     }
 

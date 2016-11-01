@@ -140,7 +140,7 @@ public class X509AuthenticationConfiguration {
         return c;
     }
 
-    private RevocationPolicy getRevocationPolicy(final String policy) {
+    private static RevocationPolicy getRevocationPolicy(final String policy) {
         switch (policy.toLowerCase()) {
             case "allow":
                 return new AllowRevocationPolicy();

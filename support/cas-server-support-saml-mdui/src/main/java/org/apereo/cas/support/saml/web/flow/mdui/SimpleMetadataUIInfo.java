@@ -184,7 +184,7 @@ public class SimpleMetadataUIInfo implements Serializable {
      * @param items the items
      * @return the string values
      */
-    private Collection<String> getStringValues(final List<?> items) {
+    private static Collection<String> getStringValues(final List<?> items) {
         final List<String> list = new ArrayList<>();
         for (final Object d : items) {
             if (d instanceof XSURI) {
