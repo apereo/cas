@@ -1,7 +1,6 @@
 package org.apereo.cas.dao;
 
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -21,99 +20,102 @@ import java.util.List;
 @Component("ticketRegistry")
 public class NoSqlTicketRegistry extends AbstractTicketRegistry implements TicketRegistryCleaner {
 
-	private static final Logger LOG = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
     private static final String TICKET_GRANTING_TICKET_PREFIX = "TGT";
     private static final String SERVICE_TICKET_PREFIX = "ST";
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
-	private ExpirationCalculator expirationCalculator;
+    private ExpirationCalculator expirationCalculator;
     private LogoutManager logoutManager;
     private boolean logUserOutOfServices = true;
 
     @Autowired
-    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final  ExpirationCalculator expirationCalculator, final LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices) {
+    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final ExpirationCalculator expirationCalculator,
+                               final LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices) {
         this.ticketRegistryDao = ticketRegistryDao;
         this.expirationCalculator = expirationCalculator;
         this.logoutManager = logoutManager;
         this.logUserOutOfServices = logUserOutOfServices;
     }
 
-	@Override
-	public void addTicket(final Ticket ticket) {
-        LOG.debug("INSERTING TICKET {}", ticket.getId());
-        if (ticket instanceof TicketGrantingTicketImpl) {
-            TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-            ticketRegistryDao.addTicketGrantingTicket(ticket);
-	        ticketRegistryDao.addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
-	    } else if (ticket instanceof ServiceTicket) {
-            ticketRegistryDao.addServiceTicket(ticket);
-	    } else {
-	        LOG.error("inserting unknown ticket type {}", ticket.getClass().getName());
-	    }
-	}
-
-	@Override
-	public int deleteTicket(final String id) {
-        if (deleteSingleTicket(id)) {
-        	return 1;
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public boolean deleteSingleTicket(String id) {
-		LOG.debug("DELETING TICKET {}", id);
-		if (isTgt(id)) {
-			return ticketRegistryDao.deleteTicketGrantingTicket(id);
-		} else if (isSt(id)) {
-			return ticketRegistryDao.deleteServiceTicket(id);
-		} else {
-			LOG.error("deleting unknown ticket type {}", id);
-			return false;
-		}
-	}
-
-	@Override
-	public Ticket getTicket(final String id) {
-        LOG.debug("QUERYING TICKET {}", id);
-	    if (isTgt(id)) {
-	        return ticketRegistryDao.getTicketGrantingTicket(id);
-	    } else if (isSt(id)) {
-            return ticketRegistryDao.getServiceTicket(id);
-	    } else {
-            LOG.error("requesting unknown ticket type {}", id);
-            return null;
-	    }
-	}
-
     @Override
-    public void updateTicket(final Ticket ticket) {
-		LOG.debug("UPDATING TICKET {}", ticket.getId());
-        if (ticket instanceof TicketGrantingTicketImpl) {
-            TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
-            ticketRegistryDao.updateTicketGrantingTicket(ticket);
+    public void addTicket(final Ticket ticket) {
+        final String ticketId = ticket.getId();
+        LOGGER.debug("INSERTING TICKET {}", ticketId);
+        if (isTgt(ticketId)) {
+            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
+            ticketRegistryDao.addTicketGrantingTicket(ticket);
             ticketRegistryDao.addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
-        } else if (ticket instanceof ServiceTicket) {
-            ticketRegistryDao.updateServiceTicket(ticket);
+        } else if (isSt(ticketId)) {
+            ticketRegistryDao.addServiceTicket(ticket);
         } else {
-			LOG.error("inserting unknown ticket type {}", ticket.getClass().getName());
+            LOGGER.error("inserting unknown ticket type {}", ticket.getClass().getName());
         }
     }
 
     @Override
-	public Collection<Ticket> getTickets() {
-		return null;
-	}
+    public int deleteTicket(final String id) {
+        if (deleteSingleTicket(id)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String id) {
+        LOGGER.debug("DELETING TICKET {}", id);
+        if (isTgt(id)) {
+            return ticketRegistryDao.deleteTicketGrantingTicket(id);
+        } else if (isSt(id)) {
+            return ticketRegistryDao.deleteServiceTicket(id);
+        } else {
+            LOGGER.error("deleting unknown ticket type {}", id);
+            return false;
+        }
+    }
+
+    @Override
+    public Ticket getTicket(final String id) {
+        LOGGER.debug("QUERYING TICKET {}", id);
+        if (isTgt(id)) {
+            return ticketRegistryDao.getTicketGrantingTicket(id);
+        } else if (isSt(id)) {
+            return ticketRegistryDao.getServiceTicket(id);
+        } else {
+            LOGGER.error("requesting unknown ticket type {}", id);
+            return null;
+        }
+    }
+
+    @Override
+    public void updateTicket(final Ticket ticket) {
+        final String ticketId = ticket.getId();
+        LOGGER.debug("UPDATING TICKET {}", ticketId);
+        if (isTgt(ticketId)) {
+            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
+            ticketRegistryDao.updateTicketGrantingTicket(ticket);
+            ticketRegistryDao.addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
+        } else if (isSt(ticketId)) {
+            ticketRegistryDao.updateServiceTicket(ticket);
+        } else {
+            LOGGER.error("inserting unknown ticket type {}", ticket.getClass().getName());
+        }
+    }
+
+    @Override
+    public Collection<Ticket> getTickets() {
+        return null;
+    }
 
     @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
             fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
-	public void clean() {
-        List<TicketGrantingTicket> expiredTgts = ticketRegistryDao.getExpiredTgts();
+    public void clean() {
+        final List<TicketGrantingTicket> expiredTgts = ticketRegistryDao.getExpiredTgts();
 
         int deleted = 0;
-        for (TicketGrantingTicket ticket : expiredTgts) {
+        for (final TicketGrantingTicket ticket : expiredTgts) {
             if (logUserOutOfServices) {
                 logoutManager.performLogout(ticket);
             }
@@ -121,7 +123,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
             deleted++;
         }
 
-        LOG.info("Finished cleaning Ticket Granting Tickets, {} removed.", deleted);
+        LOGGER.info("Finished cleaning Ticket Granting Tickets, {} removed.", deleted);
     }
 
     private boolean isSt(final String id) {

@@ -14,29 +14,30 @@ import static org.apereo.cas.authentication.RememberMeCredential.AUTHENTICATION_
 @Component
 public class ExpirationCalculator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExpirationCalculator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExpirationCalculator.class);
     private long ttl;
     private long ttk;
     private long rememberMeTtl;
 
     @Autowired
-    public ExpirationCalculator(@Value("${tgt.maxTimeToLiveInSeconds:28800}") long ttl, @Value("${tgt.timeToKillInSeconds:7200}") long ttk, @Value("${tgt.maxRememberMeTimeoutExpiration}") long rememberMeTtl) {
+    public ExpirationCalculator(@Value("${tgt.maxTimeToLiveInSeconds:28800}") final long ttl, @Value("${tgt.timeToKillInSeconds:7200}") final long ttk,
+                                @Value("${tgt.maxRememberMeTimeoutExpiration}") final long rememberMeTtl) {
         this.ttl = ttl;
         this.ttk = ttk;
         this.rememberMeTtl = rememberMeTtl;
     }
 
-    public long getExpiration(TicketGrantingTicketImpl ticket) {
+    public long getExpiration(final TicketGrantingTicketImpl ticket) {
         final Boolean b = (Boolean) ticket.getAuthentication().getAttributes().get(AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         if (b != null && b) {
-            long expiry = ticket.getCreationTime().plusSeconds(rememberMeTtl).toEpochSecond();
-            LOG.debug("Ticket creation time: {}; Ticket expiry: {}",  ticket.getCreationTime(), expiry); 
+            final long expiry = ticket.getCreationTime().plusSeconds(rememberMeTtl).toEpochSecond();
+            LOGGER.debug("Ticket creation time: {}; Ticket expiry: {}", ticket.getCreationTime(), expiry);
             return expiry;
         } else {
-            ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ttl);
-            ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ttk);
-            long expiry = ticketTtl.isBefore(ticketTtk) ? ticketTtl.toEpochSecond() : ticketTtk.toEpochSecond();
-            LOG.debug("Ticket creation time: {}; Ticket expiry: {}",  ticket.getCreationTime(), expiry);
+            final ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ttl);
+            final ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ttk);
+            final long expiry = ticketTtl.isBefore(ticketTtk) ? ticketTtl.toEpochSecond() : ticketTtk.toEpochSecond();
+            LOGGER.debug("Ticket creation time: {}; Ticket expiry: {}", ticket.getCreationTime(), expiry);
             return expiry;
         }
     }
