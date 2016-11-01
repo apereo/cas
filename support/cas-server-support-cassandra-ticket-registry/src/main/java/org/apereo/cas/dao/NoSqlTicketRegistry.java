@@ -2,7 +2,6 @@ package org.apereo.cas.dao;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -15,7 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.List;
 
 @Component("ticketRegistry")
 public class NoSqlTicketRegistry extends AbstractTicketRegistry implements TicketRegistryCleaner {
@@ -112,25 +110,19 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
             fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
     public void clean() {
-        final List<TicketGrantingTicket> expiredTgts = ticketRegistryDao.getExpiredTgts();
-
-        int deleted = 0;
-        for (final TicketGrantingTicket ticket : expiredTgts) {
+        ticketRegistryDao.getExpiredTgts().forEach(ticket -> {
             if (logUserOutOfServices) {
                 logoutManager.performLogout(ticket);
             }
             deleteTicket(ticket.getId());
-            deleted++;
-        }
-
-        LOGGER.info("Finished cleaning Ticket Granting Tickets, {} removed.", deleted);
+        });
     }
 
-    private boolean isSt(final String id) {
+    private static boolean isSt(final String id) {
         return id.startsWith(SERVICE_TICKET_PREFIX);
     }
 
-    private boolean isTgt(final String id) {
+    private static boolean isTgt(final String id) {
         return id.startsWith(TICKET_GRANTING_TICKET_PREFIX);
     }
 }
