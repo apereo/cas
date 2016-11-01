@@ -14,6 +14,7 @@ ext["thymeleafVersion"] = "3.0.1.RELEASE"
 ext["thymeleafDialectVersion"] = "2.0.3"
 ext["springSessionVersion"] = "1.2.2.RELEASE"
 ext["hsqlVersion"] = "2.3.4"
+ext["httpCoreVersion"] = "4.4.4"
 
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
@@ -25,3 +26,4 @@ ext["thymeleaf.version"] = ext["thymeleafVersion"]
 ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
 ext["spring-session.version"] = ext["springSessionVersion"]
 ext["hsqldb.version"] = ext["hsqlVersion"]
+ext["httpcore.version"] = ext["httpCoreVersion"]

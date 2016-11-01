@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,18 +24,25 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SimplePrincipal implements Principal {
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -1255260750151385796L;
 
-    /** The unique identifier for the principal. */
+    /**
+     * The unique identifier for the principal.
+     */
     @JsonProperty
     private String id;
 
-    /** Principal attributes. **/
-    @JsonProperty
+    /**
+     * Principal attributes.
+     **/
     private Map<String, Object> attributes;
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     private SimplePrincipal() {
         this.id = null;
         this.attributes = new HashMap<>();
@@ -52,12 +60,16 @@ public class SimplePrincipal implements Principal {
     /**
      * Instantiates a new simple principal.
      *
-     * @param id the id
+     * @param id         the id
      * @param attributes the attributes
      */
     @JsonCreator
     protected SimplePrincipal(@JsonProperty("id") final String id,
                               @JsonProperty("attributes") final Map<String, Object> attributes) {
+                              
+        Assert.notNull(id, "Principal id cannot be null");
+        Assert.notNull(attributes, "Principal attributes cannot be null");
+ 
         this.id = id;
         this.attributes = attributes;
     }
@@ -80,7 +92,7 @@ public class SimplePrincipal implements Principal {
     @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id);
+        builder.append(this.id.toLowerCase());
         return builder.toHashCode();
     }
 
@@ -101,8 +113,6 @@ public class SimplePrincipal implements Principal {
             return false;
         }
         final SimplePrincipal rhs = (SimplePrincipal) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
     }
 }

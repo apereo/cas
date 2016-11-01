@@ -74,7 +74,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
-    private boolean evaluateCredentialTypeForBypass(final Authentication authentication, final String credentialClassType) {
+    private static boolean evaluateCredentialTypeForBypass(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials().stream()
                 .filter(e -> e.getCredentialClass().getName().matches(credentialClassType))
                 .findAny()

@@ -139,17 +139,17 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
                 is(MFA_PROVIDER_ID_1));
     }
 
-    private HttpServletRequest mockRequest() {
+    private static HttpServletRequest mockRequest() {
         return mock(HttpServletRequest.class);
     }
 
-    private HttpServletRequest mockRequest(final String provider) {
+    private static HttpServletRequest mockRequest(final String provider) {
         final HttpServletRequest request = mockRequest();
         when(request.getParameter(REQUEST_PARAM)).thenReturn(provider);
         return request;
     }
 
-    private RegexRegisteredService mockService(final String... providers) {
+    private static RegexRegisteredService mockService(final String... providers) {
         final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setMultifactorAuthenticationProviders(ImmutableSet.copyOf(providers));
         final RegexRegisteredService service = new RegexRegisteredService();
@@ -157,7 +157,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         return service;
     }
 
-    private RegexRegisteredService mockPrincipalService(final String provider, final String attrName,
+    private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName,
                                                         final String attrValue) {
         final RegexRegisteredService service = mockService(provider);
         final DefaultRegisteredServiceMultifactorPolicy policy = (DefaultRegisteredServiceMultifactorPolicy) service

@@ -43,7 +43,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     private IgniteConfiguration igniteConfiguration;
 
     private IgniteCache<String, Ticket> ticketIgniteCache;
@@ -73,7 +73,10 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
             @Override
             public Duration getExpiryForAccess() {
-                return new Duration(TimeUnit.SECONDS, ticket.getExpirationPolicy().getTimeToIdle());
+                final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
+                        ? ticket.getExpirationPolicy().getTimeToLive()
+                        : ticket.getExpirationPolicy().getTimeToIdle();
+                return new Duration(TimeUnit.SECONDS, idleTime);
             }
 
             @Override
@@ -131,7 +134,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
-    
+
     /**
      * Flag to indicate whether this registry instance should participate in reporting its state with
      * default value set to {@code true}.
@@ -149,17 +152,17 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void configureSecureTransport() {
         final String nullKey = "NULL";
-        
-        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath()) 
+
+        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath())
                 && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath()) 
+                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
                 && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
-            
+
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
-            
-            if (nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath()) 
+
+            if (nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
                     && nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
@@ -209,7 +212,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
 
     }
-    
+
     /**
      * Make sure we shutdown Ignite when the context is destroyed.
      */
