@@ -242,7 +242,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
                 .collect(toList());
     }
 
-    private long currentTimeBucket() {
+    private static long currentTimeBucket() {
         return System.currentTimeMillis() / TEN_SECONDS;
     }
 }

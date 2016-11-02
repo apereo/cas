@@ -126,11 +126,11 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
         LOGGER.info("Finished cleaning Ticket Granting Tickets, {} removed.", deleted);
     }
 
-    private boolean isSt(final String id) {
+    private static boolean isSt(final String id) {
         return id.startsWith(SERVICE_TICKET_PREFIX);
     }
 
-    private boolean isTgt(final String id) {
+    private static boolean isTgt(final String id) {
         return id.startsWith(TICKET_GRANTING_TICKET_PREFIX);
     }
 }
