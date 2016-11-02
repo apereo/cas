@@ -189,7 +189,7 @@ OR the principal must have a `member` attribute whose value is either of `admins
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`. The principal
-also must not have an attribute "role" whose value matches the pattern "deny.+"
+also must not have an attribute "role" whose value matches the pattern `deny.+`.
 
 
 ```json
