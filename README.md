@@ -54,7 +54,6 @@ customizations to further ease future upgrades and maintenance.
 **Note: Do NOT clone or download the CAS codebase directly. That is ONLY required if you wish to contribute to the development of 
 the project. Utilize the [WAR Overlay method][overlay] instead to build and deploy your CAS instance.**
 
-
 ## Contributions
 
 - [How to contribute][contribute]
