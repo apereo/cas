@@ -63,7 +63,7 @@ the project. Utilize the [WAR Overlay method][overlay] instead to build and depl
 
 CAS development is powered by: <br/>
 
-<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="../images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
+<a href="http://www.jetbrains.com/idea/" target="_blank"><img src="https://apereo.github.io/cas/images/intellijidea.gif" valign="middle" style="vertical-align:middle"></a>
 
 [wiki]: http://apereo.github.io/cas
 [overlay]: http://apereo.github.io/cas/development/installation/Maven-Overlay-Installation.html
