@@ -16,6 +16,7 @@ ext["springSessionVersion"] = "1.2.2.RELEASE"
 ext["hsqlVersion"] = "2.3.4"
 ext["httpCoreVersion"] = "4.4.4"
 
+ext["commons-beanutils.version"] = "1.8.3"
 ext["hazelcast.version"] = ext["hazelcastVersion"]
 ext["hibernate.version"] = ext["hibernateVersion"]
 ext["tomcat.version"] = ext["springBootTomcatVersion"]

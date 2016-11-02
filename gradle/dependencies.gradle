@@ -1069,11 +1069,12 @@ ext.libraries = [
             exclude(group: "c3p0", module: "c3p0")
             force = true
         },
-        shiro                   : dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "commons-beanutils", module: "commons-beanutils")
-            force = true
-        },
+        shiro                   : [
+                dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
