@@ -69,13 +69,13 @@ public class SamlMetadataUIConfiguration {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -83,7 +83,7 @@ public class SamlMetadataUIConfiguration {
     @javax.annotation.Resource(name = "webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> serviceFactory;
 
-    @ConditionalOnMissingBean(name="samlMetadataUIWebConfigurer")
+    @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
         final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
@@ -130,7 +130,7 @@ public class SamlMetadataUIConfiguration {
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
 
             final String[] arr = entry.split(DEFAULT_SEPARATOR);
-            
+
             final String metadataFile = arr[0];
             final String signingKey = arr.length > 1 ? arr[1] : null;
 
@@ -177,7 +177,7 @@ public class SamlMetadataUIConfiguration {
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
         final StaticMetadataResolverAdapter adapter = new StaticMetadataResolverAdapter();
-        configureAdapter(adapter);        
+        configureAdapter(adapter);
         adapter.buildMetadataResolverAggregate();
         return adapter;
     }

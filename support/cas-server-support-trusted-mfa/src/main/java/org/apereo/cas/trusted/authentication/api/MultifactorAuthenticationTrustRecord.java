@@ -19,7 +19,7 @@ import java.time.LocalDate;
  * This is {@link MultifactorAuthenticationTrustRecord}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")

@@ -6,7 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
@@ -17,6 +16,7 @@ import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
@@ -33,6 +33,7 @@ import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
@@ -213,11 +214,12 @@ public class Beans {
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
 
-        PrincipalNameTransformer res = null;
+        final PrincipalNameTransformer res;
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
+            res = t;
         } else {
             res = formUserId -> formUserId;
         }
@@ -253,20 +255,14 @@ public class Beans {
         return entryResolver;
     }
 
-    /**
-     * New pooled connection factory pooled connection factory.
-     *
-     * @param l the l
-     * @return the pooled connection factory
-     */
-    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
-        final PoolConfig pc = new PoolConfig();
-        pc.setMinPoolSize(l.getMinPoolSize());
-        pc.setMaxPoolSize(l.getMaxPoolSize());
-        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
-        pc.setValidatePeriodically(l.isValidatePeriodically());
-        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
 
+    /**
+     * New connection config connection config.
+     *
+     * @param l the ldap properties
+     * @return the connection config
+     */
+    public static ConnectionConfig newConnectionConfig(final AbstractLdapProperties l) {
         final ConnectionConfig cc = new ConnectionConfig();
         cc.setLdapUrl(l.getLdapUrl());
         cc.setUseSSL(l.isUseSsl());
@@ -286,7 +282,6 @@ public class Beans {
         } else {
             cc.setSslConfig(new SslConfig());
         }
-
         if (l.getSaslMechanism() != null) {
             final BindConnectionInitializer bc = new BindConnectionInitializer();
             final SaslConfig sc;
@@ -295,25 +290,19 @@ public class Beans {
                     sc = new DigestMd5Config();
                     ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
                     break;
-
                 case CRAM_MD5:
                     sc = new CramMd5Config();
                     break;
-
                 case EXTERNAL:
                     sc = new ExternalConfig();
                     break;
-
                 case GSSAPI:
                     sc = new GssApiConfig();
                     ((GssApiConfig) sc).setRealm(l.getSaslRealm());
                     break;
-
                 default:
                     throw new IllegalArgumentException("Unknown SASL mechanism " + l.getSaslMechanism().name());
-
             }
-
             sc.setAuthorizationId(l.getSaslAuthorizationId());
             sc.setMutualAuthentication(l.getSaslMutualAuth());
             sc.setQualityOfProtection(l.getSaslQualityOfProtection());
@@ -323,12 +312,36 @@ public class Beans {
         } else if (StringUtils.equals(l.getBindCredential(), "*") && StringUtils.equals(l.getBindDn(), "*")) {
             cc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(l.getBindDn()) && StringUtils.isNotBlank(l.getBindCredential())) {
-            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(),
-                    new Credential(l.getBindCredential())));
+            cc.setConnectionInitializer(new BindConnectionInitializer(l.getBindDn(), new Credential(l.getBindCredential())));
         }
+        return cc;
+    }
 
+    /**
+     * New pool config pool config.
+     *
+     * @param l the ldap properties
+     * @return the pool config
+     */
+    public static PoolConfig newPoolConfig(final AbstractLdapProperties l) {
+        final PoolConfig pc = new PoolConfig();
+        pc.setMinPoolSize(l.getMinPoolSize());
+        pc.setMaxPoolSize(l.getMaxPoolSize());
+        pc.setValidateOnCheckOut(l.isValidateOnCheckout());
+        pc.setValidatePeriodically(l.isValidatePeriodically());
+        pc.setValidatePeriod(newDuration(l.getValidatePeriod()));
+        return pc;
+    }
+
+    /**
+     * New connection factory connection factory.
+     *
+     * @param l the l
+     * @return the connection factory
+     */
+    public static DefaultConnectionFactory newConnectionFactory(final AbstractLdapProperties l) {
+        final ConnectionConfig cc = newConnectionConfig(l);
         final DefaultConnectionFactory bindCf = new DefaultConnectionFactory(cc);
-
         if (l.getProviderClass() != null) {
             try {
                 final Class clazz = ClassUtils.getClass(l.getProviderClass());
@@ -337,6 +350,18 @@ public class Beans {
                 LOGGER.error(e.getMessage(), e);
             }
         }
+        return bindCf;
+    }
+
+    /**
+     * New blocking connection pool connection pool.
+     *
+     * @param l the l
+     * @return the connection pool
+     */
+    public static ConnectionPool newBlockingConnectionPool(final AbstractLdapProperties l) {
+        final DefaultConnectionFactory bindCf = newConnectionFactory(l);
+        final PoolConfig pc = newPoolConfig(l);
         final BlockingConnectionPool cp = new BlockingConnectionPool(pc, bindCf);
 
         cp.setBlockWaitTime(newDuration(l.getBlockWaitTime()));
@@ -349,7 +374,20 @@ public class Beans {
         cp.setPruneStrategy(strategy);
         cp.setValidator(new SearchValidator());
         cp.setFailFastInitialize(l.isFailFast());
+
+        LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
         cp.initialize();
+        return cp;
+    }
+
+    /**
+     * New pooled connection factory pooled connection factory.
+     *
+     * @param l the ldap properties
+     * @return the pooled connection factory
+     */
+    public static PooledConnectionFactory newPooledConnectionFactory(final AbstractLdapProperties l) {
+        final ConnectionPool cp = newBlockingConnectionPool(l);
         return new PooledConnectionFactory(cp);
     }
 

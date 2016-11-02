@@ -134,8 +134,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      * The Trusted devices configuration for the UI.
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @Configuration("TrustedDevicesConfiguration")
-    public class TrustedDevicesConfiguration {
+    @Configuration("trustedDevicesConfiguration")
+    public static class TrustedDevicesConfiguration {
 
         @Autowired
         @Bean
@@ -150,12 +150,12 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnBean(name = "casEventRepository")
     @Configuration("authenticationEventsConfiguration")
-    public class AuthenticationEventsConfiguration {
+    public static class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean
-        public AuthenticationEventsController trustedDevicesController(@Qualifier("casEventRepository")
-                                                                 final CasEventRepository eventRepository) {
+        public AuthenticationEventsController authenticationEventsController(@Qualifier("casEventRepository")
+                                                                            final CasEventRepository eventRepository) {
             return new AuthenticationEventsController(eventRepository);
         }
     }

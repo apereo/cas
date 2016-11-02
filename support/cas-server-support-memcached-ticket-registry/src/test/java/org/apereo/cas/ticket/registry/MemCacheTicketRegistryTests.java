@@ -1,21 +1,19 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.authentication.Authentication;
 import com.google.common.collect.Lists;
+import org.apereo.cas.AbstractMemcachedTests;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
-import org.junit.AfterClass;
+import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -42,29 +40,18 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private String registryBean;
 
-    public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
+    public MemCacheTicketRegistryTests(final String beanName) {
         registryBean = beanName;
     }
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        return Lists.newArrayList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
+        return Lists.newArrayList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
     }
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
-        bootstrap();
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        shutdown();
-    }
 
     @Before
     public void setUp() throws IOException {
-
-        // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
             logger.warn("Aborting test since no memcached server is available on localhost.");
@@ -111,11 +98,11 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
                 org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
 
         this.registry.addTicket(st1);
         this.registry.addTicket(st2);
@@ -138,26 +125,29 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     @Test
     public void verifyDeleteTicketWithPGT() {
         final Authentication a = TestUtils.getAuthentication();
-        this.registry.addTicket(new TicketGrantingTicketImpl(
-                "TGT", a, new NeverExpiresExpirationPolicy()));
-        final TicketGrantingTicket tgt = this.registry.getTicket(
-                "TGT", TicketGrantingTicket.class);
+        this.registry.addTicket(new TicketGrantingTicketImpl("TGT", a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket("TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
-        final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), null, true);
-
+        final ServiceTicket st1 = tgt.grantServiceTicket("ST1", service, new NeverExpiresExpirationPolicy(), false, true);
         this.registry.addTicket(st1);
+        this.registry.updateTicket(tgt);
 
         assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
 
         final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket("PGT-1", a, new NeverExpiresExpirationPolicy());
+        this.registry.addTicket(pgt);
+        this.registry.updateTicket(tgt);
+        this.registry.updateTicket(st1);
+        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertNotNull(this.registry.getTicket("PGT-1", ProxyGrantingTicket.class));
         assertEquals(a, pgt.getAuthentication());
-        
-        assertSame(3, this.registry.deleteTicket(tgt.getId()));
-        
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
+
+        assertTrue(this.registry.deleteTicket(tgt.getId()) > 0);
+
         assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
         assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
         assertNull(this.registry.getTicket("PGT-1", ProxyGrantingTicket.class));

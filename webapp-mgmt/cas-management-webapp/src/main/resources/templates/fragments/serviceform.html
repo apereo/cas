@@ -1,6 +1,8 @@
 <form class="service-editor form-horizontal" autocomplete="off" id="serviceForm"
+      name="serviceForm"
       ng-controller="ServiceFormController as serviceFormCtrl"
-      ng-submit="serviceFormCtrl.validateAndSave()" xmlns:th="http://www.w3.org/1999/xhtml">
+      ng-submit="serviceFormCtrl.validateAndSave()" xmlns:th="http://www.w3.org/1999/xhtml"
+      novalidate="novalidate">
 
     <div th:replace="fragments/serviceform/saveformtop" />
     

@@ -2,17 +2,28 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout">
 
 <head>
-  <title th:text="#{screen.confirmation.message}"></title>
+    <title th:text="#{screen.confirmation.message}"></title>
 </head>
 
 <body id="cas">
 <div layout:fragment="content" class="confirmView">
     <div class="alert alert-info">
-      <h2 class="h3" th:text="#{screen.confirmation.message}" />
+        <h4 th:text="#{screen.confirmation.message}"/>
 
-      <section class="row btn-row">
-        <a class="btn btn-submit" th:href="${serviceWarningUrl}"><span th:text="#{screen.button.continue}"/></a>
-      </section>
+        <form method="post" id="form" class="fm-v clearfix">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            
+            <input id="ignorewarn"
+                   name="ignorewarn"
+                   value="true"
+                   tabindex="1"
+                   type="checkbox" />
+            <label for="ignorewarn" th:utext="#{screen.welcome.label.warnremove}"/>
+            <br/><br/>
+            <input class="btn btn-submit" name="_eventId_success" accesskey="l"
+                   th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+        </form>
+
     </div>
 </div>
 </body>

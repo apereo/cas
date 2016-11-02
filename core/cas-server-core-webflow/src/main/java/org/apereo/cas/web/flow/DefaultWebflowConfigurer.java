@@ -54,6 +54,11 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction("terminateSessionAction"));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
 
+        final ActionState gatewayServicesManagementCheck = createActionState(flow,
+                CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
+        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_REDIRECT);
+        
         final ActionState serviceAuthorizationCheck = createActionState(flow,
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK, createEvaluateAction("serviceAuthorizationCheck"));
         createStateDefaultTransition(serviceAuthorizationCheck, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -74,10 +79,12 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
         state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
 
-        final EndState stateWarning = createEndState(flow,
+        final ViewState stateWarning = createViewState(flow,
                 CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
                 CasWebflowConstants.VIEW_ID_CONFIRM);
-        stateWarning.getEntryActionList().add(createEvaluateAction("serviceWarningAction"));
+        createTransitionForState(stateWarning, CasWebflowConstants.TRANSITION_ID_SUCCESS, "finalizeWarning");
+        final ActionState finalizeWarn = createActionState(flow, "finalizeWarning", createEvaluateAction("serviceWarningAction"));
+        createTransitionForState(finalizeWarn, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
     /**
@@ -116,7 +123,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_WARN,
                 "flowScope.warnCookieValue",
                 CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
-                CasWebflowConstants.STATE_ID_REDIR);
+                CasWebflowConstants.STATE_ID_REDIRECT);
 
         createDecisionState(flow, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK,
                 "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null",

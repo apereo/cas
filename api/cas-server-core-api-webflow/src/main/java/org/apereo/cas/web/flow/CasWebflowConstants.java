@@ -67,6 +67,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_AUTHENTICATION_FAILURE = "authenticationFailure";
 
     /**
+     * 'gateway' state id.
+     */
+    String STATE_ID_GATEWAY = "gateway";
+    
+    /**
      * The transition state 'warn'.
      */
     String TRANSITION_ID_WARN = "warn";
@@ -176,7 +181,7 @@ public interface CasWebflowConstants {
     /**
      * The state id 'redirect'.
      */
-    String STATE_ID_REDIR = "redirect";
+    String STATE_ID_REDIRECT = "redirect";
 
     /**
      * The state id 'postRedirectDecision'.
@@ -202,4 +207,19 @@ public interface CasWebflowConstants {
      * The flow var id 'credential'.
      */
     String VAR_ID_CREDENTIAL = "credential";
+
+    /**
+     * View id 'casResetPasswordSendInstructions'.
+     */
+    String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
+
+    /**
+     * View id 'casResetPasswordSentInstructions'.
+     */
+    String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
+    
+    /**
+     * Transition id 'resetPassword'.
+     */
+    String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
 }

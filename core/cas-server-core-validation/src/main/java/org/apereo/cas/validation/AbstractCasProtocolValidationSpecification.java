@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -36,8 +37,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public AbstractCasProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
-
-
+    
     /**
      * Method to set the renew requirement.
      *
@@ -46,7 +46,6 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     public void setRenew(final boolean renew) {
         this.renew = renew;
     }
-
 
     /**
      * Method to determine if we require renew to be true.
@@ -59,7 +58,23 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        return isSatisfiedByInternal(assertion) && (!this.renew || assertion.isFromNewLogin());
+        boolean satisfied = isSatisfiedByInternal(assertion);
+        if (!satisfied) {
+            logger.warn("{} is not satisfied by the produced assertion", getClass().getSimpleName());
+            return false;
+        }
+        satisfied = !this.renew || assertion.isFromNewLogin();
+        if (!satisfied) {
+            logger.warn("{} is to enforce the [{}] CAS protocol behavior, yet the assertion is not issued from a new login",
+                    getClass().getSimpleName(), CasProtocolConstants.PARAMETER_RENEW);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void reset() {
+        setRenew(false);
     }
 
     /**

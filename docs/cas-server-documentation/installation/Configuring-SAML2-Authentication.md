@@ -19,7 +19,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 SAML2 IdP Unsolicited/Initiated SSO profile supports the following parameters:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `providerId`                      | Required. Entity ID of the service provider.
 | `shire`                           | Optional. Response location (ACS URL) of the service provider.
 | `target`                          | Optional. Relay state.
@@ -92,7 +92,7 @@ This endpoint will attempt to generate metadata for relying party upon receiving
 service providers that do not publish a defined metadata. The following parameters are expected by this point:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `entityId`                        | Required.
 | `authnRequestSigned`              | Optional. Defaults to `false`.
 | `wantAssertionsSigned`            | Optional. Defaults to `false`.
@@ -109,6 +109,20 @@ Support is enabled by including the following dependency in the WAR overlay:
   <artifactId>cas-server-support-saml-idp</artifactId>
   <version>${cas.version}</version>
 </dependency>
+```
+
+You may also need to declare the following Maven repository in 
+your CAS Overlay to be able to resolve dependencies:
+
+```xml
+<repositories>
+    ...
+    <repository>
+        <id>shibboleth-releases</id>
+        <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+    </repository>
+    ...
+</repositories>
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
@@ -135,7 +149,7 @@ the <code>serviceId</code> field. </p></div>
 The following fields are available for SAML services:
 
 | Field                                | Description
-|--------------------------------------+-----------------------------------------------------------------+
+|--------------------------------------|------------------------------------------------------------------
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath or URL resources. 
 | `metadataSignatureLocation`          | Location of the metadata *public key* to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
@@ -144,6 +158,11 @@ The following fields are available for SAML services:
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request. 
 | `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
+| `metadataCriteriaPattern`            | If defined, will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern.
+| `metadataCriteriaDirection`          | If defined, will force an entity id filter on the metadata aggregate based on `PredicateFilter`. Allowed values are `INCLUDE`,`EXCLUDE`.
+| `metadataCriteriaRoles`              | If defined, will whitelist the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`). Default is `SPSSODescriptor`.
+| `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
+| `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 
 ### Name ID Selection
 

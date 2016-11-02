@@ -18,7 +18,7 @@ import java.util.Set;
  * This is {@link MongoDbMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
@@ -59,6 +59,18 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
         if (!this.mongoTemplate.collectionExists(this.collectionName)) {
             logger.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
+        }
+    }
+
+    @Override
+    public void expire(final String key) {
+        try {
+            final Query query = new Query();
+            query.addCriteria(Criteria.where("key").is(key));
+            final WriteResult res = this.mongoTemplate.remove(query, MultifactorAuthenticationTrustRecord.class, this.collectionName);
+            logger.info("Found and removed {} records", res.getN());
+        } catch (final NoResultException e) {
+            logger.info("No trusted authentication records could be found");
         }
     }
 

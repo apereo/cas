@@ -39,8 +39,19 @@ The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
-Also, ensure that Google Apps is registered in your Service Registry, 
-by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
+## Register Google Apps
+
+Ensure that Google Apps is registered in your [service registry](../installation/Service-Management.html).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "https://www.google.com/a/YourGoogleDomain/acs",
+  "name" : "googleApps",
+  "id" : 1000,
+  "evaluationOrder" : 10
+}
+```
 
 ## Configure Username Attribute 
 

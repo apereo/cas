@@ -248,7 +248,8 @@ public final class LdapUtils {
             LOGGER.debug("Executing password modification op for generic LDAP");
             final PasswordModifyOperation operation = new PasswordModifyOperation(modifyConnection);
             final Response response = operation.execute(new PasswordModifyRequest(currentDn,
-                    new Credential(oldPassword), new Credential(newPassword)));
+                    StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
+                    new Credential(newPassword)));
             LOGGER.debug("Result code {}, message: {}", response.getResult(), response.getMessage());
             return response.getResultCode() == ResultCode.SUCCESS;
         } catch (final LdapException e) {

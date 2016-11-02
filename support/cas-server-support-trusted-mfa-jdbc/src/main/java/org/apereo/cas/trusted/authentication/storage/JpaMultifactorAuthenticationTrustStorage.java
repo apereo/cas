@@ -16,15 +16,28 @@ import java.util.Set;
  * This is {@link JpaMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private static final String TABLE_NAME = "MultifactorAuthenticationTrustRecord";
-    
+
     @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
     private EntityManager entityManager;
+
+    @Override
+    public void expire(final String key) {
+        try {
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.key = :key",
+                    MultifactorAuthenticationTrustRecord.class)
+                    .setParameter("key", key)
+                    .executeUpdate();
+            logger.info("Found and removed {} records", count);
+        } catch (final NoResultException e) {
+            logger.info("No trusted authentication records could be found");
+        }
+    }
 
     @Override
     public void expire(final LocalDate onOrBefore) {

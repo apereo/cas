@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
@@ -34,6 +35,12 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
     @Autowired
     protected ResourceLoader resourceLoader;
 
+    /**
+     * CAS settings.
+     */
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+    
     @Override
     public void generate(final HttpServletRequest request,
                          final HttpServletResponse response,

@@ -45,7 +45,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
-                logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", values);
+                logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
                 throw new AuthenticationException();
             }
 
@@ -54,7 +54,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
                     .findFirst();
 
             if (providerFound.isPresent()) {
-                if (providerFound.get().verify(service)) {
+                if (providerFound.get().isAvailable(service)) {
                     logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
                             providerFound.get(), service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
@@ -64,7 +64,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
                 logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
                 return null;
             } else {
-                logger.warn("No multifactor provider could be found for request parameter {}", values);
+                logger.warn("No multifactor provider could be found for request parameter {}", (Object[]) values);
                 throw new AuthenticationException();
             }
         }

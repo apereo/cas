@@ -4,13 +4,15 @@ title: CAS - ClearPass
 ---
 
 # ClearPass: Credential Caching and Replay
-To enable single sign-on into some legacy application it may be necessary to provide them with the actual password.
+
+To enable single sign-on into some legacy applications it may be necessary to provide them with the actual password.
 While such approach inevitably increases security risk, at times this may be a necessary evil in order to integrate
 applications with CAS.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>ClearPass is turned off by default.
 No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the
-below configuration.</p></div>
+below configuration. Think <strong>VERY CAREFULLY</strong> before turning on this feature, as it <strong>MUST</strong> be
+the last resort in getting an integration to work...maybe not even then.</p></div>
 
 ## Overview
 

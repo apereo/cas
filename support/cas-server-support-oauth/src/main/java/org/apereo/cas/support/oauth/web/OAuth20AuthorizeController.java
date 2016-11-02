@@ -80,13 +80,12 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
-
         
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
     }
 
-    private boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
+    private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
         final Optional<CommonProfile> opt = manager.get(true);
         return opt.isPresent();
     }

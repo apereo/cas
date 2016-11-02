@@ -59,10 +59,11 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     }
 
     @Override
-    public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+    public ProxyTicket grantProxyTicket(final String id, final Service service, 
+                                        final ExpirationPolicy expirationPolicy,
                                         final boolean onlyTrackMostRecentSession) {
         final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this,
-                service, null,
+                service, false,
                 expirationPolicy);
 
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);

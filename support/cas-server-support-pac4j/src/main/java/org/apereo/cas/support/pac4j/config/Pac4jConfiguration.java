@@ -5,12 +5,14 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -54,6 +56,11 @@ public class Pac4jConfiguration {
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired(required = false)
+    @Qualifier("clientPrincipalResolver")
+    private PrincipalResolver clientPrincipalResolver;
+
+    @Autowired(required = false)
+    @Qualifier("indirectClients")
     private IndirectClient[] clients;
 
     @Autowired
@@ -164,7 +171,8 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
                 casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
         properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderEntityId());
+                casProperties.getAuthn().getPac4j().getSaml().getServiceProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private void configureOidcClient(final Map<String, String> properties) {
@@ -225,14 +233,14 @@ public class Pac4jConfiguration {
 
         // build a Clients configuration
         if (allClients.isEmpty()) {
-            throw new IllegalArgumentException("At least one pac4j client must be defined");
+            throw new IllegalArgumentException("At least one client must be defined");
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(clientAuthenticationHandler(), null);
+        authenticationHandlersResolvers.put(clientAuthenticationHandler(), this.clientPrincipalResolver);
         authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
     }
 }

@@ -197,7 +197,7 @@ public class IgniteTicketRegistryTests {
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
                     org.apereo.cas.services.TestUtils.getService(),
-                    new NeverExpiresExpirationPolicy(), null, true);
+                    new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
@@ -227,11 +227,11 @@ public class IgniteTicketRegistryTests {
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
 
         this.ticketRegistry.addTicket(st1);
         this.ticketRegistry.addTicket(st2);
@@ -262,7 +262,7 @@ public class IgniteTicketRegistryTests {
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), a, true);
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, true);
 
         this.ticketRegistry.addTicket(st1);
 

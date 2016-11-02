@@ -46,7 +46,7 @@ public class SamlIdPEntityIdValidationServiceSelectionStrategy implements Valida
      * @param service the service
      * @return the entity id as parameter
      */
-    protected Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
+    protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
         final URIBuilder builder = new URIBuilder(service.getId());
         final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();

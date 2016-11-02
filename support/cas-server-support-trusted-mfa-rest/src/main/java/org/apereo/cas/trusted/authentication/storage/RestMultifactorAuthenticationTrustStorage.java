@@ -13,7 +13,7 @@ import java.util.Set;
  * This is {@link RestMultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
@@ -36,6 +36,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
+    public void expire(final String key) {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForEntity(this.endpoint, key, Object.class);
+    }
+
+    @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         final String url = (!this.endpoint.endsWith("/") ? this.endpoint.concat("/") : this.endpoint).concat(onOrAfterDate.toString());
         return getResults(url);
@@ -51,7 +57,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return null;
     }
     
-    private Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
+    private static Set<MultifactorAuthenticationTrustRecord> getResults(final String url) {
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<MultifactorAuthenticationTrustRecord[]> responseEntity =
                 restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);

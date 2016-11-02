@@ -30,6 +30,7 @@ public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolVal
 
     @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
+        logger.debug("Number of chained authentications in the assertion {}", assertion.getChainedAuthentications().size());
         return assertion.getChainedAuthentications().size() == 1;
     }
 }

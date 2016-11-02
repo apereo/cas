@@ -32,10 +32,10 @@ public class CasEvent {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String type;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
     private String principalId;
 
     @ElementCollection

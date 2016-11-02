@@ -4,16 +4,32 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.apereo.cas.adaptors.duo.DuoCredential" />
+    <var name="credential" class="org.apereo.cas.adaptors.duo.authn.web.DuoCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
-        <transition on="success" to="viewLoginFormDuo"/>
+        <transition on="success" to="determineDuoRequest"/>
     </action-state>
 
+    <action-state id="determineDuoRequest">
+        <evaluate expression="checkWebAuthenticationRequestAction" />
+        <transition on="yes" to="viewLoginFormDuo"/>
+        <transition on="no" to="doNonWebAuthentication"/>
+    </action-state>
+    
+    <action-state id="doNonWebAuthentication">
+        <evaluate expression="duoNonWebAuthenticationAction"/>
+        <transition on="success" to="finalizeAuthentication" />
+    </action-state>
+    
+    <action-state id="finalizeAuthentication">
+        <evaluate expression="duoAuthenticationWebflowAction"/>
+        <transition on="success" to="success" />
+    </action-state>
+    
     <view-state id="viewLoginFormDuo" view="casDuoLoginView" model="credential">
         <binder>
             <binding property="signedDuoResponse"/>

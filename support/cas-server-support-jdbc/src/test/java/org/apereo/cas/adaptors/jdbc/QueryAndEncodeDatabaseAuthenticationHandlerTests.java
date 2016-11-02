@@ -65,7 +65,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private String getSqlInsertStatementToCreateUserAccount(final int i) {
+    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
         final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
 
         final String sql = String.format(
@@ -174,7 +174,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     }
 
 
-    private String genPassword(final String psw, final String salt, final int iter) {
+    private static String genPassword(final String psw, final String salt, final int iter) {
         try {
 
             final DefaultHashService hash = new DefaultHashService();

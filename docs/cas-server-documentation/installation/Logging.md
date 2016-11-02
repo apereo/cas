@@ -129,7 +129,7 @@ translates to a number of special variables available to the logging context tha
 may convey additional information about the nature of the request or the authentication event.
 
 | Variable                                     | Description
-|-----------------------------------+------------------------------------+
+|-----------------------------------|-------------------------------------
 | `remoteAddress`                     | Remote address of the HTTP request.
 | `remoteUser`                        | Remote user of the HTTP request.
 | `serverName`                        | Server name of the HTTP request.

@@ -27,7 +27,7 @@ public class SamlAttributeEncoder {
      * @param authnRequest the authn request
      * @param attributes   the attributes
      * @param service      the service
-     * @param adaptor      @return the map
+     * @param adaptor      the service provider facade
      * @return the map
      */
     public Map<String, Object> encode(final AuthnRequest authnRequest, final Map<String, Object> attributes, 
@@ -40,7 +40,7 @@ public class SamlAttributeEncoder {
         return finalAttributes;
     }
     
-    private void transformUniformResourceNames(final Map<String, Object> attributes) {
+    private static void transformUniformResourceNames(final Map<String, Object> attributes) {
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.toLowerCase().startsWith("urn_"))
                 .map(s -> new Pair<>(s.replace('_', ':'), attributes.get(s)))

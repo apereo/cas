@@ -12,33 +12,23 @@ public class SamlException extends RootCasException {
     public static final String CODE = "UNSATISFIED_SAML_REQUEST";
 
     private static final long serialVersionUID = 801270467754480446L;
-
+    
     /**
      * Instantiates a new Saml exception.
      *
-     * @param code the code
-     */
-    public SamlException(final String code) {
-        super(code);
-    }
-
-    /**
-     * Instantiates a new Saml exception.
-     *
-     * @param code the code
      * @param msg  the msg
      */
-    public SamlException(final String code, final String msg) {
-        super(code, msg);
+    public SamlException(final String msg) {
+        super(CODE, msg);
     }
 
     /**
      * Instantiates a new Saml exception.
      *
-     * @param code      the code
+     * @param msg      the msg
      * @param throwable the throwable
      */
-    public SamlException(final String code, final Throwable throwable) {
-        super(code, throwable);
+    public SamlException(final String msg, final Throwable throwable) {
+        super(msg, throwable);
     }
 }

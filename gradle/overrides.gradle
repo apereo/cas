@@ -1,0 +1,30 @@
+
+/*
+  Override the version used by Spring boot to match CAS.
+  As boot is upgraded, some of these enforcements below
+  may become unnecessary when/if version numbers match.
+ */
+ext["hibernateVersion"] = "5.2.2.Final"
+ext["springBootTomcatVersion"] = "8.5.6"
+ext["hazelcastVersion"] = "3.7.2"
+ext["infinispanVersion"] = "8.2.2.Final"
+ext["springVersion"] = "4.3.3.RELEASE"
+ext["jacksonDatabindVersion"] = "2.8.3"
+ext["thymeleafVersion"] = "3.0.1.RELEASE"
+ext["thymeleafDialectVersion"] = "2.0.3"
+ext["springSessionVersion"] = "1.2.2.RELEASE"
+ext["hsqlVersion"] = "2.3.4"
+ext["httpCoreVersion"] = "4.4.4"
+
+ext["commons-beanutils.version"] = "1.8.3"
+ext["hazelcast.version"] = ext["hazelcastVersion"]
+ext["hibernate.version"] = ext["hibernateVersion"]
+ext["tomcat.version"] = ext["springBootTomcatVersion"]
+ext["infinispan.version"] = ext["infinispanVersion"]
+ext["spring.version"] = ext["springVersion"]
+ext["jackson.version"] = ext["jacksonDatabindVersion"]
+ext["thymeleaf.version"] = ext["thymeleafVersion"]
+ext["thymeleaf-layout-dialect.version"] = ext["thymeleafDialectVersion"]
+ext["spring-session.version"] = ext["springSessionVersion"]
+ext["hsqldb.version"] = ext["hsqlVersion"]
+ext["httpcore.version"] = ext["httpCoreVersion"]

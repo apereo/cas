@@ -109,7 +109,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 .warning()
                 .code(warning.getCode())
                 .defaultText(warning.getDefaultMessage())
-                .args(warning.getParams());
+                .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
+    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
                                                                  final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
@@ -292,7 +292,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final RegisteredService service,
                                                                     final RequestContext context,
                                                                     final MultifactorAuthenticationProvider provider,
-                                                                    final Predicate predicate) {
+                                                                    final Predicate<Object> predicate) {
         final ImmutableSet.Builder<Event> builder = ImmutableSet.builder();
         if (attributeValue instanceof Collection) {
             logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
@@ -302,11 +302,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     if (predicate.apply(value)) {
                         logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, value);
 
-                        logger.debug("Attempting to verify mutlifactor authentication provider {} for {}",
+                        logger.debug("Attempting to verify multifactor authentication provider {} for {}",
                                 provider, service);
-
-                        if (provider.verify(service)) {
-
+                        if (provider.isAvailable(service)) {
                             logger.debug("Provider {} is successfully verified", provider);
 
                             final String id = provider.getId();
@@ -341,10 +339,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 if (predicate.apply(attributeValue)) {
                     logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
 
-                    logger.debug("Attempting to verify mutlifactor authentication provider {} for {}",
+                    logger.debug("Attempting to isAvailable multifactor authentication provider {} for {}",
                             provider, service);
 
-                    if (provider.verify(service)) {
+                    if (provider.isAvailable(service)) {
                         logger.debug("Provider {} is successfully verified", provider);
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
@@ -472,7 +470,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
                 logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
 
-                if (!provider.verify(service)) {
+                if (!provider.isAvailable(service)) {
                     logger.warn("Multifactor authentication provider {} could not be verified/reached.", provider);
                     return null;
                 }

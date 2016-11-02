@@ -51,7 +51,7 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -70,13 +70,13 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Bean
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
 
-    @ConditionalOnMissingBean(name="digestAuthenticationWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
         final DigestAuthenticationWebflowConfigurer w = new DigestAuthenticationWebflowConfigurer();
@@ -95,15 +95,15 @@ public class DigestAuthenticationConfiguration {
         w.setRealm(casProperties.getAuthn().getDigest().getRealm());
         w.setAuthenticationMethod(casProperties.getAuthn().getDigest().getAuthenticationMethod());
         w.setCredentialRetriever(defaultDigestCredentialRetriever);
-        
+
         w.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
         w.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         w.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        
+
         return w;
     }
 
-    @ConditionalOnMissingBean(name="defaultDigestCredentialRetriever")
+    @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
@@ -112,7 +112,7 @@ public class DigestAuthenticationConfiguration {
                 r.getStore().put(k, casProperties.getAuthn().getDigest().getRealm(), v));
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {

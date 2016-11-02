@@ -140,6 +140,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
+    public void verifyRenewSpecFailsCorrectly() throws Exception {
+        this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification(true));
+        assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+                new MockHttpServletResponse()).getView().toString().contains("Success"));
+    }
+    
+    @Test
     public void verifyInvalidServiceTicket() throws Exception {
         final AuthenticationResult ctx = TestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);

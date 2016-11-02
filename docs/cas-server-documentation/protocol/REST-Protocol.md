@@ -162,5 +162,4 @@ client.destroyTicketGrantingTicket(context, profile);
 To understand how to throttling works in CAS, 
 please review [the available options](../installation/Configuring-Authentication-Throttling.html).
 
-By default, throttling REST requests is turned off. You may enable throttling
-by adjusting the properties listed above.
+By default, throttling REST requests is turned off.

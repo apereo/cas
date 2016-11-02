@@ -103,11 +103,11 @@ public class HazelcastTicketRegistryTests {
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
         final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), null, false);
+                "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
 
         this.hzTicketRegistry1.addTicket(st1);
         this.hzTicketRegistry1.addTicket(st2);
@@ -138,7 +138,7 @@ public class HazelcastTicketRegistryTests {
         final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), null, true);
+                "ST1", service, new NeverExpiresExpirationPolicy(), false, true);
 
         this.hzTicketRegistry1.addTicket(st1);
 

@@ -68,21 +68,21 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @param id           the unique identifier for the ticket.
      * @param ticket       the TicketGrantingTicket parent.
      * @param service      the service this ticket is for.
-     * @param currentAuthentication current authenticatioon that prompted this service ticket. May be null.
+     * @param credentialProvided current credential that prompted this service ticket. May be null.
      * @param policy       the expiration policy for the Ticket.
      * @throws IllegalArgumentException if the TicketGrantingTicket or the
      *                                  Service are null.
      */
     public ServiceTicketImpl(final String id,
                              final TicketGrantingTicketImpl ticket, final Service service,
-                             final Authentication currentAuthentication, final ExpirationPolicy policy) {
+                             final boolean credentialProvided, final ExpirationPolicy policy) {
         super(id, policy);
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(ticket, "ticket cannot be null");
         this.ticketGrantingTicket = ticket;
         this.service = service;
-        this.fromNewLogin = currentAuthentication != null || ticket.getCountOfUses() == 0;
+        this.fromNewLogin = credentialProvided || ticket.getCountOfUses() == 0;
     }
 
     @Override

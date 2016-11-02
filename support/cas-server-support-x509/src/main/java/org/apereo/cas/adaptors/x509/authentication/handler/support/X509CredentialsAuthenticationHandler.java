@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
@@ -98,14 +100,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     @PostConstruct
     public void init() {
-        if (this.regExSubjectDnPattern == null) {
-            throw new IllegalArgumentException("Subject DN pattern is not configured");
-        }
         if (this.revocationChecker == null) {
             throw new IllegalArgumentException("Revocation checker is not configured");
-        }
-        if (this.regExTrustedIssuerDnPattern == null) {
-            throw new IllegalArgumentException("Trusted issuer DN pattern is not configured");
         }
     }
 
@@ -149,42 +145,23 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this.regExTrustedIssuerDnPattern = Pattern.compile(trustedIssuerDnPattern);
     }
 
-    /**
-     * @param maxPathLength The maxPathLength to set.
-     */
-    public void setMaxPathLength(
-            final int maxPathLength) {
+    public void setMaxPathLength(final int maxPathLength) {
         this.maxPathLength = maxPathLength;
     }
 
-    /**
-     * @param allowed Allow CA certs to have unlimited intermediate certs (default=false).
-     */
-
-    public void setMaxPathLengthAllowUnspecified(
-            final boolean allowed) {
+    public void setMaxPathLengthAllowUnspecified(final boolean allowed) {
         this.maxPathLengthAllowUnspecified = allowed;
     }
 
-    /**
-     * @param checkKeyUsage The checkKeyUsage to set.
-     */
-    public void setCheckKeyUsage(
-            final boolean checkKeyUsage) {
+    public void setCheckKeyUsage(final boolean checkKeyUsage) {
         this.checkKeyUsage = checkKeyUsage;
     }
 
-    /**
-     * @param requireKeyUsage The requireKeyUsage to set.
-     */
-    public void setRequireKeyUsage(
-            final boolean requireKeyUsage) {
+    public void setRequireKeyUsage(final boolean requireKeyUsage) {
         this.requireKeyUsage = requireKeyUsage;
     }
 
-
-    public void setSubjectDnPattern(
-            final String subjectDnPattern) {
+    public void setSubjectDnPattern(final String subjectDnPattern) {
         this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
     }
 

@@ -5,9 +5,29 @@ title: CAS - Troubleshooting Guide
 
 # Troubleshooting Guide
 
+A number of common questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
+
+## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
+
+If you have a question about tuning and configuration of external components utilized by CAS
+and you have a need to achieve more advanced use cases other than what the CAS defaults offer, your question is best
+addressed by the community in charge of that component's development and support. As a general rule,
+you should always pick a technology with which you are most familiar, or otherwise, shoot a question to
+the Spring Webflow, MongoDb, Hazelcast, etc forums to have experts review and recommend ideas.
+
+Typical questions in this category that are best answered elsewhere are:
+
+- How do I configure SSL for Apache Tomcat, Jetty, etc?
+- How do I pass variables from one flow to the next in Spring webflow?
+- How do I tune up a hazelcast cluster?
+- What is the recommended strategy for making MongoDb highly available? 
+
 ## Application X "redirected you too many times" 
 
-"Too many redirect" errors are usually cause by service ticket validation failure events, generally caused by application misconfiguration. Ticket validation failure may be caused by expired or unrecognized tickets, SSL-related issues and such. Examine your CAS logs and you will find the cause.
+"Too many redirect" errors are usually cause by service ticket validation failure events, generally 
+caused by application misconfiguration. 
+Ticket validation failure may be caused by expired or unrecognized tickets, SSL-related 
+issues and such. Examine your CAS logs and you will find the cause.
 
 ## Not Receiving Attributes
 
@@ -22,15 +42,23 @@ Please [review this guide](Service-Management.html) to better understand the CAS
 
 ## Application Not Authorized
 
-You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match for the requested application url.
+You may encounter this error, when the requesting application/service url cannot be found in your CAS service registry. When an 
+authentication request is submitted to the CAS `login` endpoint, the destination application is indicated as a url parameter which 
+will be checked against the CAS service registry to determine if the application is allowed to use CAS. If the url is not found, this 
+message will be displayed back. Since service definitions in the registry have the ability to be defined by a url pattern, 
+it is entirely possible that the pattern in the registry for the service definition is misconfigured and does not produce a successful match 
+for the requested application url.
 
 Please [review this guide](Service-Management.html) to better understand the CAS service registry.
 
 ## Invalid/Expired CAS Tickets
-You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
-has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
-Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
+You may experience `INVAILD_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
+has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, 
+you may want to adjust the [ticket expiration policy configuration](Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
+
+Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
+to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
 
 ## Out of Heap Memory Error
 
@@ -41,9 +69,12 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
         at 
 ```
 
-You may encounter this error, when in all likelihood, a cache-based ticket registry such as EhCache is used whose eviction policy is not correctly configured. Objects and tickets are cached inside the registry storage back-end tend to linger around longer than they should or the eviction policy is not doing a good enough job to clean unused tickets that may be marked as expired by CAS. 
+You may encounter this error, when in all likelihood, a cache-based ticket registry such as EhCache is used whose eviction policy 
+is not correctly configured. Objects and tickets are cached inside the registry storage back-end tend to linger around longer than 
+they should or the eviction policy is not doing a good enough job to clean unused tickets that may be marked as expired by CAS. 
 
-To troubleshoot, you can configure the JVM to perform a heap dump prior to exiting, which you should set up immediately so you have some additional information if/when it happens next time. The follow system properties should do the trick:
+To troubleshoot, you can configure the JVM to perform a heap dump prior to exiting, which you should set up immediately so you have 
+some additional information if/when it happens next time. The follow system properties should do the trick:
 
 ```bash
 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath="/path/to/jvm-dump.hprof" 
@@ -55,9 +86,11 @@ Also ensure that your container is configured to have enough memory available. F
 CATALINA_OPTS=-Xms1000m -Xmx2000m
 ```
 
-You will want to profile your server with something like [JVisualVM](http://visualvm.java.net/) which should be [bundled with the JDK](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jvisualvm.html).  This will help you see what is actually going on with your memory.
+You will want to profile your server with something like [JVisualVM](http://visualvm.java.net/) which should 
+be [bundled with the JDK](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jvisualvm.html).  This will help you see what is actually going on with your memory.
 
-You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) and analyzing offline using some analysis tool. 
+You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) 
+and analyzing offline using some analysis tool. 
 
 Finally, review the eviction policy of your ticket registry and ensure the values that determine object lifetime are appropriate for your environment. 
 
@@ -78,15 +111,19 @@ sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid
       at com.sun.net.ssl.internal.ssl.ClientHandshaker.serverCertificate(Unknown Source)
 ```
 
-PKIX path building errors are the most common SSL errors. The problem here is that the CAS client does not trust the certificate presented by the CAS server; most often this occurs because of using a *self-signed certificate* on the CAS server. To resolve this error, import the CAS server certificate into the system truststore of the CAS client. If the certificate is issued by your own PKI, it is better to import the root certificate of your PKI into the CAS client truststore. 
+PKIX path building errors are the most common SSL errors. The problem here is that the CAS client does not trust the certificate presented by the 
+CAS server; most often this occurs because of using a *self-signed certificate* on the CAS server. To resolve this error, import the CAS server 
+certificate into the system truststore of the CAS client. If the certificate is issued by your own PKI, it is better to import the root certificate of your PKI into the CAS client truststore. 
 
-By default the Java system truststore is at `$JAVA_HOME/jre/lib/security/cacerts`. The certificate to be imported **MUST** be a DER-encoded file. If the contents of the certificate file are binary, it's likely DER-encoded; if the file begins with the text `---BEGIN CERTIFICATE---`, it is PEM-encoded and needs to be converted to DER encoding. 
+By default the Java system truststore is at `$JAVA_HOME/jre/lib/security/cacerts`. The certificate to be imported **MUST** be a DER-encoded file. 
+If the contents of the certificate file are binary, it's likely DER-encoded; if the file begins with the text `---BEGIN CERTIFICATE---`, it is PEM-encoded and needs to be converted to DER encoding. 
 
 ```bash
 keytool -import -keystore $JAVA_HOME/jre/lib/security/cacerts -file tmp/cert.der -alias certName
 ```
 
-If you have multiple java editions installed on your machine, make sure that the app / web server is pointing to the correct JDK/JRE version (The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
+If you have multiple java editions installed on your machine, make sure that the app / web server is pointing to the correct JDK/JRE version 
+(The one to which the certificate has been exported correctly) One common mistake that occurs while generating self-validated certificates is that the `JAVA_HOME` might be different than that used by the server.
 
 
 ## No subject alternative names
@@ -95,7 +132,8 @@ If you have multiple java editions installed on your machine, make sure that the
 javax.net.ssl.SSLHandshakeException: java.security.cert.CertificateException: No subject alternative names present
 ```
 
-This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu, will not work in most cases where the client making the connection is Java.
+This is a hostname/SSL certificate CN mismatch. This commonly happens when a self-signed certificate issued to localhost is placed on a machine that 
+is accessed by IP address. It should be noted that generating a certificate with an IP address for a common name, e.g. `CN=192.168.1.1,OU=Middleware,dc=vt,dc=edu`, will not work in most cases where the client making the connection is Java.
 
 ## HTTPS hostname wrong
 ```bash
@@ -105,7 +143,8 @@ java.lang.RuntimeException: java.io.IOException: HTTPS hostname wrong:  should b
     org.apereo.cas.client.validation.AbstractTicketValidationFilter.doFilter
 ```
 
-The above error occurs most commonly when the CAS client ticket validator attempts to contact the CAS server and is presented a certificate whose CN does not match the fully-qualified host name of the CAS server. There are a few common root causes of this mismatch:
+The above error occurs most commonly when the CAS client ticket validator attempts to contact the CAS server and is presented a certificate whose 
+CN does not match the fully-qualified host name of the CAS server. There are a few common root causes of this mismatch:
 
 - CAS client misconfiguration
 - Complex multi-tier server environment (e.g. clustered CAS server)
@@ -124,7 +163,8 @@ Java support for wildcard certificates is limited to hosts strictly in the same 
 javax.net.ssl.SSLProtocolException: handshake alert: unrecognized_name
 ```
 
-The above error occurs mainly in Oracle JDK CAS Server installations. In JDK, SNI (Server Name Indication) is enabled by default. When the HTTPD Server does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
+The above error occurs mainly in Oracle JDK CAS Server installations. In JDK, SNI (Server Name Indication) is enabled by default. When the HTTPD Server 
+does not send the correct Server Name back, the JDK HTTP Connection refuses to connect and the exception stated above is thrown.
 
 You must ensure your HTTPD Server is sending back the correct hostname. E.g. in Apache HTTPD, you must set the ServerAlias in the SSL vhost:
 
@@ -169,15 +209,19 @@ export CATALINA_OPTS
 ```
 
 ## Review logs
-CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
+
+CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. 
+Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
 
 ```xml
-<AsyncLogger  name="org.apereo" level="debug" additivity="false" includeLocation="true">
+<AsyncLogger name="org.apereo" level="debug" additivity="false" includeLocation="true">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
 ```
 
-When changes are applied, restart the server environment and observe the log files to get a better understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
+When changes are applied, restart the server environment and observe the log files to get a better 
+understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
 
-
+Note that the above configuration block only addresses logging behavior of CAS components; not those
+upon which CAS depends.

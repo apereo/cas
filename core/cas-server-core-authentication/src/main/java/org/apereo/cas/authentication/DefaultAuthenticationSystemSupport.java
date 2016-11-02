@@ -38,7 +38,13 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Credential... credential) throws
             AuthenticationException {
 
-        return this.handleAuthenticationTransaction(new DefaultAuthenticationResultBuilder(this.principalElectionStrategy), credential);
+        final DefaultAuthenticationResultBuilder builder = 
+                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
+        if (credential != null && credential.length > 0) {
+            builder.collect(credential[0]);
+        }
+        
+        return this.handleAuthenticationTransaction(builder, credential);
     }
 
     @Override

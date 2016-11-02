@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.authy.config;
 
 import com.google.common.base.Throwables;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
@@ -20,6 +19,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -103,7 +104,7 @@ public class AuthyConfiguration {
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
-    
+
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -148,9 +149,19 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public AbstractMultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
-        return new AuthyMultifactorAuthenticationProvider();
+        final AuthyMultifactorAuthenticationProvider p = new AuthyMultifactorAuthenticationProvider();
+        p.setBypassEvaluator(authyBypassEvaluator());
+        return p;
     }
 
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getAuthy().getBypass()
+        );
+    }
+    
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
@@ -164,7 +175,7 @@ public class AuthyConfiguration {
         return r;
     }
 
-    @ConditionalOnMissingBean(name="authyMultifactorWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         final AuthyMultifactorWebflowConfigurer c =
@@ -188,7 +199,7 @@ public class AuthyConfiguration {
     public AuthyClientInstance authyClientInstance() {
         if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getAuthy().getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
-        }        
+        }
         final AuthyClientInstance i = new AuthyClientInstance(
                 casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
                 casProperties.getAuthn().getMfa().getAuthy().getApiUrl()

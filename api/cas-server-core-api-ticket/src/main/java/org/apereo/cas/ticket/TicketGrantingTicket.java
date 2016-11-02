@@ -36,13 +36,13 @@ public interface TicketGrantingTicket extends Ticket {
      * @param id                         The unique identifier for this ticket.
      * @param service                    The service for which we are granting a ticket
      * @param expirationPolicy           the expiration policy.
-     * @param currentAuthentication      current authentication event for issuing this ticket. Could be null.
+     * @param credentialProvided         current credential event for issuing this ticket. Could be null.
      * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
      * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id, Service service,
-                                     ExpirationPolicy expirationPolicy, 
-                                     Authentication currentAuthentication, 
+                                     ExpirationPolicy expirationPolicy,
+                                     boolean credentialProvided,
                                      boolean onlyTrackMostRecentSession);
 
     /**

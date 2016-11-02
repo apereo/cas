@@ -7,7 +7,7 @@ import java.util.Set;
  * This is {@link MultifactorAuthenticationTrustStorage}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public interface MultifactorAuthenticationTrustStorage {
 
@@ -17,6 +17,13 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrBefore the on or before
      */
     void expire(LocalDate onOrBefore);
+
+    /**
+     * Expire device by registration key.
+     *
+     * @param key the key
+     */
+    void expire(String key);
 
     /**
      * Get all records by date.

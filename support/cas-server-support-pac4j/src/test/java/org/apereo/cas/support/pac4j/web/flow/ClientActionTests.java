@@ -115,6 +115,7 @@ public class ClientActionTests {
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
+        when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);

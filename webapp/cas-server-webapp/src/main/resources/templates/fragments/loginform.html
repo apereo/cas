@@ -57,7 +57,6 @@
                         <span th:utext="#{screen.capslock.on}"/>
                     </p>
                 </span>
-                <span th:utext="#{screen.pm.button.forgotpwd}" />
             </div>
         </section>
         <section class="row check">
@@ -68,10 +67,7 @@
         </section>
         
         <section class="row" th:if="${recaptchaSiteKey}">
-            <div>
-                <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
-                <p/>
-            </div>
+            <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
         </section>
 
         <section class="row btn-row">
@@ -87,7 +83,21 @@
                    type="submit"/>
         </section>
     </form>
-        
+
+    <form th:if="${passwordManagementEnabled}" method="post" id="misagh">
+        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        <input type="hidden" name="_eventId" value="resetPassword"/>
+        <span class="fa fa-unlock"></span>
+        <a th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)" onclick="$('#misagh').submit();" />
+        <p/>
+    </form>
+   
+    <div th:unless="${passwordManagementEnabled}">
+        <span class="fa fa-question-circle"></span>
+        <span th:utext="#{screen.pm.button.forgotpwd}" />
+        <p/>
+    </div>
+    
     <script type="text/javascript" th:inline="javascript">
         var i = [[#{screen.welcome.button.loginwip}]]
         $("#fm1").submit(function() {

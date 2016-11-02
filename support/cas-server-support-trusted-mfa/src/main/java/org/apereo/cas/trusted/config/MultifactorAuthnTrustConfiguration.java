@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.Action;
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -60,7 +60,7 @@ public class MultifactorAuthnTrustConfiguration {
         a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
         return a;
     }
-    
+
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
@@ -98,7 +98,7 @@ public class MultifactorAuthnTrustConfiguration {
     public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
         return new PseudoTransactionManager();
     }
-    
+
     @Bean
     @RefreshScope
     public CipherExecutor<String, String> mfaTrustCipherExecutor() {
@@ -114,7 +114,7 @@ public class MultifactorAuthnTrustConfiguration {
         return new NoOpCipherExecutor();
     }
 
-    @ConditionalOnMissingBean(name="mfaTrustStorageCleaner")
+    @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {

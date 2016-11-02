@@ -15,7 +15,9 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -154,9 +156,18 @@ public class RadiusMultifactorConfiguration {
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
         final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider();
         p.setRadiusAuthenticationHandler(radiusTokenAuthenticationHandler());
+        p.setBypassEvaluator(radiusBypassEvaluator());
         return p;
     }
 
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
+        return new DefaultMultifactorAuthenticationProviderBypass(
+                casProperties.getAuthn().getMfa().getRadius().getBypass()
+        );
+    }
+    
     @Bean
     @RefreshScope
     public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {

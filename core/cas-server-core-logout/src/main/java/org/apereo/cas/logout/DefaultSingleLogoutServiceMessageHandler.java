@@ -110,7 +110,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      * @param registeredService the registered service
      * @return true, if support is available.
      */
-    private boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
+    private static  boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
         return registeredService != null
                 && registeredService.getAccessStrategy().isServiceAccessAllowed()
                 && registeredService.getLogoutType() != LogoutType.NONE;

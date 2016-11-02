@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +19,15 @@ public class MultifactorAuthenticationProperties {
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
-    private String globalPrincipalAttributeNameTriggers = "memberOf,eduPersonPrimaryAffiliation";
-
+    
+    private String restEndpoint;
+    
+    private String globalPrincipalAttributeNameTriggers;
+    private String globalPrincipalAttributeValueRegex;
+    
+    private String contentType = "application/cas";
+    private String globalProviderId;
+    
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
@@ -43,12 +51,28 @@ public class MultifactorAuthenticationProperties {
         this.authy = authy;
     }
 
+    public String getRestEndpoint() {
+        return restEndpoint;
+    }
+
+    public void setRestEndpoint(final String restEndpoint) {
+        this.restEndpoint = restEndpoint;
+    }
+
     public String getRequestParameter() {
         return requestParameter;
     }
 
     public void setRequestParameter(final String requestParameter) {
         this.requestParameter = requestParameter;
+    }
+
+    public String getGlobalPrincipalAttributeValueRegex() {
+        return globalPrincipalAttributeValueRegex;
+    }
+
+    public void setGlobalPrincipalAttributeValueRegex(final String globalPrincipalAttributeValueRegex) {
+        this.globalPrincipalAttributeValueRegex = globalPrincipalAttributeValueRegex;
     }
 
     public String getGlobalPrincipalAttributeNameTriggers() {
@@ -99,6 +123,21 @@ public class MultifactorAuthenticationProperties {
         this.authenticationContextAttribute = authenticationContextAttribute;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(final String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getGlobalProviderId() {
+        return globalProviderId;
+    }
+
+    public void setGlobalProviderId(final String globalProviderId) {
+        this.globalProviderId = globalProviderId;
+    }
 
     public YubiKey getYubikey() {
         return yubikey;
@@ -108,7 +147,85 @@ public class MultifactorAuthenticationProperties {
         this.yubikey = yubikey;
     }
 
-    public static class YubiKey {
+    public abstract static class BaseProvider {
+        private Bypass bypass = new Bypass();
+
+        public Bypass getBypass() {
+            return bypass;
+        }
+
+        public void setBypass(final Bypass bypass) {
+            this.bypass = bypass;
+        }
+
+        public static class Bypass {
+            private String principalAttributeName;
+            private String principalAttributeValue;
+            private String authenticationAttributeName;
+            private String authenticationAttributeValue;
+            private String authenticationHandlerName;
+            private String authenticationMethodName;
+            private String credentialClassType;
+
+            public String getCredentialClassType() {
+                return credentialClassType;
+            }
+
+            public void setCredentialClassType(final String credentialClassType) {
+                this.credentialClassType = credentialClassType;
+            }
+
+            public String getAuthenticationAttributeName() {
+                return authenticationAttributeName;
+            }
+
+            public void setAuthenticationAttributeName(final String authenticationAttributeName) {
+                this.authenticationAttributeName = authenticationAttributeName;
+            }
+
+            public String getAuthenticationAttributeValue() {
+                return authenticationAttributeValue;
+            }
+
+            public void setAuthenticationAttributeValue(final String authenticationAttributeValue) {
+                this.authenticationAttributeValue = authenticationAttributeValue;
+            }
+
+            public String getPrincipalAttributeName() {
+                return principalAttributeName;
+            }
+
+            public void setPrincipalAttributeName(final String principalAttributeName) {
+                this.principalAttributeName = principalAttributeName;
+            }
+
+            public String getPrincipalAttributeValue() {
+                return principalAttributeValue;
+            }
+
+            public void setPrincipalAttributeValue(final String principalAttributeValue) {
+                this.principalAttributeValue = principalAttributeValue;
+            }
+
+            public String getAuthenticationHandlerName() {
+                return authenticationHandlerName;
+            }
+
+            public void setAuthenticationHandlerName(final String authenticationHandlerName) {
+                this.authenticationHandlerName = authenticationHandlerName;
+            }
+
+            public String getAuthenticationMethodName() {
+                return authenticationMethodName;
+            }
+
+            public void setAuthenticationMethodName(final String authenticationMethodName) {
+                this.authenticationMethodName = authenticationMethodName;
+            }
+        }
+    }
+    
+    public static class YubiKey extends BaseProvider {
         private Integer clientId;
         private String secretKey = "";
         private int rank;
@@ -156,7 +273,7 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
-    public static class Radius {
+    public static class Radius extends BaseProvider {
         private int rank;
 
         private boolean failoverOnException;
@@ -350,7 +467,7 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
-    public static class Duo {
+    public static class Duo extends BaseProvider {
         private int rank;
         private String duoIntegrationKey;
         private String duoSecretKey;
@@ -406,7 +523,7 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
-    public static class Authy {
+    public static class Authy extends BaseProvider {
         private String apiKey;
         private String apiUrl;
         private String phoneAttribute = "phone";
@@ -463,7 +580,7 @@ public class MultifactorAuthenticationProperties {
         }
     }
 
-    public static class Trusted {
+    public static class Trusted extends BaseProvider {
         private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
         
         private String encryptionKey = "";
@@ -589,36 +706,12 @@ public class MultifactorAuthenticationProperties {
         public static class Jpa extends AbstractJpaProperties {
         }
 
-        public static class Mongodb {
-            private String clientUri = "";
-            private String collection = "MongoDbCasTrustedAuthnMfaRepository";
-            private boolean dropCollection;
-
-            public String getClientUri() {
-                return clientUri;
-            }
-
-            public void setClientUri(final String clientUri) {
-                this.clientUri = clientUri;
-            }
-
-            public String getCollection() {
-                return collection;
-            }
-
-            public void setCollection(final String collection) {
-                this.collection = collection;
-            }
-
-            public boolean isDropCollection() {
-                return dropCollection;
-            }
-
-            public void setDropCollection(final boolean dropCollection) {
-                this.dropCollection = dropCollection;
+        public static class Mongodb extends AbstractMongoProperties {
+            public Mongodb() {
+                setCollection("MongoDbCasTrustedAuthnMfaRepository");
             }
         }
-
+        
         public static class Cleaner {
             private boolean enabled = true;
             private long startDelay = 10000;
@@ -650,7 +743,7 @@ public class MultifactorAuthenticationProperties {
         }
     }
     
-    public static class GAuth {
+    public static class GAuth extends BaseProvider {
         private String issuer = "CASIssuer";
         private String label = "CASLabel";
         private int rank;
@@ -659,7 +752,17 @@ public class MultifactorAuthenticationProperties {
         private long timeStepSize = 30;
         private int windowSize = 3;
 
+        private Mongodb mongodb = new Mongodb();
+        
         private Jpa jpa = new Jpa();
+
+        public Mongodb getMongodb() {
+            return mongodb;
+        }
+
+        public void setMongodb(final Mongodb mongodb) {
+            this.mongodb = mongodb;
+        }
 
         public Jpa getJpa() {
             return jpa;
@@ -717,6 +820,12 @@ public class MultifactorAuthenticationProperties {
             this.label = label;
         }
 
+        public static class Mongodb extends AbstractMongoProperties {
+            public Mongodb() {
+                setCollection("MongoDbGoogleAuthenticatorRepository");
+            }
+        }
+        
         public static class Jpa {
             private Database database = new Database();
 

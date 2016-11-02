@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
@@ -15,6 +16,7 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,11 +59,11 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final Service service = getAssertionFrom(model).getService();
 
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
-        final String authenticationMethod = (String) authentication.getAttributes().get(
-                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
-
+        final Collection<Object> authnMethods = CollectionUtils.convertValueToCollection(authentication.getAttributes()
+                .get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+                
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
-                authentication.getAuthenticationDate(), authenticationMethod, getPrincipal(model).getId());
+                authentication.getAuthenticationDate(), authnMethods, getPrincipal(model).getId());
 
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());

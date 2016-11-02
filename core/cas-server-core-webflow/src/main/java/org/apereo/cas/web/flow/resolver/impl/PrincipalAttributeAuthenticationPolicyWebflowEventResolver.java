@@ -52,6 +52,15 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Collection<MultifactorAuthenticationProvider> providers = providerMap.values();
+        if (providers.size() == 1 && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex())) {
+            final MultifactorAuthenticationProvider provider = providers.iterator().next();
+            logger.debug("Found a single multifactor provider {} in the application context", provider);
+            return resolveEventViaPrincipalAttribute(principal,
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
+                    service, context, providers,
+                    input -> input.toString().matches(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex()));
+        }
+        
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
                 service, context, providers,

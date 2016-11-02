@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -328,6 +329,17 @@ public final class WebUtils {
     }
 
     /**
+     * Gets warning cookie.
+     *
+     * @param context the context
+     * @return warning cookie value, if present.
+     */
+    public static boolean getWarningCookie(final RequestContext context) {
+        final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
+        return Boolean.valueOf(val);
+    }
+    
+    /**
      * Put registered service into flowscope.
      *
      * @param context           the context
@@ -436,9 +448,7 @@ public final class WebUtils {
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
-            } else {
-                warnCookieGenerator.removeCookie(response);
-            }
+            } 
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }

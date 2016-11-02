@@ -3,8 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
@@ -14,8 +12,6 @@ import org.slf4j.LoggerFactory;
  * @since 4.2
  */
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
-
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Used to generate ids for {@link TicketGrantingTicket}s

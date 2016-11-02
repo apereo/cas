@@ -49,7 +49,7 @@ public class SpnegoWebflowConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -60,7 +60,7 @@ public class SpnegoWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name="spnegoWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
         final SpengoWebflowConfigurer w = new SpengoWebflowConfigurer();
@@ -68,8 +68,8 @@ public class SpnegoWebflowConfiguration {
         w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
-    
-    
+
+
     @Bean
     @RefreshScope
     public Action spnego() {
@@ -123,11 +123,11 @@ public class SpnegoWebflowConfiguration {
     public Action ldapSpnegoClientAction() {
         final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getAuthn().getSpnego().getLdap());
         final SearchFilter filter = Beans.newSearchFilter(casProperties.getAuthn().getSpnego().getLdap().getSearchFilter());
-                
+
         final SearchRequest searchRequest = Beans.newSearchRequest(
                 casProperties.getAuthn().getSpnego().getLdap().getBaseDn(),
                 filter);
-        
+
         final LdapSpnegoKnownClientSystemsFilterAction l =
                 new LdapSpnegoKnownClientSystemsFilterAction(connectionFactory,
                         searchRequest, casProperties.getAuthn().getSpnego().getSpnegoAttributeName());

@@ -4,6 +4,7 @@ title: CAS - OpenID Protocol
 ---
 
 # OpenID Protocol
+
 OpenID is an open, decentralized, free framework for user-centric digital identity. Users represent 
 themselves using URIs. For more information see the [http://www.openid.net](http://www.openid.net).
 
@@ -17,6 +18,9 @@ OpenID identifiers are URIs. The default mechanism in CAS support is an uri endi
 (ie. `http://my.cas.server/openid/myusername` where the actual user login id is `myusername`).
 This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
+<div class="alert alert-info"><strong>Pay Attention!</strong><p>OpenID protocol is <strong>NOT</strong> the same thing
+as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here<a/>.</p></div>
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -27,7 +31,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-## OpenID v2.0 support
+## OpenID v2.0
 
 To define the CAS server as an OpenID provider v2.0, add the `yadis.xml` file at the root of your CAS deployment. For example,
 if your deployment is available at `https://sso.example.org/cas`, then the `yadis.xml` file must be available at 
@@ -46,7 +50,7 @@ if your deployment is available at `https://sso.example.org/cas`, then the `yadi
 </xrds:XRDS>
 ```
 
-# Delegate To an OpenID Provider
+# OpenID Provider Delegation
 
 Using the OpenID protocol, the CAS server can also be configured 
 to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.

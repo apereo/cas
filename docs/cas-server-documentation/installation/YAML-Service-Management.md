@@ -5,8 +5,8 @@ title: CAS - YAML Service Registry
 
 # YAML Service Registry
 
-This DAO reads services definitions from YAML configuration files at the application context initialization time.
-YAML files are expected to be found inside a configured directory location and this DAO will recursively look through
+This registry reads services definitions from YAML configuration files at the application context initialization time.
+YAML files are expected to be found inside a configured directory location and this registry will recursively look through
 the directory structure to find relevant files.
 
 Support is enabled by adding the following module into the Maven overlay:

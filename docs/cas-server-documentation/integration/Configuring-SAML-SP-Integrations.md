@@ -26,17 +26,23 @@ Support is enabled by including the following module in the Overlay:
 
 The following SAML SP integrations are provided by CAS:
 
+* [InCommon](http://www.incommon.org/federation/metadata.html)
 * [Dropbox](https://www.dropbox.com/guide/admin/security/configure-single-sign-on)
 * [SAManage](https://blog.samanage.com/company/saml-single-sign-on-support-samanage/)
 * [Salesforce](https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm)
 * [Box](https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263)
 * [ServiceNow](http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile)
 * [Workday](http://www.workday.com/)
+* [TestShib](http://www.testshib.org)
 * [Webex](https://help.webex.com/docs/DOC-1067)
 * [PowerFAIDS Net Partner](https://www.collegeboard.org/powerfaids/net-partner)
 * [Office365](https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx)
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
+
+<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
+with a SAML service provider, consider contributing that recipe to the project so its configuration
+can be automated once and for all to use. Let the change become a feature of the project, rather than something you alone have to maintain.</p></div>
 
 ## Google Apps
 

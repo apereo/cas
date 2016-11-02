@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web;
 
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path = "/samlValidate", method = RequestMethod.POST)
+    @RequestMapping(path = SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, method = RequestMethod.POST)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {

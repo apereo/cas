@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
@@ -53,7 +54,7 @@ public class ProxyController {
 
     private CentralAuthenticationService centralAuthenticationService;
     private ServiceFactory webApplicationServiceFactory;
-    
+
     @Autowired
     private ApplicationContext context;
 
@@ -77,18 +78,16 @@ public class ProxyController {
         final Service targetService = getTargetService(request);
 
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
-                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
 
         try {
             final ProxyTicket proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
             return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET, proxyTicket);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), e.getCode(), new Object[]{proxyGrantingTicket}, request);
+            return generateErrorView(e.getCode(), new Object[]{proxyGrantingTicket}, request);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE,
-                    CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
                     new Object[]{targetService}, request);
         }
     }
@@ -108,20 +107,18 @@ public class ProxyController {
      * of the error into the model. View name is set to {@link #CONST_PROXY_FAILURE}.
      *
      * @param code        the code
-     * @param description the description
      * @param args        the msg args
      * @return the model and view
      */
-    private ModelAndView generateErrorView(final String code,
-                                           final String description, final Object[] args, final HttpServletRequest request) {
+    private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
         final ModelAndView modelAndView = new ModelAndView(CONST_PROXY_FAILURE);
-        modelAndView.addObject("code", code);
-        modelAndView.addObject("description", this.context.getMessage(description, args,
-                description, request.getLocale()));
+        modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
+        modelAndView.addObject("description", 
+                StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale())));
 
         return modelAndView;
     }
-    
+
     public void setCentralAuthenticationService(
             final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;

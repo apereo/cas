@@ -14,7 +14,7 @@ import java.util.Arrays;
  * This is {@link AbstractMultifactorTrustedDeviceWebflowConfigurer}.
  *
  * @author Misagh Moayyed
- * @since 5.1.0
+ * @since 5.0.0
  */
 public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
@@ -32,7 +32,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         if (flowDefinitionRegistry.getFlowDefinitionCount() <= 0) {
             throw new IllegalArgumentException("Flow definition registry has no flow definitions");
         }
-        logger.debug("Flow definitions found in the registry are {}", flowDefinitionRegistry.getFlowDefinitionIds());
+        logger.debug("Flow definitions found in the registry are {}", (Object[]) flowDefinitionRegistry.getFlowDefinitionIds());
         final String flowId = Arrays.stream(flowDefinitionRegistry.getFlowDefinitionIds()).findFirst().get();
         logger.debug("Processing flow definition {}", flowId);
 
@@ -100,7 +100,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
-    private String isDeviceRegistrationRequired() {
+    private static String isDeviceRegistrationRequired() {
         return "flashScope.".concat(MFA_TRUSTED_AUTHN_SCOPE_ATTR).concat("== null");
     }
 }

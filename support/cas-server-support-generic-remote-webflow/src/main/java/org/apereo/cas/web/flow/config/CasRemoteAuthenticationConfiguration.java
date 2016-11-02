@@ -45,7 +45,7 @@ public class CasRemoteAuthenticationConfiguration {
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
-    @ConditionalOnMissingBean(name="remoteAddressWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
         final RemoteAddressWebflowConfigurer w = new RemoteAddressWebflowConfigurer();

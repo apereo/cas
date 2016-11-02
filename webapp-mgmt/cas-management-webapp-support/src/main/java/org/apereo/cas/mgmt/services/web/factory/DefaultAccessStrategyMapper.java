@@ -33,12 +33,17 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
             accessBean.setUnauthorizedRedirectUrl(accessStrategy.getUnauthorizedRedirectUrl().toString());
         }
-        
+
         if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
             final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
             accessBean.setRequireAll(def.isRequireAllAttributes());
             accessBean.setRequiredAttr(def.getRequiredAttributes());
-            accessBean.setRejectedAttr(def.getRejectedAttributes());
+
+            def.getRejectedAttributes().forEach(
+                    (k, v) -> accessBean.getRejectedAttr().add(new RegisteredServiceEditBean.ServiceData.PropertyBean(
+                            k, org.springframework.util.StringUtils.collectionToCommaDelimitedString(v)
+                    )));
+
             accessBean.setCaseSensitive(def.isCaseInsensitive());
             accessBean.setType(RegisteredServiceSupportAccessEditBean.Types.DEFAULT);
         }
@@ -77,16 +82,15 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
 
         final DefaultRegisteredServiceAccessStrategy accessStrategy;
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
-            accessStrategy = new RemoteEndpointServiceAccessStrategy();    
-        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) { 
+            accessStrategy = new RemoteEndpointServiceAccessStrategy();
+        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
             accessStrategy = new GrouperRegisteredServiceAccessStrategy();
-        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) { 
+        } else if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME) {
             accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
         } else {
             accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
-        
-        
+
         accessStrategy.setEnabled(supportAccess.isCasEnabled());
         accessStrategy.setSsoEnabled(supportAccess.isSsoEnabled());
         accessStrategy.setRequireAllAttributes(supportAccess.isRequireAll());
@@ -102,18 +106,15 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             }
         }
         accessStrategy.setRequiredAttributes(requiredAttrs);
+
+        final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> rejectedAttrs = supportAccess.getRejectedAttr();
+        accessStrategy.getRejectedAttributes().clear();
+        rejectedAttrs.forEach(p -> {
+            accessStrategy.getRejectedAttributes().put(p.getName(), 
+                    org.springframework.util.StringUtils.commaDelimitedListToSet(p.getValue()));
+        });
         
-        final Map<String, Set<String>> rejectedAttrs = supportAccess.getRejectedAttr();
-        final Set<Map.Entry<String, Set<String>>> rejectedEntries = rejectedAttrs.entrySet();
-        final Iterator<Map.Entry<String, Set<String>>> it2 = rejectedEntries.iterator();
-        while (it2.hasNext()) {
-            final Map.Entry<String, Set<String>> entry = it2.next();
-            if (entry.getValue().isEmpty()) {
-                it2.remove();
-            }
-        }
-        accessStrategy.setRejectedAttributes(rejectedAttrs);
-        
+
         if (supportAccess.getUnauthorizedRedirectUrl() != null && !supportAccess.getUnauthorizedRedirectUrl().trim().isEmpty()) {
             try {
                 accessStrategy.setUnauthorizedRedirectUrl(new URI(supportAccess.getUnauthorizedRedirectUrl()));
@@ -121,9 +122,9 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
                 throw Throwables.propagate(e);
             }
         }
-        
+
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.TIME
-            || supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
+                || supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setEndingDateTime(supportAccess.getEndingTime());
             ((TimeBasedRegisteredServiceAccessStrategy) accessStrategy).setStartingDateTime(supportAccess.getStartingTime());
         }
@@ -136,13 +137,13 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         }
 
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.REMOTE) {
-            
+
             if (StringUtils.isNotBlank(supportAccess.getUrl())) {
                 ((RemoteEndpointServiceAccessStrategy) accessStrategy).setAcceptableResponseCodes(supportAccess.getCodes());
                 ((RemoteEndpointServiceAccessStrategy) accessStrategy).setEndpointUrl(supportAccess.getUrl());
             }
         }
-        
+
         return accessStrategy;
     }
 }

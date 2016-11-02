@@ -64,7 +64,8 @@ public class SessionMonitorTests {
         assertEquals(StatusCode.WARN, status.getCode());
         assertTrue(status.getDescription().contains("Service ticket count"));
     }
-    private void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
+
+    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
         final TicketGrantingTicketImpl[] ticket = {null};
         IntStream.range(0, tgtCount).forEach(i -> {
             ticket[0] = new TicketGrantingTicketImpl(
@@ -76,7 +77,7 @@ public class SessionMonitorTests {
 
         if (ticket[0] != null) {
             IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                                    new MockService("junit"), TEST_EXP_POLICY, null, true)));
+                                    new MockService("junit"), TEST_EXP_POLICY, false, true)));
         }
     }
 }

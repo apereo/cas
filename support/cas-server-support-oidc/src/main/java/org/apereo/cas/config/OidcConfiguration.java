@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -7,23 +8,26 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
-import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.code.OAuthCodeFactory;
+import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
-import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
+import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.web.controllers.OidcProfileEndpointController;
 import org.apereo.cas.web.controllers.OidcWellKnownEndpointController;
+import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -45,6 +49,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -61,6 +66,10 @@ import java.util.Set;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -133,8 +142,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OAuth20CallbackAuthorizeViewResolver() {
             @Override
             public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-                final Set<String> prompts = oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url);
-                if (prompts.contains(OidcConstants.PROMPT_NONE)) {
+                if (oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url)
+                        .contains(OidcConstants.PROMPT_NONE)) {
                     if (manager.get(true) != null) {
                         return new ModelAndView(url);
                     }
@@ -308,5 +317,17 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setConsentApprovalViewResolver(consentApprovalViewResolver());
         c.setoAuthCodeFactory(defaultOAuthCodeFactory);
         return c;
+    }
+
+    @RefreshScope
+    @Bean
+    public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
+        final OidcAuthenticationContextWebflowEventResolver r = new OidcAuthenticationContextWebflowEventResolver();
+        return r;
+    }
+
+    @PostConstruct
+    public void initOidcConfig() {
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(oidcAuthenticationContextWebflowEventResolver());
     }
 }

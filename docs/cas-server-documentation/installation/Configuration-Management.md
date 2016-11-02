@@ -59,7 +59,7 @@ The configuration server is controlled and defined by the `bootstrap.properties`
 The following endpoints are secured and exposed by the configuration server's `/configserver` endpoint:
 
 | Parameter                         | Description
-|-----------------------------------+-----------------------------------------+
+|-----------------------------------|------------------------------------------
 | `/encrypt`           | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`           | Accepts a `POST` to decrypt CAS configuration settings.
 | `/cas/default`       | Describes what the configuration server knows about the `default` settings profile.
@@ -160,9 +160,24 @@ Support is provided via the following dependency:
 </dependency>
 ```
 
+Note that to access and review the collection of CAS properties, 
+you will need to use [the CAS administrative interfaces](Monitoring-Statistics.html), or you may
+also use your own native tooling for MongoDB to configure and inject settings.
+
+MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
+
+```json
+{
+	"id": "kfhf945jegnsd45sdg93452",
+	"name": "the-setting-name",
+	"value": "the-setting-value"
+} 
+```
+
+
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html).
 
-### Vault
+### HashiCorp Vault
 
 CAS is also able to use [Vault](https://www.vaultproject.io/) to 
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).

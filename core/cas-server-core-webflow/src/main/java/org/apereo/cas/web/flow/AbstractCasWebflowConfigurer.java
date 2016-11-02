@@ -28,6 +28,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
+import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -100,9 +101,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected CasConfigurationProperties casProperties;
 
     private FlowBuilderServices flowBuilderServices;
-
-
-
+    
     @PostConstruct
     @Override
     public void initialize() {
@@ -126,12 +125,29 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected abstract void doInitialize() throws Exception;
 
     @Override
+    public Flow buildFlow(final String location, final String id) {
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        builder.setParent(this.loginFlowDefinitionRegistry);
+        builder.addFlowLocation(location, id);
+        final FlowDefinitionRegistry registry = builder.build();
+        return (Flow) registry.getFlowDefinition(id);
+    }
+    
+    @Override
     public Flow getLoginFlow() {
+        if (this.loginFlowDefinitionRegistry == null) {
+            logger.error("Login flow registry is not configured correctly.");
+            return null;
+        }
         return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
     }
 
     @Override
     public Flow getLogoutFlow() {
+        if (this.logoutFlowDefinitionRegistry == null) {
+            logger.error("Logout flow registry is not configured correctly.");
+            return null;
+        }
         return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
     }
 
@@ -199,6 +215,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
+        if (this.flowBuilderServices == null) {
+            logger.error("Flow builder services is not configured correctly.");
+            return null;
+        }
         final ParserContext ctx = new FluentParserContext();
         final Expression action = this.flowBuilderServices.getExpressionParser().parseExpression(expression, ctx);
         final EvaluateAction newAction = new EvaluateAction(action, null);
@@ -538,6 +558,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @return true if flow contains the state.
      */
     protected boolean containsFlowState(final Flow flow, final String stateId) {
+        if (flow == null) {
+            logger.error("Flow is not configured correctly and cannot be null.");
+            return false;
+        }
         return flow.containsState(stateId);
     }
 
