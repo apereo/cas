@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
+import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -280,19 +281,7 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "lockingStrategy")
     @Bean
     public LockingStrategy lockingStrategy() {
-        return new LockingStrategy() {
-            @Override
-            public boolean acquire() {
-                return true;
-            }
-
-            /**
-             * Does nothing.
-             */
-            @Override
-            public void release() {
-            }
-        };
+        return new NoOpLockingStrategy();
     }
      
     @ConditionalOnMissingBean(name="ticketRegistryCleaner")
