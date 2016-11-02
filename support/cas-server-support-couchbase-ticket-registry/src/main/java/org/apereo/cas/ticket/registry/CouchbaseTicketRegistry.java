@@ -65,6 +65,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(),
                             ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
+
+            logger.debug("Upserting document {} into couchbase bucket {}", document.id(),
+                    this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
@@ -88,18 +91,20 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
+            logger.debug("Locating ticket id {}", ticketId);
             final String encTicketId = encodeTicketId(ticketId);
-            if (ticketId == null) {
+            if (encTicketId == null) {
+                logger.debug("Ticket id {} could not be found", ticketId);
                 return null;
             }
 
             final SerializableDocument document = this.couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
-                logger.debug("Got ticket {} from registry.", t);
+                logger.debug("Got ticket {} from the registry.", t);
                 return t;
             }
-            logger.debug("Ticket {} not found in registry.", encTicketId);
+            logger.debug("Ticket {} not found in the registry.", encTicketId);
             return null;
         } catch (final Exception e) {
             logger.error("Failed fetching {}: {}", ticketId, e);
@@ -113,10 +118,14 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        logger.info("Setting up Couchbase Ticket Registry instance");
+        logger.info("Setting up Couchbase Ticket Registry instance witt bucket {}",
+                this.couchbase.bucket().name());
         System.setProperty("com.couchbase.queryEnabled",
                 Boolean.toString(casProperties.getTicket().getRegistry().getCouchbase().isQueryEnabled()));
+        logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
         this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
+
+        logger.info("Initializing Couchbase...");
         this.couchbase.initialize();
         logger.info("Initialized Couchbase bucket {}", this.couchbase.bucket().name());
     }
@@ -128,14 +137,16 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @PreDestroy
     public void destroy() {
         try {
+            logger.debug("Shutting down Couchbase");
             this.couchbase.shutdown();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
-    
+
     @Override
     public Collection<Ticket> getTickets() {
+        logger.debug("getTickets() isn't supported by Couchbase. Returning empty list");
         return new ArrayList<>();
     }
 
@@ -161,6 +172,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     }
 
     private int runQuery(final String prefix) {
+        logger.debug("Running query on document {} and view {} with prefix {}",
+                UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         final ViewResult allKeys = this.couchbase.bucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
@@ -169,9 +182,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         final Iterator<ViewRow> iterator = allKeys.iterator();
         if (iterator.hasNext()) {
             final ViewRow res = iterator.next();
-            return (Integer) res.value();
-        }
 
+            final Integer count = (Integer) res.value();
+            logger.debug("Found {} rows", count);
+            return count;
+        }
+        logger.debug("No rows could be found by the query");
         return 0;
     }
 
