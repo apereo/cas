@@ -420,7 +420,7 @@ public class Beans {
         LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket registry tickets.");
+                + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
         return new NoOpCipherExecutor();
     }
 
