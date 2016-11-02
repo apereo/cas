@@ -76,7 +76,7 @@ public class LogoutManagerImpl implements LogoutManager {
 
         final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
         if (proxyGrantingTickets.isEmpty()) {
-            LOGGER.info("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
+            LOGGER.debug("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
         } else {
             proxyGrantingTickets.stream().forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
         }
