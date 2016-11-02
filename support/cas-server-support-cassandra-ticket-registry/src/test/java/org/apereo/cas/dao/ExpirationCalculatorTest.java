@@ -19,7 +19,7 @@ public class ExpirationCalculatorTest {
 
     private static final int TTL = 20;
     private static final int TTK = 30;
-    public static final int REMEMBER_ME_TTL = 40;
+    private static final int REMEMBER_ME_TTL = 40;
 
     private DefaultAuthentication defaultAuthentication;
 
