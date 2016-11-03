@@ -70,6 +70,8 @@ is strongly discouraged.</p></div>
 
 ## Service Ticket Policies
 
+ST expiration policy governs the time span during which an authenticated user may attempt to validate an ST.
+
 ### Default
 
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
@@ -78,6 +80,8 @@ period of inactivity elapses. This is the default and only option.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Proxy Ticket Policies
+
+PT expiration policy governs the time span during which an authenticated user may attempt to validate an PT.
 
 ### Default
 
