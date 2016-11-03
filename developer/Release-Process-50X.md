@@ -92,5 +92,5 @@ Update the [Maintenance Policy](Maintenance-Policy.html) to note the release sch
 
 ## Docker Image (Optional)
 
-Release a new CAS [Docker image](https://github.com/apereo/cas/tree/dockerized-caswebapp).
+Release a new CAS [Docker image](https://github.com/apereo/cas-webapp-docker).
 This task is only relevant when dealing with GA releases.
