@@ -12,6 +12,7 @@ To enable single sign-on into some legacy application it may be necessary to pro
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>ClearPass is turned off by default. No applications will be able to obtain the user credentials unless ClearPass is explicitly turned on by the below configuration.</p></div>
 
 ## Architecture
+
 A service may obtain cleartext credentials for an authenticated user by presenting a valid proxy ticket obtained specifically for the CAS cleartext extension service end-point that is ClearPass. Tickets issued for a ClearPass response are validated in the same way you would access a traditional proxied service. ClearPass ensures this by just being another CAS Client. Credentials are cached inside an Ehcache-backed map with support for encryption of the obtained password in memory.
 
 Upon receiving the request, ClearPass ensures that the following validation criteria are met:
@@ -23,6 +24,7 @@ Upon receiving the request, ClearPass ensures that the following validation crit
 
 
 ## Validation Responses
+
 Upon successful validation the ClearPass service provides credentials in the following response:
 
 ```xml
@@ -43,6 +45,7 @@ If the validation fails, the traditional response is a 403 Status code being ret
 
 
 ## Components
+
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 ```xml
@@ -56,7 +59,6 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 
 ## Single Node Configuration
-
 
 ### `AuthenticationMetaDataPopulator` in `deployerConfigContext.xml`
 
@@ -104,7 +106,8 @@ Be sure to put this snippet with the other filter and filter-mappings.
 
 ### Modifying `clearpass-configuration.xml`
 
-Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/apereo/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml) file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
+Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/apereo/cas/blob/4.2.x/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml)
+file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
 
 Next, declare the following bean inside the file:
 
