@@ -53,10 +53,24 @@ Support is enabled by including the following dependency in the Maven WAR overla
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-extension-clearpass</artifactId>
     <version>${cas.version}</version>
-    <scope>runtime</scope>
 </dependency>
-```
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-config</artifactId>
+    <version>${spring.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-web</artifactId>
+    <version>${spring.version}</version>
+</dependency>
 
+
+...
+<properties>
+    <spring.version>4.0.4.RELEASE</spring.version>
+</properties>
+```
 
 ## Single Node Configuration
 
