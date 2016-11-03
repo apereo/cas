@@ -5,7 +5,7 @@ title: CAS - ClearPass
 
 # ClearPass: Credential Caching and Replay
 
-<div class="alert alert-warning"><strong>Deprecated!</strong><p>Exercising ClearPass via the architecture and configuration that is described below is deprecated. Consider <a href="ClearPass.html">using the alternative</a> that would allow adopters to consume the credential directly in the CAS validation response.</p></div>
+<div class="alert alert-warning"><strong>Deprecated!</strong><p>Exercising ClearPass via the architecture and configuration that is described below is <strong>deprecated</strong>. Consider <a href="ClearPass.html">using the alternative</a> that would allow adopters to consume the credential directly in the CAS validation response.</p></div>
 
 To enable single sign-on into some legacy application it may be necessary to provide them with the actual cleartext password. While such approach inevitably increases security risk, at times this may be a necessary evil in order to integrate applications with CAS.
 
