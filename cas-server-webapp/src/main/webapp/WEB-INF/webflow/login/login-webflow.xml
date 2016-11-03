@@ -207,5 +207,6 @@
         <transition to="viewServiceErrorView"
                     on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException"/>
         <transition to="serviceUnauthorizedCheck" on-exception="org.jasig.cas.services.UnauthorizedServiceException"/>
+        <transition to="serviceUnauthorizedCheck" on-exception="org.jasig.cas.services.UnauthorizedServiceForPrincipalException" />
     </global-transitions>
 </flow>

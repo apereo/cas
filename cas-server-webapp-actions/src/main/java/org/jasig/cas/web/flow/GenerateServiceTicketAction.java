@@ -10,6 +10,8 @@ import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -36,11 +38,18 @@ import javax.validation.constraints.NotNull;
 @Component("generateServiceTicketAction")
 public final class GenerateServiceTicketAction extends AbstractAction {
 
-    /** Instance of CentralAuthenticationService. */
+    /**
+     * Instance of CentralAuthenticationService.
+     */
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
 
     @NotNull
     @Autowired
@@ -71,11 +80,17 @@ public final class GenerateServiceTicketAction extends AbstractAction {
                 throw new InvalidTicketException(new AuthenticationException(), ticketGrantingTicket);
             }
 
+            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            WebUtils.putRegisteredService(context, registeredService);
+            WebUtils.putService(context, service);
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
+                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final AuthenticationContext authenticationContext =
                     builder.collect(WebUtils.getCredential(context))
-                           .collect(authentication).build(service);
+                            .collect(authentication).build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
@@ -109,6 +124,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
+
     /**
      * Checks if {@code gateway} is present in the request params.
      *
@@ -117,13 +133,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
      */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+                .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
     }
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
-     * @param id the id
+     * @param id    the id
      * @param error the error
      * @return the event
      */
