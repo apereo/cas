@@ -3,21 +3,24 @@ layout: default
 title: CAS - Configuring Ticketing Components
 ---
 
-# Configuring Ticketing Components
+# Ticketing
+
 There are two core configurable ticketing components:
 
 * `TicketRegistry` - Provides for durable ticket storage.
 * `ExpirationPolicy` - Provides a policy framework for ticket expiration semantics.
 
 ## Ticket Registry
+
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component.
 A cache-backed implementation is recommended for HA deployments, while the default
 `DefaultTicketRegistry` in-memory component may be suitable for small deployments.
 
 ### Default (In-Memory) Ticket Registry
 
-`DefaultTicketRegistry` uses a `ConcurrentHashMap` for memory-backed ticket storage and retrieval.
-This component does not preserve ticket state across restarts.
+The default registry uses a memory-backed internal map for ticket storage and retrieval.
+This component does not preserve ticket state across restarts and is not a suitable solution
+for clustered CAS environments that are deployed in active/active mode.
 
 ### Cache-Based Ticket Registries
 
@@ -28,6 +31,7 @@ deployments. Components for the following caching technologies are provided:
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Ignite](Ignite-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
+* [Infinispan](Infinispan-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 
