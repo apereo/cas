@@ -83,9 +83,10 @@ public class GenericSuccessViewAction extends AbstractAction {
                     this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
-            logger.warn(e.getMessage());
+            logger.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
+            logger.debug(e.getMessage(), e);
         }
-        logger.debug("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
+        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
                 NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
