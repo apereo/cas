@@ -12,20 +12,20 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
+import static com.vividsolutions.jts.geom.Dimension.L;
 import static org.junit.Assert.*;
 
 /**
  * @author William G. Thompson, Jr.
-
  * @since 3.4.10
  */
 public class TicketGrantingTicketExpirationPolicyTests {
 
-    private static final long HARD_TIMEOUT = 500L;
+    private static final long HARD_TIMEOUT = 2;
 
-    private static final long SLIDING_TIMEOUT = 60L; 
+    private static final long SLIDING_TIMEOUT = 2;
 
-    private static final long TIMEOUT_BUFFER = 20L; // needs to be long enough for timeouts to be triggered
+    private static final long TIMEOUT_BUFFER = 2; // needs to be long enough for timeouts to be triggered
 
     private TicketGrantingTicketExpirationPolicy expirationPolicy;
 
@@ -55,7 +55,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
          ticketGrantingTicket.grantServiceTicket("test",
                  org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
                  true);
-         Thread.sleep(SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER);
+         Thread.sleep((SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER) * 1_000);
          assertTrue(ticketGrantingTicket.isExpired());
 
     }
@@ -65,19 +65,19 @@ public class TicketGrantingTicketExpirationPolicyTests {
         ticketGrantingTicket.grantServiceTicket("test",
                 org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
-        Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
+        Thread.sleep((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket("test",
                 org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
-        Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
+        Thread.sleep((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
         assertFalse(ticketGrantingTicket.isExpired());
 
         ticketGrantingTicket.grantServiceTicket("test",
                 org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
-        Thread.sleep(SLIDING_TIMEOUT + TIMEOUT_BUFFER);
+        Thread.sleep((SLIDING_TIMEOUT + TIMEOUT_BUFFER) * 1_000);
         assertTrue(ticketGrantingTicket.isExpired());
 
     }
