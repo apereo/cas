@@ -94,7 +94,7 @@
 								<h2><spring:message code="screen.logout.header" /></h2>
 								<p><spring:message code="screen.logout.success" /></p>
 								<p><spring:message code="screen.logout.security" /></p>
-								<p id="service-url-container">This page will be redirected to <span id="service-url"></span> after <span id="counter"></span> seconds.</p>
+								<p id="service-url-container">This page will be redirected to <a id="service-url"></a> after <span id="counter"></span> seconds.</p>
 								<p id="service-url-link-container">If you want go to the service instantly, click <a id="service-url-link">this link.</a></p>
 							</div>
 						</div>
@@ -121,6 +121,7 @@
 			    if(serviceUrl != null && serviceUrl != "" && validateUrl(serviceUrl)) {
 				    var serviceUrlElement = document.getElementById("service-url");
 				    serviceUrlElement.textContent = serviceUrl;
+				    serviceUrlElement.href = serviceUrl;
 				    
 				    var linkElement = document.getElementById("service-url-link");
 				    linkElement.href = serviceUrl;
