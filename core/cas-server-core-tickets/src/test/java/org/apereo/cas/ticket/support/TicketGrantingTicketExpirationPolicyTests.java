@@ -33,8 +33,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Before
     public void setUp() throws Exception {
-        this.expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT,
-            TimeUnit.MILLISECONDS);
+        this.expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT);
         this.ticketGrantingTicket = new TicketGrantingTicketImpl("test",
                 TestUtils.getAuthentication(),
                 this.expirationPolicy);
@@ -44,11 +43,11 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void verifyTgtIsExpiredByHardTimeOut() throws InterruptedException {
         // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
         final ZonedDateTime creationTime = ticketGrantingTicket.getCreationTime();
-         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.MILLIS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
+         while (creationTime.plus(HARD_TIMEOUT - SLIDING_TIMEOUT / 2, ChronoUnit.SECONDS).isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
              ticketGrantingTicket.grantServiceTicket("test",
                      org.apereo.cas.services.TestUtils.getService(), expirationPolicy, false,
                      true);
-             Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
+             Thread.sleep((SLIDING_TIMEOUT - TIMEOUT_BUFFER) * 1_000);
              assertFalse(this.ticketGrantingTicket.isExpired());
          }
 

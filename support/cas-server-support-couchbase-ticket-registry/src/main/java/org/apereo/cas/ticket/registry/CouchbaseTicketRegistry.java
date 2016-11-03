@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -34,6 +35,8 @@ import java.util.List;
  * @since 4.2.0
  */
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
+    private static final long MAX_EXP_TIME_IN_DAYS = 30;
+
     private static final String END_TOKEN = "\u02ad";
 
     private static final String VIEW_NAME_ALL_TICKETS = "all_tickets";
@@ -63,8 +66,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(),
-                            ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
+                    SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
 
             logger.debug("Upserting document {} into couchbase bucket {}", document.id(),
                     this.couchbase.bucket().name());
@@ -80,8 +82,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(),
-                            ticket.getExpirationPolicy().getTimeToLive().intValue(), ticket);
+                    SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
+            logger.debug("Created document for ticket {}. Upserting into bucket {}",
+                    ticketToAdd, this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticketToAdd, e);
@@ -118,8 +121,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     @PostConstruct
     public void initialize() {
-        logger.info("Setting up Couchbase Ticket Registry instance witt bucket {}",
-                this.couchbase.bucket().name());
+        logger.info("Setting up Couchbase Ticket Registry instance");
         System.setProperty("com.couchbase.queryEnabled",
                 Boolean.toString(casProperties.getTicket().getRegistry().getCouchbase().isQueryEnabled()));
         logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
@@ -191,6 +193,22 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         return 0;
     }
 
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
+     */
+    private int getTimeToLive(final Ticket ticket) {
+        final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
+            logger.warn("Any expiration time larger than {} days in seconds is considered absolute (as in a Unix time stamp) "
+                    + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
+
+        }
+        return expTime;
+    }
 
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
         this.couchbase = couchbase;

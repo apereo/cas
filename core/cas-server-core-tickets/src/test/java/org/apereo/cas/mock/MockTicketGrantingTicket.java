@@ -140,7 +140,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public ExpirationPolicy getExpirationPolicy() {
-        return new TicketGrantingTicketExpirationPolicy(100, 100, TimeUnit.MINUTES);
+        return new TicketGrantingTicketExpirationPolicy(100, 100);
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
- * ticket can only be used once every X milliseconds to prevent misconfigured
+ * ticket can only be used once every X milliseconds to prevent mis-configured
  * clients from consuming resources by doing constant redirects.
  *
  * @author Scott Battaglia
@@ -28,43 +28,43 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
-    /** The time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    /** The time to kill in seconds. */
+    private long timeToKillInSeconds;
 
-    private long timeInBetweenUsesInMilliSeconds;
+    private long timeInBetweenUsesInSeconds;
 
     /**
      * Instantiates a new Throttled use and timeout expiration policy.
      */
     public ThrottledUseAndTimeoutExpirationPolicy(){}
 
-    public void setTimeInBetweenUsesInMilliSeconds(
-        final long timeInBetweenUsesInMilliSeconds) {
-        this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
+    public void setTimeInBetweenUsesInSeconds(
+        final long timeInBetweenUsesInSeconds) {
+        this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
     }
 
-    public void setTimeToKillInMilliSeconds(final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
 
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
-                    + "than the timeToKillInMilliseconds");
+                    + "than the timeToKillInSeconds");
             return false;
         }
 
         if (currentTime.isAfter(killTime)) {
-            LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
+            LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
             return true;
         }
 
-        final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
         if (currentTime.isBefore(dontUseUntil)) {
             LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
@@ -75,11 +75,11 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
 
     @Override
     public Long getTimeToLive() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
     @Override
     public Long getTimeToIdle() {
-        return this.timeInBetweenUsesInMilliSeconds;
+        return this.timeInBetweenUsesInSeconds;
     }
 }
