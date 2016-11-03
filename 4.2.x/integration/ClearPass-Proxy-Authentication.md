@@ -167,11 +167,12 @@ Change your `deployerConfigContext.xml` file to match the following:
 
 ## Multiple Nodes Configuration
 
-ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a Distributed Ticket Registry like the `MemcacheTicketRegistry` or the `EhcacheTicketRegistry` so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
+ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a distributed ticket registry like Memcache or EhCache so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
 
 
 ### EhCache-based Map
-By default ClearPass is setup to use a non-distrbuted EhCache to store its passwords. If you are using the `EhcacheTicketRegistry` you will want to ensure that your ehcacheClearPass.xml file is setup to replicate the ClearPass Ehcache to all your CAS servers. 
+
+By default ClearPass is setup to use a non-distrbuted EhCache to store its passwords. If you are using EhCache you will want to ensure that your ehcacheClearPass.xml file is setup to replicate the ClearPass Ehcache to all your CAS servers. 
 
 
 #### Configuration
@@ -235,6 +236,7 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 
 
 ##### Sample `clearpass-replicated.xml`
+
 ```xml
 <ehcache name="clearPassEhCacheManager" updateCheck="false" 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -254,7 +256,8 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 </ehcache>
 ```
 
-Note that the above uses manual peer discovery with RMI replication to transfer cached objects that are obtained by ClearPass. The IP addresses need to be changed for each CAS node to point to each other.
+Note that the above uses manual peer discovery with RMI replication to transfer cached objects that are obtained by ClearPass. 
+The IP addresses need to be changed for each CAS node to point to each other.
 
 
 ### Memcached  Map
