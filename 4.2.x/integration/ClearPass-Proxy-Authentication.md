@@ -65,8 +65,8 @@ Support is enabled by including the following dependency in the Maven WAR overla
     <version>${spring.version}</version>
 </dependency>
 
-
 ...
+
 <properties>
     <spring.version>4.0.4.RELEASE</spring.version>
 </properties>
