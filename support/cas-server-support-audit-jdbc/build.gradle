@@ -3,7 +3,6 @@ description = "Apereo CAS JDBC Audit Support"
 dependencies {
 	compile project(":api:cas-server-core-api")
     compile libraries.pac4j
-    compile libraries.inspektr
     compile libraries.persondirectory
     compile libraries.spring
     compile libraries.hibernate
