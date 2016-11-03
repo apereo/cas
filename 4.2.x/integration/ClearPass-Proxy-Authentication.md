@@ -65,12 +65,12 @@ Support is enabled by including the following dependency in the Maven WAR overla
 Uncomment the below element that is responsible for capturing and caching the password:
 
 ```xml
-<property name="authenticationMetaDataPopulators">
-  <list>
+<util:list id="authenticationMetadataPopulators">
+...
     <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
       c:credentialCache-ref="encryptedMap" />
-  </list>
-</property>
+...
+</util:list>
 ```
 
 
@@ -115,7 +115,7 @@ Next, declare the following bean inside the file:
 <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
     <constructor-arg>
         <list>
-            <value>https://proxy.server.edu/proxyCallback</value>
+            <value>https://proxy.server.edu/uPortal/CasProxyServlet</value>
             <value>...</value>
         </list>
     </constructor-arg>
