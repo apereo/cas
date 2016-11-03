@@ -60,6 +60,12 @@ ext.libraries = [
                 dependencies.create("com.github.lalyos:jfiglet:$jfigletVersion") {
                     force = true
                 },
+                dependencies.create("commons-collections:commons-collections:$commonsCollections3Version") {
+                    force = true
+                },
+                dependencies.create("org.apache.commons:commons-collections4:$commonsCollectionsVersion") {
+                    force = true
+                }
         ],
         ehcache                 : [
                 dependencies.create("net.sf.ehcache:ehcache:$ehcacheVersion") {

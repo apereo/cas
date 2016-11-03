@@ -6,8 +6,7 @@ dependencies {
     compile libraries.quartz
     compile libraries.jackson
     compile libraries.httpclient
-    compile libraries.inspektr
-    
+
     compileOnly project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-events")
     compile project(":core:cas-server-core-web")

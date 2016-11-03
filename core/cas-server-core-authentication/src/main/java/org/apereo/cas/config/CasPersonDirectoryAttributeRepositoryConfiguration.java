@@ -109,9 +109,6 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                 break;
         }
 
-        LOGGER.debug("Configured attribute repository sources to merge together: ", list);
-        mergingDao.setPersonAttributeDaos(list);
-
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
@@ -122,10 +119,16 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
                 .build();
         impl.setUserInfoCache(graphs.asMap());
-        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be {} minute(s)",
-                casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+        mergingDao.setPersonAttributeDaos(list);
         impl.setCachedPersonAttributesDao(mergingDao);
 
+        if (list.isEmpty()) {
+            LOGGER.debug("No attribute repository sources are available to merge together.");
+        } else {
+            LOGGER.debug("Configured attribute repository sources to merge together: ", list);
+            LOGGER.debug("Configured cache expiration policy for merging attribute sources to be {} minute(s)",
+                    casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+        }
         return impl;
     }
 
@@ -186,7 +189,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
     private void addLdapAttributeRepository(final List<IPersonAttributeDao> list) {
         final PrincipalAttributesProperties attrs = casProperties.getAuthn().getAttributeRepository();
         final PrincipalAttributesProperties.Ldap ldap = attrs.getLdap();
-        
+
         if (StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())) {
             final LdaptivePersonAttributeDao ldapDao = new LdaptivePersonAttributeDao();
 
