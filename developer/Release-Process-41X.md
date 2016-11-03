@@ -71,7 +71,7 @@ export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=128m"
 mvn -DreleaseVersion=x.y.z -DdevelopmentVersion=a.b.c release:prepare
 {% endhighlight %}
 
-##Performing the Release
+## Performing the Release
 
 {% highlight bash %}
 mvn release:perform
