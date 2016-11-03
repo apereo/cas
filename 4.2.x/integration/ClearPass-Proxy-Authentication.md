@@ -115,7 +115,7 @@ Next, declare the following bean inside the file:
 <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
     <constructor-arg>
         <list>
-            <value>https://proxy.server.edu/uPortal/CasProxyServlet</value>
+            <value>https://proxy.server.edu/proxyCallback</value>
             <value>...</value>
         </list>
     </constructor-arg>
