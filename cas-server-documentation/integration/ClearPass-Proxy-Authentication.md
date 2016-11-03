@@ -65,12 +65,12 @@ Support is enabled by including the following dependency in the Maven WAR overla
 Uncomment the below element that is responsible for capturing and caching the password:
 
 ```xml
-<property name="authenticationMetaDataPopulators">
-  <list>
+<util:list id="authenticationMetadataPopulators">
+...
     <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
       c:credentialCache-ref="encryptedMap" />
-  </list>
-</property>
+...
+</util:list>
 ```
 
 
