@@ -3,7 +3,6 @@ dependencies {
     compile libraries.spring
     compile libraries.springboot
     compile libraries.springcloud
-    compile libraries.commons
     compile libraries.groovy
     compile libraries.cassecurityfilter
     compile libraries.hibernate
