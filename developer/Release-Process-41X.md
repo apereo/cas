@@ -52,7 +52,7 @@ mvn -o javadoc:javadoc
 If notice and license checks fail, the `notice:generate` and `license:format` goals [may be used](https://wiki.jasig.org/display/LIC/maven-notice-plugin) to help remedy the situation.
 All other checks and reported issues need to be resolved manually. 
 
-##Preparing the Release
+## Preparing the Release
 
 Ensure you use JDK 7 by running the following command:
 {% highlight bash %}
@@ -128,7 +128,7 @@ John Smith
 ## Common Issues
 If you're preparing and cutting the release, please be wary of the following possible issues:
 
-###SSH Authentication: private key's passphrase prompt hangs
+### SSH Authentication: private key's passphrase prompt hangs
 SSH authentication with git on Windows is unable to cache the private key's password regardless of any authorized SSH agent running in the background. The maven-release-plugin currently is unable to actually present the password prompt. 
 
 To mitigate the problem, you will need to modify the release.properties file, and switch the authentication scheme from SSH to HTTPS. 
