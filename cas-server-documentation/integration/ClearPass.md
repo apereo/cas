@@ -13,6 +13,7 @@ No applications will be able to obtain the user credentials unless ClearPass is 
 below configuration.</p></div>
 
 ## Architecture
+
 CAS is able to issue the credential password directly in the CAS validation response. This previously was handled
 via a proxy authentication sequence and obtaining a proxy-granting ticket for the ClearPass service and was necessary
 in order to establish trust between the client application and the CAS server. This document describes the configuration that can be applied in order to receive the credential password as an attribute in the CAS validation response.
@@ -49,6 +50,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 
 ### Register Service
+
 Once you have received the public key from the client application owner, it must be first
 registered inside the CAS server's service registry. The service that holds the public key above must also
 be authorized to receive the password
@@ -78,6 +80,7 @@ as an attribute for the given attribute release policy of choice.
 ```
 
 ### Decrypt the Password
+
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt
 it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
