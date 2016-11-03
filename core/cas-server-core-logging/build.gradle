@@ -5,7 +5,6 @@ dependencies {
     compile project(":core:cas-server-core-util")
     compileOnly project(":support:cas-server-support-cookie")
     compile libraries.spring
-    compile libraries.log4j
     compile libraries.jackson
 }
 
