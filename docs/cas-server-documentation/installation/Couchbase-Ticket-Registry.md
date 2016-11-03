@@ -31,3 +31,17 @@ redundancy and replication as per normal Couchbase configuration.
 The only truly mandatory setting is the list of nodes.
 The other settings are optional, but this is designed to store data in buckets
 so in reality the bucket property must also be set.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```
