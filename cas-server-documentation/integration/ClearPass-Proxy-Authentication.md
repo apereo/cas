@@ -144,22 +144,13 @@ with:
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>It's not appropriate in your environment to allow any service that can obtain a proxy ticket to proxy to ClearPass. Explicitly authorizing proxy chains to access ClearPass (and denying all unauthorized proxy chains) is an important access control on release of the end-user's password.</p></div>
 
 
-### Modifying `ticketRegistry.xml`
+### Change Ticket Registry
 
-Obtain a copy of the [`ticketRegistry.xml`](https://github.com/apereo/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml) file and place that in your project's `WEB-INF/spring-configuration` directory.
-
-Replace:
+Change your `deployerConfigContext.xml` file to match the following:
 
 ```xml
-<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+<alias name="defaultTicketRegistry" alias="ticketRegistryValue" />
 ```
-
-with:
-
-```xml
-<bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
-```
-
 
 ## Multiple Nodes Configuration
 ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a Distributed Ticket Registry like the `MemcacheTicketRegistry` or the `EhcacheTicketRegistry` so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
