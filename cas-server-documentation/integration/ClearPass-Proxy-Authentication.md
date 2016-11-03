@@ -74,9 +74,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ## Single Node Configuration
 
-### `AuthenticationMetaDataPopulator` in `deployerConfigContext.xml`
+### Allow Credential Caching
 
-Uncomment the below element that is responsible for capturing and caching the password:
+Update `deployerConfigContext.xml` to match the following:
 
 ```xml
 <util:list id="authenticationMetadataPopulators">
@@ -88,7 +88,7 @@ Uncomment the below element that is responsible for capturing and caching the pa
 ```
 
 
-### Modifying `web.xml`
+### Enable ClearPass Endpoints
 
 In your Maven overlay, modify the `web.xml` to include the following:
 
@@ -117,8 +117,7 @@ Next, add the following filter and filter-mapping:
 
 Be sure to put this snippet with the other filter and filter-mappings.
 
-
-### Modifying `clearpass-configuration.xml`
+### Configure ClearPass
 
 Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/apereo/cas/blob/4.2.x/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml)
 file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
@@ -167,6 +166,7 @@ Change your `deployerConfigContext.xml` file to match the following:
 ```
 
 ## Multiple Nodes Configuration
+
 ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a Distributed Ticket Registry like the `MemcacheTicketRegistry` or the `EhcacheTicketRegistry` so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
 
 
