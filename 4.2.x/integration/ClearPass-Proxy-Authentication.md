@@ -160,6 +160,7 @@ with:
 
 
 ### Modifying `ticketRegistry.xml`
+
 Obtain a copy of the [`ticketRegistry.xml`](https://github.com/apereo/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/ticketRegistry.xml) file and place that in your project's `WEB-INF/spring-configuration` directory.
 
 Replace:
