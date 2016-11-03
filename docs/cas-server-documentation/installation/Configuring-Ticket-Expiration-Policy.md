@@ -7,7 +7,7 @@ title: CAS - Configuring Ticket Expiration Policy Components
 # Ticket Expiration Policies
 
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting 
-tickets (TGT) and service tickets (ST).
+tickets (`TGT`), proxy-granting tickets (`PGT`), service tickets (`ST`) and proxy tickets (`PT`).
 
 <div class="alert alert-info"><strong>Policies Are Not Ticket-Specific</strong><p>Ticket expiration policies are not specific to a 
 particular kind of ticket, so it is possible to apply a policy intended for service tickets to ticket-granting tickets, although 
@@ -70,6 +70,8 @@ is strongly discouraged.</p></div>
 
 ## Service Ticket Policies
 
+ST expiration policy governs the time span during which an authenticated user may attempt to validate an ST.
+
 ### Default
 
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
@@ -79,9 +81,20 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Proxy Ticket Policies
 
+PT expiration policy governs the time span during which an authenticated user may attempt to validate an PT.
+
 ### Default
 
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum 
 period of inactivity elapses. This is default and only option.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Proxy-Granting Ticket Policies
+
+PGT expiration policy governs the time span during which CAS may grant PTs with a valid (non-expired) PGT.
+At this time, the expiration policy assigned to proxy-granting tickets is controlled by the same policy
+assigned to ticket-granting tickets.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
