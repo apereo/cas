@@ -4,7 +4,8 @@ title: CAS - Configuring Ticket Expiration Policy Components
 ---
 
 
-## Ticket Expiration Policies
+# Ticket Expiration Policies
+
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting 
 tickets (TGT) and service tickets (ST).
 
@@ -12,20 +13,22 @@ tickets (TGT) and service tickets (ST).
 particular kind of ticket, so it is possible to apply a policy intended for service tickets to ticket-granting tickets, although 
 it may make little sense to do so.</p></div>
 
+Unless noted otherwise, all ticket expiration policy values should be specified in seconds as the unit of measure.
 
-### Ticket-Granting Ticket Policies
+## Ticket-Granting Ticket Policies
+
 TGT expiration policy governs the time span during which an authenticated user may grant STs with a valid (non-expired) TGT without
 having to re-authenticate. An attempt to grant a ST with an expired TGT would require the user to re-authenticate
 to obtain a new (valid) TGT.
 
-#### Default
+
+### Default
 
 This is default option, which provides a hard-time out as well as a sliding window.
 
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-#### Timeout
+### Timeout
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout. 
 For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise 
@@ -35,7 +38,7 @@ Settings are controlled via:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-#### Hard Timeout
+### Hard Timeout
 
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span 
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired 
@@ -46,7 +49,7 @@ Settings are controlled via:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-#### Throttled
+### Throttled
 
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at 
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client 
@@ -55,7 +58,7 @@ attempts to consume CAS server resources by requesting high volumes of service t
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-#### Never
+### Never
 
 The never expires policy allows tickets to exist indefinitely.
 
@@ -65,18 +68,18 @@ server resource usage for the ticket registries backed by filesystem storage. Si
 for those registries with this policy in effect, use of this policy with those ticket registry implementations 
 is strongly discouraged.</p></div>
 
-### Service Ticket Policies
+## Service Ticket Policies
 
-#### Default
+### Default
 
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
 period of inactivity elapses. This is the default and only option.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-### Proxy Ticket Policies
+## Proxy Ticket Policies
 
-#### Default
+### Default
 
 This is the default policy applied to proxy tickets where a ticket is expired after a fixed number of uses or after a maximum 
 period of inactivity elapses. This is default and only option.
