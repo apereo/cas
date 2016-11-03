@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.springframework.http.HttpMethod;
 import org.springframework.webflow.engine.ActionState;
@@ -97,6 +98,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         h.add(UnauthorizedSsoServiceException.class, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         h.add(NoSuchFlowExecutionException.class, CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
         h.add(UnauthorizedServiceException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+        h.add(UnauthorizedServiceForPrincipalException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
         flow.getExceptionHandlerSet().add(h);
     }
 

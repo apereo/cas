@@ -188,6 +188,7 @@ public class CasSupportActionsConfiguration {
         a.setCentralAuthenticationService(this.centralAuthenticationService);
         a.setAuthenticationSystemSupport(this.authenticationSystemSupport);
         a.setTicketRegistrySupport(this.ticketRegistrySupport);
+        a.setServicesManager(this.servicesManager);
         return a;
     }
 
