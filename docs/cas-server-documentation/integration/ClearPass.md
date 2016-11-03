@@ -30,6 +30,11 @@ Note that the return of the credential is only carried out by the CAS validation
 application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/proxyValidate`). Other means of
 returning attributes to CAS, such as SAML1 will **not** support the additional returning of this value.
 
+<div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
+the credential via the proxying mechanism. Applications that intend to obtain the credential
+need to be updated to account for the following approach described here.</p></div>
+
+
 ## Cache Credential
 
 Enable the caching and capturing of the credential in CAS properties.
