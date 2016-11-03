@@ -125,6 +125,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
     /**
      * Checks if {@code gateway} is present in the request params.
      *
