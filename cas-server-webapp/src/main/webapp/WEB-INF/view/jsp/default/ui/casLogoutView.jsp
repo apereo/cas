@@ -65,6 +65,10 @@
 	    String tenantLogo = ThemeUtils.fetchTenantLogo(request, tenantName);
 	    %>
 	    <c:set var="tenantLogo" value="<%=tenantLogo%>"/>
+		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
+		<c:if test="${empty tenantLogo}">
+            <c:set var="tenantLogo" value="${defaultTenantLogo}" />
+        </c:if>
 	    
 	    <spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 	    <c:set var="appLogo" value="${defaultAppLogo}" />
@@ -98,8 +102,9 @@
 				</div>
 			</section>
 		</main>
-		<footer role="contentinfo" id="ot-footer" class="footer">
+		<footer role="contentinfo" id="ot-footer" class="footer login-footer">
 			<!-- footer region -->
+			<img src="themes/wavity/res/lib/custom/img/LogInScreen/wavity_stacked.png">
 		</footer>
 		<script type="text/javascript">
 			window.onload = function(e){

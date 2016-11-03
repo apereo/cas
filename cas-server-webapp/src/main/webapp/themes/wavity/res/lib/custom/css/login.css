@@ -1,3 +1,14 @@
+body {
+	font-family: 'AvenirLTStd45Book';
+}
+
+@font-face {
+	font-family: 'AvenirLTStd45Book';
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/AvenirLTStd-Book.woff') format('woff');
+}
+
 .form-control {
 	box-shadow : none;
 }
@@ -142,6 +153,14 @@
 	position: relative; 
 	top: 50%; 
 	transform: translateY(-50%);
+}
+
+.footer.login-footer {
+	background-color: #fff;
+}
+
+.footer.login-footer img {
+	margin-left: 10px;
 }
 
 /***********************

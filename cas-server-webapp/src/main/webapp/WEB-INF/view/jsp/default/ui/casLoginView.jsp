@@ -135,7 +135,7 @@
                 </form>
             </div>
         </c:if>
-		<footer role="contentinfo" id="ot-footer" class="footer">
+		<footer role="contentinfo" id="ot-footer" class="footer login-footer">
 			<!-- footer region -->
 		</footer>
 
