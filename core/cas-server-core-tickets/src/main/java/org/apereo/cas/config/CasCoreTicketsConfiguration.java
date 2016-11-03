@@ -88,6 +88,7 @@ public class CasCoreTicketsConfiguration {
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
+    @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
@@ -96,6 +97,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
     @RefreshScope
     @Bean
     public ProxyTicketFactory defaultProxyTicketFactory() {
@@ -106,6 +108,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
     @Bean
     public ServiceTicketFactory defaultServiceTicketFactory() {
         final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
@@ -116,6 +119,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
         final DefaultTicketFactory f = new DefaultTicketFactory();
@@ -126,6 +130,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
     @Bean
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
@@ -134,11 +139,13 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
+    @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
     public ProxyHandler proxy20Handler() {
         final Cas20ProxyHandler h = new Cas20ProxyHandler();
@@ -162,6 +169,7 @@ public class CasCoreTicketsConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
         final DefaultTicketRegistrySupport s = new DefaultTicketRegistrySupport();
@@ -169,6 +177,7 @@ public class CasCoreTicketsConfiguration {
         return s;
     }
 
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
@@ -176,6 +185,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "serviceTicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
@@ -183,6 +193,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
@@ -190,6 +201,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
         final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
@@ -238,6 +250,7 @@ public class CasCoreTicketsConfiguration {
         return new AlwaysExpiresExpirationPolicy();
     }
 
+    @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
@@ -246,6 +259,7 @@ public class CasCoreTicketsConfiguration {
 
     }
 
+    @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
@@ -253,6 +267,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getTicket().getPt().getTimeToKillInSeconds());
     }
 
+    @ConditionalOnMissingBean(name = "uniqueIdGeneratorsMap")
     @Bean
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
