@@ -18,6 +18,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ page import="java.net.URL" %>
+<%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
+<%! public URL fileURL;%>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
@@ -40,22 +43,58 @@
 		<script type="text/javascript" src="<c:url value="${loginJsRequire}" />"></script>
 	</head>
 	<body role="application" class="bodyLayout">
+		<%
+		String serviceUrl = request.getParameter("service");
+        StringBuilder casLoginUrl = new StringBuilder()
+        		.append(request.getScheme())
+        		.append("://")
+        		.append(request.getServerName())
+        		.append("/auth/login");
+        response.addHeader("Cas-Server-Login-Url", casLoginUrl.toString());
+
+		String tenantName = "";
+		String appName = "";
+	    if (serviceUrl != null) {
+			String[] str2 = serviceUrl.split("//");
+			tenantName = str2[1].split("\\.")[0];
+
+			String str3 = str2[1].split("/")[1];
+			appName = str3.split("\\?")[0];
+	    }
+
+	    String tenantLogo = ThemeUtils.fetchTenantLogo(request, tenantName);
+	    %>
+	    <c:set var="tenantLogo" value="<%=tenantLogo%>"/>
+		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
+		<c:if test="${empty tenantLogo}">
+            <c:set var="tenantLogo" value="${defaultTenantLogo}" />
+        </c:if>
+	    
+	    <spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
+	    <c:set var="appLogo" value="${defaultAppLogo}" />
+	    <spring:theme code="standard.logout.ics.logo" var="defaultICSLogo" />
+	    <c:set var="icsLogo" value="${defaultICSLogo}" />
+		
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->
 		</header>
 		<main role="main" id="ot-main" class="main">
 			<section id="loginColumns" class="animated fadeInDown">
 				<div class="row">		
-					<div class="col-md-6 hidden-xs">			
-						<img id="domainIcon" width="400px" height="400px" class="m-t-50" src="themes/wavity/res/lib/custom/img/LogInScreen/LogInScreen_large_background_logo_oneteam.png"/>
+					<div class="col-md-6 hidden-xs tenant-logo-wrapper">
+						<img id="domainIcon" class="m-t-50" src="${tenantLogo}"/>
 					</div>
 					<div class="col-md-6">
-						<div style="color: #333;">
+						<div style="color: #333; width: 400px;">
+							<div id="images" style="margin-bottom: 30px;">
+								<img src="${appLogo}" style="width: 150px; height: 150px; float: left;">
+								<img src="${icsLogo}" style="width: 150px; height: 150px; margin-left: 30px;">
+							</div>
 							<div id="msg" class="success">
 								<h2><spring:message code="screen.logout.header" /></h2>
 								<p><spring:message code="screen.logout.success" /></p>
 								<p><spring:message code="screen.logout.security" /></p>
-								<p id="service-url-container">This page will be redirected to <span id="service-url"></span> after <span id="counter"></span> seconds.</p>
+								<p id="service-url-container">This page will be redirected to <a id="service-url"></a> after <span id="counter"></span> seconds.</p>
 								<p id="service-url-link-container">If you want go to the service instantly, click <a id="service-url-link">this link.</a></p>
 							</div>
 						</div>
@@ -63,15 +102,26 @@
 				</div>
 			</section>
 		</main>
-		<footer role="contentinfo" id="ot-footer" class="footer">
+		<footer role="contentinfo" id="ot-footer" class="footer login-footer">
 			<!-- footer region -->
+			<img src="themes/wavity/res/lib/custom/img/LogInScreen/wavity_stacked.png">
 		</footer>
 		<script type="text/javascript">
-			window.onload = function(e){ 
+			window.onload = function(e){
+				var tenantLogo = document.getElementById("domainIcon");
+				if(tenantLogo.width > 400 || tenantLogo.width <= 0) {
+					tenantLogo.width = 400;
+				}
+				
+				if(tenantLogo.height > 400 || tenantLogo.height <= 0) {
+					tenantLogo.height = 400;
+				}
+				
 			    var serviceUrl = getQueryParams(window.location.search);
 			    if(serviceUrl != null && serviceUrl != "" && validateUrl(serviceUrl)) {
 				    var serviceUrlElement = document.getElementById("service-url");
 				    serviceUrlElement.textContent = serviceUrl;
+				    serviceUrlElement.href = serviceUrl;
 				    
 				    var linkElement = document.getElementById("service-url-link");
 				    linkElement.href = serviceUrl;

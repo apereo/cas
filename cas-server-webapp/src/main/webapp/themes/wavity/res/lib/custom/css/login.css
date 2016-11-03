@@ -1,10 +1,25 @@
+body {
+	font-family: 'AvenirLTStd45Book';
+}
+
+div {
+	color: #7c7c7c;
+}
+
+@font-face {
+	font-family: 'AvenirLTStd45Book';
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/AvenirLTStd-Book.woff') format('woff');
+}
+
 .form-control {
 	box-shadow : none;
 }
 #loginColumns {	
 	margin: 0 auto;
     max-width: 900px;
-    padding: 150px 40px 10px;
+    padding: 100px 40px 10px;
 }
 #loginColumns .form-group .form-control {
 	border-bottom-left-radius: 0;
@@ -142,6 +157,14 @@
 	position: relative; 
 	top: 50%; 
 	transform: translateY(-50%);
+}
+
+.footer.login-footer {
+	background-color: #fff;
+}
+
+.footer.login-footer img {
+	margin-left: 10px;
 }
 
 /***********************

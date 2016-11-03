@@ -86,7 +86,8 @@
 	    }
 
 	    String tenantLogo = ThemeUtils.fetchTenantLogo(request, tenantName);
-		String appLogo = ThemeUtils.fetchAppLogo(request, appName);
+		//String appLogo = ThemeUtils.fetchAppLogo(request, appName);
+		String appLogo = null;
 	    %>
 
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
@@ -134,7 +135,7 @@
                 </form>
             </div>
         </c:if>
-		<footer role="contentinfo" id="ot-footer" class="footer">
+		<footer role="contentinfo" id="ot-footer" class="footer login-footer">
 			<!-- footer region -->
 		</footer>
 
