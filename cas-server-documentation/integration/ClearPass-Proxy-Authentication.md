@@ -125,6 +125,7 @@ Be sure to put this snippet with the other filter and filter-mappings.
 Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/apereo/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml) file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
 
 Next, declare the following bean inside the file:
+
 ```xml
 <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
     <constructor-arg>
