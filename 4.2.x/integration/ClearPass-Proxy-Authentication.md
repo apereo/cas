@@ -91,14 +91,17 @@ Uncomment the below element that is responsible for capturing and caching the pa
 
 
 ### Modifying `web.xml`
+
 In your Maven overlay, modify the `web.xml` to include the following:
+
 ```xml
 <servlet-mapping>
   <servlet-name>cas</servlet-name>
   <url-pattern>/clearPass</url-pattern>
 </servlet-mapping>
 ```
- Be sure to put this snippet with the other servlet-mappings.
+
+Be sure to put this snippet with the other servlet-mappings.
 
 Next, add the following filter and filter-mapping:
 
@@ -118,6 +121,7 @@ Be sure to put this snippet with the other filter and filter-mappings.
 
 
 ### Modifying `clearpass-configuration.xml`
+
 Obtain a copy of the [`clearpass-configuration.xml`](https://github.com/apereo/cas/blob/master/cas-server-webapp/src/main/webapp/WEB-INF/unused-spring-configuration/clearpass-configuration.xml) file inside the `WEB-INF/unused-spring-configuration` of the project. Place that in your project's `WEB-INF/spring-configuration` directory.
 
 Next, declare the following bean inside the file:
