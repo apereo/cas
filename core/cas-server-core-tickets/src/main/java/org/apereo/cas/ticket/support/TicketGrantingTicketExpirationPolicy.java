@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.support;
 
 import org.apereo.cas.ticket.TicketState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -10,7 +9,6 @@ import javax.annotation.PostConstruct;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
