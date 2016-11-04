@@ -1596,7 +1596,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
-# cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
+# cas.authn.samlIdp.metadata.location=/etc/cas/saml
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 
