@@ -19,7 +19,7 @@ The following settings are shared by all attribute release policies:
 may produce an opportunity for security leaks and attacks. Make sure you actually need to enable those features and that you understand the why. Avoid where and when you can, specially when it comes to sharing the user credential.</p></div>
 
 CAS makes a distinction between attributes that convey metadata about the authenication event versus
-those contain personally identifiable data for the authenticated principal. 
+those that contain personally identifiable data for the authenticated principal. 
 
 ## Authentication Attributes
 
@@ -85,7 +85,7 @@ also skips and refuses to release default attributes, if any.
 }
 ```
 
-## Return Allowed
+### Return Allowed
 
 Only return the principal attributes that are explicitly allowed by the configuration.
 
