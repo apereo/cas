@@ -36,13 +36,6 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
-    /**
-     * Init .
-     */
-    @PostConstruct
-    public void init() {
-        this.timeToKillInSeconds = TimeUnit.SECONDS.toMillis(this.timeToKillInSeconds);
-    }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
