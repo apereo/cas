@@ -1,14 +1,13 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OAuthAccessTokenExpirationPolicy}.

@@ -69,7 +69,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
