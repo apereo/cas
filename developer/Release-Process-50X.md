@@ -79,7 +79,7 @@ John Smith
 
 ## Update Overlays
 
-Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
+Update the following overlay projects to point to the newly released CAS version. 
 
 - [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
 - [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
@@ -88,7 +88,7 @@ Update the following overlay projects to point to the newly released CAS version
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with GA or minor releases.
+Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with major or minor releases.
 
 ## Docker Image (Optional)
 
