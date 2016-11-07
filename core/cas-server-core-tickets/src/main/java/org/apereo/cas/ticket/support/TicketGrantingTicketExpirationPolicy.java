@@ -46,16 +46,11 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
      */
-    public TicketGrantingTicketExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+    @JsonCreator
+    public TicketGrantingTicketExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
+                                                @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
-    }
-
-    @JsonCreator
-    public TicketGrantingTicketExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, 
-                                                @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
-        this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
     /**
@@ -113,16 +108,16 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         }
         final TicketGrantingTicketExpirationPolicy rhs = (TicketGrantingTicketExpirationPolicy) obj;
         return new EqualsBuilder()
-                .append(this.maxTimeToLiveInMilliSeconds, rhs.maxTimeToLiveInMilliSeconds)
-                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(maxTimeToLiveInMilliSeconds)
-                .append(timeToKillInMilliSeconds)
+                .append(this.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds)
                 .toHashCode();
     }
 }

@@ -107,16 +107,16 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         }
         final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
         return new EqualsBuilder()
-                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
-                .append(this.timeInBetweenUsesInMilliSeconds, rhs.timeInBetweenUsesInMilliSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .append(this.timeInBetweenUsesInSeconds, rhs.timeInBetweenUsesInSeconds)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(timeToKillInMilliSeconds)
-                .append(timeInBetweenUsesInMilliSeconds)
+                .append(timeToKillInSeconds)
+                .append(timeInBetweenUsesInSeconds)
                 .toHashCode();
     }
 }
