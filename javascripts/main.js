@@ -160,14 +160,14 @@ function generateToolbarIcons() {
         editLink = baseLink + "/edit/gh-pages/";
         historyLink = baseLink + "/commits/gh-pages/";
         deleteLink = baseLink + "/delete/gh-pages/";
-    } else if (activeVersion != CONST_CURRENT_VER) {
-        editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
-        historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
-        deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
     } else if (activeVersion == CONST_CURRENT_VER || activeVersion.indexOf("5.") != -1) {
         editLink = baseLink + "/edit/master/docs/cas-server-documentation/";
         historyLink = baseLink + "/commits/master/docs/cas-server-documentation/";
         deleteLink = baseLink + "/delete/master/docs/cas-server-documentation/";
+    } else if (activeVersion != CONST_CURRENT_VER) {
+        editLink = baseLink + "/edit/" + activeVersion + "/cas-server-documentation/";
+        historyLink = baseLink + "/commits/" + activeVersion + "/cas-server-documentation/";
+        deleteLink = baseLink + "/delete/" + activeVersion + "/cas-server-documentation/";
     }
 
     editLink += editablePage;
