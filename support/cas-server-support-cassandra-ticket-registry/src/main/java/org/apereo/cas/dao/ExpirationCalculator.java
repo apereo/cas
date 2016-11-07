@@ -28,14 +28,16 @@ public class ExpirationCalculator {
     }
 
     public long getExpiration(final TicketGrantingTicketImpl ticket) {
-        final Boolean b = (Boolean) ticket.getAuthentication().getAttributes().get(AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        if (b != null && b) {
+        final Boolean b = (Boolean) ticket.getAuthentication().getAttributes().getOrDefault(AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, false);
+        if (b) {
             final long expiry = ticket.getCreationTime().plusSeconds(rememberMeTtl).toEpochSecond();
             LOGGER.debug("Ticket creation time: {}; Ticket expiry: {}", ticket.getCreationTime(), expiry);
             return expiry;
         } else {
             final ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ttl);
             final ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ttk);
+
+            // TODO: could creationTime be smaller than lastTimeUsed
             final long expiry = ticketTtl.isBefore(ticketTtk) ? ticketTtl.toEpochSecond() : ticketTtk.toEpochSecond();
             LOGGER.debug("Ticket creation time: {}; Ticket expiry: {}", ticket.getCreationTime(), expiry);
             return expiry;
