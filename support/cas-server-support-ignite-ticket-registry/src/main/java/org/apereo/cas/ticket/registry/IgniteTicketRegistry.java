@@ -11,6 +11,7 @@ import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,8 +33,8 @@ import static java.util.stream.Collectors.toList;
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * </p>
  * <ul>
- * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Monitoring : follow separately the number of TGT and ST.</li>
+ * <li>Tuning: use cache level time to live with different values for TGT an ST.</li>
+ * <li>Monitoring: follow separately the number of TGT and ST.</li>
  * </ul>
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
@@ -151,38 +152,36 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     private void configureSecureTransport() {
+        final IgniteProperties ignite = casProperties.getTicket().getRegistry().getIgnite();
         final String nullKey = "NULL";
 
-        if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
-                && StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
+        if (StringUtils.isNotBlank(ignite.getKeyStoreFilePath())
+                && StringUtils.isNotBlank(ignite.getKeyStorePassword())
+                && StringUtils.isNotBlank(ignite.getTrustStoreFilePath())
+                && StringUtils.isNotBlank(ignite.getTrustStorePassword())) {
 
             final SslContextFactory sslContextFactory = new SslContextFactory();
-            sslContextFactory.setKeyStoreFilePath(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreFilePath());
-            sslContextFactory.setKeyStorePassword(casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
+            sslContextFactory.setKeyStoreFilePath(ignite.getKeyStoreFilePath());
+            sslContextFactory.setKeyStorePassword(ignite.getKeyStorePassword().toCharArray());
 
-            if (nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath())
-                    && nullKey.equals(casProperties.getTicket().getRegistry().getIgnite().getTrustStorePassword())) {
+            if (nullKey.equals(ignite.getTrustStoreFilePath()) && nullKey.equals(ignite.getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
-                sslContextFactory.setTrustStoreFilePath(
-                        casProperties.getTicket().getRegistry().getIgnite().getTrustStoreFilePath());
-                sslContextFactory.setTrustStorePassword(
-                        casProperties.getTicket().getRegistry().getIgnite().getKeyStorePassword().toCharArray());
+                sslContextFactory.setTrustStoreFilePath(ignite.getTrustStoreFilePath());
+                sslContextFactory.setTrustStorePassword(ignite.getKeyStorePassword().toCharArray());
             }
 
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm())) {
-                sslContextFactory.setKeyAlgorithm(casProperties.getTicket().getRegistry().getIgnite().getKeyAlgorithm());
+            if (StringUtils.isNotBlank(ignite.getKeyAlgorithm())) {
+                sslContextFactory.setKeyAlgorithm(ignite.getKeyAlgorithm());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getProtocol())) {
-                sslContextFactory.setProtocol(casProperties.getTicket().getRegistry().getIgnite().getProtocol());
+            if (StringUtils.isNotBlank(ignite.getProtocol())) {
+                sslContextFactory.setProtocol(ignite.getProtocol());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType())) {
-                sslContextFactory.setTrustStoreType(casProperties.getTicket().getRegistry().getIgnite().getTrustStoreType());
+            if (StringUtils.isNotBlank(ignite.getTrustStoreType())) {
+                sslContextFactory.setTrustStoreType(ignite.getTrustStoreType());
             }
-            if (StringUtils.isNotBlank(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType())) {
-                sslContextFactory.setKeyStoreType(casProperties.getTicket().getRegistry().getIgnite().getKeyStoreType());
+            if (StringUtils.isNotBlank(ignite.getKeyStoreType())) {
+                sslContextFactory.setKeyStoreType(ignite.getKeyStoreType());
             }
             this.igniteConfiguration.setSslContextFactory(sslContextFactory);
         }
@@ -198,7 +197,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         configureSecureTransport();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("igniteConfiguration.cacheConfiguration={}", this.igniteConfiguration.getCacheConfiguration());
+            logger.debug("igniteConfiguration.cacheConfiguration={}", (Object[]) this.igniteConfiguration.getCacheConfiguration());
             logger.debug("igniteConfiguration.getDiscoverySpi={}", this.igniteConfiguration.getDiscoverySpi());
             logger.debug("igniteConfiguration.getSslContextFactory={}", this.igniteConfiguration.getSslContextFactory());
         }
@@ -209,7 +208,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
             this.ignite = Ignition.ignite();
         }
 
-        this.ticketIgniteCache = this.ignite.getOrCreateCache(casProperties.getTicket().getRegistry().getIgnite().getTicketsCache().getCacheName());
+        final IgniteProperties ignite = casProperties.getTicket().getRegistry().getIgnite();
+        this.ticketIgniteCache = this.ignite.getOrCreateCache(ignite.getTicketsCache().getCacheName());
 
     }
 
