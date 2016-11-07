@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketState;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
@@ -29,39 +28,30 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     /** Serialization support. */
     private static final long serialVersionUID = -7636642464326939536L;
 
-    /** The time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    /** The time to kill in seconds. */
+    private final long timeToKillInSeconds;
 
 
     /** No-arg constructor for serialization support. */
     public TimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
+        this.timeToKillInSeconds = 0;
     }
 
     /**
      * Instantiates a new timeout expiration policy.
      *
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    public TimeoutExpirationPolicy(final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
-    /**
-     * Instantiates a new Timeout expiration policy.
-     *
-     * @param timeToKill the time to kill
-     * @param timeUnit the time unit
-     */
-    public TimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
-        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
-    }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime expirationTime = now.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime expirationTime = now.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         return ticketState == null || now.isAfter(expirationTime);
     }
 
@@ -73,7 +63,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public Long getTimeToIdle() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
 
@@ -90,14 +80,14 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         }
         final TimeoutExpirationPolicy rhs = (TimeoutExpirationPolicy) obj;
         return new EqualsBuilder()
-                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(timeToKillInMilliSeconds)
+                .append(timeToKillInSeconds)
                 .toHashCode();
     }
 }

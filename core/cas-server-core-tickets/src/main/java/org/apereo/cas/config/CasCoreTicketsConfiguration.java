@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
@@ -22,6 +23,7 @@ import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
+import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -55,7 +57,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link CasCoreTicketsConfiguration}.
@@ -74,7 +75,7 @@ public class CasCoreTicketsConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
@@ -82,11 +83,12 @@ public class CasCoreTicketsConfiguration {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-    
+
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
-    
+
+    @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
@@ -95,6 +97,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
     @RefreshScope
     @Bean
     public ProxyTicketFactory defaultProxyTicketFactory() {
@@ -105,6 +108,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
     @Bean
     public ServiceTicketFactory defaultServiceTicketFactory() {
         final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
@@ -115,6 +119,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
         final DefaultTicketFactory f = new DefaultTicketFactory();
@@ -125,6 +130,7 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
     @Bean
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
@@ -133,11 +139,13 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
+    @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
     public ProxyHandler proxy20Handler() {
         final Cas20ProxyHandler h = new Cas20ProxyHandler();
@@ -146,7 +154,7 @@ public class CasCoreTicketsConfiguration {
         return h;
     }
 
-    @ConditionalOnMissingBean(name="ticketRegistry")
+    @ConditionalOnMissingBean(name = "ticketRegistry")
     @RefreshScope
     @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
     public TicketRegistry defaultTicketRegistry() {
@@ -161,6 +169,7 @@ public class CasCoreTicketsConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
         final DefaultTicketRegistrySupport s = new DefaultTicketRegistrySupport();
@@ -168,6 +177,7 @@ public class CasCoreTicketsConfiguration {
         return s;
     }
 
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
@@ -175,6 +185,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "serviceTicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
@@ -182,6 +193,7 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
@@ -189,71 +201,56 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getHost().getName());
     }
 
+    @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
-        if (casProperties.getTicket().getTgt().getRememberMe().isEnabled()) {
+        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        if (tgt.getRememberMe().isEnabled()) {
             final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy();
-            p.setRememberMeExpirationPolicy(
-                    new HardTimeoutExpirationPolicy(
-                            casProperties.getTicket().getTgt().getRememberMe().getTimeToKillInSeconds(),
-                            TimeUnit.SECONDS
-                    )
-            );
+            p.setRememberMeExpirationPolicy(new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds()));
             p.setSessionExpirationPolicy(buildTicketGrantingTicketExpirationPolicy());
             return p;
         }
-        
+
         return buildTicketGrantingTicketExpirationPolicy();
     }
 
     private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
-        if (casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds() < 0
-                && casProperties.getTicket().getTgt().getTimeToKillInSeconds() < 0) {
+        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        if (tgt.getMaxTimeToLiveInSeconds() < 0 && tgt.getTimeToKillInSeconds() < 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return new NeverExpiresExpirationPolicy();
         }
-        
-        if (casProperties.getTicket().getTgt().getTimeout().getMaxTimeToLiveInSeconds() > 0) {
-            final TimeoutExpirationPolicy t = new TimeoutExpirationPolicy(
-                    casProperties.getTicket().getTgt().getTimeout().getMaxTimeToLiveInSeconds(),
-                    TimeUnit.SECONDS
-            );
-            return t;
+
+        if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout");
+            return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
-        if (casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds() > 0
-                && casProperties.getTicket().getTgt().getTimeToKillInSeconds() > 0) {
-            final TicketGrantingTicketExpirationPolicy t = new TicketGrantingTicketExpirationPolicy(
-                    casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds(),
-                    casProperties.getTicket().getTgt().getTimeToKillInSeconds(),
-                    TimeUnit.SECONDS
-            );
-            return t;
+        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts");
+            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
 
-        if (casProperties.getTicket().getTgt().getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
-                && casProperties.getTicket().getTgt().getThrottledTimeout().getTimeToKillInSeconds() > 0) {
+        if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
+                && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
             final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
-            p.setTimeToKillInMilliSeconds(TimeUnit.SECONDS.toMillis(
-                    casProperties.getTicket().getTgt().getThrottledTimeout().getTimeToKillInSeconds()));
-            p.setTimeInBetweenUsesInMilliSeconds(
-                    TimeUnit.SECONDS.toMillis(
-                            casProperties.getTicket().getTgt().getThrottledTimeout().getTimeInBetweenUsesInSeconds()));
+            p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
+            p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a throttled timeouts");
             return p;
         }
 
-        if (casProperties.getTicket().getTgt().getHardTimeout().getTimeToKillInSeconds() > 0) {
-            final HardTimeoutExpirationPolicy h = new HardTimeoutExpirationPolicy(
-                    casProperties.getTicket().getTgt().getHardTimeout().getTimeToKillInSeconds(),
-                    TimeUnit.SECONDS
-            );
-            return h;
+        if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout");
+            return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
 
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
         return new AlwaysExpiresExpirationPolicy();
     }
 
+    @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
@@ -262,6 +259,7 @@ public class CasCoreTicketsConfiguration {
 
     }
 
+    @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
@@ -269,33 +267,22 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getTicket().getPt().getTimeToKillInSeconds());
     }
 
+    @ConditionalOnMissingBean(name = "uniqueIdGeneratorsMap")
     @Bean
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl", 
+        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl",
                 serviceTicketUniqueIdGenerator());
         return map;
     }
-    
+
     @ConditionalOnMissingBean(name = "lockingStrategy")
     @Bean
     public LockingStrategy lockingStrategy() {
-        return new LockingStrategy() {
-            @Override
-            public boolean acquire() {
-                return true;
-            }
-
-            /**
-             * Does nothing.
-             */
-            @Override
-            public void release() {
-            }
-        };
+        return new NoOpLockingStrategy();
     }
-     
-    @ConditionalOnMissingBean(name="ticketRegistryCleaner")
+
+    @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();

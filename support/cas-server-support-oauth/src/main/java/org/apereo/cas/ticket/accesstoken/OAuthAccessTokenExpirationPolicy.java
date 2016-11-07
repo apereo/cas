@@ -4,15 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link OAuthAccessTokenExpirationPolicy}.
@@ -26,10 +25,10 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthAccessTokenExpirationPolicy.class);
 
     /** Maximum time this token is valid.  */
-    private long maxTimeToLiveInMilliSeconds;
+    private long maxTimeToLiveInSeconds;
 
     /** Time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    private long timeToKillInSeconds;
 
     public OAuthAccessTokenExpirationPolicy() {}
 
@@ -38,11 +37,10 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      *
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
-     * @param timeUnit the time unit
      */
-    public OAuthAccessTokenExpirationPolicy(final long maxTimeToLive, final long timeToKill, final TimeUnit timeUnit) {
-        this.maxTimeToLiveInMilliSeconds = timeUnit.toMillis(maxTimeToLive);
-        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    public OAuthAccessTokenExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+        this.maxTimeToLiveInSeconds = maxTimeToLive;
+        this.timeToKillInSeconds = timeToKill;
     }
 
     @JsonCreator
@@ -58,14 +56,14 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         final ZonedDateTime creationTime = ticketState.getCreationTime();
 
         // token has been used, check maxTimeToLive (hard window)
-        ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInMilliSeconds, ChronoUnit.MILLIS);
+        ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
+            LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInSeconds");
             return true;
         }
 
         // token is within hard window, check timeToKill (sliding window)
-        expirationTime = creationTime.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        expirationTime = creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (ticketState.getLastTimeUsed().isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;
@@ -76,12 +74,12 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
 
     @Override
     public Long getTimeToLive() {
-        return this.maxTimeToLiveInMilliSeconds;
+        return this.maxTimeToLiveInSeconds;
     }
 
     @Override
     public Long getTimeToIdle() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
 

@@ -33,8 +33,8 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     @Before
     public void setUp() throws Exception {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
-        this.expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
-        this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(TIMEOUT / 5);
+        this.expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
+        this.expirationPolicy.setTimeInBetweenUsesInSeconds(TIMEOUT / 5);
 
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
             .getAuthentication(), this.expirationPolicy);
@@ -48,7 +48,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpired() throws InterruptedException {
-        expirationPolicy.setTimeToKillInMilliSeconds(-TIMEOUT);
+        expirationPolicy.setTimeToKillInSeconds(-TIMEOUT);
         assertTrue(this.ticket.isExpired());
     }
 
@@ -56,8 +56,8 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyTicketUsedButWithTimeout() throws InterruptedException {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
-        expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
-        expirationPolicy.setTimeInBetweenUsesInMilliSeconds(-10);
+        expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
+        expirationPolicy.setTimeInBetweenUsesInSeconds(-10);
         assertFalse(this.ticket.isExpired());
     }
 
@@ -65,7 +65,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests {
     public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(), this.expirationPolicy, false,
                 true);
-        expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
+        expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         assertTrue(this.ticket.isExpired());
     }
 
