@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -207,21 +206,16 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
 
         LOGGER.debug("Searching for expired tickets. LastRun: {}; CurrentTime: {}", lastRun, currentTime);
 
-        final List<String> ticketIds = new ArrayList<>();
-        while (lastRun < currentTime && ticketIds.size() < maxTgtsToLoad) {
-            final List<String> bucketTickets = getPossibleExpiredTicketGrantingTicketIds(lastRun);
-            ticketIds.addAll(bucketTickets);
+        final List<TicketGrantingTicket> expiredTgts = new ArrayList<>();
+        while (lastRun < currentTime && expiredTgts.size() < maxTgtsToLoad) {
+            expiredTgts.addAll(getExpiredTGTsIn(lastRun));
             removeRowFromTicketCleanerBucket(lastRun);
             updateLastRunTimestamp(++lastRun);
         }
 
-        LOGGER.debug("Loaded {} possibly expired TGTs.", ticketIds.size());
+        LOGGER.debug("Loaded {} possibly expired TGTs.", expiredTgts.size());
 
-        return ticketIds.stream()
-                .map(this::getTicketGrantingTicket)
-                .filter(Objects::nonNull)
-                .filter(Ticket::isExpired)
-                .collect(Collectors.toList());
+        return expiredTgts;
     }
 
     @Override
@@ -235,10 +229,13 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
         session.execute(this.updateLrStmt.bind(timestamp));
     }
 
-    private List<String> getPossibleExpiredTicketGrantingTicketIds(final long lastRunBucket) {
+    private List<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
         return session.execute(this.selectExStmt.bind(lastRunBucket)).all()
                 .stream()
                 .map(row -> row.getString("id"))
+                .map(this::getTicketGrantingTicket)
+                .filter(Objects::nonNull)
+                .filter(Ticket::isExpired)
                 .collect(toList());
     }
 
