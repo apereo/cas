@@ -25,14 +25,20 @@ import java.time.temporal.ChronoUnit;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -7636642464326939536L;
 
-    /** The time to kill in seconds. */
+    /**
+     * The time to kill in seconds.
+     */
     private final long timeToKillInSeconds;
 
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     public TimeoutExpirationPolicy() {
         this.timeToKillInSeconds = 0;
     }
@@ -43,7 +49,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public TimeoutExpirationPolicy(final long timeToKillInSeconds) {
+    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 

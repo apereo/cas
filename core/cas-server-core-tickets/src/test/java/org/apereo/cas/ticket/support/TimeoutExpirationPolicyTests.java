@@ -55,9 +55,7 @@ public class TimeoutExpirationPolicyTests {
     @Test
     public void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
-
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, TimeoutExpirationPolicy.class);
-
         assertEquals(expirationPolicy, policyRead);
     }
 }
