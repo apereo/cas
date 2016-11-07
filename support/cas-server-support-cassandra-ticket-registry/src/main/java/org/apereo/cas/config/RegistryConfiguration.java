@@ -24,7 +24,7 @@ public class RegistryConfiguration {
 
     @Bean(name = "cassandraDao")
     public NoSqlTicketRegistryDao cassandraDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password) {
-        return new CassandraDao(contactPoints, maxTicketDuration, username, password, 1000);
+        return new CassandraDao(contactPoints, maxTicketDuration, username, password, 1000, null);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})

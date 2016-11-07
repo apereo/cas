@@ -26,7 +26,7 @@ public class CassandraDaoTest {
     @Test
     public void shouldHaveLoadAnExtendDataSet() throws Exception {
 
-        CassandraDao dao = new CassandraDao("localhost", 24, "", "", 100);
+        CassandraDao dao = new CassandraDao("localhost", 24, "", "", 100, null);
 
         Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("something", null);
