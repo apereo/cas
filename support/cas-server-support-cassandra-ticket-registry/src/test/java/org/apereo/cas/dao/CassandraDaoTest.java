@@ -34,7 +34,6 @@ public class CassandraDaoTest {
         TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl("id", defaultAuthentication, new TimeoutExpirationPolicy(3000));
 
         dao.addTicketGrantingTicket(tgt);
-        cassandraUnit.session.execute("select * from cas.ticketgrantingticket;").all().forEach(row -> System.out.println("ID = " + row.getString("id")));
 
         assertEquals(tgt, dao.getTicketGrantingTicket("id"));
     }
