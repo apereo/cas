@@ -73,7 +73,7 @@ are directly read from a `.groovy` script which is monitored for changes and rel
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
 and is monitored for changes every 5 seconds. 
 
-```
+```xml
 <lang:groovy id="messenger"
     refresh-check-delay="5000" 
     script-source="classpath:Messenger.groovy">
