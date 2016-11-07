@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,4 +38,21 @@ public class CassandraDaoTest {
         assertEquals(tgt, dao.getTicketGrantingTicket("id"));
     }
 
+    @Ignore("To be completed")
+    @Test
+    public void shouldWorkWithAStringSerializer() throws Exception {
+
+    }
+
+    @Ignore("To be completed")
+    @Test
+    public void shouldWorkWithABinarySerializer() throws Exception {
+
+    }
+
+    @Ignore("To be completed")
+    @Test
+    public void shouldReturnExpiredTGTs() throws Exception {
+
+    }
 }
