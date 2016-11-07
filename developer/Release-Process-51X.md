@@ -79,16 +79,23 @@ John Smith
 
 ## Update Overlays
 
-Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
+Update the following overlay projects to point to the newly released CAS version.
 
 - [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
 - [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
 - [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
 
+## Update Travis
+
+This task is only relevant when dealing with major or minor GA releases.
+
+- Update `.travis.yml` of the release branch to ensure it's configured to build that branch.
+- Make sure shell scripts that are involved by the Travis CI process, particularly those that are in charge of publishing SNAPSHOTs are updated to point to the release branch.
 
 ## Update Maintenance Policy
 
-Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. This task is only relevant when dealing with GA or minor releases.
+Update the [Maintenance Policy](Maintenance-Policy.html) to note the release schedule and EOL timeline. 
+This task is only relevant when dealing with major or minor releases.
 
 ## Docker Image (Optional)
 
