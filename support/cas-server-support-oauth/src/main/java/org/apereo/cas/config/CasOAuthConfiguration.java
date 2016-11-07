@@ -69,7 +69,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
@@ -281,14 +280,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     private ExpirationPolicy accessTokenExpirationPolicy() {
         return new OAuthAccessTokenExpirationPolicy(
                 casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds(),
-                casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds(),
-                TimeUnit.SECONDS
+                casProperties.getAuthn().getOauth().getAccessToken().getTimeToKillInSeconds()
         );
     }
 
     private ExpirationPolicy oAuthCodeExpirationPolicy() {
         return new OAuthCodeExpirationPolicy(casProperties.getAuthn().getOauth().getCode().getNumberOfUses(),
-                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds()));
+                casProperties.getAuthn().getOauth().getCode().getTimeToKillInSeconds());
     }
 
     @Bean
@@ -377,9 +375,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
-        return new OAuthRefreshTokenExpirationPolicy(
-                TimeUnit.SECONDS.toMillis(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds())
-        );
+        return new OAuthRefreshTokenExpirationPolicy(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
     }
 
     @Bean

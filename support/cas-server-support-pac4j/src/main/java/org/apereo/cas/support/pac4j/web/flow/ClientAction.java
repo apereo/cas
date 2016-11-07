@@ -214,7 +214,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
                                          final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
@@ -227,7 +227,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
                                       final String name) {
         final String value = request.getParameter(name);
         if (value != null) {

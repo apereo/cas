@@ -39,7 +39,7 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
         setStartState(flow, decisionState);
     }
 
-    private String getOpenIdModeCondition() {
+    private static String getOpenIdModeCondition() {
         return "externalContext.requestParameterMap['openid.mode'] ne '' "
                 + "&& externalContext.requestParameterMap['openid.mode'] ne null "
                 + "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";

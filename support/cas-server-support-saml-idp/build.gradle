@@ -4,7 +4,6 @@ dependencies {
     compile project(":core:cas-server-core-logout")
     compile project(":support:cas-server-support-saml")
     compile project(":support:cas-server-support-saml-idp-core")
-    compile libraries.commons
     compile libraries.casclient
     compile libraries.shibidp
     runtime libraries.hibernate

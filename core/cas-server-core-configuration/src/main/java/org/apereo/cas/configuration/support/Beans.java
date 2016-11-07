@@ -214,11 +214,12 @@ public class Beans {
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
 
-        PrincipalNameTransformer res = null;
+        final PrincipalNameTransformer res;
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
             final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
+            res = t;
         } else {
             res = formUserId -> formUserId;
         }
@@ -419,7 +420,7 @@ public class Beans {
         LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket registry tickets.");
+                + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
         return new NoOpCipherExecutor();
     }
 

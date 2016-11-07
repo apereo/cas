@@ -27,7 +27,7 @@ public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
         assertEquals(deflatorStream, deflator);
     }
 
-    private String deflateViaStream(final String samlRequest) throws IOException {
+    private static String deflateViaStream(final String samlRequest) throws IOException {
         final byte[] xmlBytes = samlRequest.getBytes(StandardCharsets.UTF_8);
         final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
         final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(

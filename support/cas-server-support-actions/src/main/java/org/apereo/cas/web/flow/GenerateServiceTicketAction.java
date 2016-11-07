@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -29,21 +31,25 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 public class GenerateServiceTicketAction extends AbstractAction {
-    /** Instance of CentralAuthenticationService. */
+    /**
+     * Instance of CentralAuthenticationService.
+     */
 
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     private TicketRegistrySupport ticketRegistrySupport;
 
+    private ServicesManager servicesManager;
+
     /**
      * {@inheritDoc}
-     * 
+     * <p>
      * In the initial primary authentication flow, credentials are cached and available.
      * Since they are authenticated as part of submission first, there is no need to doubly
      * authenticate and verify credentials.
-     *
+     * <p>
      * In subsequent authentication flows where a TGT is available and only an ST needs to be
      * created, there are no cached copies of the credential, since we do have a TGT available.
      * So we will simply grab the available authentication and produce the final result based on that.
@@ -54,13 +60,19 @@ public class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
-            
+
             final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
                 throw new InvalidTicketException(
                         new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
             }
-            
+
+            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            WebUtils.putRegisteredService(context, registeredService);
+            WebUtils.putService(context, service);
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
+                    registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+
             if (WebUtils.getWarningCookie(context)) {
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
@@ -73,7 +85,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
-            
+
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -96,7 +108,11 @@ public class GenerateServiceTicketAction extends AbstractAction {
     public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
         this.ticketRegistrySupport = ticketRegistrySupport;
     }
-    
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
     /**
      * Checks if {@code gateway} is present in the request params.
      *
@@ -105,13 +121,13 @@ public class GenerateServiceTicketAction extends AbstractAction {
      */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
+                .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
     }
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
      *
-     * @param id the id
+     * @param id    the id
      * @param error the error
      * @return the event
      */

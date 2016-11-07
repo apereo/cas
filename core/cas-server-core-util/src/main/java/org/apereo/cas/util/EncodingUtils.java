@@ -84,14 +84,25 @@ public final class EncodingUtils {
 
 
     /**
-     * Url encode a value.
+     * Url encode a value via UTF-8.
      *
      * @param value the value to encode
      * @return the encoded value
      */
     public static String urlEncode(final String value) {
+        return urlEncode(value, StandardCharsets.UTF_8.name());
+    }
+
+    /**
+     * Url encode a value.
+     *
+     * @param value    the value to encode
+     * @param encoding the encoding
+     * @return the encoded value
+     */
+    public static String urlEncode(final String value, final String encoding) {
         try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+            return URLEncoder.encode(value, encoding);
         } catch (final UnsupportedEncodingException e) {
             throw Throwables.propagate(e);
         }
