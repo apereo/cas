@@ -28,7 +28,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 2;
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ticketGrantingTicketExpirationPolicyTests.json");
 
     private static final long SLIDING_TIMEOUT = 2;
 

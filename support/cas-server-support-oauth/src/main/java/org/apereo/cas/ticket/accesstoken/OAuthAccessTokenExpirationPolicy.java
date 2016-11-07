@@ -38,16 +38,11 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
      */
-    public OAuthAccessTokenExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+    @JsonCreator
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
+                                            @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
-    }
-
-    @JsonCreator
-    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLiveInMilliSeconds, 
-                                            @JsonProperty("timeToIdle") final long timeToKillInMilliSeconds) {
-        this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
     @Override
@@ -96,16 +91,16 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         }
         final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
         return new EqualsBuilder()
-                .append(this.maxTimeToLiveInMilliSeconds, rhs.maxTimeToLiveInMilliSeconds)
-                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(maxTimeToLiveInMilliSeconds)
-                .append(timeToKillInMilliSeconds)
+                .append(maxTimeToLiveInSeconds)
+                .append(timeToKillInSeconds)
                 .toHashCode();
     }
 }
