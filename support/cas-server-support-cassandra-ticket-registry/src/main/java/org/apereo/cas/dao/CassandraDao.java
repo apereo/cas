@@ -6,15 +6,12 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import org.apereo.cas.ticket.ServiceTicketImpl;
+import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +21,6 @@ import static java.util.stream.Collectors.toList;
 public class CassandraDao implements NoSqlTicketRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDao.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String KEYSPACE = "cas";
 
@@ -53,6 +49,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
 
     private int maxTicketDuration;
     private final long maxTgtsToLoad;
+    private final TicketSerializer serializer;
 
     private PreparedStatement insertTgtStmt;
     private PreparedStatement updateTgtStmt;
@@ -73,9 +70,10 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
 
     private Session session;
 
-    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad) {
+    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad, final TicketSerializer serializer) {
         this.maxTicketDuration = maxTicketDuration;
         this.maxTgtsToLoad = maxTgtsToLoad;
+        this.serializer = serializer;
         final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
                 .withProtocolVersion(ProtocolVersion.V3).build();
 
@@ -102,21 +100,15 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
     @Override
     public void addTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
-        try {
-            session.execute(this.insertTgtStmt.bind(ticket.getId(), MAPPER.writeValueAsString(ticket)));
-        } catch (final IOException e) {
-            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
-        }
+        // TODO: should we create a serializeTGT method?
+        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serialize(ticket)));
     }
 
     @Override
     public void addServiceTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
-        try {
-            session.execute(this.insertStStmt.bind(ticket.getId(), MAPPER.writeValueAsString(ticket)));
-        } catch (final IOException e) {
-            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
-        }
+        // TODO: should we create a serializeST method?
+        session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serialize(ticket)));
     }
 
     @Override
@@ -141,12 +133,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        try {
-            return MAPPER.readValue(row.getString("ticket"), TicketGrantingTicketImpl.class);
-        } catch (final IOException e) {
-            LOGGER.info("Error reading ticket {}: {}", id, e);
-            return null;
-        }
+        return serializer.deserializeTGT(row.getString("ticket"));
     }
 
     @Override
@@ -157,32 +144,19 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        try {
-            return MAPPER.readValue(row.getString("ticket"), ServiceTicketImpl.class);
-        } catch (final IOException e) {
-            LOGGER.info("Error reading ticket {}: {}", id, e);
-            return null;
-        }
+        return serializer.deserializeST(row.getString("ticket"));
     }
 
     @Override
     public void updateTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("UPDATING TICKET {}", ticket.getId());
-        try {
-            session.execute(this.updateTgtStmt.bind(MAPPER.writeValueAsString(ticket), ticket.getId()));
-        } catch (final IOException e) {
-            LOGGER.info("Error updating ticket {}: {}", ticket.getId(), e);
-        }
+        session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), ticket.getId()));
     }
 
     @Override
     public void updateServiceTicket(final Ticket ticket) {
         LOGGER.debug("UPDATING TICKET {}", ticket.getId());
-        try {
-            session.execute(this.updateStStmt.bind(MAPPER.writeValueAsString(ticket), ticket.getId()));
-        } catch (final IOException e) {
-            LOGGER.info("Error updating ticket {}: {}", ticket.getId(), e);
-        }
+        session.execute(this.updateStStmt.bind(serializer.serialize(ticket), ticket.getId()));
     }
 
     @Override
@@ -207,6 +181,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
         LOGGER.debug("Searching for expired tickets. LastRun: {}; CurrentTime: {}", lastRun, currentTime);
 
         final List<TicketGrantingTicket> expiredTgts = new ArrayList<>();
+        // TODO: replace maxTgtsToLoad with Java 8 stream
         while (lastRun < currentTime && expiredTgts.size() < maxTgtsToLoad) {
             expiredTgts.addAll(getExpiredTGTsIn(lastRun));
             removeRowFromTicketCleanerBucket(lastRun);
