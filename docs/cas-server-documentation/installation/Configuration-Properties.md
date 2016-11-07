@@ -379,29 +379,29 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
-# cas.authn.attributeRepository.ldap.useSsl=true
-# cas.authn.attributeRepository.ldap.useStartTls=false
-# cas.authn.attributeRepository.ldap.connectTimeout=5000
-# cas.authn.attributeRepository.ldap.baseDn=dc=example,dc=org
-# cas.authn.attributeRepository.ldap.userFilter=cn={0}
-# cas.authn.attributeRepository.ldap.subtreeSearch=true
-# cas.authn.attributeRepository.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.authn.attributeRepository.ldap.bindCredential=Password
-# cas.authn.attributeRepository.ldap.trustCertificates=
-# cas.authn.attributeRepository.ldap.keystore=
-# cas.authn.attributeRepository.ldap.keystorePassword=
-# cas.authn.attributeRepository.ldap.keystoreType=JKS|JCEKS|PKCS12
-# cas.authn.attributeRepository.ldap.minPoolSize=3
-# cas.authn.attributeRepository.ldap.maxPoolSize=10
-# cas.authn.attributeRepository.ldap.validateOnCheckout=true
-# cas.authn.attributeRepository.ldap.validatePeriodically=true
-# cas.authn.attributeRepository.ldap.validatePeriod=600
-# cas.authn.attributeRepository.ldap.failFast=true
-# cas.authn.attributeRepository.ldap.idleTime=500
-# cas.authn.attributeRepository.ldap.prunePeriod=600
-# cas.authn.attributeRepository.ldap.blockWaitTime=5000
-# cas.authn.attributeRepository.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].useSsl=true
+# cas.authn.attributeRepository.ldap[0].useStartTls=false
+# cas.authn.attributeRepository.ldap[0].connectTimeout=5000
+# cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org
+# cas.authn.attributeRepository.ldap[0].userFilter=cn={0}
+# cas.authn.attributeRepository.ldap[0].subtreeSearch=true
+# cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.authn.attributeRepository.ldap[0].bindCredential=Password
+# cas.authn.attributeRepository.ldap[0].trustCertificates=
+# cas.authn.attributeRepository.ldap[0].keystore=
+# cas.authn.attributeRepository.ldap[0].keystorePassword=
+# cas.authn.attributeRepository.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+# cas.authn.attributeRepository.ldap[0].minPoolSize=3
+# cas.authn.attributeRepository.ldap[0].maxPoolSize=10
+# cas.authn.attributeRepository.ldap[0].validateOnCheckout=true
+# cas.authn.attributeRepository.ldap[0].validatePeriodically=true
+# cas.authn.attributeRepository.ldap[0].validatePeriod=600
+# cas.authn.attributeRepository.ldap[0].failFast=true
+# cas.authn.attributeRepository.ldap[0].idleTime=500
+# cas.authn.attributeRepository.ldap[0].prunePeriod=600
+# cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
+# cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 ```
 
 ### Groovy
@@ -410,8 +410,8 @@ If you wish to directly and separately retrieve attributes from a Groovy script,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.groovy.config.location=file:/etc/cas/attributes.groovy
-# cas.authn.attributeRepository.groovy.caseInsensitive=false
+# cas.authn.attributeRepository.groovy[0].config.location=file:/etc/cas/attributes.groovy
+# cas.authn.attributeRepository.groovy[0].caseInsensitive=false
 ```
 
 The Groovy script may be designed as:
@@ -439,7 +439,7 @@ If you wish to directly and separately retrieve attributes from a static JSON so
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.json.config.location=file://etc/cas/attribute-repository.json
+# cas.authn.attributeRepository.json[0].config.location=file://etc/cas/attribute-repository.json
 ```
 
 The format of the file may be:
@@ -463,38 +463,38 @@ If you wish to directly and separately retrieve attributes from a JDBC source,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.jdbc.singleRow=true
-# cas.authn.attributeRepository.jdbc.requireAllAttributes=true
-# cas.authn.attributeRepository.jdbc.caseCanonicalization=NONE|LOWER|UPPER
-# cas.authn.attributeRepository.jdbc.queryType=OR|AND
+# cas.authn.attributeRepository.jdbc[0].singleRow=true
+# cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
+# cas.authn.attributeRepository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
+# cas.authn.attributeRepository.jdbc[0].queryType=OR|AND
 
 # Used only when there is a mapping of many rows to one user
-# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName1=columnAttrValue1
-# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName2=columnAttrValue2
-# cas.authn.attributeRepository.jdbc.columnMappings.columnAttrName3=columnAttrValue3
+# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName1=columnAttrValue1
+# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName2=columnAttrValue2
+# cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
-# cas.authn.attributeRepository.jdbc.sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc.username=uid
-# cas.authn.attributeRepository.jdbc.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.attributeRepository.jdbc.isolateInternalQueries=false
-# cas.authn.attributeRepository.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.attributeRepository.jdbc.failFast=true
-# cas.authn.attributeRepository.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.attributeRepository.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.attributeRepository.jdbc.leakThreshold=10
-# cas.authn.attributeRepository.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.attributeRepository.jdbc.batchSize=1
-# cas.authn.attributeRepository.jdbc.user=sa
-# cas.authn.attributeRepository.jdbc.ddlAuto=create-drop
-# cas.authn.attributeRepository.jdbc.password=
-# cas.authn.attributeRepository.jdbc.autocommit=false
-# cas.authn.attributeRepository.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.attributeRepository.jdbc.idleTimeout=5000
-# cas.authn.attributeRepository.jdbc.pool.suspension=false
-# cas.authn.attributeRepository.jdbc.pool.minSize=6
-# cas.authn.attributeRepository.jdbc.pool.maxSize=18
-# cas.authn.attributeRepository.jdbc.pool.maxIdleTime=1000
-# cas.authn.attributeRepository.jdbc.pool.maxWait=2000
+# cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
+# cas.authn.attributeRepository.jdbc[0].username=uid
+# cas.authn.attributeRepository.jdbc[0].healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
+# cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.attributeRepository.jdbc[0].failFast=true
+# cas.authn.attributeRepository.jdbc[0].isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.attributeRepository.jdbc[0].leakThreshold=10
+# cas.authn.attributeRepository.jdbc[0].propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.attributeRepository.jdbc[0].batchSize=1
+# cas.authn.attributeRepository.jdbc[0].user=sa
+# cas.authn.attributeRepository.jdbc[0].ddlAuto=create-drop
+# cas.authn.attributeRepository.jdbc[0].password=
+# cas.authn.attributeRepository.jdbc[0].autocommit=false
+# cas.authn.attributeRepository.jdbc[0].driverClass=org.hsqldb.jdbcDriver
+# cas.authn.attributeRepository.jdbc[0].idleTimeout=5000
+# cas.authn.attributeRepository.jdbc[0].pool.suspension=false
+# cas.authn.attributeRepository.jdbc[0].pool.minSize=6
+# cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
+# cas.authn.attributeRepository.jdbc[0].pool.maxIdleTime=1000
+# cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
 ```
 
 ### Default Bundle
