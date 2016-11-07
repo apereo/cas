@@ -19,7 +19,7 @@ OpenID identifiers are URIs. The default mechanism in CAS support is an uri endi
 This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
 <div class="alert alert-info"><strong>Pay Attention!</strong><p>OpenID protocol is <strong>NOT</strong> the same thing
-as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here<a/>.</p></div>
+as the OpenId Connect protocol whose details are <a href="OIDC-Protocol.html">documented here</a>.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
