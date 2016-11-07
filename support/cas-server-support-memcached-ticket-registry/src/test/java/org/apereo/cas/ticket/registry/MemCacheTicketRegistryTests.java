@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import com.google.common.collect.Lists;
 import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -128,7 +129,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
         this.registry.addTicket(new TicketGrantingTicketImpl("TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket("TGT", TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket("ST1", service, new NeverExpiresExpirationPolicy(), false, true);
         this.registry.addTicket(st1);
