@@ -10,18 +10,18 @@ The following endpoints are secured and available:
 | Parameter                         | Description
 |-----------------------------------|------------------------------------------
 | `/status/dashboard`               | A good starting point, that is a control panel to CAS server functionality and management.
-| `/status`                         | [Monitor status information](Configuring-Monitoring.html).
-| `/status/autoconfig`              | Describes how the application context is auto configured.
-| `/status/beans`                   | Displays all application context beans.
+| `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
+| `/status/autoconfig`              | Describes how the application context is auto-configured.
+| `/status/beans`                   | Displays all application context Spring beans.
 | `/status/configprops`             | List of **internal** configuration properties.
 | `/status/dump`                    | Produces a thread dump.
-| `/status/env`                     | Produces a collection of application properties.
+| `/status/env`                     | Produces a collection of all application properties.
 | `/status/health`                  | General health of the system.
 | `/status/info`                    | CAS version information.
 | `/status/metrics`                 | Runtime metrics and stats.
 | `/status/stats`                   | Visual representation of CAS statistics.
 | `/status/logging`                 | Monitor CAS logs in a streaming fashion, and review the audit log.
-| `/status/config`                  | Visual representation of application properties and configuration.
+| `/status/config`                  | Visual representation of **CAS** application properties and configuration.
 | `/status/mappings`                | Describes how requests are mapped and handled by CAS.
 | `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
 | `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
