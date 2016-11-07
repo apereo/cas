@@ -28,32 +28,32 @@ public class PrincipalAttributesProperties {
     private Set<String> defaultAttributesToRelease = new HashSet<>();
     private Map<String, String> attributes = new HashMap();
 
-    private Jdbc jdbc = new Jdbc();
-    private Groovy groovy = new Groovy();
-    private Ldap ldap = new Ldap();
-    private Json json = new Json();
+    private List<Jdbc> jdbc = new ArrayList<>();
+    private List<Groovy> groovy = new ArrayList();
+    private List<Ldap> ldap = new ArrayList();
+    private List<Json> json = new ArrayList();
 
-    public Groovy getGroovy() {
+    public List<Groovy> getGroovy() {
         return groovy;
     }
 
-    public void setGroovy(final Groovy groovy) {
+    public void setGroovy(final List<Groovy> groovy) {
         this.groovy = groovy;
     }
 
-    public Json getJson() {
+    public List<Json> getJson() {
         return json;
     }
 
-    public void setJson(final Json json) {
+    public void setJson(final List<Json> json) {
         this.json = json;
     }
 
-    public Ldap getLdap() {
+    public List<Ldap> getLdap() {
         return ldap;
     }
 
-    public void setLdap(final Ldap ldap) {
+    public void setLdap(final List<Ldap> ldap) {
         this.ldap = ldap;
     }
 
@@ -81,11 +81,11 @@ public class PrincipalAttributesProperties {
         this.maximumCacheSize = maximumCacheSize;
     }
 
-    public Jdbc getJdbc() {
+    public List<Jdbc> getJdbc() {
         return jdbc;
     }
 
-    public void setJdbc(final Jdbc jdbc) {
+    public void setJdbc(final List<Jdbc> jdbc) {
         this.jdbc = jdbc;
     }
 
