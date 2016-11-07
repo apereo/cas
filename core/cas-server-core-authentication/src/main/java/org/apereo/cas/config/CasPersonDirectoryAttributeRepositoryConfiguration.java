@@ -32,11 +32,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.OrderComparator;
 import org.springframework.core.io.Resource;
 
 import javax.naming.directory.SearchControls;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
         addJsonAttributeRepository(list);
         addGroovyAttributeRepository(list);
         addStubAttributeRepositoryIfNothingElse(list);
+        OrderComparator.sort(list);
         return composeMergedAndCachedAttributeRepositories(list);
     }
 
@@ -77,6 +80,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             final Resource r = json.getConfig().getLocation();
             if (r != null) {
                 final JsonBackedComplexStubPersonAttributeDao dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                dao.setOrder(json.getOrder());
                 LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                 list.add(dao);
             }
@@ -88,6 +92,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
             if (groovy.getConfig().getLocation() != null) {
                 final GroovyPersonAttributeDao dao = new GroovyPersonAttributeDao(new GroovyScriptDao(applicationContext, casProperties));
                 dao.setCaseInsensitiveUsername(groovy.isCaseInsensitive());
+                dao.setOrder(groovy.getOrder());
 
                 LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getConfig().getLocation());
                 list.add(dao);
@@ -185,6 +190,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                 jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
                 jdbcDao.setUsernameCaseCanonicalizationMode(jdbc.getCaseCanonicalization());
                 jdbcDao.setQueryType(jdbc.getQueryType());
+                jdbcDao.setOrder(jdbc.getOrder());
                 list.add(jdbcDao);
             }
         });
@@ -221,16 +227,19 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                 constraints.setDerefLinkFlag(true);
                 ldapDao.setSearchControls(constraints);
 
+                ldapDao.setOrder(ldap.getOrder());
+
                 LOGGER.debug("Initializing LDAP attribute source for {}", ldap.getLdapUrl());
                 ldapDao.initialize();
+
                 list.add(ldapDao);
             }
         });
     }
 
     private static class GroovyScriptDao extends BaseGroovyScriptDaoImpl {
-        private ApplicationContext applicationContext;
-        private CasConfigurationProperties casProperties;
+        private final ApplicationContext applicationContext;
+        private final CasConfigurationProperties casProperties;
 
         GroovyScriptDao(final ApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
             this.applicationContext = applicationContext;

@@ -49,6 +49,7 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -178,6 +179,7 @@ public class Beans {
                 pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
             });
             dao.setBackingMap(pdirMap);
+            dao.setOrder(Ordered.LOWEST_PRECEDENCE);
             return dao;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
