@@ -1,7 +1,7 @@
 #!/bin/bash
 invokeJavadoc=false
 invokeDoc=false
-branchVersion="development"
+branchVersion="5.0.x"
 
 # Only invoke the javadoc deployment process
 # for the first job in the build matrix, so as
