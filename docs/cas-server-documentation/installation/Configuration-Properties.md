@@ -357,7 +357,8 @@ The story in plain english is:
 - Figure it out.
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
-This is important to take into account when attribute merging may take place. The order is:
+This is important to take into account when attribute merging may take place. 
+By default, the execution order is the following but can be adjusted per source:
 
 1. LDAP
 2. JDBC
@@ -370,7 +371,7 @@ as part of primary authentication, then a stub/static source will be created
 based on the defined attributes, if any.
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
-may be retrieved by CAS from the attribute repository and made available to the principal. On the other hand,
+may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
 if explicit attribute mappings are defined, then *only mapped attributes* are retrieved.
 
 ### LDAP
@@ -380,6 +381,7 @@ the following settings are then relevant:
 
 ```properties
 # cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
 # cas.authn.attributeRepository.ldap[0].connectTimeout=5000
@@ -412,6 +414,7 @@ the following settings are then relevant:
 ```properties
 # cas.authn.attributeRepository.groovy[0].config.location=file:/etc/cas/attributes.groovy
 # cas.authn.attributeRepository.groovy[0].caseInsensitive=false
+# cas.authn.attributeRepository.groovy[0].order=0
 ```
 
 The Groovy script may be designed as:
@@ -440,6 +443,7 @@ the following settings are then relevant:
 
 ```properties
 # cas.authn.attributeRepository.json[0].config.location=file://etc/cas/attribute-repository.json
+# cas.authn.attributeRepository.json[0].order=0
 ```
 
 The format of the file may be:
@@ -464,6 +468,7 @@ the following settings are then relevant:
 
 ```properties
 # cas.authn.attributeRepository.jdbc[0].singleRow=true
+# cas.authn.attributeRepository.jdbc[0].order=0
 # cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true
 # cas.authn.attributeRepository.jdbc[0].caseCanonicalization=NONE|LOWER|UPPER
 # cas.authn.attributeRepository.jdbc[0].queryType=OR|AND

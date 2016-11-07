@@ -113,6 +113,16 @@ public class PrincipalAttributesProperties {
         private QueryType queryType = QueryType.AND;
         private Map<String, String> columnMappings = new HashMap<>();
         private List<String> username = new ArrayList<>();
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+
 
         public String getSql() {
             return sql;
@@ -172,11 +182,28 @@ public class PrincipalAttributesProperties {
     }
 
     public static class Json extends AbstractConfigProperties {
-        
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
     }
 
     public static class Groovy extends AbstractConfigProperties {
         private boolean caseInsensitive;
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
 
         public boolean isCaseInsensitive() {
             return caseInsensitive;
@@ -191,6 +218,15 @@ public class PrincipalAttributesProperties {
         private boolean subtreeSearch = true;
         private String baseDn;
         private String userFilter;
+        private int order;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
 
         public String getBaseDn() {
             return baseDn;
