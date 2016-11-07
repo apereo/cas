@@ -10,7 +10,7 @@ language: java
 sudo: required
 branches:
   only:
-  - master
+  - 5.0.x
 jdk:
 - oraclejdk8
 cache:
