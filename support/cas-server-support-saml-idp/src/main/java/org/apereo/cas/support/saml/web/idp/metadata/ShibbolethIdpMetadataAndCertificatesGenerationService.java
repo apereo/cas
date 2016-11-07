@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -54,6 +53,11 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
     }
 
 
+    /**
+     * Is metadata missing?
+     *
+     * @return true/false
+     */
     public boolean isMetadataMissing() {
         try {
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();

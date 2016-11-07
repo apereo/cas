@@ -114,10 +114,22 @@ public class SamlIdPProperties {
             this.location = location;
         }
 
+        /**
+         * Gets signing cert file.
+         *
+         * @return the signing cert file
+         * @throws Exception the exception
+         */
         public Resource getSigningCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.crt"));
         }
 
+        /**
+         * Gets signing key file.
+         *
+         * @return the signing key file
+         * @throws Exception the exception
+         */
         public Resource getSigningKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
         }
@@ -130,14 +142,32 @@ public class SamlIdPProperties {
             this.privateKeyAlgName = privateKeyAlgName;
         }
 
+        /**
+         * Gets encryption cert file.
+         *
+         * @return the encryption cert file
+         * @throws Exception the exception
+         */
         public Resource getEncryptionCertFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.crt"));
         }
 
+        /**
+         * Gets encryption key file.
+         *
+         * @return the encryption key file
+         * @throws Exception the exception
+         */
         public Resource getEncryptionKeyFile() throws Exception {
             return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
         }
 
+        /**
+         * Gets metadata file.
+         *
+         * @return the metadata file
+         * @throws Exception the exception
+         */
         public File getMetadataFile() throws Exception {
             return new File(this.location.getFile(), "idp-metadata.xml");
         }
