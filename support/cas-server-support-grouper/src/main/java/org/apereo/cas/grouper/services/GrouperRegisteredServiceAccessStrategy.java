@@ -1,10 +1,8 @@
 package org.apereo.cas.grouper.services;
 
-import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
-
-import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
-import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
+import org.apereo.cas.grouper.GrouperFacade;
+import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,60 +26,29 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
     private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategy.class);
 
-    /**
-     * The enum Grouper group field.
-     */
-    public enum GrouperGroupField {
-        /**
-         * Name grouper group field.
-         */
-        NAME,
-        /**
-         * Extension grouper group field.
-         */
-        EXTENSION,
-        /**
-         * Display name grouper group field.
-         */
-        DISPLAY_NAME,
-        /**
-         * Display extension grouper group field.
-         */
-        DISPLAY_EXTENSION
-    }
 
-    private GrouperGroupField groupField = GrouperGroupField.NAME;
+    private GrouperFacade.GrouperGroupField groupField = GrouperFacade.GrouperGroupField.NAME;
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
 
-        final WsGetGroupsResult[] results;
+        final List<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal);
 
-        try {
-            final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(principal);
-            results = groupsClient.execute().getResults();
-        } catch (final Exception e) {
-            LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
-                    + ", the url endpoint for Grouper WS is correctly configured and the subject {}"
-                    + "  exists in Grouper.", principal, e);
-            return false;
-        }
-
-        if (results == null || results.length == 0) {
+        if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
 
-        final boolean denied = Arrays.stream(results).filter(groupsResult -> {
+        final boolean denied = results.stream().filter(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return true;
             }
 
             Arrays.stream(groupsResult.getWsGroups()).forEach(group -> {
-                final String groupName = constructGrouperGroupAttribute(group);
+                final String groupName = GrouperFacade.getGrouperGroupAttribute(this.groupField, group);
                 LOGGER.debug("Found group name [{}] for [{}]", groupName, principal);
                 grouperGroups.add(groupName);
             });
@@ -99,32 +66,12 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
     }
 
-    public void setGroupField(final GrouperGroupField groupField) {
+    public void setGroupField(final GrouperFacade.GrouperGroupField groupField) {
         this.groupField = groupField;
     }
 
-    public GrouperGroupField getGroupField() {
+    public GrouperFacade.GrouperGroupField getGroupField() {
         return this.groupField;
-    }
-
-    /**
-     * Construct grouper group attribute.
-     * This is the name of every individual group attribute
-     * transformed into a CAS attribute value.
-     * @param group the group
-     * @return the final attribute name
-     */
-    protected String constructGrouperGroupAttribute(final WsGroup group) {
-        switch (this.groupField) {
-            case DISPLAY_EXTENSION:
-                return group.getDisplayExtension();
-            case DISPLAY_NAME:
-                return group.getDisplayName();
-            case EXTENSION:
-                return group.getExtension();
-            default:
-                return group.getName();
-        }
     }
 
 }
