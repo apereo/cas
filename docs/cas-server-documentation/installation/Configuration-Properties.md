@@ -404,6 +404,14 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].prunePeriod=600
 # cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
 # cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+
+# cas.authn.attributeRepository.ldap[0].type=SEARCH|COMPARE
+# cas.authn.attributeRepository.ldap[0].baseDn=
+# cas.authn.attributeRepository.ldap[0].searchFilter=(objectClass=*)
+# cas.authn.attributeRepository.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.attributeRepository.ldap[0].attributeName=objectClass
+# cas.authn.attributeRepository.ldap[0].attributeValues=top
+# cas.authn.attributeRepository.ldap[0].dn=
 ```
 
 ### Groovy
@@ -998,6 +1006,14 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
 
+# cas.authn.ldap[0].type=SEARCH|COMPARE
+# cas.authn.ldap[0].baseDn=
+# cas.authn.ldap[0].searchFilter=(objectClass=*)
+# cas.authn.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.ldap[0].attributeName=objectClass
+# cas.authn.ldap[0].attributeValues=top
+# cas.authn.ldap[0].dn=
+
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
 # cas.authn.ldap[0].passwordPolicy.loginFailures=5
@@ -1107,6 +1123,14 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.useStartTls=false
 # cas.authn.spnego.ldap.baseDn=false
 # cas.authn.spnego.ldap.searchFilter=host={0}
+
+# cas.authn.spnego.ldap.type=SEARCH|COMPARE
+# cas.authn.spnego.ldap.baseDn=
+# cas.authn.spnego.ldap.searchFilter=(objectClass=*)
+# cas.authn.spnego.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.spnego.ldap.attributeName=objectClass
+# cas.authn.spnego.ldap.attributeValues=top
+# cas.authn.spnego.ldap.dn=
 ```
 
 ## JAAS Authentication
@@ -1263,6 +1287,14 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.prunePeriod=600
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+
+# cas.authn.x509.ldap.type=SEARCH|COMPARE
+# cas.authn.x509.ldap.baseDn=
+# cas.authn.x509.ldap.searchFilter=(objectClass=*)
+# cas.authn.x509.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.x509.ldap.attributeName=objectClass
+# cas.authn.x509.ldap.attributeValues=top
+# cas.authn.x509.ldap.dn=
 
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
@@ -2107,6 +2139,14 @@ used for authentication, etc.
 # cas.monitor.ldap.subtreeSearch=true
 # cas.monitor.ldap.useSsl=true
 # cas.monitor.ldap.useStartTls=false
+
+# cas.monitor.ldap.type=SEARCH|COMPARE
+# cas.monitor.ldap.baseDn=
+# cas.monitor.ldap.searchFilter=(objectClass=*)
+# cas.monitor.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.monitor.ldap.attributeName=objectClass
+# cas.monitor.ldap.attributeValues=top
+# cas.monitor.ldap.dn=
 ```
 
 ### Memory
@@ -2163,6 +2203,14 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
+
+# cas.acceptableUsagePolicy.ldap.type=SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.baseDn=
+# cas.acceptableUsagePolicy.ldap.searchFilter=(objectClass=*)
+# cas.acceptableUsagePolicy.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.acceptableUsagePolicy.ldap.attributeName=objectClass
+# cas.acceptableUsagePolicy.ldap.attributeValues=top
+# cas.acceptableUsagePolicy.ldap.dn=
 ```
 
 ## Events
@@ -2326,6 +2374,14 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.blockWaitTime=5000
 # cas.serviceRegistry.ldap.useSsl=true
 # cas.serviceRegistry.ldap.useStartTls=false
+
+# cas.serviceRegistry.ldap.type=SEARCH|COMPARE
+# cas.serviceRegistry.ldap.baseDn=
+# cas.serviceRegistry.ldap.searchFilter=(objectClass=*)
+# cas.serviceRegistry.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.serviceRegistry.ldap.attributeName=objectClass
+# cas.serviceRegistry.ldap.attributeValues=top
+# cas.serviceRegistry.ldap.dn=
 ```
 
 ### Couchbase Service Registry
@@ -2908,4 +2964,12 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.prunePeriod=600
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+
+# cas.authn.pm.ldap.type=SEARCH|COMPARE
+# cas.authn.pm.ldap.baseDn=
+# cas.authn.pm.ldap.searchFilter=(objectClass=*)
+# cas.authn.pm.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.pm.ldap.attributeName=objectClass
+# cas.authn.pm.ldap.attributeValues=top
+# cas.authn.pm.ldap.dn=
 ```
