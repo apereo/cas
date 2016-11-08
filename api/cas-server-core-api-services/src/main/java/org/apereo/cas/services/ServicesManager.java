@@ -92,4 +92,10 @@ public interface ServicesManager {
      * to reload whenever they want.
      */
     void load();
+
+    /**
+     * Return a count of loaded services by this manager.
+     * @return the count/size of registry.
+     */
+    default int count() { return 0; }
 }
