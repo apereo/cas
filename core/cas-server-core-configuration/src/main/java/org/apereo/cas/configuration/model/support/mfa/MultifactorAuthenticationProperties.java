@@ -27,7 +27,9 @@ public class MultifactorAuthenticationProperties {
     
     private String contentType = "application/cas";
     private String globalProviderId;
-    
+
+    private String grouperGroupField;
+
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
@@ -81,6 +83,14 @@ public class MultifactorAuthenticationProperties {
 
     public void setGlobalPrincipalAttributeNameTriggers(final String globalPrincipalAttributeNameTriggers) {
         this.globalPrincipalAttributeNameTriggers = globalPrincipalAttributeNameTriggers;
+    }
+
+    public String getGrouperGroupField() {
+        return grouperGroupField;
+    }
+
+    public void setGrouperGroupField(final String grouperGroupField) {
+        this.grouperGroupField = grouperGroupField;
     }
 
     public Duo getDuo() {
