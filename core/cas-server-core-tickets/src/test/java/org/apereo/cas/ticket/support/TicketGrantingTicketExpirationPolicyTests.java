@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
-import static com.vividsolutions.jts.geom.Dimension.L;
 import static org.junit.Assert.*;
 
 /**

@@ -32,7 +32,7 @@ so in reality the bucket property must also be set.
 
 ## Auto Initialization
 
-Upon startup and if the services registry database is blank, 
+Upon startup and configuration permitting, 
 the registry is able to auto initialize itself from default 
 JSON service definitions available to CAS.
 

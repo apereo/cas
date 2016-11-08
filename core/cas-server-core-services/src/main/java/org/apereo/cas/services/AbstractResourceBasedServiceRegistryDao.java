@@ -40,12 +40,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
      * The Service registry directory.
      */
     protected Path serviceRegistryDirectory;
-    
+
     /**
      * Map of service ID to registered service.
      */
     private Map<Long, RegisteredService> serviceMap = new ConcurrentHashMap<>();
-    
+
     /**
      * The Registered service json serializer.
      */
@@ -100,7 +100,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         if (enableWatcher) {
 
             LOGGER.info("Watching service registry directory at {}", configDirectory);
-            
+
             this.serviceRegistryConfigWatcher = new ServiceRegistryConfigWatcher(this, eventPublisher);
             this.serviceRegistryWatcherThread = new Thread(this.serviceRegistryConfigWatcher);
             this.serviceRegistryWatcherThread.setName(this.getClass().getName());
@@ -108,7 +108,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
             LOGGER.debug("Started service registry watcher thread");
         }
     }
-    
+
     /**
      * Destroy the watch service thread.
      */
@@ -130,6 +130,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.serviceMap.get(id);
+    }
+
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return this.serviceMap.values().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
     @Override

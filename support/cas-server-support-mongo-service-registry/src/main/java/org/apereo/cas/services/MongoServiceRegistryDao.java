@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * <p>Implementation of {@code ServiceRegistryDao} that uses a MongoDb repository as the backend
@@ -65,8 +66,6 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-
-
     }
 
     @Override
@@ -82,6 +81,13 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public RegisteredService findServiceById(final long svcId) {
         return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)),
+                RegisteredService.class, this.collectionName);
+    }
+
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        final Pattern pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)),
                 RegisteredService.class, this.collectionName);
     }
 
@@ -108,17 +114,5 @@ public class MongoServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public long size() {
         return this.mongoTemplate.count(new Query(), RegisteredService.class, this.collectionName);
-    }
-
-    public void setCollectionName(final String name) {
-        this.collectionName = name;
-    }
-    
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-
-    public void setMongoTemplate(final MongoOperations mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
     }
 }

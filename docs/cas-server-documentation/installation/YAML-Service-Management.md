@@ -64,3 +64,13 @@ will have the same id. If this happens, loading one definition will stop loading
 can be chosen arbitrarily, make sure all service numeric identifiers are unique. CAS will also output warnings
 if duplicate data is found.
 </p></div>
+
+## Auto Initialization
+
+Upon startup and configuration permitting, 
+the registry is able to auto initialize itself from default 
+JSON service definitions available to CAS.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+

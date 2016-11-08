@@ -142,6 +142,11 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
         return null;
     }
 
+    @Override
+    public RegisteredService findServiceById(final String id) {
+        return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+    }
+
     /**
      * Starts the couchbase client and initialization task.
      */

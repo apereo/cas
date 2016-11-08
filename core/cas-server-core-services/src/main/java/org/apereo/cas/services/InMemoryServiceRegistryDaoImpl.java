@@ -48,6 +48,11 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     @Override
+    public RegisteredService findServiceById(final String id) {
+        return this.registeredServices.stream().filter(r -> r.matches(id)).findFirst().orElse(null);
+    }
+
+    @Override
     public List<RegisteredService> load() {
         return this.registeredServices;
     }
