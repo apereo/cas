@@ -1,7 +1,7 @@
 package org.apereo.cas.web.view;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -110,7 +110,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final String encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         final String password = decryptCredential(encodedPsw);
         final UsernamePasswordCredential creds =
-                TestUtils.getCredentialsWithSameUsernameAndPassword();
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertEquals(password, creds.getPassword());
     }
 

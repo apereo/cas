@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -78,19 +79,19 @@ public class InfinispanTicketRegistryTests {
     }
 
     private static Ticket getTicket() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication();
         return new TicketGrantingTicketImpl("123", authentication, new NeverExpiresExpirationPolicy());
     }
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.infinispanTicketRegistry.addTicket(new TicketGrantingTicketImpl(
                 TGT_NAME, a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.infinispanTicketRegistry.getTicket(
                 TGT_NAME, TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, true);

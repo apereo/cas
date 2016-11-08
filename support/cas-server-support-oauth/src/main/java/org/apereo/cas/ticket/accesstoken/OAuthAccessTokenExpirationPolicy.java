@@ -1,5 +1,9 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import org.slf4j.Logger;
@@ -34,7 +38,9 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
      */
-    public OAuthAccessTokenExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+    @JsonCreator
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
+                                            @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
@@ -69,5 +75,32 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     @Override
     public Long getTimeToIdle() {
         return this.timeToKillInSeconds;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(maxTimeToLiveInSeconds)
+                .append(timeToKillInSeconds)
+                .toHashCode();
     }
 }

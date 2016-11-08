@@ -1,6 +1,6 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -64,6 +64,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     protected TicketGrantingTicket getTicketGrantingTicket() {
         return new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ import java.util.Map;
  * @see PrincipalFactory
  * @since 4.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface PrincipalAttributesRepository extends Serializable {
 
     /**

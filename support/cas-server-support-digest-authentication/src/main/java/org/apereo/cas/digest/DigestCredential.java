@@ -1,5 +1,7 @@
 package org.apereo.cas.digest;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,16 +21,19 @@ public class DigestCredential extends AbstractCredential {
     private String id;
 
     /**
-     * Instantiates a new Basic identifiable credental.
+     * Instantiates a new Basic identifiable credential.
      *
-     * @param uid   the id
+     * @param id   the id
      * @param realm the realm
      * @param hash  the hash
      */
-    public DigestCredential(final String uid, final String realm, final String hash) {
+    @JsonCreator
+    public DigestCredential(@JsonProperty("id") final String id,
+                            @JsonProperty("realm") final String realm,
+                            @JsonProperty("hash") final String hash) {
         this.realm = realm;
         this.hash = hash;
-        this.id = uid;
+        this.id = id;
     }
 
     public String getRealm() {
@@ -46,7 +51,6 @@ public class DigestCredential extends AbstractCredential {
     public void setHash(final String hash) {
         this.hash = hash;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -77,7 +81,6 @@ public class DigestCredential extends AbstractCredential {
                 .append(id)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

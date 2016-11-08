@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.logout.SingleLogoutService;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -27,17 +30,21 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The id of the service. */
+    @JsonProperty
     private String id;
 
     /** The original url provided, used to reconstruct the redirect url. */
+    @JsonProperty
     private String originalUrl;
 
     private String artifactId;
 
+    @JsonProperty
     private Principal principal;
 
     private boolean loggedOutAlready;
 
+    @JsonProperty
     private ResponseBuilder<WebApplicationService> responseBuilder;
 
     private ValidationResponseType format = ValidationResponseType.XML;
@@ -59,11 +66,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     @Override
-    public String toString() {
-        return this.id;
-    }
-
-    @Override
     public String getId() {
         return this.id;
     }
@@ -73,6 +75,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.artifactId;
     }
 
+    @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
         return EMPTY_MAP;
@@ -89,27 +92,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.originalUrl;
     }
 
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (object instanceof Service) {
-            final Service service = (Service) object;
-
-            return getId().equals(service.getId());
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.id)
-                .toHashCode();
-    }
 
     public Principal getPrincipal() {
         return this.principal;
@@ -154,10 +136,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.loggedOutAlready = loggedOutAlready;
     }
 
-    protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
+    @JsonProperty("responseBuilder")
+    public ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
         return this.responseBuilder;
     }
 
+    @JsonIgnore
     @Override
     public ValidationResponseType getFormat() {
         return this.format;
@@ -170,6 +154,43 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @Override
     public Response getResponse(final String ticketId) {
         return this.responseBuilder.build(this, ticketId);
+    }
 
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AbstractWebApplicationService rhs = (AbstractWebApplicationService) obj;
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder
+                .append(this.id, rhs.id)
+                .append(this.originalUrl, rhs.originalUrl)
+                .append(this.artifactId, rhs.artifactId)
+                .append(this.principal, rhs.principal)
+                .append(this.loggedOutAlready, rhs.loggedOutAlready)
+                .append(this.responseBuilder, rhs.responseBuilder)
+                .append(this.format, rhs.format);
+        return builder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .append(originalUrl)
+                .append(artifactId)
+                .append(principal)
+                .append(loggedOutAlready)
+                .append(responseBuilder)
+                .append(format)
+                .toHashCode();
     }
 }

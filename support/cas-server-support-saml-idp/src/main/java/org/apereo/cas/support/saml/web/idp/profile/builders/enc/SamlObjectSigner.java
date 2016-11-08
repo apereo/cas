@@ -324,11 +324,12 @@ public class SamlObjectSigner {
      * Gets signing certificate.
      *
      * @return the signing certificate
+     * @throws Exception the exception
      */
-    protected X509Certificate getSigningCertificate() {
+    protected X509Certificate getSigningCertificate() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
         logger.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile()));
+        return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile()));
     }
 
     /**
@@ -340,7 +341,7 @@ public class SamlObjectSigner {
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(samlIdp.getMetadata().getSigningKeyFile()));
+        privateKeyFactoryBean.setLocation(new FileSystemResource(samlIdp.getMetadata().getSigningKeyFile().getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
         logger.debug("Locating signature signing key file from [{}]", samlIdp.getMetadata().getSigningKeyFile());

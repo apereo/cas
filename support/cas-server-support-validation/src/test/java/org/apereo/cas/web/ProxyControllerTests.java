@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -55,7 +55,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyExistingPGT() throws Exception {
         final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(
-                "ticketGrantingTicketId", TestUtils.getAuthentication(),
+                "ticketGrantingTicketId", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -70,7 +70,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyNotAuthorizedPGT() throws Exception {
         final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl("ticketGrantingTicketId",
-                TestUtils.getAuthentication(),
+                CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();

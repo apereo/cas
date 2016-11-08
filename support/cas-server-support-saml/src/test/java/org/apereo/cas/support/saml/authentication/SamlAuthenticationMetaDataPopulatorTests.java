@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -38,7 +38,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(
-                TestUtils.getPrincipal());
+                CoreAuthenticationTestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -51,7 +51,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(
-                TestUtils.getPrincipal());
+                CoreAuthenticationTestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -68,7 +68,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         this.populator.setUserDefinedMappings(added);
 
         final AuthenticationBuilder builder = newAuthenticationBuilder(
-                TestUtils.getPrincipal());
+                CoreAuthenticationTestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
