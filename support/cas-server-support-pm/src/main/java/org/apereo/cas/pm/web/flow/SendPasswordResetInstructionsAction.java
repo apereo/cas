@@ -65,7 +65,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         
         final String token = passwordManagementService.createToken(username);
         final String url = casProperties.getServer().getPrefix()
-                .concat("/" + FLOW_ID_PASSWORD_RESET + "?" + PARAMETER_NAME_TOKEN + "=").concat(token);
+                .concat('/' + FLOW_ID_PASSWORD_RESET + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
         
         if (sendPasswordResetEmailToAccount(to, url)) {
             return success();
