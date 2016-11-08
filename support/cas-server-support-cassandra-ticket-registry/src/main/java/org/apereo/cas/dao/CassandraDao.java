@@ -13,11 +13,10 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
+import java.util.function.Function;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
@@ -48,9 +47,9 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     private static final String UPDATE_LR = "update " + TICKET_CLEANER_LAST_RUN_TABLE + " set last_run = ? where id = 'LASTRUN' ";
     private static final String SELECT_LR = "select last_run from " + TICKET_CLEANER_LAST_RUN_TABLE + " where id = 'LASTRUN' ";
     private static final long TEN_SECONDS = 10000L;
+    private static final int TEN = 10;
 
     private int maxTicketDuration;
-    private final long maxTgtsToLoad;
     private final ExpirationCalculator expirationCalculator;
     private final TicketSerializer<T> serializer;
     private final Class<T> typeToWriteToCassandra;
@@ -74,10 +73,9 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     private Session session;
 
-    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad,
+    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password,
                         final ExpirationCalculator expirationCalculator, final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
         this.maxTicketDuration = maxTicketDuration;
-        this.maxTgtsToLoad = maxTgtsToLoad;
         this.expirationCalculator = expirationCalculator;
         this.serializer = serializer;
         this.typeToWriteToCassandra = typeToWriteToCassandra;
@@ -102,6 +100,12 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
         this.selectLrStmt = session.prepare(SELECT_LR).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
         this.updateLrStmt = session.prepare(UPDATE_LR).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+
+        final long lastRun = getLastRunTimestamp();
+        final long currentTime = currentTimeBucket();
+        if (lastRun == 0 || lastRun > currentTime) {
+            updateLastRunTimestamp(currentTime);
+        }
     }
 
     @Override
@@ -170,8 +174,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     @Override
     public void addTicketToExpiryBucket(final Ticket ticket, final long expirationTimeInSeconds) {
-        LOGGER.debug("adding to expiry bucket: Ticket: {}; expiry: {}", ticket.getId(), expirationTimeInSeconds / 10);
-        session.execute(this.insertExStmt.bind(expirationTimeInSeconds / 10, ticket.getId()));
+        LOGGER.debug("adding to expiry bucket: Ticket: {}; expiry: {}", ticket.getId(), expirationTimeInSeconds / TEN);
+        session.execute(this.insertExStmt.bind(expirationTimeInSeconds / TEN, ticket.getId()));
     }
 
     @Override
@@ -180,26 +184,20 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     }
 
     @Override
-    public List<TicketGrantingTicket> getExpiredTgts() {
-        long lastRun = getLastRunTimestamp();
+    public Stream<TicketGrantingTicket> getExpiredTgts() {
+        final long lastRun = getLastRunTimestamp();
         final long currentTime = currentTimeBucket();
-        if (lastRun == 0 || lastRun > currentTime) {
-            updateLastRunTimestamp(currentTime);
-        }
 
         LOGGER.debug("Searching for expired tickets. LastRun: {}; CurrentTime: {}", lastRun, currentTime);
 
-        final List<TicketGrantingTicket> expiredTgts = new ArrayList<>();
-        // TODO: replace maxTgtsToLoad with Java 8 streame
-        while (lastRun <= currentTime && expiredTgts.size() < maxTgtsToLoad) {
-            expiredTgts.addAll(getExpiredTGTsIn(lastRun));
-            removeRowFromTicketCleanerBucket(lastRun);
-            updateLastRunTimestamp(++lastRun);
-        }
-
-        LOGGER.debug("Loaded {} possibly expired TGTs.", expiredTgts.size());
-
-        return expiredTgts;
+        return LongStream.rangeClosed(lastRun, currentTime)
+                .mapToObj(time -> {
+                    final Stream<TicketGrantingTicket> expiredTGTsIn = getExpiredTGTsIn(time);
+                    removeRowFromTicketCleanerBucket(time);
+                    updateLastRunTimestamp(time);
+                    return expiredTGTsIn;
+                })
+                .flatMap(Function.identity());
     }
 
     @Override
@@ -213,14 +211,13 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         session.execute(this.updateLrStmt.bind(timestamp));
     }
 
-    private List<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
+    private Stream<TicketGrantingTicket> getExpiredTGTsIn(final long lastRunBucket) {
         return session.execute(this.selectExStmt.bind(lastRunBucket)).all()
                 .stream()
                 .map(row -> row.getString("id"))
                 .map(this::getTicketGrantingTicket)
                 .filter(Objects::nonNull)
-                .filter(Ticket::isExpired)
-                .collect(toList());
+                .filter(Ticket::isExpired);
     }
 
     private static long currentTimeBucket() {

@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface NoSqlTicketRegistryDao {
 
@@ -23,6 +24,6 @@ public interface NoSqlTicketRegistryDao {
  
     void updateLastRunTimestamp(long timestamp);
     long getLastRunTimestamp();
-    List<TicketGrantingTicket> getExpiredTgts();
+    Stream<TicketGrantingTicket> getExpiredTgts();
     void removeRowFromTicketCleanerBucket(long lastRun);
 }

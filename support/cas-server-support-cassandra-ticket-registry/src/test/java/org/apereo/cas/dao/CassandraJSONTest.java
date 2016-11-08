@@ -11,7 +11,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -50,10 +50,10 @@ public class CassandraJSONTest {
         dao.addTicketGrantingTicket(notExpired);
 
         //when
-        List<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();
+        Stream<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();
 
         //then
-        int expiredTgtsInserted = 2;
-        assertThat(expiredTgts.size(), is(expiredTgtsInserted));
+        long expiredTgtsInserted = 2;
+        assertThat(expiredTgts.count(), is(expiredTgtsInserted));
     }
 }
