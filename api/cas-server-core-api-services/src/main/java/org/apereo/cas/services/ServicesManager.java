@@ -97,5 +97,7 @@ public interface ServicesManager {
      * Return a count of loaded services by this manager.
      * @return the count/size of registry.
      */
-    default int count() { return 0; }
+    default int count() {
+        return 0;
+    }
 }
