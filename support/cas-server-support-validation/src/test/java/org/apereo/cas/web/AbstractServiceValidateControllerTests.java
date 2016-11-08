@@ -4,7 +4,7 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -57,7 +57,7 @@ import static org.junit.Assert.*;
                 CasCoreUtilConfiguration.class, CasValidationConfiguration.class})
 @RunWith(SpringRunner.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
-    private static final Service SERVICE = TestUtils.getService();
+    private static final Service SERVICE = CoreAuthenticationTestUtils.getService();
 
     protected AbstractServiceValidateController serviceValidateController;
 
@@ -80,7 +80,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -109,7 +109,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicket() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -148,7 +148,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyInvalidServiceTicket() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -168,7 +168,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
@@ -196,7 +196,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithInvalidPgt() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
@@ -217,7 +217,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -237,7 +237,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -270,8 +270,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
         final String origSvc = "http://www.jasig.org?param=hello+world";
-        final Service svc = TestUtils.getService(origSvc);
-        final AuthenticationResult ctx = TestUtils
+        final Service svc = CoreAuthenticationTestUtils.getService(origSvc);
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
@@ -285,7 +285,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final String reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService(reqSvc).getId());
+        request.addParameter("service", CoreAuthenticationTestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request,
@@ -294,8 +294,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
-        final Service svc = TestUtils.getService("http://www.jasig.org?param=hello+world");
-        final AuthenticationResult ctx = TestUtils
+        final Service svc = CoreAuthenticationTestUtils.getService("http://www.jasig.org?param=hello+world");
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
@@ -307,7 +307,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         final String reqSvc = "http://www.jasig.org?param=hello%20world";
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService(reqSvc).getId());
+        request.addParameter("service", CoreAuthenticationTestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
 
         assertTrue(this.serviceValidateController.handleRequestInternal(request,
@@ -316,8 +316,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
-        final Service svc = TestUtils.getService("proxyService");
-        final AuthenticationResult ctx = TestUtils
+        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -337,8 +337,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
-        final Service svc = TestUtils.getService("proxyService");
-        final AuthenticationResult ctx = TestUtils
+        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
 
@@ -355,8 +355,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndBadFormat() throws Exception {
-        final Service svc = TestUtils.getService("proxyService");
-        final AuthenticationResult ctx = TestUtils
+        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -375,7 +375,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
-        final AuthenticationResult ctx = TestUtils
+        final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);

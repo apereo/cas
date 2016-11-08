@@ -31,3 +31,26 @@ redundancy and replication as per normal Couchbase configuration.
 The only truly mandatory setting is the list of nodes.
 The other settings are optional, but this is designed to store data in buckets
 so in reality the bucket property must also be set.
+
+## Expiration Policy
+
+You will need to remember that every document in Couchbase contains the `expiry` property. 
+An expiration time-to-live value of `0` means that no expiration is set at all.
+The expiration time starts when the document has been successfully stored on the server,
+not when the document was created on the CAS server. In practice, the delta should be very very negligible.
+Any expiration time larger than `30` days in seconds is considered absolute (as in a Unix time stamp)
+and anything smaller is considered relative in seconds.
+
+## Troubleshooting
+
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
+
+```xml
+...
+<AsyncLogger name="com.couchbase" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
+```

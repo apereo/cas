@@ -9,8 +9,9 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -78,7 +79,7 @@ public class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE,
-                org.apereo.cas.services.TestUtils.getService(MY_SERVICE));
+                RegisteredServiceTestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
@@ -109,7 +110,7 @@ public class ClientActionTests {
         mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockSession.setAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
         mockSession.setAttribute(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
-        final Service service = TestUtils.getService(MY_SERVICE);
+        final Service service = CoreAuthenticationTestUtils.getService(MY_SERVICE);
         mockSession.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         mockRequest.setSession(mockSession);
 
@@ -133,7 +134,7 @@ public class ClientActionTests {
 
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
         when(authNManager.authenticate(any(AuthenticationTransaction.class)))
-                .thenReturn(TestUtils.getAuthentication());
+                .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         
         transManager.setAuthenticationManager(authNManager);
         

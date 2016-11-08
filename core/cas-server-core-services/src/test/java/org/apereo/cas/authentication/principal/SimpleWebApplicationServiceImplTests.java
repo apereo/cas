@@ -2,8 +2,13 @@ package org.apereo.cas.authentication.principal;
 
 import static org.junit.Assert.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Scott Battaglia
@@ -12,6 +17,23 @@ import org.springframework.mock.web.MockHttpServletRequest;
  *
  */
 public class SimpleWebApplicationServiceImplTests {
+
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Test
+    public void verifySerializeACompletePrincipalToJson() throws IOException {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("service", "service");
+        final WebApplicationService serviceWritten = new WebApplicationServiceFactory().createService(request);
+
+        mapper.writeValue(JSON_FILE, serviceWritten);
+
+        final SimpleWebApplicationServiceImpl serviceRead = mapper.readValue(JSON_FILE, SimpleWebApplicationServiceImpl.class);
+
+        assertEquals(serviceWritten, serviceRead);
+    }
 
     @Test
     public void verifyResponse() {

@@ -1,9 +1,14 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -22,9 +27,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     /**
      * Instantiates a new google accounts service.
      *
-     * @param id the id
-     * @param relayState the relay state
-     * @param requestId the request id
+     * @param id              the id
+     * @param relayState      the relay state
+     * @param requestId       the request id
      * @param responseBuilder the response builder
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
@@ -34,22 +39,52 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.requestId = requestId;
     }
 
-    /**
-     * Return true if the service is already logged out.
-     *
-     * @return true if the service is already logged out.
-     */
-    @Override
-    public boolean isLoggedOutAlready() {
-        return true;
+    @JsonCreator
+    public GoogleAccountsService(@JsonProperty("id") final String id,
+                                 @JsonProperty("originalUrl") final String originalUrl, 
+                                 @JsonProperty("artifactId") final String artifactId,
+                                 @JsonProperty("responseBuilder") final ResponseBuilder<WebApplicationService> responseBuilder,
+                                 @JsonProperty("relayState") final String relayState, 
+                                 @JsonProperty("requestId") final String requestId) {
+        super(id, originalUrl, artifactId, responseBuilder);
+        this.relayState = relayState;
+        this.requestId = requestId;
     }
-
-
+    
     public String getRelayState() {
         return this.relayState;
     }
 
     public String getRequestId() {
         return this.requestId;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final GoogleAccountsService rhs = (GoogleAccountsService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.relayState, rhs.relayState)
+                .append(this.requestId, rhs.requestId)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(relayState)
+                .append(requestId)
+                .toHashCode();
     }
 }

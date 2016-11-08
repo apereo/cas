@@ -6,13 +6,14 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
@@ -98,7 +99,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     public void prepareNewCAS() throws Exception {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        final CredentialMetaData metadata = new BasicCredentialMetaData(
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Lists.newArrayList(metadata));
@@ -186,7 +188,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=UnauthorizedProxyingException.class)
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws Exception {
-        this.cas.grantServiceTicket(TGT_ID, org.apereo.cas.services.TestUtils.getService(SVC1_ID), getAuthenticationContext());
+        this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext());
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -207,7 +209,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() throws Exception {
-        final Service svc = org.apereo.cas.services.TestUtils.getService(SVC2_ID);
+        final Service svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
         

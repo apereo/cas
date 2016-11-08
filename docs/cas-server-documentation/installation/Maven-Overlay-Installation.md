@@ -20,11 +20,11 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 ## Gradle
 
-- [https://github.com/apereo/cas-gradle-overlay-template](https://github.com/apereo/cas-gradle-overlay-template)
+- [CAS Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
 
 ## Maven
 
-- [https://github.com/apereo/cas-overlay-template](https://github.com/apereo/cas-overlay-template)
+- [CAS Maven Overlay](https://github.com/apereo/cas-overlay-template)
 
 ## Docker
 
@@ -73,7 +73,7 @@ are directly read from a `.groovy` script which is monitored for changes and rel
 Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
 and is monitored for changes every 5 seconds. 
 
-```
+```xml
 <lang:groovy id="messenger"
     refresh-check-delay="5000" 
     script-source="classpath:Messenger.groovy">

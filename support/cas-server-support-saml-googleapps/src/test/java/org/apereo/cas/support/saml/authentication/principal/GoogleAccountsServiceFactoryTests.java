@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -91,7 +91,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
-        service.setPrincipal(TestUtils.getPrincipal());
+        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
         assertNotNull(service);
         final Response response = service.getResponse("SAMPLE_TICKET");
         assertNotNull(response);

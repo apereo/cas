@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class FileAuthenticationHandlerTests {
     public void verifyDoesntSupportBadUserCredentials() {
         try {
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"), TestUtils.getRegisteredService());
+                new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");

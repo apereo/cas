@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +15,11 @@ import java.util.List;
  */
 
 public class SamlIdPProperties {
-    
+
     private String entityId = "https://cas.example.org/idp";
     private String hostName = "cas.example.org";
     private String scope = "example.org";
-    
+
     private Response response = new Response();
     private Metadata metadata = new Metadata();
     private Logout logout = new Logout();
@@ -73,12 +76,12 @@ public class SamlIdPProperties {
         private boolean failFast = true;
         private boolean requireValidMetadata = true;
         private long cacheExpirationMinutes = 30;
-        private File location = new File("/etc/cas/saml");
+        private Resource location = new FileSystemResource("/etc/cas/saml");
         private String privateKeyAlgName = "RSA";
         private String basicAuthnUsername;
         private String basicAuthnPassword;
         private List<String> supportedContentTypes = new ArrayList<>();
-        
+
         public boolean isFailFast() {
             return failFast;
         }
@@ -103,20 +106,32 @@ public class SamlIdPProperties {
             this.cacheExpirationMinutes = cacheExpirationMinutes;
         }
 
-        public File getLocation() {
+        public Resource getLocation() {
             return location;
         }
 
-        public void setLocation(final File location) {
+        public void setLocation(final Resource location) {
             this.location = location;
         }
-        
-        public File getSigningCertFile() {
-            return new File(getLocation(), "/idp-signing.crt");
+
+        /**
+         * Gets signing cert file.
+         *
+         * @return the signing cert file
+         * @throws Exception the exception
+         */
+        public Resource getSigningCertFile() throws Exception {
+            return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.crt"));
         }
 
-        public File getSigningKeyFile() {
-            return new File(getLocation(), "/idp-signing.key");
+        /**
+         * Gets signing key file.
+         *
+         * @return the signing key file
+         * @throws Exception the exception
+         */
+        public Resource getSigningKeyFile() throws Exception {
+            return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
         }
 
         public String getPrivateKeyAlgName() {
@@ -126,13 +141,35 @@ public class SamlIdPProperties {
         public void setPrivateKeyAlgName(final String privateKeyAlgName) {
             this.privateKeyAlgName = privateKeyAlgName;
         }
-        
-        public File getEncryptionCertFile() {
-            return new File(getLocation(), "/idp-encryption.crt");
+
+        /**
+         * Gets encryption cert file.
+         *
+         * @return the encryption cert file
+         * @throws Exception the exception
+         */
+        public Resource getEncryptionCertFile() throws Exception {
+            return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.crt"));
         }
 
-        public File getEncryptionKeyFile() {
-            return new File(getLocation(), "/idp-encryption.key");
+        /**
+         * Gets encryption key file.
+         *
+         * @return the encryption key file
+         * @throws Exception the exception
+         */
+        public Resource getEncryptionKeyFile() throws Exception {
+            return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
+        }
+
+        /**
+         * Gets metadata file.
+         *
+         * @return the metadata file
+         * @throws Exception the exception
+         */
+        public File getMetadataFile() throws Exception {
+            return new File(this.location.getFile(), "idp-metadata.xml");
         }
 
         public String getBasicAuthnUsername() {
@@ -159,7 +196,7 @@ public class SamlIdPProperties {
             this.supportedContentTypes = supportedContentTypes;
         }
     }
-    
+
     public static class Response {
         private int skewAllowance;
         private String overrideSignatureCanonicalizationAlgorithm;
@@ -198,7 +235,7 @@ public class SamlIdPProperties {
             this.signError = signError;
         }
     }
-    
+
     public static class Logout {
         private boolean forceSignedLogoutRequests = true;
         private boolean singleLogoutCallbacksDisabled;

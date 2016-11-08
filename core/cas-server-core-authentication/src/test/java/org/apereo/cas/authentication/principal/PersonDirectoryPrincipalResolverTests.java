@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,8 +25,8 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyNullAttributes() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
         resolver.setReturnNullIfNoAttributes(true);
-        resolver.setPrincipalAttributeName(TestUtils.CONST_USERNAME);
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
+        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNull(p);
     }
@@ -34,8 +34,8 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNoAttributesWithPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setPrincipalAttributeName(TestUtils.CONST_USERNAME);
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
+        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNotNull(p);
     }
@@ -43,12 +43,12 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyAttributesWithPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(TestUtils.getAttributeRepository());
+        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
         resolver.setPrincipalAttributeName("cn");
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNotNull(p);
-        assertNotEquals(p.getId(), TestUtils.CONST_USERNAME);
+        assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
         assertTrue(p.getAttributes().containsKey("memberOf"));
     }
 

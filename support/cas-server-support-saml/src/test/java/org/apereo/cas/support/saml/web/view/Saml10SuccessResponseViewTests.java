@@ -2,8 +2,9 @@ package org.apereo.cas.support.saml.web.view;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.CasProtocolConstants;
@@ -45,7 +46,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void setUp() throws Exception {
 
         final List<RegisteredService> list = new ArrayList<>();
-        list.add(org.apereo.cas.services.TestUtils.getRegisteredService("https://.+"));
+        list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(list);
         this.response = new Saml10SuccessResponseView();
@@ -78,10 +79,10 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", "value");
 
         final Authentication primary =
-                TestUtils.getAuthentication(principal, authAttributes);
+                CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
-                TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -113,11 +114,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary = TestUtils.getAuthentication(principal, authAttributes);
+        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
-                TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -144,11 +145,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
         final Authentication primary =
-                TestUtils.getAuthentication(principal, authnAttributes);
+                CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
-                TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();

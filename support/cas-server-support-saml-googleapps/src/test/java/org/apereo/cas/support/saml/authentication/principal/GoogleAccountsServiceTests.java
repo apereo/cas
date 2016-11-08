@@ -1,6 +1,9 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import org.apereo.cas.authentication.TestUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vividsolutions.jts.util.Assert;
+import org.apache.commons.io.FileUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
@@ -20,7 +23,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
-import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -39,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -73,19 +76,15 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
+    private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
+
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;
 
     private GoogleAccountsService googleAccountsService;
 
-    @Autowired
-    private ApplicationContextProvider applicationContextProvider;
-
-    @Before
-    public void init() {
-        this.applicationContextProvider.setApplicationContext(this.applicationContext);
-    }
+    private ObjectMapper mapper = new ObjectMapper();
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -110,7 +109,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
-        this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
+        this.googleAccountsService.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
     }
 
     @Test
@@ -136,5 +135,13 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private static String encodeMessage(final String xmlString) throws IOException {
         return CompressionUtils.deflate(xmlString);
+    }
+
+    @Test
+    public void serializeGoogleAccountService() throws Exception {
+        final GoogleAccountsService service = getGoogleAccountsService();
+        mapper.writeValue(FILE, service);
+        final GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
+        Assert.equals(service, service2);
     }
 }

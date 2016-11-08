@@ -2,7 +2,7 @@ package org.apereo.cas.support.openid.web.flow;
 
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
@@ -82,7 +82,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = TestUtils.getAuthentication("scootman28");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
                 new NeverExpiresExpirationPolicy());
 

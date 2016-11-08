@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -146,7 +147,7 @@ public class YubiKeyConfiguration {
         handler.setServicesManager(servicesManager);
 
         if (!casProperties.getAuthn().getMfa().getYubikey().getApiUrls().isEmpty()) {
-            final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[] {});
+            final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[]{});
             handler.getClient().setWsapiUrls(urls);
         }
         return handler;
@@ -170,7 +171,7 @@ public class YubiKeyConfiguration {
                 casProperties.getAuthn().getMfa().getYubikey().getBypass()
         );
     }
-    
+
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
@@ -213,8 +214,8 @@ public class YubiKeyConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        if (casProperties.getAuthn().getMfa().getYubikey().getClientId() > 0
-                && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+        final MultifactorAuthenticationProperties.YubiKey yubi = casProperties.getAuthn().getMfa().getYubikey();
+        if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
             this.authenticationHandlersResolvers.put(yubikeyAuthenticationHandler(), null);
             authenticationMetadataPopulators.add(0, yubikeyAuthenticationMetaDataPopulator());
         }

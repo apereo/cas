@@ -5,6 +5,7 @@ import java.util.List;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 
 /**
  * This logout manager only marks the ticket as expired and update it in the {@link MockOnlyOneTicketRegistry}.

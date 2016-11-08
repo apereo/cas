@@ -109,7 +109,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 .warning()
                 .code(warning.getCode())
                 .defaultText(warning.getDefaultMessage())
-                .args(warning.getParams());
+                .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
+    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
                                                                  final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {

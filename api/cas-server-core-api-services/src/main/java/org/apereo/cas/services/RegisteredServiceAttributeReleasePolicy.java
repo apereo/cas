@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apereo.cas.authentication.principal.Principal;
+
 import java.io.Serializable;
 import java.util.Map;
-
-import org.apereo.cas.authentication.principal.Principal;
 
 /**
  * The release policy that decides how attributes are to be released for a given service.
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**

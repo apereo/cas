@@ -1,11 +1,16 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
@@ -17,46 +22,46 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -7636642464326939536L;
 
-    /** The time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    /**
+     * The time to kill in seconds.
+     */
+    private final long timeToKillInSeconds;
 
 
-    /** No-arg constructor for serialization support. */
+    /**
+     * No-arg constructor for serialization support.
+     */
     public TimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
+        this.timeToKillInSeconds = 0;
     }
 
     /**
      * Instantiates a new timeout expiration policy.
      *
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param timeToKillInSeconds the time to kill in seconds
      */
-    public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    @JsonCreator
+    public TimeoutExpirationPolicy(@JsonProperty("timeToIdle") final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
-    /**
-     * Instantiates a new Timeout expiration policy.
-     *
-     * @param timeToKill the time to kill
-     * @param timeUnit the time unit
-     */
-    public TimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
-        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
-    }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime expirationTime = now.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
+        final ZonedDateTime expirationTime = now.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         return ticketState == null || now.isAfter(expirationTime);
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToLive() {
         return new Long(Integer.MAX_VALUE);
@@ -64,6 +69,31 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public Long getTimeToIdle() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final TimeoutExpirationPolicy rhs = (TimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(timeToKillInSeconds)
+                .toHashCode();
     }
 }
