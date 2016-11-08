@@ -15,13 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
-public class JacksonJSONSerializer implements TicketSerializer<String> {
+public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonJSONSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonBinarySerializer.class);
     private ObjectMapper mapper;
 
-    public JacksonJSONSerializer() {
+    public JacksonBinarySerializer() {
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -30,19 +31,21 @@ public class JacksonJSONSerializer implements TicketSerializer<String> {
     }
 
     @Override
-    public String serialize(final Ticket ticket) {
+    public ByteBuffer serialize(final Ticket ticket) {
+        byte[] serialized;
         try {
-            return mapper.writeValueAsString(ticket);
+            serialized = mapper.writeValueAsBytes(ticket);
         } catch (final JsonProcessingException e) {
             LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
-            return "";
+            serialized = new byte[]{};
         }
+        return ByteBuffer.wrap(serialized);
     }
 
     @Override
-    public TicketGrantingTicket deserializeTGT(final String ticket) {
+    public TicketGrantingTicket deserializeTGT(final ByteBuffer ticket) {
         try {
-            return mapper.readValue(ticket, TicketGrantingTicketImpl.class);
+            return mapper.readValue(ticket.array(), TicketGrantingTicketImpl.class);
         } catch (final IOException e) {
             LOGGER.info("Error reading TGT: ", e);
             return null;
@@ -50,9 +53,9 @@ public class JacksonJSONSerializer implements TicketSerializer<String> {
     }
 
     @Override
-    public ServiceTicket deserializeST(final String ticket) {
+    public ServiceTicket deserializeST(final ByteBuffer ticket) {
         try {
-            return mapper.readValue(ticket, ServiceTicketImpl.class);
+            return mapper.readValue(ticket.array(), ServiceTicketImpl.class);
         } catch (final IOException e) {
             LOGGER.info("Error reading ST: ", e);
             return null;

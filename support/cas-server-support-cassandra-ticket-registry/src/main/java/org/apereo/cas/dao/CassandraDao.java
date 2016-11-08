@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,16 +29,17 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
     private static final String SERVICE_TICKET_TABLE = KEYSPACE + ".serviceticket";
     private static final String TICKET_EXPIRY_TABLE = KEYSPACE + ".ticket_cleaner";
     private static final String TICKET_CLEANER_LAST_RUN_TABLE = KEYSPACE + ".ticket_cleaner_lastrun";
+    private static final int TICKET_COLUMN_INDEX = 0;
 
     private static final String INSERT_TGT = "insert into " + TICKET_GRANTING_TICKET_TABLE + " (id, ticket) values (?, ?) ";
     private static final String UPDATE_TGT = "update " + TICKET_GRANTING_TICKET_TABLE + " set ticket = ? where id = ? ";
     private static final String DELETE_TGT = "delete from " + TICKET_GRANTING_TICKET_TABLE + " where id = ?";
-    private static final String SELECT_TGT = "select id, ticket from " + TICKET_GRANTING_TICKET_TABLE + " where id = ?";
+    private static final String SELECT_TGT = "select ticket from " + TICKET_GRANTING_TICKET_TABLE + " where id = ?";
 
     private static final String INSERT_ST = "insert into " + SERVICE_TICKET_TABLE + " (id, ticket) values (?, ?) ";
     private static final String UPDATE_ST = "update " + SERVICE_TICKET_TABLE + " set ticket = ? where id = ? ";
     private static final String DELETE_ST = "delete from " + SERVICE_TICKET_TABLE + " where id = ?";
-    private static final String SELECT_ST = "select id, ticket from " + SERVICE_TICKET_TABLE + " where id = ?";
+    private static final String SELECT_ST = "select ticket from " + SERVICE_TICKET_TABLE + " where id = ?";
 
     private static final String INSERT_EX = "insert into " + TICKET_EXPIRY_TABLE + " (expiry_type, date_bucket, id) values ('EX', ?, ?) ";
     private static final String DELETE_EX = "delete from " + TICKET_EXPIRY_TABLE + " where  expiry_type = 'EX' and date_bucket = ? ";
@@ -133,7 +135,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        return serializer.deserializeTGT(row.getString("ticket"));
+        return serializer.deserializeTGT(row.get(TICKET_COLUMN_INDEX, ByteBuffer.class));
     }
 
     @Override
@@ -144,7 +146,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        return serializer.deserializeST(row.getString("ticket"));
+        return serializer.deserializeST(row.get(TICKET_COLUMN_INDEX, ByteBuffer.class));
     }
 
     @Override

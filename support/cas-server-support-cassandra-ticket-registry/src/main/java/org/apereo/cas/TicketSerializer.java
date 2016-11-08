@@ -4,11 +4,11 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
-public interface TicketSerializer {
+public interface TicketSerializer<T> {
 
-    Object serialize(Ticket ticket);
+    T serialize(Ticket ticket);
 
-    TicketGrantingTicket deserializeTGT(String ticket);
+    TicketGrantingTicket deserializeTGT(T ticket);
 
-    ServiceTicket deserializeST(String ticket);
+    ServiceTicket deserializeST(T ticket);
 }
