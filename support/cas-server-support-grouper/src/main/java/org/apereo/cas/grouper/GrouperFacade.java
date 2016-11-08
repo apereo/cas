@@ -11,13 +11,16 @@ import java.util.List;
 
 
 /**
- * This is {@link GrouperFacade}.
+ * This is {@link GrouperFacade} that acts as a wrapper
+ * in front of the grouper API.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 public class GrouperFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(GrouperFacade.class);
+
+    protected GrouperFacade() {}
 
     /**
      * The enum Grouper group field.
