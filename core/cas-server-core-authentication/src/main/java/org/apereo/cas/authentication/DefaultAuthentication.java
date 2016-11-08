@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
@@ -81,7 +82,7 @@ public class DefaultAuthentication implements Authentication {
         this.credentials = null;
         this.failures = null;
     }
-    
+
     /**
      * Creates a new instance with the given data.
      *
@@ -101,7 +102,7 @@ public class DefaultAuthentication implements Authentication {
             final Map<String, Class<? extends Exception>> failures) {
 
         this(date, principal, attributes, successes);
-        
+
         Assert.notNull(credentials, "Credential cannot be null");
         Assert.notEmpty(credentials, "Credential cannot be empty");
 
@@ -121,7 +122,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return wrap(this.attributes);
+        return CollectionUtils.wrap(this.attributes);
     }
 
     @Override
@@ -136,7 +137,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public Map<String, Class<? extends Exception>> getFailures() {
-        return wrap(this.failures);
+        return CollectionUtils.wrap(this.failures);
     }
 
     @Override
@@ -165,26 +166,11 @@ public class DefaultAuthentication implements Authentication {
         builder.append(this.credentials, other.getCredentials());
         builder.append(this.successes, other.getSuccesses());
         builder.append(this.authenticationDate, other.getAuthenticationDate());
-        builder.append(wrap(this.attributes), other.getAttributes());
-        builder.append(wrap(this.failures), other.getFailures());
+        builder.append(CollectionUtils.wrap(this.attributes), other.getAttributes());
+        builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
         return builder.isEquals();
     }
 
-    /**
-     * Wraps a possibly null map in an immutable wrapper.
-     *
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param source Nullable map to wrap.
-     * @return {@link Collections#unmodifiableMap(java.util.Map)} if given map is not null, otherwise
-     * {@link java.util.Collections#emptyMap()}.
-     */
-    private static <K, V> Map<K, V> wrap(final Map<K, V> source) {
-        if (source != null) {
-            return new HashMap<>(source);
-        }
-        return Collections.emptyMap();
-    }
 
     @Override
     public void update(final Authentication authn) {

@@ -1,5 +1,8 @@
 package org.apereo.cas.support.oauth.services;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
@@ -9,6 +12,7 @@ import org.apereo.cas.services.RegisteredService;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthWebApplicationService extends AbstractWebApplicationService {
 
     /**
@@ -17,6 +21,11 @@ public class OAuthWebApplicationService extends AbstractWebApplicationService {
      * @param registeredService the registered service
      */
     public OAuthWebApplicationService(final RegisteredService registeredService) {
-        super(registeredService != null ? String.valueOf(registeredService.getId()) : null, null, null, null);
+        this(registeredService != null ? String.valueOf(registeredService.getId()) : null);
+    }
+
+    @JsonCreator
+    protected OAuthWebApplicationService(@JsonProperty("id") final String id) {
+        super(id, null, null, null);
     }
 }

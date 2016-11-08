@@ -5,7 +5,7 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -71,7 +71,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         throttle.preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(),
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
                     badCredentials(username)));
         } catch (final AuthenticationException e) {
             throttle.postHandle(request, response, null, null);

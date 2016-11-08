@@ -20,7 +20,7 @@ public interface PasswordManagementService {
      * @param bean the bean
      * @return true /false
      */
-    default boolean change(Credential c, PasswordChangeBean bean) {
+    default boolean change(final Credential c, final PasswordChangeBean bean) {
         return false;
     }
 
@@ -30,7 +30,7 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    default String findEmail(String username) {
+    default String findEmail(final String username) {
         return null;
     }
 
@@ -50,7 +50,7 @@ public interface PasswordManagementService {
      * @param token the token
      * @return the username
      */
-    default String parseToken(String token) {
+    default String parseToken(final String token) {
         return null;
     }
 

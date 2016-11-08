@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class RejectUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"), TestUtils.getRegisteredService())));
+                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
