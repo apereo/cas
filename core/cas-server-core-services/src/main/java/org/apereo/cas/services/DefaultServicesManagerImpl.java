@@ -162,6 +162,11 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         return matchesExistingService(this.serviceFactory.createService(service));
     }
 
+    @Override
+    public int count() {
+        return services.size();
+    }
+
     /**
      * Handle services manager refresh event.
      *

@@ -45,19 +45,23 @@ public class ServiceRegistryInitializer {
     @PostConstruct
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistryDao.size();
-        LOGGER.debug("Service registry database contains {} service definitions", size);
+        LOGGER.debug("Service registry contains {} service definitions", size);
 
 
         if (this.initFromJson) {
-            LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
+            LOGGER.debug("Service registry will be auto-initialized from default JSON services");
             this.jsonServiceRegistryDao.load().forEach(r -> {
-                LOGGER.debug("Initializing service registry database with the {} JSON service definition...", r);
-                if (this.serviceRegistryDao.findServiceById(r.getServiceId()) != null
-                        && this.serviceRegistryDao.findServiceById(r.getId()) != null) {
+                if (this.serviceRegistryDao.findServiceById(r.getServiceId()) != null) {
+                    LOGGER.debug("Skipping {} JSON service definition as a matching service is found in the registry", r.getName());
+                } else if (this.serviceRegistryDao.findServiceById(r.getId()) != null) {
+                    LOGGER.debug("Skipping {} JSON service definition as a matching numeric id is found in the registry", r.getName());
+                } else {
+                    LOGGER.debug("Initializing service registry with the {} JSON service definition...", r);
                     this.serviceRegistryDao.save(r);
                 }
             });
             this.servicesManager.load();
+            LOGGER.debug("Service registry contains {} service definitions", this.servicesManager.count());
         } else {
             LOGGER.info("The service registry database will not be initialized from default JSON services. "
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
