@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  */
 public class PolicyBasedAuthenticationManagerTests {
 
-    private AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService(),
+    private AuthenticationTransaction transaction = AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
             mock(Credential.class), mock(Credential.class));
 
     @Test

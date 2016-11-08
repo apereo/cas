@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class YubiKeyAuthenticationHandlerTests {
     public void before() {
         final RequestContext ctx = mock(RequestContext.class);
         when(ctx.getConversationScope()).thenReturn(new LocalAttributeMap<>());
-        WebUtils.putAuthentication(TestUtils.getAuthentication(), ctx);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), ctx);
         RequestContextHolder.setRequestContext(ctx);
     }
     

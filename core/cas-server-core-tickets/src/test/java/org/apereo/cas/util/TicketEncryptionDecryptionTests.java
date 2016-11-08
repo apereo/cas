@@ -1,6 +1,6 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -32,7 +32,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfSt() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
@@ -40,7 +40,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfStBase64Encode() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", RegisteredServiceTestUtils.getService(), tgt);
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         final String string = EncodingUtils.encodeBase64(bytes);
         assertNotNull(string);

@@ -1,12 +1,16 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -19,6 +23,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
+
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegexRegisteredService service;
 
@@ -103,10 +110,20 @@ public class RegexRegisteredServiceTests {
         assertEquals(expected, service.matches(testService));
     }
 
-
     private static RegexRegisteredService newService(final String id) {
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
+    }
+
+    @Test
+    public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
+        final RegexRegisteredService serviceWritten = newService("serviceId");
+
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
+
+        final RegisteredService serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
+
+        assertEquals(serviceWritten, serviceRead);
     }
 }

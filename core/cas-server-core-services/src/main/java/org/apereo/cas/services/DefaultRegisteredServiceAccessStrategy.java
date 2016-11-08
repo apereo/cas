@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.util.RegexUtils;
 
 import com.google.common.base.Predicates;
@@ -223,7 +224,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-
         return true;
     }
 
@@ -342,7 +342,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
         return true;
     }
-    
+
+    @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
         if (!this.ssoEnabled) {
@@ -351,6 +352,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return this.ssoEnabled;
     }
 
+    @JsonIgnore
     @Override
     public boolean isServiceAccessAllowed() {
         if (!this.enabled) {
@@ -359,7 +361,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         return this.enabled;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -397,7 +398,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .toHashCode();
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -410,6 +410,4 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
     }
-
-
 }

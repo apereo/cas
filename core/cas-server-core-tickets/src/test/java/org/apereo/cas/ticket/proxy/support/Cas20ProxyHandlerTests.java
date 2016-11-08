@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.proxy.support;
 
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
@@ -47,14 +47,14 @@ public class Cas20ProxyHandlerTests {
     public void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("https://www.google.com/"),
-                TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
+                CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
     public void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("https://www.google.com/?test=test"),
-                        TestUtils.getRegisteredService("https://some.app.edu")),
+                        CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")),
                 proxyGrantingTicket));
     }
 
@@ -66,6 +66,6 @@ public class Cas20ProxyHandlerTests {
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
             "http://www.rutgers.edu"),
-                TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
+                CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 }
