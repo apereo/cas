@@ -29,7 +29,7 @@ public class RegistryConfiguration {
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
-    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices, @Value("true") final boolean shouldCleanTGTs) {
+    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") final LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices) {
         return new NoSqlTicketRegistry(cassandraDao, logoutManager, logUserOutOfServices);
     }
 
