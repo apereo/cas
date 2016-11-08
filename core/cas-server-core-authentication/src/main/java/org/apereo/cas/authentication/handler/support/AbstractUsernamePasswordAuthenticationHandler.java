@@ -58,7 +58,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
 
         userPass.setUsername(transformedUsername);
-        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
 
         return authenticateUsernamePasswordInternal(userPass);
     }
@@ -106,5 +105,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             return true;
         }
         return false;
+    }
+
+    public boolean matches(final CharSequence rawPassword,final String password){
+        return this.passwordEncoder.matches(rawPassword,password);
     }
 }
