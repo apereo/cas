@@ -16,13 +16,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TicketCreator {
-    public static TicketGrantingTicketImpl defaultTGT() {
+
+    public static TicketGrantingTicketImpl expiredTGT(final String id) {
+        TicketGrantingTicketImpl tgt = defaultTGT(id);
+        tgt.markTicketExpired();
+        return tgt;
+    }
+
+    public static TicketGrantingTicketImpl defaultTGT(final String id) {
         Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("something", null);
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         ArrayList<CredentialMetaData> credentials = new ArrayList<>();
         credentials.add(meta);
         Authentication defaultAuthentication = new DefaultAuthentication(ZonedDateTime.now(), credentials, NullPrincipal.getInstance(), new HashMap<>(), successes, new HashMap<>());
-        return new TicketGrantingTicketImpl("id", defaultAuthentication, new TimeoutExpirationPolicy(3000));
+        return new TicketGrantingTicketImpl(id, defaultAuthentication, new TimeoutExpirationPolicy(3000));
     }
 }

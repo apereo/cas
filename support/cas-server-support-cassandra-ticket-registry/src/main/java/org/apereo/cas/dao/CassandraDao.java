@@ -9,6 +9,7 @@ import com.datastax.driver.core.Session;
 import org.apereo.cas.TicketSerializer;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     private int maxTicketDuration;
     private final long maxTgtsToLoad;
+    private final ExpirationCalculator expirationCalculator;
     private final TicketSerializer<T> serializer;
     private final Class<T> typeToWriteToCassandra;
 
@@ -73,9 +75,10 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     private Session session;
 
     public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad,
-                        final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
+                        final ExpirationCalculator expirationCalculator, final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
         this.maxTicketDuration = maxTicketDuration;
         this.maxTgtsToLoad = maxTgtsToLoad;
+        this.expirationCalculator = expirationCalculator;
         this.serializer = serializer;
         this.typeToWriteToCassandra = typeToWriteToCassandra;
         final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
@@ -105,6 +108,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     public void addTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
         session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket)));
+        final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
+        addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
     }
 
     @Override
@@ -153,6 +158,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     public void updateTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("UPDATING TICKET {}", ticket.getId());
         session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId()));
+        final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
+        addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
     }
 
     @Override
@@ -162,9 +169,9 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     }
 
     @Override
-    public void addTicketToExpiryBucket(final Ticket ticket, final long expirationTime) {
-        LOGGER.debug("adding to expiry bucket: Ticket: {}; expiry: {}", ticket.getId(), expirationTime / TEN_SECONDS);
-        session.execute(this.insertExStmt.bind(expirationTime / TEN_SECONDS, ticket.getId()));
+    public void addTicketToExpiryBucket(final Ticket ticket, final long expirationTimeInSeconds) {
+        LOGGER.debug("adding to expiry bucket: Ticket: {}; expiry: {}", ticket.getId(), expirationTimeInSeconds / 10);
+        session.execute(this.insertExStmt.bind(expirationTimeInSeconds / 10, ticket.getId()));
     }
 
     @Override
@@ -183,8 +190,8 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         LOGGER.debug("Searching for expired tickets. LastRun: {}; CurrentTime: {}", lastRun, currentTime);
 
         final List<TicketGrantingTicket> expiredTgts = new ArrayList<>();
-        // TODO: replace maxTgtsToLoad with Java 8 stream
-        while (lastRun < currentTime && expiredTgts.size() < maxTgtsToLoad) {
+        // TODO: replace maxTgtsToLoad with Java 8 streame
+        while (lastRun <= currentTime && expiredTgts.size() < maxTgtsToLoad) {
             expiredTgts.addAll(getExpiredTGTsIn(lastRun));
             removeRowFromTicketCleanerBucket(lastRun);
             updateLastRunTimestamp(++lastRun);
@@ -198,7 +205,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     @Override
     public long getLastRunTimestamp() {
         final Row row = session.execute(this.selectLrStmt.bind()).one();
-        return row == null ? System.currentTimeMillis() - maxTicketDuration : row.getLong("last_run");
+        return row == null ? currentTimeBucket() - maxTicketDuration : row.getLong("last_run");
     }
 
     @Override

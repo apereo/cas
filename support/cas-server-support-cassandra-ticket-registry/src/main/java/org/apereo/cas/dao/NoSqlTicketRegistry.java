@@ -2,7 +2,6 @@ package org.apereo.cas.dao;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.slf4j.Logger;
@@ -23,15 +22,13 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
     private static final String SERVICE_TICKET_PREFIX = "ST";
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
-    private ExpirationCalculator expirationCalculator;
     private LogoutManager logoutManager;
     private boolean logUserOutOfServices = true;
 
     @Autowired
-    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final ExpirationCalculator expirationCalculator,
-                               final LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices) {
+    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final LogoutManager logoutManager,
+                               @Value("true") final boolean logUserOutOfServices) {
         this.ticketRegistryDao = ticketRegistryDao;
-        this.expirationCalculator = expirationCalculator;
         this.logoutManager = logoutManager;
         this.logUserOutOfServices = logUserOutOfServices;
     }
@@ -41,9 +38,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
         final String ticketId = ticket.getId();
         LOGGER.debug("INSERTING TICKET {}", ticketId);
         if (isTgt(ticketId)) {
-            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
             ticketRegistryDao.addTicketGrantingTicket(ticket);
-            ticketRegistryDao.addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
         } else if (isSt(ticketId)) {
             ticketRegistryDao.addServiceTicket(ticket);
         } else {
@@ -91,9 +86,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
         final String ticketId = ticket.getId();
         LOGGER.debug("UPDATING TICKET {}", ticketId);
         if (isTgt(ticketId)) {
-            final TicketGrantingTicketImpl tgt = (TicketGrantingTicketImpl) ticket;
             ticketRegistryDao.updateTicketGrantingTicket(ticket);
-            ticketRegistryDao.addTicketToExpiryBucket(ticket, expirationCalculator.getExpiration(tgt));
         } else if (isSt(ticketId)) {
             ticketRegistryDao.updateServiceTicket(ticket);
         } else {
