@@ -1375,6 +1375,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
 
+# cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
+
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
 # cas.authn.mfa.authenticationContextAttribute=authnContextClass
