@@ -5,10 +5,10 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -23,16 +23,22 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 /**
@@ -88,13 +94,9 @@ public class TicketsResourceTests {
 
         configureCasMockToCreateValidTGT();
 
-        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-
-        mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
                 .andExpect(content().contentType(MediaType.TEXT_HTML))
@@ -105,13 +107,9 @@ public class TicketsResourceTests {
     public void creationOfTGTWithAuthenticationException() throws Throwable {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
-        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-
-        mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
     }
@@ -120,13 +118,9 @@ public class TicketsResourceTests {
     public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
 
-        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-
-        mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().string("Other exception"));
     }
@@ -135,13 +129,9 @@ public class TicketsResourceTests {
     public void creationOfTGTWithBadPayload() throws Throwable {
         configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
 
-        final MvcResult result = this.mockMvc.perform(post("/cas/v1/tickets")
+        this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("no_username_param", "test")
                 .param("no_password_param", "test"))
-                .andExpect(request().asyncStarted())
-                .andReturn();
-
-        mockMvc.perform(asyncDispatch(result))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
