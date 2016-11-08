@@ -12,6 +12,8 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.NoOpCasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,6 +33,8 @@ import javax.annotation.PostConstruct;
 @Configuration("grouperConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GrouperConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperConfiguration.class);
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -70,6 +74,7 @@ public class GrouperConfiguration {
         final AbstractCasWebflowEventResolver r;
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
             r = new GrouperMultifactorAuthenticationWebflowEventResolver();
+            LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         } else {
             r = new NoOpCasWebflowEventResolver();
         }

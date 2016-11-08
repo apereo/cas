@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
@@ -8,10 +11,6 @@ import org.apereo.cas.support.events.CasAuthenticationPrincipalResolvedEvent;
 import org.apereo.cas.support.events.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
-
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,14 +207,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
-        logger.info("{} successfully authenticated {}", handler.getName(), credential);
+        logger.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         
         if (resolver == null) {
             principal = result.getPrincipal();
             logger.debug(
-                    "No resolver configured for {}. Falling back to handler principal {}",
+                    "No principal resolution is configured for {}. Falling back to handler principal {}",
                     handler.getName(),
                     principal);
         } else {
