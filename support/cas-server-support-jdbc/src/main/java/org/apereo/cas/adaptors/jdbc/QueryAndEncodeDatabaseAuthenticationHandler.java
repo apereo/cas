@@ -86,7 +86,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             final Map<String, Object> values = getJdbcTemplate().queryForMap(this.sql, username);
             final String digestedPassword = digestEncodedPassword(transformedCredential.getPassword(), values);
 
-            if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
+            if ( (!this.isNoOpPasswordEncoder() &&!this.matches(transformedCredential.getPassword(),(String) values.get(this.passwordFieldName)))
+                 || (this.isNoOpPasswordEncoder() && !values.get(this.passwordFieldName).equals(digestedPassword))   ) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             return createHandlerResult(transformedCredential,
@@ -137,7 +138,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                     .build();
         return hashService.computeHash(request).toHex();
     }
-    
+
     public void setAlgorithmName(final String algorithmName) {
         this.algorithmName = algorithmName;
     }

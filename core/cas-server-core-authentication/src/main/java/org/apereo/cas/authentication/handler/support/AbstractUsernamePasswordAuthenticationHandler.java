@@ -110,4 +110,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     public boolean matches(final CharSequence rawPassword,final String password){
         return this.passwordEncoder.matches(rawPassword,password);
     }
+
+    /**
+     * Used to check if there is some passwordEncoder set so matches will be utilized
+     * @return is default passwordEncoder return true
+     */
+    public boolean isNoOpPasswordEncoder(){
+        return passwordEncoder instanceof NoOpPasswordEncoder;
+    }
 }
