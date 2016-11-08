@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
@@ -41,7 +42,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public HardTimeoutExpirationPolicy(final long timeToKillInSeconds) {
+    public HardTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
