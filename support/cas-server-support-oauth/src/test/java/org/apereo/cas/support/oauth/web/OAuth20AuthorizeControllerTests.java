@@ -339,7 +339,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         final RedirectView redirectView = (RedirectView) view;
         final String redirectUrl = redirectView.getUrl();
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "#access_token="));
-        assertTrue(redirectUrl.contains("&" + OAuthConstants.STATE + "=" + STATE));
+        assertTrue(redirectUrl.contains('&' + OAuthConstants.STATE + '=' + STATE));
 
         final String code = StringUtils.substringBetween(redirectUrl, "#access_token=", "&token_type=bearer");
         final AccessToken accessToken = (AccessToken) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);

@@ -24,7 +24,7 @@ public final class MultifactorAuthenticationTrustUtils {
      */
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
         final StringBuilder builder = new StringBuilder(r.getPrincipal());
-        return builder.append("@")
+        return builder.append('@')
                       .append(r.getGeography())
                       .toString(); 
     }
