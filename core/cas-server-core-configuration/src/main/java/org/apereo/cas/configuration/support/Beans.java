@@ -21,9 +21,11 @@ import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
@@ -33,12 +35,14 @@ import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.CompareValidator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.ldaptive.sasl.CramMd5Config;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.ExternalConfig;
@@ -49,7 +53,6 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -179,7 +182,6 @@ public class Beans {
                 pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
             });
             dao.setBackingMap(pdirMap);
-            dao.setOrder(Ordered.LOWEST_PRECEDENCE);
             return dao;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -374,7 +376,23 @@ public class Beans {
         strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
-        cp.setValidator(new SearchValidator());
+        if (StringUtils.equalsIgnoreCase("compare", l.getValidator().getType())) {
+            final CompareRequest compareRequest = new CompareRequest();
+            compareRequest.setDn(l.getValidator().getDn());
+            compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
+                    l.getValidator().getAttributeValues().toArray(new String[] {})));
+            compareRequest.setReferralHandler(new SearchReferralHandler());
+            cp.setValidator(new CompareValidator(compareRequest));
+        } else {
+            final SearchRequest searchRequest = new SearchRequest();
+            searchRequest.setBaseDn(l.getValidator().getBaseDn());
+            searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
+            searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+            searchRequest.setSearchScope(l.getValidator().getScope());
+            searchRequest.setSizeLimit(1L);
+            cp.setValidator(new SearchValidator(searchRequest));
+        }
+
         cp.setFailFastInitialize(l.isFailFast());
 
         LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
@@ -454,7 +472,7 @@ public class Beans {
         filter.setFilter(filterQuery);
         if (params != null) {
             for (int i = 0; i < params.length; i++) {
-                if (filter.getFilter().contains("{" + i + "}")) {
+                if (filter.getFilter().contains("{" + i + '}')) {
                     filter.setParameter(i, params[i]);
                 } else {
                     filter.setParameter("user", params[i]);
