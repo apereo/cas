@@ -62,10 +62,10 @@ public final class DigestAuthenticationUtils {
         String header = "";
         header += "Digest realm=\"" + realm + "\",";
         if (StringUtils.isNotBlank(authMethod)) {
-            header += "qop=" + authMethod + ",";
+            header += "qop=" + authMethod + ',';
         }
         header += "nonce=\"" + nonce + "\",";
-        header += "opaque=\"" + createOpaque(realm, nonce) + "\"";
+        header += "opaque=\"" + createOpaque(realm, nonce) + '"';
         return header;
     }
 }

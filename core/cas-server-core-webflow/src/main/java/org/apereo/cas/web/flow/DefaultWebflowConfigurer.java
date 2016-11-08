@@ -119,7 +119,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS);
 
         createDecisionState(flow, CasWebflowConstants.STATE_ID_POST_REDIR_DECISION,
-                "requestScope.response.responseType.name() == '" + HttpMethod.POST.name() + "'",
+                "requestScope.response.responseType.name() == '" + HttpMethod.POST.name() + '\'',
                 CasWebflowConstants.STATE_ID_POST_VIEW, CasWebflowConstants.STATE_ID_REDIR_VIEW);
 
         createDecisionState(flow, CasWebflowConstants.STATE_ID_WARN,
