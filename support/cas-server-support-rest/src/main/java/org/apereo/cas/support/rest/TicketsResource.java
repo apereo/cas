@@ -30,14 +30,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -88,19 +86,9 @@ public class TicketsResource {
      * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public DeferredResult<ResponseEntity<String>> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                             final HttpServletRequest request) throws JsonProcessingException {
 
-        final DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>();
-
-        CompletableFuture
-                .supplyAsync(() -> getResponseEntity(requestBody, request))
-                .whenComplete((stringResponseEntity, throwable) -> deferredResult.setResult(stringResponseEntity));
-
-        return deferredResult;
-    }
-
-    private ResponseEntity<String> getResponseEntity(@RequestBody final MultiValueMap<String, String> requestBody, final HttpServletRequest request) {
         try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
@@ -130,7 +118,6 @@ public class TicketsResource {
                 return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
             } catch (final JsonProcessingException exception) {
                 LOGGER.error(e.getMessage(), e);
-                // could we create constants ResponseEntity?
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (final BadRequestException e) {
