@@ -6,6 +6,7 @@ import org.apereo.cas.dao.ExpirationCalculator;
 import org.apereo.cas.dao.NoSqlTicketRegistry;
 import org.apereo.cas.dao.NoSqlTicketRegistryDao;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.serializer.JacksonJSONSerializer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,8 +24,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class RegistryConfiguration {
 
     @Bean(name = "cassandraDao")
-    public NoSqlTicketRegistryDao cassandraDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password) {
-        return new CassandraDao(contactPoints, maxTicketDuration, username, password, 1000, null);
+    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password) {
+        return new CassandraDao<String>(contactPoints, maxTicketDuration, username, password, 1000, new JacksonJSONSerializer(), String.class);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})

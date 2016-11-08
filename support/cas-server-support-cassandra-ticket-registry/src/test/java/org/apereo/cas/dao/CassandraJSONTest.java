@@ -18,7 +18,7 @@ public class CassandraJSONTest {
 
     @Test
     public void shouldWorkWithAStringSerializer() throws Exception {
-        CassandraDao dao = new CassandraDao("localhost", 24, "", "", 100, new JacksonJSONSerializer());
+        CassandraDao<String> dao = new CassandraDao<>("localhost", 24, "", "", 100, new JacksonJSONSerializer(), String.class);
 
         TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT();
 

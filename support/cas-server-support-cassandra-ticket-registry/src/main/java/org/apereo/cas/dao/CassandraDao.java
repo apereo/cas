@@ -12,14 +12,13 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
-public class CassandraDao implements NoSqlTicketRegistryDao {
+public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDao.class);
 
@@ -51,7 +50,8 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
 
     private int maxTicketDuration;
     private final long maxTgtsToLoad;
-    private final TicketSerializer serializer;
+    private final TicketSerializer<T> serializer;
+    private final Class<T> typeToWriteToCassandra;
 
     private PreparedStatement insertTgtStmt;
     private PreparedStatement updateTgtStmt;
@@ -72,10 +72,12 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
 
     private Session session;
 
-    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad, final TicketSerializer serializer) {
+    public CassandraDao(final String contactPoints, final int maxTicketDuration, final String username, final String password, final long maxTgtsToLoad,
+                        final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
         this.maxTicketDuration = maxTicketDuration;
         this.maxTgtsToLoad = maxTgtsToLoad;
         this.serializer = serializer;
+        this.typeToWriteToCassandra = typeToWriteToCassandra;
         final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
                 .withProtocolVersion(ProtocolVersion.V3).build();
 
@@ -133,7 +135,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        return serializer.deserializeTGT(row.get(TICKET_COLUMN_INDEX, ByteBuffer.class));
+        return serializer.deserializeTGT(row.get(TICKET_COLUMN_INDEX, typeToWriteToCassandra));
     }
 
     @Override
@@ -144,7 +146,7 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
             LOGGER.info("ticket {} not found", id);
             return null;
         }
-        return serializer.deserializeST(row.get(TICKET_COLUMN_INDEX, ByteBuffer.class));
+        return serializer.deserializeST(row.get(TICKET_COLUMN_INDEX, typeToWriteToCassandra));
     }
 
     @Override

@@ -5,9 +5,10 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreator;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +19,7 @@ public class CassandraBinaryTest {
 
     @Test
     public void shouldWorkWithABinarySerializer() throws Exception {
-        CassandraDao dao = new CassandraDao("localhost", 24, "", "", 100, new JacksonBinarySerializer());
+        CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", 24, "", "", 100, new JacksonBinarySerializer(), ByteBuffer.class);
 
         TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT();
 
@@ -26,11 +27,4 @@ public class CassandraBinaryTest {
 
         assertEquals(tgt, dao.getTicketGrantingTicket("id"));
     }
-
-    @Ignore("To be completed")
-    @Test
-    public void shouldReturnExpiredTGTs() throws Exception {
-
-    }
-
 }
