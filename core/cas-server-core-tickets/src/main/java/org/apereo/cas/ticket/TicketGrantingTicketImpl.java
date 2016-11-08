@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -43,6 +45,7 @@ import java.util.Set;
 @Table(name="TICKETGRANTINGTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(TicketGrantingTicket.PREFIX)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
@@ -258,7 +261,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public boolean isExpiredInternal() {
         return this.expired;
     }
-    
+
+    @JsonIgnore
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
@@ -297,6 +301,4 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
                 .append(ticket.getId(), this.getId())
                 .isEquals();
     }
-
-
 }

@@ -1,5 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.util.StringUtils;
 
@@ -13,14 +17,18 @@ import java.util.Map;
  * @since 4.2
  */
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
+
     private static final long serialVersionUID = -851233878780818494L;
+
+    @JsonProperty("responseType")
     private Response.ResponseType responseType;
 
     /**
      * Instantiates a new Web application service response builder.
      * @param type the type
      */
-    public WebApplicationServiceResponseBuilder(final Response.ResponseType type) {
+    @JsonCreator
+    public WebApplicationServiceResponseBuilder(@JsonProperty("responseType") final Response.ResponseType type) {
         this.responseType = type;
     }
 
@@ -43,5 +51,29 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     }
 
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final WebApplicationServiceResponseBuilder rhs = (WebApplicationServiceResponseBuilder) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.responseType, rhs.responseType)
+                .isEquals();
+    }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(responseType)
+                .toHashCode();
+    }
 }

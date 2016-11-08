@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -170,7 +170,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
-                TestUtils.getAuthentication(principal),
+                CoreAuthenticationTestUtils.getAuthentication(principal),
                 EXP_POLICY_TGT);
     }
 
@@ -187,7 +187,7 @@ public class JpaTicketRegistryTests {
         try {
             return parent.grantProxyGrantingTicket(
                     ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                    TestUtils.getAuthentication(),
+                    CoreAuthenticationTestUtils.getAuthentication(),
                     EXP_POLICY_PGT);
         } catch (final AbstractTicketException e) {
             throw Throwables.propagate(e);

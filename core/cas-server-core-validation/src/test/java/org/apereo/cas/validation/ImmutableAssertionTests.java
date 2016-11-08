@@ -1,8 +1,9 @@
 package org.apereo.cas.validation;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,12 +23,12 @@ public class ImmutableAssertionTests {
     public void verifyGettersForChainedPrincipals() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(org.apereo.cas.authentication.TestUtils.getAuthentication("test"));
-        list.add(TestUtils.getAuthentication("test1"));
-        list.add(TestUtils.getAuthentication("test2"));
+        list.add(CoreAuthenticationTestUtils.getAuthentication("test"));
+        list.add(CoreAuthenticationTestUtils.getAuthentication("test1"));
+        list.add(CoreAuthenticationTestUtils.getAuthentication("test2"));
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, org.apereo.cas.services.TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().size());
     }
@@ -36,10 +37,10 @@ public class ImmutableAssertionTests {
     public void verifyGetterFalseForNewLogin() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(TestUtils.getAuthentication());
+        list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, org.apereo.cas.services.TestUtils.getService(), false);
+                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -48,10 +49,10 @@ public class ImmutableAssertionTests {
     public void verifyGetterTrueForNewLogin() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(TestUtils.getAuthentication());
+        list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, org.apereo.cas.services.TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -59,10 +60,10 @@ public class ImmutableAssertionTests {
     @Test
     public void verifyEqualsWithNull() {
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, org.apereo.cas.services.TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
 
         assertNotEquals(assertion, null);
     }
@@ -70,10 +71,10 @@ public class ImmutableAssertionTests {
     @Test
     public void verifyEqualsWithInvalidObject() {
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, org.apereo.cas.services.TestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
 
         assertFalse("test".equals(assertion));
     }
@@ -83,25 +84,25 @@ public class ImmutableAssertionTests {
         final List<Authentication> list1 = new ArrayList<>();
         final List<Authentication> list2 = new ArrayList<>();
 
-        final Authentication auth = TestUtils.getAuthentication();
+        final Authentication auth = CoreAuthenticationTestUtils.getAuthentication();
         list1.add(auth);
         list2.add(auth);
 
-        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, org.apereo.cas.services.TestUtils.getService(), true);
-        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, org.apereo.cas.services.TestUtils.getService(), true);
+        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, RegisteredServiceTestUtils.getService(), true);
+        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, RegisteredServiceTestUtils.getService(), true);
 
         assertTrue(assertion1.equals(assertion2));
     }
 
     @Test
     public void verifyGetService() {
-        final Service service = org.apereo.cas.services.TestUtils.getService();
+        final Service service = RegisteredServiceTestUtils.getService();
 
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final Assertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, service, false);
+                CoreAuthenticationTestUtils.getAuthentication(), list, service, false);
 
         assertEquals(service, assertion.getService());
     }

@@ -72,7 +72,6 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
         this.acceptableResponseCodes = acceptableResponseCodes;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -100,7 +99,6 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 .append(acceptableResponseCodes)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

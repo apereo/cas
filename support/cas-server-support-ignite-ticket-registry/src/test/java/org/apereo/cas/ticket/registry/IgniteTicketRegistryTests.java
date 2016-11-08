@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -57,7 +58,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyAddTicketToCache() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -88,7 +89,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyGetExistingTicketWithProperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (final Exception e) {
@@ -100,7 +101,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyGetExistingTicketWithInproperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         } catch (final ClassCastException e) {
@@ -132,7 +133,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyGetExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (final Exception e) {
@@ -144,7 +145,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertSame(1, this.ticketRegistry.deleteTicket("TEST"));
         } catch (final Exception e) {
@@ -156,7 +157,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertSame(0, this.ticketRegistry.deleteTicket("TEST1"));
         } catch (final Exception e) {
@@ -168,7 +169,7 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyDeleteNullTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", CoreAuthenticationTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
@@ -194,9 +195,9 @@ public class IgniteTicketRegistryTests {
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
-                    TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                    CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
-                    org.apereo.cas.services.TestUtils.getService(),
+                    RegisteredServiceTestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
@@ -220,11 +221,11 @@ public class IgniteTicketRegistryTests {
     @Test
     public void verifyDeleteTicketWithChildren() {
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
-                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                "TGT", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
@@ -253,13 +254,13 @@ public class IgniteTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, true);
