@@ -8,7 +8,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -70,7 +70,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, TestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
+        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
     }
 
     @Override

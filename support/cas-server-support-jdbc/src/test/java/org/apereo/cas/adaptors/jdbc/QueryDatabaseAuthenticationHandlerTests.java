@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
 
     }
 
@@ -99,7 +99,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
 
     }
 
@@ -109,7 +109,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
 
     }
 
@@ -119,7 +119,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
 
     }
 
@@ -128,7 +128,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         assertNotNull(q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
 
     }
 }

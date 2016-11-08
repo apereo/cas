@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
@@ -31,7 +34,8 @@ public class PrincipalBearingCredential extends AbstractCredential {
      *
      * @param principal the principal
      */
-    public PrincipalBearingCredential(final Principal principal) {
+    @JsonCreator
+    public PrincipalBearingCredential(@JsonProperty("principal") final Principal principal) {
         Assert.notNull(principal, "principal cannot be null");
         this.principal = principal;
     }
@@ -45,9 +49,9 @@ public class PrincipalBearingCredential extends AbstractCredential {
         return this.principal;
     }
 
+    @JsonIgnore
     @Override
     public String getId() {
         return this.principal.getId();
     }
-
 }

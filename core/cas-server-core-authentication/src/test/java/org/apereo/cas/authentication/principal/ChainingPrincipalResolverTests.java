@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class ChainingPrincipalResolverTest {
+public class ChainingPrincipalResolverTests {
 
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 

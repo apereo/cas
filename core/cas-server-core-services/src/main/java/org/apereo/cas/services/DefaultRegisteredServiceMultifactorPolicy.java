@@ -64,7 +64,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
         this.principalAttributeValueToMatch = principalAttributeValueToMatch;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -94,7 +93,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
                 .append(this.principalAttributeValueToMatch)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

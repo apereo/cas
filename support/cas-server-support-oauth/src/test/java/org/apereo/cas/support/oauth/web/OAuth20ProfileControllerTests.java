@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
@@ -88,11 +88,11 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyExpiredAccessToken() throws Exception {
-        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<>());
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
         expiringAccessTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
-        final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(TestUtils.getService(), authentication);
+        final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -113,9 +113,9 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
+        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -149,9 +149,9 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
+        final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT

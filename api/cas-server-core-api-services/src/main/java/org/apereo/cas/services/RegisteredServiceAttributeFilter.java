@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceAttributeFilter extends Serializable {
     /**
      * Filters the received principal attributes for the given registered service.

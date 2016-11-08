@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -71,8 +72,8 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     public void onSetUp() throws Exception {
         final AuthenticationResult authnResult =
                 getAuthenticationSystemSupport()
-                        .handleAndFinalizeSingleAuthenticationTransaction(TestUtils.getService(),
-                                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                        .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+                                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
@@ -81,7 +82,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", org.apereo.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -97,7 +98,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyTicketGrantingTicketFromRequest() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", org.apereo.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
@@ -113,7 +114,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyTicketGrantingTicketNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", org.apereo.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -130,7 +131,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyTicketGrantingTicketExpiredTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", org.apereo.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
@@ -144,7 +145,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyTicketGrantingTicketNotTgtButGateway() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", org.apereo.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));

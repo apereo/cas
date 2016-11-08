@@ -89,7 +89,7 @@ public class SamlIdPConfiguration {
     @Autowired(required = false)
     @Qualifier("authenticationContextClassMappings")
     private Map authenticationContextClassMappings;
-        
+
     @Autowired(required = false)
     @Qualifier("overrideDataEncryptionAlgorithms")
     private List overrideDataEncryptionAlgorithms;
@@ -137,8 +137,7 @@ public class SamlIdPConfiguration {
      *
      * @return the saml idp single logout service logout url builder
      */
-    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder",
-            "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
+    @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder", "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
         final SamlIdPSingleLogoutServiceLogoutUrlBuilder b = new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
         b.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
@@ -148,8 +147,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     public ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        final SamlIdPEntityIdValidationServiceSelectionStrategy s =
-                new SamlIdPEntityIdValidationServiceSelectionStrategy();
+        final SamlIdPEntityIdValidationServiceSelectionStrategy s = new SamlIdPEntityIdValidationServiceSelectionStrategy();
         s.setWebApplicationServiceFactory(webApplicationServiceFactory);
         return s;
     }
@@ -174,8 +172,7 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        final DefaultSamlRegisteredServiceCachingMetadataResolver r =
-                new DefaultSamlRegisteredServiceCachingMetadataResolver();
+        final DefaultSamlRegisteredServiceCachingMetadataResolver r = new DefaultSamlRegisteredServiceCachingMetadataResolver();
         r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
         r.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
         r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
@@ -229,15 +226,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     public SamlIdpMetadataAndCertificatesGenerationService shibbolethIdpMetadataAndCertificatesGenerationService() {
-        final ShibbolethIdpMetadataAndCertificatesGenerationService s =
-                new ShibbolethIdpMetadataAndCertificatesGenerationService();
-
-        s.setEntityId(casProperties.getAuthn().getSamlIdp().getEntityId());
-        s.setHostName(casProperties.getAuthn().getSamlIdp().getHostName());
-        s.setMetadataLocation(casProperties.getAuthn().getSamlIdp().getMetadata().getLocation());
-        s.setScope(casProperties.getAuthn().getSamlIdp().getScope());
-
-        return s;
+        return new ShibbolethIdpMetadataAndCertificatesGenerationService();
     }
 
     @Bean
@@ -338,7 +327,7 @@ public class SamlIdPConfiguration {
         initControllerBean(c);
         return c;
     }
-    
+
     @Bean
     @RefreshScope
     public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {

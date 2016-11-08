@@ -7,7 +7,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +56,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkNoPublicKeyDefined() {
-        final Service service = TestUtils.getService("testDefault");
+        final Service service = RegisteredServiceTestUtils.getService("testDefault");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size() - 2);
@@ -64,7 +64,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkAttributesEncodedCorrectly() {
-        final Service service = TestUtils.getService("testencryption");
+        final Service service = RegisteredServiceTestUtils.getService("testencryption");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size());

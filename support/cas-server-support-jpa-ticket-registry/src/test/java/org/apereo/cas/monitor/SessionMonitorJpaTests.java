@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.mock.MockService;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -69,7 +69,7 @@ public class SessionMonitorJpaTests {
         for (int i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.getAuthentication(),
+                    CoreAuthenticationTestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }

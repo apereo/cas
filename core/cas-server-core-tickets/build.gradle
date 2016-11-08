@@ -3,6 +3,8 @@ dependencies {
     compile project(":api:cas-server-core-api-ticket")
     compile libraries.hibernate
     compile libraries.quartz
+    compile libraries.jackson
+
 
     compile project(":core:cas-server-core-authentication")
     compile project(":core:cas-server-core-util")

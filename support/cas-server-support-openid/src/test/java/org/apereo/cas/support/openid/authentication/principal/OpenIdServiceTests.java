@@ -1,15 +1,19 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import org.apereo.cas.authentication.TestUtils;
-import org.apereo.cas.authentication.principal.Response;
-import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
+import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.openid4java.association.Association;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +23,8 @@ import static org.junit.Assert.*;
  */
 public class OpenIdServiceTests extends AbstractOpenIdTests {
 
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
+    private ObjectMapper mapper = new ObjectMapper();
 
     private OpenIdService openIdService;
 
@@ -35,13 +41,24 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     }
 
     @Test
+    public void verifySerializeAOpenIdServiceToJson() throws IOException {
+        request.removeParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
+        request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
+
+        openIdService = openIdServiceFactory.createService(request);
+        mapper.writeValue(JSON_FILE, openIdService);
+        final OpenIdService serviceRead = mapper.readValue(JSON_FILE, OpenIdService.class);
+        assertEquals(openIdService, serviceRead);
+    }
+
+    @Test
     public void verifyGetResponse() {
         try {
             request.removeParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -59,9 +76,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         } catch (final Exception e) {
             logger.debug("Exception during verification of service ticket", e);
         }
-
     }
-
 
     @Test
     public void verifyExpiredAssociationGetResponse() {
@@ -71,7 +86,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
@@ -111,5 +126,4 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(new Object()));
     }
-
 }

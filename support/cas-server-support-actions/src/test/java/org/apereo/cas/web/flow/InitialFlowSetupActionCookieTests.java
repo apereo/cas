@@ -12,7 +12,7 @@ import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -87,7 +87,7 @@ public class InitialFlowSetupActionCookieTests {
         this.action.setCasProperties(casProperties);
         this.servicesManager = mock(ServicesManager.class);
         when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                TestUtils.getRegisteredService("test"));
+                RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action.setServicesManager(this.servicesManager);
 
         this.action.afterPropertiesSet();

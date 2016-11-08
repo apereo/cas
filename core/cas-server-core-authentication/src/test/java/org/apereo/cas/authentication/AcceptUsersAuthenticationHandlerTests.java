@@ -60,7 +60,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler
                     .supports(new HttpBasedServiceCredential(new URL(
-                            "http://www.rutgers.edu"), TestUtils.getRegisteredService("https://some.app.edu"))));
+                            "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }

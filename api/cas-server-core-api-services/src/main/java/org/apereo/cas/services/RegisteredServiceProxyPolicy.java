@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.net.URL;
 
@@ -13,6 +15,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceProxyPolicy extends Serializable {
 
     /**

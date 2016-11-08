@@ -3,7 +3,7 @@ package org.apereo.cas.services.web;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class ServiceThemeResolverTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
         final MutableAttributeMap scope = new LocalAttributeMap();
-        scope.put("service", TestUtils.getService(r.getServiceId()));
+        scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");

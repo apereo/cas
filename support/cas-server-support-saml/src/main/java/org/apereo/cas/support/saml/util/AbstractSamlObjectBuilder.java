@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.EncodingUtils;
 import org.jdom.Document;
@@ -62,6 +63,7 @@ import java.util.List;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.

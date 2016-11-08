@@ -22,17 +22,17 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link TestUtils}.
+ * This is {@link RegisteredServiceTestUtils}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class TestUtils {
+public final class RegisteredServiceTestUtils {
 
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
 
-    private TestUtils() {}
+    private RegisteredServiceTestUtils() {}
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -42,7 +42,7 @@ public final class TestUtils {
             final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
-                    TestUtils.getRegisteredService(url));
+                    RegisteredServiceTestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }

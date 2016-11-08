@@ -1,9 +1,10 @@
 package org.apereo.cas.support.rest;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,13 +133,13 @@ public class RegisteredServiceResourceTests {
     private void configureCasMockToCreateValidTGT() throws Exception {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
-        when(tgt.getAuthentication()).thenReturn(org.apereo.cas.authentication.TestUtils.getAuthentication(
-                org.apereo.cas.authentication.TestUtils.getPrincipal("casuser",
-                        new HashMap(TestUtils.getTestAttributes()))));
+        when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(
+                CoreAuthenticationTestUtils.getPrincipal("casuser",
+                        new HashMap(RegisteredServiceTestUtils.getTestAttributes()))));
         final Class<TicketGrantingTicket> clazz = TicketGrantingTicket.class;
 
         when(this.casMock.getTicket(anyString(), any(clazz.getClass()))).thenReturn(tgt);
         when(this.servicesManager.save(any(RegisteredService.class))).thenReturn(
-                TestUtils.getRegisteredService("TEST"));
+                RegisteredServiceTestUtils.getRegisteredService("TEST"));
     }
 }

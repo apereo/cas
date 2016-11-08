@@ -7,6 +7,7 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
@@ -308,7 +309,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
         expiringOAuthCodeFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
@@ -775,7 +776,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final List<String> list = Lists.newArrayList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        return org.apereo.cas.authentication.TestUtils.getPrincipal(ID, map);
+        return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
     private OAuthRegisteredService addRegisteredService() {

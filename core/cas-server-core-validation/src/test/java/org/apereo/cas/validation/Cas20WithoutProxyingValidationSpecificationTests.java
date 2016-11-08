@@ -21,24 +21,24 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySatisfiesSpecOfTrue() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true), new MockHttpServletRequest()));
+        assertTrue(this.validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false), new MockHttpServletRequest()));
+        assertFalse(this.validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false), new MockHttpServletRequest()));
+        assertTrue(this.validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyDoesNotSatisfiesSpecOfFalse() {
         assertFalse(this.validationSpecification.isSatisfiedBy(
-                TestUtils.getAssertion(false, new String[] {"test2"}), new MockHttpServletRequest()));
+                CoreValidationTestUtils.getAssertion(false, new String[] {"test2"}), new MockHttpServletRequest()));
     }
 
     @Test

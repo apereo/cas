@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Authentication extends Serializable {
 
     /**

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -30,7 +30,7 @@ public class GenericSuccessViewActionTests {
         
         final Authentication authn = mock(Authentication.class);
         when(authn.getPrincipal()).thenReturn(
-                TestUtils.getPrincipal("cas"));
+                CoreAuthenticationTestUtils.getPrincipal("cas"));
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
         

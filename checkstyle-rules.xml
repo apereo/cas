@@ -507,6 +507,13 @@
         <property name="message" value="Mockito methods MUST be imported statically with a *"/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
+        <property name="message" value="Name of the test class MUST end in 'Tests'"/>
+    </module>
+
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
         <property name="severity" value="error"/>
         <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>

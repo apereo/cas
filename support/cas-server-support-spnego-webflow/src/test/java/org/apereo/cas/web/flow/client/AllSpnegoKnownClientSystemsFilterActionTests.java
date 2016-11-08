@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class AllSpnegoKnownClientSystemsFilterActionTest {
+public class AllSpnegoKnownClientSystemsFilterActionTests {
 
     @Test
     public void ensureRemoteIpShouldBeChecked() {

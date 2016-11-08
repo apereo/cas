@@ -5,9 +5,9 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.junit.After;
 import org.junit.Test;
 
-import static org.apereo.cas.authentication.TestUtils.CONST_USERNAME;
-import static org.apereo.cas.authentication.TestUtils.getAuthentication;
-import static org.apereo.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword;
+import static org.apereo.cas.authentication.CoreAuthenticationTestUtils.CONST_USERNAME;
+import static org.apereo.cas.authentication.CoreAuthenticationTestUtils.getAuthentication;
+import static org.apereo.cas.authentication.CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword;
 import static org.junit.Assert.*;
 
 /**

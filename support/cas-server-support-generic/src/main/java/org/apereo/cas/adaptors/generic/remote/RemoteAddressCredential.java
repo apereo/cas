@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apereo.cas.authentication.AbstractCredential;
 
 /**
@@ -20,7 +23,8 @@ public class RemoteAddressCredential extends AbstractCredential {
      *
      * @param remoteAddress the remote address
      */
-    public RemoteAddressCredential(final String remoteAddress) {
+    @JsonCreator
+    public RemoteAddressCredential(@JsonProperty("remoteAddress") final String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
 
@@ -28,6 +32,7 @@ public class RemoteAddressCredential extends AbstractCredential {
         return this.remoteAddress;
     }
 
+    @JsonIgnore
     @Override
     public String getId() {
         return this.remoteAddress;

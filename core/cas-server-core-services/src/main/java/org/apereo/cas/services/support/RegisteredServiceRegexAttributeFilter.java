@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
  * registered service are released.
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+
     private static final long serialVersionUID = 403015306984610128L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceRegexAttributeFilter.class);
@@ -185,7 +185,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
         return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
     }
-
 
     @Override
     public String toString() {

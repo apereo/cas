@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -319,6 +320,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.usernameAttributeProvider = usernameProvider;
     }
 
+    @JsonIgnore
     @Override
     public LogoutType getLogoutType() {
         return this.logoutType;

@@ -50,7 +50,7 @@ public class StormpathAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthentication() throws Exception {
-        final HandlerResult result = this.authenticationHandler.authenticate(TestUtils
+        final HandlerResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
                 .getCredentialsWithDifferentUsernameAndPassword("casuser", "12345678mM"));
         assertEquals(result.getPrincipal().getId(), "casuser");
         assertTrue(result.getPrincipal().getAttributes().containsKey("fullName"));

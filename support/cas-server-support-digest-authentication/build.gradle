@@ -8,4 +8,7 @@ dependencies {
     compile libraries.spring
     compile libraries.springboot
     compile libraries.springcloud
+    compile libraries.jackson
+
+    testCompile libraries.tests
 }

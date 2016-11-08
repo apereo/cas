@@ -1,5 +1,9 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +46,12 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
      * @param maxTimeToLive the max time to live
      * @param timeToKill the time to kill
      */
-    public TicketGrantingTicketExpirationPolicy(final long maxTimeToLive, final long timeToKill) {
+    @JsonCreator
+    public TicketGrantingTicketExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
+                                                @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
-
 
     /**
      * After properties set.
@@ -89,4 +94,30 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         return this.timeToKillInSeconds;
     }
 
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final TicketGrantingTicketExpirationPolicy rhs = (TicketGrantingTicketExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(this.maxTimeToLiveInSeconds)
+                .append(this.timeToKillInSeconds)
+                .toHashCode();
+    }
 }

@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Authentication;
 
 import java.util.Collections;
@@ -44,6 +47,7 @@ public class NullPrincipal implements Principal {
         return INSTANCE;
     }
 
+    @JsonIgnore
     @Override
     public String getId() {
         return NOBODY;
@@ -52,5 +56,32 @@ public class NullPrincipal implements Principal {
     @Override
     public Map<String, Object> getAttributes() {
         return this.attributes;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final NullPrincipal rhs = (NullPrincipal) obj;
+        return new EqualsBuilder()
+                .append(getId(), rhs.getId())
+                .append(this.attributes, rhs.attributes)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getId())
+                .append(attributes)
+                .toHashCode();
     }
 }

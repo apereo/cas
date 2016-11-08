@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.1.0
  */
 public class DefaultRegisteredServiceUsernameProvider implements RegisteredServiceUsernameAttributeProvider {
+
     private static final long serialVersionUID = 5823989148794052951L;
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUsernameProvider.class);
 
@@ -20,7 +21,6 @@ public class DefaultRegisteredServiceUsernameProvider implements RegisteredServi
         LOGGER.debug("Returning the default principal id [{}] for username.", principal.getId());
         return principal.getId();
     }
-
 
     @Override
     public boolean equals(final Object obj) {

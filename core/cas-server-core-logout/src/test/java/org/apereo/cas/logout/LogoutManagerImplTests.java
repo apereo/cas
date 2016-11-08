@@ -1,6 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.services.TestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
@@ -73,11 +73,11 @@ public class LogoutManagerImplTests {
         this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
 
         this.services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = TestUtils.getService(URL);
+        this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);
 
-        this.registeredService = TestUtils.getRegisteredService(URL);
+        this.registeredService = RegisteredServiceTestUtils.getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 

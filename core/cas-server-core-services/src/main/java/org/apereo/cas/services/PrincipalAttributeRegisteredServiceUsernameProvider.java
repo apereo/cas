@@ -94,7 +94,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         return toStringBuilder.toString();
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

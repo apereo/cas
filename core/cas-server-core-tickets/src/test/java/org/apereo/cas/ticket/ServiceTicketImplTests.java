@@ -2,14 +2,24 @@ package org.apereo.cas.ticket;
 
 import static org.junit.Assert.*;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Scott Battaglia
@@ -17,66 +27,86 @@ import org.junit.Test;
  */
 public class ServiceTicketImplTests {
 
+    private static final String ST_ID = "stest1";
+    private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
+    
     private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+            CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+    
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private ObjectMapper mapper;
+
+    @Before
+    public void setUp() throws Exception {
+        // needed in order to serialize ZonedDateTime class
+        mapper = Jackson2ObjectMapperBuilder.json()
+                .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
+        mapper.findAndRegisterModules();
+    }
+
+    @Test
+    public void verifySerializeToJson() throws IOException {
+        final ServiceTicket stWritten = new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, 
+                RegisteredServiceTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+
+        mapper.writeValue(ST_JSON_FILE, stWritten);
+        final ServiceTicketImpl stRead = mapper.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
+        assertEquals(stWritten, stRead);
+    }
 
     @Test(expected = Exception.class)
     public void verifyNoService() {
-        new ServiceTicketImpl("stest1", this.ticketGrantingTicket, null, false, new NeverExpiresExpirationPolicy());
+        new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, null, false, new NeverExpiresExpirationPolicy());
     }
 
     @Test(expected = Exception.class)
     public void verifyNoTicket() {
-        new ServiceTicketImpl("stest1", null, org.apereo.cas.services.TestUtils.getService(), false, new NeverExpiresExpirationPolicy());
+        new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, new NeverExpiresExpirationPolicy());
     }
 
     @Test
     public void verifyIsFromNewLoginTrue() {
-        final ServiceTicket s = new ServiceTicketImpl("stest1", this.ticketGrantingTicket,
-                org.apereo.cas.services.TestUtils.getService(), true,
-                new NeverExpiresExpirationPolicy());
+        final ServiceTicket s = new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket,
+                CoreAuthenticationTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+
         assertTrue(s.isFromNewLogin());
     }
 
     @Test
     public void verifyIsFromNewLoginFalse() {
-        ServiceTicket s = this.ticketGrantingTicket.grantServiceTicket("stest1",
-                org.apereo.cas.services.TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), false, false);
-
+        ServiceTicket s = this.ticketGrantingTicket.grantServiceTicket(ST_ID, 
+                CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
         assertTrue(s.isFromNewLogin());
-        
-        s = this.ticketGrantingTicket.grantServiceTicket("stest1", 
-                org.apereo.cas.services.TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), false, false);
+        s = this.ticketGrantingTicket.grantServiceTicket(ST_ID, CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, false);
         assertFalse(s.isFromNewLogin());
     }
 
     @Test
     public void verifyGetService() {
-        final Service simpleService = org.apereo.cas.services.TestUtils.getService();
-        final ServiceTicket s = new ServiceTicketImpl("stest1", this.ticketGrantingTicket, simpleService, false,
+        final Service simpleService = CoreAuthenticationTestUtils.getService();
+        final ServiceTicket s = new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, simpleService, false,
                 new NeverExpiresExpirationPolicy());
         Assert.assertEquals(simpleService, s.getService());
     }
 
     @Test
     public void verifyGetTicket() {
-        final Service simpleService = org.apereo.cas.services.TestUtils.getService();
-        final ServiceTicket s = new ServiceTicketImpl("stest1", this.ticketGrantingTicket, simpleService, false,
+        final Service simpleService = CoreAuthenticationTestUtils.getService();
+        final ServiceTicket s = new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, simpleService, false,
                 new NeverExpiresExpirationPolicy());
         assertEquals(this.ticketGrantingTicket, s.getGrantingTicket());
     }
 
     @Test
     public void verifyIsExpiredTrueBecauseOfRoot() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                org.apereo.cas.services.TestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
+                CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
+
         t.markTicketExpired();
 
         assertTrue(s.isExpired());
@@ -84,23 +114,22 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsExpiredFalse() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                org.apereo.cas.services.TestUtils.getService(),
+                CoreAuthenticationTestUtils.getService(),
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
+
         assertFalse(s.isExpired());
     }
 
     @Test
     public void verifyTicketGrantingTicket() throws AbstractTicketException {
-        final Authentication a = TestUtils.getAuthentication();
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                org.apereo.cas.services.TestUtils.getService(),
+                CoreAuthenticationTestUtils.getService(),
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
         final TicketGrantingTicket t1 = s.grantProxyGrantingTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
@@ -111,14 +140,13 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException {
-        final Authentication a = TestUtils.getAuthentication();
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                org.apereo.cas.services.TestUtils.getService(),
+                CoreAuthenticationTestUtils.getService(),
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
-        s.grantProxyGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
+        s.grantProxyGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, 
                 new NeverExpiresExpirationPolicy());
 
         try {

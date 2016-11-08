@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -96,11 +97,11 @@ public class HazelcastTicketRegistryTests {
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
-                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                "TGT", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
@@ -129,13 +130,13 @@ public class HazelcastTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
                 "TGT", a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = org.apereo.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), false, true);
@@ -162,6 +163,6 @@ public class HazelcastTicketRegistryTests {
     }
 
     private static ServiceTicket newTestSt(final TicketGrantingTicket tgt) {
-        return new MockServiceTicket("ST-TEST", org.apereo.cas.services.TestUtils.getService(), tgt);
+        return new MockServiceTicket("ST-TEST", RegisteredServiceTestUtils.getService(), tgt);
     }
 }

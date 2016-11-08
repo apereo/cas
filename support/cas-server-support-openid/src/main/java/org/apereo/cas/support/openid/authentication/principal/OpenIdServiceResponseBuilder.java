@@ -3,6 +3,8 @@ package org.apereo.cas.support.openid.authentication.principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Response;
@@ -32,7 +34,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
     
     private static final long serialVersionUID = -4581238964007702423L;
 
+    @JsonProperty
     private ParameterList parameterList;
+
+    @JsonProperty
     private String openIdPrefixUrl;
 
     /**
@@ -40,8 +45,9 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @param parameterList the parameter list
      * @param openIdPrefixUrl the open id prefix url
      */
-    public OpenIdServiceResponseBuilder(final ParameterList parameterList,
-                                        final String openIdPrefixUrl) {
+    @JsonCreator
+    public OpenIdServiceResponseBuilder(@JsonProperty("parameterList") final ParameterList parameterList,
+                                        @JsonProperty("openIdPrefixUrl") final String openIdPrefixUrl) {
         this.parameterList = parameterList;
         this.openIdPrefixUrl = openIdPrefixUrl;
     }

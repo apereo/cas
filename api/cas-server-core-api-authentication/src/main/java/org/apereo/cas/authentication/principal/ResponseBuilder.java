@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 
 /**
@@ -9,6 +11,7 @@ import java.io.Serializable;
  * @param <T>   the type parameter
  * @since 4.2.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY)
 public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
 
     /**

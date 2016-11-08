@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,24 +27,24 @@ public class SimpleTestUsernamePasswordHandlerTests {
     @Test
     public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()));
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
+        assertFalse(this.authenticationHandler.supports(CoreAuthenticationTestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
         final HandlerResult result = authenticationHandler.authenticate(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
     @Test(expected = FailedLoginException.class)
     public void verifyInvalidUsernamePassword() throws Exception {
-        this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        this.authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 
 }

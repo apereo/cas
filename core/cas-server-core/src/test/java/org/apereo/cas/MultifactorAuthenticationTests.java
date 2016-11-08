@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -171,7 +171,7 @@ public class MultifactorAuthenticationTests {
     }
 
     private static Service newService(final String id) {
-        return TestUtils.getService(id);
+        return CoreAuthenticationTestUtils.getService(id);
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws

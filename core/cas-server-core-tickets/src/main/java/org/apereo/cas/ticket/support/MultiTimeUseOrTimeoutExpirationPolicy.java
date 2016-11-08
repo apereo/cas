@@ -1,5 +1,10 @@
 package org.apereo.cas.ticket.support;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +32,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
     private long timeToKillInSeconds;
+
+    @JsonProperty
     private int numberOfUses;
 
     /**
@@ -37,20 +44,19 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         this.numberOfUses = 0;
     }
 
-
     /**
      * Instantiates a new multi time use or timeout expiration policy.
      *
      * @param numberOfUses             the number of uses
      * @param timeToKillInSeconds the time to kill in seconds
      */
-    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
-                                                 final long timeToKillInSeconds) {
+    @JsonCreator
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, 
+                                                 @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
         Assert.isTrue(this.timeToKillInSeconds > 0, "timeToKillInSeconds must be greater than 0.");
-
     }
     
     @Override
@@ -83,9 +89,36 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         return this.timeToKillInSeconds;
     }
 
+    @JsonIgnore
     @Override
     public Long getTimeToIdle() {
         return 0L;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final MultiTimeUseOrTimeoutExpirationPolicy rhs = (MultiTimeUseOrTimeoutExpirationPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
+                .append(this.numberOfUses, rhs.numberOfUses)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(timeToKillInSeconds)
+                .append(numberOfUses)
+                .toHashCode();
     }
 
     /**

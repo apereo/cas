@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0.2
  */
-public final class TestUtils {
+public final class CoreAuthenticationTestUtils {
 
     public static final String CONST_USERNAME = "test";
 
@@ -32,7 +32,7 @@ public final class TestUtils {
 
     private static final String CONST_PASSWORD = "test1";
 
-    private TestUtils() {
+    private CoreAuthenticationTestUtils() {
         // do not instantiate
     }
 
@@ -68,7 +68,7 @@ public final class TestUtils {
             final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
-                    TestUtils.getRegisteredService(url));
+                    CoreAuthenticationTestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }

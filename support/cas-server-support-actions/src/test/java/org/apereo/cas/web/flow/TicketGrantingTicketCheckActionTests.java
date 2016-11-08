@@ -11,7 +11,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -79,7 +79,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     public void verifyValidTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
-        final AuthenticationResult ctxAuthN = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        final AuthenticationResult ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
 
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctxAuthN);

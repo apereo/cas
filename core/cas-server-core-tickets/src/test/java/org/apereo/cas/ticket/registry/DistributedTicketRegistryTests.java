@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.authentication.TestUtils;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -45,7 +46,7 @@ public class DistributedTicketRegistryTests {
     @Test
     public void verifyProxiedInstancesEqual() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
+                CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
 
@@ -62,7 +63,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(t.isExpired(), returned.isExpired());
         assertEquals(t.isRoot(), returned.isRoot());
 
-        final ServiceTicket s = t.grantServiceTicket("stest", org.apereo.cas.services.TestUtils.getService(),
+        final ServiceTicket s = t.grantServiceTicket("stest", RegisteredServiceTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
 
@@ -82,20 +83,20 @@ public class DistributedTicketRegistryTests {
     @Test
     public void verifyUpdateOfRegistry() throws AbstractTicketException {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                TestUtils.getAuthentication(),
+                CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
 
-        final ServiceTicket s = returned.grantServiceTicket("test2", org.apereo.cas.services.TestUtils.getService(),
+        final ServiceTicket s = returned.grantServiceTicket("test2", RegisteredServiceTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
 
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantProxyGrantingTicket("ff", TestUtils.getAuthentication(),
+        assertNotNull(s2.grantProxyGrantingTicket("ff", CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
 
-        assertTrue(s2.isValidFor(org.apereo.cas.services.TestUtils.getService()));
+        assertTrue(s2.isValidFor(RegisteredServiceTestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
 
         returned.markTicketExpired();
@@ -109,13 +110,13 @@ public class DistributedTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithPGT() {
-        final Authentication a = TestUtils.getAuthentication();
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
                 TGT_NAME, a, new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
                 TGT_NAME, TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = CoreAuthenticationTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, true);

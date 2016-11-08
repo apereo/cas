@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.net.URL;
@@ -13,11 +14,13 @@ public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProx
 
     private static final long serialVersionUID = -5718445151129901484L;
 
+    @JsonIgnore
     @Override
     public boolean isAllowedToProxy() {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
         return false;
@@ -41,5 +44,4 @@ public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProx
         final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
         return bldr.appendSuper(super.hashCode()).toHashCode();
     }
-
 }

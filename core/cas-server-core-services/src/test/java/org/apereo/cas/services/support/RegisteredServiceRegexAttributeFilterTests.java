@@ -1,17 +1,20 @@
 package org.apereo.cas.services.support;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +28,9 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilterTests {
+
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RegisteredServiceAttributeFilter filter;
     private Map<String, Object> givenAttributesMap;
@@ -117,5 +123,14 @@ public class RegisteredServiceRegexAttributeFilterTests {
         final RegisteredServiceAttributeFilter secondFilter =
             SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
+    }
+
+    @Test
+    public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
+        MAPPER.writeValue(JSON_FILE, filter);
+
+        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
+
+        assertEquals(filter, filterRead);
     }
 }
