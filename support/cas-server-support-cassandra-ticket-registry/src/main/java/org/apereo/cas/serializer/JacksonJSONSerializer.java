@@ -30,7 +30,17 @@ public class JacksonJSONSerializer implements TicketSerializer<String> {
     }
 
     @Override
-    public String serialize(final Ticket ticket) {
+    public String serializeTGT(final Ticket ticket) {
+        try {
+            return mapper.writeValueAsString(ticket);
+        } catch (final JsonProcessingException e) {
+            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
+            return "";
+        }
+    }
+
+    @Override
+    public String serializeST(final Ticket ticket) {
         try {
             return mapper.writeValueAsString(ticket);
         } catch (final JsonProcessingException e) {

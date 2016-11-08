@@ -102,15 +102,13 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
     @Override
     public void addTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
-        // TODO: should we create a serializeTGT method?
-        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serialize(ticket)));
+        session.execute(this.insertTgtStmt.bind(ticket.getId(), serializer.serializeTGT(ticket)));
     }
 
     @Override
     public void addServiceTicket(final Ticket ticket) {
         LOGGER.debug("INSERTING TICKET {}", ticket.getId());
-        // TODO: should we create a serializeST method?
-        session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serialize(ticket)));
+        session.execute(this.insertStStmt.bind(ticket.getId(), serializer.serializeST(ticket)));
     }
 
     @Override
@@ -152,13 +150,13 @@ public class CassandraDao implements NoSqlTicketRegistryDao {
     @Override
     public void updateTicketGrantingTicket(final Ticket ticket) {
         LOGGER.debug("UPDATING TICKET {}", ticket.getId());
-        session.execute(this.updateTgtStmt.bind(serializer.serialize(ticket), ticket.getId()));
+        session.execute(this.updateTgtStmt.bind(serializer.serializeTGT(ticket), ticket.getId()));
     }
 
     @Override
     public void updateServiceTicket(final Ticket ticket) {
         LOGGER.debug("UPDATING TICKET {}", ticket.getId());
-        session.execute(this.updateStStmt.bind(serializer.serialize(ticket), ticket.getId()));
+        session.execute(this.updateStStmt.bind(serializer.serializeST(ticket), ticket.getId()));
     }
 
     @Override

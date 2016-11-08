@@ -6,7 +6,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 public interface TicketSerializer<T> {
 
-    T serialize(Ticket ticket);
+    T serializeTGT(Ticket ticket);
+
+    T serializeST(Ticket ticket);
 
     TicketGrantingTicket deserializeTGT(T ticket);
 

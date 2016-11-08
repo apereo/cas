@@ -31,7 +31,19 @@ public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
     }
 
     @Override
-    public ByteBuffer serialize(final Ticket ticket) {
+    public ByteBuffer serializeTGT(final Ticket ticket) {
+        byte[] serialized;
+        try {
+            serialized = mapper.writeValueAsBytes(ticket);
+        } catch (final JsonProcessingException e) {
+            LOGGER.info("Error writing ticket {}: {}", ticket.getId(), e);
+            serialized = new byte[]{};
+        }
+        return ByteBuffer.wrap(serialized);
+    }
+
+    @Override
+    public ByteBuffer serializeST(final Ticket ticket) {
         byte[] serialized;
         try {
             serialized = mapper.writeValueAsBytes(ticket);
