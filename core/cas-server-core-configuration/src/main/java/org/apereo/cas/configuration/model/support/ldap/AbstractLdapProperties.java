@@ -1,8 +1,12 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import com.google.common.collect.Lists;
+import org.ldaptive.SearchScope;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+
+import java.util.List;
 
 /**
  * This is {@link AbstractLdapProperties}.
@@ -27,7 +31,7 @@ public abstract class AbstractLdapProperties {
     private long idleTime = 600;
     private long prunePeriod = 10000;
     private long blockWaitTime = 6000;
-    
+
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
     private boolean useStartTls;
@@ -46,6 +50,16 @@ public abstract class AbstractLdapProperties {
     private SecurityStrength saslSecurityStrength;
     private Boolean saslMutualAuth;
     private QualityOfProtection saslQualityOfProtection;
+
+    private Validator validator = new Validator();
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(final Validator validator) {
+        this.validator = validator;
+    }
 
     public String getBindDn() {
         return bindDn;
@@ -261,5 +275,71 @@ public abstract class AbstractLdapProperties {
 
     public Boolean getSaslMutualAuth() {
         return saslMutualAuth;
+    }
+
+    public static class Validator {
+        private String type = "search";
+        private String baseDn = "";
+        private String searchFilter = "(objectClass=*)";
+        private SearchScope scope = SearchScope.OBJECT;
+        private String attributeName = "objectClass";
+        private List<String> attributeValues = Lists.newArrayList("top");
+        private String dn = "";
+
+        public String getDn() {
+            return dn;
+        }
+
+        public void setDn(final String dn) {
+            this.dn = dn;
+        }
+
+        public String getAttributeName() {
+            return attributeName;
+        }
+
+        public void setAttributeName(final String attributeName) {
+            this.attributeName = attributeName;
+        }
+
+        public List<String> getAttributeValues() {
+            return attributeValues;
+        }
+
+        public void setAttributeValues(final List<String> attributeValues) {
+            this.attributeValues = attributeValues;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(final String type) {
+            this.type = type;
+        }
+
+        public String getBaseDn() {
+            return baseDn;
+        }
+
+        public void setBaseDn(final String baseDn) {
+            this.baseDn = baseDn;
+        }
+
+        public String getSearchFilter() {
+            return searchFilter;
+        }
+
+        public void setSearchFilter(final String searchFilter) {
+            this.searchFilter = searchFilter;
+        }
+
+        public SearchScope getScope() {
+            return scope;
+        }
+
+        public void setScope(final SearchScope scope) {
+            this.scope = scope;
+        }
     }
 }
