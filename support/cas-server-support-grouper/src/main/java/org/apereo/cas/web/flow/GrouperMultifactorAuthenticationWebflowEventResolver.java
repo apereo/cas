@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
+import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
@@ -61,8 +62,8 @@ public class GrouperMultifactorAuthenticationWebflowEventResolver extends Abstra
             throw new AuthenticationException();
         }
 
-        final GrouperFacade.GrouperGroupField groupField =
-                GrouperFacade.GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField());
+        final GrouperGroupField groupField =
+                GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
 
         final Optional<MultifactorAuthenticationProvider> providerFound =
                 providerMap.values().stream()

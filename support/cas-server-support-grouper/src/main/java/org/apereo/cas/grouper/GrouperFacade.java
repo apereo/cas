@@ -23,28 +23,6 @@ public class GrouperFacade {
     protected GrouperFacade() {}
 
     /**
-     * The enum Grouper group field.
-     */
-    public enum GrouperGroupField {
-        /**
-         * Name grouper group field.
-         */
-        NAME,
-        /**
-         * Extension grouper group field.
-         */
-        EXTENSION,
-        /**
-         * Display name grouper group field.
-         */
-        DISPLAY_NAME,
-        /**
-         * Display extension grouper group field.
-         */
-        DISPLAY_EXTENSION
-    }
-
-    /**
      * Construct grouper group attribute.
      * This is the name of every individual group attribute
      * transformed into a CAS attribute value.

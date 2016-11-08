@@ -2,6 +2,7 @@ package org.apereo.cas.grouper.services;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import org.apereo.cas.grouper.GrouperFacade;
+import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategy.class);
 
 
-    private GrouperFacade.GrouperGroupField groupField = GrouperFacade.GrouperGroupField.NAME;
+    private GrouperGroupField groupField = GrouperGroupField.NAME;
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
@@ -66,11 +67,11 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
     }
 
-    public void setGroupField(final GrouperFacade.GrouperGroupField groupField) {
+    public void setGroupField(final GrouperGroupField groupField) {
         this.groupField = groupField;
     }
 
-    public GrouperFacade.GrouperGroupField getGroupField() {
+    public GrouperGroupField getGroupField() {
         return this.groupField;
     }
 

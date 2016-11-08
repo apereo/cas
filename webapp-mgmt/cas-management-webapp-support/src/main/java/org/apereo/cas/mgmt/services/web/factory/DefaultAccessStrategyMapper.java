@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.services.web.factory;
 
 import com.google.common.base.Throwables;
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceSupportAccessEditBean;
@@ -132,7 +133,7 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
         if (supportAccess.getType() == RegisteredServiceSupportAccessEditBean.Types.GROUPER) {
             if (StringUtils.isNotBlank(supportAccess.getGroupField())) {
                 ((GrouperRegisteredServiceAccessStrategy) accessStrategy)
-                        .setGroupField(GrouperRegisteredServiceAccessStrategy.GrouperGroupField.valueOf(supportAccess.getGroupField()));
+                        .setGroupField(GrouperGroupField.valueOf(supportAccess.getGroupField()));
             }
         }
 
