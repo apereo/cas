@@ -37,7 +37,6 @@ public class ExpirationCalculator {
             final ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ttl);
             final ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ttk);
 
-            // TODO: could creationTime be smaller than lastTimeUsed
             final long expiry = ticketTtl.isBefore(ticketTtk) ? ticketTtl.toEpochSecond() : ticketTtk.toEpochSecond();
             LOGGER.debug("Ticket creation time: {}; Ticket expiry: {}", ticket.getCreationTime(), expiry);
             return expiry;
