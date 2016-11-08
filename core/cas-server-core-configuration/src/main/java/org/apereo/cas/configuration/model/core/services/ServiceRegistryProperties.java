@@ -30,7 +30,7 @@ public class ServiceRegistryProperties extends AbstractConfigProperties {
     @NestedConfigurationProperty
     private CouchbaseServiceRegistryProperties couchbase = new CouchbaseServiceRegistryProperties();
 
-    private boolean initFromJson = true;
+    private boolean initFromJson;
 
     private int startDelay = 15000;
     

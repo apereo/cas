@@ -17,13 +17,13 @@ import javax.annotation.PostConstruct;
 public class ServiceRegistryInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
-    
+
     private ServiceRegistryDao serviceRegistryDao;
-    
+
     private ServiceRegistryDao jsonServiceRegistryDao;
 
     private ServicesManager servicesManager;
-    
+
     private boolean initFromJson;
 
     public ServiceRegistryInitializer() {
@@ -45,23 +45,23 @@ public class ServiceRegistryInitializer {
     @PostConstruct
     public void initServiceRegistryIfNecessary() {
         final long size = this.serviceRegistryDao.size();
+        LOGGER.debug("Service registry database contains {} service definitions", size);
 
-        if (size == 0) {
-            if (this.initFromJson) {
-                LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
-                this.jsonServiceRegistryDao.load().forEach(r -> {
-                    LOGGER.debug("Initializing service registry database with the {} JSON service definition...", r);
+
+        if (this.initFromJson) {
+            LOGGER.debug("Service registry database will be auto-initialized from default JSON services");
+            this.jsonServiceRegistryDao.load().forEach(r -> {
+                LOGGER.debug("Initializing service registry database with the {} JSON service definition...", r);
+                if (this.serviceRegistryDao.findServiceById(r.getServiceId()) != null
+                        && this.serviceRegistryDao.findServiceById(r.getId()) != null) {
                     this.serviceRegistryDao.save(r);
-                });
-                this.servicesManager.load();
-            } else {
-                LOGGER.info("The service registry database will not be initialized from default JSON services. "
-                        + "Since the service registry database is empty, CAS will refuse to authenticate services "
-                        + "until service definitions are added to the database.");
-            }
+                }
+            });
+            this.servicesManager.load();
         } else {
-            LOGGER.debug("Service registry database contains {} service definitions", size);
+            LOGGER.info("The service registry database will not be initialized from default JSON services. "
+                    + "If the service registry database ends up empty, CAS will refuse to authenticate services "
+                    + "until service definitions are added to the registry.");
         }
-
     }
 }
