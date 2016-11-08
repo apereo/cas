@@ -24,17 +24,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class RegistryConfiguration {
 
     @Bean(name = "cassandraDao")
-    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password, ExpirationCalculator calculator) {
-        return new CassandraDao<String>(contactPoints, maxTicketDuration, username, password, 1000, calculator, new JacksonJSONSerializer(), String.class);
+    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password, final ExpirationCalculator calculator) {
+        return new CassandraDao<String>(contactPoints, maxTicketDuration, username, password, calculator, new JacksonJSONSerializer(), String.class);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
-    public TicketRegistry noSqlTicketRegistry(NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices, @Value("true") final boolean shouldCleanTGTs) {
+    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices, @Value("true") final boolean shouldCleanTGTs) {
         return new NoSqlTicketRegistry(cassandraDao, logoutManager, logUserOutOfServices);
     }
 
     @Bean(name="ticketRegistryCleaner")
-    public TicketRegistryCleaner ticketRegistryCleaner(NoSqlTicketRegistry ticketRegistry) {
+    public TicketRegistryCleaner ticketRegistryCleaner(final NoSqlTicketRegistry ticketRegistry) {
         return ticketRegistry;
     }
 }

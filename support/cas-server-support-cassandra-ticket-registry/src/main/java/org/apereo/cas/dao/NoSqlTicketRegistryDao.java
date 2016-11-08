@@ -3,7 +3,6 @@ package org.apereo.cas.dao;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public interface NoSqlTicketRegistryDao {
