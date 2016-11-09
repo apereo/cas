@@ -1,5 +1,6 @@
 package org.jasig.cas.logout;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
@@ -8,6 +9,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
+import org.jasig.cas.web.flow.AuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.wavity.plan.api.PlanProvider;
+import com.wavity.plan.api.deployment.DeploymentPlan;
+import com.wavity.plan.api.service.ServiceType;
+
 import javax.validation.constraints.NotNull;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,6 +179,35 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         }
         return null;
+    } 
+
+    /**
+     * Gets the REST end point from deployment plan.
+     * 
+     * @param tenant the string of tenant ID
+     * @return the string of end point.
+     */
+    private String getPlanEndPointServerName(final String tenant) {
+        final PlanProvider provider = PlanProvider.getInstance();
+        final DeploymentPlan deploymentPlan = provider.getDeploymentPlan();
+        if (deploymentPlan == null) {
+            throw new IllegalArgumentException("Deployment plan can't be null");
+        }
+        final String endPoint = deploymentPlan.getServiceRestEndPoint(ServiceType.cas, tenant);
+        if (StringUtils.isEmpty(endPoint)) {
+            throw new IllegalArgumentException("End point can't be null");
+        }
+        try {
+            final URL url = new URL(endPoint);
+            final StringBuilder builder = new StringBuilder();
+            builder.append(url.getProtocol())
+                .append("://")
+                .append(url.getHost());
+            return builder.toString();
+        } catch (final MalformedURLException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -182,7 +219,16 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
         try {
-            URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
+            URL serviceUrl = new URL(singleLogoutService.getOriginalUrl());
+            final String tenantId = AuthUtils.extractTenantID(serviceUrl.toString());
+            final String endPointServerUrl = getPlanEndPointServerName(tenantId);
+            
+            final StringBuilder url = new StringBuilder();
+            url.append(endPointServerUrl)
+               .append(serviceUrl.getFile());
+            
+            //URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
+            URL logoutUrl = new URL(url.toString());
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
 
             if (serviceLogoutUrl != null) {
