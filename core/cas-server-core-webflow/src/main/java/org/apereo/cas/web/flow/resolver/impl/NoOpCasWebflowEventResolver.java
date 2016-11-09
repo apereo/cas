@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class NoOpCasWebflowEventResolver extends AbstractCasWebflowEventResolver {
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         return null;
     }
 }

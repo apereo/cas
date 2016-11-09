@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
     private CasConfigurationProperties casProperties;
     
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
@@ -116,6 +117,14 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
         }
         logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
+    }
+
+
+    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Override
+    public Event resolveSingle(final RequestContext context) {
+        return super.resolveSingle(context);
     }
 
     public void setGeoLocationService(final GeoLocationService geoLocationService) {
