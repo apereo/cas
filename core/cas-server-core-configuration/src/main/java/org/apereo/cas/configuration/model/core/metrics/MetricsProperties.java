@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.metrics;
 
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * This is {@link MetricsProperties}.
  *
@@ -9,14 +11,14 @@ package org.apereo.cas.configuration.model.core.metrics;
 
 public class MetricsProperties {
 
-    private long refreshInterval = 30;
+    private String refreshInterval = "PT30S";
     private String loggerName = "perfStatsLogger";
 
     public long getRefreshInterval() {
-        return refreshInterval;
+        return Beans.newDuration(this.refreshInterval).getSeconds();
     }
 
-    public void setRefreshInterval(final long refreshInterval) {
+    public void setRefreshInterval(final String refreshInterval) {
         this.refreshInterval = refreshInterval;
     }
 

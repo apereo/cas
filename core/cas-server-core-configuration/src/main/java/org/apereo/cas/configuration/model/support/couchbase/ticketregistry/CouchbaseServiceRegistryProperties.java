@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
 
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * This is {@link CouchbaseServiceRegistryProperties}.
  *
@@ -12,7 +14,7 @@ public class CouchbaseServiceRegistryProperties {
 
     private String nodeSet = "localhost:8091";
 
-    private int timeout = 10;
+    private String timeout = "PT10S";
 
     private String password;
     private String bucket = "default";
@@ -33,11 +35,11 @@ public class CouchbaseServiceRegistryProperties {
         this.nodeSet = nodeSet;
     }
 
-    public int getTimeout() {
-        return timeout;
+    public long getTimeout() {
+        return Beans.newDuration(timeout).getSeconds();
     }
 
-    public void setTimeout(final int timeout) {
+    public void setTimeout(final String timeout) {
         this.timeout = timeout;
     }
 

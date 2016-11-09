@@ -23,19 +23,22 @@ public abstract class AbstractLdapProperties {
 
     private int minPoolSize = 3;
     private int maxPoolSize = 10;
+
     private boolean validateOnCheckout = true;
     private boolean validatePeriodically = true;
-    private long validatePeriod = 300;
+    private String validatePeriod = "PT5M";
 
     private boolean failFast = true;
-    private long idleTime = 600;
-    private long prunePeriod = 10000;
-    private long blockWaitTime = 6000;
+
+    private String idleTime = "PT10M";
+    private String prunePeriod = "PT2H";
+    private String blockWaitTime = "PT3S";
 
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
     private boolean useStartTls;
-    private long connectTimeout = 5000;
+    private String connectTimeout = "PT5S";
+    private String responseTimeout = "PT5S";
 
     private String providerClass;
     private boolean allowMultipleDns;
@@ -93,11 +96,11 @@ public abstract class AbstractLdapProperties {
         this.allowMultipleDns = allowMultipleDns;
     }
 
-    public long getPrunePeriod() {
+    public String getPrunePeriod() {
         return prunePeriod;
     }
 
-    public void setPrunePeriod(final long prunePeriod) {
+    public void setPrunePeriod(final String prunePeriod) {
         this.prunePeriod = prunePeriod;
     }
 
@@ -165,11 +168,11 @@ public abstract class AbstractLdapProperties {
         this.validatePeriodically = validatePeriodically;
     }
 
-    public long getValidatePeriod() {
+    public String getValidatePeriod() {
         return validatePeriod;
     }
 
-    public void setValidatePeriod(final long validatePeriod) {
+    public void setValidatePeriod(final String validatePeriod) {
         this.validatePeriod = validatePeriod;
     }
 
@@ -181,19 +184,19 @@ public abstract class AbstractLdapProperties {
         this.failFast = failFast;
     }
 
-    public long getIdleTime() {
+    public String getIdleTime() {
         return idleTime;
     }
 
-    public void setIdleTime(final long idleTime) {
+    public void setIdleTime(final String idleTime) {
         this.idleTime = idleTime;
     }
 
-    public long getBlockWaitTime() {
+    public String getBlockWaitTime() {
         return blockWaitTime;
     }
 
-    public void setBlockWaitTime(final long blockWaitTime) {
+    public void setBlockWaitTime(final String blockWaitTime) {
         this.blockWaitTime = blockWaitTime;
     }
 
@@ -221,11 +224,11 @@ public abstract class AbstractLdapProperties {
         this.useStartTls = useStartTls;
     }
 
-    public long getConnectTimeout() {
+    public String getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(final long connectTimeout) {
+    public void setConnectTimeout(final String connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
@@ -275,6 +278,14 @@ public abstract class AbstractLdapProperties {
 
     public Boolean getSaslMutualAuth() {
         return saslMutualAuth;
+    }
+
+    public String getResponseTimeout() {
+        return responseTimeout;
+    }
+
+    public void setResponseTimeout(final String responseTimeout) {
+        this.responseTimeout = responseTimeout;
     }
 
     public static class Validator {

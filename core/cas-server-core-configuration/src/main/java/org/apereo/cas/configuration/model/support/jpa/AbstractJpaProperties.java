@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 
 /**
@@ -26,7 +27,7 @@ public abstract class AbstractJpaProperties {
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
-    private int idleTimeout = 5000;
+    private String idleTimeout = "PT5S";
 
     private int leakThreshold = 10;
 
@@ -102,11 +103,11 @@ public abstract class AbstractJpaProperties {
         this.pool = pool;
     }
 
-    public int getIdleTimeout() {
-        return idleTimeout;
+    public long getIdleTimeout() {
+        return Beans.newDuration(idleTimeout).toMillis();
     }
 
-    public void setIdleTimeout(final int idleTimeout) {
+    public void setIdleTimeout(final String idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 
