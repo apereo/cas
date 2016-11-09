@@ -220,11 +220,11 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     private URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
         try {
-            URL serviceUrl = new URL(singleLogoutService.getOriginalUrl());
-            String[] splitedPath = serviceUrl.getPath().split("/");
+            final URL serviceUrl = new URL(singleLogoutService.getOriginalUrl());
+            final String[] splitedPath = serviceUrl.getPath().split("/");
             ServiceType type = ServiceType.cas;
             if(splitedPath.length > 1) {
-            	type = ServiceType.valueOf(splitedPath[1]);
+                type = ServiceType.valueOf(splitedPath[1]);
             }
             
             final String tenantId = AuthUtils.extractTenantID(serviceUrl.toString());
@@ -233,7 +233,7 @@ public final class LogoutManagerImpl implements LogoutManager {
             final StringBuilder logoutUrlBuilder = new StringBuilder();
             logoutUrlBuilder.append(endPointServerUrl);
             if(serviceUrl.getPort() != -1) {
-            	logoutUrlBuilder.append(":").append(serviceUrl.getPort());
+                logoutUrlBuilder.append(":").append(serviceUrl.getPort());
             }
             logoutUrlBuilder.append(serviceUrl.getFile());
             
