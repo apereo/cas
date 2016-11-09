@@ -187,13 +187,13 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param tenant the string of tenant ID
      * @return the string of end point.
      */
-    private String getPlanEndPointServerName(final String tenant) {
+    private String getPlanEndPointServerName(final ServiceType type, final String tenant) {
         final PlanProvider provider = PlanProvider.getInstance();
         final DeploymentPlan deploymentPlan = provider.getDeploymentPlan();
         if (deploymentPlan == null) {
             throw new IllegalArgumentException("Deployment plan can't be null");
         }
-        final String endPoint = deploymentPlan.getServiceRestEndPoint(ServiceType.cas, tenant);
+        final String endPoint = deploymentPlan.getServiceRestEndPoint(type, tenant);
         if (StringUtils.isEmpty(endPoint)) {
             throw new IllegalArgumentException("End point can't be null");
         }
@@ -220,8 +220,14 @@ public final class LogoutManagerImpl implements LogoutManager {
     private URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
         try {
             URL serviceUrl = new URL(singleLogoutService.getOriginalUrl());
+            String[] splitedPath = serviceUrl.getPath().split("/");
+            ServiceType type = ServiceType.cas;
+            if(splitedPath.length > 1) {
+            	type = ServiceType.valueOf(splitedPath[1]);
+            }
+            
             final String tenantId = AuthUtils.extractTenantID(serviceUrl.toString());
-            final String endPointServerUrl = getPlanEndPointServerName(tenantId);
+            final String endPointServerUrl = getPlanEndPointServerName(type, tenantId);
             
             final StringBuilder logoutUrlBuilder = new StringBuilder();
             logoutUrlBuilder.append(endPointServerUrl);
