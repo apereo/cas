@@ -40,5 +40,5 @@ artifacts (jar files in most cases) that are downloaded and installed locally. W
 behavior by altering Maven configuration settings, it is considered advanced usage and not supported.
 
 A common solution to overcoming lack of Internet connectivity on a CAS server is to build CAS on a dedicated build
-host with internet connectivity. The `cas.war` file produced by the build is subsequently copied to the CAS server
+host with internet connectivity. The web application artifact produced by the build could then subsequently be copied to the CAS server
 for deployment.
