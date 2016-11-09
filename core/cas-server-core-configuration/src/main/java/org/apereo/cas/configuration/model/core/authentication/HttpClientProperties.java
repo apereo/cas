@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -11,17 +12,17 @@ import org.springframework.core.io.Resource;
  */
 
 public class HttpClientProperties {
-    private int connectionTimeout = 5000;
-    private int readTimeout = 5000;
-    private int asyncTimeout = 5000;
+    private String connectionTimeout = "PT5S";
+    private String readTimeout = "PT5S";
+    private String asyncTimeout = "PT5S";
 
     private Truststore truststore = new Truststore();
     
-    public int getAsyncTimeout() {
-        return asyncTimeout;
+    public long getAsyncTimeout() {
+        return Beans.newDuration(this.asyncTimeout).toMillis();
     }
 
-    public void setAsyncTimeout(final int asyncTimeout) {
+    public void setAsyncTimeout(final String asyncTimeout) {
         this.asyncTimeout = asyncTimeout;
     }
     
@@ -33,19 +34,19 @@ public class HttpClientProperties {
         this.truststore = truststore;
     }
 
-    public int getConnectionTimeout() {
-        return connectionTimeout;
+    public long getConnectionTimeout() {
+        return Beans.newDuration(this.connectionTimeout).toMillis();
     }
 
-    public void setConnectionTimeout(final int connectionTimeout) {
+    public void setConnectionTimeout(final String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public int getReadTimeout() {
-        return readTimeout;
+    public long getReadTimeout() {
+        return Beans.newDuration(this.readTimeout).toMillis();
     }
 
-    public void setReadTimeout(final int readTimeout) {
+    public void setReadTimeout(final String readTimeout) {
         this.readTimeout = readTimeout;
     }
 
