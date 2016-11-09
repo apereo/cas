@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -58,8 +59,23 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
 
         userPass.setUsername(transformedUsername);
+        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
 
-        return authenticateUsernamePasswordInternal(userPass);
+        return authenticateUsernamePasswordInternal(userPass,((UsernamePasswordCredential) credential).getPassword());
+    }
+
+    /**
+     * Authenticates a username/password credential by an arbitrary strategy with extra parameter where is original credential. Override it if
+     * implementation need to use original password for validation.
+     * @param transformedCredential
+     * @param charSequence
+     * @return
+     * @throws GeneralSecurityException
+     * @throws PreventedException
+     */
+    protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential,final CharSequence charSequence)
+            throws   GeneralSecurityException, PreventedException {
+        return authenticateUsernamePasswordInternal(transformedCredential);
     }
 
     /**
@@ -75,6 +91,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      */
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
+
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
@@ -107,15 +124,17 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         return false;
     }
 
-    public boolean matches(final CharSequence rawPassword,final String password){
-        return this.passwordEncoder.matches(rawPassword,password);
+    /**
+     * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded
+     * password is different and we cannot use traditional compare of encoded strings to check if passwords match
+     * @param charSequence
+     * @param password
+     * @return true in case rawPassword matched encoded password
+     */
+
+    protected boolean matches(final CharSequence charSequence,final String password){
+        return this.passwordEncoder.matches(charSequence,password);
     }
 
-    /**
-     * Used to check if there is some passwordEncoder set so matches will be utilized
-     * @return is default passwordEncoder return true
-     */
-    public boolean isNoOpPasswordEncoder(){
-        return passwordEncoder instanceof NoOpPasswordEncoder;
-    }
+
 }

@@ -29,7 +29,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,final CharSequence charSequence)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
@@ -39,9 +39,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
         final String username = credential.getUsername();
         final String password = credential.getPassword();
+
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
-            if (!this.matches(password, dbPassword)) {
+
+            if ((StringUtils.isNotBlank(charSequence) && !this.matches(charSequence, dbPassword)) ||
+                    (StringUtils.isBlank(charSequence) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
@@ -52,7 +55,17 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
+
+        //return authenticateUsernamePasswordInternal(credential);
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+    }
+
+
+    @Override
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+                throws GeneralSecurityException, PreventedException
+    {
+        return authenticateUsernamePasswordInternal(credential,null);
     }
 
     public void setSql(final String sql) {
