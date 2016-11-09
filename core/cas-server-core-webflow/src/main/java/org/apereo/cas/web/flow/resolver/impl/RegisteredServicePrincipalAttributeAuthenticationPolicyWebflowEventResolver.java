@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +25,7 @@ import java.util.Set;
 public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver
         extends RegisteredServiceAuthenticationPolicyWebflowEventResolver {
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
@@ -45,5 +46,13 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
                 service, context, providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
+    }
+
+
+    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Override
+    public Event resolveSingle(final RequestContext context) {
+        return super.resolveSingle(context);
     }
 }

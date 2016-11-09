@@ -425,13 +425,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return resolveInternal(context);
     }
 
-    /**
-     * Resolve internal event.
-     *
-     * @param context the context
-     * @return the event
-     */
-    protected abstract Set<Event> resolveInternal(RequestContext context);
 
     @Override
     public Event resolveSingle(final RequestContext context) {

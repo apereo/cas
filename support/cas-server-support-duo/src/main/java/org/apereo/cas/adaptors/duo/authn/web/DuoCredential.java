@@ -47,7 +47,7 @@ public class DuoCredential implements Credential, Serializable {
     @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
-        builder.append(this.getUsername());
+        builder.append(this.username);
         return builder.toHashCode();
     }
 
