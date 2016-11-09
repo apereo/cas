@@ -178,7 +178,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated principal [{}] and attributes {} with credentials {}.", 
+        logger.info("Authenticated principal [{}] with attributes {} via credentials {}.",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
