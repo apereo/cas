@@ -165,6 +165,19 @@ Change your `deployerConfigContext.xml` file to match the following:
 <alias name="defaultTicketRegistry" alias="ticketRegistryValue" />
 ```
 
+### Web Session Configuration
+
+You must make sure your `web.xml` contains the following XML piece:
+
+```xml
+<session-config>
+    <!-- Default to 5 minute session timeouts -->
+    <session-timeout>5</session-timeout>
+</session-config>
+```
+
+By default, `COOKIE` tracking mode is turned on with an `http-only` configuration. Those need to be removed. 
+
 ## Multiple Nodes Configuration
 
 ClearPass stores the password information it collects in a non-distributed EhCache-based Map. This works fine in single-server CAS environments but causes issues in multi-server CAS environments. In a normal multi-server CAS environment you would use a distributed ticket registry like Memcache or EhCache so that all CAS servers would have knowledge of all the tickets. After the distributed Ticket Registry is setup you should replace ClearPass's default in-memory Map with a Map implemenation that matches your ticket registry. 
