@@ -182,8 +182,9 @@ public final class LogoutManagerImpl implements LogoutManager {
     } 
 
     /**
-     * Gets the REST end point from deployment plan.
+     * Gets the end point from deployment plan.
      * 
+     * @param type the type of Service
      * @param tenant the string of tenant ID
      * @return the string of end point.
      */
