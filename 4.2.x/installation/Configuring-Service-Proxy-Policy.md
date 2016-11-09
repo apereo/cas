@@ -12,7 +12,8 @@ Note that by default, the proxy authentication is disallowed for all application
 ## Components
 
 ### Refuse
-Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
+
+Disallows proxy authentication for a service. This is the default policy and need not be configured explicitly.
 
 ```json
 {
@@ -27,6 +28,7 @@ Disallows proxy authentication for a service. This is default policy and need no
 ```
 
 ### Regex
+
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
 ```json
