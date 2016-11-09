@@ -8,6 +8,22 @@ dependencies {
   testCompile project(':cas-server-core-services')
   testCompile project(path: ":cas-server-core-services", configuration: "tests")
   testCompile project(':cas-server-core-util')
+  
+  // wavity internal deps
+  compile (group: 'wavity-dependency', name: 'wavity-dependency', version: project.versions.wavityDependencyVersion) {
+    transitive = true
+    exclude group: 'javax.json', module: 'javax.json-api'
+    exclude group: 'javax', module: 'javaee-api'
+    exclude group: 'javax', module: 'javaee-web-api'
+    exclude group: 'javax', module: 'javaee-endorsed-api'
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.slf4j'
+    exclude group: 'log4j'
+    exclude group: 'org.apache.logging.log4j'
+    exclude group: 'commons-logging'
+    exclude group: 'xml-security', module: 'xmlsec'
+    exclude group: 'org.springframework'
+  }
 }
 
 
