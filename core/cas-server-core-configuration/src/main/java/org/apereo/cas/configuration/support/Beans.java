@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
@@ -272,6 +273,7 @@ public class Beans {
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
+        cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
@@ -412,13 +414,18 @@ public class Beans {
     }
 
     /**
-     * New duration.
+     * New duration. If the provided length is duration,
+     * it will be parsed accordingly, or if it's a numeric value
+     * it will be pared as a duration assuming it's provided as seconds.
      *
      * @param length the length in seconds.
      * @return the duration
      */
-    public static Duration newDuration(final long length) {
-        return Duration.ofSeconds(length);
+    public static Duration newDuration(final String length) {
+        if (NumberUtils.isNumber(length)) {
+            return Duration.ofSeconds(Long.valueOf(length));
+        }
+        return Duration.parse(length);
     }
 
     /**

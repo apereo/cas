@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
 import com.google.common.collect.Lists;
+import org.apereo.cas.configuration.support.Beans;
 
 import java.util.List;
 
@@ -12,8 +13,8 @@ import java.util.List;
  */
 
 public class SamlMetadataUIProperties {
-    private int startDelay = 30_000;
-    private int repeatInterval = 120_000;
+    private String startDelay = "PT30S";
+    private String repeatInterval = "PT2M";
     private String parameter = "entityId";
     private long maxValidity;
     private boolean requireSignedRoot;
@@ -45,19 +46,19 @@ public class SamlMetadataUIProperties {
         this.parameter = parameter;
     }
 
-    public int getStartDelay() {
-        return startDelay;
+    public long getStartDelay() {
+        return Beans.newDuration(startDelay).toMillis();
     }
 
-    public void setStartDelay(final int startDelay) {
+    public void setStartDelay(final String startDelay) {
         this.startDelay = startDelay;
     }
 
-    public int getRepeatInterval() {
-        return repeatInterval;
+    public long getRepeatInterval() {
+        return Beans.newDuration(repeatInterval).toMillis();
     }
 
-    public void setRepeatInterval(final int repeatInterval) {
+    public void setRepeatInterval(final String repeatInterval) {
         this.repeatInterval = repeatInterval;
     }
 

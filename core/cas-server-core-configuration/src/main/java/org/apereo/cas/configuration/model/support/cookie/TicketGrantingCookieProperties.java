@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * Configuration properties class for tgc.
  *
@@ -9,7 +11,7 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 public class TicketGrantingCookieProperties extends CookieProperties {
 
-    private int rememberMeMaxAge = 1209600;
+    private String rememberMeMaxAge = "PT14D";
 
     private String encryptionKey = "";
 
@@ -37,11 +39,11 @@ public class TicketGrantingCookieProperties extends CookieProperties {
         this.signingKey = signingKey;
     }
 
-    public int getRememberMeMaxAge() {
-        return rememberMeMaxAge;
+    public long getRememberMeMaxAge() {
+        return Beans.newDuration(rememberMeMaxAge).getSeconds();
     }
 
-    public void setRememberMeMaxAge(final int rememberMeMaxAge) {
+    public void setRememberMeMaxAge(final String rememberMeMaxAge) {
         this.rememberMeMaxAge = rememberMeMaxAge;
     }
 

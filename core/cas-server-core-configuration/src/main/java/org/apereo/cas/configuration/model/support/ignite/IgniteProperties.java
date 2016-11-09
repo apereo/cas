@@ -1,7 +1,10 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.time.Duration;
 
 /**
  * This is {@link IgniteProperties}.
@@ -23,31 +26,31 @@ public class IgniteProperties {
     private String trustStoreFilePath;
     private String trustStorePassword;
     
-    private int heartbeatFrequency = 2000;
-    private int joinTimeout = 1000;
+    private String heartbeatFrequency = "PT2S";
+    private String joinTimeout = "PT1S";
     private String localAddress;
     private int localPort = -1;
-    private int networkTimeout = 5000;
-    private int socketTimeout = 5000;
+    private String networkTimeout = "PT5S";
+    private String socketTimeout = "PT5S";
     private int threadPriority = 10;
     private boolean forceServerMode;
     
     @NestedConfigurationProperty
     private CryptographyProperties crypto = new CryptographyProperties();
 
-    public int getHeartbeatFrequency() {
-        return heartbeatFrequency;
+    public long getHeartbeatFrequency() {
+        return Duration.parse(heartbeatFrequency).toMillis();
     }
 
-    public void setHeartbeatFrequency(final int heartbeatFrequency) {
+    public void setHeartbeatFrequency(final String heartbeatFrequency) {
         this.heartbeatFrequency = heartbeatFrequency;
     }
 
-    public int getJoinTimeout() {
-        return joinTimeout;
+    public long getJoinTimeout() {
+        return Beans.newDuration(joinTimeout).toMillis();
     }
 
-    public void setJoinTimeout(final int joinTimeout) {
+    public void setJoinTimeout(final String joinTimeout) {
         this.joinTimeout = joinTimeout;
     }
 
@@ -67,19 +70,19 @@ public class IgniteProperties {
         this.localPort = localPort;
     }
 
-    public int getNetworkTimeout() {
-        return networkTimeout;
+    public long getNetworkTimeout() {
+        return Beans.newDuration(networkTimeout).toMillis();
     }
 
-    public void setNetworkTimeout(final int networkTimeout) {
+    public void setNetworkTimeout(final String networkTimeout) {
         this.networkTimeout = networkTimeout;
     }
 
-    public int getSocketTimeout() {
-        return socketTimeout;
+    public long getSocketTimeout() {
+        return Beans.newDuration(socketTimeout).toMillis();
     }
 
-    public void setSocketTimeout(final int socketTimeout) {
+    public void setSocketTimeout(final String socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 

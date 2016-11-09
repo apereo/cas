@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,7 +100,7 @@ public class JpaLockingStrategyTests {
     public void verifyLockExpiration() throws Exception {
         final String appId = "expquick";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
         try {
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
@@ -178,12 +179,12 @@ public class JpaLockingStrategyTests {
         return locks;
     }
 
-    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
+    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final String ttl) {
         final JpaLockingStrategy lock = new JpaLockingStrategy();
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
         lock.setApplicationId(appId);
         lock.setUniqueId(uniqueId);
-        lock.setLockTimeout(ttl);
+        lock.setLockTimeout(Beans.newDuration(ttl).getSeconds());
         return (LockingStrategy) Proxy.newProxyInstance(
                 JpaLockingStrategy.class.getClassLoader(),
                 new Class[]{LockingStrategy.class},

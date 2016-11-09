@@ -1,5 +1,9 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.configuration.support.Beans;
+
+import java.time.Duration;
+
 /**
  * This is {@link ServerProperties}.
  *
@@ -8,7 +12,7 @@ package org.apereo.cas.configuration.model.core;
  */
 public class ServerProperties {
     
-    private int connectionTimeout = 20000;
+    private String connectionTimeout = "PT20S";
     
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
@@ -64,12 +68,12 @@ public class ServerProperties {
         return getPrefix().concat("/logout");
     }
 
-    public void setConnectionTimeout(final int connectionTimeout) {
+    public void setConnectionTimeout(final String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
     public int getConnectionTimeout() {
-        return connectionTimeout;
+        return (int) Duration.parse(connectionTimeout).toMillis();
     }
 
     public static class Ajp {
@@ -79,7 +83,7 @@ public class ServerProperties {
         private boolean allowTrace;
         private String scheme = "http";
         private boolean enabled;
-        private int asyncTimeout = 5000;
+        private String asyncTimeout = "PT5S";
         private boolean enableLookups;
         private int maxPostSize = 20971520;
         private int proxyPort = -1;
@@ -133,11 +137,11 @@ public class ServerProperties {
             this.enabled = enabled;
         }
 
-        public int getAsyncTimeout() {
-            return asyncTimeout;
+        public long getAsyncTimeout() {
+            return Beans.newDuration(asyncTimeout).toMillis();
         }
 
-        public void setAsyncTimeout(final int asyncTimeout) {
+        public void setAsyncTimeout(final String asyncTimeout) {
             this.asyncTimeout = asyncTimeout;
         }
 

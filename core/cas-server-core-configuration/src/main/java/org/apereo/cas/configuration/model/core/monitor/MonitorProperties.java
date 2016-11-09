@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -130,7 +131,7 @@ public class MonitorProperties {
     }
 
     public static class Ldap extends AbstractLdapProperties {
-        private int maxWait = 5000;
+        private String maxWait = "PT5S";
         
         @NestedConfigurationProperty
         private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
@@ -143,18 +144,18 @@ public class MonitorProperties {
             this.pool = pool;
         }
 
-        public int getMaxWait() {
-            return maxWait;
+        public long getMaxWait() {
+            return Beans.newDuration(maxWait).toMillis();
         }
 
-        public void setMaxWait(final int maxWait) {
+        public void setMaxWait(final String maxWait) {
             this.maxWait = maxWait;
         }
     }
     
     public static class Jdbc extends AbstractJpaProperties {
         private String validationQuery = "SELECT 1";
-        private int maxWait = 5000;
+        private String maxWait = "PT5S";
         
         public String getValidationQuery() {
             return validationQuery;
@@ -164,11 +165,11 @@ public class MonitorProperties {
             this.validationQuery = validationQuery;
         }
 
-        public int getMaxWait() {
-            return maxWait;
+        public long getMaxWait() {
+            return Beans.newDuration(maxWait).toMillis();
         }
 
-        public void setMaxWait(final int maxWait) {
+        public void setMaxWait(final String maxWait) {
             this.maxWait = maxWait;
         }
 
