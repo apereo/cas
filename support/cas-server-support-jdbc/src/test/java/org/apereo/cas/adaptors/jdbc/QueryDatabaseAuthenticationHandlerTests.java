@@ -92,7 +92,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"),"psw1");
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), "psw1");
 
     }
 
@@ -102,7 +102,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"),"psw11");
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"), "psw11");
 
     }
 
@@ -112,7 +112,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"),"psw0");
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
 
     }
 
@@ -122,7 +122,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"),"psw0");
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
 
     }
 
