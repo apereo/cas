@@ -137,7 +137,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                                     .build();
         return hashService.computeHash(request).toHex();
     }
-    
+
     public void setAlgorithmName(final String algorithmName) {
         this.algorithmName = algorithmName;
     }
