@@ -7,6 +7,10 @@ title: CAS - Troubleshooting Guide
 
 A number of common questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
 
+## Deployment Problem; X Configuration Issue. Can You Help?
+
+[Study this](#review-logs).
+
 ## How do I tune/extend MongoDb, MySQL, Spring Webflow, etc?
 
 If you have a question about tuning and configuration of external components utilized by CAS
@@ -224,4 +228,10 @@ When changes are applied, restart the server environment and observe the log fil
 understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
 
 Note that the above configuration block only addresses logging behavior of CAS components; not those
-upon which CAS depends.
+upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
+Those are usually your best data source for diagnostics and troubleshooting.
+
+If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-8.5-doc/logging.html), 
+you may also want to look into your `catalina.out`
+and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
+
