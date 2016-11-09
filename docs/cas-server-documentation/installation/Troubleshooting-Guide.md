@@ -7,6 +7,29 @@ title: CAS - Troubleshooting Guide
 
 A number of common questions and answers are gathered here. Please watch for updates as this is likely to grow as time/development moves on.
 
+## Review Logs
+
+CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. 
+Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
+
+```xml
+<AsyncLogger name="org.apereo" level="debug" additivity="false" includeLocation="true">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+```
+
+When changes are applied, restart the server environment and observe the log files to get a better 
+understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
+
+Note that the above configuration block only addresses logging behavior of CAS components; not those
+upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
+Those are usually your best data source for diagnostics and troubleshooting.
+
+If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-8.5-doc/logging.html), 
+you may also want to look into your `catalina.out`
+and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
+
 ## Deployment Problem; X Configuration Issue. Can You Help?
 
 [Study this](#review-logs).
@@ -211,27 +234,3 @@ Sample `setenv.sh` Tomcat Script follows:
  
 export CATALINA_OPTS
 ```
-
-## Review logs
-
-CAS server logs are the best resource for determining the root cause of the problem, provided you have configured the appropriate log levels. 
-Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo` package in the log configuration:
-
-```xml
-<AsyncLogger name="org.apereo" level="debug" additivity="false" includeLocation="true">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
-</AsyncLogger>
-```
-
-When changes are applied, restart the server environment and observe the log files to get a better 
-understanding of CAS behavior. For more info, please [review  this guide](Logging.html) on how to configure logs with CAS.
-
-Note that the above configuration block only addresses logging behavior of CAS components; not those
-upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
-Those are usually your best data source for diagnostics and troubleshooting.
-
-If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-8.5-doc/logging.html), 
-you may also want to look into your `catalina.out`
-and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
-
