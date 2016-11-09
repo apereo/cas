@@ -223,11 +223,14 @@ public final class LogoutManagerImpl implements LogoutManager {
             final String tenantId = AuthUtils.extractTenantID(serviceUrl.toString());
             final String endPointServerUrl = getPlanEndPointServerName(tenantId);
             
-            final StringBuilder url = new StringBuilder();
-            url.append(endPointServerUrl)
-               .append(serviceUrl.getFile());
+            final StringBuilder logoutUrlBuilder = new StringBuilder();
+            logoutUrlBuilder.append(endPointServerUrl);
+            if(serviceUrl.getPort() != -1) {
+            	logoutUrlBuilder.append(":").append(serviceUrl.getPort());
+            }
+            logoutUrlBuilder.append(serviceUrl.getFile());
             
-            URL logoutUrl = new URL(url.toString());
+            URL logoutUrl = new URL(logoutUrlBuilder.toString());
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
 
             if (serviceLogoutUrl != null) {
