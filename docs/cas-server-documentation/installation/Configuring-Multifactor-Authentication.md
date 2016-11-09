@@ -110,8 +110,8 @@ and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Au
 MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) 
 groups to which the authenticated principal is assigned. 
 Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
-The group's comparing factor **MUST** be defined in CAS to activate this behavior by CAS
-and can be based on the group's name, display name, etc where
+The group's comparing factor **MUST** be defined in CAS to activate this behavior
+and it can be based on the group's name, display name, etc where
 a successful match against a provider id shall activate the chosen MFA provider. 
 
 ```xml
