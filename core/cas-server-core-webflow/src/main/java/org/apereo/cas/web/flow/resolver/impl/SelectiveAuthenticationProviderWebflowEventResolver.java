@@ -29,7 +29,7 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
     private CasConfigurationProperties casProperties;
     
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         final Set<Event> resolvedEvents = getResolvedEventsAsAttribute(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
         final RegisteredService registeredService = WebUtils.getRegisteredService(context);
