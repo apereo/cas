@@ -227,7 +227,6 @@ public final class LogoutManagerImpl implements LogoutManager {
             url.append(endPointServerUrl)
                .append(serviceUrl.getFile());
             
-            //URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
             URL logoutUrl = new URL(url.toString());
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
 
