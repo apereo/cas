@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class OidcAuthenticationContextWebflowEventResolver extends AbstractCasWebflowEventResolver {
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);

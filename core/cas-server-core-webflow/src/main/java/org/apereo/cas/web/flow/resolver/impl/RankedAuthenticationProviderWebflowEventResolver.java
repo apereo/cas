@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,7 +32,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
     private AuthenticationContextValidator authenticationContextValidator;
 
     @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         final String tgt = WebUtils.getTicketGrantingTicketId(context);
         final RegisteredService service = WebUtils.getRegisteredService(context);
 
@@ -84,6 +85,14 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
         return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
 
+    }
+
+
+    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Override
+    public Event resolveSingle(final RequestContext context) {
+        return super.resolveSingle(context);
     }
 
     public void setInitialAuthenticationAttemptWebflowEventResolver(

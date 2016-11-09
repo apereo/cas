@@ -33,4 +33,12 @@ public interface CasWebflowEventResolver {
     default String getName() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Resolve internal event.
+     *
+     * @param context the context
+     * @return the event
+     */
+    Set<Event> resolveInternal(RequestContext context);
 }

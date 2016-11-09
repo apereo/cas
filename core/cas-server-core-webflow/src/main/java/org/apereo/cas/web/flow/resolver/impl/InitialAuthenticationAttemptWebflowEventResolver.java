@@ -36,6 +36,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
