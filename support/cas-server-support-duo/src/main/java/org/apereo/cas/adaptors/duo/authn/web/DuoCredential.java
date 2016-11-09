@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
 
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class DuoCredential implements Credential, Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("username", this.username)
                 .append("signedDuoResponse", this.signedDuoResponse)
                 .toString();
@@ -39,14 +40,14 @@ public class DuoCredential implements Credential, Serializable {
         }
         final DuoCredential other = (DuoCredential) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.username, other.username);
+        builder.append(this.username, other.getUsername());
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
-        builder.append(this.username);
+        builder.append(this.getUsername());
         return builder.toHashCode();
     }
 
