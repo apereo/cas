@@ -316,6 +316,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
         }
 
-        logger.debug("LDAP authentication entry attributes are {}", this.authenticatedEntryAttributes);
+        logger.debug("LDAP authentication entry attributes are {}", (Object[]) this.authenticatedEntryAttributes);
     }
 }
