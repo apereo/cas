@@ -1,6 +1,5 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
@@ -22,8 +21,6 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import static org.springframework.boot.SpringApplication.run;
 
 /**
  * This is {@link CasWebApplication}.
