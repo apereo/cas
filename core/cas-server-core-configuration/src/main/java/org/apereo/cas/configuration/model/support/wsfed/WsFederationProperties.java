@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -17,7 +18,7 @@ public class WsFederationProperties {
     private String identityProviderUrl = "https://adfs.example.org/adfs/ls/";
     private String signingCertificateResources = "classpath:adfs-signing.crt";
     private String relyingPartyIdentifier = "urn:cas:localhost";
-    private int tolerance = 10000;
+    private String tolerance = "PT10S";
     private String attributesType = "WSFED";
     private boolean attributeResolverEnabled = true;
     private boolean autoRedirect = true;
@@ -85,11 +86,11 @@ public class WsFederationProperties {
         this.relyingPartyIdentifier = relyingPartyIdentifier;
     }
 
-    public int getTolerance() {
-        return tolerance;
+    public long getTolerance() {
+        return Beans.newDuration(tolerance).toMillis();
     }
 
-    public void setTolerance(final int tolerance) {
+    public void setTolerance(final String tolerance) {
         this.tolerance = tolerance;
     }
 
