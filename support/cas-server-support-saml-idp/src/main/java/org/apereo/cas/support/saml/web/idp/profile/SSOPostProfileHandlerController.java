@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.util.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;

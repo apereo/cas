@@ -25,7 +25,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.Pair;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
