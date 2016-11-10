@@ -20,9 +20,9 @@ import static org.junit.Assert.*;
  */
 public class AcceptUsersAuthenticationHandlerTests {
 
-    private Map<String, String> users;
+    private final Map<String, String> users;
 
-    private AcceptUsersAuthenticationHandler authenticationHandler;
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
         this.users = new HashMap<>();

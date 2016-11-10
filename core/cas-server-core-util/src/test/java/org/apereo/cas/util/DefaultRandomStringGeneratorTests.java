@@ -16,7 +16,7 @@ public class DefaultRandomStringGeneratorTests {
 
     private static final int LENGTH = 35;
 
-    private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
+    private final RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
         LENGTH);
 
     @Test

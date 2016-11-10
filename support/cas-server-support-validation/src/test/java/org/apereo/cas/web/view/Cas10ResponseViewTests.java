@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  */
 public class Cas10ResponseViewTests {
 
-    private Cas10ResponseView view = new Cas10ResponseView();
+    private final Cas10ResponseView view = new Cas10ResponseView();
 
     private Map<String, Object> model;
 
