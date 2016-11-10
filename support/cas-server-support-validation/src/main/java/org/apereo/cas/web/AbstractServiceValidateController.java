@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -140,7 +141,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         // no MFA auth context found
         if (!requestedContext.isPresent()) {
             logger.debug("No particular authentication context is required for this request");
-            return new Pair<>(Boolean.TRUE, Optional.empty());
+            return Pair.of(Boolean.TRUE, Optional.empty());
         }
 
         // validate the requested strategy
@@ -247,7 +248,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
-        if (!ctxResult.getFirst()) {
+        if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
@@ -266,7 +267,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         onSuccessfulValidation(serviceTicketId, assertion);
         logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request, 
-                ctxResult.getSecond(), proxyGrantingTicketId);
+                ctxResult.getValue(), proxyGrantingTicketId);
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, 
