@@ -148,11 +148,11 @@ public class QueryDatabaseAuthenticationHandlerTests {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
                 new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
 
-        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+        q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc1") +"' password"));
 
         q.setPasswordEncoder(encoder);
         q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"));
     }
 
     /**
@@ -166,10 +166,11 @@ public class QueryDatabaseAuthenticationHandlerTests {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
                 new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
 
-        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+        q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc2") +"' password"));
 
         q.setPasswordEncoder(encoder);
-        q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw0"),"psw0");
+        assertNotNull(q.authenticateUsernamePasswordInternal(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"),"pswbc2"));
+
     }
 }

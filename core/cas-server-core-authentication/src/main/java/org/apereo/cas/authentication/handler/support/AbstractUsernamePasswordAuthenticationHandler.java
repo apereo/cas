@@ -77,7 +77,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential,final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,final String originalPassword)
             throws   GeneralSecurityException, PreventedException {
         return authenticateUsernamePasswordInternal(transformedCredential);
     }
