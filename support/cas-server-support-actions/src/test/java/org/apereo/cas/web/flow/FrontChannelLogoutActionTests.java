@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.LogoutManagerImpl;
-import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;

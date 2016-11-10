@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -108,7 +109,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
 
-        final Pair<SignableSAMLObject, MessageContext> pair = new Pair<>(authnRequest, ctx);
+        final Pair<SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
     }
 }
