@@ -60,7 +60,25 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         userPass.setUsername(transformedUsername);
         userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
 
-        return authenticateUsernamePasswordInternal(userPass);
+        return authenticateUsernamePasswordInternal(userPass,((UsernamePasswordCredential) credential).getPassword());
+    }
+
+    /**
+     * Authenticates a username/password credential by an arbitrary strategy with extra parameter original credential password before
+     * encoding password. Override it if implementation need to use original password for authentication.
+     *
+     * @param transformedCredential the credential object bearing the transformed username and password.
+     * @param originalPassword original password from credential before password encoding
+     *
+     * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
+     * from the credential.
+     *
+     * @throws GeneralSecurityException On authentication failure.
+     * @throws PreventedException On the indeterminate case when authentication is prevented.
+     */
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,final String originalPassword)
+            throws   GeneralSecurityException, PreventedException {
+        return authenticateUsernamePasswordInternal(transformedCredential);
     }
 
     /**
@@ -107,4 +125,19 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
         return false;
     }
+
+    /**
+     * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded
+     * password is different and we cannot use traditional compare of encoded strings to check if passwords match
+     *
+     * @param charSequence raw not encoded password
+     * @param password encoded password to compare with
+     *
+     * @return true in case charSequence matched encoded password
+     */
+    protected boolean matches(final CharSequence charSequence,final String password){
+        return this.passwordEncoder.matches(charSequence,password);
+    }
+
+
 }
