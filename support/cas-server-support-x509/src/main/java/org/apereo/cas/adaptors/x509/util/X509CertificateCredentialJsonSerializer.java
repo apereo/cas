@@ -25,9 +25,7 @@ public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509
             throws IOException {
 
         generator.writeArrayFieldStart("certificates");
-        Arrays.stream(value.getCertificates()).forEach(Unchecked.consumer(c -> {
-            generator.writeBinary(c.getEncoded());
-        }));
+        Arrays.stream(value.getCertificates()).forEach(Unchecked.consumer(c -> generator.writeBinary(c.getEncoded())));
         generator.writeEndArray();
     }
 

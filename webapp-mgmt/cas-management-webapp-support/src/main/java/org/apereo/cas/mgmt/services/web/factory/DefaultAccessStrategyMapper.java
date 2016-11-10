@@ -110,10 +110,8 @@ public class DefaultAccessStrategyMapper implements AccessStrategyMapper {
 
         final Set<RegisteredServiceEditBean.ServiceData.PropertyBean> rejectedAttrs = supportAccess.getRejectedAttr();
         accessStrategy.getRejectedAttributes().clear();
-        rejectedAttrs.forEach(p -> {
-            accessStrategy.getRejectedAttributes().put(p.getName(), 
-                    org.springframework.util.StringUtils.commaDelimitedListToSet(p.getValue()));
-        });
+        rejectedAttrs.forEach(p -> accessStrategy.getRejectedAttributes().put(p.getName(),
+                org.springframework.util.StringUtils.commaDelimitedListToSet(p.getValue())));
         
 
         if (supportAccess.getUnauthorizedRedirectUrl() != null && !supportAccess.getUnauthorizedRedirectUrl().trim().isEmpty()) {

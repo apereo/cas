@@ -93,9 +93,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
                     this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-                    (resultSet, i) -> {
-                        return resultSet.getTimestamp(1);
-                    });
+                    (resultSet, i) -> resultSet.getTimestamp(1));
             if (failures.size() < 2) {
                 return false;
             }
