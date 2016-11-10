@@ -724,7 +724,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.principalTransformation.prefix=
 ```
 
-## File Authentication
+## File (Whitelist) Authentication
 
 To learn more about this topic, [please review this guide](Whitelist-Authentication.html).
 
@@ -743,7 +743,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.principalTransformation.prefix=
 ```
 
-## Reject Users Authentication
+## Reject Users (Blacklist) Authentication
 
 To learn more about this topic, [please review this guide](Blacklist-Authentication.html).
 
