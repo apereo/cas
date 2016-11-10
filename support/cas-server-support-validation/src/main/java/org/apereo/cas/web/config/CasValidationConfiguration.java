@@ -1,7 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -52,7 +52,7 @@ public class CasValidationConfiguration {
             
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private DefaultAuthenticationContextValidator authenticationContextValidator;
+    private AuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

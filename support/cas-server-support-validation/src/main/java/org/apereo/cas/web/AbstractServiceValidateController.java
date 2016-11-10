@@ -6,7 +6,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -81,7 +81,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
         
-    private DefaultAuthenticationContextValidator authenticationContextValidator;
+    private AuthenticationContextValidator authenticationContextValidator;
     
     private View jsonView;
 
@@ -499,7 +499,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
     
-    public void setAuthenticationContextValidator(final DefaultAuthenticationContextValidator authenticationContextValidator) {
+    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
         this.authenticationContextValidator = authenticationContextValidator;
     }
 

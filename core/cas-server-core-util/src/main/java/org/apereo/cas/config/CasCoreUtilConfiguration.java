@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +33,10 @@ public class CasCoreUtilConfiguration {
     @PostConstruct
     public void init() {
         final ConfigurableApplicationContext applicationContext = applicationContextProvider().getConfigurableApplicationContext();
+
+        final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
+        applicationContext.getEnvironment().setConversionService(conversionService);
+
         final ScheduledAnnotationBeanPostProcessor p = applicationContext.getBean(ScheduledAnnotationBeanPostProcessor.class);
         p.setEmbeddedValueResolver(new EmbeddedValueResolver(applicationContext.getBeanFactory()) {
             @Override

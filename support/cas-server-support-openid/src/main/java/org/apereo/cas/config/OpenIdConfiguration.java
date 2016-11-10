@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
@@ -113,7 +113,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private DefaultAuthenticationContextValidator authenticationContextValidator;
+    private AuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
