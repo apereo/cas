@@ -32,7 +32,7 @@ public class ValidateCaptchaAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCaptchaAction.class);
     private static final String CODE = "captchaError";
 
-    private GoogleRecaptchaProperties recaptchaProperties;
+    private final GoogleRecaptchaProperties recaptchaProperties;
 
     public ValidateCaptchaAction(final GoogleRecaptchaProperties recaptchaProperties) {
         this.recaptchaProperties = recaptchaProperties;
