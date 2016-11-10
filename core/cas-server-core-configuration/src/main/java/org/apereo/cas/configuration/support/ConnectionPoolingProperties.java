@@ -9,8 +9,8 @@ package org.apereo.cas.configuration.support;
 public class ConnectionPoolingProperties {
     private int minSize = 6;
     private int maxSize = 18;
-    private int maxIdleTime = 1_000;
-    private int maxWait = 2_000;
+    private String maxIdleTime = "PT1S";
+    private String maxWait = "PT2S";
     private boolean suspension;
 
     public boolean isSuspension() {
@@ -37,19 +37,19 @@ public class ConnectionPoolingProperties {
         this.maxSize = maxSize;
     }
 
-    public int getMaxIdleTime() {
-        return maxIdleTime;
+    public long getMaxIdleTime() {
+        return Beans.newDuration(maxIdleTime).toMillis();
     }
 
-    public void setMaxIdleTime(final int maxIdleTime) {
+    public void setMaxIdleTime(final String maxIdleTime) {
         this.maxIdleTime = maxIdleTime;
     }
 
-    public int getMaxWait() {
-        return maxWait;
+    public long getMaxWait() {
+        return Beans.newDuration(maxWait).toMillis();
     }
 
-    public void setMaxWait(final int maxWait) {
+    public void setMaxWait(final String maxWait) {
         this.maxWait = maxWait;
     }
 }

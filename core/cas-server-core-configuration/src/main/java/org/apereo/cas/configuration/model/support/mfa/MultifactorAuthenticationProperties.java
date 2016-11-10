@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
+import org.apereo.cas.configuration.support.Beans;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -724,8 +725,9 @@ public class MultifactorAuthenticationProperties {
         
         public static class Cleaner {
             private boolean enabled = true;
-            private long startDelay = 10000;
-            private long repeatInterval = 60000;
+            private String startDelay = "PT15S";
+
+            private String repeatInterval = "PT2M";
             
             public boolean isEnabled() {
                 return enabled;
@@ -736,18 +738,18 @@ public class MultifactorAuthenticationProperties {
             }
 
             public long getStartDelay() {
-                return startDelay;
+                return Beans.newDuration(startDelay).toMillis();
             }
 
-            public void setStartDelay(final long startDelay) {
+            public void setStartDelay(final String startDelay) {
                 this.startDelay = startDelay;
             }
 
             public long getRepeatInterval() {
-                return repeatInterval;
+                return Beans.newDuration(repeatInterval).toMillis();
             }
 
-            public void setRepeatInterval(final long repeatInterval) {
+            public void setRepeatInterval(final String repeatInterval) {
                 this.repeatInterval = repeatInterval;
             }
         }
