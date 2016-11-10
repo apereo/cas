@@ -25,11 +25,11 @@ import java.security.GeneralSecurityException;
  * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    
+
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
-    
+
     private Predicate<Credential> credentialSelectionPredicate = Predicates.alwaysTrue();
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
@@ -60,7 +60,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         userPass.setUsername(transformedUsername);
         userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
 
-        return authenticateUsernamePasswordInternal(userPass,((UsernamePasswordCredential) credential).getPassword());
+        return authenticateUsernamePasswordInternal(userPass, ((UsernamePasswordCredential) credential).getPassword());
     }
 
     /**
@@ -68,16 +68,14 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * encoding password. Override it if implementation need to use original password for authentication.
      *
      * @param transformedCredential the credential object bearing the transformed username and password.
-     * @param originalPassword original password from credential before password encoding
-     *
+     * @param originalPassword      original password from credential before password encoding
      * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
-     *
      * @throws GeneralSecurityException On authentication failure.
-     * @throws PreventedException On the indeterminate case when authentication is prevented.
+     * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,final String originalPassword)
-            throws   GeneralSecurityException, PreventedException {
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, final String originalPassword)
+            throws GeneralSecurityException, PreventedException {
         return authenticateUsernamePasswordInternal(transformedCredential);
     }
 
@@ -85,12 +83,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * Authenticates a username/password credential by an arbitrary strategy.
      *
      * @param transformedCredential the credential object bearing the transformed username and password.
-     *
      * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
-     *
      * @throws GeneralSecurityException On authentication failure.
-     * @throws PreventedException On the indeterminate case when authentication is prevented.
+     * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
@@ -131,12 +127,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * password is different and we cannot use traditional compare of encoded strings to check if passwords match
      *
      * @param charSequence raw not encoded password
-     * @param password encoded password to compare with
-     *
+     * @param password     encoded password to compare with
      * @return true in case charSequence matched encoded password
      */
-    protected boolean matches(final CharSequence charSequence,final String password){
-        return this.passwordEncoder.matches(charSequence,password);
+    protected boolean matches(final CharSequence charSequence, final String password) {
+        return this.passwordEncoder.matches(charSequence, password);
     }
 
 
