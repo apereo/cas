@@ -98,7 +98,7 @@ public class Beans {
             bean.setPassword(jpaProperties.getPassword());
 
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(jpaProperties.getPool().getMaxIdleTime());
+            bean.setMinimumIdle(Long.valueOf(jpaProperties.getPool().getMaxIdleTime()).intValue());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailFast(jpaProperties.isFailFast());
@@ -106,7 +106,7 @@ public class Beans {
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setLoginTimeout(jpaProperties.getPool().getMaxWait());
+            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
             return bean;
         } catch (final Exception e) {
@@ -137,7 +137,7 @@ public class Beans {
         final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
         bean.setCorePoolSize(config.getMinSize());
         bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds(config.getMaxWait());
+        bean.setKeepAliveSeconds(Long.valueOf(config.getMaxWait()).intValue());
         return bean;
     }
 

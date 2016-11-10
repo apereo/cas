@@ -133,7 +133,7 @@ public class WsFederationCredential implements Credential {
      * @param timeDrift        the amount of acceptable time drift
      * @return true if the credentials are valid, otherwise false
      */
-    public boolean isValid(final String expectedAudience, final String expectedIssuer, final int timeDrift) {
+    public boolean isValid(final String expectedAudience, final String expectedIssuer, final long timeDrift) {
         if (!this.getAudience().equalsIgnoreCase(expectedAudience)) {
             logger.warn("Audience is invalid: {}", this.getAudience());
             return false;
