@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
@@ -13,11 +14,16 @@ import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static org.springframework.boot.SpringApplication.run;
 
 /**
  * This is {@link CasWebApplication}.
@@ -58,6 +64,10 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasWebApplication.class)
                 .banner(new CasBanner())
+                .initializers((ApplicationContextInitializer<ConfigurableApplicationContext>) applicationContext -> {
+                    final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
+                    applicationContext.getEnvironment().setConversionService(conversionService);
+                })
                 .run(args);
     }
 }

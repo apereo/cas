@@ -1,5 +1,5 @@
 apply plugin: "war"
-apply plugin: "spring-boot"
+apply plugin: "org.springframework.boot"
 
 description = "Apereo CAS Web Application"
 

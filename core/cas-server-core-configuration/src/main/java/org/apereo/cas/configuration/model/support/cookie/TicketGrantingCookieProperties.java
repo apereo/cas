@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.support.Beans;
 
 public class TicketGrantingCookieProperties extends CookieProperties {
 
-    private String rememberMeMaxAge = "PT14D";
+    private String rememberMeMaxAge = "P14D";
 
     private String encryptionKey = "";
 

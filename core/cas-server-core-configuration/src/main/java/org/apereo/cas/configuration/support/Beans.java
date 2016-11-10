@@ -382,7 +382,7 @@ public class Beans {
             final CompareRequest compareRequest = new CompareRequest();
             compareRequest.setDn(l.getValidator().getDn());
             compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValues().toArray(new String[] {})));
+                    l.getValidator().getAttributeValues().toArray(new String[]{})));
             compareRequest.setReferralHandler(new SearchReferralHandler());
             cp.setValidator(new CompareValidator(compareRequest));
         } else {
@@ -422,10 +422,14 @@ public class Beans {
      * @return the duration
      */
     public static Duration newDuration(final String length) {
-        if (NumberUtils.isNumber(length)) {
-            return Duration.ofSeconds(Long.valueOf(length));
+        try {
+            if (NumberUtils.isNumber(length)) {
+                return Duration.ofSeconds(Long.valueOf(length));
+            }
+            return Duration.parse(length);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        return Duration.parse(length);
     }
 
     /**
