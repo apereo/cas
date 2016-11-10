@@ -16,7 +16,7 @@ public class MockService implements Service {
 
     private static final long serialVersionUID = 117438127028057173L;
     private boolean loggedOut;
-    private String id;
+    private final String id;
 
     public MockService(final String id) {
         this.id = id;

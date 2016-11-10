@@ -55,7 +55,7 @@ public class AuthenticationExceptionHandler {
     private static final Set<Class<? extends Exception>> DEFAULT_ERROR_LIST =
             new HashSet<>();
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Order is important here; We want the account policy exceptions to be handled

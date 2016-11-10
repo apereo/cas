@@ -16,9 +16,9 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
  */
 public class AuthyAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    private String authenticationContextAttribute;
-    private AuthenticationHandler authenticationHandler;
-    private MultifactorAuthenticationProvider provider;
+    private final String authenticationContextAttribute;
+    private final AuthenticationHandler authenticationHandler;
+    private final MultifactorAuthenticationProvider provider;
 
     public AuthyAuthenticationMetaDataPopulator(final String authenticationContextAttribute,
                                                 final AuthenticationHandler authenticationHandler,
