@@ -8,6 +8,8 @@ import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsern
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasThrottlingConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasThrottlingConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,8 +66,7 @@ public class CasThrottlingConfiguration {
 
 
     private static ThrottledSubmissionHandlerInterceptor neverThrottle() {
-        return new ThrottledSubmissionHandlerInterceptor() {
-        };
+        return () -> LOGGER.debug("Throttling is turned off. No cleanup will take place");
     }
 
     private AbstractThrottledSubmissionHandlerInterceptorAdapter
