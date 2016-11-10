@@ -46,7 +46,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /**
      * Instance of Logging.
      */
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The compiled pattern supplied by the deployer.

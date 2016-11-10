@@ -143,7 +143,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
 
     private static class AttributeContext {
         private int currentIndex;
-        private String[] values;
+        private final String[] values;
 
         /**
          * Instantiates a new attribute context.

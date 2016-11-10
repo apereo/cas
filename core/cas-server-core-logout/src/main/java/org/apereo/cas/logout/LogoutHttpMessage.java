@@ -14,7 +14,7 @@ import java.net.URL;
 public class LogoutHttpMessage extends HttpMessage {
 
     /** The parameter name that contains the logout request. */
-    private String logoutParameterName = "logoutRequest";
+    private final String logoutParameterName = "logoutRequest";
     
     private boolean prefixLogoutParameterName = true;
 

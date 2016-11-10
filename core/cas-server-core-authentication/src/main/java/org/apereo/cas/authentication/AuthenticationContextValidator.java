@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 public class AuthenticationContextValidator {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String authenticationContextAttribute;
 
