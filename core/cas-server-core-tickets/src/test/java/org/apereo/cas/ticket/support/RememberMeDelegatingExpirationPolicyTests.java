@@ -46,7 +46,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
     public void verifyTicketExpirationWithRememberMe() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
-                Collections.<String, Object>singletonMap(
+                Collections.singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());

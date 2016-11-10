@@ -47,7 +47,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final String VALUE_PATTERN = "^enforce.*$";
     private static final String VALUE_NOMATCH = "noop";
 
-    private DefaultPrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final DefaultPrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 

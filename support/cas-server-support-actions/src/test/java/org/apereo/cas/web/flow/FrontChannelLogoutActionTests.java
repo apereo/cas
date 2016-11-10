@@ -85,7 +85,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutNoIndex() throws Exception {
-        WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
+        WebUtils.putLogoutRequests(this.requestContext, Collections.emptyList());
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }    

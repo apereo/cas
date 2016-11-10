@@ -25,7 +25,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void verifyResponse() {

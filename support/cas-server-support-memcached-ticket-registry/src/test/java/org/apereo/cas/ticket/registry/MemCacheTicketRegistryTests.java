@@ -39,7 +39,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private MemCacheTicketRegistry registry;
 
-    private String registryBean;
+    private final String registryBean;
 
     public MemCacheTicketRegistryTests(final String beanName) {
         registryBean = beanName;

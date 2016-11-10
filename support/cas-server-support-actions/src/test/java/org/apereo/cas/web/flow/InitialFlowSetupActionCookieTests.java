@@ -64,7 +64,7 @@ public class InitialFlowSetupActionCookieTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private InitialFlowSetupAction action = new InitialFlowSetupAction();
+    private final InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 

@@ -57,9 +57,9 @@ public class KryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
-    private KryoTranscoder transcoder;
+    private final KryoTranscoder transcoder;
 
-    private Map<String, Object> principalAttributes;
+    private final Map<String, Object> principalAttributes;
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();

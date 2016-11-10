@@ -72,7 +72,7 @@ public class MultifactorAuthenticationTests {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private final AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired
     @Qualifier("centralAuthenticationService")

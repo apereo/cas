@@ -202,7 +202,7 @@ public class DefaultServicesManagerImplTests {
          */
         private static final long serialVersionUID = 6572142033945243669L;
 
-        private String id;
+        private final String id;
 
         protected SimpleService(final String id) {
             this.id = id;

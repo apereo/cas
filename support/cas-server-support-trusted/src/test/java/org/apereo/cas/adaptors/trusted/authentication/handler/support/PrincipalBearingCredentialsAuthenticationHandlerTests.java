@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  */
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
-    private PrincipalBearingCredentialsAuthenticationHandler handler
+    private final PrincipalBearingCredentialsAuthenticationHandler handler
                 = new PrincipalBearingCredentialsAuthenticationHandler();
     /**
      * When the credentials bear a Principal, succeed the authentication.

@@ -44,10 +44,10 @@ import java.util.Collection;
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
 
     /** Instance under test. */
-    private CRLDistributionPointRevocationChecker checker;
+    private final CRLDistributionPointRevocationChecker checker;
 
     /** Answers requests for CRLs made to localhost:8085. */
-    private MockWebServer webServer;
+    private final MockWebServer webServer;
 
 
     /**

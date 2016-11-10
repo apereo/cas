@@ -22,8 +22,8 @@ import java.util.Collection;
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     private X509Certificate certificate;
-    private X509SubjectAlternativeNameUPNPrincipalResolver resolver;
-    private String expected;
+    private final X509SubjectAlternativeNameUPNPrincipalResolver resolver;
+    private final String expected;
 
     /**
      * Creates a new test instance with the given parameters.

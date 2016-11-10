@@ -30,7 +30,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     /** Instance under test. */
-    private ResourceCRLRevocationChecker checker;
+    private final ResourceCRLRevocationChecker checker;
 
     /**
      * Creates a new test instance with given parameters.

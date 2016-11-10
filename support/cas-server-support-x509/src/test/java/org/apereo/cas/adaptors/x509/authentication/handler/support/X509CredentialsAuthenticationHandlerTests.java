@@ -42,22 +42,22 @@ public class X509CredentialsAuthenticationHandlerTests {
     /**
      * Subject of test.
      */
-    private X509CredentialsAuthenticationHandler handler;
+    private final X509CredentialsAuthenticationHandler handler;
 
     /**
      * Test authentication credential.
      */
-    private Credential credential;
+    private final Credential credential;
 
     /**
      * Expected result of supports test.
      */
-    private boolean expectedSupports;
+    private final boolean expectedSupports;
 
     /**
      * Expected authentication result.
      */
-    private Object expectedResult;
+    private final Object expectedResult;
 
 
     /**

@@ -138,7 +138,7 @@ public class DefaultHandlerResult implements HandlerResult {
     @Override
     public List<MessageDescriptor> getWarnings() {
         return this.warnings == null
-                ? Collections.<MessageDescriptor>emptyList()
+                ? Collections.emptyList()
                 : Collections.unmodifiableList(this.warnings);
     }
 

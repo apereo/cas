@@ -96,7 +96,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private final AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     public ArgumentExtractor getArgumentExtractor() {
         return this.argumentExtractor;

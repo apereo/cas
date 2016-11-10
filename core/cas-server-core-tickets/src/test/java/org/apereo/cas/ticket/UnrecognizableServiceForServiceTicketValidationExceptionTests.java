@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  */
 public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
-    private Service service = RegisteredServiceTestUtils.getService();
+    private final Service service = RegisteredServiceTestUtils.getService();
 
     @Test
     public void verifyThrowableConstructor() {

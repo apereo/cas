@@ -30,7 +30,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     private Map<String, List<Object>> attributes;
 
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     private Principal principal;
 
@@ -50,7 +50,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         when(dao.getPerson(any(String.class))).thenReturn(person);
 
         this.principal = this.principalFactory.createPrincipal("uid",
-                Collections.<String, Object>singletonMap("mail",
+                Collections.singletonMap("mail",
                         new ArrayList(Lists.newArrayList(new Object[]{"final@school.com"}))));
     }
 

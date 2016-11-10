@@ -23,8 +23,8 @@ import java.util.Collection;
 public class X509SubjectPrincipalResolverTests {
 
     private X509Certificate certificate;
-    private X509SubjectPrincipalResolver resolver;
-    private String expected;
+    private final X509SubjectPrincipalResolver resolver;
+    private final String expected;
 
     /**
      * Creates a new test instance with the given parameters.

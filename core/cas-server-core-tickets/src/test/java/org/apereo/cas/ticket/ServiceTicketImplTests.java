@@ -33,7 +33,7 @@ public class ServiceTicketImplTests {
     private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     private ObjectMapper mapper;
 

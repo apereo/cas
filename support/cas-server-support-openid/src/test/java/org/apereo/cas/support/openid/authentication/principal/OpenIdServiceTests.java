@@ -24,11 +24,11 @@ import static org.junit.Assert.*;
 public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private OpenIdService openIdService;
 
-    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     private Association association;
 
