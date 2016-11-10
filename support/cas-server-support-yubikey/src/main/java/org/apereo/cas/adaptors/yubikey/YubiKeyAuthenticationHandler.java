@@ -34,7 +34,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     private YubiKeyAccountRegistry registry;
 
-    private YubicoClient client;
+    private final YubicoClient client;
 
     /**
      * Prepares the Yubico client with the received clientId and secretKey. If you wish to
