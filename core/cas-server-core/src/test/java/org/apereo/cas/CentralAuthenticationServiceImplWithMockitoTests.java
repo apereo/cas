@@ -1,42 +1,42 @@
 package org.apereo.cas;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedProxyingException;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.DefaultProxyTicketFactory;
+import org.apereo.cas.ticket.DefaultServiceTicketFactory;
+import org.apereo.cas.ticket.DefaultTicketFactory;
 import org.apereo.cas.ticket.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
-import org.apereo.cas.authentication.CredentialMetaData;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.RegisteredServiceProxyPolicy;
-import org.apereo.cas.services.UnauthorizedProxyingException;
-import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.DefaultServiceTicketFactory;
-import org.apereo.cas.ticket.DefaultTicketFactory;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.Ticket;
-
-import com.google.common.base.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -79,7 +79,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private TicketRegistry ticketRegMock;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
-        private String id;
+        private final String id;
 
         VerifyServiceByIdMatcher(final String id) {
             this.id = id;
@@ -97,7 +97,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     public void prepareNewCAS() throws Exception {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        final CredentialMetaData metadata = new BasicCredentialMetaData(
+                RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Lists.newArrayList(metadata));
@@ -173,27 +174,27 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ticketRegMock.getTickets()).thenReturn(Lists.newArrayList(tgtMock, tgtMock2, stMock, stMock2));
     }
 
-    @Test(expected=InvalidTicketException.class)
+    @Test(expected = InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
     }
 
-    @Test(expected=UnauthorizedServiceException.class)
+    @Test(expected = UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
         this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext());
     }
 
-    @Test(expected=UnauthorizedProxyingException.class)
+    @Test(expected = UnauthorizedProxyingException.class)
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws Exception {
-        this.cas.grantServiceTicket(TGT_ID, org.apereo.cas.services.TestUtils.getService(SVC1_ID), getAuthenticationContext());
+        this.cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
         this.cas.getTicket(null, TicketGrantingTicket.class);
     }
 
-    @Test(expected=InvalidTicketException.class)
+    @Test(expected = InvalidTicketException.class)
     public void getTicketGrantingTicketIfTicketIdIsMissing() throws InvalidTicketException {
         this.cas.getTicket("TGT-9000", TicketGrantingTicket.class);
     }
@@ -206,7 +207,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() throws Exception {
-        final Service svc = org.apereo.cas.services.TestUtils.getService(SVC2_ID);
+        final Service svc = RegisteredServiceTestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
 
