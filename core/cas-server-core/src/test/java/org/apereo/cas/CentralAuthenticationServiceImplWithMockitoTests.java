@@ -81,7 +81,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private TicketRegistry ticketRegMock;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
-        private String id;
+        private final String id;
 
         VerifyServiceByIdMatcher(final String id) {
             this.id = id;
@@ -203,7 +203,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(Predicates.<Ticket>alwaysTrue());
+        final Collection<Ticket> c = this.cas.getTickets(Predicates.alwaysTrue());
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 

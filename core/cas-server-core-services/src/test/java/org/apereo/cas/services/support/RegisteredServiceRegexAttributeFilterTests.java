@@ -32,8 +32,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private RegisteredServiceAttributeFilter filter;
-    private Map<String, Object> givenAttributesMap;
+    private final RegisteredServiceAttributeFilter filter;
+    private final Map<String, Object> givenAttributesMap;
 
     @Mock
     private RegisteredService registeredService;

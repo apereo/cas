@@ -39,7 +39,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
         final String description = "Validation failed";
         this.view.renderMergedOutputModel(
-                Collections.<String, Object>singletonMap("description", description), request, response);
+                Collections.singletonMap("description", description), request, response);
 
         final String responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));

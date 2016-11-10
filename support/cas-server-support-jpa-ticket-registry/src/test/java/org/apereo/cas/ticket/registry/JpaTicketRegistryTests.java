@@ -65,7 +65,7 @@ public class JpaTicketRegistryTests {
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
     /** Logger instance. */
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -245,9 +245,9 @@ public class JpaTicketRegistryTests {
     }
 
     private static class ServiceTicketGenerator implements Callable<String> {
-        private PlatformTransactionManager txManager;
-        private String parentTgtId;
-        private TicketRegistry jpaTicketRegistry;
+        private final PlatformTransactionManager txManager;
+        private final String parentTgtId;
+        private final TicketRegistry jpaTicketRegistry;
 
         ServiceTicketGenerator(final String tgtId, final TicketRegistry jpaTicketRegistry,
                                       final PlatformTransactionManager txManager) {

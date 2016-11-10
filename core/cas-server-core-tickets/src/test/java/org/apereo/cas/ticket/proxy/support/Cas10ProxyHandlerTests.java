@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
  */
 public class Cas10ProxyHandlerTests {
 
-    private ProxyHandler proxyHandler = new Cas10ProxyHandler();
+    private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
     public void verifyNoCredentialsOrProxy() {

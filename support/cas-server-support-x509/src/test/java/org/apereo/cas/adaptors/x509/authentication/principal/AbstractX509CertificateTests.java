@@ -30,9 +30,9 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
     protected static class CasX509Certificate extends X509Certificate {
         
         private static final long serialVersionUID = -4449243195531417769L;
-        private X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+        private final X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
         
-        private boolean valid;
+        private final boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
