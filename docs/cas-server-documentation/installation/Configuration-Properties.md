@@ -28,6 +28,8 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## Remember
 
+### Naming Convention
+
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
 and syntax. **BE CAREFUL** with the distinction.
@@ -36,8 +38,24 @@ and syntax. **BE CAREFUL** with the distinction.
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
 
+### Trust But Verify
 - If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
+
+### Time UoM
+
+- All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
+
+```bash
+"PT20S"     -- parses as "20 seconds"
+"PT15M"     -- parses as "15 minutes"
+"PT10H"     -- parses as "10 hours"
+"P2D"       -- parses as "2 days" 
+"P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
+```
+
+The native numeric syntax is still supported though you will have to refer to the docs
+on each case to learn the exact unit of measure.
 
 ## Configuration Storage
 
