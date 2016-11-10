@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * This is {@link OAuthProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class OAuthProperties {
 
     private Code code = new Code();
@@ -59,34 +60,34 @@ public class OAuthProperties {
     }
 
     public static class AccessToken {
-        private long maxTimeToLiveInSeconds = 28800;
-        private long timeToKillInSeconds = 7200;
+        private String maxTimeToLiveInSeconds = "PT28800S";
+        private String timeToKillInSeconds = "PT7200S";
 
         public long getMaxTimeToLiveInSeconds() {
-            return maxTimeToLiveInSeconds;
+            return Beans.newDuration(maxTimeToLiveInSeconds).getSeconds();
         }
 
-        public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds) {
+        public void setMaxTimeToLiveInSeconds(final String maxTimeToLiveInSeconds) {
             this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
         }
 
         public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
+            return Beans.newDuration(timeToKillInSeconds).getSeconds();
         }
 
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+        public void setTimeToKillInSeconds(final String timeToKillInSeconds) {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
 
     public static class RefreshToken {
-        private long timeToKillInSeconds = 2592000;
+        private String timeToKillInSeconds = "P14D";
 
         public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
+            return Beans.newDuration(timeToKillInSeconds).getSeconds();
         }
 
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+        public void setTimeToKillInSeconds(final String timeToKillInSeconds) {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
