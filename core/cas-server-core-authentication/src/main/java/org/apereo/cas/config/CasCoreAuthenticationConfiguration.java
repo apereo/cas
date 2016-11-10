@@ -39,6 +39,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -76,7 +77,7 @@ import java.util.regex.Pattern;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
-    
+
     private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
 
     @Autowired
@@ -116,22 +117,22 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean(name = {"authenticationPolicy", "defaultAuthenticationPolicy"})
     public AuthenticationPolicy defaultAuthenticationPolicy() {
-        if (casProperties.getAuthn().getPolicy().getReq().isEnabled()) {
-            final RequiredHandlerAuthenticationPolicy bean =
-                    new RequiredHandlerAuthenticationPolicy(casProperties.getAuthn().getPolicy().getReq().getHandlerName());
-            bean.setTryAll(casProperties.getAuthn().getPolicy().getReq().isTryAll());
+        final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
+        if (police.getReq().isEnabled()) {
+            final RequiredHandlerAuthenticationPolicy bean = new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName());
+            bean.setTryAll(police.getReq().isTryAll());
             return bean;
         }
 
-        if (casProperties.getAuthn().getPolicy().getAll().isEnabled()) {
+        if (police.getAll().isEnabled()) {
             return new AllAuthenticationPolicy();
         }
 
-        if (casProperties.getAuthn().getPolicy().getNotPrevented().isEnabled()) {
+        if (police.getNotPrevented().isEnabled()) {
             return new NotPreventedAuthenticationPolicy();
         }
 
-        return new AnyAuthenticationPolicy(casProperties.getAuthn().getPolicy().getAny().isTryAll());
+        return new AnyAuthenticationPolicy(police.getAny().isTryAll());
     }
 
     @RefreshScope
@@ -337,19 +338,17 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public SimpleHttpClientFactoryBean.DefaultHttpClient httpClient() {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
-                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
         return c;
     }
 
     @Bean
     public HttpClient noRedirectHttpClient() throws Exception {
-        final SimpleHttpClientFactoryBean.DefaultHttpClient c =
-                new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
         c.setRedirectsEnabled(false);
         c.setCircularRedirectsAllowed(false);
         c.setSslSocketFactory(trustStoreSslSocketFactory());
@@ -360,7 +359,7 @@ public class CasCoreAuthenticationConfiguration {
     public HttpClient supportsTrustStoreSslSocketFactoryHttpClient() throws Exception {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
         c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout(casProperties.getHttpClient().getReadTimeout());
+        c.setReadTimeout(Long.valueOf(casProperties.getHttpClient().getReadTimeout()).intValue());
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         return c.getObject();
     }

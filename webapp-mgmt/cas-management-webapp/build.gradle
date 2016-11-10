@@ -1,5 +1,5 @@
 apply plugin: "war"
-apply plugin: "spring-boot"
+apply plugin: "org.springframework.boot"
 
 description = "Apereo CAS Management Web Application"
 
@@ -14,7 +14,7 @@ bootRun {
     }
 }
 
-springBoot  {
+springBoot {
     mainClass = "org.apereo.cas.mgmt.web.CasManagementWebApplication"
 }
 
@@ -24,8 +24,8 @@ bootRepackage {
 }
 
 war {
-	def currentTime = java.time.ZonedDateTime.now()
-	
+    def currentTime = java.time.ZonedDateTime.now()
+
     manifest {
         attributes("Implementation-Title": project.name,
                 "Implementation-Vendor": project.group,
