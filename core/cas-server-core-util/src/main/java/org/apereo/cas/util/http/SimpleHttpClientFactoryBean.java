@@ -106,7 +106,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
 
-    private int connectionTimeout = DEFAULT_TIMEOUT;
+    private long connectionTimeout = DEFAULT_TIMEOUT;
 
     private int readTimeout = DEFAULT_TIMEOUT;
 
@@ -228,8 +228,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
             final RequestConfig requestConfig = RequestConfig.custom()
                     .setSocketTimeout(this.readTimeout)
-                    .setConnectTimeout(this.connectionTimeout)
-                    .setConnectionRequestTimeout(this.connectionTimeout)
+                    .setConnectTimeout(Long.valueOf(this.connectionTimeout).intValue())
+                    .setConnectionRequestTimeout(Long.valueOf(this.connectionTimeout).intValue())
                     .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)
@@ -322,12 +322,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         this.acceptableCodes = Ints.asList(acceptableCodes);
     }
 
-    public int getConnectionTimeout() {
+    public long getConnectionTimeout() {
         return this.connectionTimeout;
     }
 
-
-    public void setConnectionTimeout(final int connectionTimeout) {
+    public void setConnectionTimeout(final long connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 

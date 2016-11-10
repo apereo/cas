@@ -259,7 +259,7 @@ public class CasWebflowContextConfiguration {
 
         if (casProperties.getWebflow().getSession().isStorage()) {
             final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-            conversationManager.setLockTimeoutSeconds(casProperties.getWebflow().getSession().getLockTimeout());
+            conversationManager.setLockTimeoutSeconds(Long.valueOf(casProperties.getWebflow().getSession().getLockTimeout()).intValue());
             conversationManager.setMaxConversations(casProperties.getWebflow().getSession().getMaxConversations());
 
             final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
