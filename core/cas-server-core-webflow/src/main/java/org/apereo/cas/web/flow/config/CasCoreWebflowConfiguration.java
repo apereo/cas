@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -53,7 +53,7 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private DefaultAuthenticationContextValidator authenticationContextValidator;
+    private AuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("centralAuthenticationService")

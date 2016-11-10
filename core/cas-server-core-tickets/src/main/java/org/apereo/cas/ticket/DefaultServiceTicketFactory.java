@@ -31,6 +31,13 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     
     private boolean trackMostRecentSession = true;
 
+    public DefaultServiceTicketFactory() {
+    }
+
+    public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy) {
+        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
+    }
+
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,

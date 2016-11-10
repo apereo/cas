@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -29,7 +29,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
-    private DefaultAuthenticationContextValidator authenticationContextValidator;
+    private AuthenticationContextValidator authenticationContextValidator;
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -100,8 +100,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         this.initialAuthenticationAttemptWebflowEventResolver = initialAuthenticationAttemptWebflowEventResolver;
     }
 
-    public void setAuthenticationContextValidator(
-            final DefaultAuthenticationContextValidator authenticationContextValidator) {
+    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
         this.authenticationContextValidator = authenticationContextValidator;
     }
 

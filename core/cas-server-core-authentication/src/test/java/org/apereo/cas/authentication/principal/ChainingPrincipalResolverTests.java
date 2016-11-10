@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Credential;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
 import java.util.Collections;
 
@@ -46,9 +47,13 @@ public class ChainingPrincipalResolverTests {
 
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(false);
-        when(resolver2.resolve(argThat(credential1 -> "output".equals(credential1.getId()))))
-                .thenReturn(principalFactory.createPrincipal("final",
-                        Collections.singletonMap("mail", "final@example.com")));
+        when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
+            @Override
+            public boolean matches(final Object o) {
+                return "output".equals(((Credential) o).getId());
+            }
+        }))).thenReturn(principalFactory.createPrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Lists.newArrayList(resolver1, resolver2));
         final Principal principal = resolver.resolve(credential);
