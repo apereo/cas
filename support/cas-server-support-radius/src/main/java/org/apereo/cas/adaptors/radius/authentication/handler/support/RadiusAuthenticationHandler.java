@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.util.Pair;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -55,8 +55,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             final Pair<Boolean, Optional<Map<String, Object>>> result =
                     RadiusUtils.authenticate(username, credential.getPassword(), this.servers, 
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
-            if (result.getFirst()) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getSecond().get()),
+            if (result.getKey()) {
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()),
                         new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

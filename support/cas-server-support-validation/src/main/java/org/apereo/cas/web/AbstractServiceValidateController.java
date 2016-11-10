@@ -5,7 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -27,7 +27,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.util.Pair;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
@@ -81,7 +80,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
         
-    private AuthenticationContextValidator authenticationContextValidator;
+    private DefaultAuthenticationContextValidator authenticationContextValidator;
     
     private View jsonView;
 
@@ -499,7 +498,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
     
-    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
+    public void setAuthenticationContextValidator(final DefaultAuthenticationContextValidator authenticationContextValidator) {
         this.authenticationContextValidator = authenticationContextValidator;
     }
 

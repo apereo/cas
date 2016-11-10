@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import com.google.common.collect.Maps;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.util.Pair;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
 import net.jradius.packet.attribute.RadiusAttribute;
-import org.apereo.cas.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public final class RadiusUtils {
                     for (final RadiusAttribute attribute : response.getAttributes()) {
                         attributes.put(attribute.getAttributeName(), attribute.getValue().toString());
                     }
-                    return new Pair<>(Boolean.TRUE, Optional.of(attributes));
+                    return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 
                 if (!failoverOnAuthenticationFailure) {
@@ -62,6 +62,6 @@ public final class RadiusUtils {
                 LOGGER.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        return new Pair<>(Boolean.TRUE, Optional.empty());
+        return Pair.of(Boolean.TRUE, Optional.empty());
     }
 }

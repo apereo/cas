@@ -5,7 +5,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.AnyAuthenticationPolicy;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -169,8 +169,8 @@ public class CasCoreAuthenticationConfiguration {
 
     @RefreshScope
     @Bean
-    public AuthenticationContextValidator authenticationContextValidator() {
-        final AuthenticationContextValidator val = new AuthenticationContextValidator();
+    public DefaultAuthenticationContextValidator authenticationContextValidator() {
+        final DefaultAuthenticationContextValidator val = new DefaultAuthenticationContextValidator();
         val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         return val;

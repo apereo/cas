@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.util.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -108,7 +108,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
 
         final Pair<String, Map<String, Object>> pair = convertPersonAttributesToPrincipal(principalId, attributes);
-        return this.principalFactory.createPrincipal(pair.getFirst(), pair.getSecond());
+        return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
     }
 
     /**
@@ -141,7 +141,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         });
-        return new Pair<>(principalId[0], convertedAttributes);
+        return Pair.of(principalId[0], convertedAttributes);
     }
 
     /**

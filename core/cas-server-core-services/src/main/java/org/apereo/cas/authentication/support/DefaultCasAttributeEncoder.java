@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.Pair;
 
 import java.util.Map;
 import java.util.Set;
@@ -130,14 +130,14 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
 
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
                 .filter(s -> s.contains(":"))
-                .map(s -> new Pair<>(s.replace(':', '_'), attributes.get(s)))
+                .map(s -> Pair.of(s.replace(':', '_'), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
             logger.debug("Found {} attribute(s) that need to be sanitized/encoded.");
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
-                logger.debug("Sanitized attribute name to be {}", p.getFirst());
-                attributes.put(p.getFirst(), p.getSecond());
+                logger.debug("Sanitized attribute name to be {}", p.getKey());
+                attributes.put(p.getKey(), p.getValue());
             });
         }
     }

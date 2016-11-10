@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.util.Pair;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;

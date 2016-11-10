@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication;
 
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * The {@link AuthenticationContextValidator} is responsible for evaluating an authentication
+ * The {@link DefaultAuthenticationContextValidator} is responsible for evaluating an authentication
  * object to see whether it satisfied a requested authentication context.
  *
  * @author Misagh Moayyed
  * @since 4.3
  */
-public class AuthenticationContextValidator {
+public class DefaultAuthenticationContextValidator implements AuthenticationContextValidator {
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -44,14 +44,7 @@ public class AuthenticationContextValidator {
     }
 
 
-    /**
-     * Validate the authentication context.
-     *
-     * @param authentication   the authentication
-     * @param requestedContext the requested context
-     * @param service          the service
-     * @return the resulting pair indicates whether context is satisfied, and if so, by which provider.
-     */
+    @Override
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
                                                                                final String requestedContext,
                                                                                final RegisteredService service) {
@@ -63,19 +56,19 @@ public class AuthenticationContextValidator {
                 getAllMultifactorAuthenticationProvidersFromApplicationContext();
         if (providerMap == null) {
             logger.debug("No providers have been configured");
-            return new Pair(Boolean.FALSE, Optional.empty());
+            return Pair.of(Boolean.FALSE, Optional.empty());
         }
         final Optional<MultifactorAuthenticationProvider> requestedProvider =
                 locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
             logger.debug("Requested authentication provider cannot be recognized.");
-            return new Pair(Boolean.FALSE, Optional.empty());
+            return Pair.of(Boolean.FALSE, Optional.empty());
         }
 
         if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             logger.debug("Requested authentication context {} is satisfied", requestedContext);
-            return new Pair(Boolean.TRUE, requestedProvider);
+            return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
         final Collection<MultifactorAuthenticationProvider> satisfiedProviders =
@@ -83,7 +76,7 @@ public class AuthenticationContextValidator {
 
         if (satisfiedProviders == null) {
             logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
-            return new Pair(Boolean.FALSE, requestedProvider);
+            return Pair.of(Boolean.FALSE, requestedProvider);
         }
 
         if (!satisfiedProviders.isEmpty()) {
@@ -99,7 +92,7 @@ public class AuthenticationContextValidator {
             if (result.isPresent()) {
                 logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
                         result.get(), requestedProvider);
-                return new Pair(Boolean.TRUE, requestedProvider);
+                return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
 
@@ -112,7 +105,7 @@ public class AuthenticationContextValidator {
                                 + "Since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                 + "of the present authentication context", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
-                return new Pair(true, requestedProvider);
+                return Pair.of(true, requestedProvider);
             }
         }
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
@@ -121,11 +114,11 @@ public class AuthenticationContextValidator {
                                 + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
                                 + "without the presence of {}", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
-                return new Pair(true, satisfiedProviders.stream().findFirst());
+                return Pair.of(true, satisfiedProviders.stream().findFirst());
             }
         }
 
-        return new Pair(false, requestedProvider);
+        return Pair.of(false, requestedProvider);
     }
 
     /**
