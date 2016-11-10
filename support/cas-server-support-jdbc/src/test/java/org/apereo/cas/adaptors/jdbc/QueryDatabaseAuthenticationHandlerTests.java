@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,6 +21,8 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -89,7 +92,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), "psw1");
 
     }
 
@@ -99,7 +102,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"), "psw11");
 
     }
 
@@ -109,7 +112,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
 
     }
 
@@ -119,7 +122,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
         q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
 
     }
 
@@ -130,5 +133,43 @@ public class QueryDatabaseAuthenticationHandlerTests {
         assertNotNull(q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
 
+    }
+
+    /**
+     *  This test proves that in case BCRYPT is used authentication using encoded password always fail
+     * with FailedLoginException
+     * @throws Exception
+     */
+    @Test(expected = FailedLoginException.class)
+    public void verifyBCryptFail() throws Exception {
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
+        q.setDataSource(this.dataSource);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
+                new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
+
+        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+
+        q.setPasswordEncoder(encoder);
+        q.authenticateUsernamePasswordInternal(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+    }
+
+    /**
+     *  This test proves that in case BCRYPT and using raw password test can authenticate
+     */
+    @Test
+    public void verifyBCryptSuccess() throws Exception {
+        final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
+        q.setDataSource(this.dataSource);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
+                new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
+
+        q.setSql(SQL.replace("password", "'" + encoder.encode("psw0") +"' password"));
+
+        q.setPasswordEncoder(encoder);
+        q.authenticateUsernamePasswordInternal(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw0"),"psw0");
     }
 }
