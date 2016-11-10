@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.util.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
