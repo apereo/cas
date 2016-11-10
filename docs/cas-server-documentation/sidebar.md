@@ -12,16 +12,16 @@
 
 * [Installation](#installation)
     *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
-    *   [Configuration Management](/$version/installation/Configuration-Management.html)
-        *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
-        *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
-        *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
-        *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
-    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
+ *   [Configuration Management](/$version/installation/Configuration-Management.html)
+     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
+     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
+     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
+     *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
+        
 * [Authentication](#authentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Database](/$version/installation/Database-Authentication.html)
@@ -97,7 +97,7 @@
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
     *   [Audits](/$version/installation/Audits.html)
-    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
+    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html
 
 * [User Interface](#user_interface)
     *   [UI Customization](/$version/installation/User-Interface-Customization.html)
@@ -125,6 +125,7 @@
     *   [Google reCAPTCHA](/$version/integration/Configuring-Google-reCAPTCHA.html)
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
+    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Shibboleth IdP](/$version/integration/Shibboleth.html)
 
 * [Developer](#developer)
