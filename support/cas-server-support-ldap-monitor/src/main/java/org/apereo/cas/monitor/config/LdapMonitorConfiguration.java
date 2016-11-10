@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class LdapMonitorConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -44,11 +44,9 @@ public class LdapMonitorConfiguration {
         final PooledConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(
                 casProperties.getMonitor().getLdap()
         );
-        
-        final PooledLdapConnectionFactoryMonitor m =
-                new PooledLdapConnectionFactoryMonitor(connectionFactory,
-                        new SearchValidator());
-        m.setMaxWait(casProperties.getMonitor().getLdap().getMaxWait());
+
+        final PooledLdapConnectionFactoryMonitor m = new PooledLdapConnectionFactoryMonitor(connectionFactory, new SearchValidator());
+        m.setMaxWait(Long.valueOf(casProperties.getMonitor().getLdap().getMaxWait()).intValue());
         m.setExecutor(executor);
         return m;
     }

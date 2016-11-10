@@ -75,14 +75,14 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
             bean.setWriteConcern(WriteConcern.valueOf(casProperties.getServiceRegistry().getMongo().getWriteConcern()));
-            bean.setHeartbeatConnectTimeout(casProperties.getServiceRegistry().getMongo().getTimeout());
-            bean.setHeartbeatSocketTimeout(casProperties.getServiceRegistry().getMongo().getTimeout());
+            bean.setHeartbeatConnectTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
+            bean.setHeartbeatSocketTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
             bean.setMaxConnectionLifeTime(casProperties.getServiceRegistry().getMongo().getConns().getLifetime());
             bean.setSocketKeepAlive(casProperties.getServiceRegistry().getMongo().isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime(casProperties.getServiceRegistry().getMongo().getIdleTimeout());
+            bean.setMaxConnectionIdleTime(Long.valueOf(casProperties.getServiceRegistry().getMongo().getIdleTimeout()).intValue());
             bean.setConnectionsPerHost(casProperties.getServiceRegistry().getMongo().getConns().getPerHost());
-            bean.setSocketTimeout(casProperties.getServiceRegistry().getMongo().getTimeout());
-            bean.setConnectTimeout(casProperties.getServiceRegistry().getMongo().getTimeout());
+            bean.setSocketTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
+            bean.setConnectTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
             bean.afterPropertiesSet();
             return bean.getObject();
         } catch (final Exception e) {

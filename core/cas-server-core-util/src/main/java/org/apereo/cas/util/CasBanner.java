@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 
 import javax.crypto.Cipher;
 import java.io.PrintStream;
+import java.time.ZonedDateTime;
 import java.util.Formatter;
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ public class CasBanner implements Banner {
         final Properties properties = System.getProperties();
         try (Formatter formatter = new Formatter()) {
             formatter.format("CAS Version: %s%n", CasVersion.getVersion());
+            formatter.format("System Date/Time: %s%n", ZonedDateTime.now());
             formatter.format("Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("System Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
             formatter.format("Java Home: %s%n", properties.get("java.home"));
