@@ -130,4 +130,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         
     }
 
+    @Override
+    public void decrement() {
+        logger.debug("Throttling is not activated for this interceptor adapter");
+    }
+
 }
