@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apache.http.HttpStatus;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -30,7 +31,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreUtilConfiguration.class,
         AopAutoConfiguration.class, CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
