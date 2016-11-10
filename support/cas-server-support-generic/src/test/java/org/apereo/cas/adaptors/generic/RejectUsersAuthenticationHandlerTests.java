@@ -20,9 +20,9 @@ import static org.junit.Assert.*;
  */
 public class RejectUsersAuthenticationHandlerTests {
 
-    private Set<String> users;
+    private final Set<String> users;
 
-    private RejectUsersAuthenticationHandler authenticationHandler;
+    private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
         this.users = new HashSet<>();

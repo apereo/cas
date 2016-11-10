@@ -17,7 +17,7 @@ public class NullPrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "nullPrincipal.json");
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void verifySerializeANullPrincipalToJson() throws IOException {

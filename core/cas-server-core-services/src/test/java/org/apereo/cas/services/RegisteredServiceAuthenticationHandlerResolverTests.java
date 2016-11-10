@@ -53,7 +53,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler();
         handler3.setName("handler3");
 
-        this.handlers = ImmutableSet.<AuthenticationHandler>of(handler1, handler2, handler3);
+        this.handlers = ImmutableSet.of(handler1, handler2, handler3);
     }
 
     @Test

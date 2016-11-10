@@ -84,7 +84,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private GoogleAccountsService googleAccountsService;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();

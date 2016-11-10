@@ -28,7 +28,7 @@ public class OAuthRegisteredServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private ServiceRegistryDao dao;
+    private final ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));

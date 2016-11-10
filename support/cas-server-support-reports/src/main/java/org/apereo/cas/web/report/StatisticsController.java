@@ -104,7 +104,7 @@ public class StatisticsController implements ServletContextAware {
         int expiredSts = 0;
 
         final Collection<Ticket> tickets =
-                this.centralAuthenticationService.getTickets(Predicates.<Ticket>alwaysTrue());
+                this.centralAuthenticationService.getTickets(Predicates.alwaysTrue());
 
         for (final Ticket ticket : tickets) {
             if (ticket instanceof ServiceTicket) {

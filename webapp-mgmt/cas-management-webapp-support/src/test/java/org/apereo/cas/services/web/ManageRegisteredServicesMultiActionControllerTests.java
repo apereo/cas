@@ -135,7 +135,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     private static class CustomRegisteredServiceMapper implements RegisteredServiceMapper {
-        private RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
+        private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
         public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {

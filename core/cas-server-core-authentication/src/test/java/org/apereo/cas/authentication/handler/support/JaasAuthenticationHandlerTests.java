@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class JaasAuthenticationHandlerTests {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private JaasAuthenticationHandler handler;
 
