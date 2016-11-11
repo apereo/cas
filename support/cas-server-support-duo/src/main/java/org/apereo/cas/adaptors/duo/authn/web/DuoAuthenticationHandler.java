@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn.web;
 
-import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private BaseDuoAuthenticationService<String> duoAuthenticationService;
+    private DuoAuthenticationService<String> duoAuthenticationService;
 
     /**
      * Creates the duo authentication handler.
@@ -74,7 +74,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         return DuoCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    public void setDuoAuthenticationService(final BaseDuoAuthenticationService<String> duoAuthenticationService) {
+    public void setDuoAuthenticationService(final DuoAuthenticationService<String> duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 }

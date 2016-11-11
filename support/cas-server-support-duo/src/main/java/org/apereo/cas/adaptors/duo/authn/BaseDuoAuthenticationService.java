@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
@@ -19,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseDuoAuthenticationService<T> {
+public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticationService<T> {
 
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
@@ -40,21 +39,8 @@ public abstract class BaseDuoAuthenticationService<T> {
         this.duoProperties = duoProperties;
     }
 
-    /**
-     * Verify the authentication response from Duo.
-     *
-     * @param credential signed request token
-     * @return authenticated user / verified response.
-     * @throws Exception if response verification fails
-     */
-    public abstract T authenticate(Credential credential) throws Exception;
-
-    /**
-     * Can ping boolean.
-     *
-     * @return true/false
-     */
-    public boolean canPing() {
+    @Override
+    public boolean ping() {
         try {
             String url = duoProperties.getDuoApiHost().concat("/rest/v1/ping");
             if (!url.startsWith("http")) {
@@ -79,6 +65,11 @@ public abstract class BaseDuoAuthenticationService<T> {
         return false;
     }
 
+    @Override
+    public String getApiHost() {
+        return duoProperties.getDuoApiHost();
+    }
+    
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }

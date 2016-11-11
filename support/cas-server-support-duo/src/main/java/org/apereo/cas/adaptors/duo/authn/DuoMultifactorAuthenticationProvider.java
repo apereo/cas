@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.adaptors.duo.authn.web.DuoWebAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
@@ -14,7 +13,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private BaseDuoAuthenticationService duoAuthenticationService;
+    private DuoAuthenticationService duoAuthenticationService;
 
     private String id = DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
 
@@ -28,7 +27,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
         return casProperties.getAuthn().getMfa().getDuo().getRank();
     }
 
-    public void setDuoAuthenticationService(final BaseDuoAuthenticationService duoAuthenticationService) {
+    public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 
@@ -38,6 +37,6 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     @Override
     protected boolean isAvailable() {
-        return this.duoAuthenticationService.canPing();
+        return this.duoAuthenticationService.ping();
     }
 }
