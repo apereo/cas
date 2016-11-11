@@ -17,10 +17,10 @@
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
 * [Configuration Management](/$version/installation/Configuration-Management.html)
-   *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
-   *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
-   *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
-   *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
+    * [Properties & Settings](/$version/installation/Configuration-Properties.html)
+    * [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
+    * [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
+    * [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
         
 * [Authentication](#authentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
