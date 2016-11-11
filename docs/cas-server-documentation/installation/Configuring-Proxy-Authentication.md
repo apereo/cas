@@ -136,5 +136,4 @@ final byte[] cred64 = decodeBase64(encodedPgt);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
-
 ```
