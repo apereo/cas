@@ -49,7 +49,7 @@ public class HazelcastInstanceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
@@ -60,7 +60,7 @@ public class HazelcastInstanceConfiguration {
                 casProperties.getTicket().getRegistry().getHazelcast().getCrypto()));
         return r;
     }
-    
+
     @Bean
     public HazelcastInstance hazelcast() {
         return Hazelcast.newHazelcastInstance(getConfig());
@@ -74,7 +74,7 @@ public class HazelcastInstanceConfiguration {
      */
     private Config getConfig() {
         final HazelcastProperties.Cluster cluster = casProperties.getTicket().getRegistry().getHazelcast().getCluster();
-                
+
         final Config config;
         if (casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation() != null
                 && casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().exists()) {
@@ -92,7 +92,7 @@ public class HazelcastInstanceConfiguration {
             //No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
             config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
-            
+
             //TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
                     .setEnabled(cluster.isTcpipEnabled())
@@ -104,7 +104,7 @@ public class HazelcastInstanceConfiguration {
             if (cluster.isMulticastEnabled()) {
                 multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
                 multicastConfig.setMulticastPort(cluster.getMulticastPort());
-                
+
                 final Set<String> trustedInterfaces = StringUtils.commaDelimitedListToSet(cluster.getMulticastTrustedInterfaces());
                 if (!trustedInterfaces.isEmpty()) {
                     multicastConfig.setTrustedInterfaces(trustedInterfaces);
@@ -117,25 +117,23 @@ public class HazelcastInstanceConfiguration {
             final JoinConfig joinConfig = new JoinConfig()
                     .setMulticastConfig(multicastConfig)
                     .setTcpIpConfig(tcpIpConfig);
-            
+
             //Network config
             final NetworkConfig networkConfig = new NetworkConfig()
                     .setPort(cluster.getPort())
                     .setPortAutoIncrement(cluster.isPortAutoIncrement())
                     .setJoin(joinConfig);
 
-            //Map config
+            // Map config
+            final EvictionPolicy evictionPolicy = EvictionPolicy.valueOf(cluster.getEvictionPolicy());
             final MapConfig mapConfig = new MapConfig().setName(casProperties.getTicket()
                     .getRegistry().getHazelcast().getMapName())
                     .setMaxIdleSeconds(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds())
                     .setBackupCount(cluster.getBackupCount())
                     .setAsyncBackupCount(cluster.getAsyncBackupCount())
-                    .setEvictionPolicy(EvictionPolicy.valueOf(
-                            cluster.getEvictionPolicy()))
-                    .setEvictionPercentage(cluster.getEvictionPercentage())
+                    .setEvictionPolicy(evictionPolicy)
                     .setMaxSizeConfig(new MaxSizeConfig()
-                            .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(
-                                    cluster.getMaxSizePolicy()))
+                            .setMaxSizePolicy(MaxSizeConfig.MaxSizePolicy.valueOf(cluster.getMaxSizePolicy()))
                             .setSize(cluster.getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
@@ -146,9 +144,7 @@ public class HazelcastInstanceConfiguration {
         }
         //Add additional default config properties regardless of the configuration source
         return config.setInstanceName(cluster.getInstanceName())
-                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP,
-                        cluster.getLoggingType())
-                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP,
-                        String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
+                .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
+                .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 }
