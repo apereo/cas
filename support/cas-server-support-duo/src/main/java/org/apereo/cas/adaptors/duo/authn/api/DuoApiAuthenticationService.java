@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.duo.authn.api;
 
 import com.duosecurity.client.Http;
+import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -14,28 +14,22 @@ import org.springframework.http.HttpMethod;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoApiAuthenticationService {
+public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Boolean> {
     private static final int API_VERSION = 2;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DuoApiAuthenticationService.class);
-
-    private final MultifactorAuthenticationProperties.Duo duoProperties;
 
     /**
      * Creates the duo authentication service.
+     *
+     * @param duoProperties
      */
     public DuoApiAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
-        this.duoProperties = duoProperties;
+        super(duoProperties);
     }
 
-    /**
-     * Verify the authentication response from Duo.
-     *
-     * @param credential the authentication
-     * @return true/false
-     */
-    public boolean authenticate(final DuoApiCredential credential) {
+    @Override
+    public Boolean authenticate(final Credential crds) {
         try {
+            final DuoApiCredential credential = DuoApiCredential.class.cast(crds);
             final Principal p = credential.getAuthentication().getPrincipal();
             final Http request = new Http(HttpMethod.POST.name(),
                     duoProperties.getDuoApiHost(),
@@ -48,13 +42,14 @@ public class DuoApiAuthenticationService {
                     duoProperties.getDuoSecretKey(), API_VERSION);
 
             final JSONObject result = (JSONObject) request.executeRequest();
-            LOGGER.debug("Duo authentication response: {}", result);
+            logger.debug("Duo authentication response: {}", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
                 return true;
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         return false;
     }
+
 }
