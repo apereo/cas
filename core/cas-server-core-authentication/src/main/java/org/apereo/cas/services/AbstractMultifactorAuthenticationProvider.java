@@ -102,7 +102,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      * @return the true/false
      */
     protected abstract boolean isAvailable();
-    
+
     public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
         this.bypassEvaluator = bypassEvaluator;
     }
@@ -136,5 +136,10 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public boolean matches(final String identifier) {
+        return getId().matches(identifier);
     }
 }

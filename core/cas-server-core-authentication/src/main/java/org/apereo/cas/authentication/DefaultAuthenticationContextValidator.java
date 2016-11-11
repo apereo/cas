@@ -148,7 +148,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         }
 
         contexts.stream().forEach(context ->
-                providers.removeIf(provider -> !provider.getId().equals(context))
+                providers.removeIf(provider -> !provider.matches(context.toString()))
         );
 
         logger.debug("Found {} providers that may satisfy the context", providers.size());
@@ -160,7 +160,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
 
         return providersArray.stream()
-                .filter(provider -> provider.getId().equals(requestedProvider))
+                .filter(provider -> provider.matches(requestedProvider))
                 .findFirst();
     }
 
