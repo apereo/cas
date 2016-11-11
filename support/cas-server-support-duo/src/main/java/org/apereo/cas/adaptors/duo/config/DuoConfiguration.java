@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationMetaDataPopulator;
@@ -15,6 +15,7 @@ import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolve
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.DuoNonWebAuthenticationAction;
+import org.apereo.cas.adaptors.duo.web.flow.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -123,10 +124,11 @@ public class DuoConfiguration {
         return builder.build();
     }
 
+    @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
         final DuoAuthenticationHandler h = new DuoAuthenticationHandler();
-        h.setDuoAuthenticationService(duoAuthenticationServiceDefault());
+        h.setDuoAuthenticationService(duoAuthenticationService());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
@@ -168,7 +170,7 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService() {
+    public DuoAuthenticationService<Boolean> duoApiAuthenticationService() {
         final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
         Assert.hasLength(duo.getDuoApiHost(), "Duo API host cannot be blank");
         Assert.hasLength(duo.getDuoIntegrationKey(), "Duo integration key cannot be blank");
@@ -180,7 +182,7 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public BaseDuoAuthenticationService<String> duoAuthenticationServiceDefault() {
+    public DuoAuthenticationService<String> duoAuthenticationService() {
         final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
         final DuoWebAuthenticationService s = new DuoWebAuthenticationService(duo);
         s.setHttpClient(this.httpClient);
@@ -189,18 +191,18 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProviderBypass duoBypassEvaluator() {
-        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
-        return new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass());
+    public MultifactorAuthenticationProvider duoAuthenticationProviderDefault() {
+        final DuoMultifactorAuthenticationProvider p = new DuoMultifactorAuthenticationProvider();
+        p.setDuoAuthenticationService(duoAuthenticationService());
+        p.setBypassEvaluator(duoBypassEvaluator());
+        return p;
     }
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider duoAuthenticationProviderDefault() {
-        final DuoMultifactorAuthenticationProvider p = new DuoMultifactorAuthenticationProvider();
-        p.setDuoAuthenticationService(duoAuthenticationServiceDefault());
-        p.setBypassEvaluator(duoBypassEvaluator());
-        return p;
+    public MultifactorAuthenticationProviderBypass duoBypassEvaluator() {
+        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
+        return new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass());
     }
 
     @Bean
@@ -214,6 +216,12 @@ public class DuoConfiguration {
         a.setDuoAuthenticationWebflowEventResolver(duoAuthenticationWebflowEventResolver());
         return a;
     }
+
+    @Bean
+    public Action prepareDuoWebLoginFormAction() {
+        return new PrepareDuoWebLoginFormAction(duoAuthenticationService());
+    }
+
 
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {

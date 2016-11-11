@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn.api;
 
-import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -18,9 +18,9 @@ import java.util.ArrayList;
  * @since 5.0.0
  */
 public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService;
+    private DuoAuthenticationService<Boolean> duoApiAuthenticationService;
 
-    public void setDuoApiAuthenticationService(final BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService) {
+    public void setDuoApiAuthenticationService(final DuoAuthenticationService<Boolean> duoApiAuthenticationService) {
         this.duoApiAuthenticationService = duoApiAuthenticationService;
     }
 
