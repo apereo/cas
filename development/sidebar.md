@@ -16,6 +16,12 @@
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
 
+* [Installation](#installation)
+    *   [WAR Overlay](/$version/installation/Maven-Overlay-Installation.html)
+    *   [Docker Deployment](/$version/installation/Docker-Installation.html)
+    *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
+    *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
+    
 * [Configuration Management](/$version/installation/Configuration-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     * [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
