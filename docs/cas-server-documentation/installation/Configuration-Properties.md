@@ -2530,7 +2530,6 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
 # cas.ticket.registry.hazelcast.cluster.multicastEnabled=false
-# cas.ticket.registry.hazelcast.cluster.evictionPercentage=10
 # cas.ticket.registry.hazelcast.cluster.tcpipEnabled=true
 # cas.ticket.registry.hazelcast.cluster.members=localhost
 # cas.ticket.registry.hazelcast.cluster.loggingType=slf4j
