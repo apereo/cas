@@ -10,7 +10,7 @@ The CAS authentication process is primarily controlled by an authentication mana
 ## Authentication Manager
 CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
-For each given credential do the following:
+For any given credential the manager does the following:
 
 1. Iterate over all configured authentication handlers.
 2. Attempt to authenticate a credential if a handler supports it.
@@ -58,7 +58,7 @@ Please [see this guide](Configuring-LongTerm-Authentication.html) for more detai
 
 Please [see this guide](Configuring-Proxy-Authentication.html) for more details.
 
-## Multi-factor Authentication (MFA)
+## Multifactor Authentication (MFA)
 
 Please [see this guide](Configuring-Multifactor-Authentication.html) for more details.
 
