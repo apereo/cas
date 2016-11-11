@@ -28,6 +28,8 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## Remember
 
+Take note of the following suggestions before you start with the configuration.
+
 ### Naming Convention
 
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
@@ -39,12 +41,13 @@ misspell a property definition or fail to adhere to the dot-notation syntax and 
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
 
 ### Trust But Verify
-- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
+
+If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
 ### Time UoM
 
-- All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
+All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
 
 ```bash
 "PT20S"     -- parses as "20 seconds"
@@ -55,7 +58,7 @@ Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to c
 ```
 
 The native numeric syntax is still supported though you will have to refer to the docs
-on each case to learn the exact unit of measure.
+in each case to learn the exact unit of measure.
 
 ## Configuration Storage
 
@@ -1785,6 +1788,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
+# cas.authn.pac4j.autoRedirect=false
 ```
 
 ### CAS

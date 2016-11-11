@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
@@ -81,15 +80,11 @@ public class Pac4jConfiguration {
     }
 
     @Bean
-    public Pac4jProperties pac4jProperties() {
-        return new Pac4jProperties();
-    }
-
-    @Bean
     public AuthenticationMetaDataPopulator clientAuthenticationMetaDataPopulator() {
         return new ClientAuthenticationMetaDataPopulator();
     }
 
+    @RefreshScope
     @Bean
     public ClientAuthenticationHandler clientAuthenticationHandler() {
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
@@ -100,12 +95,14 @@ public class Pac4jConfiguration {
         return h;
     }
 
+    @RefreshScope
     @Bean
     public Action clientAction() {
         final ClientAction a = new ClientAction();
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setAuthenticationSystemSupport(authenticationSystemSupport);
         a.setClients(builtClients());
+        a.setAutoRedirect(casProperties.getAuthn().getPac4j().isAutoRedirect());
         return a;
     }
 

@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -85,6 +86,8 @@ public class ClientAction extends AbstractAction {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     private CentralAuthenticationService centralAuthenticationService;
+
+    private boolean autoRedirect;
 
     /**
      * Build the ClientAction.
@@ -155,6 +158,18 @@ public class ClientAction extends AbstractAction {
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
         }
+
+        if (this.autoRedirect) {
+            final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
+            if (urls != null && urls.size() == 1) {
+                final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
+                LOGGER.debug("Auto-redirecting to client url {}", cfg.getRedirectUrl());
+                response.sendRedirect(cfg.getRedirectUrl());
+                final ExternalContext externalContext = context.getExternalContext();
+                externalContext.recordResponseComplete();
+                return stopWebflow();
+            }
+        }
         return error();
     }
 
@@ -215,7 +230,7 @@ public class ClientAction extends AbstractAction {
      * @param name    The name of the parameter
      */
     private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
-                                         final String name) {
+                                                final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -228,7 +243,7 @@ public class ClientAction extends AbstractAction {
      * @param name    The name of the parameter
      */
     private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
-                                      final String name) {
+                                             final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -259,10 +274,14 @@ public class ClientAction extends AbstractAction {
         this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
     private Event stopWebflow() {
         return new Event(this, STOP);
     }
-    
+
     /**
      * Determine if request has errors.
      *
@@ -283,7 +302,7 @@ public class ClientAction extends AbstractAction {
             }
             model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
             model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
-            
+
             if (params.containsKey("error_description")) {
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
             } else if (params.containsKey("error_message")) {
@@ -291,7 +310,7 @@ public class ClientAction extends AbstractAction {
             }
             model.put("service", request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
-            
+
             LOGGER.debug("Delegation request has failed. Details are {}", model);
             return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
         }
@@ -303,9 +322,9 @@ public class ClientAction extends AbstractAction {
      */
     public static class ProviderLoginPageConfiguration implements Serializable {
         private static final long serialVersionUID = 6216882278086699364L;
-        private String name;
-        private String redirectUrl;
-        private String type;
+        private final String name;
+        private final String redirectUrl;
+        private final String type;
 
         /**
          * Instantiates a new Provider ui configuration.

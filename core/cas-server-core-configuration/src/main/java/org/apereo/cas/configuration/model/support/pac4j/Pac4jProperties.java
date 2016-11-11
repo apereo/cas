@@ -10,6 +10,7 @@ package org.apereo.cas.configuration.model.support.pac4j;
 public class Pac4jProperties {
 
     private boolean typedIdUsed;
+    private boolean autoRedirect;
 
     private Facebook facebook = new Facebook();
     private Twitter twitter = new Twitter();
@@ -23,6 +24,14 @@ public class Pac4jProperties {
     private Yahoo yahoo = new Yahoo();
     private Foursquare foursquare = new Foursquare();
     private WindowsLive windowsLive = new WindowsLive();
+
+    public boolean isAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(final boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
 
     public WindowsLive getWindowsLive() {
         return windowsLive;
