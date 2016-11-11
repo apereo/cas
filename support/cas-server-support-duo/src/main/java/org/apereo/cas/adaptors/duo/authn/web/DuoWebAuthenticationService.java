@@ -27,16 +27,12 @@ public class DuoWebAuthenticationService extends BaseDuoAuthenticationService<St
         super(duoProperties);
     }
 
-    /**
-     * Sign the authentication request.
-     *
-     * @param username username requesting authentication
-     * @return signed response
-     */
-    public String generateSignedRequestToken(final String username) {
+
+    @Override
+    public String signRequestToken(final String uid) {
         return DuoWeb.signRequest(duoProperties.getDuoIntegrationKey(),
                 duoProperties.getDuoSecretKey(),
-                duoProperties.getDuoApplicationKey(), username);
+                duoProperties.getDuoApplicationKey(), uid);
     }
 
     @Override
