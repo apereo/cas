@@ -16,7 +16,7 @@
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
    
-* [Configuration Management](#configmgmt)
+* [Configuration](#configmgmt)
     *   [Overview](/$version/installation/Configuration-Management.html) 
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
