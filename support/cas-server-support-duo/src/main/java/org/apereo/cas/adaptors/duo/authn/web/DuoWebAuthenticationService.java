@@ -23,11 +23,11 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public class DuoAuthenticationService {
+public class DuoWebAuthenticationService {
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DuoAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DuoWebAuthenticationService.class);
 
     private HttpClient httpClient;
 
@@ -36,7 +36,7 @@ public class DuoAuthenticationService {
     /**
      * Creates the duo authentication service.
      */
-    public DuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
+    public DuoWebAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         this.duoProperties = duoProperties;
     }
 
