@@ -72,7 +72,7 @@
 
 * [Ticketing](#ticketing)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
-    *   [Expiration Policy](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
+    *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
     *   [Persistence](#persistence)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
         *   [Ehcache](/$version/installation/Ehcache-Ticket-Registry.html)
