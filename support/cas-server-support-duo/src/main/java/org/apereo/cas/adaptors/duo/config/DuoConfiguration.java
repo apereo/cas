@@ -2,13 +2,13 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorTrustWebflowConfigurer;
@@ -20,6 +20,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -41,6 +42,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -113,7 +115,8 @@ public class DuoConfiguration {
 
     @Bean
     public FlowDefinitionRegistry duoFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final FlowDefinitionRegistryBuilder builder =
+                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-duo/*-webflow.xml");
         return builder.build();
@@ -122,7 +125,7 @@ public class DuoConfiguration {
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
         final DuoAuthenticationHandler h = new DuoAuthenticationHandler();
-        h.setDuoAuthenticationService(duoAuthenticationService());
+        h.setDuoAuthenticationService(duoAuthenticationServiceDefault());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
         return h;
@@ -139,7 +142,7 @@ public class DuoConfiguration {
         final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(duoAuthenticationHandler());
-        pop.setProvider(duoAuthenticationProvider());
+        pop.setProvider(duoAuthenticationProviderDefault());
         return pop;
     }
 
@@ -149,10 +152,10 @@ public class DuoConfiguration {
         final DuoApiAuthenticationMetaDataPopulator pop = new DuoApiAuthenticationMetaDataPopulator();
         pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
         pop.setAuthenticationHandler(duoApiAuthenticationHandler());
-        pop.setProvider(duoAuthenticationProvider());
+        pop.setProvider(duoAuthenticationProviderDefault());
         return pop;
     }
-    
+
     @Bean
     public AuthenticationHandler duoApiAuthenticationHandler() {
         final DuoApiAuthenticationHandler h = new DuoApiAuthenticationHandler();
@@ -161,18 +164,24 @@ public class DuoConfiguration {
         h.setServicesManager(servicesManager);
         return h;
     }
-    
+
     @Bean
     @RefreshScope
     public DuoApiAuthenticationService duoApiAuthenticationService() {
-        final DuoApiAuthenticationService s = new DuoApiAuthenticationService();
-        return s;
+        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
+        Assert.hasLength(duo.getDuoApiHost(), "Duo API host cannot be blank");
+        Assert.hasLength(duo.getDuoIntegrationKey(), "Duo integration key cannot be blank");
+        Assert.hasLength(duo.getDuoSecretKey(), "Duo secret key cannot be blank");
+        Assert.hasLength(duo.getDuoApplicationKey(), "Duo application key cannot be blank");
+        return new DuoApiAuthenticationService(duo);
+
     }
-    
+
     @Bean
     @RefreshScope
-    public DuoAuthenticationService duoAuthenticationService() {
-        final DuoAuthenticationService s = new DuoAuthenticationService();
+    public DuoAuthenticationService duoAuthenticationServiceDefault() {
+        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
+        final DuoAuthenticationService s = new DuoAuthenticationService(duo);
         s.setHttpClient(this.httpClient);
         return s;
     }
@@ -180,26 +189,24 @@ public class DuoConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass duoBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getDuo().getBypass()
-        );
+        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
+        return new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass());
     }
-    
+
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider duoAuthenticationProvider() {
+    public MultifactorAuthenticationProvider duoAuthenticationProviderDefault() {
         final DuoMultifactorAuthenticationProvider p = new DuoMultifactorAuthenticationProvider();
-        p.setDuoAuthenticationService(duoAuthenticationService());
+        p.setDuoAuthenticationService(duoAuthenticationServiceDefault());
         p.setBypassEvaluator(duoBypassEvaluator());
         return p;
     }
 
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        final DuoNonWebAuthenticationAction a = new DuoNonWebAuthenticationAction();
-        return a;
+        return new DuoNonWebAuthenticationAction();
     }
-        
+
     @Bean
     public Action duoAuthenticationWebflowAction() {
         final DuoAuthenticationWebflowAction a = new DuoAuthenticationWebflowAction();
@@ -231,10 +238,12 @@ public class DuoConfiguration {
 
     @PostConstruct
     protected void initializeServletApplicationContext() {
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getDuo().getDuoApiHost())
-                && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getDuo().getDuoSecretKey())) {
+        final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
+        if (StringUtils.isNotBlank(duo.getDuoApiHost()) && StringUtils.isNotBlank(duo.getDuoSecretKey())) {
+
             this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
             this.authenticationHandlersResolvers.put(duoApiAuthenticationHandler(), null);
+
             authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
             authenticationMetadataPopulators.add(0, duoApiAuthenticationMetaDataPopulator());
         }

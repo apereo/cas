@@ -16,9 +16,11 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     private DuoAuthenticationService duoAuthenticationService;
 
+    private String id = DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
+
     @Override
     public String getId() {
-        return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
+        return id;
     }
 
     @Override
@@ -28,6 +30,10 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     @Override
