@@ -68,16 +68,9 @@ The local trust store should only be used for CAS-related functionality of cours
 can be carried over across CAS and Java upgrades, and certainly managed by the source control system that should
 host all CAS configuration.
 
-```xml
-# The http client truststore file, in addition to the default's
-# http.client.truststore.file=classpath:truststore.jks
-#
-# The http client truststore's password
-# http.client.truststore.psw=changeit
-```
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-
-## Returning PGT in Validation Response
+## PGT in Validation Response
 
 In situations where using `CAS20ProxyHandler` may be undesirable, such that invoking a callback url to receive the proxy granting ticket is not feasible,
 CAS may be configured to return the proxy-granting ticket id directly in the validation response. In order to successfully establish trust between the
@@ -120,7 +113,7 @@ as an attribute for the given attribute release policy of choice.
 ```
 
 
-#### Decrypt the PGT Id
+### Decrypt PGT
 
 Once the client application has received the `proxyGrantingTicket` id attribute in the CAS validation response, it can decrypt it
 via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
