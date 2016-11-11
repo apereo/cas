@@ -190,7 +190,6 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
 
 #### Configuration
 
-
 ##### Sample `clearpass-configuration.xml`
 ```xml
 <!--  Credentials Cache implementation -->
