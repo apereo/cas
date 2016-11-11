@@ -8,7 +8,7 @@ import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationMetaDataPopulat
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationMetaDataPopulator;
-import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.web.DuoWebAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorTrustWebflowConfigurer;
@@ -179,9 +179,9 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public DuoAuthenticationService duoAuthenticationServiceDefault() {
+    public DuoWebAuthenticationService duoAuthenticationServiceDefault() {
         final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
-        final DuoAuthenticationService s = new DuoAuthenticationService(duo);
+        final DuoWebAuthenticationService s = new DuoWebAuthenticationService(duo);
         s.setHttpClient(this.httpClient);
         return s;
     }

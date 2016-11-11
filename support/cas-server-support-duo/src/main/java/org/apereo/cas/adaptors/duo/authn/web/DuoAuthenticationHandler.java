@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private DuoAuthenticationService duoAuthenticationService;
+    private DuoWebAuthenticationService duoAuthenticationService;
 
     /**
      * Creates the duo authentication handler.
@@ -26,7 +26,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     public DuoAuthenticationHandler() {}
 
     /**
-     * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)
+     * Do an out of band request using the DuoWeb api (encapsulated in DuoWebAuthenticationService)
      * to the hosted duo service. If it is successful
      * it will return a String containing the username of the successfully authenticated user, but if not - will
      * return a blank String or null.
@@ -73,7 +73,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         return DuoCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
+    public void setDuoAuthenticationService(final DuoWebAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 }
