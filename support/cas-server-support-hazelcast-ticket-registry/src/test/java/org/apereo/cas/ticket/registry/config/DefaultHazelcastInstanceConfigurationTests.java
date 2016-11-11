@@ -67,7 +67,6 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertNotNull(mapConfig);
         assertEquals(28800, mapConfig.getMaxIdleSeconds());
         assertEquals(EvictionPolicy.LRU, mapConfig.getEvictionPolicy());
-        assertEquals(10, mapConfig.getEvictionPercentage());
     }
 
     @After
