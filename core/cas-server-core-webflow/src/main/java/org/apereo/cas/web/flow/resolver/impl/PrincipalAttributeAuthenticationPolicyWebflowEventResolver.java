@@ -16,6 +16,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jooq.lambda.Agg.count;
+import static org.springframework.integration.support.management.graph.LinkNode.Type.input;
+
 /**
  * This is {@link PrincipalAttributeAuthenticationPolicyWebflowEventResolver}
  * that attempts to locate a principal attribute, match its value against
@@ -59,14 +62,14 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
             return resolveEventViaPrincipalAttribute(principal,
                     org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
                     service, context, providers,
-                    input -> input.toString().matches(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex()));
+                    input -> input != null && input.toString().matches(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex()));
         }
         
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
                 service, context, providers,
                 input -> providers.stream()
-                        .filter(provider -> provider.getId().equals(input))
+                        .filter(provider -> input != null && provider.matches(input.toString()))
                         .count() > 0);
     }
 

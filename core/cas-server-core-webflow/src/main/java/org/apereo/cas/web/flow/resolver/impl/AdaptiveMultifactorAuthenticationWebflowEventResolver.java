@@ -71,7 +71,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
             final String pattern = entry.getValue().toString();
 
             final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
-                    .filter(provider -> provider.getId().equals(mfaMethod))
+                    .filter(provider -> provider.matches(mfaMethod))
                     .findFirst();
             
             if (!providerFound.isPresent()) {

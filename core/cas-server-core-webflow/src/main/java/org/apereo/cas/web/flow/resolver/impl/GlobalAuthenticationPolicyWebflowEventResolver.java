@@ -52,7 +52,7 @@ public class GlobalAuthenticationPolicyWebflowEventResolver extends AbstractCasW
         }
 
         final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
-                .filter(provider -> provider.getId().equals(mfaId))
+                .filter(provider -> provider.matches(mfaId))
                 .findFirst();
 
         if (providerFound.isPresent()) {

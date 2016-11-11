@@ -71,7 +71,7 @@ public class GrouperMultifactorAuthenticationWebflowEventResolver extends Abstra
                         .filter(provider -> results.stream().filter(wr -> Arrays.stream(wr.getWsGroups()).filter(g -> {
                             final String value = GrouperFacade.getGrouperGroupAttribute(groupField, g);
                             logger.debug("Evaluating group {} against provider id {}", value, provider.getId());
-                            return provider.getId().matches(value);
+                            return provider.matches(value);
                         }).findAny().isPresent()).findAny().isPresent())
                         .findFirst();
 

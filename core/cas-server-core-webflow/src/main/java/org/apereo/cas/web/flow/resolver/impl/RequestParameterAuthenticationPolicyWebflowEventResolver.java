@@ -51,7 +51,7 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
             }
 
             final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
-                    .filter(provider -> provider.getId().equals(values[0]))
+                    .filter(provider -> provider.matches(values[0]))
                     .findFirst();
 
             if (providerFound.isPresent()) {

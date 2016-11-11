@@ -495,7 +495,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         try {
             logger.debug("Locating bean definition for {}", providerId);
             return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
-                    .filter(p -> p.getId().equals(providerId))
+                    .filter(p -> p.matches(providerId))
                     .findFirst();
         } catch (final Exception e) {
             logger.debug("Could not locate [{}] bean id in the application context as an authentication provider.", providerId);

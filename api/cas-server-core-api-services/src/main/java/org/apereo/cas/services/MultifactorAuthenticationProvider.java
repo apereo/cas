@@ -36,11 +36,19 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     String getId();
 
     /**
+     * Does provider match/support this identifier?
+     *
+     * @param identifier the identifier
+     * @return the boolean
+     */
+    boolean matches(String identifier);
+
+    /**
      * Indicates whether the current active event is supported by
      * this mfa provider based on the given authentication and service definition.
      * This allows each mfa provider to design bypass rules based on traits
-     * of the service or authentication, or both. 
-     * 
+     * of the service or authentication, or both.
+     *
      * @param e                 the event
      * @param authentication    the authentication
      * @param registeredService the registered service
