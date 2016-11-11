@@ -58,7 +58,7 @@ Please [see this guide](Configuring-LongTerm-Authentication.html) for more detai
 
 Please [see this guide](Configuring-Proxy-Authentication.html) for more details.
 
-## Multi-factor Authentication (MFA)
+## Multifactor Authentication (MFA)
 
 Please [see this guide](Configuring-Multifactor-Authentication.html) for more details.
 
