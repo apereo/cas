@@ -733,7 +733,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 
 ```properties
 # cas.authn.file.separator=::
-# cas.authn.file.filename=
+# cas.authn.file.filename=file:///path/to/users/file
 
 # cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.file.passwordEncoder.characterEncoding=
