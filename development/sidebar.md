@@ -118,8 +118,10 @@
     *   [OpenID Protocol](/$version/protocol/OpenID-Protocol.html)
     *   [OAuth Protocol](/$version/protocol/OAuth-Protocol.html)
     *   [OIDC Protocol](/$version/protocol/OIDC-Protocol.html)
-    *   [SAML Protocol](/$version/protocol/SAML-Protocol.html)
-        *   [Web SSO](/$version/installation/Configuring-SAML2-Authentication.html)
+    *   [SAML Protocol](#samlprotocol)
+        *   [SAML1](/$version/protocol/SAML-Protocol.html)
+        *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
+        *   [Google Apps](/$version/integration/Google-Apps-Integration.html)  
     *   [REST Protocol](/$version/protocol/REST-Protocol.html)
 
 * [Integration](#integration)
