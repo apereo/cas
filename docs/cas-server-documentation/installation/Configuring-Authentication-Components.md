@@ -38,6 +38,7 @@ configured via the static authencation handler, and <strong>MUST</strong> be rem
 prior to production rollouts.</p></div>
 
 ## Principal Resolution
+
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
 
 ### Principal Transformation
@@ -50,7 +51,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Long Term Authentication
 
 CAS has support for long term Ticket Granting Tickets, a feature that is also referred to as _"Remember Me"_
-to extends the length of the SSO session beyond the typical configuration.
+to extend the length of the SSO session beyond the typical configuration.
 Please [see this guide](Configuring-LongTerm-Authentication.html) for more details.
 
 ## Proxy Authentication
