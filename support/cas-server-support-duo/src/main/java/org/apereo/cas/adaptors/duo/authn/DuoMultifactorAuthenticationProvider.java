@@ -14,7 +14,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private DuoWebAuthenticationService duoAuthenticationService;
+    private BaseDuoAuthenticationService duoAuthenticationService;
 
     private String id = DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
 
@@ -28,7 +28,7 @@ public class DuoMultifactorAuthenticationProvider extends AbstractMultifactorAut
         return casProperties.getAuthn().getMfa().getDuo().getRank();
     }
 
-    public void setDuoAuthenticationService(final DuoWebAuthenticationService duoAuthenticationService) {
+    public void setDuoAuthenticationService(final BaseDuoAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 

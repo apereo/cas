@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn.api;
 
+import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -17,9 +18,9 @@ import java.util.ArrayList;
  * @since 5.0.0
  */
 public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private DuoApiAuthenticationService duoApiAuthenticationService;
+    private BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService;
 
-    public void setDuoApiAuthenticationService(final DuoApiAuthenticationService duoApiAuthenticationService) {
+    public void setDuoApiAuthenticationService(final BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService) {
         this.duoApiAuthenticationService = duoApiAuthenticationService;
     }
 
@@ -27,11 +28,14 @@ public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAut
     protected HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
 
-        final DuoApiCredential c = DuoApiCredential.class.cast(credential);
-
-        if (this.duoApiAuthenticationService.authenticate(c)) {
-            final Principal principal = c.getAuthentication().getPrincipal();
-            return createHandlerResult(credential, principal, new ArrayList<>());
+        try {
+            final DuoApiCredential c = DuoApiCredential.class.cast(credential);
+            if (this.duoApiAuthenticationService.authenticate(c)) {
+                final Principal principal = c.getAuthentication().getPrincipal();
+                return createHandlerResult(credential, principal, new ArrayList<>());
+            }
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
         }
         throw new FailedLoginException("Duo authentication has failed");
     }

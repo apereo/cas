@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationMetaDataPopulator;
@@ -167,7 +168,7 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public DuoApiAuthenticationService duoApiAuthenticationService() {
+    public BaseDuoAuthenticationService<Boolean> duoApiAuthenticationService() {
         final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
         Assert.hasLength(duo.getDuoApiHost(), "Duo API host cannot be blank");
         Assert.hasLength(duo.getDuoIntegrationKey(), "Duo integration key cannot be blank");
@@ -179,7 +180,7 @@ public class DuoConfiguration {
 
     @Bean
     @RefreshScope
-    public DuoWebAuthenticationService duoAuthenticationServiceDefault() {
+    public BaseDuoAuthenticationService<String> duoAuthenticationServiceDefault() {
         final MultifactorAuthenticationProperties.Duo duo = casProperties.getAuthn().getMfa().getDuo();
         final DuoWebAuthenticationService s = new DuoWebAuthenticationService(duo);
         s.setHttpClient(this.httpClient);
