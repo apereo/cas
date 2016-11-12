@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 

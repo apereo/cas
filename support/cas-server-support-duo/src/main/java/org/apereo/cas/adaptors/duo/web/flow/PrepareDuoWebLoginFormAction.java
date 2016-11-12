@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.authn.web.DuoCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.support.WebUtils;
