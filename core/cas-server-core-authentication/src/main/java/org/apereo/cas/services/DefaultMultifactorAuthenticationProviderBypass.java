@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMultifactorAuthenticationProviderBypass.class);
+    private static final long serialVersionUID = 3720922341350004543L;
 
     private MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
