@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +18,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link PrincipalAttributeAuthenticationPolicyWebflowEventResolver}
+ * This is {@link PrincipalAttributeAuthenticationPolicyProviderResolver}
  * that attempts to locate a principal attribute, match its value against
  * the provided pattern and decide the next event in the flow for the given service.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver
-        extends BaseMultifactorAuthenticationWebflowEventResolver {
+public class PrincipalAttributeAuthenticationPolicyProviderResolver
+        extends BaseMultifactorAuthenticationProviderResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

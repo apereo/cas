@@ -2,25 +2,22 @@ package org.apereo.cas.web.flow.authentication;
 
 import com.google.common.collect.Sets;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
- * This is {@link BaseMultifactorAuthenticationWebflowEventResolver}.
+ * This is {@link BaseMultifactorAuthenticationProviderResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver
-        implements MultifactorAuthenticationWebflowEventResolver {
+public abstract class BaseMultifactorAuthenticationProviderResolver extends AbstractCasWebflowEventResolver
+        implements MultifactorAuthenticationProviderResolver {
 
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
@@ -42,28 +39,44 @@ public abstract class BaseMultifactorAuthenticationWebflowEventResolver extends 
         return providerFound;
     }
 
-    @Override
+
+    /**
+     * Locate the provider in the collection, and have it match the requested mfa.
+     * If the provider is multi-instance, resolve based on inner-registered providers.
+     *
+     * @param providers        the providers
+     * @param requestMfaMethod the request mfa method
+     * @return the optional
+     */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String... requestMfaMethod) {
         return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
     }
 
-    @Override
+    /**
+     * Locate the provider in the collection, and have it match the requested mfa.
+     * If the provider is multi-instance, resolve based on inner-registered providers.
+     *
+     * @param providers        the providers
+     * @param requestMfaMethod the request mfa method
+     * @return the optional
+     */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
         return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
     }
 
     @Override
-    public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<MultifactorAuthenticationProvider> providers) {
-        final Set providersSet = providers.stream()
-                .map(p -> {
-                    if (p instanceof VariegatedMultifactorAuthenticationProvider) {
-                        return Stream.of(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
-                    }
-                    return p;
-                })
-                .collect(Collectors.toSet());
-        return providersSet;
+    public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<? extends MultifactorAuthenticationProvider> providers) {
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = Sets.newHashSet();
+        providers.stream().forEach(p -> {
+            if (p instanceof VariegatedMultifactorAuthenticationProvider) {
+                flattenedProviders.addAll(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
+            } else {
+                flattenedProviders.add(p);
+            }
+        });
+
+        return flattenedProviders;
     }
 }
