@@ -15,6 +15,8 @@ import org.apereo.cas.services.RegisteredService;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OAuthWebApplicationService extends AbstractWebApplicationService {
 
+    private static final long serialVersionUID = -4851305887430952052L;
+
     /**
      * Instantiates a new OAuth web application service impl.
      *
