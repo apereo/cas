@@ -228,7 +228,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param service the service
      * @return the authentication provider for service
      */
-    protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
+    protected Collection<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
             return policy.getMultifactorAuthenticationProviders().stream()
@@ -442,47 +442,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-
-    /**
-     * Resolve event per authentication provider event.
-     *
-     * @param principal the principal
-     * @param context   the context
-     * @param service   the service
-     * @return the event
-     */
-    protected Set<Event> resolveEventPerAuthenticationProvider(final Principal principal,
-                                                               final RequestContext context,
-                                                               final RegisteredService service) {
-
-        try {
-            final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
-            if (providers != null && !providers.isEmpty()) {
-                final MultifactorAuthenticationProvider provider =
-                        this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-
-                logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
-
-                if (!provider.isAvailable(service)) {
-                    logger.warn("Multifactor authentication provider {} could not be verified/reached.", provider);
-                    return null;
-                }
-                final String identifier = provider.getId();
-                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        provider, service.getName());
-
-                final Event event = validateEventIdForMatchingTransitionInContext(identifier, context,
-                        buildEventAttributeMap(principal, service, provider));
-                return ImmutableSet.of(event);
-            }
-
-            logger.debug("No multifactor authentication providers could be located for {}", service);
-            return null;
-
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
 
     /**
      * Find the MultifactorAuthenticationProvider in the application contact that matches the specified providerId (e.g. "mfa-duo").
