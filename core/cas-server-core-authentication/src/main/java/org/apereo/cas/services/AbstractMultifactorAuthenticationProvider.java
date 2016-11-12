@@ -63,7 +63,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             logger.debug("Provided event id {} is not applicable to this provider identified by {}", getId());
             return false;
         }
-        if (!bypassEvaluator.eval(authentication)) {
+        if (bypassEvaluator != null && !bypassEvaluator.eval(authentication)) {
             logger.debug("Request cannot be supported by provider {}", getId());
             return false;
         }
@@ -99,7 +99,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         }
 
         if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
-            if (isAvailable(service)) {
+            if (isAvailable()) {
                 return true;
             }
             if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {

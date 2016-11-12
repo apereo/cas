@@ -1,15 +1,15 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,11 +23,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SelectiveAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
+public class SelectiveAuthenticationProviderWebflowEventResolver extends BaseMultifactorAuthenticationProviderResolver {
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final Set<Event> resolvedEvents = getResolvedEventsAsAttribute(context);
@@ -49,10 +46,10 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
      * @param context           the request context
      * @return the set of resolved events
      */
-    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, 
-                                               final Authentication authentication, 
-                                               final RegisteredService registeredService, 
-                                               final HttpServletRequest request, 
+    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents,
+                                               final Authentication authentication,
+                                               final RegisteredService registeredService,
+                                               final HttpServletRequest request,
                                                final RequestContext context) {
         logger.debug("Collection of resolved events for this authentication sequence are:");
         for (final Event resolveEvent : resolveEvents) {
@@ -82,11 +79,11 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
             return resolveEvents;
         }
 
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());
         final Set<Event> finalEvents = resolveEvents
                 .stream()
-                .filter(e -> !providers.entrySet()
-                        .stream()
-                        .filter(p -> p.getValue().supports(e, authentication, registeredService))
+                .filter(e -> !flattenedProviders.stream()
+                        .filter(p -> p.supports(e, authentication, registeredService))
                         .collect(Collectors.toSet())
                         .isEmpty())
                 .collect(Collectors.toSet());

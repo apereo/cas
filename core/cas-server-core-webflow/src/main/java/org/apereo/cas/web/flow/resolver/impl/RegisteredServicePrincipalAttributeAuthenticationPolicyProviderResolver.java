@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
@@ -17,15 +17,15 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver}
+ * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyProviderResolver}
  * that attempts to locate the given principal attribute in the service authentication policy
  * and match it against the pattern provided in the same policy.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver
-        extends BaseMultifactorAuthenticationWebflowEventResolver {
+public class RegisteredServicePrincipalAttributeAuthenticationPolicyProviderResolver
+        extends BaseMultifactorAuthenticationProviderResolver {
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {

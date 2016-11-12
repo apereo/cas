@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
@@ -14,6 +15,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +26,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcAuthenticationContextWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class OidcAuthenticationContextWebflowEventResolver extends BaseMultifactorAuthenticationProviderResolver {
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
@@ -62,7 +64,9 @@ public class OidcAuthenticationContextWebflowEventResolver extends AbstractCasWe
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
-        final Optional<MultifactorAuthenticationProvider> provider = providerMap.values()
+
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
+        final Optional<MultifactorAuthenticationProvider> provider = flattenedProviders
                 .stream()
                 .filter(v -> values.contains(v.getId())).findAny();
 
