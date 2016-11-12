@@ -3,11 +3,12 @@ package org.apereo.cas.web.flow.resolver.impl;
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.web.flow.MultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
@@ -24,8 +25,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver
-        extends RegisteredServiceAuthenticationPolicyWebflowEventResolver
-        implements MultifactorAuthenticationWebflowEventResolver {
+        extends BaseMultifactorAuthenticationWebflowEventResolver {
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);

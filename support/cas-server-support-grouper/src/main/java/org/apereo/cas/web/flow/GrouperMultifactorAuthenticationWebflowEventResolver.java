@@ -12,6 +12,8 @@ import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -32,8 +34,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GrouperMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver
-        implements MultifactorAuthenticationWebflowEventResolver {
+public class GrouperMultifactorAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationWebflowEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
