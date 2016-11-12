@@ -7,12 +7,12 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link DuoNonWebAuthenticationAction}.
+ * This is {@link DuoDirectAuthenticationAction}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoNonWebAuthenticationAction extends AbstractAction {
+public class DuoDirectAuthenticationAction extends AbstractAction {
     
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
