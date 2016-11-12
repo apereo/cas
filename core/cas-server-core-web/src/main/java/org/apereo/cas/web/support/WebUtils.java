@@ -36,6 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -338,7 +339,7 @@ public final class WebUtils {
         final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
         return Boolean.valueOf(val);
     }
-    
+
     /**
      * Put registered service into flowscope.
      *
@@ -448,7 +449,7 @@ public final class WebUtils {
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
-            } 
+            }
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
@@ -669,4 +670,26 @@ public final class WebUtils {
         }
         return Maps.newHashMap();
     }
+
+    /**
+     * Put resolved multifactor authentication providers into scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
+                                                                     final Collection<MultifactorAuthenticationProvider> value) {
+        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", value);
+    }
+
+    /**
+     * Gets resolved multifactor authentication providers.
+     *
+     * @param context the context
+     * @return the resolved multifactor authentication providers
+     */
+    public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
+        return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
+    }
+
 }

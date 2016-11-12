@@ -174,7 +174,8 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Entity
     @Table(name = "locks")
     private static class Lock implements Serializable {
-        
+
+        private static final long serialVersionUID = -5750740484289616656L;
         /** column name that holds application identifier. */
         @Id
         @Column(name="application_id")

@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
 import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,8 @@ import java.util.concurrent.TimeUnit;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class MultifactorAuthenticationProperties {
+public class MultifactorAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7416521468929733907L;
 
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
@@ -157,7 +159,8 @@ public class MultifactorAuthenticationProperties {
         this.yubikey = yubikey;
     }
 
-    public abstract static class BaseProvider {
+    public abstract static class BaseProvider implements Serializable {
+        private static final long serialVersionUID = -2690281104343633871L;
         private int rank;
         private String id;
         private Bypass bypass = new Bypass();
@@ -186,7 +189,8 @@ public class MultifactorAuthenticationProperties {
             this.id = id;
         }
 
-        public static class Bypass {
+        public static class Bypass implements Serializable {
+            private static final long serialVersionUID = -9181362378365850397L;
             private String principalAttributeName;
             private String principalAttributeValue;
             private String authenticationAttributeName;
@@ -254,6 +258,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class YubiKey extends BaseProvider {
+        private static final long serialVersionUID = 9138057706201201089L;
         private Integer clientId;
         private String secretKey = "";
 
@@ -299,6 +304,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Radius extends BaseProvider {
+        private static final long serialVersionUID = 7021301814775348087L;
         private boolean failoverOnException;
         private boolean failoverOnAuthenticationFailure;
 
@@ -487,6 +493,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Duo extends BaseProvider {
+        private static final long serialVersionUID = -4445375354167880807L;
         private String duoIntegrationKey;
         private String duoSecretKey;
         private String duoApplicationKey;
@@ -539,6 +546,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Authy extends BaseProvider {
+        private static final long serialVersionUID = -3746749663459157641L;
         private String apiKey;
         private String apiUrl;
         private String phoneAttribute = "phone";
@@ -600,6 +608,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Trusted extends BaseProvider {
+        private static final long serialVersionUID = 1505013239016790473L;
         private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
 
         private String encryptionKey = "";
@@ -764,6 +773,7 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class GAuth extends BaseProvider {
+        private static final long serialVersionUID = -7401748853833491119L;
         private String issuer = "CASIssuer";
         private String label = "CASLabel";
 

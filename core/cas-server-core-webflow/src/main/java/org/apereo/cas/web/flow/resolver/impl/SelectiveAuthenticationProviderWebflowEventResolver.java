@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -12,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SelectiveAuthenticationProviderWebflowEventResolver}
@@ -52,11 +53,11 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends BaseMul
                                                final HttpServletRequest request,
                                                final RequestContext context) {
         logger.debug("Collection of resolved events for this authentication sequence are:");
-        for (final Event resolveEvent : resolveEvents) {
-            logger.debug("Event id [{}] resolved from {}",
-                    resolveEvent.getId(), resolveEvent.getSource().getClass().getName());
-        }
-        return filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService);
+        resolveEvents.forEach(e -> logger.debug("Event id [{}] resolved from {}", e.getId(), e.getSource().getClass().getName()));
+        final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
+                filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService);
+        WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
+        return pair.getKey();
     }
 
     /**
@@ -67,28 +68,27 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends BaseMul
      * @param registeredService the registered service
      * @return the set of events
      */
-    protected Set<Event> filterEventsByMultifactorAuthenticationProvider(final Set<Event> resolveEvents,
-                                                                         final Authentication authentication,
-                                                                         final RegisteredService registeredService) {
+    protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+            final Set<Event> resolveEvents, final Authentication authentication,
+            final RegisteredService registeredService) {
         logger.debug("Locating multifactor providers to determine support for this authentication sequence");
         final Map<String, MultifactorAuthenticationProvider> providers =
                 WebUtils.getAllMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
             logger.debug("No providers are available to honor this request. Moving on...");
-            return resolveEvents;
+            return Pair.of(resolveEvents, Sets.newHashSet());
         }
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());
-        final Set<Event> finalEvents = resolveEvents
-                .stream()
-                .filter(e -> !flattenedProviders.stream()
-                        .filter(p -> p.supports(e, authentication, registeredService))
-                        .collect(Collectors.toSet())
-                        .isEmpty())
-                .collect(Collectors.toSet());
 
-        logger.debug("Finalized set of resolved events are {}", finalEvents);
-        return finalEvents;
+        // remove providers that don't support the event
+        flattenedProviders.removeIf(p -> resolveEvents.stream().filter(e -> p.supports(e, authentication, registeredService)).count() == 0);
+
+        // remove events that are not supported by providers.
+        resolveEvents.removeIf(e -> flattenedProviders.stream().filter(p -> p.supports(e, authentication, registeredService)).count() == 0);
+
+        logger.debug("Finalized set of resolved events are {}", resolveEvents);
+        return Pair.of(resolveEvents, flattenedProviders);
     }
 }

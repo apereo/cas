@@ -6,6 +6,7 @@ package org.apereo.cas.mgmt.services.web.beans;
  * @since 5.0
  */
 public class RegisteredServiceOidcTypeEditBean extends RegisteredServiceOAuthTypeEditBean {
+    private static final long serialVersionUID = -378685014926798349L;
     private boolean signToken;
     private String jwks;
 

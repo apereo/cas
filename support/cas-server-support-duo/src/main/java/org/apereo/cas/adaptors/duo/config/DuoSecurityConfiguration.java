@@ -2,11 +2,10 @@ package org.apereo.cas.adaptors.duo.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.BasicDuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
-import org.apereo.cas.adaptors.duo.authn.api.DuoDirectAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.web.DuoWebAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorTrustWebflowConfigurer;
@@ -155,9 +154,8 @@ public class DuoSecurityConfiguration {
                         && StringUtils.isNotBlank(duo.getDuoSecretKey())
                         && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
                 .forEach(duo -> {
-                    // add support for web-based duo
                     final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider();
-                    final DuoWebAuthenticationService s = new DuoWebAuthenticationService(duo);
+                    final BasicDuoAuthenticationService s = new BasicDuoAuthenticationService(duo);
                     s.setHttpClient(this.httpClient);
                     pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                     pWeb.setDuoAuthenticationService(s);
@@ -165,18 +163,7 @@ public class DuoSecurityConfiguration {
                     pWeb.setOrder(duo.getRank());
                     pWeb.setId(duo.getId());
 
-                    // add support for non-web based duo via direct interaction with duo APIs
-                    final DefaultDuoMultifactorAuthenticationProvider pApi = new DefaultDuoMultifactorAuthenticationProvider();
-                    final DuoDirectAuthenticationService sApi = new DuoDirectAuthenticationService(duo);
-                    sApi.setHttpClient(this.httpClient);
-                    pApi.setDuoAuthenticationService(sApi);
-                    pApi.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-                    pApi.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass()));
-                    pApi.setOrder(duo.getRank());
-                    pApi.setId(duo.getId());
-
                     provider.addProvider(pWeb);
-                    provider.addProvider(pApi);
                 });
 
         if (provider.getProviders().isEmpty()) {

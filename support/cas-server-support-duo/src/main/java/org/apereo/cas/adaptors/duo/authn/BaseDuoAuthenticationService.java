@@ -20,10 +20,11 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticationService<T> {
+public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
 
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
+    private static final long serialVersionUID = -8044100706027708789L;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -32,7 +33,7 @@ public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticati
      */
     protected final MultifactorAuthenticationProperties.Duo duoProperties;
 
-    private HttpClient httpClient;
+    private transient HttpClient httpClient;
 
     /**
      * Creates the duo authentication service.
@@ -44,10 +45,11 @@ public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticati
     @Override
     public boolean ping() {
         try {
-            String url = duoProperties.getDuoApiHost().concat("/rest/v1/ping");
+            String url = getApiHost().concat("/rest/v1/ping");
             if (!url.startsWith("http")) {
                 url = "https://" + url;
             }
+
             final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
                 final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
@@ -75,7 +77,6 @@ public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticati
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
-
 
     @Override
     public boolean equals(final Object obj) {

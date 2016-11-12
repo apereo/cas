@@ -10,7 +10,9 @@ import org.apereo.cas.authentication.principal.Service;
  * @since 5.0.0
  */
 public class DefaultValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
-    
+
+    private static final long serialVersionUID = -7458940344679793681L;
+
     @Override
     public Service resolveServiceFrom(final Service service) {
         return service;
