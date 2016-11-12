@@ -185,6 +185,8 @@ public class GoogleAuthentiacatorConfiguration {
     public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
         final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
+        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setOrder(casProperties.getAuthn().getMfa().getGauth().getRank());
         return p;
     }
 
