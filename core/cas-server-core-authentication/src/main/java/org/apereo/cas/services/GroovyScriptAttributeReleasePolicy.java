@@ -19,6 +19,7 @@ import java.util.Map;
  */
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptAttributeReleasePolicy.class);
+    private static final long serialVersionUID = 1703080077563402223L;
 
     private String groovyScript;
 

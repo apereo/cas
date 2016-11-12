@@ -13,6 +13,7 @@ import java.net.URL;
  */
 public class LogoutHttpMessage extends HttpMessage {
 
+    private static final long serialVersionUID = 399581521957873727L;
     /** The parameter name that contains the logout request. */
     private final String logoutParameterName = "logoutRequest";
     
