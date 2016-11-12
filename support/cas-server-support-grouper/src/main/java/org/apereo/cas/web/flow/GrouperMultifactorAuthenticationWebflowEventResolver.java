@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link GrouperMultifactorAuthenticationWebflowEventResolver}.
@@ -66,14 +68,18 @@ public class GrouperMultifactorAuthenticationWebflowEventResolver extends Abstra
         final GrouperGroupField groupField =
                 GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
 
+        final Set<String> values = Sets.newHashSet();
+        results.stream().forEach(wr -> Arrays.stream(wr.getWsGroups()).map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
+                .collect(Collectors.toSet())
+                .forEach(g -> values.add(g)));
+
+
         final Optional<MultifactorAuthenticationProvider> providerFound =
                 providerMap.values().stream()
-                        .filter(provider -> results.stream().filter(wr -> Arrays.stream(wr.getWsGroups()).filter(g -> {
-                            final String value = GrouperFacade.getGrouperGroupAttribute(groupField, g);
-                            logger.debug("Evaluating group {} against provider id {}", value, provider.getId());
-                            return provider.matches(value);
-                        }).findAny().isPresent()).findAny().isPresent())
-                        .findFirst();
+                        .filter(provider -> values.stream().filter(g -> {
+                            logger.debug("Evaluating group {} against provider id {}", g, provider.getId());
+                            return provider.matches(g);
+                        }).findFirst().isPresent()).findFirst();
 
         if (providerFound.isPresent()) {
             if (providerFound.get().isAvailable(service)) {
