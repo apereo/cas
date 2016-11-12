@@ -7,7 +7,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.MultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class RestEndpointAuthenticationPolicyWebflowEventResolver
-        extends AbstractCasWebflowEventResolver
-        implements MultifactorAuthenticationWebflowEventResolver {
+        extends BaseMultifactorAuthenticationWebflowEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,8 +60,8 @@ public class RestEndpointAuthenticationPolicyWebflowEventResolver
         final RestTemplate restTemplate = new RestTemplate();
         final ResponseEntity<String> responseEntity =
                 restTemplate.postForEntity(casProperties.getAuthn().getMfa().getRestEndpoint(), principal.getId(), String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            final String results = responseEntity.getBody().toString();
+        if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+            final String results = responseEntity.getBody();
             if (StringUtils.isNotBlank(results)) {
                 logger.debug("Result returned from the rest endpoint is {}", results);
                 return Sets.newHashSet(new Event(this, results));

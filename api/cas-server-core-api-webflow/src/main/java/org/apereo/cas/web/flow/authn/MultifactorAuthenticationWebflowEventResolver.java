@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.authn;
 
 /**
  * This is {@link MultifactorAuthenticationWebflowEventResolver}.
