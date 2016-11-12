@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +17,18 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link RestEndpointAuthenticationPolicyWebflowEventResolver}.
+ * This is {@link RestEndpointAuthenticationPolicyProviderResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RestEndpointAuthenticationPolicyWebflowEventResolver
-        extends BaseMultifactorAuthenticationWebflowEventResolver {
+public class RestEndpointAuthenticationPolicyProviderResolver
+        extends BaseMultifactorAuthenticationProviderResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -36,6 +37,7 @@ public class RestEndpointAuthenticationPolicyWebflowEventResolver
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
+        final String restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
 
         if (service == null || authentication == null) {
             logger.debug("No service or authentication is available to determine event for principal");
@@ -43,7 +45,7 @@ public class RestEndpointAuthenticationPolicyWebflowEventResolver
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getRestEndpoint())) {
+        if (StringUtils.isBlank(restEndpoint)) {
             logger.debug("Rest endpoint to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -55,17 +57,31 @@ public class RestEndpointAuthenticationPolicyWebflowEventResolver
             return null;
         }
 
-        logger.debug("Contacting {} to inquire about {}", casProperties.getAuthn().getMfa().getRestEndpoint(), principal.getId());
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
+
+        logger.debug("Contacting {} to inquire about {}", restEndpoint, principal.getId());
         final RestTemplate restTemplate = new RestTemplate();
-        final ResponseEntity<String> responseEntity =
-                restTemplate.postForEntity(casProperties.getAuthn().getMfa().getRestEndpoint(), principal.getId(), String.class);
+        final ResponseEntity<String> responseEntity = restTemplate.postForEntity(restEndpoint, principal.getId(), String.class);
         if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
             final String results = responseEntity.getBody();
             if (StringUtils.isNotBlank(results)) {
                 logger.debug("Result returned from the rest endpoint is {}", results);
-                return Sets.newHashSet(new Event(this, results));
+
+
+                final MultifactorAuthenticationProvider restProvider = flattenedProviders.stream()
+                        .filter(p -> p.matches(results))
+                        .findFirst()
+                        .orElse(null);
+
+                if (restProvider != null) {
+                    logger.debug("Found multifactor authentication provider {}", restProvider.getId());
+                    return Sets.newHashSet(new Event(this, restProvider.getId()));
+                }
+                logger.debug("No multifactor authentication provider could be matched against {}", results);
+
             }
         }
+        logger.debug("No providers are available to match rest endpoint results");
         return Sets.newHashSet();
     }
 
