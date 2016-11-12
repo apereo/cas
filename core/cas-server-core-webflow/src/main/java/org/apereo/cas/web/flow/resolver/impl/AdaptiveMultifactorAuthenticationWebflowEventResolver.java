@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -72,9 +71,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends BaseM
             final String mfaMethod = entry.getKey().toString();
             final String pattern = entry.getValue().toString();
 
-            final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
-                    .filter(provider -> provider.matches(mfaMethod))
-                    .findFirst();
+            final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, mfaMethod);
 
             if (!providerFound.isPresent()) {
                 logger.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",

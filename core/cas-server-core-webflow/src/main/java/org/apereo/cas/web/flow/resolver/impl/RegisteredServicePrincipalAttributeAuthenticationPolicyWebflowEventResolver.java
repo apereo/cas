@@ -8,12 +8,12 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -45,7 +45,7 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         }
 
         final Principal principal = authentication.getPrincipal();
-        final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
+        final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
                 service, context, providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));

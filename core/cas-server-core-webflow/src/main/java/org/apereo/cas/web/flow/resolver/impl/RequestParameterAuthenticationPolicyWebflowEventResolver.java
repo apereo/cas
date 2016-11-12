@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +51,8 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver
                 logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
                 throw new AuthenticationException();
             }
-            final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
-                    .filter(provider -> provider.matches(values[0]))
-                    .findFirst();
 
+            final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values[0]);
             if (providerFound.isPresent()) {
                 if (providerFound.get().isAvailable(service)) {
                     logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
