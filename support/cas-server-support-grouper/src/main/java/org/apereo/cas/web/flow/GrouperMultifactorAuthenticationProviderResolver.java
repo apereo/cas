@@ -12,7 +12,7 @@ import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link GrouperMultifactorAuthenticationWebflowEventResolver}.
+ * This is {@link GrouperMultifactorAuthenticationProviderResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GrouperMultifactorAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationWebflowEventResolver {
+public class GrouperMultifactorAuthenticationProviderResolver extends BaseMultifactorAuthenticationProviderResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -73,8 +73,7 @@ public class GrouperMultifactorAuthenticationWebflowEventResolver extends BaseMu
                 .collect(Collectors.toSet())
                 .forEach(g -> values.add(g)));
 
-        final Optional<MultifactorAuthenticationProvider> providerFound =
-                resolveProvider(providerMap, values);
+        final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
 
         if (providerFound.isPresent()) {
             if (providerFound.get().isAvailable(service)) {
