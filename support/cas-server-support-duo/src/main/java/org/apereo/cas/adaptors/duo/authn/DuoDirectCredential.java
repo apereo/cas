@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.authn.api;
+package org.apereo.cas.adaptors.duo.authn;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -9,18 +9,18 @@ import org.apereo.cas.authentication.Credential;
 import java.io.Serializable;
 
 /**
- * This is {@link DuoApiCredential}.
+ * This is {@link DuoDirectCredential}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoApiCredential implements Credential, Serializable {
+public class DuoDirectCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -7570699733132111037L;
     
     private final Authentication authentication;
 
-    public DuoApiCredential(final Authentication authentication) {
+    public DuoDirectCredential(final Authentication authentication) {
         this.authentication = authentication;
     }
 
@@ -44,7 +44,7 @@ public class DuoApiCredential implements Credential, Serializable {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final DuoApiCredential rhs = (DuoApiCredential) obj;
+        final DuoDirectCredential rhs = (DuoDirectCredential) obj;
         return new EqualsBuilder()
                 .append(this.authentication, rhs.authentication)
                 .isEquals();
