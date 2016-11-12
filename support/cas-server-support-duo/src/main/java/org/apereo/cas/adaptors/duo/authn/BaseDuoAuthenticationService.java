@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
@@ -69,8 +71,39 @@ public abstract class BaseDuoAuthenticationService<T> implements DuoAuthenticati
     public String getApiHost() {
         return duoProperties.getDuoApiHost();
     }
-    
+
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final BaseDuoAuthenticationService rhs = (BaseDuoAuthenticationService) obj;
+        return new EqualsBuilder()
+                .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
+                .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
+                .append(this.duoProperties.getDuoIntegrationKey(), rhs.duoProperties.getDuoIntegrationKey())
+                .append(this.duoProperties.getDuoSecretKey(), rhs.duoProperties.getDuoSecretKey())
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(this.duoProperties.getDuoApiHost())
+                .append(this.duoProperties.getDuoApplicationKey())
+                .append(this.duoProperties.getDuoIntegrationKey())
+                .append(this.duoProperties.getDuoSecretKey())
+                .toHashCode();
     }
 }
