@@ -171,7 +171,7 @@ public class RadiusMultifactorConfiguration {
                 casProperties.getAuthn().getMfa().getRadius().getBypass()
         );
     }
-    
+
     @Bean
     @RefreshScope
     public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
@@ -192,7 +192,7 @@ public class RadiusMultifactorConfiguration {
         a.setPrincipalFactory(radiusTokenPrincipalFactory());
         a.setServicesManager(servicesManager);
         a.setServers(radiusTokenServers());
-        a.setFailoverOnAuthenticationFailure(                radius.isFailoverOnAuthenticationFailure());
+        a.setFailoverOnAuthenticationFailure(radius.isFailoverOnAuthenticationFailure());
         a.setFailoverOnException(radius.isFailoverOnException());
 
         return a;
