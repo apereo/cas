@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.authn.web;
+package org.apereo.cas.adaptors.duo.authn;
 
 
 import org.apache.commons.lang3.StringUtils;
