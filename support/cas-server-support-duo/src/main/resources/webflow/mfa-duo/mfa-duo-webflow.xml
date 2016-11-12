@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <var name="credential" class="org.apereo.cas.adaptors.duo.authn.web.DuoCredential" />
+    <var name="credential" class="org.apereo.cas.adaptors.duo.authn.DuoCredential" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>

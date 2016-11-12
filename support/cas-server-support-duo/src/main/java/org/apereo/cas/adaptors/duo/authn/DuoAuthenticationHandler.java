@@ -1,7 +1,5 @@
-package org.apereo.cas.adaptors.duo.authn.web;
+package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -43,10 +41,32 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
      */
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+        if (credential instanceof DuoDirectCredential) {
+            return authenticateDuoApiCredential(credential);
+        }
+        return authenticateDuoCredential(credential);
+    }
 
+    private HandlerResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
+        try {
+            final DuoAuthenticationService<Boolean> duoApiAuthenticationService =
+                    provider.findProvider("misagh", DuoMultifactorAuthenticationProvider.class)
+                            .getDuoAuthenticationService();
+
+            final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
+            if (duoApiAuthenticationService.authenticate(c)) {
+                final Principal principal = c.getAuthentication().getPrincipal();
+                return createHandlerResult(credential, principal, new ArrayList<>());
+            }
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        throw new FailedLoginException("Duo authentication has failed");
+    }
+
+    private HandlerResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
         try {
             final DuoCredential duoCredential = (DuoCredential) credential;
-
             if (!duoCredential.isValid()) {
                 throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
                         + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
@@ -78,7 +98,8 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     @Override
     public boolean supports(final Credential credential) {
-        return DuoCredential.class.isAssignableFrom(credential.getClass());
+        return DuoCredential.class.isAssignableFrom(credential.getClass())
+                || credential instanceof DuoDirectCredential;
     }
 
     public void setProvider(final VariegatedMultifactorAuthenticationProvider provider) {

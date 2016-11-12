@@ -6,6 +6,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
@@ -18,7 +19,7 @@ import org.springframework.http.HttpMethod;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Boolean> {
+public class DuoDirectAuthenticationService extends BaseDuoAuthenticationService<Boolean> {
     private static final int API_VERSION = 2;
 
     /**
@@ -26,7 +27,7 @@ public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Bo
      *
      * @param duoProperties
      */
-    public DuoApiAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
+    public DuoDirectAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         super(duoProperties);
     }
 
@@ -38,7 +39,7 @@ public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Bo
     @Override
     public Boolean authenticate(final Credential crds) {
         try {
-            final DuoApiCredential credential = DuoApiCredential.class.cast(crds);
+            final DuoDirectCredential credential = DuoDirectCredential.class.cast(crds);
             final Principal p = credential.getAuthentication().getPrincipal();
             final Http request = getHttpRequest();
             signHttpRequest(request, p.getId());
@@ -85,7 +86,7 @@ public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Bo
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final DuoApiAuthenticationService rhs = (DuoApiAuthenticationService) obj;
+        final DuoDirectAuthenticationService rhs = (DuoDirectAuthenticationService) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

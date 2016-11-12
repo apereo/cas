@@ -3,10 +3,9 @@ package org.apereo.cas.adaptors.duo.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationHandler;
-import org.apereo.cas.adaptors.duo.authn.api.DuoApiAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.web.DuoAuthenticationHandler;
+import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
+import org.apereo.cas.adaptors.duo.authn.api.DuoDirectAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.web.DuoWebAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
@@ -146,25 +145,6 @@ public class DuoSecurityConfiguration {
 
     @Bean
     @RefreshScope
-    public AuthenticationMetaDataPopulator duoApiAuthenticationMetaDataPopulator() {
-        final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
-        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        pop.setAuthenticationHandler(duoApiAuthenticationHandler());
-        pop.setProvider(duoMultifactorAuthenticationProvider());
-        return pop;
-    }
-
-    @Bean
-    public AuthenticationHandler duoApiAuthenticationHandler() {
-        final DuoApiAuthenticationHandler h = new DuoApiAuthenticationHandler();
-        h.setProvider(duoMultifactorAuthenticationProvider());
-        h.setPrincipalFactory(duoPrincipalFactory());
-        h.setServicesManager(servicesManager);
-        return h;
-    }
-
-    @Bean
-    @RefreshScope
     public DefaultVariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
         final DefaultVariegatedMultifactorAuthenticationProvider provider = new DefaultVariegatedMultifactorAuthenticationProvider();
 
@@ -187,7 +167,7 @@ public class DuoSecurityConfiguration {
 
                     // add support for non-web based duo via direct interaction with duo APIs
                     final DefaultDuoMultifactorAuthenticationProvider pApi = new DefaultDuoMultifactorAuthenticationProvider();
-                    final DuoApiAuthenticationService sApi = new DuoApiAuthenticationService(duo);
+                    final DuoDirectAuthenticationService sApi = new DuoDirectAuthenticationService(duo);
                     sApi.setHttpClient(this.httpClient);
                     pApi.setDuoAuthenticationService(sApi);
                     pApi.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
@@ -249,10 +229,7 @@ public class DuoSecurityConfiguration {
     @PostConstruct
     protected void initializeServletApplicationContext() {
         this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
-        this.authenticationHandlersResolvers.put(duoApiAuthenticationHandler(), null);
-
         authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
-        authenticationMetadataPopulators.add(0, duoApiAuthenticationMetaDataPopulator());
     }
 
     /**
