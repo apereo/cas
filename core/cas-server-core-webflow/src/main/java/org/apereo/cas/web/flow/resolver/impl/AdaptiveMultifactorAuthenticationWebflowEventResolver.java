@@ -73,7 +73,7 @@ public class AdaptiveMultifactorAuthenticationWebflowEventResolver extends Abstr
             final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
                     .filter(provider -> provider.matches(mfaMethod))
                     .findFirst();
-            
+
             if (!providerFound.isPresent()) {
                 logger.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
                             mfaMethod, pattern, mfaMethod);

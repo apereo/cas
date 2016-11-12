@@ -16,9 +16,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jooq.lambda.Agg.count;
-import static org.springframework.integration.support.management.graph.LinkNode.Type.input;
-
 /**
  * This is {@link PrincipalAttributeAuthenticationPolicyWebflowEventResolver}
  * that attempts to locate a principal attribute, match its value against

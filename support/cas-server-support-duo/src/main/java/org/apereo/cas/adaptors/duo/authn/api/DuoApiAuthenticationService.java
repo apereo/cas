@@ -3,6 +3,8 @@ package org.apereo.cas.adaptors.duo.authn.api;
 import com.duosecurity.client.Http;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -71,4 +73,28 @@ public class DuoApiAuthenticationService extends BaseDuoAuthenticationService<Bo
                 "/auth/v" + API_VERSION + "/auth");
     }
 
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DuoApiAuthenticationService rhs = (DuoApiAuthenticationService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
 }

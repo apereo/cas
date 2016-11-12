@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.duo.authn.api;
 
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -18,10 +20,10 @@ import java.util.ArrayList;
  * @since 5.0.0
  */
 public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private DuoAuthenticationService<Boolean> duoApiAuthenticationService;
+    private VariegatedMultifactorAuthenticationProvider provider;
 
-    public void setDuoApiAuthenticationService(final DuoAuthenticationService<Boolean> duoApiAuthenticationService) {
-        this.duoApiAuthenticationService = duoApiAuthenticationService;
+    public void setProvider(final VariegatedMultifactorAuthenticationProvider provider) {
+        this.provider = provider;
     }
 
     @Override
@@ -29,8 +31,12 @@ public class DuoApiAuthenticationHandler extends AbstractPreAndPostProcessingAut
             throws GeneralSecurityException, PreventedException {
 
         try {
+            final DuoAuthenticationService<Boolean> duoApiAuthenticationService =
+                    provider.findProvider("misagh", DuoMultifactorAuthenticationProvider.class)
+                            .getDuoAuthenticationService();
+
             final DuoApiCredential c = DuoApiCredential.class.cast(credential);
-            if (this.duoApiAuthenticationService.authenticate(c)) {
+            if (duoApiAuthenticationService.authenticate(c)) {
                 final Principal principal = c.getAuthentication().getPrincipal();
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }

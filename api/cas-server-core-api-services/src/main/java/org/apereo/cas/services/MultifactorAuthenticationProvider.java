@@ -55,4 +55,6 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * @return true if supported
      */
     boolean supports(Event e, Authentication authentication, RegisteredService registeredService);
+
+
 }

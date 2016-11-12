@@ -36,6 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -652,6 +653,7 @@ public final class WebUtils {
     public static void putRememberMeAuthenticationEnabled(final RequestContext context, final Boolean enabled) {
         context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
     }
+
 
     /**
      * Gets all multifactor authentication providers from application context.

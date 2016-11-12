@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.authn.web;
+package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;

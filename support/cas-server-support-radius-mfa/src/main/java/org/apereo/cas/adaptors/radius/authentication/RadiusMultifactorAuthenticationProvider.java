@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 
 /**
@@ -15,15 +14,6 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     
     private RadiusTokenAuthenticationHandler radiusAuthenticationHandler;
 
-    @Override
-    public String getId() {
-        return RadiusMultifactorWebflowConfigurer.MFA_RADIUS_EVENT_ID;
-    }
-
-    @Override
-    public int getOrder() {
-        return casProperties.getAuthn().getMfa().getRadius().getRank();
-    }
 
     @Override
     protected boolean isAvailable() {

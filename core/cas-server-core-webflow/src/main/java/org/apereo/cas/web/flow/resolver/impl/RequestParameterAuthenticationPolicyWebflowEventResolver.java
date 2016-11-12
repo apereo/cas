@@ -49,7 +49,6 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
                 logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
                 throw new AuthenticationException();
             }
-
             final Optional<MultifactorAuthenticationProvider> providerFound = providerMap.values().stream()
                     .filter(provider -> provider.matches(values[0]))
                     .findFirst();

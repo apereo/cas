@@ -176,9 +176,10 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(
-                yubikeyAuthenticationHandler(),
-                this.httpClient);
+                yubikeyAuthenticationHandler(), this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
+        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
         return p;
     }
 

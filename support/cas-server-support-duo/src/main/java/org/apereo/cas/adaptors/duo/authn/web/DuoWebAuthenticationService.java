@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.authn.web;
 
 import com.duosecurity.duoweb.DuoWeb;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.authn.BaseDuoAuthenticationService;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
@@ -49,5 +51,27 @@ public class DuoWebAuthenticationService extends BaseDuoAuthenticationService<St
     }
 
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DuoWebAuthenticationService rhs = (DuoWebAuthenticationService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
 }
