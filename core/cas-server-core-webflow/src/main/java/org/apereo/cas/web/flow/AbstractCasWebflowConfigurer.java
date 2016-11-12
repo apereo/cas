@@ -100,7 +100,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    private FlowBuilderServices flowBuilderServices;
+    /** Flow builder services. */
+    protected FlowBuilderServices flowBuilderServices;
     
     @PostConstruct
     @Override

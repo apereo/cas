@@ -8,9 +8,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.duo.web.flow.DuoDirectAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.adaptors.duo.web.flow.DuoNonWebAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -22,6 +22,7 @@ import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.http.HttpClient;
@@ -39,7 +40,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -108,15 +108,6 @@ public class DuoSecurityConfiguration {
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
 
-    @Bean
-    public FlowDefinitionRegistry duoFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setBasePath("classpath*:/webflow");
-        builder.addFlowLocationPattern("/mfa-duo/*-webflow.xml");
-        return builder.build();
-    }
-
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
@@ -144,7 +135,7 @@ public class DuoSecurityConfiguration {
 
     @Bean
     @RefreshScope
-    public DefaultVariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
+    public VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
         final DefaultVariegatedMultifactorAuthenticationProvider provider = new DefaultVariegatedMultifactorAuthenticationProvider();
 
         casProperties.getAuthn().getMfa().getDuo()
@@ -175,7 +166,7 @@ public class DuoSecurityConfiguration {
 
     @Bean
     public Action duoNonWebAuthenticationAction() {
-        return new DuoNonWebAuthenticationAction();
+        return new DuoDirectAuthenticationAction();
     }
 
     @Bean
@@ -207,9 +198,9 @@ public class DuoSecurityConfiguration {
     @Bean
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final DuoMultifactorWebflowConfigurer r = new DuoMultifactorWebflowConfigurer();
-        r.setDuoFlowRegistry(duoFlowRegistry());
         r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         r.setFlowBuilderServices(flowBuilderServices);
+        r.setProvider(duoMultifactorAuthenticationProvider());
         return r;
     }
 
@@ -231,7 +222,6 @@ public class DuoSecurityConfiguration {
         @Bean
         public CasWebflowConfigurer duoMultifactorTrustWebflowConfigurer() {
             final DuoMultifactorTrustWebflowConfigurer r = new DuoMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(duoFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());

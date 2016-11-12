@@ -8,7 +8,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
-import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.springframework.webflow.execution.Event;
