@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RestEndpointAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class RestEndpointAuthenticationPolicyWebflowEventResolver
+        extends AbstractCasWebflowEventResolver
+        implements MultifactorAuthenticationWebflowEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

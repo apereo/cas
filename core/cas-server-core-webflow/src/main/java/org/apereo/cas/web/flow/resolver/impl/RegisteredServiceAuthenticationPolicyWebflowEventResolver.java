@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.web.flow.MultifactorAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
@@ -18,7 +19,8 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class RegisteredServiceAuthenticationPolicyWebflowEventResolver
+        extends AbstractCasWebflowEventResolver implements MultifactorAuthenticationWebflowEventResolver {
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {

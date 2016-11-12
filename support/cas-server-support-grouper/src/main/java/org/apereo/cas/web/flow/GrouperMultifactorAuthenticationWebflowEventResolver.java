@@ -32,7 +32,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GrouperMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class GrouperMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver
+        implements MultifactorAuthenticationWebflowEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
