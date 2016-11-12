@@ -6,7 +6,7 @@
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
   "description" : "Description is here",
-  "theme": "misagh",
+  "theme": "oauth",
   "logoutUrl" : "https://example.org/logout",
   "logo": "https://example.org",
   "evaluationOrder": 100,

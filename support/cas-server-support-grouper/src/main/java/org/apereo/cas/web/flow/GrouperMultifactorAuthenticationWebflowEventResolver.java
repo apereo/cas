@@ -13,8 +13,6 @@ import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.authn.MultifactorAuthenticationWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,13 +73,8 @@ public class GrouperMultifactorAuthenticationWebflowEventResolver extends BaseMu
                 .collect(Collectors.toSet())
                 .forEach(g -> values.add(g)));
 
-
         final Optional<MultifactorAuthenticationProvider> providerFound =
-                providerMap.values().stream()
-                        .filter(provider -> values.stream().filter(g -> {
-                            logger.debug("Evaluating group {} against provider id {}", g, provider.getId());
-                            return provider.matches(g);
-                        }).findFirst().isPresent()).findFirst();
+                resolveProvider(providerMap, values);
 
         if (providerFound.isPresent()) {
             if (providerFound.get().isAvailable(service)) {
