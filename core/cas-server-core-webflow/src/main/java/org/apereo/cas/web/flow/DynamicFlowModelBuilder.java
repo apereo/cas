@@ -19,8 +19,14 @@ import java.util.LinkedList;
  * @since 5.1.0
  */
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
+    /**
+     * The Flow model.
+     */
     private FlowModel flowModel;
 
+    /**
+     * Instantiates a new Dynamic flow model builder.
+     */
     public DynamicFlowModelBuilder() {
         init();
     }
@@ -36,22 +42,47 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
     public void build() throws FlowModelBuilderException {
     }
 
+    /**
+     * Sets on start actions.
+     *
+     * @param vars the vars
+     */
     public void setOnStartActions(final LinkedList<AbstractActionModel> vars) {
         this.flowModel.setOnStartActions(vars);
     }
 
+    /**
+     * Sets start state id.
+     *
+     * @param id the id
+     */
     public void setStartStateId(final String id) {
         this.flowModel.setStartStateId(id);
     }
 
+    /**
+     * Sets vars.
+     *
+     * @param vars the vars
+     */
     public void setVars(final LinkedList<VarModel> vars) {
         this.flowModel.setVars(vars);
     }
 
+    /**
+     * Sets global transitions.
+     *
+     * @param vars the vars
+     */
     public void setGlobalTransitions(final LinkedList<TransitionModel> vars) {
         this.flowModel.setGlobalTransitions(vars);
     }
 
+    /**
+     * Sets states.
+     *
+     * @param states the states
+     */
     public void setStates(final LinkedList<AbstractStateModel> states) {
         this.flowModel.setStates(states);
     }

@@ -26,7 +26,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     private static final String RESULT_KEY_STAT = "stat";
     private static final long serialVersionUID = -8044100706027708789L;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Duo Properties.
