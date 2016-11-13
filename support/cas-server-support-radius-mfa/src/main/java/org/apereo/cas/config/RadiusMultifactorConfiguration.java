@@ -252,7 +252,6 @@ public class RadiusMultifactorConfiguration {
         @Bean
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
             final RadiusMultifactorTrustWebflowConfigurer r = new RadiusMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(radiusFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());

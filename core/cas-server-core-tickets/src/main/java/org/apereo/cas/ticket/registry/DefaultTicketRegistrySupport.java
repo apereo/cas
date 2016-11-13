@@ -23,7 +23,8 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     /**
      * Instantiates a new Default ticket registry support.
      */
-    public DefaultTicketRegistrySupport() {}
+    public DefaultTicketRegistrySupport() {
+    }
 
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
@@ -41,6 +42,13 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     public Map<String, Object> getPrincipalAttributesFrom(final String ticketGrantingTicketId) throws RuntimeException {
         final Principal principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
         return principal == null ? null : principal.getAttributes();
+    }
+
+    @Override
+    public void updateAuthentication(final String ticketGrantingTicketId, final Authentication authentication) {
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        tgt.getAuthentication().update(authentication);
+        this.ticketRegistry.updateTicket(tgt);
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {

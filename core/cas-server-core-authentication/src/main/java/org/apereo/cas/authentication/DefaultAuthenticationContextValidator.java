@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -31,6 +32,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     private String authenticationContextAttribute;
 
     private String globalFailureMode;
+
+    private String mfaTrustedAuthnAttributeName;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -68,6 +71,12 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
 
         if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             logger.debug("Requested authentication context {} is satisfied", requestedContext);
+            return Pair.of(Boolean.TRUE, requestedProvider);
+        }
+
+        if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName)
+                && authentication.getAttributes().containsKey(this.mfaTrustedAuthnAttributeName)) {
+            logger.debug("Requested authentication context {} is satisfied since device is already trusted");
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
@@ -170,6 +179,10 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
         return policy.getFailureMode();
+    }
+
+    public void setMfaTrustedAuthnAttributeName(final String mfaTrustedAuthnAttributeName) {
+        this.mfaTrustedAuthnAttributeName = mfaTrustedAuthnAttributeName;
     }
 
     public void setGlobalFailureMode(final String globalFailureMode) {
