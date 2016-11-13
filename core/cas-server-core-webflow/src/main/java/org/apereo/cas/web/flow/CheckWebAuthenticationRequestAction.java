@@ -10,8 +10,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.l;
-
 /**
  * This is {@link CheckWebAuthenticationRequestAction}.
  *

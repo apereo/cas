@@ -65,11 +65,22 @@ public final class MultifactorAuthenticationTrustUtils {
         authn.update(newAuthn);
     }
 
+    /**
+     * Is multifactor authentication trusted in scope boolean.
+     *
+     * @param requestContext the request context
+     * @return the boolean
+     */
     public static boolean isMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
         return requestContext.getFlashScope().contains(
                 AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR);
     }
 
+    /**
+     * Sets multifactor authentication trusted in scope.
+     *
+     * @param requestContext the request context
+     */
     public static void setMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
         final MutableAttributeMap flashScope = requestContext.getFlashScope();
         flashScope.put(AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR, Boolean.TRUE);
