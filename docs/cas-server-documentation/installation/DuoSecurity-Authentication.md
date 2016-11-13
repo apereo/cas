@@ -24,6 +24,18 @@ Duo offers several options for authenticating users:
 </dependency>
 ```
 
+## Multiple Instances
+
+CAS multifactor authentication support for Duo Security allows
+multiple Duo providers to be configured with distinct ids each of
+which may be connected to a separate Duo Security instance with a different configuration.
+This behvaior allows more sensitive applications to be connected
+to a Duo instance that has more strict and secure authentication policies.
+
+For this behavior to function, separate unique ids, of your own choosing, need to be assigned to each Duo Security
+provider. Each provider instance is registered with CAS and activated in the authentication
+flows as necessary. The provider id need not be defined if there is only a single Duo instance available.
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

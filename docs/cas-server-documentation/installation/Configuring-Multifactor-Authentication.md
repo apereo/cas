@@ -28,6 +28,13 @@ Configure authentication per instructions [here](DuoSecurity-Authentication.html
 |----------------------|----------------------------------
 | `id`                 | `mfa-duo`
 
+CAS multifactor authentication support for Duo Security allows
+multiple Duo providers to be configured with distinct ids each of
+which may be connected to a separate Duo Security instance with a different configuration.
+This behvaior allows more sensitive applications to be connected
+to a Duo instance that has more strict and secure authentication policies.
+Consult [this guide](DuoSecurity-Authentication.html) to learn more.
+
 ### Authy Authenticator
 
 Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
