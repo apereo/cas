@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.jwt.JwtTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -40,9 +41,21 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
-    
+
+    @NestedConfigurationProperty
+    private JwtTicketRegistryProperties jwt = new JwtTicketRegistryProperties();
+
+
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
+
+    public JwtTicketRegistryProperties getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(final JwtTicketRegistryProperties jwt) {
+        this.jwt = jwt;
+    }
 
     public InMemory getInMemory() {
         return inMemory;
