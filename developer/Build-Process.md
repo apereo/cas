@@ -19,6 +19,7 @@ Or a quicker clone:
 
 ```bash
 git clone --depth=1 git@github.com:apereo/cas.git cas-server
+# git fetch --unshallow
 ```
 
 ## Build
