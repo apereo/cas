@@ -1317,6 +1317,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.scala-lang", module: "scala-library")
+                    exclude(group: "org.apache.kafka", module: "kafka-clients")
                     force = true
                 },
                 dependencies.create("org.apache.zookeeper:zookeeper:$zookeeperVersion") {
@@ -1366,6 +1367,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-amqp:$springCloudBusVersion") {
