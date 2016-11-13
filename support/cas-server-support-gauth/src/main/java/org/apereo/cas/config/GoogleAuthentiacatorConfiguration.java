@@ -258,7 +258,6 @@ public class GoogleAuthentiacatorConfiguration {
         @Bean
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
             final GoogleAuthenticatorMultifactorTrustWebflowConfigurer r = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(googleAuthenticatorFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
