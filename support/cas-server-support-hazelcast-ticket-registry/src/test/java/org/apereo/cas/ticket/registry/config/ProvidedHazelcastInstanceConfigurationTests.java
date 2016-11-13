@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
-import org.apereo.cas.config.HazelcastInstanceConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        HazelcastInstanceConfiguration.class,
+        HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
