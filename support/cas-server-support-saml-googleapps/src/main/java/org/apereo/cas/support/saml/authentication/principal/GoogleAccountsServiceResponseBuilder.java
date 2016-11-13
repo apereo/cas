@@ -79,6 +79,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      *
      * @param privateKeyLocation the private key
      * @param publicKeyLocation  the public key
+     * @param keyAlgorithm       the key algorithm
      * @param samlObjectBuilder  the saml object builder
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
@@ -94,7 +95,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      *
      * @param privateKeyLocation the private key
      * @param publicKeyLocation  the public key
+     * @param keyAlgorithm       the key algorithm
      * @param samlObjectBuilder  the saml object builder
+     * @param skewAllowance      the skew allowance
      */
     @JsonCreator
     public GoogleAccountsServiceResponseBuilder(@JsonProperty("privateKeyLocation") final String privateKeyLocation,
