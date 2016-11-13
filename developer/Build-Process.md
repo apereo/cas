@@ -101,7 +101,7 @@ Execute the following command:
 
 ```bash
 CD cas-server-webapp
-gradle build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipFindbugs=true 
+./gradlew build bootRun --parallel -x test -DskipCheckstyle=true -x javadoc -DskipFindbugs=true 
 ```
 
 The response will look something like this:
@@ -136,7 +136,7 @@ versioneye.api_key=1234567890abcdef
 Then run the following command at the root:
 
 ```bash
-gradle versionEyeUpdate
+./gradlew versionEyeUpdate
 ```
 
 Browse the report at the above link to see which dependencies might need attention. 
