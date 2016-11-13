@@ -6,12 +6,11 @@ import org.apereo.cas.adaptors.duo.authn.BasicDuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
-import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
-import org.apereo.cas.adaptors.duo.web.flow.DuoDirectAuthenticationAction;
-import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.adaptors.duo.web.flow.PrepareDuoWebLoginFormAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -31,6 +30,7 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,6 +39,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -181,7 +183,6 @@ public class DuoSecurityConfiguration {
         return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider());
     }
 
-
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
         final DuoAuthenticationWebflowEventResolver r = new DuoAuthenticationWebflowEventResolver();
@@ -196,11 +197,14 @@ public class DuoSecurityConfiguration {
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
     @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final DuoMultifactorWebflowConfigurer r = new DuoMultifactorWebflowConfigurer();
         r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         r.setFlowBuilderServices(flowBuilderServices);
         r.setProvider(duoMultifactorAuthenticationProvider());
+        r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
         return r;
     }
 
@@ -208,24 +212,5 @@ public class DuoSecurityConfiguration {
     protected void initializeServletApplicationContext() {
         this.authenticationHandlersResolvers.put(duoAuthenticationHandler(), null);
         authenticationMetadataPopulators.add(0, duoAuthenticationMetaDataPopulator());
-    }
-
-    /**
-     * The Duo multifactor trust configuration.
-     */
-    @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
-    @Configuration("duoMultifactorTrustConfiguration")
-    public class DuoMultifactorTrustConfiguration {
-
-        @ConditionalOnProperty(prefix = "cas.authn.mfa.duo", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
-        @ConditionalOnMissingBean(name = "duoMultifactorTrustWebflowConfigurer")
-        @Bean
-        public CasWebflowConfigurer duoMultifactorTrustWebflowConfigurer() {
-            final DuoMultifactorTrustWebflowConfigurer r = new DuoMultifactorTrustWebflowConfigurer();
-            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-            r.setFlowBuilderServices(flowBuilderServices);
-            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
-            return r;
-        }
     }
 }
