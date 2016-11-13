@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.web.flow;
+package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 

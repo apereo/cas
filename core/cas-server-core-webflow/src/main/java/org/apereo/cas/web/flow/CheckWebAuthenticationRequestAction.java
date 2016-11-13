@@ -1,12 +1,16 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.l;
 
 /**
  * This is {@link CheckWebAuthenticationRequestAction}.
@@ -15,15 +19,21 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 public class CheckWebAuthenticationRequestAction extends AbstractAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckWebAuthenticationRequestAction.class);
+
     private String contentType;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        
+
+        LOGGER.debug("Checking request content type {} against {}", request.getContentType(), this.contentType);
         if (this.contentType.equalsIgnoreCase(request.getContentType())) {
+            LOGGER.debug("Authentication request via type {} is not web-based", this.contentType);
             return new EventFactorySupport().no(this);
         }
+
+        LOGGER.debug("Authenticated request is identified as web-based via type {}", request.getContentType());
         return new EventFactorySupport().yes(this);
     }
 

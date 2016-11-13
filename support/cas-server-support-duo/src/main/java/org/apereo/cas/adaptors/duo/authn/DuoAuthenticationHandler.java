@@ -44,6 +44,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         if (credential instanceof DuoDirectCredential) {
+            logger.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
         }
         return authenticateDuoCredential(credential);
@@ -55,6 +56,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
                 final Principal principal = c.getAuthentication().getPrincipal();
+                logger.debug("Duo has successfully authenticated {}", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Exception e) {

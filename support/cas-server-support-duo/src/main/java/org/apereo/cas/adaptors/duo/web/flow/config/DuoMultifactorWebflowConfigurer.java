@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.duo.web.flow;
+package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -158,7 +158,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
         trans.add(transModel);
         viewState.setTransitions(trans);
         states.add(viewState);
-        
+
         /////////////////
 
         actModel = new ActionStateModel(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
