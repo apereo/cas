@@ -263,7 +263,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String secretKey = "";
 
         private List<String> apiUrls = new ArrayList<>();
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
 
         public YubiKey() {
             setId("mfa-yubikey");
@@ -311,7 +311,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Server server = new Server();
         private Client client = new Client();
 
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
 
         public Radius() {
             setId("mfa-radius");
@@ -498,7 +498,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String duoSecretKey;
         private String duoApplicationKey;
         private String duoApiHost;
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
 
         public Duo() {
             setId("mfa-duo");
@@ -552,7 +552,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String phoneAttribute = "phone";
         private String mailAttribute = "mail";
         private boolean forceVerification = true;
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
 
         public Authy() {
             setId("mfa-authy");
