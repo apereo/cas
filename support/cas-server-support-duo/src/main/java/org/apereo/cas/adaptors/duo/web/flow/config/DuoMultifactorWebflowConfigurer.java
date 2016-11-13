@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
