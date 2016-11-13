@@ -249,8 +249,7 @@ public final class WebUtils {
      * @param context the context
      * @return the ticket granting ticket id
      */
-    public static String getTicketGrantingTicketId(
-            final RequestContext context) {
+    public static String getTicketGrantingTicketId(final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
         final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 

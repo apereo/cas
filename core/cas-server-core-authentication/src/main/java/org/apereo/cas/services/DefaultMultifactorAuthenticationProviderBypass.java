@@ -125,7 +125,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             ).collect(Collectors.toSet());
 
             supports = names.isEmpty();
-            if (!names.isEmpty() && (StringUtils.isNotBlank(attrValue))) {
+            if (!names.isEmpty() && StringUtils.isNotBlank(attrValue)) {
                 final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
                     final Set<Object> valuesCol = CollectionUtils.convertValueToCollection(e.getValue());
                     return valuesCol.stream()

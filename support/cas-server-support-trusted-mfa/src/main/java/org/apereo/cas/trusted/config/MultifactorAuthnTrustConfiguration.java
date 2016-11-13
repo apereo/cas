@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -42,6 +43,10 @@ public class MultifactorAuthnTrustConfiguration {
     private static final long MAX_CACHE_SIZE = 1000;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -49,7 +54,8 @@ public class MultifactorAuthnTrustConfiguration {
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationSetTrustAction a = new MultifactorAuthenticationSetTrustAction();
         a.setStorage(storage);
-        a.setMfaTrustedAuthnAttributeName(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute());
+        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
         return a;
     }
 
@@ -67,6 +73,7 @@ public class MultifactorAuthnTrustConfiguration {
         final MultifactorAuthenticationVerifyTrustAction a = new MultifactorAuthenticationVerifyTrustAction();
         a.setStorage(storage);
         a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
         return a;
     }
 

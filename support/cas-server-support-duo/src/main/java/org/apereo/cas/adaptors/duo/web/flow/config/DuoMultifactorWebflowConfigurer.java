@@ -3,9 +3,10 @@ package org.apereo.cas.adaptors.duo.web.flow.config;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DynamicFlowModelBuilder;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
@@ -31,7 +32,7 @@ import java.util.LinkedList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     private VariegatedMultifactorAuthenticationProvider provider;
 
@@ -39,8 +40,24 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
     protected void doInitialize() throws Exception {
         provider.getProviders().forEach(p -> {
             final FlowDefinitionRegistry duoFlowRegistry = buildDuoFlowRegistry(p);
+            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, p.getId());
+            final ConfigurableListableBeanFactory cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
+            cfg.registerSingleton(p.getId(), duoFlowRegistry);
             registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), p.getId(), duoFlowRegistry);
         });
+
+        casProperties.getAuthn().getMfa().getDuo().stream()
+                .filter(duo -> duo.isTrustedDeviceEnabled())
+                .forEach(duo -> {
+                    final String id = duo.getId();
+                    try {
+                        logger.debug("Activating multifactor trusted authentication for webflow {}", id);
+                        final FlowDefinitionRegistry registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
+                        registerMultifactorTrustedAuthentication(registry);
+                    } catch (final Exception e) {
+                        logger.error("Failed to register multifactor trusted authentication for " + id, e);
+                    }
+                });
     }
 
     public void setProvider(final VariegatedMultifactorAuthenticationProvider provider) {

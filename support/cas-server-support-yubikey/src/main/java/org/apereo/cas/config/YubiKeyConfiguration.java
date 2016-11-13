@@ -234,7 +234,6 @@ public class YubiKeyConfiguration {
         @Bean
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
             final YubiKeyMultifactorTrustWebflowConfigurer r = new YubiKeyMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(yubikeyFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());

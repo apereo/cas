@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.boot.Banner;
@@ -46,6 +47,7 @@ public class CasBanner implements Banner {
             formatter.format("OS Architecture: %s%n", properties.get("os.arch"));
             formatter.format("OS Name: %s%n", properties.get("os.name"));
             formatter.format("OS Version: %s%n", properties.get("os.version"));
+            formatter.format("Container Version: %s%n", ServerInfo.getServerInfo());
             return formatter.toString();
         }
     }

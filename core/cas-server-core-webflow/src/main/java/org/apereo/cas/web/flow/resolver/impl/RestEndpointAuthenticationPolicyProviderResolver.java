@@ -66,8 +66,6 @@ public class RestEndpointAuthenticationPolicyProviderResolver
             final String results = responseEntity.getBody();
             if (StringUtils.isNotBlank(results)) {
                 logger.debug("Result returned from the rest endpoint is {}", results);
-
-
                 final MultifactorAuthenticationProvider restProvider = flattenedProviders.stream()
                         .filter(p -> p.matches(results))
                         .findFirst()
@@ -78,7 +76,7 @@ public class RestEndpointAuthenticationPolicyProviderResolver
                     return Sets.newHashSet(new Event(this, restProvider.getId()));
                 }
                 logger.debug("No multifactor authentication provider could be matched against {}", results);
-
+                return Sets.newHashSet();
             }
         }
         logger.debug("No providers are available to match rest endpoint results");
