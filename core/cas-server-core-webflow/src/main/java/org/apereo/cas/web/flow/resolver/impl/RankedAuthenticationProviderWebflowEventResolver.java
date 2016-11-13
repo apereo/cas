@@ -75,6 +75,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
                 this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
+            logger.debug("Authentication context is successfully validated by {} for service {}", id, service);
             return resumeFlow();
         }
 
