@@ -29,7 +29,7 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
     /**
      * Creates the duo authentication service.
      *
-     * @param duoProperties
+     * @param duoProperties Duo authentication properties
      */
     public BasicDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         super(duoProperties);
