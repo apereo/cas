@@ -34,8 +34,6 @@ The expiration policy applied to TGTs provides for most-recently-used expiration
 For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise 
 it would be marked as expired.
 
-Settings are controlled via:
-
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ### Hard Timeout
@@ -43,9 +41,6 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span 
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired 
 and the user will be forced to re-authenticate.
-
-
-Settings are controlled via:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
