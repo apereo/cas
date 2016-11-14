@@ -6,6 +6,8 @@ import org.jasig.cas.validation.ValidationResponseType;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,7 +29,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
         final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
 
-        final String serviceToUse;
+        String serviceToUse;
         if (StringUtils.isNotBlank(targetService)) {
             serviceToUse = targetService;
         } else if (StringUtils.isNotBlank(service)) {
@@ -38,6 +40,26 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
         if (StringUtils.isBlank(serviceToUse)) {
             return null;
+        }
+
+        //To use in dev server, modify a serviceToUse's protocol from https to http
+        //Because components communicate with each other with http, not https
+        try {
+            final URL url = new URL(serviceToUse);
+            if(url.getProtocol().equalsIgnoreCase("https")) {
+                final StringBuilder builder = new StringBuilder();
+                builder
+                    .append("http")
+                    .append("://")
+                    .append(url.getHost());
+                if(url.getPort() != -1) {
+                    builder.append(":").append(url.getPort());
+                }
+                builder.append(url.getFile());
+                serviceToUse = builder.toString();
+            }
+        } catch (final MalformedURLException e) {
+            e.printStackTrace();
         }
 
         final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
