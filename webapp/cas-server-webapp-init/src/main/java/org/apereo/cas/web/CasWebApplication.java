@@ -1,5 +1,7 @@
 package org.apereo.cas.web;
 
+import com.google.common.collect.ImmutableMap;
+import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
@@ -65,6 +67,7 @@ public class CasWebApplication {
                     final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
                     applicationContext.getEnvironment().setConversionService(conversionService);
                 })
+                .properties(ImmutableMap.of(CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, Boolean.TRUE))
                 .run(args);
     }
 }
