@@ -1428,6 +1428,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     force = true
                 }
         ],

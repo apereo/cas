@@ -46,10 +46,10 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
      * @param authentication    the authentication
      * @param registeredService the registered service
      * @param request           the request
-     * @param context           @return the set
+     * @param context           the request context
      * @return the set of resolved events
      */
-    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, 
+    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents,
                                                final Authentication authentication, 
                                                final RegisteredService registeredService, 
                                                final HttpServletRequest request, 
