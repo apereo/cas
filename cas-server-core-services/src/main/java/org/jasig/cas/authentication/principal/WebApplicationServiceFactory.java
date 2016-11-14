@@ -3,6 +3,8 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.validation.ValidationResponseType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("webApplicationServiceFactory")
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
@@ -59,7 +62,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
                 serviceToUse = builder.toString();
             }
         } catch (final MalformedURLException e) {
-            e.printStackTrace();
+            logger.error("Service URL String is not converted to URL: {}", e.toString());
         }
 
         final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
