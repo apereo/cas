@@ -29,3 +29,11 @@ CAS web application. Once CAS is running, it will be available under ports `8080
 ## Configuration
 
 [See the following guide](https://github.com/apereo/cas-webapp-docker).
+
+The docker images that are hosted on Docker Hub are *mostly* meant to be used
+as quickstarters and demos. You may also be able to use them as
+base images to add your customizations into the image. The image
+is built out of an existing [CAS overlay](Maven-Overlay-Installation.html). 
+So your approach could simply be to point your [Dockerfile](https://github.com/apereo/cas-webapp-docker)
+to your overlay and build your own specific images based on the 
+instructions [listed here](https://github.com/apereo/cas-webapp-docker).
