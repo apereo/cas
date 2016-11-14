@@ -178,7 +178,8 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
     
-    compileJava.options.fork = true 
+    compileJava.options.fork = true
+    compileJava.options.incremental = Boolean.getBoolean("enableIncremental")
 
     def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {
