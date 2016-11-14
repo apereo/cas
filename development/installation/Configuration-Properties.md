@@ -733,7 +733,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 
 ```properties
 # cas.authn.file.separator=::
-# cas.authn.file.filename=
+# cas.authn.file.filename=file:///path/to/users/file
 
 # cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.file.passwordEncoder.characterEncoding=
@@ -1582,20 +1582,21 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 To learn more about this topic, [please review this guide](DuoSecurity-Authentication.html).
 
 ```properties
-# cas.authn.mfa.duo.duoSecretKey=
-# cas.authn.mfa.duo.rank=0
-# cas.authn.mfa.duo.duoApplicationKey=
-# cas.authn.mfa.duo.duoIntegrationKey=
-# cas.authn.mfa.duo.duoApiHost=
-# cas.authn.mfa.duo.trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].duoSecretKey=
+# cas.authn.mfa.duo[0].rank=0
+# cas.authn.mfa.duo[0].duoApplicationKey=
+# cas.authn.mfa.duo[0].duoIntegrationKey=
+# cas.authn.mfa.duo[0].duoApiHost=
+# cas.authn.mfa.duo[0].trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].id=mfa-duo
 
-# cas.authn.mfa.duo.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.duo.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.duo.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.duo.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.duo.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.duo.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.duo.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.duo[0].bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.duo[0].bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Authy
