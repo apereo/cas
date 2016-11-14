@@ -1,11 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.ticket.Ticket;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 
-import static com.sun.corba.se.impl.util.RepositoryId.cache;
 
 /**
  * This is {@link JwtTicketRegistry}, which manages and issues
@@ -34,7 +34,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
 
     }
 
@@ -49,6 +49,8 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
         logger.debug("Adding ticket {} to live {} seconds and stay idle for {} seconds",
                 ticket.getId(), ticket.getExpirationPolicy().getTimeToLive(), idleTime);
 
+        ...
+
     }
 
     @Override
@@ -57,18 +59,22 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        final Ticket ticket = Ticket.class.cast(cache.get(encTicketId));
+        final Ticket ticket = ...
+
         return ticket;
     }
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-
+        logger.warn("deleteSingleTicket() is not supported by {}", getClass().getSimpleName());
+        return true;
     }
 
 
     @Override
     public Collection<Ticket> getTickets() {
+        logger.warn("getTickets() is not supported by {}", getClass().getSimpleName());
+        return Lists.newArrayList();
     }
 
 }
