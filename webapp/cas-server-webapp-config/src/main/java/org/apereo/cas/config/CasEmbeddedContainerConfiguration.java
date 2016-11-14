@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -37,7 +38,14 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration("casEmbeddedContainerConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ConditionalOnProperty(name = CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 public class CasEmbeddedContainerConfiguration {
+    /**
+     * Property to dictate to the environment whether embedded container is running CAS.
+     */
+    public static final String EMBEDDED_CONTAINER_CONFIG_ACTIVE = "CasEmbeddedContainerConfigurationActive";
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerConfiguration.class);
 
     @Autowired
@@ -49,7 +57,7 @@ public class CasEmbeddedContainerConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnClass(Tomcat.class)
+    @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
