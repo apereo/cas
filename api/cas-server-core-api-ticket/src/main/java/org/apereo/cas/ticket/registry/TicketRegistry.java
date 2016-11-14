@@ -63,8 +63,9 @@ public interface TicketRegistry {
      * Update the received ticket.
      *
      * @param ticket the ticket
+     * @return the updated ticket
      */
-    void updateTicket(Ticket ticket);
+    Ticket updateTicket(Ticket ticket);
 
     /**
      * Computes the number of SSO sessions stored in the ticket registry.
@@ -73,7 +74,7 @@ public interface TicketRegistry {
      *         or {@link Integer#MIN_VALUE} if unknown.
      */
     long sessionCount();
-    
+
     /**
      * Computes the number of service tickets stored in the ticket registry.
      *
