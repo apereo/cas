@@ -88,7 +88,7 @@
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
-    *   [Persistence](#persistence)
+    *   [Persistence](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
         *   [JSON](/$version/installation/JSON-Service-Management.html)
         *   [YAML](/$version/installation/YAML-Service-Management.html)
