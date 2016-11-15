@@ -1830,6 +1830,7 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc.maxClockSkew=
 # cas.authn.pac4j.oidc.customParamKey2=
 # cas.authn.pac4j.oidc.customParamValue2=
+# cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
 # cas.authn.pac4j.oidc.customParamKey1=

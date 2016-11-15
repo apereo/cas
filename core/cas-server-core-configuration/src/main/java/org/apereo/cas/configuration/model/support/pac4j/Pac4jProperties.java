@@ -281,12 +281,21 @@ public class Pac4jProperties {
         private String secret;
         private String discoveryUri;
         private String useNonce;
+        private String scope;
         private String preferredJwsAlgorithm;
         private String maxClockSkew;
         private String customParamKey1;
         private String customParamValue1;
         private String customParamKey2;
         private String customParamValue2;
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
 
         public String getId() {
             return this.id;
