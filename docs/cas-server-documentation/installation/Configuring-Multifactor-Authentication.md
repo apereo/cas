@@ -20,52 +20,13 @@ interface with the authentication subsystem accept one or more credentials to au
 
 The following multifactor providers are supported by CAS.
 
-### Duo Security
-
-Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-duo`
-
-CAS multifactor authentication support for Duo Security allows
-multiple Duo providers to be configured with distinct ids each of
-which may be connected to a separate Duo Security instance with a different configuration.
-This behvaior allows more sensitive applications to be connected
-to a Duo instance that has more strict and secure authentication policies.
-Consult [this guide](DuoSecurity-Authentication.html) to learn more.
-
-### Authy Authenticator
-
-Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-authy`
-
-### YubiKey
-
-Configure authentication per instructions [here](YubiKey-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-yubikey`
-
-### RSA/RADIUS
-
-Configure authentication per instructions [here](RADIUS-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-radius`
-
-### Google Authenticator
-
-Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-gauth`
+| Provider              | Id              | Instructions
+|-----------------------|-----------------|----------------------------------------------------------
+| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html). 
+| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html). 
+| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html). 
+| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html). 
+| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html). 
 
 ## Triggers
 
