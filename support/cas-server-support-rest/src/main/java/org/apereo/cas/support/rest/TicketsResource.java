@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.HashMap;
@@ -231,6 +232,9 @@ public class TicketsResource {
     public void setCredentialFactory(final CredentialFactory credentialFactory) {
         this.credentialFactory = credentialFactory;
     }
-
-
+    
+    @PostConstruct
+    private void init() {
+        this.jacksonObjectMapper.findAndRegisterModules();
+    }
 }

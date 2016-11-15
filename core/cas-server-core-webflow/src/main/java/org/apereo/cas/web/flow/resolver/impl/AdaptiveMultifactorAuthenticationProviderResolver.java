@@ -54,18 +54,34 @@ public class AdaptiveMultifactorAuthenticationProviderResolver extends BaseMulti
         }
         
         final Map<String, MultifactorAuthenticationProvider> providerMap = 
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.warn("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
         
+        final Set<Event> providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
+        if (providerFound != null && !providerFound.isEmpty()) {
+            logger.warn("Found multifactor authentication providers {} required for this authentication event", providerFound);
+            return providerFound;
+        }
+        
+        
+        return null;
+    }
+
+    private Set<Event> checkRequireMultifactorProvidersForRequest(final RequestContext context, 
+                                                                  final RegisteredService service, 
+                                                                  final Authentication authentication) {
+
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final String clientIp = clientInfo.getClientIpAddress();
         logger.debug("Located client IP address as [{}]", clientIp);
 
         final String agent = WebUtils.getHttpServletRequestUserAgent();
-
+        final Map multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry> entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             final String mfaMethod = entry.getKey().toString();
@@ -78,30 +94,44 @@ public class AdaptiveMultifactorAuthenticationProviderResolver extends BaseMulti
                             mfaMethod, pattern, mfaMethod);
                 throw new AuthenticationException();
             }
-            
-            if (agent.matches(pattern) || clientIp.matches(pattern)) {
-                logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
-                             + "adaptive authentication and is required to use [{}]",
-                            agent, clientIp, pattern, mfaMethod);
 
+            if (checkUserAgentOrClientIp(clientIp, agent, mfaMethod, pattern)) {
                 return buildEvent(context, service, authentication, providerFound.get());
             }
-                        
-            if (this.geoLocationService != null) {
-                final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
-                final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
-                if (loc != null) {
-                    final String address = loc.buildAddress();
-                    if (address.matches(pattern)) {
-                        logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
-                                        + "adaptive authentication and is required to use [{}]",
-                                address, clientIp, pattern, mfaMethod);
-                        return buildEvent(context, service, authentication, providerFound.get());
-                    }
-                }
+
+            if (checkRequestGeoLocation(clientIp, mfaMethod, pattern)) {
+                return buildEvent(context, service, authentication, providerFound.get());
             }
         }
         return null;
+    }
+
+    private boolean checkRequestGeoLocation(final String clientIp, final String mfaMethod, final String pattern) {
+        if (this.geoLocationService != null) {
+            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
+            final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
+            if (loc != null) {
+                final String address = loc.build();
+                if (address.matches(pattern)) {
+                    logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
+                                    + "adaptive authentication and is required to use [{}]",
+                            address, clientIp, pattern, mfaMethod);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
+        if (agent.matches(pattern) || clientIp.matches(pattern)) {
+            logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
+                         + "adaptive authentication and is required to use [{}]",
+                        agent, clientIp, pattern, mfaMethod);
+
+            return true;
+        }
+        return false;
     }
 
     private Set<Event> buildEvent(final RequestContext context, final RegisteredService service, 
