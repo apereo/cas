@@ -539,15 +539,14 @@ public final class WebUtils {
     /**
      * Gets http servlet request geo location.
      *
+     * @param request the request
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
         final int latIndex = 0;
         final int longIndex = 1;
-        final int accuIndex = 2;
+        final int accuracyIndex = 2;
         final int timeIndex = 3;
-
-        final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final GeoLocationRequest loc = new GeoLocationRequest();
         if (request != null) {
             final String geoLocationParam = request.getParameter("geolocation");
@@ -555,11 +554,20 @@ public final class WebUtils {
                 final String[] geoLocation = geoLocationParam.split(",");
                 loc.setLatitude(geoLocation[latIndex]);
                 loc.setLongitude(geoLocation[longIndex]);
-                loc.setAccuracy(geoLocation[accuIndex]);
+                loc.setAccuracy(geoLocation[accuracyIndex]);
                 loc.setTimestamp(geoLocation[timeIndex]);
             }
         }
         return loc;
+    }
+    
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+        return getHttpServletRequestGeoLocation(WebUtils.getHttpServletRequest());
     }
 
     /**
@@ -660,7 +668,7 @@ public final class WebUtils {
      * @param applicationContext the application context
      * @return the all multifactor authentication providers from application context
      */
-    public static Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProviders(
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
             final ApplicationContext applicationContext) {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);

@@ -31,7 +31,7 @@ var authnEvents = (function () {
             t.row.add([
                 type[type.length-1],
                 rec.principalId,
-                new Date(rec.creationTime),
+                new Date(rec.properties.creationTime),
                 new Date(rec.timestamp),
                 rec.properties.agent,
                 rec.clientIpAddress,

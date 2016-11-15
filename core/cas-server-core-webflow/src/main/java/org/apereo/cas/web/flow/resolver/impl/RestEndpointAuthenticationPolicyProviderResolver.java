@@ -51,7 +51,7 @@ public class RestEndpointAuthenticationPolicyProviderResolver
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.warn("No multifactor authentication providers are available in the application context");
             return null;
