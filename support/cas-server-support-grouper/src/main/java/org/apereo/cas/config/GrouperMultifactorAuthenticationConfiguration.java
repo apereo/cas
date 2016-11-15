@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -25,16 +26,17 @@ import org.springframework.web.util.CookieGenerator;
 import javax.annotation.PostConstruct;
 
 /**
- * This is {@link GrouperConfiguration}.
+ * This is {@link GrouperMultifactorAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("grouperConfiguration")
+@Configuration("grouperMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GrouperConfiguration {
+@ConditionalOnClass(value = CasWebflowEventResolver.class)
+public class GrouperMultifactorAuthenticationConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperMultifactorAuthenticationConfiguration.class);
 
     @Autowired
     @Qualifier("centralAuthenticationService")
