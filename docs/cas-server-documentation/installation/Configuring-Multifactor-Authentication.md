@@ -189,6 +189,9 @@ The following failure modes are supported:
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
 
+A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Ranking Providers
 
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
