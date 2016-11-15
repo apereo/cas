@@ -100,7 +100,7 @@
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
     *   [Audits](/$version/installation/Audits.html)
-    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html
+    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
 
 * [User Interface](#user_interface)
     *   [UI Customization](/$version/installation/User-Interface-Customization.html)
