@@ -32,11 +32,11 @@ import javax.annotation.Nullable;
  * @since 4.0.0
  */
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-    
+
     private transient Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private ConnectionFactory connectionFactory;
-    
+
     private SearchExecutor userSearchExecutor;
 
     private String roleAttribute;
@@ -98,12 +98,12 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
                     Beans.newSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(), username));
-            
+
             logger.debug("LDAP user search response: {}", response);
             userResult = response.getResult();
 
             if (userResult.size() == 0) {
-                throw new AccountNotFoundException(username + " not found.");
+                throw new RuntimeException(new AccountNotFoundException(username + " not found."));
             }
             if (userResult.size() > 1 && !this.allowMultipleResults) {
                 throw new IllegalStateException(
@@ -113,7 +113,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             if (userResult.getEntry().getAttributes().isEmpty()) {
                 throw new IllegalStateException("No attributes are retrieved for this user.");
             }
-            
+
             final LdapAttribute attribute = userResult.getEntry().getAttribute(this.roleAttribute);
             if (attribute == null) {
                 throw new IllegalStateException("Configured role attribute cannot be found for this user");
@@ -138,7 +138,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             profile.addAttribute(ldapAttribute.getName(), value);
         });
     }
-    
+
     public void setConnectionFactory(@Nullable final ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
