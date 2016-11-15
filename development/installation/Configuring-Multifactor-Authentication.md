@@ -158,6 +158,8 @@ A few simple examples follow:
 - Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
 ## Fail-Open vs Fail-Closed
 
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
@@ -186,6 +188,9 @@ The following failure modes are supported:
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Ranking Providers
 
