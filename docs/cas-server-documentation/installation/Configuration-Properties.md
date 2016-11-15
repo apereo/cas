@@ -1812,6 +1812,17 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.scope=
 ```
 
+### LinkedIn
+
+Delegate authentication to LinkedIn.
+
+```properties
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.id=
+# cas.authn.pac4j.linkedIn.secret=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
 ### Twitter
 
 Delegate authentication to Twitter.
