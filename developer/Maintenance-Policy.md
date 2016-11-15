@@ -19,7 +19,7 @@ In particular, the following questions are addressed:
 - Once the year is passed, maintenance of the release is **STRICTLY** limited to security patches and fixing vulnerabilities for another calendar year.
 - The lifespan of a release **MAY** be extended beyond a single year, to be decided by the [CAS PMC](../Mailing-Lists.html) and the community at large when and where reasonable.
 
-By “CAS Release”, we mean anything that is a minor release and above. (i.e. `4.1.x`, `4.2.x`, `5.0.0`, `5.1.0`, etc).
+By “CAS Release”, we mean anything that is a feature release and above. (i.e. `4.1.x`, `4.2.x`, `5.0.0`, `5.1.0`, etc).
 
 ## EOL Schedule
 
