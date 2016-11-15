@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
  */
 public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private ConnectionFactory connectionFactory;
 

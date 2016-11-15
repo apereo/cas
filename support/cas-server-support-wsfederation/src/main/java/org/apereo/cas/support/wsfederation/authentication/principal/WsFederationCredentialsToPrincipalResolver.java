@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
+    private final transient Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
     private WsFederationConfiguration configuration;
 

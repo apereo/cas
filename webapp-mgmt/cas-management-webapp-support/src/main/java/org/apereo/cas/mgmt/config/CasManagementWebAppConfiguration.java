@@ -37,6 +37,7 @@ import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.Authorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
@@ -125,7 +126,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     
     @Bean
     public Client casClient() {
-        final CasClient client = new CasClient(casProperties.getServer().getLoginUrl());
+        final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        final CasClient client = new CasClient(cfg);
         client.setAuthorizationGenerator(authorizationGenerator());
         return client;
     }

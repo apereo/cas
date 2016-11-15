@@ -182,7 +182,7 @@ public class OidcAuthorizationRequestSupport {
     public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
                                                              final Authentication authentication) {
         if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
-            casClient.setRenew(true);
+            casClient.getConfiguration().setRenew(true);
         }
     }
 
@@ -195,7 +195,7 @@ public class OidcAuthorizationRequestSupport {
     public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
         final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
-            casClient.setRenew(true);
+            casClient.getConfiguration().setRenew(true);
         }
     }
 
@@ -208,8 +208,8 @@ public class OidcAuthorizationRequestSupport {
     public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
         final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
-            casClient.setRenew(false);
-            casClient.setGateway(true);
+            casClient.getConfiguration().setRenew(false);
+            casClient.getConfiguration().setGateway(true);
         }
     }
 

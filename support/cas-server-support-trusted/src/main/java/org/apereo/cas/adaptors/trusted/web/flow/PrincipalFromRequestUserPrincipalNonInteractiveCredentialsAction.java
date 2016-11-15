@@ -24,7 +24,7 @@ import java.security.Principal;
  */
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private PrincipalFactory principalFactory;
 

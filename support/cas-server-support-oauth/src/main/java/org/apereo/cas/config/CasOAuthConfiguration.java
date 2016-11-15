@@ -42,6 +42,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
@@ -123,7 +124,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public Config oauthSecConfig() {
-        final CasClient oauthCasClient = new CasClient(casProperties.getServer().getLoginUrl()) {
+        final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        final CasClient oauthCasClient = new CasClient(cfg) {
             @Override
             protected RedirectAction retrieveRedirectAction(final WebContext context) {
                 return oauthCasClientRedirectActionBuilder().build(this, context);
