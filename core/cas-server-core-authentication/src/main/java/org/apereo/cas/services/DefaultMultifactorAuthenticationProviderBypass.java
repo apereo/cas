@@ -29,45 +29,45 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass) {
         this.bypass = bypass;
     }
-    
+
     @Override
     public boolean eval(final Authentication authentication) {
 
         final Principal principal = authentication.getPrincipal();
-        final boolean supportsByPrincipal = skipBypassAndSupportEventBasedOnPrincipalAttributes(bypass, principal);
-        if (!supportsByPrincipal) {
+        final boolean bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypass, principal);
+        if (bypassByPrincipal) {
             LOGGER.debug("Bypass rules for principal {} indicate the request may be ignored", principal.getId());
             return false;
         }
 
-        final boolean supportsByAuthn = skipBypassAndSupportEventBasedOnAuthenticationAttributes(bypass, authentication);
-        if (!supportsByAuthn) {
+        final boolean bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypass, authentication);
+        if (bypassByAuthn) {
             LOGGER.debug("Bypass rules for authentication {} indicate the request may be ignored", principal.getId());
             return false;
         }
 
-        final boolean supportsByAuthnMethod = !evaluateAttributeRulesForBypass(
+        final boolean bypassByAuthnMethod = locateMatchingAttributeValue(
                 AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
                 bypass.getAuthenticationMethodName(),
                 authentication.getAttributes()
         );
-        if (!supportsByAuthnMethod) {
+        if (bypassByAuthnMethod) {
             LOGGER.debug("Bypass rules for authentication method {} indicate the request may be ignored", principal.getId());
             return false;
         }
 
-        final boolean supportsByAuthnHandler = !evaluateAttributeRulesForBypass(
+        final boolean bypassByHandlerName = locateMatchingAttributeValue(
                 AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 bypass.getAuthenticationHandlerName(),
                 authentication.getAttributes()
         );
-        if (!supportsByAuthnHandler) {
+        if (bypassByHandlerName) {
             LOGGER.debug("Bypass rules for authentication handlers {} indicate the request may be ignored", principal.getId());
             return false;
         }
 
-        final boolean supportsByCredentialType = !evaluateCredentialTypeForBypass(authentication, bypass.getCredentialClassType());
-        if (!supportsByCredentialType) {
+        final boolean bypassByCredType = locateMatchingCredentialType(authentication, bypass.getCredentialClassType());
+        if (bypassByCredType) {
             LOGGER.debug("Bypass rules for credential types {} indicate the request may be ignored", principal.getId());
             return false;
         }
@@ -75,7 +75,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
-    private static boolean evaluateCredentialTypeForBypass(final Authentication authentication, final String credentialClassType) {
+    private static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials().stream()
                 .filter(e -> e.getCredentialClass().getName().matches(credentialClassType))
                 .findAny()
@@ -89,9 +89,9 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      * @param authn  the authn
      * @return the boolean
      */
-    protected boolean skipBypassAndSupportEventBasedOnAuthenticationAttributes(
+    protected boolean locateMatchingAttributeBasedOnAuthenticationAttributes(
             final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass, final Authentication authn) {
-        return evaluateAttributeRulesForBypass(bypass.getAuthenticationAttributeName(),
+        return locateMatchingAttributeValue(bypass.getAuthenticationAttributeName(),
                 bypass.getAuthenticationAttributeValue(), authn.getAttributes());
     }
 
@@ -102,9 +102,9 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      * @param principal the principal
      * @return the boolean
      */
-    protected boolean skipBypassAndSupportEventBasedOnPrincipalAttributes(
+    protected boolean locateMatchingAttributeBasedOnPrincipalAttributes(
             final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass, final Principal principal) {
-        return evaluateAttributeRulesForBypass(bypass.getPrincipalAttributeName(),
+        return locateMatchingAttributeValue(bypass.getPrincipalAttributeName(),
                 bypass.getAuthenticationAttributeValue(), principal.getAttributes());
     }
 
@@ -114,10 +114,10 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      * @param attrName   the attr name
      * @param attrValue  the attr value
      * @param attributes the attributes
-     * @return true if event should not be bypassed.
+     * @return true a matching attribute name/value is found
      */
-    protected boolean evaluateAttributeRulesForBypass(final String attrName, final String attrValue,
-                                                      final Map<String, Object> attributes) {
+    protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
+                                                   final Map<String, Object> attributes) {
         boolean supports = true;
         if (StringUtils.isNotBlank(attrName)) {
             final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e ->
@@ -126,6 +126,8 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
             supports = names.isEmpty();
             if (!names.isEmpty() && StringUtils.isNotBlank(attrValue)) {
+
+                LOGGER.debug("Found {} attributes relevant for multifactor authentication bypass", names.size());
                 final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
                     final Set<Object> valuesCol = CollectionUtils.convertValueToCollection(e.getValue());
                     return valuesCol.stream()
@@ -133,6 +135,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                             .findAny()
                             .isPresent();
                 }).collect(Collectors.toSet());
+
                 supports = values.isEmpty();
 
             }
