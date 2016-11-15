@@ -32,7 +32,7 @@ public class SamlMetadataController {
 
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
     
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @javax.annotation.Resource(name="templateSpMetadata")
     private Resource templateSpMetadata;

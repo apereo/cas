@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The network netmask. */
     private InetAddress inetNetmask;
