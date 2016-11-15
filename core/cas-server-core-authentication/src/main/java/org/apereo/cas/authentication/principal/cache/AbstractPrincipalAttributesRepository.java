@@ -281,7 +281,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public void setTimeUnit(final String unit) {
         this.timeUnit = unit;
     }
-    
+
+    public void setExpiration(final long expiration) {
+        this.expiration = expiration;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {

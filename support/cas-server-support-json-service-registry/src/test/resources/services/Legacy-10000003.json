@@ -22,7 +22,7 @@
         "expiration" : 2
       },
       "mergingStrategy" : "NONE"
-    }
+    },
     "authorizedToReleaseCredentialPassword" : false,
     "authorizedToReleaseProxyGrantingTicket" : false
   },
