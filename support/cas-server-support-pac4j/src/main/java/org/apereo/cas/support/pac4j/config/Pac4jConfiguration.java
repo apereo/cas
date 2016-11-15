@@ -187,24 +187,17 @@ public class Pac4jConfiguration {
     private void configureOidcClient(final Map<String, String> properties) {
         final Pac4jProperties.Oidc oidc = casProperties.getAuthn().getPac4j().getOidc();
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1,
-                oidc.getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2,
-                oidc.getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1,
-                oidc.getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2,
-                oidc.getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI,
-                oidc.getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID,
-                oidc.getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW,
-                oidc.getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM,
-                oidc.getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, oidc.getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, oidc.getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, oidc.getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, oidc.getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, oidc.getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, oidc.getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, oidc.getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, oidc.getPreferredJwsAlgorithm());
         properties.put(PropertiesConfigFactory.OIDC_SECRET, oidc.getSecret());
         properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, oidc.getUseNonce());
+        properties.put(PropertiesConfigFactory.OIDC_SCOPE, oidc.getScope());
     }
 
     /**
