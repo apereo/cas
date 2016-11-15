@@ -29,7 +29,7 @@ public class GenericSuccessViewAction extends AbstractAction {
     /**
      * Log instance for logging events, info, warnings, errors, etc.
      */
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private CentralAuthenticationService centralAuthenticationService;
     private ServicesManager servicesManager;

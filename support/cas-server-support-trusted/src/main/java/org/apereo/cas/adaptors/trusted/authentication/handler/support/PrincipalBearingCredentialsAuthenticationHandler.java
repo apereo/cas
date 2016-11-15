@@ -22,7 +22,7 @@ import java.security.GeneralSecurityException;
  */
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
