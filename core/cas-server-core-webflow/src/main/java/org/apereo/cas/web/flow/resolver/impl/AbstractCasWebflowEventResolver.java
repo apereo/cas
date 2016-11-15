@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -61,6 +62,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * CAS event publisher.
+     */
+    @Autowired
+    protected ApplicationEventPublisher eventPublisher;
+    
     /**
      * The Application context.
      */
