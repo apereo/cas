@@ -333,6 +333,9 @@ To learn more about this topic, [please review this guide](Logging.html).
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
 server.contextParameters.isLog4jAutoInitializationDisabled=true
+
+# Control log levels via properties
+# logging.level.org.apereo.cas=DEBUG
 ```
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
