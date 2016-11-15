@@ -174,14 +174,24 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper(getJsonFactory());
+        configureObjectMapper(mapper);
+        return mapper;
+    }
+
+    /**
+     * Configure mapper.
+     *
+     * @param mapper the mapper
+     */
+    protected void configureObjectMapper(final ObjectMapper mapper) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        return mapper;
     }
+
 
     protected JsonFactory getJsonFactory() {
         return null;
