@@ -1812,6 +1812,17 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.scope=
 ```
 
+### LinkedIn
+
+Delegate authentication to LinkedIn.
+
+```properties
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.id=
+# cas.authn.pac4j.linkedIn.secret=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
 ### Twitter
 
 Delegate authentication to Twitter.
@@ -1830,6 +1841,7 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc.maxClockSkew=
 # cas.authn.pac4j.oidc.customParamKey2=
 # cas.authn.pac4j.oidc.customParamValue2=
+# cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
 # cas.authn.pac4j.oidc.customParamKey1=
