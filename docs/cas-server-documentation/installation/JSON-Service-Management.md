@@ -70,7 +70,7 @@ syntax with the ability to specify comments.
 
 A given JSON file for instance could be formatted as such in CAS:
 
-```
+```json
 {
   /*
     Generic service definition that applies to https/imaps urls
@@ -81,7 +81,52 @@ A given JSON file for instance could be formatted as such in CAS:
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
 }
-
 ```
 
 Note the trailing comma at the end. See the above link for more info on the alternative syntax.
+
+## Legacy Syntax
+
+CAS automatically should remain backwards compatible with service definitions
+that were created by a CAS `4.2.x` instance. Warnings should show up in the logs
+when such deprecated service definitions are found. Deployers are advised to review each definition
+and consult the docs to apply the new syntax.
+
+An example legacy JSON file is listed below for reference:
+
+```json
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://www.jasig.org/cas",
+  "name" : "Legacy",
+  "id" : 100,
+  "description" : "This service definition authorizes the legacy jasig/cas URL. It is solely here to demonstrate service backwards-compatibility",
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "evaluationOrder" : 100,
+  "usernameAttributeProvider" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+      "duration" : {
+        "@class" : "javax.cache.expiry.Duration",
+        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
+        "expiration" : 2
+      },
+      "mergingStrategy" : "NONE"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : false
+  },
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true
+  }
+}
+```
