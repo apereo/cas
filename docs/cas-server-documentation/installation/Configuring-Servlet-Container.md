@@ -12,7 +12,8 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## Embedded
 
 Note that CAS itself ships with an embedded Tomcat container that allows the platform to be self contained as much as possible. You **DO 
-NOT** need to configure and deploy to an externally configured container. 
+NOT** need to configure and deploy to an externally configured container. Note that by default, the embedded Tomcat container attempts
+to enable the HTTP2 protocol.
 
 <div class="alert alert-info"><strong>Note</strong><p>
 Remember that mostly all aspects of the embedded container can be controlled via the CAS properties. See <a href="Configuration-Properties.html">this guide</a> for more info.
