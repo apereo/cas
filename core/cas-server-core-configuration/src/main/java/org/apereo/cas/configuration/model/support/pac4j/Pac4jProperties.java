@@ -18,6 +18,7 @@ public class Pac4jProperties {
     private Oidc oidc = new Oidc();
     private Cas cas = new Cas();
 
+    private LinkedIn linkedIn = new LinkedIn();
     private Dropbox dropbox = new Dropbox();
     private Github github = new Github();
     private Google google = new Google();
@@ -31,6 +32,14 @@ public class Pac4jProperties {
 
     public void setAutoRedirect(final boolean autoRedirect) {
         this.autoRedirect = autoRedirect;
+    }
+
+    public LinkedIn getLinkedIn() {
+        return linkedIn;
+    }
+
+    public void setLinkedIn(final LinkedIn linkedIn) {
+        this.linkedIn = linkedIn;
     }
 
     public WindowsLive getWindowsLive() {
@@ -127,6 +136,45 @@ public class Pac4jProperties {
 
     public Twitter getTwitter() {
         return this.twitter;
+    }
+
+    public static class LinkedIn {
+        private String id;
+        private String secret;
+        private String scope;
+        private String fields;
+
+        public String getId() {
+            return this.id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public String getSecret() {
+            return this.secret;
+        }
+
+        public void setSecret(final String secret) {
+            this.secret = secret;
+        }
+
+        public String getScope() {
+            return this.scope;
+        }
+
+        public void setScope(final String scope) {
+            this.scope = scope;
+        }
+
+        public String getFields() {
+            return this.fields;
+        }
+
+        public void setFields(final String fields) {
+            this.fields = fields;
+        }
     }
 
     public static class Facebook {

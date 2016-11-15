@@ -152,6 +152,14 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, fb.getFields());
     }
 
+    private void configureLinkedInClient(final Map<String, String> properties) {
+        final Pac4jProperties.LinkedIn fb = casProperties.getAuthn().getPac4j().getLinkedIn();
+        properties.put(PropertiesConfigFactory.LINKEDIN_ID, fb.getId());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SECRET, fb.getSecret());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SCOPE, fb.getScope());
+        properties.put(PropertiesConfigFactory.LINKEDIN_FIELDS, fb.getFields());
+    }
+
     private void configureTwitterClient(final Map<String, String> properties) {
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
         properties.put(PropertiesConfigFactory.TWITTER_ID, twitter.getId());
@@ -167,20 +175,13 @@ public class Pac4jConfiguration {
     private void configureSamlClient(final Map<String, String> properties) {
         final Pac4jProperties.Saml saml = casProperties.getAuthn().getPac4j().getSaml();
 
-        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
-                saml.getIdentityProviderMetadataPath());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
-                saml.getKeystorePassword());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
-                saml.getKeystorePath());
-        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
-                saml.getMaximumAuthenticationLifetime());
-        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
-                saml.getPrivateKeyPassword());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
-                saml.getServiceProviderEntityId());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                saml.getServiceProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH, saml.getIdentityProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD, saml.getKeystorePassword());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH, saml.getKeystorePath());
+        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME, saml.getMaximumAuthenticationLifetime());
+        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD, saml.getPrivateKeyPassword());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID, saml.getServiceProviderEntityId());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH, saml.getServiceProviderMetadataPath());
         properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
@@ -224,6 +225,7 @@ public class Pac4jConfiguration {
         configureGoogleClient(properties);
         configureWindowsLiveClient(properties);
         configureYahooClient(properties);
+        configureLinkedInClient(properties);
 
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
@@ -241,6 +243,7 @@ public class Pac4jConfiguration {
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
+
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
