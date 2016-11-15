@@ -75,6 +75,7 @@ public class ValidateCaptchaAction extends AbstractAction {
                     }
                     LOGGER.debug("Google captcha response received: {}", response);
                     final ObjectMapper mapper = new ObjectMapper();
+                    mapper.findAndRegisterModules();
                     final JsonNode node = mapper.reader().readTree(response.toString());
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;

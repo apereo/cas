@@ -8,6 +8,7 @@ title: CAS - Configuring Authentication Components
 The CAS authentication process is primarily controlled by an authentication manager, which orchestrates a collection of authentication handlers.
 
 ## Authentication Manager
+
 CAS ships with a single yet flexible authentication manager which performs authentication according to the following contract.
 
 For any given credential the manager does the following:
