@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -23,15 +24,16 @@ import java.util.stream.Collectors;
 public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMultifactorAuthenticationProviderBypass.class);
     private static final long serialVersionUID = 3720922341350004543L;
+    private static final String REGISTERED_SERVICE_PROPERTY_BYPASS_MFA = "bypassMultifactorAuthentication";
 
-    private MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
+    private final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass) {
         this.bypass = bypass;
     }
 
     @Override
-    public boolean eval(final Authentication authentication) {
+    public boolean isAuthenticationRequestHonored(final Authentication authentication, final RegisteredService registeredService) {
 
         final Principal principal = authentication.getPrincipal();
         final boolean bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypass, principal);
@@ -72,10 +74,49 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
+        final boolean bypassByService = locateMatchingRegisteredServiceProperty(authentication, registeredService);
+        if (bypassByService) {
+            LOGGER.debug("Bypass rules for service {} indicate the request may be ignored", principal.getId());
+            return false;
+        }
+
+
         return true;
     }
 
-    private static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
+    /**
+     * Locate matching registered service property boolean.
+     *
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @return the boolean
+     */
+    protected boolean locateMatchingRegisteredServiceProperty(final Authentication authentication,
+                                                              final RegisteredService registeredService) {
+        if (registeredService != null) {
+            if (registeredService.getProperties().containsKey(REGISTERED_SERVICE_PROPERTY_BYPASS_MFA)) {
+                return registeredService.getProperties()
+                        .get(REGISTERED_SERVICE_PROPERTY_BYPASS_MFA)
+                        .getValues()
+                        .stream()
+                        .filter(e -> StringUtils.equalsIgnoreCase(e, BooleanUtils.toStringYesNo(Boolean.TRUE))
+                                || StringUtils.equalsIgnoreCase(e, BooleanUtils.toStringOnOff(Boolean.TRUE))
+                                || StringUtils.equalsIgnoreCase(e, Boolean.TRUE.toString())).findAny()
+                        .isPresent();
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Locate matching credential type boolean.
+     *
+     * @param authentication      the authentication
+     * @param credentialClassType the credential class type
+     * @return the boolean
+     */
+    protected boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials().stream()
                 .filter(e -> e.getCredentialClass().getName().matches(credentialClassType))
                 .findAny()
@@ -118,7 +159,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      */
     protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
                                                    final Map<String, Object> attributes) {
-        boolean supports = true;
+        boolean supports = false;
         if (StringUtils.isNotBlank(attrName)) {
             final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e ->
                     e.getKey().matches(attrName)

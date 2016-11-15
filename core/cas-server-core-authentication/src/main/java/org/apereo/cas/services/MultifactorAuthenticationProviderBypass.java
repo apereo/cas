@@ -15,7 +15,8 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable {
      * Eval current bypass rules for the provider.
      *
      * @param authentication the authentication
+     * @param registeredService the registered service in question
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
-    boolean eval(Authentication authentication);
+    boolean isAuthenticationRequestHonored(Authentication authentication, RegisteredService registeredService);
 }
