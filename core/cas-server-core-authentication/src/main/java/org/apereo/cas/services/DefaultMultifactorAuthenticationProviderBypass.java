@@ -29,7 +29,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
     private final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
-    private final TicketRegistrySupport ticketRegistrySupport;
+    private final transient TicketRegistrySupport ticketRegistrySupport;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass,
                                                           final TicketRegistrySupport ticketRegistrySupport) {
