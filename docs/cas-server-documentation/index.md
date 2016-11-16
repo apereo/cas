@@ -5,11 +5,11 @@ title: CAS - Home
 
 # Enterprise Single Sign-On
 
-* Java (Spring Webflow/Spring Boot) server component
-* Pluggable authentication support (LDAP, Database, X.509, MFA)
-* Support for multiple protocols (CAS, SAML, OAuth, OpenID, OIDC)
-* Cross-platform client support (Java, .Net, PHP, Perl, Apache, etc)
-* Integrates with uPortal, Liferay, BlueSocket, Moodle, Google Apps, etc
+* [Java (Spring Webflow/Spring Boot) server component](planning/Architecture.html)
+* [Pluggable authentication support](Configuring-Authentication-Components.html) (LDAP, Database, X.509, MFA)
+* Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), [OAuth](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OIDC](protocol/OIDC-Protocol.html))
+* [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc)
+* Integrates with [InCommon, Box, Office365, ServiceNow](integration/Configuring-SAML-SP-Integrations.html), uPortal, Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc
 
 CAS provides a friendly open source community that actively supports and contributes to the project.
 While the project is rooted in higher-ed open source, it has grown to an international audience spanning
