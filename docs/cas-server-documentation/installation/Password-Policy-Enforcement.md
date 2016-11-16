@@ -26,9 +26,8 @@ fully explaining the nature of the problem.
 - `PASSWORD_EXPIRED`
 
 The translation of LDAP errors into CAS workflow is all
-handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate).
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+handled by [ldaptive](http://www.ldaptive.org/docs/guide/authentication/accountstate). To see the relevant list of CAS properties,
+please [review this guide](Configuration-Properties.html).
 
 ### Account Expiration Notification
 
