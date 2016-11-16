@@ -168,7 +168,8 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass()
+                casProperties.getAuthn().getMfa().getRadius().getBypass(),
+                ticketRegistrySupport
         );
     }
 

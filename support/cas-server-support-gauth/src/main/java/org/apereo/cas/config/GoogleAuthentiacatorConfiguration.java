@@ -136,7 +136,8 @@ public class GoogleAuthentiacatorConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass googleBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getGauth().getBypass()
+                casProperties.getAuthn().getMfa().getGauth().getBypass(),
+                ticketRegistrySupport
         );
     }
     
