@@ -43,10 +43,6 @@ user account is not registered yet the new-user enrollment policy allows folks t
 Duo Security altogether, shall not challenge the user
 and will also **NOT** report back a multifactor-enabled authentication context back to the application.
 
-## Configuration
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
 ## Non-Browser MFA
 
 The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.
@@ -64,3 +60,7 @@ to pass through Duo Security as well.
 ```bash
 curl --location --header "Content-Type: application/cas" https://apps.example.org/myapp -L -u casuser:Mellon
 ```
+
+## Configuration
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
