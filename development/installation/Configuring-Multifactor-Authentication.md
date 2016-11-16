@@ -30,7 +30,7 @@ The following multifactor providers are supported by CAS.
 
 ## Triggers
 
-Multifactor authentication can be activated based on the following triggers:
+Multifactor authentication can be activated based on the following triggers.
 
 ### Global
 
@@ -159,6 +159,32 @@ A few simple examples follow:
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+Note that ticket validation requests shall successfully go through if multifactor authentication was
+bypass for the given provider. In such cases, no authentication context is passed back to the application and
+additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
+
+### Applications
+
+MFA Bypass rules can be overriden per application via the CAS service registry. This is useful when
+MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
+whose access should bypass MFA may be defined as such in the CAS service registry:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample",
+  "id" : 10000001,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "bypassMultifactorAuthentication" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}
+```
 
 ## Fail-Open vs Fail-Closed
 
