@@ -88,21 +88,19 @@ public class LoggingConfigController {
 
     private void registerLogFileTailThreads() throws IOException {
         final Collection<String> outputFileNames = new HashSet<>();
-        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
-        for (final LoggerConfig config : loggerConfigs) {
-            for (final String key : config.getAppenders().keySet()) {
-                final Appender appender = config.getAppenders().get(key);
-                if (appender instanceof FileAppender) {
-                    outputFileNames.add(((FileAppender) appender).getFileName());
-                } else if (appender instanceof RandomAccessFileAppender) {
-                    outputFileNames.add(((RandomAccessFileAppender) appender).getFileName());
-                } else if (appender instanceof RollingFileAppender) {
-                    outputFileNames.add(((RollingFileAppender) appender).getFileName());
-                } else if (appender instanceof MemoryMappedFileAppender) {
-                    outputFileNames.add(((MemoryMappedFileAppender) appender).getFileName());
-                } else if (appender instanceof RollingRandomAccessFileAppender) {
-                    outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
-                }
+        final Collection<Appender> loggerAppenders = this.loggerContext.getConfiguration().getAppenders().values();
+        for (final Appender appender : loggerAppenders) {
+            final Appender appender = config.getAppenders().get(key);
+            if (appender instanceof FileAppender) {
+                outputFileNames.add(((FileAppender) appender).getFileName());
+            } else if (appender instanceof RandomAccessFileAppender) {
+                outputFileNames.add(((RandomAccessFileAppender) appender).getFileName());
+            } else if (appender instanceof RollingFileAppender) {
+                outputFileNames.add(((RollingFileAppender) appender).getFileName());
+            } else if (appender instanceof MemoryMappedFileAppender) {
+                outputFileNames.add(((MemoryMappedFileAppender) appender).getFileName());
+            } else if (appender instanceof RollingRandomAccessFileAppender) {
+                outputFileNames.add(((RollingRandomAccessFileAppender) appender).getFileName());
             }
         }
 
