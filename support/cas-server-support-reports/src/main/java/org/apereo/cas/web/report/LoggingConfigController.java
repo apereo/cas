@@ -90,7 +90,6 @@ public class LoggingConfigController {
         final Collection<String> outputFileNames = new HashSet<>();
         final Collection<Appender> loggerAppenders = this.loggerContext.getConfiguration().getAppenders().values();
         for (final Appender appender : loggerAppenders) {
-            final Appender appender = config.getAppenders().get(key);
             if (appender instanceof FileAppender) {
                 outputFileNames.add(((FileAppender) appender).getFileName());
             } else if (appender instanceof RandomAccessFileAppender) {
