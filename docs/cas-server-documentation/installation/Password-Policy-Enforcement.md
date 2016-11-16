@@ -33,7 +33,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ### Account Expiration Notification
 
 LPPE is also able to warn the user when the account is about to expire. The expiration policy is
-determined through pre-configured Ldap attributes with default values in place.
+determined through pre-configured LDAP attributes with default values in place.
 
 ## Password Management
 
