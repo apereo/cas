@@ -149,7 +149,7 @@ public class DuoSecurityConfiguration {
                     s.setHttpClient(this.httpClient);
                     pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                     pWeb.setDuoAuthenticationService(s);
-                    pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass()));
+                    pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass(), ticketRegistrySupport));
                     pWeb.setOrder(duo.getRank());
                     pWeb.setId(duo.getId());
 

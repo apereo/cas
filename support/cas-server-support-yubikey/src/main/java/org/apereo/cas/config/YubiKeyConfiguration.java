@@ -168,7 +168,8 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getYubikey().getBypass()
+                casProperties.getAuthn().getMfa().getYubikey().getBypass(),
+                ticketRegistrySupport
         );
     }
 

@@ -332,7 +332,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                final RequestContext context,
                                                                final MultifactorAuthenticationProvider provider,
                                                                final Predicate predicate) {
-
         try {
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);

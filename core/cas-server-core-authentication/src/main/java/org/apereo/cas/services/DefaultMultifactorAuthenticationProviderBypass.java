@@ -5,8 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,27 +26,34 @@ import java.util.stream.Collectors;
 public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMultifactorAuthenticationProviderBypass.class);
     private static final long serialVersionUID = 3720922341350004543L;
-    private static final String REGISTERED_SERVICE_PROPERTY_BYPASS_MFA = "bypassMultifactorAuthentication";
 
     private final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass;
 
-    public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass) {
+    private final TicketRegistrySupport ticketRegistrySupport;
+
+    public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProperties.BaseProvider.Bypass bypass,
+                                                          final TicketRegistrySupport ticketRegistrySupport) {
         this.bypass = bypass;
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     @Override
-    public boolean isAuthenticationRequestHonored(final Authentication authentication, final RegisteredService registeredService) {
+    public boolean isAuthenticationRequestHonored(final Authentication authentication,
+                                                  final RegisteredService registeredService,
+                                                  final MultifactorAuthenticationProvider provider) {
 
         final Principal principal = authentication.getPrincipal();
         final boolean bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypass, principal);
         if (bypassByPrincipal) {
             LOGGER.debug("Bypass rules for principal {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         final boolean bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypass, authentication);
         if (bypassByAuthn) {
             LOGGER.debug("Bypass rules for authentication {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
@@ -55,6 +64,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         );
         if (bypassByAuthnMethod) {
             LOGGER.debug("Bypass rules for authentication method {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
@@ -65,18 +75,21 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         );
         if (bypassByHandlerName) {
             LOGGER.debug("Bypass rules for authentication handlers {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         final boolean bypassByCredType = locateMatchingCredentialType(authentication, bypass.getCredentialClassType());
         if (bypassByCredType) {
             LOGGER.debug("Bypass rules for credential types {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
-        final boolean bypassByService = locateMatchingRegisteredServiceProperty(authentication, registeredService);
+        final boolean bypassByService =
+                locateMatchingRegisteredServiceProperty(authentication, registeredService, AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
         if (bypassByService) {
-            LOGGER.debug("Bypass rules for service {} indicate the request may be ignored", principal.getId());
+            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
@@ -84,19 +97,33 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
+    private void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+                                                      final Principal principal) {
+        LOGGER.debug("Bypass rules for service {} indicate the request may be ignored", principal.getId());
+        final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
+                .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE)
+                .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId())
+                .build();
+        LOGGER.debug("Updated authentication session to remember bypass for {} via {}", provider.getId(),
+                AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
+        authentication.update(newAuthn);
+    }
+
     /**
      * Locate matching registered service property boolean.
      *
      * @param authentication    the authentication
      * @param registeredService the registered service
+     * @param propertyName      the property name
      * @return the boolean
      */
     protected boolean locateMatchingRegisteredServiceProperty(final Authentication authentication,
-                                                              final RegisteredService registeredService) {
+                                                              final RegisteredService registeredService,
+                                                              final String propertyName) {
         if (registeredService != null) {
-            if (registeredService.getProperties().containsKey(REGISTERED_SERVICE_PROPERTY_BYPASS_MFA)) {
+            if (registeredService.getProperties().containsKey(propertyName)) {
                 return registeredService.getProperties()
-                        .get(REGISTERED_SERVICE_PROPERTY_BYPASS_MFA)
+                        .get(propertyName)
                         .getValues()
                         .stream()
                         .filter(e -> StringUtils.equalsIgnoreCase(e, BooleanUtils.toStringYesNo(Boolean.TRUE))

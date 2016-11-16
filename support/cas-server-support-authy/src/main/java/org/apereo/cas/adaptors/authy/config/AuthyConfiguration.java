@@ -160,7 +160,8 @@ public class AuthyConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAuthy().getBypass()
+                casProperties.getAuthn().getMfa().getAuthy().getBypass(),
+                ticketRegistrySupport
         );
     }
     

@@ -63,7 +63,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             logger.debug("Provided event id {} is not applicable to this provider identified by {}", getId());
             return false;
         }
-        if (bypassEvaluator != null && !bypassEvaluator.isAuthenticationRequestHonored(authentication, registeredService)) {
+        if (bypassEvaluator != null && !bypassEvaluator.isAuthenticationRequestHonored(
+                authentication, registeredService, this)) {
             logger.debug("Request cannot be supported by provider {}", getId());
             return false;
         }

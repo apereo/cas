@@ -11,12 +11,25 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public interface MultifactorAuthenticationProviderBypass extends Serializable {
+
+    /**
+     * bypass mfa authn attribute.
+     */
+    String AUTHENTICATION_ATTRIBUTE_BYPASS_MFA = "bypassMultifactorAuthentication";
+
+    /**
+     * bypass mfa for provider id authn attribute.
+     */
+    String AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER = "bypassedMultifactorAuthenticationProviderId";
+
     /**
      * Eval current bypass rules for the provider.
      *
-     * @param authentication the authentication
+     * @param authentication    the authentication
      * @param registeredService the registered service in question
+     * @param provider          the provider
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
-    boolean isAuthenticationRequestHonored(Authentication authentication, RegisteredService registeredService);
+    boolean isAuthenticationRequestHonored(Authentication authentication, RegisteredService registeredService,
+                                           MultifactorAuthenticationProvider provider);
 }
