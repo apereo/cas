@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@ComponentScan(basePackages = {"org.apereo.cas", "org.pac4j.springframework"},
+@ComponentScan(basePackages = {"org.pac4j.springframework"},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX,
                 pattern = "org\\.pac4j\\.springframework\\.web\\.ApplicationLogoutController")})
 @EnableConfigServer
