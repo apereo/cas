@@ -36,6 +36,15 @@ For this behavior to function, separate unique ids, of your own choosing, need t
 provider. Each provider instance is registered with CAS and activated in the authentication
 flows as necessary. The provider id need not be defined if there is only a single Duo instance available.
 
+## User Account Status
+
+If users are unregistered with Duo Security or allowed through via a direct bypass,
+CASA will query Duo Security for the user account apriori to learn
+whether user is registered or configured for direct bypass. If the account status matches either of those conditions or the
+user account is not registered yet the new-user enrollment policy allows folks to skip registration, CAS wilk bypass
+Duo Security altogether, shall not challenge the user
+and will also **NOT** report back a multifactor-enabled authentication context back to the application.
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
