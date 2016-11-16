@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreAuthenticationConfiguration,org.apereo.cas.authentication.support.PasswordPolicyConfiguration,org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration
