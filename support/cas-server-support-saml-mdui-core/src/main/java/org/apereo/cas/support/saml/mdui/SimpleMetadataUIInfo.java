@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class SimpleMetadataUIInfo implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMetadataUIInfo.class);
-    private static final int DEFAULT_IMAGE_SIZE = 48;
+    private static final int DEFAULT_IMAGE_SIZE = 32;
 
     private static final long serialVersionUID = -1434801982864628179L;
 
