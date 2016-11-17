@@ -12,6 +12,7 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -81,7 +82,7 @@ public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTest
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.doExecute(ctx);
-        assertTrue(ctx.getFlowScope().contains(SamlMetadataUIParserAction.MDUI_FLOW_PARAMETER_NAME));
+        assertTrue(ctx.getFlowScope().contains(MetadataUIUtils.MDUI_FLOW_PARAMETER_NAME));
     }
 
 
