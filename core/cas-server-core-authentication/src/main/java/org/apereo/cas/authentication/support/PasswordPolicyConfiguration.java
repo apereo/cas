@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
  */
 public class PasswordPolicyConfiguration {
 
-    private PasswordPolicyProperties passwordPolicyProperties;
+    private final PasswordPolicyProperties passwordPolicyProperties;
 
     public PasswordPolicyConfiguration(final PasswordPolicyProperties passwordPolicyProperties) {
         this.passwordPolicyProperties = passwordPolicyProperties;
