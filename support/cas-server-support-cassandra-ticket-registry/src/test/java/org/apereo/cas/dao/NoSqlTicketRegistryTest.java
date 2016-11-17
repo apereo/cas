@@ -1,15 +1,31 @@
 package org.apereo.cas.dao;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.serializer.JacksonJSONSerializer;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreator;
+import org.cassandraunit.CassandraCQLUnit;
+import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.stream.Stream;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class NoSqlTicketRegistryTest {
+
+    @Rule
+    public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
+    private CassandraDao<String> dao;
+
+    @Before
+    public void setUp() throws Exception {
+        dao = new CassandraDao<>("localhost", 24, "", "", new ExpirationCalculator(0, 0, 0), new JacksonJSONSerializer(), String.class);
+    }
 
     @Test
     public void shouldAddATicket() throws Exception {
@@ -25,15 +41,12 @@ public class NoSqlTicketRegistryTest {
 
     @Test
     public void shouldRetrieveATicket() throws Exception {
-        NoSqlTicketRegistryDao dao = mock(NoSqlTicketRegistryDao.class);
         NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, mock(LogoutManager.class), true);
         String ticketId = "TGT-1234";
+        TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
+        ticketRegistry.addTicket(ticket);
 
-        //when
-        ticketRegistry.getTicket(ticketId);
-
-        //then
-        verify(dao).getTicketGrantingTicket(ticketId);
+        assertEquals(ticket, ticketRegistry.getTicket(ticketId));
     }
 
     @Test
