@@ -3,15 +3,11 @@ package org.apereo.cas.dao;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 
 import static org.apereo.cas.authentication.RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME;
 
-@Component
 public class ExpirationCalculator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExpirationCalculator.class);
@@ -19,9 +15,7 @@ public class ExpirationCalculator {
     private long ttk;
     private long rememberMeTtl;
 
-    @Autowired
-    public ExpirationCalculator(@Value("${tgt.maxTimeToLiveInSeconds:28800}") final long ttl, @Value("${tgt.timeToKillInSeconds:7200}") final long ttk,
-                                @Value("${tgt.maxRememberMeTimeoutExpiration}") final long rememberMeTtl) {
+    public ExpirationCalculator(final long ttl, final long ttk, final long rememberMeTtl) {
         this.ttl = ttl;
         this.ttk = ttk;
         this.rememberMeTtl = rememberMeTtl;

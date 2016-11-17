@@ -25,7 +25,7 @@ public class RegistryConfiguration {
 
     @Bean(name = "cassandraDao")
     public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password, final ExpirationCalculator calculator) {
-        return new CassandraDao<String>(contactPoints, maxTicketDuration, username, password, calculator, new JacksonJSONSerializer(), String.class);
+        return new CassandraDao<>(contactPoints, maxTicketDuration, username, password, calculator, new JacksonJSONSerializer(), String.class);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
@@ -33,8 +33,14 @@ public class RegistryConfiguration {
         return new NoSqlTicketRegistry(cassandraDao, logoutManager, logUserOutOfServices);
     }
 
-    @Bean(name="ticketRegistryCleaner")
+    @Bean(name = "ticketRegistryCleaner")
     public TicketRegistryCleaner ticketRegistryCleaner(final NoSqlTicketRegistry ticketRegistry) {
         return ticketRegistry;
+    }
+
+    @Bean
+    public ExpirationCalculator expirationCalculator(@Value("${tgt.maxTimeToLiveInSeconds:28800}") final long ttl, @Value("${tgt.timeToKillInSeconds:7200}") final long ttk,
+                                @Value("${tgt.maxRememberMeTimeoutExpiration}") final long rememberMeTtl) {
+        return new ExpirationCalculator(ttl, ttk, rememberMeTtl);
     }
 }
