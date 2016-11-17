@@ -49,6 +49,7 @@ public class DuoIntegration {
      * Sets enrollment policy status.
      *
      * @param enrollmentPolicyStatus the enrollment policy status
+     * @return the integration
      */
     public DuoIntegration setEnrollmentPolicyStatus(final DuoEnrollmentPolicyStatus enrollmentPolicyStatus) {
         this.enrollmentPolicyStatus = enrollmentPolicyStatus;
@@ -63,6 +64,7 @@ public class DuoIntegration {
      * Sets greeting.
      *
      * @param greeting the greeting
+     * @return the integration
      */
     public DuoIntegration setGreeting(final String greeting) {
         this.greeting = greeting;
@@ -77,6 +79,7 @@ public class DuoIntegration {
      * Sets name.
      *
      * @param name the name
+     * @return the integration
      */
     public DuoIntegration setName(final String name) {
         this.name = name;
@@ -91,6 +94,7 @@ public class DuoIntegration {
      * Sets type.
      *
      * @param type the type
+     * @return the integration
      */
     public DuoIntegration setType(final String type) {
         this.type = type;
