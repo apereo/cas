@@ -19,7 +19,7 @@ public class CassandraBinaryTest {
 
     @Test
     public void shouldWorkWithABinarySerializer() throws Exception {
-        CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", 24, "", "", 100, new ExpirationCalculator(0, 0, 0), new JacksonBinarySerializer(), ByteBuffer.class);
+        CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", 24, "", "", new ExpirationCalculator(0, 0, 0), new JacksonBinarySerializer(), ByteBuffer.class);
 
         TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
 

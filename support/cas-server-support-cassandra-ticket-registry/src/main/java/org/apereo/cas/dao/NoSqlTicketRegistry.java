@@ -107,7 +107,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
             if (logUserOutOfServices) {
                 logoutManager.performLogout(ticket);
             }
-            deleteTicket(ticket.getId());
+            ticketRegistryDao.deleteTicketGrantingTicket(ticket.getId());
         });
     }
 
