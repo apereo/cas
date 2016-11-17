@@ -1,16 +1,15 @@
-package org.apereo.cas.support.saml.web.flow;
+package org.apereo.cas.support.saml.mdui.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.web.flow.mdui.MetadataResolverAdapter;
-import org.apereo.cas.support.saml.web.flow.mdui.SimpleMetadataUIInfo;
+import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.SimpleMetadataUIInfo;
 import org.apereo.cas.web.support.WebUtils;
-
-import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -32,7 +31,7 @@ import java.util.List;
  * The result is put into the flow request context under the parameter
  * {@link #MDUI_FLOW_PARAMETER_NAME}. The entity id parameter is
  * specified by default at {@link SamlProtocolConstants#PARAMETER_ENTITY_ID}.
- *
+ * <p>
  * <p>This action is best suited to be invoked when the CAS login page
  * is about to render so that the page, once the MDUI info is obtained,
  * has a chance to populate the UI with relevant info about the SP.</p>
@@ -47,13 +46,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    private String entityIdParameterName;
-    
-    private MetadataResolverAdapter metadataAdapter;
-    
+
+    private final String entityIdParameterName;
+
+    private final MetadataResolverAdapter metadataAdapter;
+
     private ServicesManager servicesManager;
-    
+
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     /**
@@ -70,7 +69,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * Instantiates a new SAML mdui parser action.
      *
      * @param entityIdParameterName the entity id parameter name
-     * @param metadataAdapter     the metadata adapter
+     * @param metadataAdapter       the metadata adapter
      */
     public SamlMetadataUIParserAction(final String entityIdParameterName,
                                       final MetadataResolverAdapter metadataAdapter) {
