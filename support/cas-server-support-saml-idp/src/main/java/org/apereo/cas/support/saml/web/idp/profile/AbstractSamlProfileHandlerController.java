@@ -65,7 +65,6 @@ import java.util.Optional;
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     /**
      * The Saml object signer.
      */
