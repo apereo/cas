@@ -19,17 +19,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration("ticketRegistryConfiguration")
-@PropertySource("classpath:/cassandra.properties")
 @EnableScheduling
-@EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
+@EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class, ExpirationCalculatorProperties.class})
 public class RegistryConfiguration {
 
-    @Autowired
-    CassandraProperties cassandraProperties;
+    @Autowired CassandraProperties cassandraProperties;
+
+    @Autowired ExpirationCalculatorProperties expirationProperties;
 
     @Bean(name = "cassandraDao")
-    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, final ExpirationCalculator calculator) {
-        return new CassandraDao<>(cassandraProperties.getContactPoints(), maxTicketDuration, cassandraProperties.getUsername(), cassandraProperties.getPassword(), calculator, new JacksonJSONSerializer(), String.class);
+    public NoSqlTicketRegistryDao cassandraJSONDao(final ExpirationCalculator calculator) {
+        return new CassandraDao<>(cassandraProperties.getContactPoints(), expirationProperties.getMaxTicketDuration(), cassandraProperties.getUsername(), cassandraProperties.getPassword(), calculator, new JacksonJSONSerializer(), String.class);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
@@ -43,8 +43,7 @@ public class RegistryConfiguration {
     }
 
     @Bean
-    public ExpirationCalculator expirationCalculator(@Value("${tgt.maxTimeToLiveInSeconds:28800}") final long ttl, @Value("${tgt.timeToKillInSeconds:7200}") final long ttk,
-                                @Value("${tgt.maxRememberMeTimeoutExpiration}") final long rememberMeTtl) {
-        return new ExpirationCalculator(ttl, ttk, rememberMeTtl);
+    public ExpirationCalculator expirationCalculator() {
+        return new ExpirationCalculator(expirationProperties.getMaxTimeToLiveInSeconds(), expirationProperties.getTimeToKillInSeconds(), expirationProperties.getMaxTicketDuration());
     }
 }
