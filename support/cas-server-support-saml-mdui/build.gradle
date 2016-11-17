@@ -1,10 +1,15 @@
 description = "Apereo CAS SAML Server MDUI Support"
 dependencies {
+    compile libraries.spring
+    compile libraries.springboot
+    compile libraries.springcloud
     compile libraries.quartz
     compile project(":support:cas-server-support-saml")
     compile project(":core:cas-server-core-configuration")
+    compile project(":support:cas-server-support-saml-mdui-core")
+
     compile libraries.opensaml
-    runtime libraries.hibernate
+
     testCompile libraries.log4j
     testCompile libraries.metrics
     testCompile project(path: ":support:cas-server-support-saml", configuration: "tests")

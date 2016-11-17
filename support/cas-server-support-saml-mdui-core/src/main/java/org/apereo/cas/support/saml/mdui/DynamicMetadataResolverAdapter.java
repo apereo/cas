@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.flow.mdui;
+package org.apereo.cas.support.saml.mdui;
 
 import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;

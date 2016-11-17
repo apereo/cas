@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.flow.mdui;
+package org.apereo.cas.support.saml.mdui;
 
 import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;

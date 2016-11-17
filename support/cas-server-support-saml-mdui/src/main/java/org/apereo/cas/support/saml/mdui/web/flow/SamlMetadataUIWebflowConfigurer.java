@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.flow;
+package org.apereo.cas.support.saml.mdui.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.Action;
  * @since 5.0.0
  */
 public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    
+
     private Action samlMetadataUIParserAction;
 
     @Override
