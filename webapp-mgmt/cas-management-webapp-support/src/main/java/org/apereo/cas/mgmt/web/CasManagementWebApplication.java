@@ -1,8 +1,6 @@
 package org.apereo.cas.mgmt.web;
 
-import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mgmt.config.CasManagementWebAppConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -26,17 +24,14 @@ import org.springframework.context.annotation.ImportResource;
  */
 @ImportResource(locations = {
         "classpath:/managementConfigContext.xml"})
-@SpringBootApplication(scanBasePackages = {"org.pac4j.springframework", "org.apereo.cas"},
+@SpringBootApplication(scanBasePackages = {"org.pac4j.springframework"},
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
                 VelocityAutoConfiguration.class})
-@Import(value = {
-        AopAutoConfiguration.class, 
-        CasCoreServicesConfiguration.class, 
-        CasManagementWebAppConfiguration.class})
+@Import(value = AopAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigServer
