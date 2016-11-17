@@ -3,7 +3,11 @@
         <table>
             <tr>
                 <td>
-                    <img th:src="${mduiContext.logoUrl}"/>
+                    <img th:title="${mduiContext.displayName}"
+                         th:alt="${mduiContext.displayName}"
+                         th:src="${mduiContext.logoUrl}"
+                         th:width="${mduiContext.logoWidth}"
+                         th:height="${mduiContext.logoHeight}"/>
                 </td>
                 <td id="servicedesc">
                     <h2 th:text="${mduiContext.displayName}"></h2>

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
  */
 public class SimpleMetadataUIInfo implements Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMetadataUIInfo.class);
+    private static final int DEFAULT_IMAGE_SIZE = 48;
 
     private static final long serialVersionUID = -1434801982864628179L;
 
@@ -144,6 +145,40 @@ public class SimpleMetadataUIInfo implements Serializable {
             return getStringValues(this.uiInfo.getPrivacyStatementURLs());
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Gets logo height.
+     *
+     * @return the logo url
+     */
+    public long getLogoWidth() {
+        try {
+            final Collection<Logo> items = getLogoUrls();
+            if (!items.isEmpty()) {
+                return items.iterator().next().getWidth();
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return DEFAULT_IMAGE_SIZE;
+    }
+
+    /**
+     * Gets logo height.
+     *
+     * @return the logo url
+     */
+    public long getLogoHeight() {
+        try {
+            final Collection<Logo> items = getLogoUrls();
+            if (!items.isEmpty()) {
+                return items.iterator().next().getHeight();
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return DEFAULT_IMAGE_SIZE;
     }
 
     /**

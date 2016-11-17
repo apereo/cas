@@ -50,7 +50,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
                 final SamlRegisteredService samlService = SamlRegisteredService.class.cast(registeredService);
                 final SamlRegisteredServiceServiceProviderMetadataFacade facade =
                         SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
-                
+
                 final SimpleMetadataUIInfo mdui =
                         MetadataUIUtils.locateMDUIForEntityId(facade.getEntityDescriptor(),
                                 service.getId(), registeredService);
