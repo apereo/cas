@@ -9,6 +9,7 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.serializer.JacksonJSONSerializer;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,17 +21,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration("ticketRegistryConfiguration")
 @PropertySource("classpath:/cassandra.properties")
 @EnableScheduling
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
 public class RegistryConfiguration {
 
+    @Autowired
+    CassandraProperties cassandraProperties;
+
     @Bean(name = "cassandraDao")
-    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${cassandra.contact.points:localhost}") final String contactPoints, @Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, @Value("${cassandra.username}") final String username, @Value("${cassandra.password}") final String password, final ExpirationCalculator calculator) {
-        return new CassandraDao<>(contactPoints, maxTicketDuration, username, password, calculator, new JacksonJSONSerializer(), String.class);
+    public NoSqlTicketRegistryDao cassandraJSONDao(@Value("${tgt.maxRememberMeTimeoutExpiration:5184000}") final int maxTicketDuration, final ExpirationCalculator calculator) {
+        return new CassandraDao<>(cassandraProperties.getContactPoints(), maxTicketDuration, cassandraProperties.getUsername(), cassandraProperties.getPassword(), calculator, new JacksonJSONSerializer(), String.class);
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
-    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") final LogoutManager logoutManager, @Value("true") final boolean logUserOutOfServices) {
-        return new NoSqlTicketRegistry(cassandraDao, logoutManager, logUserOutOfServices);
+    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") final LogoutManager logoutManager) {
+        return new NoSqlTicketRegistry(cassandraDao, logoutManager);
     }
 
     @Bean(name = "ticketRegistryCleaner")

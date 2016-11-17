@@ -2788,8 +2788,8 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
 
 ```properties
-# cas.rest.attributeName=
-# cas.rest.attributeValue=
+# cas.rest.contactPoints=
+# cas.rest.username=
 # cas.rest.throttler=neverThrottle
 ```
 

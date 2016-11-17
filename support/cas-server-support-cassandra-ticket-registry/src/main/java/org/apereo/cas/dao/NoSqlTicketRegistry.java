@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Collection;
@@ -21,14 +20,11 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
     private LogoutManager logoutManager;
-    private boolean logUserOutOfServices = true;
 
     @Autowired
-    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final LogoutManager logoutManager,
-                               @Value("true") final boolean logUserOutOfServices) {
+    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final LogoutManager logoutManager) {
         this.ticketRegistryDao = ticketRegistryDao;
         this.logoutManager = logoutManager;
-        this.logUserOutOfServices = logUserOutOfServices;
     }
 
     @Override
@@ -102,9 +98,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
     @Override
     public void clean() {
         ticketRegistryDao.getExpiredTgts().forEach(ticket -> {
-            if (logUserOutOfServices) {
-                logoutManager.performLogout(ticket);
-            }
+            logoutManager.performLogout(ticket);
             ticketRegistryDao.deleteTicketGrantingTicket(ticket.getId());
         });
     }
