@@ -3,6 +3,7 @@ dependencies {
     compile project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-logout")
     compile project(":support:cas-server-support-saml")
+    compile project(":support:cas-server-support-saml-mdui-core")
     compile project(":support:cas-server-support-saml-idp-core")
     compile libraries.casclient
     compile libraries.shibidp
