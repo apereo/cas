@@ -16,10 +16,7 @@ import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.server.EnableConfigServer;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
