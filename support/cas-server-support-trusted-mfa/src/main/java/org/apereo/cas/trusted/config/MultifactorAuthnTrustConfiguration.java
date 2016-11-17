@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
@@ -19,11 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
@@ -36,6 +39,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class MultifactorAuthnTrustConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
@@ -123,6 +127,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
+    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationTrustStorageCleaner c = new MultifactorAuthenticationTrustStorageCleaner();
