@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.flow.config;
+package org.apereo.cas.support.saml.mdui.config;
 
 import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
@@ -9,13 +9,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.web.flow.SamlMetadataUIParserAction;
-import org.apereo.cas.support.saml.web.flow.SamlMetadataUIWebflowConfigurer;
-import org.apereo.cas.support.saml.web.flow.mdui.AbstractMetadataResolverAdapter;
-import org.apereo.cas.support.saml.web.flow.mdui.ChainingMetadataResolverAdapter;
-import org.apereo.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter;
-import org.apereo.cas.support.saml.web.flow.mdui.MetadataResolverAdapter;
-import org.apereo.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.ChainingMetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.DynamicMetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.StaticMetadataResolverAdapter;
+import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
+import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;

@@ -127,10 +127,6 @@ public class SamlIdPConfiguration {
         this.validationServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
-    @Bean
-    public Resource templateSpMetadata() {
-        return new ClassPathResource("template-sp-metadata.xml");
-    }
 
     /**
      * Saml id p single logout service logout url builder saml id p single logout service logout url builder.

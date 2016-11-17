@@ -298,7 +298,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter>
             metadataFilterList) throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
-            logger.warn("No metadata signature location is defined for {}, so SignatureValidationFilter will not be invoked",
+            logger.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked",
                     service.getMetadataLocation());
             return;
         }
@@ -310,7 +310,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         keyInfoProviderList.add(new DEREncodedKeyValueProvider());
         keyInfoProviderList.add(new InlineX509DataProvider());
 
-        logger.debug("Attempting to resolve credentials from {} for {}",
+        logger.debug("Attempting to resolve credentials from [{}] for [{}]",
                 service.getMetadataSignatureLocation(), service.getMetadataLocation());
 
         final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
@@ -319,7 +319,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         credentialFactoryBean.afterPropertiesSet();
         final BasicCredential credential = credentialFactoryBean.getObject();
 
-        logger.info("Successfully resolved credentials from {} for {}",
+        logger.info("Successfully resolved credentials from [{}] for [{}]",
                 service.getMetadataSignatureLocation(), service.getMetadataLocation());
 
         final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
@@ -344,7 +344,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             metadataFilterList.add(requiredValidUntilFilter);
             logger.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {
-            logger.debug("No metadata maximum validity criteria is defined for {}, so RequiredValidUntilFilter will not be invoked",
+            logger.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",
                     service.getMetadataLocation());
         }
     }
