@@ -82,7 +82,7 @@ public class MetadataUIUtils {
             return null;
         }
 
-        final SPSSODescriptor spssoDescriptor = MetadataUIUtils.getSPSsoDescriptor(entityDescriptor);
+        final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             LOGGER.debug("SP SSO descriptor not found for [{}]", entityId);
             return null;
