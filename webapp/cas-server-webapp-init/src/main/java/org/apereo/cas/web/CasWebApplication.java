@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAuto
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
+import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.velocity.VelocityAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,
+                JmxAutoConfiguration.class,
                 DataSourceAutoConfiguration.class,
                 DataSourceTransactionManagerAutoConfiguration.class,
                 MetricsDropwizardAutoConfiguration.class,
