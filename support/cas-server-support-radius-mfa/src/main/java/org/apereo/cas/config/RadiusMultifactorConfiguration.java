@@ -161,6 +161,7 @@ public class RadiusMultifactorConfiguration {
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
         return p;
     }
 
