@@ -26,16 +26,6 @@ public class CasPropertiesConfiguration {
     private ConfigurableEnvironment environment;
 
     /**
-     * Place holder configurer property sources placeholder configurer.
-     *
-     * @return the property sources placeholder configurer
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
-    /**
      * Init.
      */
     @PostConstruct
