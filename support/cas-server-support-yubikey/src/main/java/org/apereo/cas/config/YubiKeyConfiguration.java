@@ -176,11 +176,11 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(
-                yubikeyAuthenticationHandler(), this.httpClient);
+        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(yubikeyAuthenticationHandler(), this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
         return p;
     }
 

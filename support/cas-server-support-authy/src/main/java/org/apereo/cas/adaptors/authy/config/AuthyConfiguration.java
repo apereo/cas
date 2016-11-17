@@ -152,7 +152,8 @@ public class AuthyConfiguration {
         final AuthyMultifactorAuthenticationProvider p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
+        p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
         return p;
     }
 
