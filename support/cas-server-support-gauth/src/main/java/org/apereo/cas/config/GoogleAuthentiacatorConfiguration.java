@@ -188,6 +188,7 @@ public class GoogleAuthentiacatorConfiguration {
         p.setBypassEvaluator(googleBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getGauth().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getGauth().getId());
         return p;
     }
 
