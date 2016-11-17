@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -19,6 +21,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -68,6 +71,7 @@ public class CasWebApplication {
                     applicationContext.getEnvironment().setConversionService(conversionService);
                 })
                 .properties(ImmutableMap.of(CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, Boolean.TRUE))
+                .logStartupInfo(true)
                 .run(args);
     }
 }
