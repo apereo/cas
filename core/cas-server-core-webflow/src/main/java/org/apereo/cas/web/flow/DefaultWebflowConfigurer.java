@@ -26,12 +26,14 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
 
-        createDefaultGlobalExceptionHandlers(flow);
-        createDefaultEndStates(flow);
-        createDefaultDecisionStates(flow);
-        createDefaultActionStates(flow);
+        if (flow != null) {
+            createDefaultGlobalExceptionHandlers(flow);
+            createDefaultEndStates(flow);
+            createDefaultDecisionStates(flow);
+            createDefaultActionStates(flow);
 
-        createRememberMeAuthnWebflowConfig(flow);
+            createRememberMeAuthnWebflowConfig(flow);
+        }
     }
 
     private void createRememberMeAuthnWebflowConfig(final Flow flow) {
