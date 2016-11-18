@@ -89,7 +89,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         }
 
         final SimpleMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
-
+        WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
         return success();
     }
 

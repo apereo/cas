@@ -34,6 +34,7 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -70,7 +71,7 @@ public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTest
 
     @Autowired
     @Qualifier("samlMetadataUIParserAction")
-    private SamlMetadataUIParserAction samlMetadataUIParserAction;
+    private Action samlMetadataUIParserAction;
 
 
     @Test
@@ -83,7 +84,7 @@ public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTest
 
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        samlMetadataUIParserAction.doExecute(ctx);
+        samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SimpleMetadataUIInfo.class));
     }
 

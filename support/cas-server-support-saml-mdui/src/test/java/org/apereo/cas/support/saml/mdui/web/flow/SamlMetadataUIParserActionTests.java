@@ -34,6 +34,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -71,7 +72,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Autowired
     @Qualifier("samlMetadataUIParserAction")
-    private SamlMetadataUIParserAction samlMetadataUIParserAction;
+    private Action samlMetadataUIParserAction;
 
     @Test
     public void verifyEntityIdUIInfoExists() throws Exception {
@@ -83,7 +84,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        samlMetadataUIParserAction.doExecute(ctx);
+        samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SimpleMetadataUIInfo.class));
     }
 
@@ -98,7 +99,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        samlMetadataUIParserAction.doExecute(ctx);
+        samlMetadataUIParserAction.execute(ctx);
         assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SimpleMetadataUIInfo.class));
     }
 
