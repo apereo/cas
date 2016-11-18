@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
+import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
@@ -34,7 +34,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,7 +78,7 @@ public class SamlIdPConfiguration {
     private OpenSamlConfigBean openSamlConfigBean;
 
     @javax.annotation.Resource(name = "validationServiceSelectionStrategies")
-    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+    private List<AuthenticationRequestServiceSelectionStrategy> validationServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
@@ -171,8 +171,8 @@ public class SamlIdPConfiguration {
     }
 
     @Bean
-    public ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        final SamlIdPEntityIdValidationServiceSelectionStrategy s = new SamlIdPEntityIdValidationServiceSelectionStrategy();
+    public AuthenticationRequestServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
+        final SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy s = new SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy();
         s.setWebApplicationServiceFactory(webApplicationServiceFactory);
         return s;
     }

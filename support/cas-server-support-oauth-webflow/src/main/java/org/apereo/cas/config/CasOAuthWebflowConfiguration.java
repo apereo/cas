@@ -5,7 +5,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20LogoutAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.ApplicationLogoutController;
@@ -48,8 +48,8 @@ public class CasOAuthWebflowConfiguration {
     private Config oauthSecConfig;
 
     @Autowired
-    @Qualifier("oauth20ValidationServiceSelectionStrategy")
-    private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
+    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+    private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -78,6 +78,6 @@ public class CasOAuthWebflowConfiguration {
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
     @Bean
     public Action oauth20RegisteredServiceUIAction() {
-        return new OAuth20RegisteredServiceUIAction(this.servicesManager, oauth20ValidationServiceSelectionStrategy);
+        return new OAuth20RegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
     }
 }

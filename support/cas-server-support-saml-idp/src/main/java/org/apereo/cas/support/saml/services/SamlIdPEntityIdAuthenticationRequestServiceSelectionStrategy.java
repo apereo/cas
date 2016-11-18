@@ -2,21 +2,21 @@ package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 /**
- * This is {@link SamlIdPEntityIdValidationServiceSelectionStrategy}.
+ * This is {@link SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlIdPEntityIdValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
+public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,7 +36,7 @@ public class SamlIdPEntityIdValidationServiceSelectionStrategy implements Valida
     }
 
     @Override
-    public int compareTo(final ValidationServiceSelectionStrategy o) {
+    public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
         return 0;
     }
 

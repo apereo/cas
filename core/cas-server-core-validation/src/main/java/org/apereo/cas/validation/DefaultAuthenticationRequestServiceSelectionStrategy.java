@@ -3,13 +3,13 @@ package org.apereo.cas.validation;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
- * This is {@link DefaultValidationServiceSelectionStrategy} which returns back to the caller
+ * This is {@link DefaultAuthenticationRequestServiceSelectionStrategy} which returns back to the caller
  * the provided service, as it was without any additional processing. 
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
+public class DefaultAuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
 
     private static final long serialVersionUID = -7458940344679793681L;
 
@@ -24,7 +24,7 @@ public class DefaultValidationServiceSelectionStrategy implements ValidationServ
     }
 
     @Override
-    public int compareTo(final ValidationServiceSelectionStrategy o) {
+    public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
         return Integer.MAX_VALUE;
     }
 }

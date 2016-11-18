@@ -3,22 +3,22 @@ package org.apereo.cas.support.oauth.validator;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
 
 import java.util.Optional;
 
 /**
- * This is {@link OAuth20ValidationServiceSelectionStrategy}.
+ * This is {@link OAuth20AuthenticationRequestServiceSelectionStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuth20ValidationServiceSelectionStrategy implements ValidationServiceSelectionStrategy {
+public class OAuth20AuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
     private ServicesManager servicesManager;
@@ -48,7 +48,7 @@ public class OAuth20ValidationServiceSelectionStrategy implements ValidationServ
     }
 
     @Override
-    public int compareTo(final ValidationServiceSelectionStrategy o) {
+    public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
         return MAX_ORDER - 1;
     }
 

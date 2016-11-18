@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import java.io.Serializable;
 
 /**
- * This is {@link ValidationServiceSelectionStrategy} which attempts to
+ * This is {@link AuthenticationRequestServiceSelectionStrategy} which attempts to
  * resolve and nominate a service during a validation event. By default
  * most services provided to CAS are taken and resolved verbatim. However,
  * in scenarios where a given module ends up inserting target service identifiers
@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface ValidationServiceSelectionStrategy extends Serializable, Comparable<ValidationServiceSelectionStrategy> {
+public interface AuthenticationRequestServiceSelectionStrategy extends Serializable, Comparable<AuthenticationRequestServiceSelectionStrategy> {
 
     /**
      * Defined order of the strategy in the list of available processors. 
