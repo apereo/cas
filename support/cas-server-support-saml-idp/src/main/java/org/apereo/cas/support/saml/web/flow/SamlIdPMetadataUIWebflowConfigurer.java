@@ -19,8 +19,10 @@ public class SamlIdPMetadataUIWebflowConfigurer extends AbstractCasWebflowConfig
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ViewState state = (ViewState) flow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-        state.getEntryActionList().add(this.samlMetadataUIParserAction);
+        if (flow != null) {
+            final ViewState state = (ViewState) flow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            state.getEntryActionList().add(this.samlMetadataUIParserAction);
+        }
     }
 
     public void setSamlMetadataUIParserAction(final Action samlMetadataUIParserAction) {
