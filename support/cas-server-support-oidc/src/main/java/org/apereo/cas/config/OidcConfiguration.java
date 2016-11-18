@@ -27,7 +27,7 @@ import org.apereo.cas.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.web.controllers.OidcProfileEndpointController;
 import org.apereo.cas.web.controllers.OidcWellKnownEndpointController;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventResolver;
+import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventEventResolver;
 import org.apereo.cas.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.web.flow.OidcWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -322,7 +322,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        return new OidcAuthenticationContextWebflowEventResolver();
+        return new OidcAuthenticationContextWebflowEventEventResolver();
     }
 
     @Bean
