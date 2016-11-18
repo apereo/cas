@@ -72,6 +72,7 @@ public final class WebUtils {
     private static final String PARAMETER_SERVICE = "service";
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
+    private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
 
     /**
      * Instantiates a new web utils instance.
@@ -689,6 +690,33 @@ public final class WebUtils {
      */
     public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
         return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
+    }
+
+    /**
+     * Sets service user interface metadata.
+     *
+     * @param requestContext the request context
+     * @param mdui           the mdui
+     */
+    public static void putServiceUserInterfaceMetadata(final RequestContext requestContext, final Object mdui) {
+        if (mdui != null) {
+            requestContext.getFlowScope().put(PARAMETER_SERVICE_UI_METADATA, mdui);
+        }
+    }
+
+    /**
+     * Gets service user interface metadata.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clz            the clz
+     * @return the service user interface metadata
+     */
+    public static <T> T getServiceUserInterfaceMetadata(final RequestContext requestContext, final Class<T> clz) {
+        if (requestContext.getFlowScope().contains(PARAMETER_SERVICE_UI_METADATA)) {
+            return requestContext.getFlowScope().get(PARAMETER_SERVICE_UI_METADATA, clz);
+        }
+        return null;
     }
 
 }

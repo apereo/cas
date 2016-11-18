@@ -19,11 +19,6 @@ import java.util.List;
  * @since 5.1.0
  */
 public class MetadataUIUtils {
-    /**
-     * The default entityId parameter name.
-     */
-    public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUIUtils.class);
 
 
@@ -59,11 +54,11 @@ public class MetadataUIUtils {
      * @param registeredService the registered service
      * @return the simple metadata ui info
      */
-    public static SimpleMetadataUIInfo locateMDUIForEntityId(final MetadataResolverAdapter metadataAdapter,
-                                         final String entityId,
-                                         final RegisteredService registeredService) {
+    public static SimpleMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
+                                                                              final String entityId,
+                                                                              final RegisteredService registeredService) {
         final EntityDescriptor entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
-        return locateMDUIForEntityId(entityDescriptor, entityId, registeredService);
+        return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService);
     }
 
     /**
@@ -74,9 +69,9 @@ public class MetadataUIUtils {
      * @param registeredService the registered service
      * @return the simple metadata ui info
      */
-    public static SimpleMetadataUIInfo locateMDUIForEntityId(final EntityDescriptor entityDescriptor,
-                                                             final String entityId,
-                                                             final RegisteredService registeredService) {
+    public static SimpleMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
+                                                                              final String entityId,
+                                                                              final RegisteredService registeredService) {
         if (entityDescriptor == null) {
             LOGGER.debug("Entity descriptor not found for [{}]", entityId);
             return null;

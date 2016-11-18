@@ -88,10 +88,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
                     "Entity " + entityId + " not recognized");
         }
 
-        final SimpleMetadataUIInfo mdui = MetadataUIUtils.locateMDUIForEntityId(this.metadataAdapter, entityId, registeredService);
-        if (mdui != null) {
-            requestContext.getFlowScope().put(MetadataUIUtils.MDUI_FLOW_PARAMETER_NAME, mdui);
-        }
+        final SimpleMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(this.metadataAdapter, entityId, registeredService);
+
         return success();
     }
 
