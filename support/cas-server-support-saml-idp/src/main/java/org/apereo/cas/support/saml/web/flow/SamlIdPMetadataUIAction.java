@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -26,11 +26,11 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
 
     private final SamlRegisteredServiceCachingMetadataResolver resolver;
 
-    private final ValidationServiceSelectionStrategy serviceSelectionStrategy;
+    private final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
 
     public SamlIdPMetadataUIAction(final ServicesManager servicesManager,
                                    final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                   final ValidationServiceSelectionStrategy serviceSelectionStrategy) {
+                                   final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy) {
         this.servicesManager = servicesManager;
         this.resolver = resolver;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
