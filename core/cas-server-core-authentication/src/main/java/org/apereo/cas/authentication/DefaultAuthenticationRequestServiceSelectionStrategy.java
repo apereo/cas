@@ -1,6 +1,7 @@
-package org.apereo.cas.validation;
+package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 
 /**
  * This is {@link DefaultAuthenticationRequestServiceSelectionStrategy} which returns back to the caller

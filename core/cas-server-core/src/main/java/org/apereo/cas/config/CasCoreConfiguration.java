@@ -13,7 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.validation.DefaultAuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -79,7 +79,7 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public CentralAuthenticationService centralAuthenticationService(@Qualifier("authenticationRequestServiceSelectionStrategies")
-                                                                     final List validationServiceSelectionStrategies,
+                                                                     final List authenticationRequestServiceSelectionStrategies,
                                                                      @Qualifier("principalFactory")
                                                                      final PrincipalFactory principalFactory,
                                                                      @Qualifier("protocolTicketCipherExecutor")
@@ -89,7 +89,7 @@ public class CasCoreConfiguration {
         impl.setServicesManager(this.servicesManager);
         impl.setLogoutManager(this.logoutManager);
         impl.setTicketFactory(this.ticketFactory);
-        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
+        impl.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
         impl.setPrincipalFactory(principalFactory);
         impl.setCipherExecutor(cipherExecutor);

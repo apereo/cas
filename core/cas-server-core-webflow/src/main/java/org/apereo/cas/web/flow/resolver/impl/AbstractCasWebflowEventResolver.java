@@ -100,7 +100,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
-    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+    /**
+     * Extract the service specially in the event that it's proxied by a callback.
+     */
+    protected List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Adds a warning message to the message context.
@@ -473,6 +476,22 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     protected void putResolvedEventsAsAttribute(final RequestContext context, final Set<Event> resolvedEvents) {
         context.getAttributes().put(RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
+    }
+
+
+    /**
+     * Resolve service from authentication request.
+     *
+     * @param service the service
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+        return this.authenticationRequestServiceSelectionStrategies.stream()
+                .sorted()
+                .filter(s -> s.supports(service))
+                .findFirst()
+                .get()
+                .resolveServiceFrom(service);
     }
 
     /**

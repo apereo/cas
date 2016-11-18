@@ -86,7 +86,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * The service selection strategy during validation events.
      **/
-    protected List<AuthenticationRequestServiceSelectionStrategy> validationServiceSelectionStrategies;
+    protected List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
@@ -286,12 +286,30 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return ticket;
     }
 
+    /**
+     * Resolve service from authentication request.
+     *
+     * @param service the service
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+        return this.authenticationRequestServiceSelectionStrategies.stream()
+                .sorted()
+                .filter(s -> s.supports(service))
+                .findFirst()
+                .get()
+                .resolveServiceFrom(service);
+    }
+
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    
+    public void setAuthenticationRequestServiceSelectionStrategies(final List<AuthenticationRequestServiceSelectionStrategy> s) {
+        this.authenticationRequestServiceSelectionStrategies = s;
+    }
+
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -302,10 +320,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
-    }
-
-    public void setValidationServiceSelectionStrategies(final List list) {
-        this.validationServiceSelectionStrategies = list;
     }
 
     public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
