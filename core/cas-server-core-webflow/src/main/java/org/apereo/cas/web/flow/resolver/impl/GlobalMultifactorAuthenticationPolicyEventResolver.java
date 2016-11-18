@@ -19,12 +19,12 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link GlobalAuthenticationPolicyProviderEventResolver}.
+ * This is {@link GlobalMultifactorAuthenticationPolicyEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GlobalAuthenticationPolicyProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

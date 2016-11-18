@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
@@ -75,7 +75,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
 
         final AbstractCasWebflowEventResolver r;
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
-            r = new GrouperMultifactorAuthenticationProviderEventResolver();
+            r = new GrouperMultifactorAuthenticationPolicyEventResolver();
             LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         } else {
             r = new NoOpCasWebflowEventResolver();
