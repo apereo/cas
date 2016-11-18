@@ -54,9 +54,9 @@ public class MetadataUIUtils {
      * @param registeredService the registered service
      * @return the simple metadata ui info
      */
-    public static SimpleMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
-                                                                              final String entityId,
-                                                                              final RegisteredService registeredService) {
+    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
+                                                                            final String entityId,
+                                                                            final RegisteredService registeredService) {
         final EntityDescriptor entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
         return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService);
     }
@@ -69,9 +69,9 @@ public class MetadataUIUtils {
      * @param registeredService the registered service
      * @return the simple metadata ui info
      */
-    public static SimpleMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
-                                                                              final String entityId,
-                                                                              final RegisteredService registeredService) {
+    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
+                                                                            final String entityId,
+                                                                            final RegisteredService registeredService) {
         if (entityDescriptor == null) {
             LOGGER.debug("Entity descriptor not found for [{}]", entityId);
             return null;
@@ -95,7 +95,7 @@ public class MetadataUIUtils {
             return null;
         }
 
-        final SimpleMetadataUIInfo mdui = new SimpleMetadataUIInfo(registeredService);
+        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService);
         spExtensions.stream().filter(obj -> obj instanceof UIInfo).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
             LOGGER.debug("Found UI info for [{}] and added to flow context", entityId);
