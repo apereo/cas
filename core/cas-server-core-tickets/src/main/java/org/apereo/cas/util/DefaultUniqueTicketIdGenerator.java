@@ -99,7 +99,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
-        int capacity = prefix.length() + initialCapacity + number.length();
+        final int capacity = prefix.length() + initialCapacity + number.length();
         return new StringBuilder(capacity)
                 .append(prefix)
                 .append('-')
@@ -110,6 +110,11 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
                 .toString();
     }
 
+    /**
+     * Sets suffix.
+     *
+     * @param suffix the suffix
+     */
     public void setSuffix(final String suffix) {
         this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : "";
         initialCapacity = 2 + this.suffix.length() + this.randomStringGenerator.getMaxLength();

@@ -20,7 +20,7 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
 
     private static final int DEFAULT_IMAGE_SIZE = 32;
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** the registered service. **/
     protected final transient RegisteredService registeredService;
@@ -167,13 +167,16 @@ public abstract class BaseRegisteredServiceUserInterfaceInfo implements Serializ
         return new ArrayList<>();
     }
 
+    /**
+     * The Logo wrapper class for services UI.
+     */
     public static class Logo implements Serializable {
 
         private static final long serialVersionUID = -1434231982864628179L;
 
         private String url;
-        private long height;
-        private long width;
+        private long height = DEFAULT_IMAGE_SIZE;
+        private long width = DEFAULT_IMAGE_SIZE;
 
         public Logo() {
         }

@@ -138,14 +138,14 @@ public class QueryDatabaseAuthenticationHandlerTests {
     /**
      *  This test proves that in case BCRYPT is used authentication using encoded password always fail
      * with FailedLoginException
-     * @throws Exception
+     * @throws Exception in case encoding fails
      */
     @Test(expected = FailedLoginException.class)
     public void verifyBCryptFail() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
                 new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
 
         q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc1") +"' password"));
@@ -163,14 +163,14 @@ public class QueryDatabaseAuthenticationHandlerTests {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
                 new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
 
         q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc2") +"' password"));
 
         q.setPasswordEncoder(encoder);
         assertNotNull(q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"),"pswbc2"));
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"), "pswbc2"));
 
     }
 }
