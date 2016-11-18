@@ -27,12 +27,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link GrouperMultifactorAuthenticationProviderEventResolver}.
+ * This is {@link GrouperMultifactorAuthenticationPolicyEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GrouperMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

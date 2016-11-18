@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,6 +11,9 @@ import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProvi
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,14 +22,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link PrincipalAttributeAuthenticationPolicyProviderEventResolver}
- * that attempts to locate a principal attribute, match its value against
- * the provided pattern and decide the next event in the flow for the given service.
+ * This is {@link RestEndpointMultifactorAuthenticationPolicyEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class PrincipalAttributeAuthenticationPolicyProviderEventResolver
+public class RestEndpointMultifactorAuthenticationPolicyEventResolver
         extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
@@ -35,6 +37,7 @@ public class PrincipalAttributeAuthenticationPolicyProviderEventResolver
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
+        final String restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
 
         if (service == null || authentication == null) {
             logger.debug("No service or authentication is available to determine event for principal");
@@ -42,8 +45,8 @@ public class PrincipalAttributeAuthenticationPolicyProviderEventResolver
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers())) {
-            logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
+        if (StringUtils.isBlank(restEndpoint)) {
+            logger.debug("Rest endpoint to determine event is not configured for {}", principal.getId());
             return null;
         }
 
@@ -54,22 +57,30 @@ public class PrincipalAttributeAuthenticationPolicyProviderEventResolver
             return null;
         }
 
-        final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
-        if (providers.size() == 1 && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex())) {
-            final MultifactorAuthenticationProvider provider = providers.iterator().next();
-            logger.debug("Found a single multifactor provider {} in the application context", provider);
-            return resolveEventViaPrincipalAttribute(principal,
-                    org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
-                    service, context, providers,
-                    input -> input != null && input.toString().matches(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex()));
-        }
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
 
-        return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
-                service, context, providers,
-                input -> providers.stream()
-                        .filter(provider -> input != null && provider.matches(input.toString()))
-                        .count() > 0);
+        logger.debug("Contacting {} to inquire about {}", restEndpoint, principal.getId());
+        final RestTemplate restTemplate = new RestTemplate();
+        final ResponseEntity<String> responseEntity = restTemplate.postForEntity(restEndpoint, principal.getId(), String.class);
+        if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+            final String results = responseEntity.getBody();
+            if (StringUtils.isNotBlank(results)) {
+                logger.debug("Result returned from the rest endpoint is {}", results);
+                final MultifactorAuthenticationProvider restProvider = flattenedProviders.stream()
+                        .filter(p -> p.matches(results))
+                        .findFirst()
+                        .orElse(null);
+
+                if (restProvider != null) {
+                    logger.debug("Found multifactor authentication provider {}", restProvider.getId());
+                    return Sets.newHashSet(new Event(this, restProvider.getId()));
+                }
+                logger.debug("No multifactor authentication provider could be matched against {}", results);
+                return Sets.newHashSet();
+            }
+        }
+        logger.debug("No providers are available to match rest endpoint results");
+        return Sets.newHashSet();
     }
 
 
