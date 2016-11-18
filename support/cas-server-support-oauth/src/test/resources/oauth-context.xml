@@ -25,6 +25,6 @@
         </bean>
     </util:list>
     <util:list id="validationServiceSelectionStrategies">
-        <bean class="org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy" />
+        <bean class="org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy" />
     </util:list>
 </beans>

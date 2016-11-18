@@ -18,7 +18,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
@@ -91,8 +91,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
-    @Qualifier("oauth20ValidationServiceSelectionStrategy")
-    private ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy;
+    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+    private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -338,7 +338,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
     @Bean
     public Action oidcRegisteredServiceUIAction() {
-        return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20ValidationServiceSelectionStrategy);
+        return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
     }
 
     @PostConstruct
