@@ -15,8 +15,6 @@ dependencies {
 
     testCompile(
             'junit:junit:4.12',
-            'org.cassandraunit:cassandra-unit:3.0.0.1',
-            'org.codehaus.groovy:groovy-all:2.4.7',
-            'org.spockframework:spock-core:1.0-groovy-2.4'
+            'org.cassandraunit:cassandra-unit:3.0.0.1'
     )
 }
