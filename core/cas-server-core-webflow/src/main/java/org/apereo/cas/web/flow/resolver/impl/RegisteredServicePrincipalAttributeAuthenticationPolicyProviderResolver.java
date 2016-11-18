@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -15,6 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyProviderResolver}
@@ -48,7 +48,7 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyProviderReso
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
         return resolveEventViaPrincipalAttribute(principal,
                 org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
-                service, context, providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
+                service, context, providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());
     }
 
 
