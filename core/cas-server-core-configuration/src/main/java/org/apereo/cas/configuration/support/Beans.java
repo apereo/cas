@@ -181,7 +181,7 @@ public class Beans {
             final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
+                pdirMap.put(entry.getKey(), Lists.newArrayList((String[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;
