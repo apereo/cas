@@ -48,7 +48,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
-                logger.warn("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
+                logger.error("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
                 throw new AuthenticationException();
             }
 
