@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -15,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.function.Predicate;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -30,7 +29,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    private Predicate<Credential> credentialSelectionPredicate = Predicates.alwaysTrue();
+    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
@@ -99,7 +98,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
+    public void setCredentialSelectionPredicate(final java.util.function.Predicate<Credential> credentialSelectionPredicate) {
         this.credentialSelectionPredicate = credentialSelectionPredicate;
     }
 
@@ -115,7 +114,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     public boolean supports(final Credential credential) {
         if (credential instanceof UsernamePasswordCredential) {
             if (this.credentialSelectionPredicate != null) {
-                return this.credentialSelectionPredicate.apply(credential);
+                return this.credentialSelectionPredicate.test(credential);
             }
             return true;
         }

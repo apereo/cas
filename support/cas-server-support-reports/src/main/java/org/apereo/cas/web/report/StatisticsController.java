@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
-import com.google.common.base.Predicates;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -103,8 +102,7 @@ public class StatisticsController implements ServletContextAware {
         int expiredTgts = 0;
         int expiredSts = 0;
 
-        final Collection<Ticket> tickets =
-                this.centralAuthenticationService.getTickets(Predicates.alwaysTrue());
+        final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(ticket -> true);
 
         for (final Ticket ticket : tickets) {
             if (ticket instanceof ServiceTicket) {
