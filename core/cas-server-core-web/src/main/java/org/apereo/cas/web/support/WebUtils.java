@@ -35,6 +35,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -698,7 +699,7 @@ public final class WebUtils {
      * @param requestContext the request context
      * @param mdui           the mdui
      */
-    public static void putServiceUserInterfaceMetadata(final RequestContext requestContext, final Object mdui) {
+    public static void putServiceUserInterfaceMetadata(final RequestContext requestContext, final Serializable mdui) {
         if (mdui != null) {
             requestContext.getFlowScope().put(PARAMETER_SERVICE_UI_METADATA, mdui);
         }
