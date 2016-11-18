@@ -10,6 +10,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
@@ -36,6 +37,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
+
+import java.util.List;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.
@@ -77,7 +80,12 @@ public class CasCoreWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-        
+
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+
+
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
     @Autowired
     @Bean
@@ -251,5 +259,6 @@ public class CasCoreWebflowConfiguration {
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
     }
 }
