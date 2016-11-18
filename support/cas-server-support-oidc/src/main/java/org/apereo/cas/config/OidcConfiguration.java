@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -30,6 +33,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventEventResolver;
 import org.apereo.cas.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.web.flow.OidcWebflowConfigurer;
+import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -53,6 +57,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -61,6 +66,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -74,6 +80,16 @@ import java.util.Set;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -89,6 +105,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
@@ -136,6 +160,11 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
+
+
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
@@ -322,7 +351,15 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        return new OidcAuthenticationContextWebflowEventEventResolver();
+        final OidcAuthenticationContextWebflowEventEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver();
+        r.setAuthenticationSystemSupport(authenticationSystemSupport);
+        r.setCentralAuthenticationService(centralAuthenticationService);
+        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setServicesManager(servicesManager);
+        r.setTicketRegistrySupport(ticketRegistrySupport);
+        r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
+        return r;
     }
 
     @Bean
