@@ -36,19 +36,4 @@ public class NoSqlTicketRegistryTest {
 
         assertEquals(ticket, ticketRegistry.getTicket(ticketId));
     }
-
-    @Test
-    public void shouldLogUserOutOfServices() throws Exception {
-        LogoutManager logoutManager = mock(LogoutManager.class);
-        NoSqlTicketRegistryDao dao = mock(NoSqlTicketRegistryDao.class);
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, logoutManager);
-
-        when(dao.getExpiredTgts()).thenReturn(Stream.of(TicketCreator.expiredTGT("expiredId")));
-
-        //when
-        ticketRegistry.clean();
-
-        //then
-        verify(logoutManager).performLogout(any());
-    }
 }
