@@ -86,18 +86,9 @@ CAS at the root context path so it's able to respond to those requests. (i.e. `h
 
 ## SP Metadata
 
-- `/cas/idp/servicemetadatagen`
-
-This endpoint will attempt to generate metadata for relying party upon receiving a POST request. This is useful when integrating with
-service providers that do not publish a defined metadata. The following parameters are expected by this point:
-
-| Parameter                         | Description
-|-----------------------------------|------------------------------------------
-| `entityId`                        | Required.
-| `authnRequestSigned`              | Optional. Defaults to `false`.
-| `wantAssertionsSigned`            | Optional. Defaults to `false`.
-| `x509Certificate`                 | Required.
-| `acsUrl`                          | Required.
+If the SP you wish to integrate with does not produce SAML metadata, you may be able to 
+use [this service](https://www.samltool.com/sp_metadata.php) to create the metadata,
+save it in an XML file and then reference and register it with CAS for the SP.
 
 ## Configuration
 
