@@ -22,12 +22,10 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
-  
     /**
      * The logger instance.
      */
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     /**
      * The numeric generator to generate the static part of the id.
@@ -65,7 +63,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this(maxLength, null);
     }
 
-
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
      * maximum length for the random portion.
@@ -102,18 +99,16 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
         final StringBuilder buffer = new StringBuilder(prefix.length() + 2
-                + (StringUtils.isNotBlank(this.suffix) ? this.suffix.length() : 0) + this.randomStringGenerator.getMaxLength()
+                + this.suffix.length() + this.randomStringGenerator.getMaxLength()
                 + number.length());
 
-        buffer.append(prefix);
-        buffer.append('-');
-        buffer.append(number);
-        buffer.append('-');
-        buffer.append(this.randomStringGenerator.getNewString());
-
-        buffer.append(this.suffix);
-
-        return buffer.toString();
+        return buffer.append(prefix)
+                .append('-')
+                .append(number)
+                .append('-')
+                .append(this.randomStringGenerator.getNewString())
+                .append(this.suffix)
+                .toString();
     }
 
     public void setSuffix(final String suffix) {
