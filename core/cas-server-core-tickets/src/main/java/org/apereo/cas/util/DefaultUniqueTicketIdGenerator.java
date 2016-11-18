@@ -111,15 +111,13 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         buffer.append('-');
         buffer.append(this.randomStringGenerator.getNewString());
 
-        if (this.suffix != null) {
-            buffer.append(this.suffix);
-        }
+        buffer.append(this.suffix);
 
         return buffer.toString();
     }
 
     public void setSuffix(final String suffix) {
-        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : null;
+        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : "";
     }
 
     /**
