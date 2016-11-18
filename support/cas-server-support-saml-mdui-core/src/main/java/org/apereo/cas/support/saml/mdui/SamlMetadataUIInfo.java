@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link SimpleMetadataUIInfo}.
+ * This is {@link SamlMetadataUIInfo}.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class SimpleMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
+public class SamlMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
 
@@ -29,7 +29,7 @@ public class SimpleMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo
      *
      * @param registeredService the registered service
      */
-    public SimpleMetadataUIInfo(final RegisteredService registeredService) {
+    public SamlMetadataUIInfo(final RegisteredService registeredService) {
         this(null, registeredService);
     }
 
@@ -39,7 +39,7 @@ public class SimpleMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo
      * @param uiInfo            the ui info
      * @param registeredService the registered service
      */
-    public SimpleMetadataUIInfo(@Nullable final UIInfo uiInfo, final RegisteredService registeredService) {
+    public SamlMetadataUIInfo(@Nullable final UIInfo uiInfo, final RegisteredService registeredService) {
         super(registeredService);
         this.uiInfo = uiInfo;
     }
