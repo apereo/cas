@@ -31,7 +31,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = WebUtils.getRegisteredService(context);
+        final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {

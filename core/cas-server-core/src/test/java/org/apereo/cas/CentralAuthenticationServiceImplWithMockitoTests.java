@@ -35,7 +35,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.DefaultAuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -140,7 +140,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
                 factory, smMock, mock(LogoutManager.class));
-        this.cas.setValidationServiceSelectionStrategies(Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy()));
+        this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(
+                new DefaultAuthenticationRequestServiceSelectionStrategy()));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
     }
