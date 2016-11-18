@@ -94,8 +94,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     private ServiceFactory webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("validationServiceSelectionStrategies")
-    private List validationServiceSelectionStrategies;
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -422,6 +422,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             servicesManager.load();
         }
 
-        this.validationServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
+        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
     }
 }

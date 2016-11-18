@@ -24,6 +24,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -56,6 +57,10 @@ import java.util.Map;
 @Configuration("duoSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -189,6 +194,7 @@ public class DuoSecurityConfiguration {
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
     }
 

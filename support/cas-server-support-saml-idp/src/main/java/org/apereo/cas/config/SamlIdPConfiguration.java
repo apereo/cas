@@ -77,8 +77,9 @@ public class SamlIdPConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
 
-    @javax.annotation.Resource(name = "validationServiceSelectionStrategies")
-    private List<AuthenticationRequestServiceSelectionStrategy> validationServiceSelectionStrategies;
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
@@ -154,7 +155,7 @@ public class SamlIdPConfiguration {
 
     @PostConstruct
     public void init() {
-        this.validationServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
+        this.authenticationRequestServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
     /**

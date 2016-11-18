@@ -30,6 +30,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -55,14 +56,18 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link GoogleAuthentiacatorConfiguration}.
+ * This is {@link GoogleAuthenticatorConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GoogleAuthentiacatorConfiguration {
+public class GoogleAuthenticatorConfiguration {
+
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -202,6 +207,7 @@ public class GoogleAuthentiacatorConfiguration {
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
     }
 
