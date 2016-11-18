@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * This is {@link BaseMultifactorAuthenticationProviderResolver}.
+ * This is {@link BaseMultifactorAuthenticationProviderEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseMultifactorAuthenticationProviderResolver extends AbstractCasWebflowEventResolver
+public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasWebflowEventResolver
         implements MultifactorAuthenticationProviderResolver {
 
     @Override

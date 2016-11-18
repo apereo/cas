@@ -12,7 +12,7 @@ import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link GrouperMultifactorAuthenticationProviderResolver}.
+ * This is {@link GrouperMultifactorAuthenticationProviderEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GrouperMultifactorAuthenticationProviderResolver extends BaseMultifactorAuthenticationProviderResolver {
+public class GrouperMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

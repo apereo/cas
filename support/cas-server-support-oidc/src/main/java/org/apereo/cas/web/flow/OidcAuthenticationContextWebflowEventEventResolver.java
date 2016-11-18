@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.springframework.webflow.execution.Event;
@@ -20,12 +20,12 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link OidcAuthenticationContextWebflowEventResolver}.
+ * This is {@link OidcAuthenticationContextWebflowEventEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcAuthenticationContextWebflowEventResolver extends BaseMultifactorAuthenticationProviderResolver {
+public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);

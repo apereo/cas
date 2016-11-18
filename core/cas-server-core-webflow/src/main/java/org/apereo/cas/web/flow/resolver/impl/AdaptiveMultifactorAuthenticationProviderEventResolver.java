@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -23,14 +23,14 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link AdaptiveMultifactorAuthenticationProviderResolver},
+ * This is {@link AdaptiveMultifactorAuthenticationProviderEventResolver},
  * which handles the initial authentication attempt and calls upon a number of
  * embedded resolvers to produce the next event in the authentication flow.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AdaptiveMultifactorAuthenticationProviderResolver extends BaseMultifactorAuthenticationProviderResolver {
+public class AdaptiveMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     private GeoLocationService geoLocationService;
     
