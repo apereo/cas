@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.execution.Event;
@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServiceAuthenticationPolicyProviderResolver}
+ * This is {@link RegisteredServiceAuthenticationPolicyProviderEventResolver}
  * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RegisteredServiceAuthenticationPolicyProviderResolver extends BaseMultifactorAuthenticationProviderResolver {
+public class RegisteredServiceAuthenticationPolicyProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
