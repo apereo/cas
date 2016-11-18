@@ -16,15 +16,15 @@ import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProv
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationProviderEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.GlobalAuthenticationPolicyProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AdaptiveMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.GlobalMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.PrincipalAttributeAuthenticationPolicyProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.PrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RegisteredServiceAuthenticationPolicyProviderEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RegisteredServicePrincipalAttributeAuthenticationPolicyProviderEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RequestParameterAuthenticationPolicyProviderEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RestEndpointAuthenticationPolicyProviderEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RegisteredServiceMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RequestParameterMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RestEndpointMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +84,8 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final AdaptiveMultifactorAuthenticationProviderEventResolver r =
-                new AdaptiveMultifactorAuthenticationProviderEventResolver();
+        final AdaptiveMultifactorAuthenticationPolicyEventResolver r =
+                new AdaptiveMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         r.setGeoLocationService(this.geoLocationService);
         return r;
@@ -96,8 +96,8 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final PrincipalAttributeAuthenticationPolicyProviderEventResolver r =
-                new PrincipalAttributeAuthenticationPolicyProviderEventResolver();
+        final PrincipalAttributeMultifactorAuthenticationPolicyEventResolver r =
+                new PrincipalAttributeMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }
@@ -134,7 +134,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final RestEndpointAuthenticationPolicyProviderEventResolver r = new RestEndpointAuthenticationPolicyProviderEventResolver();
+        final RestEndpointMultifactorAuthenticationPolicyEventResolver r = new RestEndpointMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }
@@ -156,7 +156,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final GlobalAuthenticationPolicyProviderEventResolver r = new GlobalAuthenticationPolicyProviderEventResolver();
+        final GlobalMultifactorAuthenticationPolicyEventResolver r = new GlobalMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }
@@ -178,7 +178,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final RequestParameterAuthenticationPolicyProviderEventResolver r = new RequestParameterAuthenticationPolicyProviderEventResolver();
+        final RequestParameterMultifactorAuthenticationPolicyEventResolver r = new RequestParameterMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }
@@ -189,8 +189,8 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final RegisteredServicePrincipalAttributeAuthenticationPolicyProviderEventResolver r =
-                new RegisteredServicePrincipalAttributeAuthenticationPolicyProviderEventResolver();
+        final RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver r =
+                new RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }
@@ -201,7 +201,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final RegisteredServiceAuthenticationPolicyProviderEventResolver r = new RegisteredServiceAuthenticationPolicyProviderEventResolver();
+        final RegisteredServiceMultifactorAuthenticationPolicyEventResolver r = new RegisteredServiceMultifactorAuthenticationPolicyEventResolver();
         configureResolver(r, selector);
         return r;
     }

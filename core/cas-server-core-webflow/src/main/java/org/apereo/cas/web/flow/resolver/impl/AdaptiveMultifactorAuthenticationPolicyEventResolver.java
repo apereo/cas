@@ -23,14 +23,14 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link AdaptiveMultifactorAuthenticationProviderEventResolver},
+ * This is {@link AdaptiveMultifactorAuthenticationPolicyEventResolver},
  * which handles the initial authentication attempt and calls upon a number of
  * embedded resolvers to produce the next event in the authentication flow.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class AdaptiveMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     private GeoLocationService geoLocationService;
     

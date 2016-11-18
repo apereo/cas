@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServiceAuthenticationPolicyProviderEventResolver}
+ * This is {@link RegisteredServiceMultifactorAuthenticationPolicyEventResolver}
  * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RegisteredServiceAuthenticationPolicyProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {

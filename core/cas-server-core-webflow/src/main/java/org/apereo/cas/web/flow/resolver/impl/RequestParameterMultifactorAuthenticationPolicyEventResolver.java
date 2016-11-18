@@ -19,13 +19,13 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link RequestParameterAuthenticationPolicyProviderEventResolver}
+ * This is {@link RequestParameterMultifactorAuthenticationPolicyEventResolver}
  * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RequestParameterAuthenticationPolicyProviderEventResolver
+public class RequestParameterMultifactorAuthenticationPolicyEventResolver
         extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired

@@ -17,14 +17,14 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyProviderEventResolver}
+ * This is {@link RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver}
  * that attempts to locate the given principal attribute in the service authentication policy
  * and match it against the pattern provided in the same policy.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RegisteredServicePrincipalAttributeAuthenticationPolicyProviderEventResolver
+public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver
         extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Override
