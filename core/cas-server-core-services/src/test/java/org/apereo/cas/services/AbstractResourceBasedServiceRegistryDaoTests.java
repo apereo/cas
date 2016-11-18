@@ -266,7 +266,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
             list.add(this.dao.save(r));
         });
 
-        list.stream().forEach(r2 -> {
+        list.forEach(r2 -> {
             try {
                 Thread.sleep(500);
                 this.dao.delete(r2);

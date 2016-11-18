@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -201,7 +200,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(Predicates.<Ticket>alwaysTrue());
+        final Collection<Ticket> c = this.cas.getTickets(ticket -> true);
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 

@@ -24,6 +24,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SSL socket factory that loads the SSL context from a custom
@@ -151,21 +152,21 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
-                    .filter(alias -> alias != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
-                    .filter(alias -> alias != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
             return this.keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
-                    .filter(privateKey -> privateKey != null).findFirst().orElse(null);
+                    .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
@@ -179,17 +180,16 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getClientAliases(keyType, issuers))));
+            this.keyManagers.forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getClientAliases(keyType, issuers))));
             return aliases.toArray(new String[] {});
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            this.keyManagers.stream().forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getServerAliases(keyType, issuers))));
+            this.keyManagers.forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getServerAliases(keyType, issuers))));
             return aliases.toArray(new String[] {});
         }
-
     }
 
     /**
@@ -248,7 +248,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            this.trustManagers.stream().forEach(trustManager -> certificates.addAll(Lists.newArrayList(trustManager.getAcceptedIssuers())));
+            this.trustManagers.forEach(trustManager -> certificates.addAll(Lists.newArrayList(trustManager.getAcceptedIssuers())));
             return certificates.toArray(new X509Certificate[certificates.size()]);
         }
     }
