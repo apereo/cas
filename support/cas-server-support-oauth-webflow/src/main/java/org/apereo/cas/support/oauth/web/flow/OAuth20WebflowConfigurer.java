@@ -8,12 +8,12 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link OAuth20LogoutWebflowConfigurer}.
+ * This is {@link OAuth20WebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OAuth20LogoutWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class OAuth20WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private Action oauth20LogoutAction;
     private Action oauth20RegisteredServiceUIAction;
