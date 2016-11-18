@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -292,14 +292,14 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final RegisteredService service,
                                                                     final RequestContext context,
                                                                     final MultifactorAuthenticationProvider provider,
-                                                                    final Predicate<Object> predicate) {
+                                                                    final Predicate<String> predicate) {
         final ImmutableSet.Builder<Event> builder = ImmutableSet.builder();
         if (attributeValue instanceof Collection) {
             logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
             final Collection<String> values = (Collection<String>) attributeValue;
             for (final String value : values) {
                 try {
-                    if (predicate.apply(value)) {
+                    if (predicate.test(value)) {
                         logger.debug("Attribute value predicate {} has successfully matched the [{}]", predicate, value);
 
                         logger.debug("Attempting to verify multifactor authentication provider {} for {}",
@@ -331,11 +331,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                final RegisteredService service,
                                                                final RequestContext context,
                                                                final MultifactorAuthenticationProvider provider,
-                                                               final Predicate predicate) {
+                                                               final Predicate<String> predicate) {
         try {
             if (attributeValue instanceof String) {
                 logger.debug("Attribute value {} is a single-valued attribute", attributeValue);
-                if (predicate.apply(attributeValue)) {
+                if (predicate.test((String) attributeValue)) {
                     logger.debug("Attribute value predicate {} has matched the [{}]", predicate, attributeValue);
 
                     logger.debug("Attempting to isAvailable multifactor authentication provider {} for {}",
@@ -377,7 +377,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final RegisteredService service,
                                                            final RequestContext context,
                                                            final Collection<MultifactorAuthenticationProvider> providers,
-                                                           final Predicate predicate) {
+                                                           final Predicate<String> predicate) {
 
         if (providers == null || providers.isEmpty()) {
             logger.debug("No authentication provider is associated with this service");
