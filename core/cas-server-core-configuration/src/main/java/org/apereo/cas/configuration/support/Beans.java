@@ -66,6 +66,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -177,7 +178,7 @@ public class Beans {
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map pdirMap = new HashMap<>();
+            final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
                 pdirMap.put(entry.getKey(), Lists.newArrayList(vals));

@@ -3,7 +3,6 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
@@ -35,9 +34,9 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -200,14 +199,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
-        final Iterator<Ticket> it = c.iterator();
-        while (it.hasNext()) {
-            if (!predicate.apply(it.next())) {
-                it.remove();
-            }
-        }
-        return c;
+        return this.ticketRegistry.getTickets().stream()
+                .filter(predicate)
+                .collect(Collectors.toSet());
     }
     
     /**

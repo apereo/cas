@@ -207,7 +207,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setDescription("Here is another description");
         rs.setRequiredHandlers(new HashSet<>(Lists.newArrayList("handler1", "handler2")));
 
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
 
         final Set<String> values = new HashSet<>();
@@ -219,6 +219,4 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
         return rs;
     }
-
-
 }
