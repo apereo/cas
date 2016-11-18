@@ -64,7 +64,7 @@ public class CasCoreConfiguration {
     }
     
     @Bean
-    public List<AuthenticationRequestServiceSelectionStrategy> validationServiceSelectionStrategies() {
+    public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
         final List list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
         return list;
@@ -78,7 +78,7 @@ public class CasCoreConfiguration {
     
     @Autowired
     @Bean
-    public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
+    public CentralAuthenticationService centralAuthenticationService(@Qualifier("authenticationRequestServiceSelectionStrategies")
                                                                      final List validationServiceSelectionStrategies,
                                                                      @Qualifier("principalFactory")
                                                                      final PrincipalFactory principalFactory,

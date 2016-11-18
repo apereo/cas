@@ -21,6 +21,7 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -39,6 +40,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -97,6 +99,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * The mfa selector.
      */
     protected MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Adds a warning message to the message context.
@@ -522,5 +526,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     public void setMultifactorAuthenticationProviderSelector(final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
         this.multifactorAuthenticationProviderSelector = multifactorAuthenticationProviderSelector;
+    }
+
+    public void setAuthenticationRequestServiceSelectionStrategies(final List<AuthenticationRequestServiceSelectionStrategy> strategies) {
+        this.authenticationRequestServiceSelectionStrategies = strategies;
     }
 }
