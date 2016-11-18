@@ -24,24 +24,12 @@ public class NoSqlTicketRegistryTest {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", 24, "", "", new ExpirationCalculator(0, 0, 0), new JacksonJSONSerializer(), String.class);
-    }
-
-    @Test
-    public void shouldAddATicket() throws Exception {
-        NoSqlTicketRegistryDao dao = mock(NoSqlTicketRegistryDao.class);
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, mock(LogoutManager.class), true);
-
-        //when
-        ticketRegistry.addTicket(TicketCreator.defaultTGT("id"));
-
-        //then
-        verify(dao).addTicketGrantingTicket(any());
+        dao = new CassandraDao<>("localhost", "", "", new JacksonJSONSerializer(), String.class);
     }
 
     @Test
     public void shouldRetrieveATicket() throws Exception {
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, mock(LogoutManager.class), true);
+        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, mock(LogoutManager.class));
         String ticketId = "TGT-1234";
         TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
         ticketRegistry.addTicket(ticket);
@@ -50,11 +38,10 @@ public class NoSqlTicketRegistryTest {
     }
 
     @Test
-    public void shouldLogUserOutOfServicesWhenPropertySpecified() throws Exception {
-        boolean logUserOutOfServices = true;
+    public void shouldLogUserOutOfServices() throws Exception {
         LogoutManager logoutManager = mock(LogoutManager.class);
         NoSqlTicketRegistryDao dao = mock(NoSqlTicketRegistryDao.class);
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, logoutManager, logUserOutOfServices);
+        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, logoutManager);
 
         when(dao.getExpiredTgts()).thenReturn(Stream.of(TicketCreator.expiredTGT("expiredId")));
 
@@ -63,21 +50,5 @@ public class NoSqlTicketRegistryTest {
 
         //then
         verify(logoutManager).performLogout(any());
-    }
-
-    @Test
-    public void shouldLogUserOutOfServicesWhenPropertyNotSpecified() throws Exception {
-        boolean logUserOutOfServices = false;
-        LogoutManager logoutManager = mock(LogoutManager.class);
-        NoSqlTicketRegistryDao dao = mock(NoSqlTicketRegistryDao.class);
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, logoutManager, logUserOutOfServices);
-
-        when(dao.getExpiredTgts()).thenReturn(Stream.of(TicketCreator.expiredTGT("expiredId")));
-
-        //when
-        ticketRegistry.clean();
-
-        //then
-        verify(logoutManager, never()).performLogout(any());
     }
 }

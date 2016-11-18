@@ -25,7 +25,7 @@ public class CassandraJSONTest {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", 24, "", "", new ExpirationCalculator(0, 0, 0), new JacksonJSONSerializer(), String.class);
+        dao = new CassandraDao<>("localhost", "", "", new JacksonJSONSerializer(), String.class);
     }
 
     @Test

@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties({CasConfigurationProperties.class, CassandraProperties.class})
 public class RegistryConfiguration {
 
-    @Autowired CassandraProperties cassandraProperties;
+    @Autowired private CassandraProperties cassandraProperties;
 
     @Bean(name = "cassandraDao")
     public NoSqlTicketRegistryDao cassandraJSONDao() {

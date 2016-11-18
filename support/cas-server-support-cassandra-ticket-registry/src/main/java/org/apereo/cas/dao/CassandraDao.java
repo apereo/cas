@@ -233,7 +233,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
         return System.currentTimeMillis() / TEN_SECONDS;
     }
 
-    private static long calculateExpirationDate(TicketGrantingTicketImpl ticket) {
+    private static long calculateExpirationDate(final TicketGrantingTicketImpl ticket) {
         final ZonedDateTime ticketTtl = ticket.getCreationTime().plusSeconds(ticket.getExpirationPolicy().getTimeToLive());
         final ZonedDateTime ticketTtk = ticket.getLastTimeUsed().plusSeconds(ticket.getExpirationPolicy().getTimeToIdle());
 
