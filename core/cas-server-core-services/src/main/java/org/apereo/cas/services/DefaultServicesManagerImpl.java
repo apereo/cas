@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -41,7 +42,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
-    private TreeSet<RegisteredService> orderedServices;
+    private Set<RegisteredService> orderedServices;
 
     public DefaultServicesManagerImpl() {
     }
