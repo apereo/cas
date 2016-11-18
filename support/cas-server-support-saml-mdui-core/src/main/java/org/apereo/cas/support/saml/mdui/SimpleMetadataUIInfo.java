@@ -1,17 +1,12 @@
 package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.services.BaseRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
-import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,15 +18,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class SimpleMetadataUIInfo implements Serializable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleMetadataUIInfo.class);
-    private static final int DEFAULT_IMAGE_SIZE = 32;
+public class SimpleMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
 
     private transient UIInfo uiInfo;
-
-    private transient RegisteredService registeredService;
 
     /**
      * Instantiates a new Simple metadata uI info.
@@ -45,171 +36,61 @@ public class SimpleMetadataUIInfo implements Serializable {
     /**
      * Instantiates a new Simple mdui info.
      *
-     * @param uiInfo the ui info
+     * @param uiInfo            the ui info
      * @param registeredService the registered service
      */
     public SimpleMetadataUIInfo(@Nullable final UIInfo uiInfo, final RegisteredService registeredService) {
+        super(registeredService);
         this.uiInfo = uiInfo;
-        this.registeredService = registeredService;
     }
 
-    /**
-     * Gets description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        final Collection<String> items = getDescriptions();
-        if (items.isEmpty()) {
-            return this.registeredService.getDescription();
-        }
-        return StringUtils.collectionToDelimitedString(items, ".");
-    }
-
-    /**
-     * Gets descriptions.
-     *
-     * @return the descriptions
-     */
+    @Override
     public Collection<String> getDescriptions() {
         if (this.uiInfo != null) {
             return getStringValues(this.uiInfo.getDescriptions());
         }
-        return new ArrayList<>();
+        return super.getDescriptions();
     }
 
-    /**
-     * Gets display name.
-     *
-     * @return the display name
-     */
-    public String getDisplayName() {
-        final Collection<String> items = getDisplayNames();
-        if (items.isEmpty()) {
-            return this.registeredService.getName();
-        }
-        return StringUtils.collectionToDelimitedString(items, ".");
-    }
-
-    /**
-     * Gets display names.
-     *
-     * @return the display names
-     */
+    @Override
     public Collection<String> getDisplayNames() {
         if (this.uiInfo != null) {
             return getStringValues(this.uiInfo.getDisplayNames());
         }
-        return new ArrayList<>();
+        return super.getDescriptions();
     }
 
-    /**
-     * Gets information uRL.
-     *
-     * @return the information uRL
-     */
-    public String getInformationURL() {
-        final Collection<String> items = getInformationURLs();
-        return StringUtils.collectionToDelimitedString(items, ".");
-    }
 
-    /**
-     * Gets information uR ls.
-     *
-     * @return the information uR ls
-     */
+    @Override
     public Collection<String> getInformationURLs() {
         if (this.uiInfo != null) {
             return getStringValues(this.uiInfo.getInformationURLs());
         }
-        return new ArrayList<>();
+        return super.getInformationURLs();
     }
 
-    /**
-     * Gets privacy statement uRL.
-     *
-     * @return the privacy statement uRL
-     */
-    public String getPrivacyStatementURL() {
-        final Collection<String> items = getPrivacyStatementURLs();
-        return StringUtils.collectionToDelimitedString(items, ".");
-    }
 
-    /**
-     * Gets privacy statement uR ls.
-     *
-     * @return the privacy statement uR ls
-     */
+    @Override
     public Collection<String> getPrivacyStatementURLs() {
         if (this.uiInfo != null) {
             return getStringValues(this.uiInfo.getPrivacyStatementURLs());
         }
-        return new ArrayList<>();
+        return super.getPrivacyStatementURLs();
     }
 
-    /**
-     * Gets logo height.
-     *
-     * @return the logo url
-     */
-    public long getLogoWidth() {
-        try {
-            final Collection<Logo> items = getLogoUrls();
-            if (!items.isEmpty()) {
-                return items.iterator().next().getWidth();
-            }
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        }
-        return DEFAULT_IMAGE_SIZE;
-    }
-
-    /**
-     * Gets logo height.
-     *
-     * @return the logo url
-     */
-    public long getLogoHeight() {
-        try {
-            final Collection<Logo> items = getLogoUrls();
-            if (!items.isEmpty()) {
-                return items.iterator().next().getHeight();
-            }
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        }
-        return DEFAULT_IMAGE_SIZE;
-    }
-
-    /**
-     * Gets logo url.
-     *
-     * @return the logo url
-     */
-    public URL getLogoUrl() {
-        try {
-            final Collection<Logo> items = getLogoUrls();
-            if (!items.isEmpty()) {
-                return new URL(items.iterator().next().getURL());
-            }
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        }
-        return this.registeredService.getLogo();
-    }
 
     /**
      * Gets logo urls.
      *
      * @return the logo urls
      */
+    @Override
     public Collection<Logo> getLogoUrls() {
         final List<Logo> list = new ArrayList<>();
-
         if (this.uiInfo != null) {
-            list.addAll(this.uiInfo.getLogos().stream().collect(Collectors.toList()));
+            list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(),
+                    l.getWidth())).collect(Collectors.toList()));
         }
-
         return list;
     }
 

@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
  * the mdui extension block for a SAML SP from the provided metadata locations.
- * The result is put into the flow request context under the parameter
- * {@link MetadataUIUtils#MDUI_FLOW_PARAMETER_NAME}. The entity id parameter is
+ * The result is put into the flow request context. The entity id parameter is
  * specified by default at {@link SamlProtocolConstants#PARAMETER_ENTITY_ID}.
  * <p>
  * <p>This action is best suited to be invoked when the CAS login page
