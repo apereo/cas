@@ -98,7 +98,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void setCredentialSelectionPredicate(final java.util.function.Predicate<Credential> credentialSelectionPredicate) {
+    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
         this.credentialSelectionPredicate = credentialSelectionPredicate;
     }
 
