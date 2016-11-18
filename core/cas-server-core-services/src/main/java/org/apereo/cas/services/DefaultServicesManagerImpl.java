@@ -41,6 +41,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    private TreeSet<RegisteredService> orderedServices;
 
     public DefaultServicesManagerImpl() {
     }
@@ -66,29 +67,24 @@ public class DefaultServicesManagerImpl implements ServicesManager {
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
-        final RegisteredService r = findServiceBy(id);
-        if (r == null) {
-            return null;
+        final RegisteredService service = findServiceBy(id);
+        if (service != null) {
+            this.serviceRegistryDao.delete(service);
+            this.services.remove(id);
+            this.orderedServices = convertToTreeSet();
+            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         }
-
-        this.serviceRegistryDao.delete(r);
-        this.services.remove(id);
-
-        publishEvent(new CasRegisteredServiceDeletedEvent(this, r));
-        return r;
+        return service;
     }
-
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        final TreeSet<RegisteredService> c = convertToTreeSet();
-        return c.stream().filter(r -> r.matches(service)).findFirst().orElse(null);
+        return orderedServices.stream().filter(r -> r.matches(service)).findFirst().orElse(null);
     }
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
-        return convertToTreeSet()
-                .stream()
+        return orderedServices.stream()
                 .filter(predicate)
                 .collect(Collectors.toSet());
     }
@@ -104,18 +100,9 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         }
     }
 
-    /**
-     * Stuff services to tree set.
-     *
-     * @return the tree set
-     */
-    public TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(this.services.values());
-    }
-
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(convertToTreeSet());
+        return Collections.unmodifiableCollection(orderedServices);
     }
 
     @Override
@@ -129,10 +116,11 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
+        this.orderedServices = convertToTreeSet();
         publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
-    
+
     /**
      * Load services that are provided by the DAO.
      */
@@ -146,9 +134,9 @@ public class DefaultServicesManagerImpl implements ServicesManager {
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service {}", r.getServiceId());
                     return r.getId();
-                }, r -> r, (r, s) -> s == null ? r : s == null ? r : s));
-        LOGGER.info("Loaded {} services from {}.", this.services.size(),
-                this.serviceRegistryDao);
+                }, r -> r, (r, s) -> s == null ? r : s));
+        orderedServices = convertToTreeSet();
+        LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
     }
 
     @Override
@@ -175,10 +163,19 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     protected void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
         load();
     }
-    
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }
+    }
+
+    /**
+     * Stuff services to tree set.
+     *
+     * @return the tree set
+     */
+    private TreeSet<RegisteredService> convertToTreeSet() {
+        return new TreeSet<>(this.services.values());
     }
 }
