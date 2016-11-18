@@ -5,7 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
-import org.apereo.cas.support.saml.mdui.SimpleMetadataUIInfo;
+import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -51,7 +51,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
                 final SamlRegisteredServiceServiceProviderMetadataFacade facade =
                         SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
 
-                final SimpleMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(facade.getEntityDescriptor(),
+                final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(facade.getEntityDescriptor(),
                         service.getId(), registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
