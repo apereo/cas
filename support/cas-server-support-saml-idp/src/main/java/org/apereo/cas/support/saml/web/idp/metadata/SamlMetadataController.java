@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class SamlMetadataController {
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    @javax.annotation.Resource(name = "shibbolethIdpMetadataAndCertificatesGenerationService")
+    @Resource(name = "shibbolethIdpMetadataAndCertificatesGenerationService")
     private SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**
@@ -63,10 +64,10 @@ public class SamlMetadataController {
         final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
-        final PrintWriter writer = response.getWriter();
-        logger.debug("Producing metadata for the response");
-        writer.write(contents);
-        writer.flush();
-        writer.close();
+        try (PrintWriter writer = response.getWriter()) {
+            logger.debug("Producing metadata for the response");
+            writer.write(contents);
+            writer.flush();
+        }
     }
 }
