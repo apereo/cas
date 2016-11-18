@@ -5,8 +5,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.services.BaseRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -22,10 +21,10 @@ import org.springframework.webflow.execution.RequestContext;
 public class OidcRegisteredServiceUIAction extends AbstractAction {
     private final ServicesManager servicesManager;
 
-    private final ValidationServiceSelectionStrategy serviceSelectionStrategy;
+    private final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
 
     public OidcRegisteredServiceUIAction(final ServicesManager servicesManager,
-                                         final ValidationServiceSelectionStrategy serviceSelectionStrategy) {
+                                         final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy) {
         this.servicesManager = servicesManager;
         this.serviceSelectionStrategy = serviceSelectionStrategy;
     }
