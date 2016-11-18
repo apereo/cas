@@ -160,8 +160,8 @@ A few simple examples follow:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
-Note that ticket validation requests shall successfully go through if multifactor authentication was
-bypass for the given provider. In such cases, no authentication context is passed back to the application and
+Note that ticket validation requests shall successfully go through if multifactor authentication is
+bypassed for the given provider. In such cases, no authentication context is passed back to the application and
 additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
 
 ### Applications
