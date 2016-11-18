@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,14 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link RequestParameterAuthenticationPolicyProviderResolver}
+ * This is {@link RequestParameterAuthenticationPolicyProviderEventResolver}
  * that attempts to resolve the next event based on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RequestParameterAuthenticationPolicyProviderResolver
-        extends BaseMultifactorAuthenticationProviderResolver {
+public class RequestParameterAuthenticationPolicyProviderEventResolver
+        extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;

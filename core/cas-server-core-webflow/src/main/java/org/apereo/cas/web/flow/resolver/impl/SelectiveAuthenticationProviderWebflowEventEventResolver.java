@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link SelectiveAuthenticationProviderWebflowEventResolver}
+ * This is {@link SelectiveAuthenticationProviderWebflowEventEventResolver}
  * that acts as a stub resolver, specifically designed for extensions.
  * Deployers can extend this class to perform additional processes on the final set
  * of resolved events, to select one vs another based on the nature of the event attributes.
@@ -24,7 +24,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SelectiveAuthenticationProviderWebflowEventResolver extends BaseMultifactorAuthenticationProviderResolver {
+public class SelectiveAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
