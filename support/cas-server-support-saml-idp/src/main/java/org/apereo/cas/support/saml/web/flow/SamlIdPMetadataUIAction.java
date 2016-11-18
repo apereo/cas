@@ -51,12 +51,9 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
                 final SamlRegisteredServiceServiceProviderMetadataFacade facade =
                         SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
 
-                final SimpleMetadataUIInfo mdui =
-                        MetadataUIUtils.locateMDUIForEntityId(facade.getEntityDescriptor(),
-                                service.getId(), registeredService);
-                if (mdui != null) {
-                    requestContext.getFlowScope().put(MetadataUIUtils.MDUI_FLOW_PARAMETER_NAME, mdui);
-                }
+                final SimpleMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(facade.getEntityDescriptor(),
+                        service.getId(), registeredService);
+                WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
         }
         return success();

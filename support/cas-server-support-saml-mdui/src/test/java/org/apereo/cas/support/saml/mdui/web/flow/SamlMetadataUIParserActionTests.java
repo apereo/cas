@@ -12,13 +12,14 @@ import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
+import org.apereo.cas.support.saml.mdui.SimpleMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.doExecute(ctx);
-        assertTrue(ctx.getFlowScope().contains(MetadataUIUtils.MDUI_FLOW_PARAMETER_NAME));
+        assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SimpleMetadataUIInfo.class));
     }
 
 
@@ -98,7 +99,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.doExecute(ctx);
-        assertFalse(ctx.getFlowScope().contains(MetadataUIUtils.MDUI_FLOW_PARAMETER_NAME));
+        assertNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SimpleMetadataUIInfo.class));
     }
 
 }
