@@ -42,7 +42,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
-    private Set<RegisteredService> orderedServices;
+    private Set<RegisteredService> orderedServices = new TreeSet<>();
 
     public DefaultServicesManagerImpl() {
     }
@@ -72,7 +72,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         if (service != null) {
             this.serviceRegistryDao.delete(service);
             this.services.remove(id);
-            this.orderedServices = convertToTreeSet();
+            this.orderedServices.remove(service);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         }
         return service;
@@ -117,7 +117,10 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
-        this.orderedServices = convertToTreeSet();
+        if (this.orderedServices.contains(r)) {
+            System.out.println("ya esta " + r.getId());
+        }
+        this.orderedServices.add(r);
         publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
@@ -136,7 +139,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
                     LOGGER.debug("Adding registered service {}", r.getServiceId());
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
-        orderedServices = convertToTreeSet();
+        orderedServices.addAll(this.services.values());
         LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
     }
 
@@ -169,14 +172,5 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);
         }
-    }
-
-    /**
-     * Stuff services to tree set.
-     *
-     * @return the tree set
-     */
-    private TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<>(this.services.values());
     }
 }
