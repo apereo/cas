@@ -131,5 +131,4 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }
-    
 }
