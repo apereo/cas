@@ -20,9 +20,15 @@ public interface NoSqlTicketRegistryDao {
     void updateServiceTicket(Ticket ticket);
 
     void addTicketToExpiryBucket(Ticket ticket, long expirationTime);
- 
+    void removeRowFromTicketCleanerBucket(long lastRun);
+
     void updateLastRunTimestamp(long timestamp);
     long getLastRunTimestamp();
+
+    /**
+     * Return a Stream as there are more operations to do
+     *
+     * @return {@link Stream}
+     */
     Stream<TicketGrantingTicket> getExpiredTgts();
-    void removeRowFromTicketCleanerBucket(long lastRun);
 }
