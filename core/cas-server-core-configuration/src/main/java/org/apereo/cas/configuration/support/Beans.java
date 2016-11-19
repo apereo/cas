@@ -77,7 +77,7 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class Beans {
+public final class Beans {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
