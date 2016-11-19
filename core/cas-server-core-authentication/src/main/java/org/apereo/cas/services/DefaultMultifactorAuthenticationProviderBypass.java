@@ -60,7 +60,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         final boolean bypassByAuthnMethod = locateMatchingAttributeValue(
                 AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
                 bypass.getAuthenticationMethodName(),
-                authentication.getAttributes()
+                authentication.getAttributes(), false
         );
         if (bypassByAuthnMethod) {
             LOGGER.debug("Bypass rules for authentication method {} indicate the request may be ignored", principal.getId());
@@ -71,7 +71,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         final boolean bypassByHandlerName = locateMatchingAttributeValue(
                 AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 bypass.getAuthenticationHandlerName(),
-                authentication.getAttributes()
+                authentication.getAttributes(), false
         );
         if (bypassByHandlerName) {
             LOGGER.debug("Bypass rules for authentication handlers {} indicate the request may be ignored", principal.getId());
@@ -93,20 +93,32 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
+        updateAuthenticationToForgetBypass(authentication, provider, principal);
 
         return true;
     }
 
+    private void updateAuthenticationToForgetBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+                                                    final Principal principal) {
+        LOGGER.debug("Bypass rules for service {} indicate the request may be ignored", principal.getId());
+        final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
+                .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE)
+                .build();
+        LOGGER.debug("Updated authentication session to remember bypass for {} via {}", provider.getId(),
+                AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
+        authentication.updateAll(newAuthn);
+    }
+
     private void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
                                                       final Principal principal) {
-        LOGGER.debug("Bypass rules for service {} indicate the request may be ignored", principal.getId());
+        LOGGER.debug("Bypass rules for service {} indicate the request may NOT be ignored", principal.getId());
         final Authentication newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
                 .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE)
                 .addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId())
                 .build();
-        LOGGER.debug("Updated authentication session to remember bypass for {} via {}", provider.getId(),
+        LOGGER.debug("Updated authentication session to NOT remember bypass for {} via {}", provider.getId(),
                 AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
-        authentication.update(newAuthn);
+        authentication.updateAll(newAuthn);
     }
 
     /**
@@ -177,37 +189,59 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     }
 
     /**
-     * Evaluate attribute rules for bypass.
+     * Locate matching attribute value boolean.
      *
      * @param attrName   the attr name
      * @param attrValue  the attr value
      * @param attributes the attributes
-     * @return true a matching attribute name/value is found
+     * @return true/false
      */
     protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
                                                    final Map<String, Object> attributes) {
-        boolean supports = false;
-        if (StringUtils.isNotBlank(attrName)) {
-            final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e ->
-                    e.getKey().matches(attrName)
-            ).collect(Collectors.toSet());
+        return locateMatchingAttributeValue(attrName, attrValue, attributes, true);
+    }
 
-            supports = names.isEmpty();
-            if (!names.isEmpty() && StringUtils.isNotBlank(attrValue)) {
-
-                LOGGER.debug("Found {} attributes relevant for multifactor authentication bypass", names.size());
-                final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
-                    final Set<Object> valuesCol = CollectionUtils.convertValueToCollection(e.getValue());
-                    return valuesCol.stream()
-                            .filter(v -> v.toString().matches(attrValue))
-                            .findAny()
-                            .isPresent();
-                }).collect(Collectors.toSet());
-
-                supports = values.isEmpty();
-
-            }
+    /**
+     * Evaluate attribute rules for bypass.
+     *
+     * @param attrName               the attr name
+     * @param attrValue              the attr value
+     * @param attributes             the attributes
+     * @param matchIfNoValueProvided the force match on value
+     * @return true a matching attribute name/value is found
+     */
+    protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
+                                                   final Map<String, Object> attributes,
+                                                   final boolean matchIfNoValueProvided) {
+        if (StringUtils.isBlank(attrName)) {
+            return false;
         }
-        return supports;
+
+        final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e ->
+                e.getKey().matches(attrName)
+        ).collect(Collectors.toSet());
+
+
+        LOGGER.debug("Found {} attributes relevant for multifactor authentication bypass", names.size());
+
+        if (names.isEmpty()) {
+            return false;
+        }
+
+        if (StringUtils.isBlank(attrValue)) {
+            return matchIfNoValueProvided;
+        }
+
+
+        final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
+            final Set<Object> valuesCol = CollectionUtils.convertValueToCollection(e.getValue());
+            return valuesCol.stream()
+                    .filter(v -> v.toString().matches(attrValue))
+                    .findAny()
+                    .isPresent();
+        }).collect(Collectors.toSet());
+
+        return !values.isEmpty();
+
     }
 }
