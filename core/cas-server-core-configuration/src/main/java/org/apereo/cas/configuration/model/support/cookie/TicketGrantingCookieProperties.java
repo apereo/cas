@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
 
 /**
@@ -13,9 +14,9 @@ public class TicketGrantingCookieProperties extends CookieProperties {
 
     private String rememberMeMaxAge = "P14D";
 
-    private String encryptionKey = "";
+    private String encryptionKey = StringUtils.EMPTY;
 
-    private String signingKey = "";
+    private String signingKey = StringUtils.EMPTY;
     
     private boolean cipherEnabled = true;
     
