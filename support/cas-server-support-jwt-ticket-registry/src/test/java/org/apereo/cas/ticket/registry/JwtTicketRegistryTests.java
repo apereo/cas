@@ -58,4 +58,14 @@ public class JwtTicketRegistryTests {
         final TicketGrantingTicket ticket = defaultTicketGrantingTicketFactory.create(authn);
         assertNotNull(ticket);
     }
+
+    1. complete other ticket factories into JWT
+    2. write tests for all
+    3. complete ticket registry
+    4. how do we handle expiration policy? Must go inside JWT. How to calculate date?
+    5. Smoke test at runtime?
+    6. Docs?
+    7. Logout? Admin UIs, etc? How is the registry affected?
+
+    
 }
