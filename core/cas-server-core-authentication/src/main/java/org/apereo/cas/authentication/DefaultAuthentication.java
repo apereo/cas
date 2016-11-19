@@ -177,4 +177,10 @@ public class DefaultAuthentication implements Authentication {
         this.attributes.putAll(authn.getAttributes());
         this.authenticationDate = authn.getAuthenticationDate();
     }
+
+    @Override
+    public void updateAll(final Authentication authn) {
+        this.attributes.clear();
+        update(authn);
+    }
 }

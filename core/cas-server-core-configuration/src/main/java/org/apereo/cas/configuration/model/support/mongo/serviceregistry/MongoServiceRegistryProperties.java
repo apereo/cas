@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
 
 /**
@@ -14,9 +15,9 @@ public class MongoServiceRegistryProperties {
 
     private int port = 27017;
 
-    private String userId = "";
+    private String userId = StringUtils.EMPTY;
 
-    private String userPassword = "";
+    private String userPassword = StringUtils.EMPTY;
 
     private String serviceRegistryCollection = "cas-service-registry";
 

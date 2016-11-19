@@ -17,14 +17,16 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
-        final List<Action> currentActions = new ArrayList<>();
-        state.getActionList().forEach(currentActions::add);
-        currentActions.forEach(a -> state.getActionList().remove(a));
-        
-        state.getActionList().add(createEvaluateAction("validateCaptchaAction"));
-        currentActions.forEach(a -> state.getActionList().add(a));
-        
-        state.getTransitionSet().add(createTransition("captchaError", CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
+        if (flow != null) {
+            final ActionState state = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+            final List<Action> currentActions = new ArrayList<>();
+            state.getActionList().forEach(currentActions::add);
+            currentActions.forEach(a -> state.getActionList().remove(a));
+
+            state.getActionList().add(createEvaluateAction("validateCaptchaAction"));
+            currentActions.forEach(a -> state.getActionList().add(a));
+
+            state.getTransitionSet().add(createTransition("captchaError", CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
+        }
     }
 }

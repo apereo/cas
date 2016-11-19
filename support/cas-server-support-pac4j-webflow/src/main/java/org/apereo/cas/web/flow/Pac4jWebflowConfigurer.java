@@ -26,25 +26,27 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState actionState = createActionState(flow, ClientAction.CLIENT_ACTION,
-                createEvaluateAction(ClientAction.CLIENT_ACTION));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
-        actionState.getTransitionSet().add(createTransition(ClientAction.STOP, ClientAction.STOP_WEBFLOW));
-        setStartState(flow, actionState);
-        final ViewState state = createViewState(flow, ClientAction.STOP_WEBFLOW, ClientAction.VIEW_ID_STOP_WEBFLOW);
-        state.getEntryActionList().add(new AbstractAction() {
-            @Override
-            protected Event doExecute(final RequestContext requestContext) throws Exception {
-                final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-                final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
-                final Optional<ModelAndView> mv = ClientAction.hasDelegationRequestFailed(request, response.getStatus());
-                if (mv.isPresent()) {
-                    mv.get().getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v));
+        if (flow != null) {
+            final ActionState actionState = createActionState(flow, ClientAction.CLIENT_ACTION,
+                    createEvaluateAction(ClientAction.CLIENT_ACTION));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
+            actionState.getTransitionSet().add(createTransition(ClientAction.STOP, ClientAction.STOP_WEBFLOW));
+            setStartState(flow, actionState);
+            final ViewState state = createViewState(flow, ClientAction.STOP_WEBFLOW, ClientAction.VIEW_ID_STOP_WEBFLOW);
+            state.getEntryActionList().add(new AbstractAction() {
+                @Override
+                protected Event doExecute(final RequestContext requestContext) throws Exception {
+                    final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+                    final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+                    final Optional<ModelAndView> mv = ClientAction.hasDelegationRequestFailed(request, response.getStatus());
+                    if (mv.isPresent()) {
+                        mv.get().getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v));
+                    }
+                    return null;
                 }
-                return null;
-            }
-        });
+            });
+        }
     }
 }

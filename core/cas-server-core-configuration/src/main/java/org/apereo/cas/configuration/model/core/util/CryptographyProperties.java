@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.core.util;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Common properties for all cryptography related configs.
  *
@@ -43,7 +45,7 @@ public class CryptographyProperties {
      * Encryption.
      */
     public static class Encryption {
-        private String key = "";
+        private String key = StringUtils.EMPTY;
         private int keySize = 16;
 
         public String getKey() {
@@ -67,7 +69,7 @@ public class CryptographyProperties {
      * Signing.
      */
     public static class Signing {
-        private String key = "";
+        private String key = StringUtils.EMPTY;
         private int keySize = 512;
 
         public String getKey() {

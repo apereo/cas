@@ -20,56 +20,17 @@ interface with the authentication subsystem accept one or more credentials to au
 
 The following multifactor providers are supported by CAS.
 
-### Duo Security
-
-Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-duo`
-
-CAS multifactor authentication support for Duo Security allows
-multiple Duo providers to be configured with distinct ids each of
-which may be connected to a separate Duo Security instance with a different configuration.
-This behvaior allows more sensitive applications to be connected
-to a Duo instance that has more strict and secure authentication policies.
-Consult [this guide](DuoSecurity-Authentication.html) to learn more.
-
-### Authy Authenticator
-
-Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-authy`
-
-### YubiKey
-
-Configure authentication per instructions [here](YubiKey-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-yubikey`
-
-### RSA/RADIUS
-
-Configure authentication per instructions [here](RADIUS-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-radius`
-
-### Google Authenticator
-
-Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-gauth`
+| Provider              | Id              | Instructions
+|-----------------------|-----------------|----------------------------------------------------------
+| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html). 
+| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html). 
+| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html). 
+| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html). 
+| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html). 
 
 ## Triggers
 
-Multifactor authentication can be activated based on the following triggers:
+Multifactor authentication can be activated based on the following triggers.
 
 ### Global
 
@@ -197,6 +158,34 @@ A few simple examples follow:
 - Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+Note that ticket validation requests shall successfully go through if multifactor authentication is
+bypassed for the given provider. In such cases, no authentication context is passed back to the application and
+additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
+
+### Applications
+
+MFA Bypass rules can be overriden per application via the CAS service registry. This is useful when
+MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
+whose access should bypass MFA may be defined as such in the CAS service registry:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "sample",
+  "id" : 10000001,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "bypassMultifactorAuthentication" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
+}
+```
+
 ## Fail-Open vs Fail-Closed
 
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
@@ -225,6 +214,9 @@ The following failure modes are supported:
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Ranking Providers
 
