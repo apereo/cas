@@ -1,4 +1,4 @@
-package org.apereo.cas.integration.pac4j;
+package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -9,12 +9,12 @@ import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link SpringSecurityPasswordEncoderTests}.
+ * This is {@link DefaultPasswordEncoderTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class SpringSecurityPasswordEncoderTests {
+public class DefaultPasswordEncoderTests {
 
     @Test
     public void verifyPasswordEncoderByMD5() {
@@ -35,4 +35,15 @@ public class SpringSecurityPasswordEncoderTests {
         final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));
         assertTrue(e.matches("asd123", "2891baceeef1652ee698294da0e71ba78a2a4064"));
     }
+
+    @Test
+    public void verifyPasswordEncoderBySHA256() {
+        final PasswordEncoderProperties p = new PasswordEncoderProperties();
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT);
+        p.setEncodingAlgorithm("SHA-256");
+        p.setCharacterEncoding("UTF-8");
+        final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));
+        assertTrue(e.matches("asd123", "54d5cb2d332dbdb4850293caae4559ce88b65163f1ea5d4e4b3ac49d772ded14"));
+    }
+
 }
