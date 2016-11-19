@@ -4,9 +4,11 @@ import org.apereo.cas.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
@@ -22,6 +24,7 @@ import java.time.Duration;
  * @since 5.0.0
  */
 @Configuration("casCoreUtilConfiguration")
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreUtilConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreUtilConfiguration.class);
 

@@ -39,7 +39,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
     /**
      * The Commons Logging instance.
      */
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 

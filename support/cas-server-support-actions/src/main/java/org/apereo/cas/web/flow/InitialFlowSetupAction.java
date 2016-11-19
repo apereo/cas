@@ -34,7 +34,7 @@ import java.util.List;
  * @since 3.1
  */
 public class InitialFlowSetupAction extends AbstractAction {
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private CasConfigurationProperties casProperties;
