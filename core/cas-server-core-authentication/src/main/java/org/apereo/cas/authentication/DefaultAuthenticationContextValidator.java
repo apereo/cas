@@ -4,6 +4,7 @@ package org.apereo.cas.authentication;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
@@ -47,11 +48,23 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     }
 
 
+    /**
+     * {@inheritDoc}
+     * If the authentication event is established as part trusted/device browser
+     * such that MFA was skipped, allow for validation to execute successfully.
+     * If authentication event did bypass MFA, let for allow for validation to execute successfully.
+     *
+     * @param authentication   the authentication
+     * @param requestedContext the requested context
+     * @param service          the service
+     * @return true if the context can be successfully validated.
+     */
     @Override
     public Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validate(final Authentication authentication,
                                                                                final String requestedContext,
                                                                                final RegisteredService service) {
-        final Object ctxAttr = authentication.getAttributes().get(this.authenticationContextAttribute);
+        final Map<String, Object> attrs = authentication.getAttributes();
+        final Object ctxAttr = attrs.get(this.authenticationContextAttribute);
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
@@ -74,17 +87,35 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
+
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName)
-                && authentication.getAttributes().containsKey(this.mfaTrustedAuthnAttributeName)) {
+                && attrs.containsKey(this.mfaTrustedAuthnAttributeName)) {
             logger.debug("Requested authentication context {} is satisfied since device is already trusted");
             return Pair.of(Boolean.TRUE, requestedProvider);
+        }
+
+        if (attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
+                && attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
+
+            final boolean isBypass = Boolean.class.cast(attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
+            final String bypassedId = attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
+
+            logger.debug("Found multifactor authentication bypass attributes for provider {}", bypassedId);
+
+            if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
+                logger.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt");
+                return Pair.of(Boolean.TRUE, requestedProvider);
+            }
+
+            logger.debug("Either multifactor authentication was not bypassed or the requested context {} does not match the bypassed provider",
+                    requestedProvider, bypassedId);
         }
 
         final Collection<MultifactorAuthenticationProvider> satisfiedProviders =
                 getSatisfiedAuthenticationProviders(authentication, providerMap.values());
 
         if (satisfiedProviders == null) {
-            logger.debug("No satisfied multifactor authentication providers are recorded in the current authentication context.");
+            logger.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return Pair.of(Boolean.FALSE, requestedProvider);
         }
 

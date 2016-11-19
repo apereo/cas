@@ -76,15 +76,15 @@ public class AbstractRegisteredServiceTests {
                 .isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
-        assertFalse(this.r.equals(null));
+        assertNotNull(this.r);
         assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
+        assertEquals(this.r, this.r);
     }
 
     @Test
     public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
-        assertFalse(new RegexRegisteredService().equals(null));
+        assertNotNull(new RegexRegisteredService());
         assertFalse(new RegexRegisteredService().equals(new Object()));
     }
     

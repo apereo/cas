@@ -14,7 +14,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.web.report.AuthenticationEventsController;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.HealthCheckController;
-import org.apereo.cas.web.report.InternalConfigStateController;
+import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.StatisticsController;
@@ -76,8 +76,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @RefreshScope
     @Bean
-    public InternalConfigStateController internalConfigController() {
-        return new InternalConfigStateController();
+    public ConfigurationStateController internalConfigController() {
+        return new ConfigurationStateController();
     }
 
     @Bean

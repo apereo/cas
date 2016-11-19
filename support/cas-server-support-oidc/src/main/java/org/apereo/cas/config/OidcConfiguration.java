@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -18,6 +21,7 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
@@ -25,7 +29,11 @@ import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.web.controllers.OidcProfileEndpointController;
 import org.apereo.cas.web.controllers.OidcWellKnownEndpointController;
-import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventResolver;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.OidcAuthenticationContextWebflowEventEventResolver;
+import org.apereo.cas.web.flow.OidcRegisteredServiceUIAction;
+import org.apereo.cas.web.flow.OidcWebflowConfigurer;
+import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -38,6 +46,7 @@ import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -48,11 +57,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -67,9 +81,42 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
+            new FirstMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
+
+    @Autowired
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
+    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
+
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
+    private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -114,17 +161,18 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Qualifier("defaultOAuthCodeFactory")
     private OAuthCodeFactory defaultOAuthCodeFactory;
 
+
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oidcInterceptor())
                 .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
 
-    /**
-     * Consent approval view resolver.
-     *
-     * @return the consent approval view resolver
-     */
+
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         final OidcConsentApprovalViewResolver c = new OidcConsentApprovalViewResolver();
@@ -132,11 +180,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
-    /**
-     * Callback authorize view resolver.
-     *
-     * @return the oauth 20 callback authorize view resolver
-     */
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
@@ -156,21 +199,12 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
-    /**
-     * Oidc interceptor handler interceptor.
-     *
-     * @return the handler interceptor
-     */
     @Bean
     public HandlerInterceptor oidcInterceptor() {
         return this.oauthInterceptor;
     }
 
-    /**
-     * Oauth cas client redirect action builder.
-     *
-     * @return the o auth cas client redirect action builder
-     */
+
     @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         final OidcCasClientRedirectActionBuilder builder = new OidcCasClientRedirectActionBuilder();
@@ -178,11 +212,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return builder;
     }
 
-    /**
-     * Requires authentication authorize interceptor.
-     *
-     * @return the requires authentication interceptor
-     */
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
@@ -322,8 +351,31 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        final OidcAuthenticationContextWebflowEventResolver r = new OidcAuthenticationContextWebflowEventResolver();
+        final OidcAuthenticationContextWebflowEventEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver();
+        r.setAuthenticationSystemSupport(authenticationSystemSupport);
+        r.setCentralAuthenticationService(centralAuthenticationService);
+        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
+        r.setServicesManager(servicesManager);
+        r.setTicketRegistrySupport(ticketRegistrySupport);
+        r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
+    }
+
+    @Bean
+    public CasWebflowConfigurer oidcWebflowConfigurer() {
+        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer();
+        cfg.setFlowBuilderServices(this.flowBuilderServices);
+        cfg.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
+        cfg.setOidcRegisteredServiceUIAction(oidcRegisteredServiceUIAction());
+        return cfg;
+    }
+
+    @ConditionalOnMissingBean(name = "oidcRegisteredServiceUIAction")
+    @Bean
+    public Action oidcRegisteredServiceUIAction() {
+        return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
     }
 
     @PostConstruct
