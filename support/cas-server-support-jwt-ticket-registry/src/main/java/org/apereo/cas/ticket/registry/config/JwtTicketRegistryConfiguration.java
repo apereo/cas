@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry.config;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
@@ -15,10 +13,10 @@ import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.JwtProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.JwtProxyTicketFactory;
 import org.apereo.cas.ticket.registry.JwtServiceTicketFactory;
+import org.apereo.cas.ticket.registry.JwtTicketCipherExecutor;
 import org.apereo.cas.ticket.registry.JwtTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.JwtTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.EncodingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,10 +39,6 @@ public class JwtTicketRegistryConfiguration {
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy grantingTicketExpirationPolicy;
-
-    @Autowired
-    @Qualifier("protocolTicketCipherExecutor")
-    private CipherExecutor protocolTicketCipherExecutor;
 
     @Autowired
     @Qualifier("serviceTicketExpirationPolicy")
@@ -78,7 +72,7 @@ public class JwtTicketRegistryConfiguration {
         final JwtProxyGrantingTicketFactory f = new JwtProxyGrantingTicketFactory();
         f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy);
         f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator);
-        f.setCipherExecutor(protocolTicketCipherExecutor);
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
@@ -87,7 +81,7 @@ public class JwtTicketRegistryConfiguration {
         final JwtProxyTicketFactory f = new JwtProxyTicketFactory();
         f.setProxyTicketExpirationPolicy(proxyTicketExpirationPolicy);
         f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap);
-        f.setCipherExecutor(protocolTicketCipherExecutor);
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
@@ -97,32 +91,25 @@ public class JwtTicketRegistryConfiguration {
         f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy);
         f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap);
         f.setTrackMostRecentSession(casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
-        f.setCipherExecutor(protocolTicketCipherExecutor);
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
     @Bean
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
-        final JwtTicketGrantingTicketFactory f = new JwtTicketGrantingTicketFactory(jwtSigningEncryptionKeyPair());
+        final JwtTicketGrantingTicketFactory f = new JwtTicketGrantingTicketFactory();
         f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy);
         f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator);
-        f.setCipherExecutor(protocolTicketCipherExecutor);
+        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 
+    @RefreshScope
     @Bean
-    public Pair<String, String> jwtSigningEncryptionKeyPair() {
+    public CipherExecutor protocolTicketCipherExecutor() {
         final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getJwt().getCrypto();
-
-        String signing = crypto.getSigning().getKey();
-        if (StringUtils.isBlank(signing)) {
-            signing = EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize());
-        }
-
-        String encryption = crypto.getEncryption().getKey();
-        if (StringUtils.isBlank(encryption)) {
-            encryption = EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize());
-        }
-        return Pair.of(signing, encryption);
+        return new JwtTicketCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey());
     }
+
 }
