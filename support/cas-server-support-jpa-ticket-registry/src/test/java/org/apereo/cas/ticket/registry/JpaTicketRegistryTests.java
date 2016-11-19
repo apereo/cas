@@ -260,8 +260,6 @@ public class JpaTicketRegistryTests {
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(status -> {
-                // Querying for the TGT prior to updating it as done in
-                // DefaultCentralAuthenticationService#grantServiceTicket(String, Service, Credential)
                 final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                 jpaTicketRegistry.addTicket(st);
                 return st.getId();
