@@ -117,9 +117,6 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
-        if (this.orderedServices.contains(r)) {
-            System.out.println("ya esta " + r.getId());
-        }
         this.orderedServices.add(r);
         publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
