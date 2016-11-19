@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Before;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasCoreServicesConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class, CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations= {"/services-context.xml"})
 @EnableScheduling
