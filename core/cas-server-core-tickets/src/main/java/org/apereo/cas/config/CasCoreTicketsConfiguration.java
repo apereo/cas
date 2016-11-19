@@ -124,6 +124,16 @@ public class CasCoreTicketsConfiguration {
         return f;
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
+    @Bean
+    public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
+        final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
+        f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
+        f.setCipherExecutor(protocolTicketCipherExecutor());
+        return f;
+    }
+
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
@@ -132,16 +142,6 @@ public class CasCoreTicketsConfiguration {
         f.setTicketGrantingTicketFactory(defaultTicketGrantingTicketFactory());
         f.setServiceTicketFactory(defaultServiceTicketFactory());
         f.setProxyTicketFactory(defaultProxyTicketFactory());
-        return f;
-    }
-
-    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
-    @Bean
-    public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
-        final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
-        f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
-        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
-        f.setCipherExecutor(protocolTicketCipherExecutor());
         return f;
     }
 

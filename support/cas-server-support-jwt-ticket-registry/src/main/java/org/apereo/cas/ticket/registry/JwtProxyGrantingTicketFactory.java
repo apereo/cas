@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.ticket.DefaultProxyTicketFactory;
+import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
 
 /**
  * This is {@link JwtProxyGrantingTicketFactory}.
@@ -8,5 +8,5 @@ import org.apereo.cas.ticket.DefaultProxyTicketFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class JwtProxyGrantingTicketFactory extends DefaultProxyTicketFactory {
+public class JwtProxyGrantingTicketFactory extends DefaultProxyGrantingTicketFactory {
 }
