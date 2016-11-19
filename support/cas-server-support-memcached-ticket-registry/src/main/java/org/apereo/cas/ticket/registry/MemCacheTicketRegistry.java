@@ -26,7 +26,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
      */
     public MemCacheTicketRegistry() {
     }
-    
+
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
@@ -38,10 +38,10 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticketToUpdate) {
+    public Ticket updateTicket(final Ticket ticketToUpdate) {
         if (this.client == null) {
             logger.debug("No memcached client is available in the configuration.");
-            return;
+            return null;
         }
 
         final Ticket ticket = encodeTicket(ticketToUpdate);
@@ -49,6 +49,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticketToUpdate), ticket).get()) {
                 logger.error("Failed to update {}", ticket);
+                return null;
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
@@ -56,6 +57,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         } catch (final Exception e) {
             logger.error("Failed updating {}", ticket, e);
         }
+        return ticket;
     }
 
     @Override
@@ -134,7 +136,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         }
         this.client.shutdown();
     }
-    
+
     /**
      * If not time out value is specified, expire the ticket immediately.
      *
