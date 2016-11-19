@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link AbstractMongoProperties}.
  *
@@ -7,8 +9,8 @@ package org.apereo.cas.configuration.model.support.mongo;
  * @since 5.0.0
  */
 public abstract class AbstractMongoProperties {
-    private String clientUri = "";
-    private String collection = "";
+    private String clientUri = StringUtils.EMPTY;
+    private String collection = StringUtils.EMPTY;
     private boolean dropCollection;
 
     public String getClientUri() {

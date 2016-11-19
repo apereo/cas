@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -14,6 +13,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -91,13 +92,14 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check to see if any of the specified attributes match the attrValue pattern
+        final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
         return StreamSupport.stream(ATTR_NAMES.split(attrName).spliterator(), false)
                 // principal.getAttribute(name).values
                 .map(principal.getAttributes()::get).filter(Objects::nonNull)
                 .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
                 // value =~ /attrValue/
                 .filter(String.class::isInstance).map(String.class::cast)
-                .anyMatch(Predicates.containsPattern(attrValue)::apply);
+                .anyMatch(attrValuePredicate);
     }
 
     public void setRequestParameter(final String requestParameter) {

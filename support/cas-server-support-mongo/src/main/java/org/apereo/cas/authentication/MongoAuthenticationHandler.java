@@ -2,10 +2,10 @@ package org.apereo.cas.authentication;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.credentials.password.NopPasswordEncoder;
 import org.pac4j.core.credentials.password.PasswordEncoder;
 import org.pac4j.mongo.credentials.authenticator.MongoAuthenticator;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     private String usernameAttribute;
     private String passwordAttribute;
     
-    private PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
+    private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
@@ -66,5 +66,18 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
 
     public void setMongoPasswordEncoder(final PasswordEncoder mongoPasswordEncoder) {
         this.mongoPasswordEncoder = mongoPasswordEncoder;
+    }
+
+    private static class NoOpPasswordEncoder implements PasswordEncoder {
+        @Override
+        public String encode(final String s) {
+            LOGGER.debug("No password encoding shall take place by CAS");
+            return s;
+        }
+
+        @Override
+        public boolean matches(final String s, final String s1) {
+            return StringUtils.equals(s, s1);
+        }
     }
 }

@@ -84,8 +84,12 @@ allprojects {
 }
 
 subprojects {
-    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
-    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {}
+    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") {
+        doLast {}
+    }
+    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
+        doLast {}
+    }
 
     apply plugin: "java"
     apply plugin: "checkstyle"
@@ -174,7 +178,11 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
     
-    compileJava.options.fork = true 
+    compileJava.options.fork = true
+
+    if (Boolean.getBoolean("enableIncremental")) {
+        compileJava.options.incremental = true
+    }
 
     def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {

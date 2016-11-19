@@ -1,9 +1,12 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.adaptors.duo.DuoUserAccount;
+import org.apereo.cas.adaptors.duo.DuoIntegration;
 import org.apereo.cas.authentication.Credential;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link DuoAuthenticationService}.
@@ -43,4 +46,21 @@ public interface DuoAuthenticationService extends Serializable {
      * @return the signed token
      */
     String signRequestToken(String uid);
+
+
+    /**
+     * Gets duo user account.
+     *
+     * @param uid the uid
+     * @return the duo user account
+     */
+    Optional<DuoUserAccount> getDuoUserAccount(String uid);
+
+    /**
+     * Gets duo user enrollment policy.
+     *
+     * @return the duo user enrollment policy
+     */
+    Optional<DuoIntegration> getDuoIntegrationPolicy();
+
 }

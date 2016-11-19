@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private PrincipalFactory principalFactory;
 

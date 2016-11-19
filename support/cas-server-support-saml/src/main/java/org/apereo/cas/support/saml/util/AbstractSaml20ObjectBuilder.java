@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;

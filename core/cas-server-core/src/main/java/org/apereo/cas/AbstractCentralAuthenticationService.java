@@ -3,7 +3,6 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
@@ -23,7 +22,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +34,9 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -87,7 +86,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * The service selection strategy during validation events.
      **/
-    protected List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+    protected List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
@@ -200,14 +199,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
-        final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
-        final Iterator<Ticket> it = c.iterator();
-        while (it.hasNext()) {
-            if (!predicate.apply(it.next())) {
-                it.remove();
-            }
-        }
-        return c;
+        return this.ticketRegistry.getTickets().stream()
+                .filter(predicate)
+                .collect(Collectors.toSet());
     }
     
     /**
@@ -292,12 +286,30 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return ticket;
     }
 
+    /**
+     * Resolve service from authentication request.
+     *
+     * @param service the service
+     * @return the service
+     */
+    protected Service resolveServiceFromAuthenticationRequest(final Service service) {
+        return this.authenticationRequestServiceSelectionStrategies.stream()
+                .sorted()
+                .filter(s -> s.supports(service))
+                .findFirst()
+                .get()
+                .resolveServiceFrom(service);
+    }
+
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    
+    public void setAuthenticationRequestServiceSelectionStrategies(final List<AuthenticationRequestServiceSelectionStrategy> s) {
+        this.authenticationRequestServiceSelectionStrategies = s;
+    }
+
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
@@ -308,10 +320,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setLogoutManager(final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
-    }
-
-    public void setValidationServiceSelectionStrategies(final List list) {
-        this.validationServiceSelectionStrategies = list;
     }
 
     public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
