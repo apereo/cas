@@ -16,6 +16,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -44,6 +45,7 @@ public class OidcAuthorizationRequestSupport {
      * @return the oidc prompt from authorization request
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
+        Assert.notNull(url, "URL cannot be null");
         final URIBuilder builderContext = new URIBuilder(url);
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                 .stream().filter(p -> OidcConstants.PROMPT.equals(p.getName()))
@@ -182,7 +184,7 @@ public class OidcAuthorizationRequestSupport {
     public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
                                                              final Authentication authentication) {
         if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
-            casClient.setRenew(true);
+            casClient.getConfiguration().setRenew(true);
         }
     }
 
@@ -195,7 +197,7 @@ public class OidcAuthorizationRequestSupport {
     public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
         final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
-            casClient.setRenew(true);
+            casClient.getConfiguration().setRenew(true);
         }
     }
 
@@ -208,8 +210,8 @@ public class OidcAuthorizationRequestSupport {
     public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
         final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
         if (prompts.contains(OidcConstants.PROMPT_NONE)) {
-            casClient.setRenew(false);
-            casClient.setGateway(true);
+            casClient.getConfiguration().setRenew(false);
+            casClient.getConfiguration().setGateway(true);
         }
     }
 

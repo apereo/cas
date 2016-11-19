@@ -15,15 +15,17 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        final ActionState actionState = createActionState(flow, "digestAuthenticationCheck",
-                createEvaluateAction("digestAuthenticationAction"));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
-                CasWebflowConstants.TRANSITION_ID_WARN));
-        actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
-        registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
-        createStateDefaultTransition(actionState, getStartState(flow).getId());
-        setStartState(flow, actionState);
+        if (flow != null) {
+            final ActionState actionState = createActionState(flow, "digestAuthenticationCheck",
+                    createEvaluateAction("digestAuthenticationAction"));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
+                    CasWebflowConstants.TRANSITION_ID_WARN));
+            actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+            registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
+            createStateDefaultTransition(actionState, getStartState(flow).getId());
+            setStartState(flow, actionState);
+        }
     }
 }

@@ -62,7 +62,7 @@ public class JcifsConfig {
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String loginConf;
     

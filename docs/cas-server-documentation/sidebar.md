@@ -88,7 +88,7 @@
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
-    *   [Persistence](#persistence)
+    *   [Persistence](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
         *   [JSON](/$version/installation/JSON-Service-Management.html)
         *   [YAML](/$version/installation/YAML-Service-Management.html)
@@ -100,7 +100,7 @@
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
     *   [Audits](/$version/installation/Audits.html)
-    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html
+    *   [Monitoring & Statistics](/$version/installation/Monitoring-Statistics.html)
 
 * [User Interface](#user_interface)
     *   [UI Customization](/$version/installation/User-Interface-Customization.html)
@@ -114,6 +114,7 @@
         *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
 
 * [Protocols](#protocols)
+    *   [Overview](/$version/protocol/Protocol-Overview.html)
     *   [CAS Protocol](/$version/protocol/CAS-Protocol.html)
     *   [OpenID Protocol](/$version/protocol/OpenID-Protocol.html)
     *   [OAuth Protocol](/$version/protocol/OAuth-Protocol.html)

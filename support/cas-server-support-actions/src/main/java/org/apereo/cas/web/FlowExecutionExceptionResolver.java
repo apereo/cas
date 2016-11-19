@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -30,7 +31,7 @@ import java.util.Map;
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
     /** Instance of a logger. */
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     
     private String modelKey = "exception.message";
@@ -57,7 +58,7 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
 
         final String urlToRedirectTo = request.getRequestURI()
                 + (request.getQueryString() != null ? '?'
-                + request.getQueryString() : "");
+                + request.getQueryString() : StringUtils.EMPTY);
 
         logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         final Map<String, Object> model = new HashMap<>();

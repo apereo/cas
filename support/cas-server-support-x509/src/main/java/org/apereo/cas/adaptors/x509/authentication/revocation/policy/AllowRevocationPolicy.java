@@ -14,7 +14,7 @@ import java.security.GeneralSecurityException;
  *
  */
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
 
     /**

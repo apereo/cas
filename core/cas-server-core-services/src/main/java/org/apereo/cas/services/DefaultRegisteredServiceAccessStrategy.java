@@ -1,13 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apereo.cas.util.RegexUtils;
-
-import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +14,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}
@@ -243,7 +243,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         
-        return copy.stream().filter(key -> {
+        return copy.stream().anyMatch(key -> {
             final Set<String> requiredValues = this.requiredAttributes.get(key);
             final Set<String> availableValues;
 
@@ -257,7 +257,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
             if (pattern != null) {
-                differenceInValues = Sets.filter(availableValues, Predicates.contains(pattern));
+                final Predicate<String> patternPredicate = pattern.asPredicate();
+                differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
             } else {
                 differenceInValues = Sets.intersection(availableValues, requiredValues);
             }
@@ -267,7 +268,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 return true;
             }
             return false;
-        }).findFirst().isPresent();
+        });
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
@@ -286,7 +287,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         
-        return rejectedCopy.stream().filter(key -> {
+        return rejectedCopy.stream().anyMatch(key -> {
             final Set<String> rejectedValues = this.rejectedAttributes.get(key);
             final Set<String> availableValues;
 
@@ -300,7 +301,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
             if (pattern != null) {
-                differenceInValues = Sets.filter(availableValues, Predicates.contains(pattern));
+                final Predicate<String> patternPredicate = pattern.asPredicate();
+                differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
             } else {
                 differenceInValues = Sets.intersection(availableValues, rejectedValues);
             }
@@ -311,7 +313,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 return true;
             }
             return false;
-        }).findFirst().isPresent();
+        });
     }
     /**
      * Enough attributes available to process? Check collection sizes and determine

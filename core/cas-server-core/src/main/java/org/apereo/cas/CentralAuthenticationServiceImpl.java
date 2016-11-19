@@ -321,12 +321,7 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
                 }
             }
 
-            final Service selectedService = this.validationServiceSelectionStrategies.stream()
-                    .sorted()
-                    .filter(s -> s.supports(service))
-                    .findFirst()
-                    .get()
-                    .resolveServiceFrom(service);
+            final Service selectedService = resolveServiceFromAuthenticationRequest(service);
             
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             logger.debug("Located registered service definition {} from {} to handle validation request",
@@ -370,6 +365,8 @@ public class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticat
             }
         }
     }
+
+
 
     @Audit(
             action = "TICKET_GRANTING_TICKET",

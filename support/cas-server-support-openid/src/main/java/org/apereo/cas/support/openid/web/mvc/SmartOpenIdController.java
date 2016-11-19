@@ -27,7 +27,7 @@ public class SmartOpenIdController extends AbstractDelegateController implements
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    private transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final transient Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
 

@@ -4,9 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 
@@ -24,16 +22,6 @@ import java.util.Properties;
 public class CasPropertiesConfiguration {
     @Autowired
     private ConfigurableEnvironment environment;
-
-    /**
-     * Place holder configurer property sources placeholder configurer.
-     *
-     * @return the property sources placeholder configurer
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
     /**
      * Init.

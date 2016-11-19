@@ -14,7 +14,7 @@
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
@@ -28,7 +28,7 @@
         <module name="JavadocVariable">
             <property name="severity" value="error"/>
             <property name="scope" value="protected"/>
-      <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
             <property name="severity" value="error"/>
@@ -99,7 +99,7 @@
         </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
-            <property name="ignoreOverridden" value="true" />
+            <property name="ignoreOverridden" value="true"/>
         </module>
         <module name="StaticVariableName">
             <property name="severity" value="error"/>
@@ -139,7 +139,7 @@
         <module name="RedundantImport">
             <property name="severity" value="error"/>
         </module>
-        
+
         <!--
         This check insofar is unable to ignore constants and logger fields.
         <module name="RequireThis">
@@ -148,7 +148,7 @@
             <property name="validateOnlyOverlapping" value="false" />
         </module>
         -->
-        
+
         <module name="UnusedImports">
             <property name="severity" value="error"/>
         </module>
@@ -186,7 +186,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="ParenPad">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter">
@@ -232,11 +232,11 @@
         <module name="StringLiteralEquality">
             <property name="severity" value="error"/>
         </module>
-        
+
         <module name="AnnotationLocation">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
-        
+
         <!--
         <module name="MissingCtor">
             <property name="severity" value="error" />
@@ -244,20 +244,20 @@
         -->
 
         <module name="OuterTypeFilename">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="OuterTypeNumber">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="AnnotationUseStyle">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="CatchParameterName">
-            <property name="severity" value="error" />
+            <property name="severity" value="error"/>
         </module>
         <module name="AnonInnerLength">
-            <property name="max" value="40" />
-            <property name="severity" value="error" />
+            <property name="max" value="40"/>
+            <property name="severity" value="error"/>
         </module>
         <module name="RightCurly">
             <property name="severity" value="error"/>
@@ -296,7 +296,7 @@
                       value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
         </module>
          -->
-        
+
         <module name="VisibilityModifier">
             <property name="severity" value="error"/>
             <property name="protectedAllowed" value="true"/>
@@ -343,7 +343,7 @@
             <property name="message"
                       value="It's better to name controller/component/configuration annotations to avoid implicit configuration"/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
             <property name="severity" value="error"/>
@@ -392,6 +392,13 @@
             <property name="format" value="(public|protected)\s+void\s+test\w+\(.+\{$"/>
             <property name="message"
                       value="JUnit test methods should not begin with the 'test' prefix. Use annotations instead and/or rename the method"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="commonslang3"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Force using commons-lang v3"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="org\.apache\.commons\.lang\."/>
+            <property name="message" value="Use 'org.apache.commons.lang3' instead."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
@@ -459,7 +466,6 @@
         <property name="severity" value="error"/>
     </module>
 
-    
 
     <!-- Custom checks based on regular expressions -->
     <module name="RegexpSingleline">
@@ -499,7 +505,7 @@
         <property name="format" value="Arrays\.asList\(.+"/>
         <property name="message" value="Use Lists.newArrayList() instead."/>
     </module>
-    
+
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>

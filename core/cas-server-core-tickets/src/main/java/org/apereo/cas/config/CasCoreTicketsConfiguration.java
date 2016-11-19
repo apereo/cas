@@ -44,11 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -69,6 +71,7 @@ import java.util.Map;
 @EnableScheduling
 @EnableAsync
 @EnableTransactionManagement
+@AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class CasCoreTicketsConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
@@ -284,6 +287,7 @@ public class CasCoreTicketsConfiguration {
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleaner")
     @Bean
+    @Lazy
     public TicketRegistryCleaner ticketRegistryCleaner() {
         final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
         c.setLockingStrategy(lockingStrategy());

@@ -152,6 +152,14 @@ public class Pac4jConfiguration {
         properties.put(PropertiesConfigFactory.FACEBOOK_FIELDS, fb.getFields());
     }
 
+    private void configureLinkedInClient(final Map<String, String> properties) {
+        final Pac4jProperties.LinkedIn fb = casProperties.getAuthn().getPac4j().getLinkedIn();
+        properties.put(PropertiesConfigFactory.LINKEDIN_ID, fb.getId());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SECRET, fb.getSecret());
+        properties.put(PropertiesConfigFactory.LINKEDIN_SCOPE, fb.getScope());
+        properties.put(PropertiesConfigFactory.LINKEDIN_FIELDS, fb.getFields());
+    }
+
     private void configureTwitterClient(final Map<String, String> properties) {
         final Pac4jProperties.Twitter twitter = casProperties.getAuthn().getPac4j().getTwitter();
         properties.put(PropertiesConfigFactory.TWITTER_ID, twitter.getId());
@@ -167,44 +175,30 @@ public class Pac4jConfiguration {
     private void configureSamlClient(final Map<String, String> properties) {
         final Pac4jProperties.Saml saml = casProperties.getAuthn().getPac4j().getSaml();
 
-        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH,
-                saml.getIdentityProviderMetadataPath());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD,
-                saml.getKeystorePassword());
-        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH,
-                saml.getKeystorePath());
-        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME,
-                saml.getMaximumAuthenticationLifetime());
-        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD,
-                saml.getPrivateKeyPassword());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID,
-                saml.getServiceProviderEntityId());
-        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH,
-                saml.getServiceProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_IDENTITY_PROVIDER_METADATA_PATH, saml.getIdentityProviderMetadataPath());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PASSWORD, saml.getKeystorePassword());
+        properties.put(PropertiesConfigFactory.SAML_KEYSTORE_PATH, saml.getKeystorePath());
+        properties.put(PropertiesConfigFactory.SAML_MAXIMUM_AUTHENTICATION_LIFETIME, saml.getMaximumAuthenticationLifetime());
+        properties.put(PropertiesConfigFactory.SAML_PRIVATE_KEY_PASSWORD, saml.getPrivateKeyPassword());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_ENTITY_ID, saml.getServiceProviderEntityId());
+        properties.put(PropertiesConfigFactory.SAML_SERVICE_PROVIDER_METADATA_PATH, saml.getServiceProviderMetadataPath());
         properties.put(PropertiesConfigFactory.SAML_DESTINATION_BINDING_TYPE, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
     }
 
     private void configureOidcClient(final Map<String, String> properties) {
         final Pac4jProperties.Oidc oidc = casProperties.getAuthn().getPac4j().getOidc();
 
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1,
-                oidc.getCustomParamKey1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2,
-                oidc.getCustomParamKey2());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1,
-                oidc.getCustomParamValue1());
-        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2,
-                oidc.getCustomParamValue2());
-        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI,
-                oidc.getDiscoveryUri());
-        properties.put(PropertiesConfigFactory.OIDC_ID,
-                oidc.getId());
-        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW,
-                oidc.getMaxClockSkew());
-        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM,
-                oidc.getPreferredJwsAlgorithm());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY1, oidc.getCustomParamKey1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_KEY2, oidc.getCustomParamKey2());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE1, oidc.getCustomParamValue1());
+        properties.put(PropertiesConfigFactory.OIDC_CUSTOM_PARAM_VALUE2, oidc.getCustomParamValue2());
+        properties.put(PropertiesConfigFactory.OIDC_DISCOVERY_URI, oidc.getDiscoveryUri());
+        properties.put(PropertiesConfigFactory.OIDC_ID, oidc.getId());
+        properties.put(PropertiesConfigFactory.OIDC_MAX_CLOCK_SKEW, oidc.getMaxClockSkew());
+        properties.put(PropertiesConfigFactory.OIDC_PREFERRED_JWS_ALGORITHM, oidc.getPreferredJwsAlgorithm());
         properties.put(PropertiesConfigFactory.OIDC_SECRET, oidc.getSecret());
         properties.put(PropertiesConfigFactory.OIDC_USE_NONCE, oidc.getUseNonce());
+        properties.put(PropertiesConfigFactory.OIDC_SCOPE, oidc.getScope());
     }
 
     /**
@@ -231,6 +225,7 @@ public class Pac4jConfiguration {
         configureGoogleClient(properties);
         configureWindowsLiveClient(properties);
         configureYahooClient(properties);
+        configureLinkedInClient(properties);
 
         // add the new clients found via properties first
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
@@ -248,6 +243,7 @@ public class Pac4jConfiguration {
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
+
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

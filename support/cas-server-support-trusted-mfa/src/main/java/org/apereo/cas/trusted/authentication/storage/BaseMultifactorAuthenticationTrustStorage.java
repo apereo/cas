@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;

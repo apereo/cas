@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -36,7 +35,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -141,7 +140,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
                 factory, smMock, mock(LogoutManager.class));
-        this.cas.setValidationServiceSelectionStrategies(Collections.singletonList(new DefaultValidationServiceSelectionStrategy()));
+        this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(
+                new DefaultAuthenticationRequestServiceSelectionStrategy()));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
     }
@@ -201,7 +201,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(Predicates.<Ticket>alwaysTrue());
+        final Collection<Ticket> c = this.cas.getTickets(ticket -> true);
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
