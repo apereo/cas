@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,9 +43,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private CipherExecutor<String, String> cipherExecutor;
+    private CipherExecutor<Serializable, String> cipherExecutor;
 
-    public LdapPasswordManagementService(final CipherExecutor<String, String> cipherExecutor) {
+    public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 
