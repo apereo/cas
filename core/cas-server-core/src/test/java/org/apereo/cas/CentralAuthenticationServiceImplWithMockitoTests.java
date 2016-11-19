@@ -73,7 +73,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     private static final String PRINCIPAL = "principal";
 
-    private CentralAuthenticationServiceImpl cas;
+    private DefaultCentralAuthenticationService cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
 
@@ -138,7 +138,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         factory.initialize();
 
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
+        this.cas = new DefaultCentralAuthenticationService(ticketRegMock,
                 factory, smMock, mock(LogoutManager.class));
         this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(
                 new DefaultAuthenticationRequestServiceSelectionStrategy()));
