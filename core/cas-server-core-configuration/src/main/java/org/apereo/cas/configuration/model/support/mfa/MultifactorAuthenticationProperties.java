@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -260,7 +261,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     public static class YubiKey extends BaseProvider {
         private static final long serialVersionUID = 9138057706201201089L;
         private Integer clientId;
-        private String secretKey = "";
+        private String secretKey = StringUtils.EMPTY;
 
         private List<String> apiUrls = new ArrayList<>();
         private boolean trustedDeviceEnabled;
@@ -611,9 +612,9 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private static final long serialVersionUID = 1505013239016790473L;
         private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
 
-        private String encryptionKey = "";
+        private String encryptionKey = StringUtils.EMPTY;
 
-        private String signingKey = "";
+        private String signingKey = StringUtils.EMPTY;
 
         private boolean cipherEnabled = true;
 

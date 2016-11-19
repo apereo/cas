@@ -66,6 +66,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,7 +77,7 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class Beans {
+public final class Beans {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
@@ -177,10 +178,10 @@ public class Beans {
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map pdirMap = new HashMap<>();
+            final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
+                pdirMap.put(entry.getKey(), Lists.newArrayList((String[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;
@@ -198,15 +199,16 @@ public class Beans {
 
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
-            case NONE:
-                return NoOpPasswordEncoder.getInstance();
             case DEFAULT:
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
-            default:
+            case BCRYPT:
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+            case NONE:
+            default:
+                return NoOpPasswordEncoder.getInstance();
         }
     }
 

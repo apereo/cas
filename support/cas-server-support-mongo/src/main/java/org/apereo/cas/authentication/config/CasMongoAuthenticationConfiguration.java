@@ -6,8 +6,10 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,10 +29,6 @@ import java.util.Map;
 @Configuration("casMongoAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasMongoAuthenticationConfiguration {
-
-    @Autowired(required = false)
-    @Qualifier("mongoPac4jPasswordEncoder")
-    private org.pac4j.core.credentials.password.PasswordEncoder mongoPasswordEncoder;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -55,33 +53,25 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
-        final MongoAuthenticationHandler mongo = new MongoAuthenticationHandler();
+        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler();
+        final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
 
-        mongo.setAttributes(casProperties.getAuthn().getMongo().getAttributes());
-        mongo.setCollectionName(casProperties.getAuthn().getMongo().getCollectionName());
-        mongo.setMongoHostUri(casProperties.getAuthn().getMongo().getMongoHostUri());
-        mongo.setPasswordAttribute(casProperties.getAuthn().getMongo().getPasswordAttribute());
-        mongo.setUsernameAttribute(casProperties.getAuthn().getMongo().getUsernameAttribute());
+        handler.setAttributes(mongo.getAttributes());
+        handler.setCollectionName(mongo.getCollectionName());
+        handler.setMongoHostUri(mongo.getMongoHostUri());
+        handler.setPasswordAttribute(mongo.getPasswordAttribute());
+        handler.setUsernameAttribute(mongo.getUsernameAttribute());
+        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
+        handler.setMongoPasswordEncoder(new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder())));
+        handler.setPrincipalFactory(mongoPrincipalFactory());
+        handler.setServicesManager(servicesManager);
 
-        mongo.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(
-                casProperties.getAuthn().getMongo().getPrincipalTransformation()));
-
-        mongo.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getMongo().getPasswordEncoder()));
-        if (mongoPasswordEncoder != null) {
-            mongo.setMongoPasswordEncoder(mongoPasswordEncoder);
-        }
-
-
-        mongo.setPrincipalFactory(mongoPrincipalFactory());
-        mongo.setServicesManager(servicesManager);
-
-        return mongo;
+        return handler;
     }
 
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

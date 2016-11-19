@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link UnauthorizedServiceForPrincipalException}
  * thrown when an attribute is missing from principal
@@ -20,7 +22,7 @@ public class UnauthorizedServiceForPrincipalException extends UnauthorizedServic
      * Instantiates a new unauthorized sso service exception.
      */
     public UnauthorizedServiceForPrincipalException() {
-        super(CODE, "");
+        super(CODE, StringUtils.EMPTY);
     }
 
     /**

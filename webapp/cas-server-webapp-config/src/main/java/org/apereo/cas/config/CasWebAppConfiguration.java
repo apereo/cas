@@ -99,7 +99,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
                     throws Exception {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
-                        + (queryString != null ? '?' + queryString : "");
+                        + (queryString != null ? '?' + queryString : StringUtils.EMPTY);
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
 

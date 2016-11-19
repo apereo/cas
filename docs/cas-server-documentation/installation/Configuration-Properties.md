@@ -333,6 +333,9 @@ To learn more about this topic, [please review this guide](Logging.html).
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
 server.contextParameters.isLog4jAutoInitializationDisabled=true
+
+# Control log levels via properties
+# logging.level.org.apereo.cas=DEBUG
 ```
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
@@ -460,7 +463,7 @@ class SampleGroovyPersonAttributeDao {
         def casApplicationContext = args[3]
 
         logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
-        return[name:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+        return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
 ```
@@ -1812,6 +1815,17 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.scope=
 ```
 
+### LinkedIn
+
+Delegate authentication to LinkedIn.
+
+```properties
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.id=
+# cas.authn.pac4j.linkedIn.secret=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
 ### Twitter
 
 Delegate authentication to Twitter.
@@ -1830,6 +1844,7 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc.maxClockSkew=
 # cas.authn.pac4j.oidc.customParamKey2=
 # cas.authn.pac4j.oidc.customParamValue2=
+# cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
 # cas.authn.pac4j.oidc.customParamKey1=
