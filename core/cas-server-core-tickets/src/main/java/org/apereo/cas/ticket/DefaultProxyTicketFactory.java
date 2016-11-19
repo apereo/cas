@@ -39,13 +39,42 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
     private CipherExecutor<String, String> cipherExecutor;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket,
                                        final Service service) {
+        final String ticketId = produceTicketIdentifier(service);
+        return produceTicket(proxyGrantingTicket, service, ticketId);
+    }
+
+    /**
+     * Produce ticket.
+     *
+     * @param <T>                 the type parameter
+     * @param proxyGrantingTicket the proxy granting ticket
+     * @param service             the service
+     * @param ticketId            the ticket id
+     * @return the ticket
+     */
+    protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket, final Service service, final String ticketId) {
+        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
+                ticketId,
+                service,
+                this.proxyTicketExpirationPolicy,
+                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+        return (T) serviceTicket;
+    }
+
+    /**
+     * Produce ticket identifier.
+     *
+     * @param service the service
+     * @return the ticket id
+     */
+    protected String produceTicketIdentifier(final Service service) {
         final String uniqueTicketIdGenKey = service.getClass().getName();
         logger.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
         UniqueTicketIdGenerator generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
@@ -61,13 +90,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
             ticketId = this.cipherExecutor.encode(ticketId);
             logger.debug("Encoded proxy ticket id {}", ticketId);
         }
-        
-        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
-                ticketId,
-                service,
-                this.proxyTicketExpirationPolicy,
-                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
-        return (T) serviceTicket;
+        return ticketId;
     }
 
     @Override

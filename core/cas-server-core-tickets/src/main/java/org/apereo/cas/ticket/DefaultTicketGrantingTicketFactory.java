@@ -20,7 +20,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * created.
      */
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-    
+
     /**
      * Expiration policy for ticket granting tickets.
      */
@@ -30,21 +30,42 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
+        final String tgtId = produceTicketIdentifier();
+        return produceTicket(authentication, tgtId);
+    }
+
+    @Override
+    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
+        return (T) this;
+    }
+
+    /**
+     * Produce ticket.
+     *
+     * @param <T>            the type parameter
+     * @param authentication the authentication
+     * @param tgtId          the tgt id
+     * @return the ticket.
+     */
+    protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication, final String tgtId) {
+        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+                tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
+        return (T) ticketGrantingTicket;
+    }
+
+    /**
+     * Produce ticket identifier string.
+     *
+     * @return the ticket id.
+     */
+    protected String produceTicketIdentifier() {
         String tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode ticket-granting ticket {}", tgtId);
             tgtId = this.cipherExecutor.encode(tgtId);
             LOGGER.debug("Encoded ticket-granting ticket id {}", tgtId);
         }
-
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
-        return (T) ticketGrantingTicket;
-    }
-
-    @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+        return tgtId;
     }
 
     public void setTicketGrantingTicketUniqueTicketIdGenerator(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator) {

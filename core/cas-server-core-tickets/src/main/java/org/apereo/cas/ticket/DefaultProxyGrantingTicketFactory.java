@@ -33,15 +33,39 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
                                                     final Authentication authentication) throws AbstractTicketException {
+        final String pgtId = produceTicketIdentifier();
+        return produceTicket(serviceTicket, authentication, pgtId);
+    }
+
+    /**
+     * Produce ticket.
+     *
+     * @param <T>            the type parameter
+     * @param serviceTicket  the service ticket
+     * @param authentication the authentication
+     * @param pgtId          the pgt id
+     * @return the ticket
+     */
+    protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
+                                                              final String pgtId) {
+        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
+                authentication, this.ticketGrantingTicketExpirationPolicy);
+        return (T) proxyGrantingTicket;
+    }
+
+    /**
+     * Produce ticket identifier string.
+     *
+     * @return the ticket
+     */
+    protected String produceTicketIdentifier() {
         String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode proxy-granting ticket {}", pgtId);
             pgtId = this.cipherExecutor.encode(pgtId);
             LOGGER.debug("Encoded proxy-granting ticket id {}", pgtId);
         }
-        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
-                authentication, this.ticketGrantingTicketExpirationPolicy);
-        return (T) proxyGrantingTicket;
+        return pgtId;
     }
 
     @Override
