@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Common properties for all cookie configs.
  *
@@ -10,11 +12,11 @@ public class CookieProperties {
 
     private String name;
 
-    private String path = "";
+    private String path = StringUtils.EMPTY;
 
     private int maxAge = -1;
 
-    private String domain = "";
+    private String domain = StringUtils.EMPTY;
 
     private boolean secure = true;
 
