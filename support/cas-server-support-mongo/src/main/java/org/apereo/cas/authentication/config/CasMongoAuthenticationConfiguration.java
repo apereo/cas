@@ -8,9 +8,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.integration.pac4j.authentication.PasswordEncoderSupport;
 import org.apereo.cas.services.ServicesManager;
-import org.pac4j.core.credentials.password.PasswordEncoder;
+import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,7 +54,6 @@ public class CasMongoAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
         final MongoAuthenticationHandler handler = new MongoAuthenticationHandler();
-
         final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
 
         handler.setAttributes(mongo.getAttributes());
@@ -64,11 +62,7 @@ public class CasMongoAuthenticationConfiguration {
         handler.setPasswordAttribute(mongo.getPasswordAttribute());
         handler.setUsernameAttribute(mongo.getUsernameAttribute());
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
-
-        final PasswordEncoder encoder = PasswordEncoderSupport.newPasswordEncoder(mongo.getPasswordEncoder());
-        if (encoder != null) {
-            handler.setMongoPasswordEncoder(encoder);
-        }
+        handler.setMongoPasswordEncoder(new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder())));
         handler.setPrincipalFactory(mongoPrincipalFactory());
         handler.setServicesManager(servicesManager);
 
@@ -78,7 +72,6 @@ public class CasMongoAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(mongoAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }
