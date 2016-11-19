@@ -107,12 +107,12 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setSubject(principal.getId());
 
         if (authentication.getAttributes().containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
-            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+            final Collection<Object> val = CollectionUtils.toCollection(
                     authentication.getAttributes().get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+            final Collection<Object> val = CollectionUtils.toCollection(
                     authentication.getAttributes().get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[] {}));
         }

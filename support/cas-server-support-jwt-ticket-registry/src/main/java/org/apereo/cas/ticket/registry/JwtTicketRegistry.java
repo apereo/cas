@@ -65,7 +65,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        logger.warn("deleteSingleTicket() is not supported by {}", getClass().getSimpleName());
+        logger.debug("deleteSingleTicket() is not supported by {}", getClass().getSimpleName());
         return true;
     }
 

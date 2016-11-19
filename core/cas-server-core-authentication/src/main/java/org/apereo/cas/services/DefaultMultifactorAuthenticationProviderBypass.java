@@ -234,7 +234,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
 
         final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
-            final Set<Object> valuesCol = CollectionUtils.convertValueToCollection(e.getValue());
+            final Set<Object> valuesCol = CollectionUtils.toCollection(e.getValue());
             return valuesCol.stream()
                     .filter(v -> v.toString().matches(attrValue))
                     .findAny()
