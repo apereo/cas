@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -75,9 +76,9 @@ public class InitialFlowSetupActionCookieTests {
     @Before
     public void setUp() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.warnCookieGenerator.setCookiePath("");
+        this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.tgtCookieGenerator.setCookiePath("");
+        this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(

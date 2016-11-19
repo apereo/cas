@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -110,7 +111,7 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
 
         registeredServiceResource.setAttributeName("Test");
-        registeredServiceResource.setAttributeValue("");
+        registeredServiceResource.setAttributeValue(StringUtils.EMPTY);
 
         this.mockMvc.perform(post("/cas/v1/services/add/TGT-12345"))
                 .andExpect(status().isBadRequest());
