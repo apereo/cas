@@ -20,12 +20,14 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
         this.ticket = ticket;
     }
 
-    public void updateTicket(final Ticket ticket) {
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
         // ticket must exist
         if (this.ticket == null) {
             throw new IllegalArgumentException("No ticket to update");
         }
         addTicket(ticket);
+        return ticket;
     }
 
     @SuppressWarnings("unchecked")
