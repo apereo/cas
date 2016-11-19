@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+
 /**
  * The {@link DefaultTicketGrantingTicketFactory} is responsible
  * for creating {@link TicketGrantingTicket} objects.
@@ -26,7 +28,10 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
-    private CipherExecutor<String, String> cipherExecutor;
+    /**
+     * The ticket cipher, if any.
+     */
+    protected CipherExecutor<Serializable, String> cipherExecutor;
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
@@ -77,7 +82,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
 
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 }

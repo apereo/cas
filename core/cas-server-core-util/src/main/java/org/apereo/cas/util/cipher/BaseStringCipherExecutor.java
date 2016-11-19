@@ -9,6 +9,7 @@ import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<String, String> {
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
 
     private static final int ENCRYPTION_KEY_SIZE = 256;
 
@@ -95,15 +96,15 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
     }
 
     @Override
-    public String encode(final String value) {
+    public String encode(final Serializable value) {
         final String encoded = encryptValue(value);
         final String signed = new String(sign(encoded.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return signed;
     }
 
     @Override
-    public String decode(final String value) {
-        final byte[] encoded = verifySignature(value.getBytes(StandardCharsets.UTF_8));
+    public String decode(final Serializable value) {
+        final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
         if (encoded != null && encoded.length > 0) {
             return decryptValue(new String(encoded, StandardCharsets.UTF_8));
         }
@@ -136,10 +137,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
      * @param value the value
      * @return the encoded value
      */
-    private String encryptValue(final String value) {
+    private String encryptValue(final Serializable value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setPayload(value);
+            jwe.setPayload(serializeValue(value));
             jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
             jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
             jwe.setKey(this.secretKeyEncryptionKey);
@@ -149,6 +150,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
             throw new RuntimeException("Ensure that you have installed JCE Unlimited Strength Jurisdiction Policy Files. "
                     + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Serialize value as string.
+     *
+     * @param value the value
+     * @return the string
+     */
+    protected String serializeValue(final Serializable value) {
+        return value.toString();
     }
 
     /**

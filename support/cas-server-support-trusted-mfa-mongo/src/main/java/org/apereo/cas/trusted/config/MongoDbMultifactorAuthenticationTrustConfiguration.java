@@ -32,7 +32,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor<String, String> mfaTrustCipherExecutor;
+    private CipherExecutor mfaTrustCipherExecutor;
 
     @RefreshScope
     @Bean
