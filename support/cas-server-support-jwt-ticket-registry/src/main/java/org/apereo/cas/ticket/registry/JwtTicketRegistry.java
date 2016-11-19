@@ -35,7 +35,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-
+        return ticket;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
         logger.debug("Adding ticket {} to live {} seconds and stay idle for {} seconds",
                 ticket.getId(), ticket.getExpirationPolicy().getTimeToLive(), idleTime);
 
-        ...
+
 
     }
 
@@ -59,7 +59,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        final Ticket ticket = ...
+        final Ticket ticket = null;
 
         return ticket;
     }
@@ -73,7 +73,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        logger.warn("getTickets() is not supported by {}", getClass().getSimpleName());
+        logger.debug("getTickets() is not supported by {}", getClass().getSimpleName());
         return Lists.newArrayList();
     }
 

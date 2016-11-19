@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -274,8 +275,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public Map uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl",
-                serviceTicketUniqueIdGenerator());
+        map.put(SimpleWebApplicationServiceImpl.class.getName(), serviceTicketUniqueIdGenerator());
         return map;
     }
 
@@ -304,6 +304,7 @@ public class CasCoreTicketsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "protocolTicketCipherExecutor")
     public CipherExecutor protocolTicketCipherExecutor() {
         if (casProperties.getTicket().getSecurity().isCipherEnabled()) {
             return new ProtocolTicketCipherExecutor(
