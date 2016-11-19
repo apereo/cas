@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -26,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -149,7 +149,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param attributeList List of LDAP attribute names
      */
     public void setPrincipalAttributeList(final List<String> attributeList) {
-        this.principalAttributeMap = Maps.uniqueIndex(attributeList, Functions.toStringFunction());
+        this.principalAttributeMap = attributeList.stream().collect(Collectors.toMap(Object::toString, Function.identity()));
     }
 
     /**

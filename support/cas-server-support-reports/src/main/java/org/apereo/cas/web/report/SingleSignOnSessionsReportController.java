@@ -169,12 +169,7 @@ public class SingleSignOnSessionsReportController {
      * @return the non expired ticket granting tickets
      */
     private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
-        return this.centralAuthenticationService.getTickets(ticket -> {
-            if (ticket instanceof TicketGrantingTicket) {
-                return !ticket.isExpired();
-            }
-            return false;
-        });
+        return this.centralAuthenticationService.getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
     }
 
     /**

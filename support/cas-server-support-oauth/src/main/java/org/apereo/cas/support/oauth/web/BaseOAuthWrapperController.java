@@ -107,8 +107,8 @@ public abstract class BaseOAuthWrapperController {
                 new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
 
-        final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), "");
-        final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), "");
+        final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
+        final String nonce = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.NONCE), StringUtils.EMPTY);
 
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", profile.getPermissions())

@@ -15,7 +15,7 @@ import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.apereo.cas.support.oauth.validator.OAuth20ValidationServiceSelectionStrategy;
+import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
@@ -39,7 +39,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -94,8 +94,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     private ServiceFactory webApplicationServiceFactory;
 
     @Autowired
-    @Qualifier("validationServiceSelectionStrategies")
-    private List validationServiceSelectionStrategies;
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -382,8 +382,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @ConditionalOnMissingBean(name = "oauth20ValidationServiceSelectionStrategy")
-    public ValidationServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
-        final OAuth20ValidationServiceSelectionStrategy s = new OAuth20ValidationServiceSelectionStrategy();
+    public AuthenticationRequestServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
+        final OAuth20AuthenticationRequestServiceSelectionStrategy s = new OAuth20AuthenticationRequestServiceSelectionStrategy();
         s.setServicesManager(servicesManager);
         s.setWebApplicationServiceFactory(webApplicationServiceFactory);
         return s;
@@ -422,6 +422,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             servicesManager.load();
         }
 
-        this.validationServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
+        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
     }
 }

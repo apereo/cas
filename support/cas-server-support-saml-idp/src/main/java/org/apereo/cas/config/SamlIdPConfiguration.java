@@ -7,11 +7,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.services.SamlIdPEntityIdValidationServiceSelectionStrategy;
+import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.ChainingMetadataResolverCacheLoader;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.DefaultSamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
+import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
@@ -32,16 +34,19 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.ui.velocity.VelocityEngineFactory;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -72,8 +77,9 @@ public class SamlIdPConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
 
-    @javax.annotation.Resource(name = "validationServiceSelectionStrategies")
-    private List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies;
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
@@ -122,14 +128,34 @@ public class SamlIdPConfiguration {
     @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
     private List overrideWhiteListedSignatureSigningAlgorithms;
 
-    @PostConstruct
-    public void init() {
-        this.validationServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
+    @Autowired(required = false)
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired(required = false)
+    private FlowBuilderServices flowBuilderServices;
+
+    @ConditionalOnMissingBean(name = "samlIdPMetadataUIWebConfigurer")
+    @Bean
+    public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
+        final SamlIdPMetadataUIWebflowConfigurer w = new SamlIdPMetadataUIWebflowConfigurer();
+        w.setSamlMetadataUIParserAction(samlIdPMetadataUIParserAction());
+        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        w.setFlowBuilderServices(flowBuilderServices);
+        return w;
     }
 
     @Bean
-    public Resource templateSpMetadata() {
-        return new ClassPathResource("template-sp-metadata.xml");
+    public Action samlIdPMetadataUIParserAction() {
+        return new SamlIdPMetadataUIAction(
+                servicesManager,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                samlIdPEntityIdValidationServiceSelectionStrategy());
+    }
+
+    @PostConstruct
+    public void init() {
+        this.authenticationRequestServiceSelectionStrategies.add(0, samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
     /**
@@ -146,8 +172,8 @@ public class SamlIdPConfiguration {
     }
 
     @Bean
-    public ValidationServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        final SamlIdPEntityIdValidationServiceSelectionStrategy s = new SamlIdPEntityIdValidationServiceSelectionStrategy();
+    public AuthenticationRequestServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
+        final SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy s = new SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy();
         s.setWebApplicationServiceFactory(webApplicationServiceFactory);
         return s;
     }
@@ -335,4 +361,6 @@ public class SamlIdPConfiguration {
         initControllerBean(c);
         return c;
     }
+
+
 }

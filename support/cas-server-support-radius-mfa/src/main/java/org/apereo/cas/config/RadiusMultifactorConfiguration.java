@@ -23,6 +23,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -102,14 +103,14 @@ public class RadiusMultifactorConfiguration {
             new FirstMultifactorAuthenticationProviderSelector();
 
     @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
-    /**
-     * Radius flow registry flow definition registry.
-     *
-     * @return the flow definition registry
-     */
+
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder =
@@ -120,11 +121,6 @@ public class RadiusMultifactorConfiguration {
     }
 
 
-    /**
-     * Radius servers list.
-     *
-     * @return the list
-     */
     @RefreshScope
     @Bean
     public List radiusTokenServers() {
@@ -161,6 +157,7 @@ public class RadiusMultifactorConfiguration {
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
         return p;
     }
 
@@ -168,7 +165,8 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass()
+                casProperties.getAuthn().getMfa().getRadius().getBypass(),
+                ticketRegistrySupport
         );
     }
 
@@ -221,6 +219,7 @@ public class RadiusMultifactorConfiguration {
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
     }
 

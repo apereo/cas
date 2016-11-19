@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
@@ -21,6 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -87,11 +87,10 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
-        final Collection<RegisteredService> c = convertToTreeSet()
+        return convertToTreeSet()
                 .stream()
-                .filter(predicate::apply)
+                .filter(predicate)
                 .collect(Collectors.toSet());
-        return c;
     }
 
     @Override
