@@ -448,7 +448,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             mock(ExpirationPolicy.class));
         final MockExpireUpdateTicketLogoutManager logoutManager = new MockExpireUpdateTicketLogoutManager(registry);
         registry.addTicket(tgt);
-        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry, null, null, logoutManager);
+        final DefaultCentralAuthenticationService cas = new DefaultCentralAuthenticationService(registry, null, null, logoutManager);
         cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }

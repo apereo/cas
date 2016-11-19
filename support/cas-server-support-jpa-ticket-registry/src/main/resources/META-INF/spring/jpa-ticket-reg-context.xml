@@ -68,7 +68,7 @@
                       expression="execution(* org.apereo.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
  
         <aop:pointcut id="casOperations"
-                      expression="execution(* org.apereo.cas.CentralAuthenticationServiceImpl.*(..))"/>
+                      expression="execution(* org.apereo.cas.DefaultCentralAuthenticationService.*(..))"/>
 
         <aop:advisor advice-ref="txRegistryAdvice"
                      pointcut-ref="ticketRegistryOperations"/>
