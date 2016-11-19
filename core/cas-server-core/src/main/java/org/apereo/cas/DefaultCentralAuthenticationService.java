@@ -45,7 +45,6 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -159,7 +158,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         CurrentCredentialsAndAuthentication.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, 
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
                 authenticationResult != null && authenticationResult.isCredentialProvided());
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
@@ -170,23 +169,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
 
         return serviceTicket;
-    }
-
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                final TicketGrantingTicket ticketGrantingTicket)
-            throws MixedPrincipalException {
-        Authentication currentAuthentication = null;
-        if (context != null) {
-            currentAuthentication = context.getAuthentication();
-            if (currentAuthentication != null) {
-                final Authentication original = ticketGrantingTicket.getAuthentication();
-                if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                    throw new MixedPrincipalException(
-                            currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-                }
-            }
-        }
-        return currentAuthentication;
     }
 
     @Audit(
@@ -215,7 +197,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
-        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(), 
+        getAuthenticationSatisfiedByPolicy(proxyGrantingTicketObject.getRoot().getAuthentication(),
                 new ServiceContext(service, registeredService));
 
         final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
@@ -290,11 +272,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
 
-        if (!ticketAuthenticityIsVerified(serviceTicketId)) {
+        if (!isTicketAuthenticityVerified(serviceTicketId)) {
             logger.info("Service ticket [{}] is not a valid ticket issued by CAS.", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
-        
+
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
@@ -322,7 +304,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             }
 
             final Service selectedService = resolveServiceFromAuthenticationRequest(service);
-            
+
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
             logger.debug("Located registered service definition {} from {} to handle validation request",
                     registeredService, selectedService);
@@ -367,7 +349,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
 
-
     @Audit(
             action = "TICKET_GRANTING_TICKET",
             actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER",
@@ -398,19 +379,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         return ticketGrantingTicket;
     }
 
-
-    /**
-     * Verify the ticket id received is actually legitimate
-     * before contacting downstream systems to find and process it.
-     *
-     * @param ticketId the ticket id
-     * @return true/false
-     */
-    private boolean ticketAuthenticityIsVerified(final String ticketId) {
-        if (this.cipherExecutor != null) {
-            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
-            return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+                                                                       final TicketGrantingTicket ticketGrantingTicket)
+            throws MixedPrincipalException {
+        Authentication currentAuthentication = null;
+        if (context != null) {
+            currentAuthentication = context.getAuthentication();
+            if (currentAuthentication != null) {
+                final Authentication original = ticketGrantingTicket.getAuthentication();
+                if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                    throw new MixedPrincipalException(
+                            currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+                }
+            }
         }
-        return !StringUtils.isEmpty(ticketId);
+        return currentAuthentication;
     }
+
 }
