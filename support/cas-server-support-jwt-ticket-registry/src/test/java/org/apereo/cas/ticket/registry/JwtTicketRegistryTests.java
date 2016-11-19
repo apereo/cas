@@ -67,5 +67,5 @@ public class JwtTicketRegistryTests {
     6. Docs?
     7. Logout? Admin UIs, etc? How is the registry affected?
 
-    
+
 }
