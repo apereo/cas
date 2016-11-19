@@ -199,15 +199,16 @@ public class Beans {
 
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
-            case NONE:
-                return NoOpPasswordEncoder.getInstance();
             case DEFAULT:
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
-            default:
+            case BCRYPT:
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+            case NONE:
+            default:
+                return NoOpPasswordEncoder.getInstance();
         }
     }
 
