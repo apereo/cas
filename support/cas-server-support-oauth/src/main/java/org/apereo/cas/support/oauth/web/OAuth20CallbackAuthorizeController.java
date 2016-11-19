@@ -1,6 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;

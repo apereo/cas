@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.InvalidLoginLocationException;
 import org.apereo.cas.authentication.InvalidLoginTimeException;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.util.DateTimeUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;

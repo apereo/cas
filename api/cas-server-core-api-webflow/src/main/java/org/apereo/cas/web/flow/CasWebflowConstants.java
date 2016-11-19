@@ -222,4 +222,9 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * State id 'doLogout'.
+     */
+    String STATE_ID_DO_LOGOUT = "doLogout";
 }

@@ -16,6 +16,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -44,6 +45,7 @@ public class OidcAuthorizationRequestSupport {
      * @return the oidc prompt from authorization request
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
+        Assert.notNull(url, "URL cannot be null");
         final URIBuilder builderContext = new URIBuilder(url);
         final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
                 .stream().filter(p -> OidcConstants.PROMPT.equals(p.getName()))

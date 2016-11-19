@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;

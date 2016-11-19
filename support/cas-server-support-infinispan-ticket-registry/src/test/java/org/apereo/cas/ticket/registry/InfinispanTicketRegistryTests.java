@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -75,7 +76,7 @@ public class InfinispanTicketRegistryTests {
         final Ticket ticket = getTicket();
         infinispanTicketRegistry.addTicket(ticket);
         Assert.assertEquals(infinispanTicketRegistry.getTicket(ticket.getId()), ticket);
-        assertNull(infinispanTicketRegistry.getTicket(""));
+        assertNull(infinispanTicketRegistry.getTicket(StringUtils.EMPTY));
     }
 
     private static Ticket getTicket() {

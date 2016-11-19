@@ -51,7 +51,7 @@ public class DashboardController {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     /**
      * Handle request internal model and view.
      *
@@ -74,6 +74,8 @@ public class DashboardController {
         }
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
+        model.put("serverFunctionsEnabled",
+                (Boolean) model.get("restartEndpointEnabled") || (Boolean) model.get("shutdownEndpointEnabled"));
 
         model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
 
@@ -90,10 +92,8 @@ public class DashboardController {
         model.put("isNativeProfile", isNativeProfile);
         model.put("isDefaultProfile", isDefaultProfile);
 
-        model.put("trustedDevicesEnabled", 
-                this.applicationContext.containsBean("trustedDevicesController"));
-        model.put("authenticationEventsRepositoryEnabled",
-                this.applicationContext.containsBean("casEventRepository"));
+        model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController"));
+        model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository"));
 
         return new ModelAndView("monitoring/viewDashboard", model);
     }

@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link AuthenticationTransaction}.
@@ -67,14 +67,9 @@ public class AuthenticationTransaction implements Serializable {
 
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
-            final Set<Credential> set = new HashSet<>(Lists.newArrayList(credentials));
-            final Iterator<Credential> it = set.iterator();
-            while (it.hasNext()) {
-                if (it.next() == null) {
-                    it.remove();
-                }
-            }
-            return set;
+            return Arrays.stream(credentials)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }

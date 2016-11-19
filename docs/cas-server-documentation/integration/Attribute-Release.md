@@ -5,10 +5,7 @@ title: CAS - Attribute Release
 
 # Attribute Release
 
-Resolved attributes are returned to scoped services via the [SAML 1.1 protocol](../protocol/SAML-Protocol.html) 
-or the [CAS protocol](../protocol/CAS-Protocol.html).
-
-Attributes pass through a two-step process:
+Attributes are returned to scoped services and pass through a two-step process:
 
 * [Attribute Resolution](Attribute-Resolution.html): Done at the time of establishing the principal, *usually* via `PrincipalResolver` components where attributes are resolved from various sources.
 * Attribute Release: Adopters must explicitly configure attribute release for services in order for the resolved attributes to be released to a service in the validation response.

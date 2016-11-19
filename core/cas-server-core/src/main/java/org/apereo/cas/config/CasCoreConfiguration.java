@@ -12,8 +12,8 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.validation.DefaultValidationServiceSelectionStrategy;
-import org.apereo.cas.validation.ValidationServiceSelectionStrategy;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -64,7 +64,7 @@ public class CasCoreConfiguration {
     }
     
     @Bean
-    public List<ValidationServiceSelectionStrategy> validationServiceSelectionStrategies() {
+    public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
         final List list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
         return list;
@@ -72,14 +72,14 @@ public class CasCoreConfiguration {
 
     @Bean
     @Scope(value = "prototype")
-    public ValidationServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
-        return new DefaultValidationServiceSelectionStrategy();
+    public AuthenticationRequestServiceSelectionStrategy defaultValidationServiceSelectionStrategy() {
+        return new DefaultAuthenticationRequestServiceSelectionStrategy();
     }
     
     @Autowired
     @Bean
-    public CentralAuthenticationService centralAuthenticationService(@Qualifier("validationServiceSelectionStrategies")
-                                                                     final List validationServiceSelectionStrategies,
+    public CentralAuthenticationService centralAuthenticationService(@Qualifier("authenticationRequestServiceSelectionStrategies")
+                                                                     final List authenticationRequestServiceSelectionStrategies,
                                                                      @Qualifier("principalFactory")
                                                                      final PrincipalFactory principalFactory,
                                                                      @Qualifier("protocolTicketCipherExecutor")
@@ -89,7 +89,7 @@ public class CasCoreConfiguration {
         impl.setServicesManager(this.servicesManager);
         impl.setLogoutManager(this.logoutManager);
         impl.setTicketFactory(this.ticketFactory);
-        impl.setValidationServiceSelectionStrategies(validationServiceSelectionStrategies);
+        impl.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
         impl.setPrincipalFactory(principalFactory);
         impl.setCipherExecutor(cipherExecutor);

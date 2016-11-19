@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -88,8 +86,7 @@ public final class SamlIdPUtils {
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                                                          final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver) {
         try {
-            final Predicate p = Predicates.instanceOf(SamlRegisteredService.class);
-            final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(p);
+            final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(service -> service instanceof SamlRegisteredService);
             final List<MetadataResolver> resolvers = new ArrayList<>();
             final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 

@@ -2,9 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 
-import com.google.common.base.Predicate;
-
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Manages the storage, retrieval, and matching of Services wishing to use CAS

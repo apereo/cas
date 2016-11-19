@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -63,7 +64,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         final MockRequestContext context = new MockRequestContext();
-        context.setCurrentEvent(new Event("", "error"));
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

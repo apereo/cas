@@ -122,8 +122,8 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     return msg;
                 }
             }
-            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned {}",
-                    responseCode);
+            LOGGER.warn("Response code from {}} did not match any of the acceptable response codes. Code returned {}",
+                    url, responseCode);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(),

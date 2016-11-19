@@ -1,20 +1,19 @@
 package org.apereo.cas.authentication.handler.support;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.function.Predicate;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -30,7 +29,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    private Predicate<Credential> credentialSelectionPredicate = Predicates.alwaysTrue();
+    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
@@ -115,7 +114,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     public boolean supports(final Credential credential) {
         if (credential instanceof UsernamePasswordCredential) {
             if (this.credentialSelectionPredicate != null) {
-                return this.credentialSelectionPredicate.apply(credential);
+                return this.credentialSelectionPredicate.test(credential);
             }
             return true;
         }

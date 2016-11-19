@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
@@ -95,7 +96,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
 
-        final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
+        final Set<Event> eventBuilder = Sets.newLinkedHashSet();
         this.orderedResolvers
                 .stream()
                 .filter(r -> r != null)
@@ -112,7 +113,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     }
                 });
 
-        return eventBuilder.build();
+        return eventBuilder;
     }
 
     @Override

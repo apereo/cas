@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import com.google.common.base.Predicate;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -16,6 +15,7 @@ import org.apereo.cas.validation.Assertion;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.

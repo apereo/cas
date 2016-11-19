@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
@@ -38,6 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -102,8 +103,8 @@ public class LdapAuthenticationConfiguration {
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
                         LOGGER.debug("Ldap authentication for {} is filtering credentials by {}", l.getCredentialCriteria());
-                        handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
-                                .apply(credential.getId()));
+                        final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
+                        handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
                     }
 
                     final Map<String, String> attributes = new HashMap<>();

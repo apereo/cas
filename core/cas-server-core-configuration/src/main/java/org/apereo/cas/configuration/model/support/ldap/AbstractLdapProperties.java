@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.SearchScope;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
@@ -290,12 +291,12 @@ public abstract class AbstractLdapProperties {
 
     public static class Validator {
         private String type = "search";
-        private String baseDn = "";
+        private String baseDn = StringUtils.EMPTY;
         private String searchFilter = "(objectClass=*)";
         private SearchScope scope = SearchScope.OBJECT;
         private String attributeName = "objectClass";
         private List<String> attributeValues = Lists.newArrayList("top");
-        private String dn = "";
+        private String dn = StringUtils.EMPTY;
 
         public String getDn() {
             return dn;

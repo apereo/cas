@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 
@@ -23,7 +24,7 @@ public abstract class AbstractJpaProperties {
 
     private String user = "sa";
 
-    private String password = "";
+    private String password = StringUtils.EMPTY;
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
