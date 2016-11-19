@@ -71,7 +71,7 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     private static class NoOpPasswordEncoder implements PasswordEncoder {
         @Override
         public String encode(final String s) {
-            LOGGER.warn("No password encoding shall take place");
+            LOGGER.debug("No password encoding shall take place by CAS");
             return s;
         }
 
