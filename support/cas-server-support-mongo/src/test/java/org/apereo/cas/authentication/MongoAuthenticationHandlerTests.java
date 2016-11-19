@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CasCoreServicesConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class})
 @EnableScheduling
 public class MongoAuthenticationHandlerTests {
