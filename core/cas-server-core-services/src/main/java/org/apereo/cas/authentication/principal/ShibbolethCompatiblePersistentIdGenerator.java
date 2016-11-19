@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.DigestUtils;
 
@@ -73,7 +74,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         final String data = String.join(CONST_SEPARATOR, service.getId(), principal.getId());
         final Charset charset = Charset.defaultCharset();
         final String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
-        return result.replaceAll(System.getProperty("line.separator"), "");
+        return result.replaceAll(System.getProperty("line.separator"), StringUtils.EMPTY);
     }
 
 

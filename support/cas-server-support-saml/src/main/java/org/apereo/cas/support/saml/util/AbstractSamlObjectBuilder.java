@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.EncodingUtils;
 import org.jdom.Document;
@@ -255,7 +256,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
                     .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
                             (TransformParameterSpec) null));
 
-            final Reference ref = sigFactory.newReference("", sigFactory
+            final Reference ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
                             .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform,
                     null, null);
 

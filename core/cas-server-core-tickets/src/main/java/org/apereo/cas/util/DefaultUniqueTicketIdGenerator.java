@@ -116,7 +116,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @param suffix the suffix
      */
     public void setSuffix(final String suffix) {
-        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : "";
+        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : StringUtils.EMPTY;
         initialCapacity = 2 + this.suffix.length() + this.randomStringGenerator.getMaxLength();
     }
 

@@ -43,15 +43,15 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
     @Override
     public void write(final Kryo kryo, final Output output, final RegisteredService service) {
         kryo.writeObject(output, service.getServiceId());
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getName(), ""));
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), ""));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getName(), StringUtils.EMPTY));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getDescription(), StringUtils.EMPTY));
         kryo.writeObject(output, service.getId());
         kryo.writeObject(output, service.getEvaluationOrder());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), getEmptyUrl()));
         kryo.writeObject(output, service.getLogoutType());
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), getEmptyUrl()));
         kryo.writeObject(output, ImmutableSet.copyOf(service.getRequiredHandlers()));
-        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), ""));
+        kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
 
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getPublicKey(),
                 new RegisteredServicePublicKeyImpl()));
