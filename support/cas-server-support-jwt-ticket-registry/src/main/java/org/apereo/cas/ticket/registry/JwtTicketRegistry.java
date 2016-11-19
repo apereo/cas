@@ -18,7 +18,6 @@ import java.util.Collection;
  */
 public class JwtTicketRegistry extends AbstractTicketRegistry {
 
-
     /**
      * Instantiates a new Infinispan ticket registry.
      */
