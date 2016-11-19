@@ -97,7 +97,6 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         if (attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
                 && attrs.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
 
-
             final boolean isBypass = Boolean.class.cast(attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
             final String bypassedId = attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
 
