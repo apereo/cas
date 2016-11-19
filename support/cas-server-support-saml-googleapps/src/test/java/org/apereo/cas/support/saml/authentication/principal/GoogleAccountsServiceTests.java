@@ -120,7 +120,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         assertNotNull(response);
         assertTrue(response.contains("NotOnOrAfter"));
 
-        final Pattern pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\StringUtils.EMPTY);
+        final Pattern pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
         final Matcher matcher = pattern.matcher(response);
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
 
