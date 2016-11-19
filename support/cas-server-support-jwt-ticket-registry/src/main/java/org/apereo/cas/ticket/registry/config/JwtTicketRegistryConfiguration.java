@@ -1,7 +1,10 @@
 package org.apereo.cas.ticket.registry.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -15,6 +18,7 @@ import org.apereo.cas.ticket.registry.JwtServiceTicketFactory;
 import org.apereo.cas.ticket.registry.JwtTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.JwtTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.EncodingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -99,10 +103,26 @@ public class JwtTicketRegistryConfiguration {
 
     @Bean
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
-        final JwtTicketGrantingTicketFactory f = new JwtTicketGrantingTicketFactory();
+        final JwtTicketGrantingTicketFactory f = new JwtTicketGrantingTicketFactory(jwtSigningEncryptionKeyPair());
         f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy);
         f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator);
         f.setCipherExecutor(protocolTicketCipherExecutor);
         return f;
+    }
+
+    @Bean
+    public Pair<String, String> jwtSigningEncryptionKeyPair() {
+        final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getJwt().getCrypto();
+
+        String signing = crypto.getSigning().getKey();
+        if (StringUtils.isBlank(signing)) {
+            signing = EncodingUtils.generateJsonWebKey(crypto.getSigning().getKeySize());
+        }
+
+        String encryption = crypto.getEncryption().getKey();
+        if (StringUtils.isBlank(encryption)) {
+            encryption = EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize());
+        }
+        return Pair.of(signing, encryption);
     }
 }
