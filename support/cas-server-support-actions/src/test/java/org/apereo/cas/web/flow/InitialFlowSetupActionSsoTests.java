@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -40,7 +40,7 @@ import org.springframework.webflow.test.MockRequestContext;
                 CasCoreTicketsConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCookieConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreServicesConfiguration.class})
