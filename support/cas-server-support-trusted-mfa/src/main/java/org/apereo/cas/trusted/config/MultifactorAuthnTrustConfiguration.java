@@ -31,6 +31,8 @@ import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
 
+import java.io.Serializable;
+
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
@@ -112,7 +114,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Bean
     @RefreshScope
-    public CipherExecutor<String, String> mfaTrustCipherExecutor() {
+    public CipherExecutor<Serializable, String> mfaTrustCipherExecutor() {
         if (casProperties.getAuthn().getMfa().getTrusted().isCipherEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
                     casProperties.getAuthn().getMfa().getTrusted().getEncryptionKey(),
