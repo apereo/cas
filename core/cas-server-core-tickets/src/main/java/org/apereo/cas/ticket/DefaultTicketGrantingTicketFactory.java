@@ -30,7 +30,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
-        final String tgtId = produceTicketIdentifier();
+        final String tgtId = produceTicketIdentifier(authentication);
         return produceTicket(authentication, tgtId);
     }
 
@@ -56,9 +56,10 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     /**
      * Produce ticket identifier string.
      *
+     * @param authentication the authentication
      * @return the ticket id.
      */
-    protected String produceTicketIdentifier() {
+    protected String produceTicketIdentifier(final Authentication authentication) {
         String tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode ticket-granting ticket {}", tgtId);
