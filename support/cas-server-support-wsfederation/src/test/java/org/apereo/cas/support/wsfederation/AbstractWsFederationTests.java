@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -50,7 +50,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreValidationConfiguration.class,
                 CasCoreConfiguration.class,
                 SamlConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {

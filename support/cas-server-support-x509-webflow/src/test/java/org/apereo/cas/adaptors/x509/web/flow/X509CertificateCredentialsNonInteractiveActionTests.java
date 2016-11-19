@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
         CasCoreTicketsConfiguration.class,
         CasCoreWebConfiguration.class,
         CasCoreLogoutConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         X509AuthenticationConfiguration.class,

@@ -44,15 +44,15 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link CasPersonDirectoryAttributeRepositoryConfiguration}.
+ * This is {@link CasPersonDirectoryConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casPersonDirectoryAttributeRepositoryConfiguration")
+@Configuration("casPersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryAttributeRepositoryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasPersonDirectoryAttributeRepositoryConfiguration.class);
+public class CasPersonDirectoryConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasPersonDirectoryConfiguration.class);
 
     @Autowired
     private ApplicationContext applicationContext;

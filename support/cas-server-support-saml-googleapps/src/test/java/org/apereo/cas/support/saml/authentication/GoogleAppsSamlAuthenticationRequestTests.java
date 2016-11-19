@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
         CasProtocolViewsConfiguration.class,
         CasCoreValidationConfiguration.class,
         CasCoreConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = "classpath:/gapps.properties")
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {

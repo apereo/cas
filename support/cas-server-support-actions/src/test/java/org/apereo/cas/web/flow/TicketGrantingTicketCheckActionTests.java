@@ -6,7 +6,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
         CasCoreLogoutConfiguration.class,
         CasCoreValidationConfiguration.class,
         CasCoreConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
 
