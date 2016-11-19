@@ -59,7 +59,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final Service service = getAssertionFrom(model).getService();
 
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
-        final Collection<Object> authnMethods = CollectionUtils.convertValueToCollection(authentication.getAttributes()
+        final Collection<Object> authnMethods = CollectionUtils.toCollection(authentication.getAttributes()
                 .get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
                 
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
