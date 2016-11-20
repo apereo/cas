@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -86,8 +85,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final boolean bypassByService =
-                locateMatchingRegisteredServiceProperty(authentication, registeredService, AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
+        final boolean bypassByService = locateMatchingRegisteredServiceForBypass(authentication, registeredService);
         if (bypassByService) {
             updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
@@ -126,24 +124,12 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
      *
      * @param authentication    the authentication
      * @param registeredService the registered service
-     * @param propertyName      the property name
-     * @return the boolean
+     * @return true/false
      */
-    protected boolean locateMatchingRegisteredServiceProperty(final Authentication authentication,
-                                                              final RegisteredService registeredService,
-                                                              final String propertyName) {
-        if (registeredService != null) {
-            if (registeredService.getProperties().containsKey(propertyName)) {
-                return registeredService.getProperties()
-                        .get(propertyName)
-                        .getValues()
-                        .stream()
-                        .filter(e -> StringUtils.equalsIgnoreCase(e, BooleanUtils.toStringYesNo(Boolean.TRUE))
-                                || StringUtils.equalsIgnoreCase(e, BooleanUtils.toStringOnOff(Boolean.TRUE))
-                                || StringUtils.equalsIgnoreCase(e, Boolean.TRUE.toString())).findAny()
-                        .isPresent();
-
-            }
+    protected boolean locateMatchingRegisteredServiceForBypass(final Authentication authentication,
+                                                               final RegisteredService registeredService) {
+        if (registeredService != null && registeredService.getMultifactorPolicy() != null) {
+            return registeredService.getMultifactorPolicy().isBypass();
         }
         return false;
     }
