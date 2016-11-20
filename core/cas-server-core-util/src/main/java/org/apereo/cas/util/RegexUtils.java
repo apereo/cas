@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -12,6 +11,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public final class RegexUtils {
+
+    private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
     private RegexUtils() {}
 
@@ -30,13 +31,13 @@ public final class RegexUtils {
      * case insensitive.
      *
      * @param pattern the pattern, may not be null.
-     * @return the pattern or empty. 
+     * @return the pattern or empty.
      */
-    public static Optional<Pattern> createPattern(final String pattern) {
+    public static Pattern createPattern(final String pattern) {
         if (RegexUtils.isValidRegex(pattern)) {
-            return Optional.of(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+            return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
         }
-        return Optional.empty();
+        return MATCH_NOTHING_PATTERN;
     }
     
     /**
