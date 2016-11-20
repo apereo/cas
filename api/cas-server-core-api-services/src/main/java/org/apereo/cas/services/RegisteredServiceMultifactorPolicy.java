@@ -73,6 +73,6 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      *
      * @return true/false
      */
-    boolean isBypass();
+    boolean isBypassEnabled();
 
 }

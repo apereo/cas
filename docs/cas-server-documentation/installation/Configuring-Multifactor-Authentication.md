@@ -182,7 +182,7 @@ whose access should bypass MFA may be defined as such in the CAS service registr
   "multifactorPolicy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
-    "bypass" : "true"
+    "bypassEnabled" : "true"
   }
 }
 ```
