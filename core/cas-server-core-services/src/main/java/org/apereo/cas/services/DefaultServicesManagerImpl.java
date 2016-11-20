@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
-    private Set<RegisteredService> orderedServices = new TreeSet<>();
+    private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
     public DefaultServicesManagerImpl() {
     }
