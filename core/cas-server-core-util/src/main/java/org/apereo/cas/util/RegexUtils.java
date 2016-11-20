@@ -1,7 +1,11 @@
 package org.apereo.cas.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 /**
@@ -12,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public final class RegexUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
     private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
     private RegexUtils() {}
@@ -23,7 +28,15 @@ public final class RegexUtils {
      * @return whether this is a valid regex or not
      */
     public static boolean isValidRegex(final String pattern) {
-        return pattern != null;
+        try {
+            if (pattern != null) {
+                Pattern.compile(pattern).pattern();
+                return true;
+            }
+        } catch (final PatternSyntaxException exception) {
+            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
+        }
+        return false;
     }
 
     /**
