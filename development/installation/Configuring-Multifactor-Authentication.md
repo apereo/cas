@@ -170,22 +170,19 @@ additional attributes are supplanted to let the application know multifactor aut
 
 ### Applications
 
-MFA Bypass rules can be overriden per application via the CAS service registry. This is useful when
+MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
 MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
 whose access should bypass MFA may be defined as such in the CAS service registry:
 
 ```json
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.+",
-  "name" : "sample",
-  "id" : 10000001,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "bypassMultifactorAuthentication" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "true" ] ]
-    }
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "bypassEnabled" : "true"
   }
 }
 ```
