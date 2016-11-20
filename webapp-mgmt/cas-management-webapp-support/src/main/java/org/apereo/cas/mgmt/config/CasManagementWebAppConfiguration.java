@@ -168,39 +168,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return mapping;
     }
 
-    public class CasManagementSecurityInterceptor extends SecurityInterceptor {
-
-        public CasManagementSecurityInterceptor() {
-            super(config(), "CasClient", "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
-            final DefaultSecurityLogic logic = new DefaultSecurityLogic() {
-                @Override
-                protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
-                    return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
-                }
-
-                @Override
-                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
-                    return true;
-                }
-            };
-
-            logic.setSaveProfileInSession(true);
-            setSecurityLogic(logic);
-        }
-
-        @Override
-        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                               final Object handler, final ModelAndView modelAndView) throws Exception {
-            if (!StringUtils.isEmpty(request.getQueryString())
-                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
-                final RedirectView v = new RedirectView(request.getRequestURL().toString());
-                v.setExposeModelAttributes(false);
-                v.setExposePathVariables(false);
-                modelAndView.setView(v);
-            }
-        }
-    }
-
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         return new CasManagementSecurityInterceptor();
@@ -424,5 +391,41 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public List authenticationMetadataPopulators() {
         return new ArrayList<>();
+    }
+
+    /**
+     * The Cas management security interceptor.
+     */
+    public class CasManagementSecurityInterceptor extends SecurityInterceptor {
+
+        public CasManagementSecurityInterceptor() {
+            super(config(), "CasClient", "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
+            final DefaultSecurityLogic logic = new DefaultSecurityLogic() {
+                @Override
+                protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
+                    return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
+                }
+
+                @Override
+                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
+                    return true;
+                }
+            };
+
+            logic.setSaveProfileInSession(true);
+            setSecurityLogic(logic);
+        }
+
+        @Override
+        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler, final ModelAndView modelAndView) throws Exception {
+            if (!StringUtils.isEmpty(request.getQueryString())
+                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
+                final RedirectView v = new RedirectView(request.getRequestURL().toString());
+                v.setExposeModelAttributes(false);
+                v.setExposePathVariables(false);
+                modelAndView.setView(v);
+            }
+        }
     }
 }
