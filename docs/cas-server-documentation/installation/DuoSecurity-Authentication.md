@@ -30,15 +30,15 @@ which may be connected to a separate Duo Security instance with a different conf
 This behvaior allows more sensitive applications to be connected
 to a Duo instance that has more strict and secure authentication policies.
 
-For this behavior to function, separate unique ids, of your own choosing, need to be assigned to each Duo Security
+For this behavior to function, separate unique ids of your own choosing need to be assigned to each Duo Security
 provider. Each provider instance is registered with CAS and activated in the authentication
 flows as necessary. The provider id need not be defined if there is only a single Duo instance available.
 
 ## User Account Status
 
 If users are unregistered with Duo Security or allowed through via a direct bypass,
-CASA will query Duo Security for the user account apriori to learn
-whether user is registered or configured for direct bypass. If the account status matches either of those conditions or the
+CAS will query Duo Security for the user account apriori to learn
+whether user is registered or configured for direct bypass. If the account status matches either of those conditions or if the
 user account is not registered yet the new-user enrollment policy allows folks to skip registration, CAS will bypass
 Duo Security altogether, shall not challenge the user
 and will also **NOT** report back a multifactor-enabled authentication context back to the application.
