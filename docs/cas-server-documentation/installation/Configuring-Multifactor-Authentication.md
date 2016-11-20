@@ -158,6 +158,10 @@ A few simple examples follow:
 - Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
+Note that in addition to the above options, some multifactor authentication providers
+may also skip and bypass the authentication request in the event that the authentiated principal doesn't quite "qualify"
+for multifactor authentication. See the documentation for each specific provider to learn more. 
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
