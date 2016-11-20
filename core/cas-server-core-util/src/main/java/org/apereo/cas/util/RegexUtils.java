@@ -1,8 +1,5 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -15,7 +12,6 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public final class RegexUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
 
     private RegexUtils() {}
 
@@ -26,16 +22,7 @@ public final class RegexUtils {
      * @return whether this is a valid regex or not
      */
     public static boolean isValidRegex(final String pattern) {
-        try {
-            if (pattern == null) {
-                throw new IllegalArgumentException("Pattern cannot be null");
-            }
-            LOGGER.debug("Pattern {} is a valid regex.", Pattern.compile(pattern).pattern());
-            return true;
-        } catch (final Exception exception) {
-            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
-        }
-        return false;
+        return pattern != null;
     }
 
     /**
@@ -49,7 +36,6 @@ public final class RegexUtils {
         if (RegexUtils.isValidRegex(pattern)) {
             return Optional.of(Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
         }
-
         return Optional.empty();
     }
     
