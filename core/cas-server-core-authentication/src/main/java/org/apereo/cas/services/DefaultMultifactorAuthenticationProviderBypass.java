@@ -129,7 +129,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     protected boolean locateMatchingRegisteredServiceForBypass(final Authentication authentication,
                                                                final RegisteredService registeredService) {
         if (registeredService != null && registeredService.getMultifactorPolicy() != null) {
-            return registeredService.getMultifactorPolicy().isBypass();
+            return registeredService.getMultifactorPolicy().isBypassEnabled();
         }
         return false;
     }
