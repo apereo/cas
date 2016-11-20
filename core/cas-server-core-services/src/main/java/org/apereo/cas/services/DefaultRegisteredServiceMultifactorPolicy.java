@@ -21,6 +21,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
     private FailureModes failureMode = FailureModes.CLOSED;
     private String principalAttributeNameTrigger;
     private String principalAttributeValueToMatch;
+    private boolean bypass;
 
     /**
      * Instantiates a new Default registered service authentication policy.
@@ -64,6 +65,10 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
         this.principalAttributeValueToMatch = principalAttributeValueToMatch;
     }
 
+    public void setBypass(final boolean bypass) {
+        this.bypass = bypass;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -81,7 +86,13 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
                 .append(this.failureMode, rhs.failureMode)
                 .append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger)
                 .append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch)
+                .append(this.bypass, rhs.bypass)
                 .isEquals();
+    }
+
+    @Override
+    public boolean isBypass() {
+        return this.bypass;
     }
 
     @Override
@@ -91,6 +102,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
                 .append(this.failureMode)
                 .append(this.principalAttributeNameTrigger)
                 .append(this.principalAttributeValueToMatch)
+                .append(this.bypass)
                 .toHashCode();
     }
 
@@ -101,6 +113,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
                 .append("failureMode", this.failureMode)
                 .append("principalAttributeNameTrigger", this.principalAttributeNameTrigger)
                 .append("principalAttributeValueToMatch", this.principalAttributeValueToMatch)
+                .append("bypass", this.bypass)
                 .toString();
     }
 }
