@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
  */
 public final class RegexUtils {
 
+    public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
-    private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
     private RegexUtils() {}
 
@@ -30,7 +31,7 @@ public final class RegexUtils {
     public static boolean isValidRegex(final String pattern) {
         try {
             if (pattern != null) {
-                Pattern.compile(pattern).pattern();
+                Pattern.compile(pattern);
                 return true;
             }
         } catch (final PatternSyntaxException exception) {
@@ -47,10 +48,7 @@ public final class RegexUtils {
      * @return the pattern or empty.
      */
     public static Pattern createPattern(final String pattern) {
-        if (RegexUtils.isValidRegex(pattern)) {
-            return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-        }
-        return MATCH_NOTHING_PATTERN;
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
     
     /**
@@ -62,9 +60,17 @@ public final class RegexUtils {
      */
     public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
         final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
-        if (isValidRegex(pattern)) {
-            return Pattern.compile(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+        return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+    }
+
+    private static Pattern createPattern(final String pattern, final int flags) {
+        if (pattern == null) {
+            return MATCH_NOTHING_PATTERN;
         }
-        return null;
+        try {
+            return Pattern.compile(pattern, flags);
+        } catch (final PatternSyntaxException exception) {
+            return MATCH_NOTHING_PATTERN;
+        }
     }
 }

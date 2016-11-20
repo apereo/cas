@@ -8,8 +8,15 @@ public class RegexUtilsTest {
 
     @Test
     public void verifyNotValidRegex() throws Exception {
-        String notValidRegex = "$$$$";
+        String notValidRegex = "***";
 
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
+    }
+
+    @Test
+    public void verifyNullRegex() throws Exception {
+        String nullRegex = null;
+
+        assertFalse(RegexUtils.isValidRegex(nullRegex));
     }
 }
