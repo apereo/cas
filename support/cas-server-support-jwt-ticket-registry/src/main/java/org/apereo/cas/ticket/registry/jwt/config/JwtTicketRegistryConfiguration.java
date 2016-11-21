@@ -1,21 +1,20 @@
-package org.apereo.cas.ticket.registry.config;
+package org.apereo.cas.ticket.registry.jwt.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.apereo.cas.ticket.registry.JwtProxyGrantingTicketFactory;
-import org.apereo.cas.ticket.registry.JwtProxyTicketFactory;
-import org.apereo.cas.ticket.registry.JwtServiceTicketFactory;
-import org.apereo.cas.ticket.registry.JwtTicketCipherExecutor;
-import org.apereo.cas.ticket.registry.JwtTicketGrantingTicketFactory;
-import org.apereo.cas.ticket.registry.JwtTicketRegistry;
+import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyTicketFactory;
+import org.apereo.cas.ticket.registry.jwt.factories.JwtServiceTicketFactory;
+import org.apereo.cas.ticket.registry.jwt.JwtTicketCipherExecutor;
+import org.apereo.cas.ticket.registry.jwt.factories.JwtTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.registry.jwt.JwtTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -63,7 +62,7 @@ public class JwtTicketRegistryConfiguration {
     @RefreshScope
     public TicketRegistry jwtTicketRegistry() {
         final JwtTicketRegistry r = new JwtTicketRegistry();
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(casProperties.getTicket().getRegistry().getJwt().getCrypto()));
+        r.setCipherExecutor(protocolTicketCipherExecutor());
         return r;
     }
 
@@ -104,12 +103,10 @@ public class JwtTicketRegistryConfiguration {
         return f;
     }
 
-    @RefreshScope
     @Bean
     public CipherExecutor protocolTicketCipherExecutor() {
         final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getJwt().getCrypto();
-        return new JwtTicketCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey());
+        return new JwtTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
     }
 
 }

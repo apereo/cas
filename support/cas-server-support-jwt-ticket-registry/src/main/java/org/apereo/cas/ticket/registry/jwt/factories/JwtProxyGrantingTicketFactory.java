@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.jwt.factories;
 
 import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
 
