@@ -381,8 +381,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "oauth20ValidationServiceSelectionStrategy")
-    public AuthenticationRequestServiceSelectionStrategy oauth20ValidationServiceSelectionStrategy() {
+    @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
+    public AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
         final OAuth20AuthenticationRequestServiceSelectionStrategy s = new OAuth20AuthenticationRequestServiceSelectionStrategy();
         s.setServicesManager(servicesManager);
         s.setWebApplicationServiceFactory(webApplicationServiceFactory);
@@ -422,6 +422,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             servicesManager.load();
         }
 
-        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
+        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20AuthenticationRequestServiceSelectionStrategy());
     }
 }
