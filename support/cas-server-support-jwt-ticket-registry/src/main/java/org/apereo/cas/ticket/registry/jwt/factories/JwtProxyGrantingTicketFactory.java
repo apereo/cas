@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry.jwt.factories;
 
-import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 
 /**
  * This is {@link JwtProxyGrantingTicketFactory}.

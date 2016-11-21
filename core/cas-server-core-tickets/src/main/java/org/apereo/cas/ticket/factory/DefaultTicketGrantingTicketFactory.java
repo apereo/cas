@@ -1,7 +1,14 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
-import org.apereo.cas.ticket.registry.jwt.serializers.BaseJwtTicketSerializers;
+import org.apereo.cas.ticket.BaseTicketSerializers;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
             final String type = claims.getStringClaim(JwtTicketClaims.TYPE);
 
             final String ticketContent = claims.getStringClaim(JwtTicketClaims.CONTENT_BODY);
-            final Ticket ticket = BaseJwtTicketSerializers.deserializeTicket(ticketContent, type);
+            final Ticket ticket = BaseTicketSerializers.deserializeTicket(ticketContent, type);
 
             logger.debug("Recreated ticket instance {}. Validating...", ticket.getId());
             validateTicketBasedOnClaims(ticket, claims);
