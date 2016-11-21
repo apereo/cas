@@ -35,7 +35,8 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
-    private CipherExecutor<String, String> cipherExecutor;
+    /** The ticket cipher. */
+    protected CipherExecutor<String, String> cipherExecutor;
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
