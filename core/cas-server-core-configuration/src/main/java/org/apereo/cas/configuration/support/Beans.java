@@ -447,7 +447,8 @@ public final class Beans {
     /**
      * New ticket registry cipher executor cipher executor.
      *
-     * @param registry the registry
+     * @param registry         the registry
+     * @param forceIfBlankKeys the force if blank keys
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
@@ -461,7 +462,7 @@ public final class Beans {
                     registry.getSigning().getKeySize(),
                     registry.getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
+        LOGGER.debug("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
