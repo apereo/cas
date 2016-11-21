@@ -5,10 +5,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import net.minidev.json.JSONObject;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.jwt.serializers.BaseJwtTicketSerializers;
+import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.apereo.cas.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class JwtTicketGrantingTicketFactory extends DefaultTicketGrantingTicketF
                             .audience(casProperties.getServer().getPrefix())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(tgt.getId())
-                            .claim(JwtTicketClaims.CONTENT_BODY, BaseJwtTicketSerializers.serializeTicket(tgt))
+                            .claim(JwtTicketClaims.CONTENT_BODY, BaseTicketSerializers.serializeTicket(tgt))
                             .claim(JwtTicketClaims.TYPE, TicketGrantingTicket.class.getName())
                             .issueTime(DateTimeUtils.dateOf(authentication.getAuthenticationDate()))
                             .subject(authentication.getPrincipal().getId());
