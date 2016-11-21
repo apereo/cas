@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public class DefaultPrincipalFactory implements PrincipalFactory {
 
     @Override
     public Principal createPrincipal(final String id) {
-        return new SimplePrincipal(id, Collections.EMPTY_MAP);
+        return new SimplePrincipal(id, new HashMap<>());
     }
 
     @Override

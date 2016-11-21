@@ -32,11 +32,11 @@ public class JwtProxyTicketFactory extends DefaultProxyTicketFactory {
             final ProxyTicket pt = super.produceTicket(proxyGrantingTicket, service, ticketId);
             final JWTClaimsSet.Builder claims =
                     new JWTClaimsSet.Builder()
-                            .audience(casProperties.getServer().getPrefix())
+                            .audience(service.getId())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(pt.getId())
                             .claim(JwtTicketClaims.CONTENT_BODY, BaseTicketSerializers.serializeTicket(pt))
-                            .claim(JwtTicketClaims.TYPE, ProxyGrantingTicket.class.getName())
+                            .claim(JwtTicketClaims.TYPE, ProxyTicket.class.getName())
                             .issueTime(DateTimeUtils.dateOf(proxyGrantingTicket.getCreationTime()))
                             .subject(proxyGrantingTicket.getAuthentication().getPrincipal().getId());
 
