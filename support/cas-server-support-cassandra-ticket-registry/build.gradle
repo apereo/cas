@@ -13,8 +13,5 @@ dependencies {
     compile libraries.log4j
     compile libraries.jackson
 
-    testCompile(
-            'junit:junit:4.12',
-            'org.cassandraunit:cassandra-unit:3.0.0.1'
-    )
+    testCompile('org.cassandraunit:cassandra-unit:3.0.0.1')
 }
