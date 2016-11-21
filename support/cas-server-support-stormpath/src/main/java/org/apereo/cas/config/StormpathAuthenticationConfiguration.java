@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.stormpath.StormpathProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +51,13 @@ public class StormpathAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler stormpathAuthenticationHandler() {
+        final StormpathProperties stormpath = casProperties.getAuthn().getStormpath();
+
         final StormpathAuthenticationHandler handler =
-                new StormpathAuthenticationHandler(
-                        casProperties.getAuthn().getStormpath().getApiKey(),
-                        casProperties.getAuthn().getStormpath().getApplicationId(),
-                        casProperties.getAuthn().getStormpath().getSecretkey());
+                new StormpathAuthenticationHandler(stormpath.getApiKey(), stormpath.getApplicationId(), stormpath.getSecretkey());
 
-        handler.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getStormpath().getPasswordEncoder()));
-        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getStormpath().getPrincipalTransformation()));
-
+        handler.setPasswordEncoder(Beans.newPasswordEncoder(stormpath.getPasswordEncoder()));
+        handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(stormpath.getPrincipalTransformation()));
         handler.setPrincipalFactory(stormpathPrincipalFactory());
         handler.setServicesManager(servicesManager);
         return handler;
@@ -66,11 +65,10 @@ public class StormpathAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getApiKey())
-            && StringUtils.isNotBlank(casProperties.getAuthn().getStormpath().getSecretkey())) {
-            this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(),
-                    personDirectoryPrincipalResolver);
+        final StormpathProperties stormpath = casProperties.getAuthn().getStormpath();
+        if (StringUtils.isNotBlank(stormpath.getApiKey())
+                && StringUtils.isNotBlank(stormpath.getSecretkey())) {
+            this.authenticationHandlersResolvers.put(stormpathAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
     }
 }
