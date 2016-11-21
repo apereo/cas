@@ -5,11 +5,16 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 /**
+ * This is {@link TicketSerializer}
+ *
  * Abstraction layer for ticket serialization methods
  *
  * Currently used by {@link org.apereo.cas.dao.CassandraDao}
  * so {@param T} should be something that can be written
  * to Cassandra like {@link String}
+ *
+ * @author David Rodriguez
+ * @since 5.1.0
  */
 public interface TicketSerializer<T> {
 
