@@ -12,7 +12,7 @@ import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -101,7 +101,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao")
                                            final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
+        final DefaultServicesManager impl = new DefaultServicesManager();
         impl.setServiceRegistryDao(serviceRegistryDao);
         impl.setServiceFactory(this.webApplicationServiceFactory());
         return impl;
