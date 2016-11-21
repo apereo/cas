@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,7 +74,7 @@ public class HazelcastProperties {
         private int port = 5701;
         private boolean multicastEnabled;
         private boolean tcpipEnabled = true;
-        private List<String> members = Lists.newArrayList("localhost");
+        private List<String> members = Collections.singletonList("localhost");
         private int maxHeapSizePercentage = 85;
         private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
         private String evictionPolicy = "LRU";
