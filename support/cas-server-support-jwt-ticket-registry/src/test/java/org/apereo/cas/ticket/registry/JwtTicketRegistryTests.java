@@ -8,9 +8,12 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-import org.apereo.cas.ticket.registry.config.JwtTicketRegistryConfiguration;
+import org.apereo.cas.ticket.registry.jwt.config.JwtTicketRegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,14 @@ public class JwtTicketRegistryTests {
     @Qualifier("defaultTicketGrantingTicketFactory")
     private TicketGrantingTicketFactory defaultTicketGrantingTicketFactory;
 
+    @Autowired
+    @Qualifier("defaultServiceTicketFactory")
+    private ServiceTicketFactory defaultServiceTicketFactory;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
     @Test
     public void verifyTicketGrantingTicketAsJwt() {
         final Map attrs = CoreAuthenticationTestUtils.getAttributeRepository()
@@ -57,15 +68,12 @@ public class JwtTicketRegistryTests {
                         CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attrs), attrs);
         final TicketGrantingTicket ticket = defaultTicketGrantingTicketFactory.create(authn);
         assertNotNull(ticket);
-    }
+        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
 
-    1. complete other ticket factories into JWT
-    2. write tests for all
-    3. complete ticket registry
-    4. how do we handle expiration policy? Must go inside JWT. How to calculate date?
-    5. Smoke test at runtime?
-    6. Docs?
-    7. Logout? Admin UIs, etc? How is the registry affected?
+        final ServiceTicket st = defaultServiceTicketFactory.create(ticket, RegisteredServiceTestUtils.getService(), true);
+        assertNotNull(st);
+        assertNotNull(ticketRegistry.getTicket(st.getId()));
+    }
 
 
 }
