@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.jwt.serializers;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * This is {@link BaseJwtTicketSerializers}.
@@ -18,6 +20,7 @@ import java.io.StringWriter;
  * @since 5.1.0
  */
 public abstract class BaseJwtTicketSerializers {
+    private static final Map<String, Class> TICKET_TYPE_CACHE = Maps.newConcurrentMap();
 
     public static StringSerializer<TicketGrantingTicket> getTicketGrantingTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>() {
@@ -37,6 +40,12 @@ public abstract class BaseJwtTicketSerializers {
         };
     }
 
+    /**
+     * Serialize ticket.
+     *
+     * @param ticket the ticket
+     * @return the string
+     */
     public static String serializeTicket(final Ticket ticket) {
         final StringWriter writer = new StringWriter();
         if (ticket instanceof TicketGrantingTicket) {
@@ -48,18 +57,40 @@ public abstract class BaseJwtTicketSerializers {
         return writer.toString();
     }
 
+    /**
+     * Deserialize ticket t.
+     *
+     * @param <T>      the type parameter
+     * @param ticketId the ticket id
+     * @param type     the type
+     * @return the t
+     */
     public static <T extends Ticket> T deserializeTicket(final String ticketId, final String type) {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
         }
         try {
-            final Class<T> clazz = (Class<T>) Class.forName(type);
+            final Class<T> clazz;
+            if (TICKET_TYPE_CACHE.containsKey(type)) {
+                clazz = TICKET_TYPE_CACHE.get(type);
+            } else {
+                clazz = (Class<T>) Class.forName(type);
+                TICKET_TYPE_CACHE.put(type, clazz);
+            }
             return deserializeTicket(ticketId, clazz);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
+    /**
+     * Deserialize ticket.
+     *
+     * @param <T>      the type parameter
+     * @param ticketId the ticket id
+     * @param clazz    the clazz
+     * @return the t
+     */
     public static <T extends Ticket> T deserializeTicket(final String ticketId, final Class<T> clazz) {
         Ticket ticket = null;
         if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
