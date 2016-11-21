@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -5704993954986738308L;
@@ -31,6 +33,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
+    @JsonProperty
     private long timeToKillInSeconds;
 
     @JsonProperty
@@ -124,9 +127,13 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Proxy ticket expiration policy.
      */
+    @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
     public static class ProxyTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
+
+        private ProxyTicketExpirationPolicy() {
+        }
 
         /**
          * Instantiates a new proxy ticket expiration policy.
@@ -134,8 +141,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param numberOfUses        the number of uses
          * @param timeToKillInSeconds the time to kill in seconds
          */
-        public ProxyTicketExpirationPolicy(final int numberOfUses,
-                                           final long timeToKillInSeconds) {
+        @JsonCreator
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
+                                           @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -143,9 +151,13 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     /**
      * The Service ticket expiration policy.
      */
+    @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
     public static class ServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
 
         private static final long serialVersionUID = -5814201080268311070L;
+
+        private ServiceTicketExpirationPolicy() {
+        }
 
         /**
          * Instantiates a new Service ticket expiration policy.
@@ -153,8 +165,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param numberOfUses        the number of uses
          * @param timeToKillInSeconds the time to kill in seconds
          */
-        public ServiceTicketExpirationPolicy(final int numberOfUses,
-                                             final long timeToKillInSeconds) {
+        @JsonCreator
+        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
+                                             @JsonProperty("timeToKillInSeconds")final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
