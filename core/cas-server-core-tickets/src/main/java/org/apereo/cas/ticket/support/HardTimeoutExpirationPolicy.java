@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
@@ -18,6 +19,7 @@ import java.time.temporal.ChronoUnit;
  * @author Andrew Feller
  * @since 3.1.2
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

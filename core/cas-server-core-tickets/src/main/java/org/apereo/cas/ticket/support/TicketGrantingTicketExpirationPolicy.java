@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
