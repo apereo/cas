@@ -48,6 +48,14 @@ public interface StringSerializer<T> extends Serializable {
     T from(File file);
 
     /**
+     * Create the object type from the given writer.
+     *
+     * @param writer the writer instance
+     * @return the object instance constructed from
+     */
+    T from(Writer writer);
+
+    /**
      * Serialize the given object to its  equivalent to the output stream.
      *
      * @param out    the output stream

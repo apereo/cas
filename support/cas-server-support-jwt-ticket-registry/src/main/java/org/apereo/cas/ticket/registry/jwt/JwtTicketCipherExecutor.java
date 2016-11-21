@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry;
+package org.apereo.cas.ticket.registry.jwt;
 
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 

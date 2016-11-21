@@ -33,7 +33,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      */
     protected ExpirationPolicy serviceTicketExpirationPolicy;
 
-    private CipherExecutor<String, String> cipherExecutor;
+    /** Cipher executor. */
+    protected CipherExecutor<String, String> cipherExecutor;
 
     private boolean trackMostRecentSession = true;
 
@@ -48,7 +49,12 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
                                        final Service service,
                                        final boolean credentialProvided) {
-        final String ticketId = produceTicketIdentifier(service);
+        String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to encode service ticket {}", ticketId);
+            ticketId = this.cipherExecutor.encode(ticketId);
+            logger.debug("Encoded service ticket id {}", ticketId);
+        }
         return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId);
     }
 
@@ -76,10 +82,13 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     /**
      * Produce ticket identifier.
      *
-     * @param service the service
-     * @return the ticket id
+     * @param service              the service
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param credentialProvided   whether credentials where directly provided
+     * @return the tI don't knowet id
      */
-    protected String produceTicketIdentifier(final Service service) {
+    protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
+                                             final boolean credentialProvided) {
         final String uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
@@ -92,13 +101,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     uniqueTicketIdGenKey);
         }
 
-        String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
-        if (this.cipherExecutor != null) {
-            logger.debug("Attempting to encode service ticket {}", ticketId);
-            ticketId = this.cipherExecutor.encode(ticketId);
-            logger.debug("Encoded service ticket id {}", ticketId);
-        }
-        return ticketId;
+        return serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
     }
 
     @Override
