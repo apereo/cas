@@ -72,7 +72,7 @@ public class JwtTicketRegistryTests {
 
 
     @Test
-    public void verifyTicketGrantingTicketAsJwt() {
+    public void verifyJwtTicketFactories() {
         final Map attrs = CoreAuthenticationTestUtils.getAttributeRepository()
                 .getPerson(CoreAuthenticationTestUtils.CONST_USERNAME)
                 .getAttributes();

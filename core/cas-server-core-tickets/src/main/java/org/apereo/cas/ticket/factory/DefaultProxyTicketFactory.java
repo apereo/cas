@@ -42,7 +42,8 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     protected ExpirationPolicy proxyTicketExpirationPolicy;
 
-    private CipherExecutor<String, String> cipherExecutor;
+    /** The ticket cipher. */
+    protected CipherExecutor<String, String> cipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
