@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -108,7 +109,7 @@ public class SamlServiceProviderProperties {
 
     public static class Box extends AbstractSamlSPProperties {
         public Box() {
-            setAttributes(Lists.newArrayList("email", "firstName", "lastName"));
+            setAttributes(Arrays.asList("email", "firstName", "lastName"));
         }
     }
 
@@ -123,13 +124,13 @@ public class SamlServiceProviderProperties {
 
     public static class Salesforce extends AbstractSamlSPProperties {
         public Salesforce() {
-            setAttributes(Lists.newArrayList("mail", "eduPersonPrincipalName"));
+            setAttributes(Arrays.asList("mail", "eduPersonPrincipalName"));
         }
     }
 
     public static class ServiceNow extends AbstractSamlSPProperties {
         public ServiceNow() {
-            setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
+            setAttributes(Collections.singletonList("eduPersonPrincipalName"));
         }
     }
 
@@ -142,19 +143,19 @@ public class SamlServiceProviderProperties {
     public static class Office365 extends AbstractSamlSPProperties {
         public Office365() {
             setNameIdAttribute("scopedImmutableID");
-            setAttributes(Lists.newArrayList("IDPEmail,ImmutableID"));
+            setAttributes(Collections.singletonList("IDPEmail,ImmutableID"));
         }
     }
     public static class Webex extends AbstractSamlSPProperties {
         public Webex() {
             setNameIdAttribute("email");
-            setAttributes(Lists.newArrayList("firstName,lastName"));
+            setAttributes(Collections.singletonList("firstName,lastName"));
         }
     }
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
             setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
-            setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
+            setAttributes(Collections.singletonList("eduPersonPrincipalName"));
         }
     }
 }

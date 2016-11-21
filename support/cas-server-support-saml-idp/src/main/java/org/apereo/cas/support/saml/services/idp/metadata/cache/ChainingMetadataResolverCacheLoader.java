@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
-import com.google.common.collect.Lists;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -47,9 +46,12 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingMetadataResolverCacheLoader} that uses Guava's cache loading strategy
@@ -127,12 +129,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param metadataResolvers the metadata resolvers
      * @throws Exception the exception
      */
-    protected void resolveMetadataDynamically(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
-            throws Exception {
+    protected void resolveMetadataDynamically(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers) throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
 
-        final FunctionDrivenDynamicHTTPMetadataResolver resolver =
-                new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
         resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES));
         resolver.setRequireValidMetadata(requireValidMetadata);
 
@@ -170,8 +170,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param metadataResolvers the metadata resolvers
      * @throws IOException the io exception
      */
-    protected void resolveMetadataFromResource(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
-            throws IOException {
+    protected void resolveMetadataFromResource(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers) throws IOException {
         final String metadataLocation = service.getMetadataLocation();
         logger.info("Loading SAML metadata from [{}]", metadataLocation);
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
@@ -205,8 +204,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param service          the service
      * @throws Exception the exception
      */
-    protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
-                                               final SamlRegisteredService service) throws Exception {
+    protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider, final SamlRegisteredService service) throws Exception {
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(this.failFastInitialization);
         metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
@@ -226,8 +224,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param metadataProvider the metadata provider
      * @throws Exception the exception
      */
-    protected void buildMetadataFilters(final SamlRegisteredService service, final AbstractMetadataResolver metadataProvider) throws
-            Exception {
+    protected void buildMetadataFilters(final SamlRegisteredService service, final AbstractMetadataResolver metadataProvider) throws Exception {
         final List<MetadataFilter> metadataFilterList = new ArrayList<>();
 
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
@@ -247,18 +244,20 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
     private void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            final List<QName> roles = Lists.newArrayList();
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
-            rolesSet.stream().forEach(s -> {
-                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    logger.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    logger.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-            });
+            final List<QName> roles = rolesSet.stream().map(s -> {
+                        if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                            logger.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                            return SPSSODescriptor.DEFAULT_ELEMENT_NAME;
+                        }
+                        if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                            logger.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                            return IDPSSODescriptor.DEFAULT_ELEMENT_NAME;
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
             final EntityRoleFilter filter = new EntityRoleFilter(roles);
             filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
@@ -267,7 +266,6 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             logger.debug("Added entity role filter with roles [{}]", roles);
         }
     }
-
 
     private void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
@@ -295,23 +293,17 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param metadataFilterList the metadata filter list
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter>
-            metadataFilterList) throws Exception {
+    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
-            logger.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked",
-                    service.getMetadataLocation());
+            logger.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked", service.getMetadataLocation());
             return;
         }
 
         final AbstractResource resource = ResourceUtils.getResourceFrom(service.getMetadataSignatureLocation());
-        final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
-        keyInfoProviderList.add(new RSAKeyValueProvider());
-        keyInfoProviderList.add(new DSAKeyValueProvider());
-        keyInfoProviderList.add(new DEREncodedKeyValueProvider());
-        keyInfoProviderList.add(new InlineX509DataProvider());
+        final List<KeyInfoProvider> keyInfoProviderList = Arrays.asList(new RSAKeyValueProvider(), new DSAKeyValueProvider(),
+                new DEREncodedKeyValueProvider(), new InlineX509DataProvider());
 
-        logger.debug("Attempting to resolve credentials from [{}] for [{}]",
-                service.getMetadataSignatureLocation(), service.getMetadataLocation());
+        logger.debug("Attempting to resolve credentials from [{}] for [{}]", service.getMetadataSignatureLocation(), service.getMetadataLocation());
 
         final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
         final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
@@ -319,8 +311,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         credentialFactoryBean.afterPropertiesSet();
         final BasicCredential credential = credentialFactoryBean.getObject();
 
-        logger.info("Successfully resolved credentials from [{}] for [{}]",
-                service.getMetadataSignatureLocation(), service.getMetadataLocation());
+        logger.info("Successfully resolved credentials from [{}] for [{}]", service.getMetadataSignatureLocation(), service.getMetadataLocation());
 
         final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
         final ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
@@ -337,15 +328,13 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @param service            the service
      * @param metadataFilterList the metadata filter list
      */
-    protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter>
-            metadataFilterList) {
+    protected void buildRequiredValidUntilFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (service.getMetadataMaxValidity() > 0) {
             final RequiredValidUntilFilter requiredValidUntilFilter = new RequiredValidUntilFilter(service.getMetadataMaxValidity());
             metadataFilterList.add(requiredValidUntilFilter);
             logger.debug("Added metadata RequiredValidUntilFilter with max validity of [{}]", service.getMetadataMaxValidity());
         } else {
-            logger.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",
-                    service.getMetadataLocation());
+            logger.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked", service.getMetadataLocation());
         }
     }
 

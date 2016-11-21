@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -46,6 +45,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -151,7 +151,7 @@ public class OpenIdConfiguration {
     @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Lists.newArrayList(smartOpenIdAssociationController(), openIdValidateController()));
+        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), openIdValidateController()));
         return controller;
     }
 
@@ -194,7 +194,6 @@ public class OpenIdConfiguration {
         return manager;
     }
 
-
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
@@ -233,7 +232,6 @@ public class OpenIdConfiguration {
         return new OpenIdProviderController();
     }
 
-
     @Bean
     public Action openIdSingleSignOnAction() {
         final OpenIdSingleSignOnAction a = new OpenIdSingleSignOnAction();
@@ -259,7 +257,6 @@ public class OpenIdConfiguration {
         m.setMappings(mappings);
         return m;
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

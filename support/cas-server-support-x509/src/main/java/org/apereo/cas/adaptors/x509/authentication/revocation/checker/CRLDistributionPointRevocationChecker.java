@@ -1,8 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -24,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,13 +78,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param crlCache the crl cache
      * @param fetcher  the fetcher
      */
-    public CRLDistributionPointRevocationChecker(
-            final Cache crlCache,
-            final CRLFetcher fetcher) {
+    public CRLDistributionPointRevocationChecker(final Cache crlCache, final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;
     }
-
 
     /**
      * Throws exceptions if fetching crl fails. Defaults to false.
@@ -103,7 +99,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     @Override
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
-
         if (this.crlCache == null) {
             throw new IllegalArgumentException("CRL cache is not defined");
         }
@@ -118,7 +113,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
 
         final URI[] urls = getDistributionPoints(cert);
-        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Lists.newArrayList(urls));
+        logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         boolean stopFetching = false;
 
@@ -184,7 +179,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
     }
 
-
     /**
      * Gets the distribution points.
      *
@@ -248,6 +242,4 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             logger.warn("{} is not a valid distribution point URI.", uriString);
         }
     }
-
-
 }

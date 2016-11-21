@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -92,7 +91,7 @@ public class LdapAuthenticationConfiguration {
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                     handler.setServicesManager(servicesManager);
 
-                    final List<String> additionalAttrs = Lists.newArrayList(l.getAdditionalAttributes());
+                    final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttrs.add(l.getPrincipalAttributeId());
                     }
@@ -180,8 +179,7 @@ public class LdapAuthenticationConfiguration {
         }
         handlers.add(new PasswordPolicyAuthenticationResponseHandler());
         handlers.add(new PasswordExpirationAuthenticationResponseHandler());
-        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(
-                new AuthenticationResponseHandler[handlers.size()]));
+        authenticator.setAuthenticationResponseHandlers((AuthenticationResponseHandler[]) handlers.toArray(new AuthenticationResponseHandler[handlers.size()]));
 
         if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
                 && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
@@ -270,8 +268,7 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static PooledCompareAuthenticationHandler getPooledCompareAuthenticationHandler(final LdapAuthenticationProperties l) {
-        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(
-                Beans.newPooledConnectionFactory(l));
+        final PooledCompareAuthenticationHandler handler = new PooledCompareAuthenticationHandler(Beans.newPooledConnectionFactory(l));
         handler.setPasswordAttribute(l.getPrincipalAttributePassword());
         return handler;
     }
