@@ -7,7 +7,7 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -31,11 +31,11 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private DefaultRegisteredServiceFactory registeredServiceFactory;
 
-    private DefaultServicesManagerImpl servicesManager;
+    private DefaultServicesManager servicesManager;
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
         this.registeredServiceFactory.initializeDefaults();

@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class DefaultServicesManagerImpl implements ServicesManager {
+public class DefaultServicesManager implements ServicesManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
 
     private ServiceRegistryDao serviceRegistryDao;
 
@@ -44,7 +44,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManagerImpl() {
+    public DefaultServicesManager() {
     }
 
     /**
@@ -52,7 +52,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+    public DefaultServicesManager(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
     }
 
