@@ -5,12 +5,12 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import net.minidev.json.JSONObject;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.DefaultServiceTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.registry.jwt.serializers.BaseJwtTicketSerializers;
+import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +36,7 @@ public class JwtServiceTicketFactory extends DefaultServiceTicketFactory {
                             .audience(casProperties.getServer().getPrefix())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(st.getId())
-                            .claim(JwtTicketClaims.CONTENT_BODY, BaseJwtTicketSerializers.serializeTicket(st))
+                            .claim(JwtTicketClaims.CONTENT_BODY, BaseTicketSerializers.serializeTicket(st))
                             .claim(JwtTicketClaims.TYPE, ServiceTicket.class.getName())
                             .issueTime(new Date())
                             .subject(service.getId());

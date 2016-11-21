@@ -1,5 +1,11 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;

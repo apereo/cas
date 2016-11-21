@@ -1,8 +1,12 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
