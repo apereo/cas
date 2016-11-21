@@ -6,7 +6,7 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.logout.DefaultLogoutRequest;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -42,7 +42,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     private InMemoryServiceRegistryDaoImpl serviceRegistryDao;
 
-    private DefaultServicesManagerImpl serviceManager;
+    private DefaultServicesManager serviceManager;
 
     private MockHttpServletRequest request;
 
@@ -64,7 +64,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
-        this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
+        this.serviceManager = new DefaultServicesManager(serviceRegistryDao);
         this.serviceManager.load();
 
         this.warnCookieGenerator.setCookieName("test");
