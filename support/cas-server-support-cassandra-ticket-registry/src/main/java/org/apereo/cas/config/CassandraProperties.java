@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * This is {@link CassandraProperties}.
  *
  * @author David Rodriguez
- * @since 5.0.0
+ * @since 5.1.0
  */
 @ConfigurationProperties("cassandra")
 public class CassandraProperties {
