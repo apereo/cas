@@ -441,8 +441,19 @@ public final class Beans {
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
-        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey())) {
+        return newTicketRegistryCipherExecutor(registry, false);
+    }
+
+    /**
+     * New ticket registry cipher executor cipher executor.
+     *
+     * @param registry the registry
+     * @return the cipher executor
+     */
+    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
+        if ((StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey()))
+                || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),

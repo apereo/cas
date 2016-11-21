@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @param <T>   the type parameter
  * @since 4.2.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
 
     /**
