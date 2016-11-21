@@ -1,12 +1,8 @@
-package org.apereo.cas.ticket.registry.jwt.serializers;
+package org.apereo.cas.ticket;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
@@ -16,13 +12,13 @@ import java.io.StringWriter;
 import java.util.Map;
 
 /**
- * This is {@link BaseJwtTicketSerializers}
- * that attempts to serialize ticket objects in prep for JWTs.
+ * This is {@link BaseTicketSerializers}
+ * that attempts to serialize ticket objects.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public abstract class BaseJwtTicketSerializers {
+public abstract class BaseTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = Maps.newConcurrentMap();
 
     /**
