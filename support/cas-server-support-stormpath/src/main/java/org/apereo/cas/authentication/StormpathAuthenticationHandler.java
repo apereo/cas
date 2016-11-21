@@ -26,8 +26,6 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
 
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
-        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey,
-                this.secretkey, this.applicationId);
-        return authenticator;
+        return new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
     }
 }
