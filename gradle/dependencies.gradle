@@ -27,6 +27,7 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
+        cassandra               : dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion"),
         cassecurityfilter       : dependencies.create("org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion") {
             force = true
         },
@@ -704,7 +705,8 @@ ext.libraries = [
                 dependencies.create("org.spockframework:spock-spring:$spockVersion"),
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
-                }
+                },
+                dependencies.create("org.cassandraunit:cassandra-unit:$cassandraUnitVersion")
         ],
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
