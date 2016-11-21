@@ -80,6 +80,21 @@ Providers: CSV list
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="col-sm-4" for="bypassEnabled">
+                    <span th:text="#{services.form.label.multiauth.bypassenabled}" />
+                    <i class="fa fa-lg fa-question-circle form-tooltip-icon"
+                       data-toggle="tooltip"
+                       data-placement="top"
+                       th:title="#{services.form.tooltip.multiauth.bypassenabled}"></i>
+                </label>
+                <div class="col-sm-8">
+                    <div class="checkbox checkbox-inline">
+                        <input type="checkbox" id="bypassEnabled" ng-model="serviceFormCtrl.serviceData.multiAuth.bypassEnabled" />
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
