@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -14,7 +16,8 @@ import java.io.StringWriter;
 import java.util.Map;
 
 /**
- * This is {@link BaseJwtTicketSerializers}.
+ * This is {@link BaseJwtTicketSerializers}
+ * that attempts to serialize ticket objects in prep for JWTs.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -22,6 +25,39 @@ import java.util.Map;
 public abstract class BaseJwtTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = Maps.newConcurrentMap();
 
+    /**
+     * Gets proxy granting ticket serializer.
+     *
+     * @return the proxy granting ticket serializer
+     */
+    public static StringSerializer<ProxyGrantingTicket> getProxyGrantingTicketSerializer() {
+        return new AbstractJacksonBackedStringSerializer<ProxyGrantingTicket>() {
+            @Override
+            protected Class<ProxyGrantingTicket> getTypeToSerialize() {
+                return ProxyGrantingTicket.class;
+            }
+        };
+    }
+
+    /**
+     * Gets proxy ticket serializer.
+     *
+     * @return the proxy ticket serializer
+     */
+    public static StringSerializer<ProxyTicket> getProxyTicketSerializer() {
+        return new AbstractJacksonBackedStringSerializer<ProxyTicket>() {
+            @Override
+            protected Class<ProxyTicket> getTypeToSerialize() {
+                return ProxyTicket.class;
+            }
+        };
+    }
+
+    /**
+     * Gets ticket granting ticket serializer.
+     *
+     * @return the ticket granting ticket serializer
+     */
     public static StringSerializer<TicketGrantingTicket> getTicketGrantingTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>() {
             @Override
@@ -31,6 +67,11 @@ public abstract class BaseJwtTicketSerializers {
         };
     }
 
+    /**
+     * Gets service ticket serializer.
+     *
+     * @return the service ticket serializer
+     */
     public static StringSerializer<ServiceTicket> getServiceTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<ServiceTicket>() {
             @Override
@@ -58,12 +99,12 @@ public abstract class BaseJwtTicketSerializers {
     }
 
     /**
-     * Deserialize ticket t.
+     * Deserialize ticket.
      *
      * @param <T>      the type parameter
      * @param ticketId the ticket id
      * @param type     the type
-     * @return the t
+     * @return the ticket instance.
      */
     public static <T extends Ticket> T deserializeTicket(final String ticketId, final String type) {
         if (StringUtils.isBlank(type)) {
@@ -89,7 +130,7 @@ public abstract class BaseJwtTicketSerializers {
      * @param <T>      the type parameter
      * @param ticketId the ticket id
      * @param clazz    the clazz
-     * @return the t
+     * @return the ticket instance
      */
     public static <T extends Ticket> T deserializeTicket(final String ticketId, final Class<T> clazz) {
         Ticket ticket = null;
