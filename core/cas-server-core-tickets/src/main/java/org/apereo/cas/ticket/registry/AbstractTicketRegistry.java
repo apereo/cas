@@ -33,7 +33,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    private CipherExecutor cipherExecutor;
+    /** The cipher executor for ticket objects. */
+    protected CipherExecutor cipherExecutor;
 
     /**
      * Default constructor.

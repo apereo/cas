@@ -154,6 +154,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    public T from(final Writer writer) {
+        return from(writer.toString());
+    }
+
+    @Override
     public void to(final File out, final T object) {
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
@@ -193,6 +198,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        mapper.findAndRegisterModules();
     }
 
 
