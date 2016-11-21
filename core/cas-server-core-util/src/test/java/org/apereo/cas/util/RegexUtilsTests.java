@@ -4,18 +4,24 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class RegexUtilsTest {
+/**
+ * Tests for {@link RegexUtils}
+ *
+ * @author David Rodriguez
+ * @since 5.0.0
+ */
+public class RegexUtilsTests {
 
     @Test
     public void verifyNotValidRegex() throws Exception {
-        String notValidRegex = "***";
+        final String notValidRegex = "***";
 
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
     public void verifyNullRegex() throws Exception {
-        String nullRegex = null;
+        final String nullRegex = null;
 
         assertFalse(RegexUtils.isValidRegex(nullRegex));
     }
