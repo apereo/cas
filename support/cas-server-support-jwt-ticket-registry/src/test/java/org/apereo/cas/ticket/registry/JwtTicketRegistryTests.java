@@ -13,6 +13,10 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.jwt.config.JwtTicketRegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +62,15 @@ public class JwtTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("defaultProxyGrantingTicketFactory")
+    private ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory;
+
+    @Autowired
+    @Qualifier("defaultProxyTicketFactory")
+    private ProxyTicketFactory defaultProxyTicketFactory;
+
+
     @Test
     public void verifyTicketGrantingTicketAsJwt() {
         final Map attrs = CoreAuthenticationTestUtils.getAttributeRepository()
@@ -73,7 +86,14 @@ public class JwtTicketRegistryTests {
         final ServiceTicket st = defaultServiceTicketFactory.create(ticket, RegisteredServiceTestUtils.getService(), true);
         assertNotNull(st);
         assertNotNull(ticketRegistry.getTicket(st.getId()));
-    }
 
+        final ProxyGrantingTicket pgt = defaultProxyGrantingTicketFactory.create(st, authn);
+        assertNotNull(pgt);
+        assertNotNull(ticketRegistry.getTicket(pgt.getId()));
+
+        final ProxyTicket pt = defaultProxyTicketFactory.create(pgt, RegisteredServiceTestUtils.getService());
+        assertNotNull(pt);
+        assertNotNull(ticketRegistry.getTicket(pt.getId()));
+    }
 
 }
