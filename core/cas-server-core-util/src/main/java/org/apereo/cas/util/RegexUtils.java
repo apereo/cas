@@ -45,7 +45,8 @@ public final class RegexUtils {
      * case insensitive.
      *
      * @param pattern the pattern, may not be null.
-     * @return the pattern or empty.
+     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
      */
     public static Pattern createPattern(final String pattern) {
         return createPattern(pattern, Pattern.CASE_INSENSITIVE);
@@ -63,13 +64,22 @@ public final class RegexUtils {
         return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
     }
 
+    /**
+     * Creates the pattern with the given flags.
+     *
+     * @param pattern the pattern, may be null.
+     * @return the compiled pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * if pattern is null or invalid.
+     */
     private static Pattern createPattern(final String pattern, final int flags) {
         if (pattern == null) {
+            LOGGER.debug("Pattern {} can't be null", pattern);
             return MATCH_NOTHING_PATTERN;
         }
         try {
             return Pattern.compile(pattern, flags);
         } catch (final PatternSyntaxException exception) {
+            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
             return MATCH_NOTHING_PATTERN;
         }
     }
