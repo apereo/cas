@@ -422,6 +422,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             servicesManager.load();
         }
 
-        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20ValidationServiceSelectionStrategy());
+        this.authenticationRequestServiceSelectionStrategies.add(0, oauth20AuthenticationRequestServiceSelectionStrategy());
     }
 }
