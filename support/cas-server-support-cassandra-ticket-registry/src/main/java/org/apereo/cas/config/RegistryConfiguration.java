@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dao.CassandraDao;
+import org.apereo.cas.dao.CassandraTicketRegistryCleaner;
 import org.apereo.cas.dao.NoSqlTicketRegistry;
 import org.apereo.cas.dao.NoSqlTicketRegistryDao;
 import org.apereo.cas.logout.LogoutManager;
@@ -28,12 +29,12 @@ public class RegistryConfiguration {
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})
-    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") final LogoutManager logoutManager) {
-        return new NoSqlTicketRegistry(cassandraDao, logoutManager);
+    public TicketRegistry noSqlTicketRegistry(final NoSqlTicketRegistryDao cassandraDao) {
+        return new NoSqlTicketRegistry(cassandraDao);
     }
 
     @Bean(name = "ticketRegistryCleaner")
-    public TicketRegistryCleaner ticketRegistryCleaner(final NoSqlTicketRegistry ticketRegistry) {
-        return ticketRegistry;
+    public TicketRegistryCleaner ticketRegistryCleaner(final NoSqlTicketRegistryDao cassandraDao, @Qualifier("logoutManager") final LogoutManager logoutManager) {
+        return new CassandraTicketRegistryCleaner(cassandraDao, logoutManager);
     }
 }

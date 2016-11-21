@@ -1,6 +1,5 @@
 package org.apereo.cas.dao;
 
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.serializer.JacksonJSONSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreator;
@@ -11,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class NoSqlTicketRegistryTest {
 
@@ -26,7 +24,7 @@ public class NoSqlTicketRegistryTest {
 
     @Test
     public void shouldRetrieveATicket() throws Exception {
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao, mock(LogoutManager.class));
+        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao);
         String ticketId = "TGT-1234";
         TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
         ticketRegistry.addTicket(ticket);

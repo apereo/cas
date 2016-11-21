@@ -1,30 +1,25 @@
 package org.apereo.cas.dao;
 
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Collection;
 
-public class NoSqlTicketRegistry extends AbstractTicketRegistry implements TicketRegistryCleaner {
+public class NoSqlTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
     private static final String TICKET_GRANTING_TICKET_PREFIX = "TGT";
     private static final String SERVICE_TICKET_PREFIX = "ST";
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
-    private LogoutManager logoutManager;
 
     @Autowired
-    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao, final LogoutManager logoutManager) {
+    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao) {
         this.ticketRegistryDao = ticketRegistryDao;
-        this.logoutManager = logoutManager;
     }
 
     @Override
@@ -91,16 +86,6 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry implements Ticke
     @Override
     public Collection<Ticket> getTickets() {
         return null;
-    }
-
-    @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
-            fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
-    @Override
-    public void clean() {
-        ticketRegistryDao.getExpiredTgts().forEach(ticket -> {
-            logoutManager.performLogout(ticket);
-            ticketRegistryDao.deleteTicketGrantingTicket(ticket.getId());
-        });
     }
 
     private static boolean isSt(final String id) {
