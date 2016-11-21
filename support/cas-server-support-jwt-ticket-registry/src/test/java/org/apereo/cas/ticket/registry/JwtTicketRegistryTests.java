@@ -85,7 +85,11 @@ public class JwtTicketRegistryTests {
 
         final ServiceTicket st = defaultServiceTicketFactory.create(ticket, RegisteredServiceTestUtils.getService(), true);
         assertNotNull(st);
-        assertNotNull(ticketRegistry.getTicket(st.getId()));
+        final ServiceTicket stDecoded = ticketRegistry.getTicket(st.getId(), ServiceTicket.class);
+        assertNotNull(stDecoded);
+        assertNotNull(stDecoded.getGrantingTicket());
+        assertNotNull(stDecoded.getGrantingTicket().getRoot());
+        assertEquals(ticket, stDecoded.getGrantingTicket());
 
         final ProxyGrantingTicket pgt = defaultProxyGrantingTicketFactory.create(st, authn);
         assertNotNull(pgt);

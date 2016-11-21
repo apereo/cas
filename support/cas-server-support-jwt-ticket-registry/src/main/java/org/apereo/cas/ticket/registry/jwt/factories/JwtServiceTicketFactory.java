@@ -33,13 +33,14 @@ public class JwtServiceTicketFactory extends DefaultServiceTicketFactory {
             final ServiceTicket st = super.produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId);
             final JWTClaimsSet.Builder claims =
                     new JWTClaimsSet.Builder()
-                            .audience(casProperties.getServer().getPrefix())
+                            .audience(service.getId())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(st.getId())
                             .claim(JwtTicketClaims.CONTENT_BODY, BaseTicketSerializers.serializeTicket(st))
                             .claim(JwtTicketClaims.TYPE, ServiceTicket.class.getName())
                             .issueTime(new Date())
-                            .subject(service.getId());
+                            .subject(ticketGrantingTicket.getAuthentication().getPrincipal().getId());
+
             final JWTClaimsSet claimsSet = claims.build();
             final JSONObject object = claimsSet.toJSONObject();
             final String id = cipherExecutor.encode(object.toJSONString());
