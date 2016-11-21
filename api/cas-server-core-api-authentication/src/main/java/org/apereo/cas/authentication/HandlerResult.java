@@ -12,7 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public interface HandlerResult extends Serializable {
 
     /**
