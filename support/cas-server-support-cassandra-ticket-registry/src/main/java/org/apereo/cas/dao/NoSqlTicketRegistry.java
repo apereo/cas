@@ -4,8 +4,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Collection;
 
@@ -17,21 +15,20 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
 
-    @Autowired
-    public NoSqlTicketRegistry(@Qualifier("cassandraDao") final NoSqlTicketRegistryDao ticketRegistryDao) {
+    public NoSqlTicketRegistry(final NoSqlTicketRegistryDao ticketRegistryDao) {
         this.ticketRegistryDao = ticketRegistryDao;
     }
 
     @Override
     public void addTicket(final Ticket ticket) {
         final String ticketId = ticket.getId();
-        LOGGER.debug("INSERTING TICKET {}", ticketId);
+        LOGGER.debug("Inserting ticket {}", ticketId);
         if (isTgt(ticketId)) {
             ticketRegistryDao.addTicketGrantingTicket(ticket);
         } else if (isSt(ticketId)) {
             ticketRegistryDao.addServiceTicket(ticket);
         } else {
-            LOGGER.error("inserting unknown ticket type {}", ticket.getClass().getName());
+            LOGGER.error("Inserting unknown ticket type {}", ticket.getClass().getName());
         }
     }
 
@@ -46,26 +43,26 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String id) {
-        LOGGER.debug("DELETING TICKET {}", id);
+        LOGGER.debug("Deleting ticket {}", id);
         if (isTgt(id)) {
             return ticketRegistryDao.deleteTicketGrantingTicket(id);
         } else if (isSt(id)) {
             return ticketRegistryDao.deleteServiceTicket(id);
         } else {
-            LOGGER.error("deleting unknown ticket type {}", id);
+            LOGGER.error("Deleting unknown ticket type {}", id);
             return false;
         }
     }
 
     @Override
     public Ticket getTicket(final String id) {
-        LOGGER.debug("QUERYING TICKET {}", id);
+        LOGGER.debug("Querying ticket {}", id);
         if (isTgt(id)) {
             return ticketRegistryDao.getTicketGrantingTicket(id);
         } else if (isSt(id)) {
             return ticketRegistryDao.getServiceTicket(id);
         } else {
-            LOGGER.error("requesting unknown ticket type {}", id);
+            LOGGER.error("Requesting unknown ticket type {}", id);
             return null;
         }
     }
@@ -73,13 +70,13 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
     @Override
     public void updateTicket(final Ticket ticket) {
         final String ticketId = ticket.getId();
-        LOGGER.debug("UPDATING TICKET {}", ticketId);
+        LOGGER.debug("Updating ticket {}", ticketId);
         if (isTgt(ticketId)) {
             ticketRegistryDao.updateTicketGrantingTicket(ticket);
         } else if (isSt(ticketId)) {
             ticketRegistryDao.updateServiceTicket(ticket);
         } else {
-            LOGGER.error("inserting unknown ticket type {}", ticket.getClass().getName());
+            LOGGER.error("Updating unknown ticket type {}", ticket.getClass().getName());
         }
     }
 
