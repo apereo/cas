@@ -960,18 +960,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with `sAMAccountName`.
-- Authenticated Search - Manager bind/search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Anonymous Search - Anonymous search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
-
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
@@ -979,7 +967,39 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+retrieved from [other attribute repository sources](#authentication-attributes), if any.
+Attributes retrieved directly as part of LDAP authentication trump all other attributes.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
+
+### Active Directory
+
+Users authenticate with `sAMAccountName`.
+
+### Authenticated Search
+
+Manager bind/search type of authentication.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Anonymous Search 
+
+Anonymous search.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Direct Bind 
+
+Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. 
+
+There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
