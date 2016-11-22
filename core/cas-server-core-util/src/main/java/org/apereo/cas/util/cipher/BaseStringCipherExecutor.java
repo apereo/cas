@@ -141,6 +141,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<St
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setPayload(value);
+            jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.DIRECT);
             jwe.setEncryptionMethodHeaderParameter(this.contentEncryptionAlgorithmIdentifier);
             jwe.setKey(this.secretKeyEncryptionKey);
