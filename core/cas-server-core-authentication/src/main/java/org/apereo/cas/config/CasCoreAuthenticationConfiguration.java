@@ -160,6 +160,7 @@ public class CasCoreAuthenticationConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getAccept().getName());
         return h;
     }
 
@@ -308,6 +309,7 @@ public class CasCoreAuthenticationConfiguration {
 
         h.setPrincipalFactory(jaasPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getJaas().getName());
         return h;
     }
 

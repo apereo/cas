@@ -12,6 +12,16 @@ public class RemoteAddressAuthenticationProperties {
 
     private String ipAddressRange = StringUtils.EMPTY;
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     public String getIpAddressRange() {
         return ipAddressRange;
     }
