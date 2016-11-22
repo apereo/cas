@@ -28,6 +28,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -57,6 +59,7 @@ import java.util.Map;
 @Configuration("duoSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DuoSecurityConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DuoSecurityConfiguration.class);
 
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
@@ -119,7 +122,12 @@ public class DuoSecurityConfiguration {
         h.setProvider(duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getMfa().getDuo().getName());
+        final String name = casProperties.getAuthn().getMfa().getDuo().stream().findFirst().get().getName();
+        if (casProperties.getAuthn().getMfa().getDuo().size() > 1) {
+            LOGGER.debug("Multiple Duo Security providers are available; Authentication handler is named after {}", name);
+        }
+        h.setName(name);
+
         return h;
     }
 
