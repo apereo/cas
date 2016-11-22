@@ -1,13 +1,18 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.EchoingPrincipalResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link PersonDirectoryPrincipalResolver}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -16,7 +21,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNullPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        final Principal p = resolver.resolve(() -> null);
+        final Principal p = resolver.resolve(() -> null, CoreAuthenticationTestUtils.getPrincipal());
         assertNull(p);
 
     }
@@ -27,7 +32,7 @@ public class PersonDirectoryPrincipalResolverTests {
         resolver.setReturnNullIfNoAttributes(true);
         resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Principal p = resolver.resolve(c);
+        final Principal p = resolver.resolve(c, null);
         assertNull(p);
     }
 
@@ -36,7 +41,7 @@ public class PersonDirectoryPrincipalResolverTests {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
         resolver.setPrincipalAttributeName(CoreAuthenticationTestUtils.CONST_USERNAME);
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Principal p = resolver.resolve(c);
+        final Principal p = resolver.resolve(c, null);
         assertNotNull(p);
     }
 
@@ -46,10 +51,39 @@ public class PersonDirectoryPrincipalResolverTests {
         resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
         resolver.setPrincipalAttributeName("cn");
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        final Principal p = resolver.resolve(c);
+        final Principal p = resolver.resolve(c, null);
         assertNotNull(p);
         assertNotEquals(p.getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
         assertTrue(p.getAttributes().containsKey("memberOf"));
     }
 
+    @Test
+    public void verifyChainingResolverOverwrite() {
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
+        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
+
+        final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
+        chain.setChain(Lists.newArrayList(resolver, new EchoingPrincipalResolver()));
+        final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                CoreAuthenticationTestUtils.getPrincipal("test", ImmutableMap.of("cn", "changedCN", "attr1", "value1")));
+        assertEquals(p.getAttributes().size(),
+                CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
+        assertTrue(p.getAttributes().containsKey("attr1"));
+        assertTrue(p.getAttributes().containsKey("cn"));
+        assertTrue(CollectionUtils.convertValueToCollection(p.getAttributes().get("cn")).contains("changedCN"));
+    }
+
+    @Test
+    public void verifyChainingResolver() {
+        final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
+        resolver.setAttributeRepository(CoreAuthenticationTestUtils.getAttributeRepository());
+
+        final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
+        chain.setChain(Lists.newArrayList(resolver, new EchoingPrincipalResolver()));
+        final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+                CoreAuthenticationTestUtils.getPrincipal("test", ImmutableMap.of("attr1", "value")));
+        assertEquals(p.getAttributes().size(),
+                CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
+        assertTrue(p.getAttributes().containsKey("attr1"));
+    }
 }
