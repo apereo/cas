@@ -114,6 +114,7 @@ public class RadiusConfiguration {
 
         h.setPrincipalFactory(radiusPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getRadius().getName());
         return h;
     }
 

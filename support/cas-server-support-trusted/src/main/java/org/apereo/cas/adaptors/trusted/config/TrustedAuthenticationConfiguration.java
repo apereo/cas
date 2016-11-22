@@ -68,6 +68,7 @@ public class TrustedAuthenticationConfiguration {
                 new PrincipalBearingCredentialsAuthenticationHandler();
         h.setPrincipalFactory(trustedPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getTrusted().getName());
         return h;
     }
 
