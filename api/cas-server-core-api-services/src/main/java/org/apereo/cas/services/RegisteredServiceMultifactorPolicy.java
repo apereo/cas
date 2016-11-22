@@ -68,4 +68,11 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      */
     String getPrincipalAttributeValueToMatch();
 
+    /**
+     * Indicates whether authentication should be skipped.
+     *
+     * @return true/false
+     */
+    boolean isBypassEnabled();
+
 }
