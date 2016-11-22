@@ -126,7 +126,7 @@ public class AuthyConfiguration {
             h.setServicesManager(servicesManager);
             h.setPrincipalFactory(authyPrincipalFactory());
             h.setForceVerification(casProperties.getAuthn().getMfa().getAuthy().isForceVerification());
-
+            h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
             throw Throwables.propagate(e);

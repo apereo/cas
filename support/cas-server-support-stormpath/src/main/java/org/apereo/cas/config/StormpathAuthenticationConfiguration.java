@@ -60,6 +60,7 @@ public class StormpathAuthenticationConfiguration {
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(stormpath.getPrincipalTransformation()));
         handler.setPrincipalFactory(stormpathPrincipalFactory());
         handler.setServicesManager(servicesManager);
+        handler.setName(stormpath.getName());
         return handler;
     }
 

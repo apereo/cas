@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -8,6 +9,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
@@ -24,10 +26,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-
 import org.springframework.webflow.execution.Action;
-
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -82,24 +81,24 @@ public class WsFederationAuthenticationConfiguration {
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
         final WsFederationConfiguration config = new WsFederationConfiguration();
-
+        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
         config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType
-                .valueOf(casProperties.getAuthn().getWsfed().getAttributesType()));
-        config.setIdentityAttribute(casProperties.getAuthn().getWsfed().getIdentityAttribute());
-        config.setIdentityProviderIdentifier(casProperties.getAuthn().getWsfed().getIdentityProviderIdentifier());
-        config.setIdentityProviderUrl(casProperties.getAuthn().getWsfed().getIdentityProviderUrl());
-        config.setTolerance(casProperties.getAuthn().getWsfed().getTolerance());
-        config.setRelyingPartyIdentifier(casProperties.getAuthn().getWsfed().getRelyingPartyIdentifier());
-        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getSigningCertificateResources())
+                .valueOf(wsfed.getAttributesType()));
+        config.setIdentityAttribute(wsfed.getIdentityAttribute());
+        config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
+        config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
+        config.setTolerance(wsfed.getTolerance());
+        config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())
                 .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
 
-        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getEncryptionPrivateKey())
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey())
                 .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
 
-        org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getWsfed().getEncryptionCertificate())
+        org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate())
                 .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
 
-        config.setEncryptionPrivateKeyPassword(casProperties.getAuthn().getWsfed().getEncryptionPrivateKeyPassword());
+        config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
         config.setAttributeMutator(this.attributeMutator);
         return config;
     }
@@ -115,22 +114,24 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler adfsAuthNHandler() {
-        final WsFederationAuthenticationHandler h =
-                new WsFederationAuthenticationHandler();
+        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        final WsFederationAuthenticationHandler h = new WsFederationAuthenticationHandler();
         h.setPrincipalFactory(adfsPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(wsfed.getName());
         return h;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {
+        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
         final WsFederationCredentialsToPrincipalResolver r =
                 new WsFederationCredentialsToPrincipalResolver();
         r.setConfiguration(wsFedConfig());
         r.setAttributeRepository(attributeRepository);
-        r.setPrincipalAttributeName(casProperties.getAuthn().getWsfed().getPrincipal().getPrincipalAttribute());
-        r.setReturnNullIfNoAttributes(casProperties.getAuthn().getWsfed().getPrincipal().isReturnNull());
+        r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());
+        r.setReturnNullIfNoAttributes(wsfed.getPrincipal().isReturnNull());
         r.setPrincipalFactory(adfsPrincipalFactory());
         return r;
     }
@@ -156,11 +157,11 @@ public class WsFederationAuthenticationConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
+        final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
+        if (StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
+                && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier())) {
 
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getWsfed().getIdentityProviderUrl()) 
-           && StringUtils.isNotBlank(casProperties.getAuthn().getWsfed().getIdentityProviderIdentifier())) {
-
-            if (!casProperties.getAuthn().getWsfed().isAttributeResolverEnabled()) {
+            if (!wsfed.isAttributeResolverEnabled()) {
                 authenticationHandlersResolvers.put(adfsAuthNHandler(), null);
             } else {
                 authenticationHandlersResolvers.put(adfsAuthNHandler(), adfsPrincipalResolver());

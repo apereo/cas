@@ -134,15 +134,18 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
-        if (StringUtils.isBlank(this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+        final MultifactorAuthenticationProperties.YubiKey yubi =
+                this.casProperties.getAuthn().getMfa().getYubikey();
+
+        if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
         }
-        if (this.casProperties.getAuthn().getMfa().getYubikey().getClientId() <= 0) {
+        if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
-                this.casProperties.getAuthn().getMfa().getYubikey().getClientId(),
-                this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey());
+                yubi.getClientId(),
+                yubi.getSecretKey());
 
         if (registry != null) {
             handler.setRegistry(this.registry);
@@ -155,6 +158,7 @@ public class YubiKeyConfiguration {
             final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[]{});
             handler.getClient().setWsapiUrls(urls);
         }
+        handler.setName(yubi.getName());
         return handler;
     }
 

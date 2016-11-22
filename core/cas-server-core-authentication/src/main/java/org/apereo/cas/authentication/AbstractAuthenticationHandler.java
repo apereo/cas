@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -14,26 +15,35 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-    /** Instance of logging for subclasses. */
+    /**
+     * Instance of logging for subclasses.
+     */
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Factory to create the principal type. **/
+    /**
+     * Factory to create the principal type.
+     **/
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /** The services manager instance, as the entry point to the registry. **/
+    /**
+     * The services manager instance, as the entry point to the registry.
+     **/
     protected ServicesManager servicesManager;
 
-    /** Configurable handler name. */
+    /**
+     * Configurable handler name.
+     */
     private String name;
 
     /**
      * Instantiates a new Abstract authentication handler.
      */
-    public AbstractAuthenticationHandler() {}
+    public AbstractAuthenticationHandler() {
+    }
 
     @Override
     public String getName() {
-        return this.name != null ? this.name : getClass().getSimpleName();
+        return StringUtils.isNotBlank(this.name) ? this.name : getClass().getSimpleName();
     }
 
     /**

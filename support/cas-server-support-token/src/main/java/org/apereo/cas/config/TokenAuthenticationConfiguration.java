@@ -70,6 +70,7 @@ public class TokenAuthenticationConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getToken().getPrincipalTransformation()));
         h.setPrincipalFactory(tokenPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getToken().getName());
         return h;
     }
 

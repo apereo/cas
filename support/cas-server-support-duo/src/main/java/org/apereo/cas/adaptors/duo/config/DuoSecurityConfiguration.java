@@ -119,6 +119,7 @@ public class DuoSecurityConfiguration {
         h.setProvider(duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getMfa().getDuo().getName());
         return h;
     }
 
