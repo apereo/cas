@@ -158,6 +158,10 @@ A few simple examples follow:
 - Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
+Note that in addition to the above options, some multifactor authentication providers
+may also skip and bypass the authentication request in the event that the authentiated principal doesn't quite "qualify"
+for multifactor authentication. See the documentation for each specific provider to learn more. 
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 Note that ticket validation requests shall successfully go through if multifactor authentication is
@@ -166,22 +170,19 @@ additional attributes are supplanted to let the application know multifactor aut
 
 ### Applications
 
-MFA Bypass rules can be overriden per application via the CAS service registry. This is useful when
+MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
 MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
 whose access should bypass MFA may be defined as such in the CAS service registry:
 
 ```json
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^https://.+",
-  "name" : "sample",
-  "id" : 10000001,
-  "properties" : {
-    "@class" : "java.util.HashMap",
-    "bypassMultifactorAuthentication" : {
-      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "true" ] ]
-    }
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "bypassEnabled" : "true"
   }
 }
 ```
