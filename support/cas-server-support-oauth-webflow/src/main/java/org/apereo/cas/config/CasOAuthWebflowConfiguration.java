@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.web.flow.OAuth20LogoutAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
@@ -61,18 +60,8 @@ public class CasOAuthWebflowConfiguration {
         c.setFlowBuilderServices(this.flowBuilderServices);
         c.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
-        c.setOauth20LogoutAction(oauth20LogoutAction());
         c.setOauth20RegisteredServiceUIAction(oauth20RegisteredServiceUIAction());
         return c;
-    }
-
-    @Bean
-    public Action oauth20LogoutAction() {
-        final ApplicationLogoutController controller = new ApplicationLogoutController();
-        controller.setConfig(oauthSecConfig);
-        final OAuth20LogoutAction action = new OAuth20LogoutAction();
-        action.setApplicationLogoutController(controller);
-        return action;
     }
 
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
