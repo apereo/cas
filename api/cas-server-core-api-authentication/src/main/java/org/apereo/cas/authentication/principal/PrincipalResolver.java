@@ -22,17 +22,16 @@ public interface PrincipalResolver {
      * Resolves a principal from the given credential using an arbitrary strategy.
      *
      * @param credential Source credential.
-     *
+     * @param principal  A principal that may have been produced during the authentication process. May be null.
      * @return Resolved principal, or null if the principal could not be resolved.
      */
-    Principal resolve(Credential credential);
+    Principal resolve(Credential credential, Principal principal);
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD
-     * be called prior to {@link #resolve(Credential)}.
+     * be called prior to {@link #resolve(Credential, Principal)}.
      *
      * @param credential The credential to check for support.
-     *
      * @return True if credential is supported, false otherwise.
      */
     boolean supports(Credential credential);

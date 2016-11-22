@@ -76,7 +76,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential) {
+    public Principal resolve(final Credential credential, final Principal currentPrincipal) {
         logger.debug("Attempting to resolve a principal...");
 
         String principalId = extractPrincipalId(credential);
@@ -105,7 +105,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
         logger.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-
 
         final Pair<String, Map<String, Object>> pair = convertPersonAttributesToPrincipal(principalId, attributes);
         return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
