@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class AcceptAuthenticationProperties {
 
     private String users = StringUtils.EMPTY;
+    private String name;
 
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
@@ -44,5 +45,13 @@ public class AcceptAuthenticationProperties {
 
     public void setUsers(final String users) {
         this.users = users;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }

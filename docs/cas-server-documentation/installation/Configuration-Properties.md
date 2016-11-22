@@ -1165,6 +1165,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.realm=CAS
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
+# cas.authn.jaas.name=
 
 # cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jaas.passwordEncoder.characterEncoding=
@@ -1209,6 +1210,7 @@ prior to production rollouts.</p></div>
 
 ```properties
 # cas.authn.accept.users=
+# cas.authn.accept.name=
 
 # cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.accept.passwordEncoder.characterEncoding=
