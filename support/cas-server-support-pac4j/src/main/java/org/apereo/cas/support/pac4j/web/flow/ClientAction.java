@@ -1,6 +1,5 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -36,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -143,8 +143,7 @@ public class ClientAction extends AbstractAction {
             // credentials not null -> try to authenticate
             if (credentials != null) {
                 final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service,
-                                new ClientCredential(credentials));
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, new ClientCredential(credentials));
 
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -229,8 +228,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
-                                                final String name) {
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -242,8 +240,7 @@ public class ClientAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
-                                             final String name) {
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -289,12 +286,11 @@ public class ClientAction extends AbstractAction {
      * @param status  the status
      * @return the optional model and view, if request is an error.
      */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
-                                                                    final int status) {
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         final Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
                 || params.containsKey("error_message")) {
-            final Map<String, Object> model = Maps.newHashMap();
+            final Map<String, Object> model = new HashMap<>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
             } else {
