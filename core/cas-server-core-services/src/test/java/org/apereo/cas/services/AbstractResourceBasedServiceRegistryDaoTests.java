@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -14,11 +12,14 @@ import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -70,8 +71,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        final DefaultRegisteredServiceMultifactorPolicy policy =
-                new DefaultRegisteredServiceMultifactorPolicy();
+        final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailureMode(RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM);
 
         final Set<String> set = new HashSet<>();
@@ -194,7 +194,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setServiceId("testId");
 
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("1", "2", "3"));
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
         r.setAttributeReleasePolicy(policy);
 
         final RegisteredService r2 = this.dao.save(r);
@@ -215,10 +215,10 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
-        r.setRequiredHandlers(new HashSet<>(Lists.newArrayList("h1", "h2")));
+        r.setRequiredHandlers(new HashSet<>(Arrays.asList("h1", "h2")));
 
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("1", "2", "3"));
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
         r.setAttributeReleasePolicy(policy);
         r.getAttributeReleasePolicy().setAttributeFilter(new RegisteredServiceRegexAttributeFilter("\\w+"));
 
@@ -255,16 +255,16 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     
     @Test
     public void verifyServiceRemovals() throws Exception{
-        final List<RegisteredService> list = new ArrayList<>(5);
-        IntStream.range(1, 5).forEach(i -> {
-            final RegexRegisteredService r = new RegexRegisteredService();
-            r.setServiceId("^https://.+");
-            r.setName("testServiceType");
-            r.setTheme("testtheme");
-            r.setEvaluationOrder(1000);
-            r.setId(i * 100);
-            list.add(this.dao.save(r));
-        });
+        final List<RegisteredService> list = IntStream.range(1, 5).mapToObj(i -> {
+                    final RegexRegisteredService r = new RegexRegisteredService();
+                    r.setServiceId("^https://.+");
+                    r.setName("testServiceType");
+                    r.setTheme("testtheme");
+                    r.setEvaluationOrder(1000);
+                    r.setId(i * 100);
+                    return this.dao.save(r);
+                })
+                .collect(Collectors.toList());
 
         list.forEach(r2 -> {
             try {
@@ -285,12 +285,11 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("checkForAuthorizationStrategy");
         r.setId(42);
 
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy(false, false);
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(false, false);
 
         final Map<String, Set<String>> attrs = new HashMap<>();
-        attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
-        attrs.put("memberOf", Sets.newHashSet(Lists.newArrayList("v4, v5, v6")));
+        attrs.put("cn", new HashSet<>(Collections.singletonList("v1, v2, v3")));
+        attrs.put("memberOf", new HashSet<>(Collections.singletonList("v4, v5, v6")));
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 
@@ -306,8 +305,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("verifyAAccessStrategyWithStarEndDate");
         r.setId(62);
 
-        final TimeBasedRegisteredServiceAccessStrategy authz =
-                new TimeBasedRegisteredServiceAccessStrategy(true, false);
+        final TimeBasedRegisteredServiceAccessStrategy authz = new TimeBasedRegisteredServiceAccessStrategy(true, false);
 
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
@@ -341,8 +339,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
 
     @Test
     public void serializePublicKeyForServiceAndVerify() throws Exception {
-        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
-                "classpath:RSA1024Public.key", "RSA");
+        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA");
 
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");

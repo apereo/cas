@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.config;
 
-import com.google.common.collect.Sets;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -42,6 +41,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link X509AuthenticationConfiguration}.
@@ -128,11 +128,9 @@ public class X509AuthenticationConfiguration {
         c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlResourceExpiredPolicy()));
         c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()));
 
-        final Set<Resource> x509CrlResources = Sets.newLinkedHashSet();
-        x509.getCrlResources()
-                .stream()
+        final Set<Resource> x509CrlResources = x509.getCrlResources().stream()
                 .map(s -> this.resourceLoader.getResource(s))
-                .forEach(r -> x509CrlResources.add(r));
+                .collect(Collectors.toSet());
         c.setResources(x509CrlResources);
 
         c.setFetcher(getCrlFetcher());
@@ -152,7 +150,6 @@ public class X509AuthenticationConfiguration {
         }
     }
 
-    
     private CRLFetcher getCrlFetcher() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
@@ -262,8 +259,7 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
-        final X509SerialNumberAndIssuerDNPrincipalResolver r =
-                new X509SerialNumberAndIssuerDNPrincipalResolver();
+        final X509SerialNumberAndIssuerDNPrincipalResolver r = new X509SerialNumberAndIssuerDNPrincipalResolver();
 
         r.setSerialNumberPrefix(casProperties.getAuthn().getX509().getSerialNumberPrefix());
         r.setValueDelimiter(casProperties.getAuthn().getX509().getValueDelimiter());

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -12,11 +11,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
@@ -33,6 +31,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -81,18 +81,13 @@ public class InitialFlowSetupActionCookieTests {
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(
-                new WebApplicationServiceFactory()
-        )};
-        this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
+        this.action.setArgumentExtractors(Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory())));
         this.action.setCasProperties(casProperties);
         this.servicesManager = mock(ServicesManager.class);
-        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                RegisteredServiceTestUtils.getRegisteredService("test"));
+        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action.setServicesManager(this.servicesManager);
 
         this.action.afterPropertiesSet();
-
     }
 
     @Test

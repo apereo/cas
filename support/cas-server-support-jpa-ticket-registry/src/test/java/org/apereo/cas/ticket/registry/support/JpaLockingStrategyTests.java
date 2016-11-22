@@ -1,11 +1,9 @@
 package org.apereo.cas.ticket.registry.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -25,7 +23,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -64,11 +62,6 @@ public class JpaLockingStrategyTests {
     @Autowired
     @Qualifier("dataSourceTicket")
     private DataSource dataSource;
-
-    @Before
-    public void setUp() {
-
-    }
 
     /**
      * Test basic acquire/release semantics.
@@ -143,7 +136,7 @@ public class JpaLockingStrategyTests {
     public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(getConcurrentLocks("concurrent-new")));
+            testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
@@ -162,7 +155,7 @@ public class JpaLockingStrategyTests {
         locks[0].release();
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(locks));
+            testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
@@ -193,18 +186,15 @@ public class JpaLockingStrategyTests {
 
     private String getOwner(final String appId) {
         final JdbcTemplate simpleJdbcTemplate = new JdbcTemplate(dataSource);
-        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
-                "SELECT unique_id FROM locks WHERE application_id=?", appId);
+        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList("SELECT unique_id FROM locks WHERE application_id=?", appId);
         if (results.isEmpty()) {
             return null;
         }
         return (String) results.get(0).get("unique_id");
     }
 
-    private static void testConcurrency(final ExecutorService executor, 
-                                        final Collection<LockingStrategy> locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<>(locks.size());
-        lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
+    private static void testConcurrency(final ExecutorService executor, final Collection<LockingStrategy> locks) throws Exception {
+        final List<Locker> lockers = locks.stream().map(Locker::new).collect(Collectors.toList());
 
         final long lockCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -215,9 +205,6 @@ public class JpaLockingStrategyTests {
         }).count();
         assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<>(locks.size());
-
-        releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
         final long releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
                 return result.get();
@@ -233,8 +220,7 @@ public class JpaLockingStrategyTests {
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
 
-        TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
-                                           final PlatformTransactionManager txManager) {
+        TransactionalLockInvocationHandler(final JpaLockingStrategy lock, final PlatformTransactionManager txManager) {
             jpaLock = lock;
             this.txManager = txManager;
         }
@@ -257,7 +243,6 @@ public class JpaLockingStrategyTests {
                 }
             });
         }
-
     }
 
     private static class Locker implements Callable<Boolean> {
@@ -298,5 +283,4 @@ public class JpaLockingStrategyTests {
             }
         }
     }
-
 }

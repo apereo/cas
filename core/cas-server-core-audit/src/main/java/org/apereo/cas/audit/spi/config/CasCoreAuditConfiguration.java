@@ -1,6 +1,5 @@
 package org.apereo.cas.audit.spi.config;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
@@ -54,15 +53,10 @@ public class CasCoreAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(
-            @Qualifier("auditTrailManager")
-            final AuditTrailManager auditTrailManager) {
-
-        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
-                casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(principalIdProvider()),
-                ImmutableList.of(auditTrailManager), auditActionResolverMap(),
-                auditResourceResolverMap());
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
+        final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(casProperties.getAudit().getAppCode(),
+                auditablePrincipalResolver(principalIdProvider()), Collections.singletonList(auditTrailManager),
+                auditActionResolverMap(), auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
@@ -118,8 +112,7 @@ public class CasCoreAuditConfiguration {
                     final Event event = Event.class.cast(o);
 
                     final String sourceName = event.getSource().getClass().getSimpleName();
-                    final String result =
-                            new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
+                    final String result = new ToStringBuilder(event, ToStringStyle.NO_CLASS_NAME_STYLE)
                                     .append("event", event.getId())
                                     .append("timestamp", new Date(event.getTimestamp()))
                                     .append("source", sourceName)
@@ -149,7 +142,6 @@ public class CasCoreAuditConfiguration {
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOLVER", defResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOLVER", defResolver);
 
-
         final AuditActionResolver cResolver = ticketCreationActionResolver();
         map.put("CREATE_PROXY_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("GRANT_SERVICE_TICKET_RESOLVER", cResolver);
@@ -157,8 +149,7 @@ public class CasCoreAuditConfiguration {
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
 
-        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER",
-                new DefaultAuditActionResolver("_TRIGGERED", "_NOT_TRIGGERED"));
+        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", "_NOT_TRIGGERED"));
 
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 

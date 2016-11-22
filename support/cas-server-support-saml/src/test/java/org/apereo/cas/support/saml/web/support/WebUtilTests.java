@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.support;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -25,7 +24,7 @@ public class WebUtilTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 
-        final Service service = WebUtils.getService(Lists.newArrayList(casArgumentExtractor), request);
+        final Service service = WebUtils.getService(Collections.singletonList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());

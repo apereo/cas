@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -22,11 +21,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -47,9 +46,8 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        return Lists.newArrayList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
+        return Arrays.asList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
     }
-
 
     @Before
     public void setUp() throws IOException {
@@ -89,21 +87,14 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
-        this.registry.addTicket(new TicketGrantingTicketImpl(
-                "TGT",
-                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
-        final TicketGrantingTicket tgt = this.registry.getTicket(
-                "TGT", TicketGrantingTicket.class);
+        this.registry.addTicket(new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket("TGT", TicketGrantingTicket.class);
 
-        final Service service =
-                RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
-        final ServiceTicket st1 = tgt.grantServiceTicket(
-                "ST1", service, new NeverExpiresExpirationPolicy(), false, false);
-        final ServiceTicket st2 = tgt.grantServiceTicket(
-                "ST2", service, new NeverExpiresExpirationPolicy(), false, false);
-        final ServiceTicket st3 = tgt.grantServiceTicket(
-                "ST3", service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st1 = tgt.grantServiceTicket("ST1", service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st2 = tgt.grantServiceTicket("ST2", service, new NeverExpiresExpirationPolicy(), false, false);
+        final ServiceTicket st3 = tgt.grantServiceTicket("ST3", service, new NeverExpiresExpirationPolicy(), false, false);
 
         this.registry.addTicket(st1);
         this.registry.addTicket(st2);

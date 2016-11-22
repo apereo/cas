@@ -1,14 +1,15 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,32 +29,28 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
      public void checkDefaultAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
     public void checkDisabledAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy(false, true);
+        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(false, true);
         assertFalse(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
     public void checkDisabledSsoAuthzStrategyConfig() {
-        final RegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy(true, false);
+        final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(true, false);
         assertTrue(authz.isServiceAccessAllowed());
         assertFalse(authz.isServiceAccessAllowedForSso());
     }
 
     @Test
     public void setAuthzStrategyConfig() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy(false, false);
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy(false, false);
         authz.setEnabled(true);
         authz.setSsoEnabled(true);
         assertTrue(authz.isServiceAccessAllowed());
@@ -63,32 +60,27 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalNoAttrRequirements() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsEmptyPrincipal() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsAll() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test",
-                getPrincipalAttributes()));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", getPrincipalAttributes()));
     }
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsMissingOne() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
 
         final Map<String, Object> pAttrs = getPrincipalAttributes();
@@ -99,8 +91,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsMissingOneButNotAllNeeded() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(getRequiredAttributes());
         authz.setRequireAllAttributes(false);
         final Map<String, Object> pAttrs = getPrincipalAttributes();
@@ -111,8 +102,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         final Map<String, Set<String>> reqs = getRequiredAttributes();
         reqs.remove("phone");
         authz.setRequiredAttributes(reqs);
@@ -125,8 +115,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
 
         final Map<String, Set<String>> reqs = getRequiredAttributes();
         reqs.remove("phone");
@@ -140,8 +129,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkRejectedAttributesNotAvailable() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
 
         final Map<String, Set<String>> reqs = getRequiredAttributes();
         authz.setRequiredAttributes(reqs);
@@ -154,8 +142,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkRejectedAttributesAvailable() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
 
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
@@ -167,8 +154,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkRejectedAttributesAvailableRequireAll() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(true);
 
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
@@ -181,8 +167,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkRejectedAttributesAvailableRequireAll3() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(false);
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
@@ -194,8 +179,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkRejectedAttributesAvailableRequireAll2() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(false);
         final Map<String, Set<String>> rejectedAttributes = getRejectedAttributes();
         authz.setRejectedAttributes(rejectedAttributes);
@@ -208,8 +192,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalWithAttrValueCaseInsensitiveComparison() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
 
         final Map<String, Set<String>> reqs = getRequiredAttributes();
         authz.setRequiredAttributes(reqs);
@@ -224,8 +207,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAuthzPrincipalWithAttrValuePatternComparison() {
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
 
         final Map<String, Set<String>> reqs = getRequiredAttributes();
         reqs.remove("cn");
@@ -257,23 +239,23 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
-        map.put("cn", Sets.newHashSet("cas", "SSO"));
-        map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
-        map.put("phone", Sets.newHashSet("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        map.put("cn", new HashSet<>(Arrays.asList("cas", "SSO")));
+        map.put("givenName", new HashSet<>(Arrays.asList("CAS", "KAZ")));
+        map.put("phone", new HashSet<>(Collections.singletonList("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d")));
         return map;
     }
 
     private static Map<String, Set<String>> getRejectedAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
-        map.put("address", Sets.newHashSet(".+"));
-        map.put("role", Sets.newHashSet("staff"));
+        map.put("address", new HashSet<>(Collections.singletonList(".+")));
+        map.put("role", new HashSet<>(Collections.singletonList("staff")));
         return map;
     }
     
     private static Map<String, Object> getPrincipalAttributes() {
         final Map<String, Object> map = new HashMap<>();
         map.put("cn", "cas");
-        map.put("givenName", Lists.newArrayList("cas", "KAZ"));
+        map.put("givenName", Arrays.asList("cas", "KAZ"));
         map.put("sn", "surname");
         map.put("phone", "123-456-7890");
 

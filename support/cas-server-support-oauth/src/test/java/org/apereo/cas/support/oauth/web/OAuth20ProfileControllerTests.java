@@ -2,19 +2,18 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
@@ -26,8 +25,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -38,7 +37,6 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     private static final String CONTEXT = "/oauth2.0/";
@@ -61,8 +59,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.PROFILE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
         final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
@@ -74,8 +71,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyNoExistingAccessToken() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.PROFILE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, "DOES NOT EXIST");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
@@ -95,8 +91,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.PROFILE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
@@ -110,16 +105,14 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyOK() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
-        map.put(NAME2, list);
+        map.put(NAME2, Arrays.asList(VALUE, VALUE));
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.PROFILE_URL);
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
@@ -146,18 +139,15 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
-        map.put(NAME2, list);
+        map.put(NAME2, Arrays.asList(VALUE, VALUE));
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                + OAuthConstants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
-                + accessToken.getId());
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + OAuthConstants.PROFILE_URL);
+        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' + accessToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final ResponseEntity<String> entity = oAuth20ProfileController.handleRequestInternal(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
@@ -179,10 +169,8 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     }
 
     private static Authentication getAuthentication(final Principal principal) {
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-                new BasicIdentifiableCredential(principal.getId()));
-        final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),
-                metadata, principal, new ArrayList<>());
+        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
+        final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(), metadata, principal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()
                 .setPrincipal(principal)
