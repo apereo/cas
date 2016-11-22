@@ -123,6 +123,16 @@ public class X509Properties {
 
     private String trustedIssuerDnPattern = ".+";
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     public int getCacheMaxElementsInMemory() {
         return cacheMaxElementsInMemory;
     }

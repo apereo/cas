@@ -93,6 +93,7 @@ public class Pac4jConfiguration {
         h.setPrincipalFactory(clientPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
+        h.setName(casProperties.getAuthn().getPac4j().getName());
         return h;
     }
 

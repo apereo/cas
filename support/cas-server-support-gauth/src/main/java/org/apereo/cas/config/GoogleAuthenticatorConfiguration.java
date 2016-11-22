@@ -134,6 +134,7 @@ public class GoogleAuthenticatorConfiguration {
         h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
         return h;
     }
 

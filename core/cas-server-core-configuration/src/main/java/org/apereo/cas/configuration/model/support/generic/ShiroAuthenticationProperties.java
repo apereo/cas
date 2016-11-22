@@ -28,7 +28,17 @@ public class ShiroAuthenticationProperties extends AbstractConfigProperties {
     private PrincipalTransformationProperties principalTransformation =
             new PrincipalTransformationProperties();
 
+    private String name;
+
     public ShiroAuthenticationProperties() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public PrincipalTransformationProperties getPrincipalTransformation() {

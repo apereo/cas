@@ -88,6 +88,7 @@ public class SpnegoConfiguration {
         h.setAuthentication(spnegoAuthentication());
         h.setPrincipalWithDomainName(casProperties.getAuthn().getSpnego().isPrincipalWithDomainName());
         h.setNTLMallowed(casProperties.getAuthn().getSpnego().isNtlmAllowed());
+        h.setName(casProperties.getAuthn().getSpnego().getName());
         return h;
     }
 
@@ -101,6 +102,7 @@ public class SpnegoConfiguration {
         ntlm.setLoadBalance(casProperties.getAuthn().getNtlm().isLoadBalance());
         ntlm.setPrincipalFactory(ntlmPrincipalFactory());
         ntlm.setServicesManager(servicesManager);
+        ntlm.setName(casProperties.getAuthn().getNtlm().getName());
         return ntlm;
     }
 
