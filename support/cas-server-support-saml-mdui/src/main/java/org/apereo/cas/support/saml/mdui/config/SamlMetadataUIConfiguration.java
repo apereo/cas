@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui.config;
 
-import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -95,8 +94,7 @@ public class SamlMetadataUIConfiguration {
 
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
-                SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
         final SamlMetadataUIParserAction a = new SamlMetadataUIParserAction(parameter, metadataAdapter());
 
         a.setServiceFactory(this.serviceFactory);
@@ -148,15 +146,13 @@ public class SamlMetadataUIConfiguration {
 
                 final BasicProviderKeyInfoCredentialResolver keyInfoResolver =
                         new BasicProviderKeyInfoCredentialResolver(
-                                ImmutableList.of(
-                                        new RSAKeyValueProvider(),
+                                Arrays.asList(new RSAKeyValueProvider(),
                                         new DSAKeyValueProvider(),
                                         new DEREncodedKeyValueProvider(),
                                         new InlineX509DataProvider()
                                 )
                         );
-                final ExplicitKeySignatureTrustEngine engine =
-                        new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
+                final ExplicitKeySignatureTrustEngine engine = new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
 
                 final SignatureValidationFilter sigFilter = new SignatureValidationFilter(engine);
                 sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,6 +20,7 @@ import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -129,8 +129,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param attributes person attributes
      * @return principal attributes
      */
-    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(
-            final Map<String, List<Object>> attributes) {
+    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
         return attributes.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
@@ -142,7 +141,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return person attributes
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
 
         principalAttributes.entrySet().stream().forEach(entry -> {
@@ -185,20 +184,17 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(),
-                    cachedAttributes);
+            LOGGER.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(), cachedAttributes);
             return cachedAttributes;
         }
 
         if (getAttributeRepository() == null) {
-            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
-                    getClass().getName(), p.getId());
+            LOGGER.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}", getClass().getName(), p.getId());
             return cachedAttributes;
         }
 
         final Map<String, List<Object>> sourceAttributes = retrievePersonAttributesToPrincipalAttributes(p.getId());
-        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
-                sourceAttributes.size(), p.getId());
+        LOGGER.debug("Found [{}] attributes for principal [{}] from the attribute repository.", sourceAttributes.size(), p.getId());
 
         if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
             LOGGER.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
@@ -207,10 +203,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
         final Map<String, List<Object>> principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
 
-        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]",
-                this.mergingStrategy.getClass().getSimpleName());
-        final Map<String, List<Object>> mergedAttributes =
-                this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
+        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy.getClass().getSimpleName());
+        final Map<String, List<Object>> mergedAttributes = this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
 
         return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
     }
@@ -222,8 +216,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param sourceAttributes the source attributes
      * @return the map
      */
-    private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p,
-                                                        final Map<String, List<Object>> sourceAttributes) {
+    private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p, final Map<String, List<Object>> sourceAttributes) {
         final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
         addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
