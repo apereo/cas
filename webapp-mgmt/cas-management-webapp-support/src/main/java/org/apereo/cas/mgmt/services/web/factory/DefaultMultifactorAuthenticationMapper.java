@@ -20,6 +20,8 @@ public class DefaultMultifactorAuthenticationMapper implements MultifactorAuthen
 
         bean.getMultiAuth().getPrincipalAttr().setNameTrigger(multifactorPolicy.getPrincipalAttributeNameTrigger());
         bean.getMultiAuth().getPrincipalAttr().setValueMatch(multifactorPolicy.getPrincipalAttributeValueToMatch());
+
+        bean.getMultiAuth().setBypassEnabled(multifactorPolicy.isBypassEnabled());
     }
 
     @Override
@@ -31,6 +33,7 @@ public class DefaultMultifactorAuthenticationMapper implements MultifactorAuthen
             policy.setPrincipalAttributeNameTrigger(data.getMultiAuth().getPrincipalAttr().getNameTrigger());
             policy.setPrincipalAttributeValueToMatch(data.getMultiAuth().getPrincipalAttr().getValueMatch());
             policy.setMultifactorAuthenticationProviders(Sets.newHashSet(data.getMultiAuth().getProviders().split(",")));
+            policy.setBypassEnabled(data.getMultiAuth().isBypassEnabled());
             return policy;
         }
         return null;
