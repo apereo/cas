@@ -31,7 +31,7 @@ public class JaasAuthenticationProperties {
     public void setName(final String name) {
         this.name = name;
     }
-    
+
     public PrincipalTransformationProperties getPrincipalTransformation() {
         return principalTransformation;
     }
