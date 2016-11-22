@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
@@ -12,6 +10,7 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +32,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    private Collection<MultifactorAuthenticationProvider> providers = Sets.newHashSet();
+    private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
     public DefaultVariegatedMultifactorAuthenticationProvider() {
     }
@@ -54,13 +53,12 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
-        return count == providers.size();
+        return providers.stream().allMatch(p -> p.isAvailable(service));
     }
 
     @Override
     public String getId() {
-        return StringUtils.join(providers.stream().map(p -> p.getId()).collect(Collectors.toList()), '|');
+        return providers.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.joining("|"));
     }
 
     @Override
@@ -95,11 +93,9 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
         if (!clazz.isAssignableFrom(provider.getClass())) {
             throw new ClassCastException("MultifactorAuthenticationProvider [" + provider.getId()
-                    + " is of type " + provider.getClass()
-                    + " when we were expecting " + clazz);
+                    + " is of type " + provider.getClass() + " when we were expecting " + clazz);
         }
 
         return (T) provider;
     }
-
 }

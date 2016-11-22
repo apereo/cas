@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,10 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.collect.Maps.newTreeMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
@@ -110,7 +110,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Default attributes found to be released are {}", defaultAttributes);
 
         LOGGER.debug("Attempting to merge policy attributes and default attributes");
-        final Map<String, Object> attributesToRelease = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, Object> attributesToRelease = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         LOGGER.debug("Adding default attributes first to the released set of attributes");
         attributesToRelease.putAll(defaultAttributes);
@@ -153,17 +153,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             final Set<String> defaultAttrs = props.getAuthn().getAttributeRepository().getDefaultAttributesToRelease();
             LOGGER.debug("Default attributes for release are: {}", defaultAttrs);
 
-            final Map<String, Object> defaultAttributesToRelease = newTreeMap(String.CASE_INSENSITIVE_ORDER);
-            defaultAttrs.stream().forEach(key -> {
-                if (attributes.containsKey(key)) {
-                    LOGGER.debug("Found and added default attribute for release: {}", key);
-                    defaultAttributesToRelease.put(key, attributes.get(key));
-                }
-            });
-            return defaultAttributesToRelease;
+            return defaultAttrs.stream()
+                    .filter(attributes::containsKey)
+                    .collect(Collectors.toMap(attr -> attr, attributes::get));
         }
-
-        return Maps.newTreeMap();
+        return Collections.emptyMap();
     }
 
     /**
@@ -207,7 +201,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                 .append(this.principalAttributesRepository, that.principalAttributesRepository)
                 .isEquals();
     }
-
 
     @Override
     public String toString() {

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
@@ -62,7 +61,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return this;
     }
 
-
     @Override
     public AuthenticationResult build() {
         return build(null);
@@ -72,8 +70,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     public AuthenticationResult build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning "
-                    + "null");
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
             return null;
         }
         LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
@@ -116,7 +113,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                                             final AuthenticationBuilder authenticationBuilder) {
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
-        authentications.stream().forEach(authn -> {
+        authentications.forEach(authn -> {
             final Principal authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
@@ -124,7 +121,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                     principalAttributes, authenticatedPrincipal.getId());
 
-            authn.getAttributes().keySet().stream().forEach(attrName -> {
+            authn.getAttributes().keySet().forEach(attrName -> {
                 if (authenticationAttributes.containsKey(attrName)) {
                     LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
                     final Object oldValue = authenticationAttributes.remove(attrName);
@@ -146,8 +143,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                 }
             });
 
-            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result",
-                    authenticationAttributes);
+            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
                     .addFailures(authn.getFailures())
@@ -161,7 +157,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
+        return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
     }
     
     public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {

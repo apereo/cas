@@ -1,6 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -55,27 +55,23 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         try {
-            final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.date >= :date",
-                            MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
-            return Sets.newHashSet(results);
+            return new HashSet<>(this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.date >= :date",
+                    MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList());
         } catch (final NoResultException e) {
             logger.info("No trusted authentication records could be found for {}", onOrAfterDate);
         }
-        return Sets.newHashSet();
+        return Collections.emptySet();
     }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
-            final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal",
-                            MultifactorAuthenticationTrustRecord.class).setParameter("principal", principal).getResultList();
-            return Sets.newHashSet(results);
+            return new HashSet<>(this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal",
+                    MultifactorAuthenticationTrustRecord.class).setParameter("principal", principal).getResultList());
         } catch (final NoResultException e) {
             logger.info("No trusted authentication records could be found for {}", principal);
         }
-        return Sets.newHashSet();
+        return Collections.emptySet();
     }
 
     @Override
