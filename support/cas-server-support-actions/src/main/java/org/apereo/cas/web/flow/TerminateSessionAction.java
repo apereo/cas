@@ -5,7 +5,10 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.springframework.web.ApplicationLogoutController;
+import org.pac4j.core.config.Config;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -26,23 +29,23 @@ import java.util.List;
  */
 public class TerminateSessionAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
-    
-    /** Webflow event helper component. */
+
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    
+
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    private ApplicationLogoutController applicationLogoutController;
-    
+     private Config pac4jSecurityConfig;
+
     /**
      * Creates a new instance with the given parameters.
      */
-    public TerminateSessionAction() {}
-    
+    public TerminateSessionAction() {
+    }
+
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
         return terminate(requestContext);
@@ -52,7 +55,6 @@ public class TerminateSessionAction extends AbstractAction {
      * Terminates the CAS SSO session by destroying the TGT (if any) and removing cookies related to the SSO session.
      *
      * @param context Request context.
-     *
      * @return "success"
      */
     public Event terminate(final RequestContext context) {
@@ -60,7 +62,7 @@ public class TerminateSessionAction extends AbstractAction {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-            
+
             String tgtId = WebUtils.getTicketGrantingTicketId(context);
             // for logout, we need to get the cookie's value
             if (tgtId == null) {
@@ -83,9 +85,20 @@ public class TerminateSessionAction extends AbstractAction {
         }
     }
 
-    private void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
+    /**
+     * Destroy application session.
+     * Also kills all delegated authn profiles via pac4j.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-        this.applicationLogoutController.applicationLogout(request, response);
+
+        final WebContext context = new J2EContext(request, response, pac4jSecurityConfig.getSessionStore());
+        final ProfileManager manager = new ProfileManager(context);
+        manager.logout();
+
         final HttpSession session = request.getSession();
         if (session != null) {
             session.invalidate();
@@ -104,7 +117,7 @@ public class TerminateSessionAction extends AbstractAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setApplicationLogoutController(final ApplicationLogoutController applicationLogoutController) {
-        this.applicationLogoutController = applicationLogoutController;
+    public void setPac4jSecurityConfig(final Config pac4jSecurityConfig) {
+        this.pac4jSecurityConfig = pac4jSecurityConfig;
     }
 }
