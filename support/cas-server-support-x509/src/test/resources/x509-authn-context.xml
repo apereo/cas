@@ -81,10 +81,10 @@
        | Credential-to-principal resolver beans
        -->
     <bean id="usernamePasswordCredentialsResolver"
-          class="org.apereo.cas.authentication.principal.BasicPrincipalResolver" />
+          class="org.apereo.cas.authentication.principal.ProxyingPrincipalResolver" />
 
     <bean id="httpBasedCredentialsResolver"
-          class="org.apereo.cas.authentication.principal.BasicPrincipalResolver" />
+          class="org.apereo.cas.authentication.principal.ProxyingPrincipalResolver" />
 
     <!--
        | Resolves a principal from the subject DN of an X.509 certificate.
