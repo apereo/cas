@@ -248,7 +248,7 @@ public class JdbcAuthenticationProperties {
         public void setName(final String name) {
             this.name = name;
         }
-        
+
         public PasswordEncoderProperties getPasswordEncoder() {
             return passwordEncoder;
         }

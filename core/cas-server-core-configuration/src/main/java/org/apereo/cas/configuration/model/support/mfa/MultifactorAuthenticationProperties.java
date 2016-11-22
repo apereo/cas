@@ -165,6 +165,15 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private int rank;
         private String id;
         private Bypass bypass = new Bypass();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
 
         public Bypass getBypass() {
             return bypass;
@@ -313,6 +322,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private Client client = new Client();
 
         private boolean trustedDeviceEnabled;
+
 
         public Radius() {
             setId("mfa-radius");
@@ -554,6 +564,8 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String mailAttribute = "mail";
         private boolean forceVerification = true;
         private boolean trustedDeviceEnabled;
+
+
 
         public Authy() {
             setId("mfa-authy");
