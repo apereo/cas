@@ -85,6 +85,7 @@ public class JwtTicketRegistryTests {
 
         final ServiceTicket st = defaultServiceTicketFactory.create(ticket, RegisteredServiceTestUtils.getService(), true);
         assertNotNull(st);
+
         final ServiceTicket stDecoded = ticketRegistry.getTicket(st.getId(), ServiceTicket.class);
         assertNotNull(stDecoded);
         assertNotNull(stDecoded.getGrantingTicket());
@@ -93,11 +94,19 @@ public class JwtTicketRegistryTests {
 
         final ProxyGrantingTicket pgt = defaultProxyGrantingTicketFactory.create(st, authn);
         assertNotNull(pgt);
-        assertNotNull(ticketRegistry.getTicket(pgt.getId()));
+
+        final ProxyGrantingTicket pgtDecoded = ticketRegistry.getTicket(pgt.getId(), ProxyGrantingTicket.class);
+        assertNotNull(pgtDecoded);
+        assertNotNull(pgtDecoded.getAuthentication());
+        assertNotNull(pgtDecoded.getExpirationPolicy());
+        assertNotNull(pgtDecoded.getGrantingTicket());
 
         final ProxyTicket pt = defaultProxyTicketFactory.create(pgt, RegisteredServiceTestUtils.getService());
         assertNotNull(pt);
-        assertNotNull(ticketRegistry.getTicket(pt.getId()));
+        final ProxyTicket ptDecoded = ticketRegistry.getTicket(pt.getId(), ProxyTicket.class);
+        assertNotNull(ptDecoded);
+        assertNotNull(ptDecoded.getExpirationPolicy());
+        assertNotNull(ptDecoded.getGrantingTicket());
     }
 
 }
