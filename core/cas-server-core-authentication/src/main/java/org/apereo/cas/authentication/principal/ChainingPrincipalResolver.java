@@ -58,21 +58,29 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
                 LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());
-                principals.add(resolver.resolve(credential, principal));
+                final Principal p = resolver.resolve(credential, principal);
+                if (p != null) {
+                    principals.add(p);
+                }
             }
         }
+
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
+
         final Map<String, Object> attributes = Maps.newHashMap();
         principals.forEach(p -> {
-            LOGGER.debug("Adding attributes {} for the final principal", p.getAttributes());
-            attributes.putAll(p.getAttributes());
+            if (p != null && p.getAttributes() != null && !p.getAttributes().isEmpty()) {
+                LOGGER.debug("Adding attributes {} for the final principal", p.getAttributes());
+                attributes.putAll(p.getAttributes());
+            }
         });
-        final Principal finalPrincipal = this.principalFactory.createPrincipal(principals.get(0).getId(),
-                attributes);
-        LOGGER.debug("Final principal constructed is {}", finalPrincipal);
+
+        final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
+        final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
+        LOGGER.debug("Final principal constructed by the chain of resolvers is {}", finalPrincipal);
         return finalPrincipal;
     }
 
