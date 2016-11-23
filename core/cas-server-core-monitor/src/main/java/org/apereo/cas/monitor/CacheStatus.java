@@ -1,7 +1,5 @@
 package org.apereo.cas.monitor;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -15,7 +13,6 @@ public class CacheStatus extends Status {
 
     private CacheStatistics[] statistics;
 
-    
     /**
      * Creates a new instance describing cache status.
      *
@@ -28,18 +25,15 @@ public class CacheStatus extends Status {
         this.statistics = statistics;
     }
 
-
     /**
      * Creates a new instance when cache statistics are unavailable due to given exception.
      *
      * @param e Cause of unavailable statistics.
      */
     public CacheStatus(final Exception e) {
-        super(StatusCode.ERROR,
-                String.format("Error fetching cache status: %s::%s", e.getClass().getSimpleName(), e.getMessage()));
+        super(StatusCode.ERROR, String.format("Error fetching cache status: %s::%s", e.getClass().getSimpleName(), e.getMessage()));
         this.statistics = null;
     }
-
 
     /**
      * Gets the current cache statistics.
@@ -47,9 +41,8 @@ public class CacheStatus extends Status {
      * @return Cache statistics.
      */
     public CacheStatistics[] getStatistics() {
-        return ImmutableList.copyOf(this.statistics).toArray(new CacheStatistics[this.statistics.length]);
+        return Arrays.copyOf(this.statistics, this.statistics.length);
     }
-
 
     /**
      * Builds the description string for the retrieved statistics.
@@ -70,9 +63,7 @@ public class CacheStatus extends Status {
             }
             sb.append(' ');
         }
-        sb.append("Cache statistics: [");
-        sb.append(String.join("|", Arrays.stream(statistics).map(Object::toString).collect(Collectors.toList())));
-        sb.append(']');
+        sb.append(Arrays.stream(statistics).map(Object::toString).collect(Collectors.joining("|", "Cache statistics: [", "]")));
         return sb.toString();
     }
 }
