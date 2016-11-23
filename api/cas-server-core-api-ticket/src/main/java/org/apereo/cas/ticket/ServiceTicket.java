@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public interface ServiceTicket extends Ticket {
 
     /**
