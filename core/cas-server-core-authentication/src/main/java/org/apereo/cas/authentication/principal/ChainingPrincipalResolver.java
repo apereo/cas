@@ -3,11 +3,13 @@ package org.apereo.cas.authentication.principal;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.PrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -78,6 +80,12 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             }
         });
 
+        final long count = principals.stream().map(p -> p.getId()).distinct().collect(Collectors.toSet()).size();
+        if (count > 1) {
+            throw new PrincipalException("Resolved principals by the chain are not unique",
+                    Maps.newHashMap(),
+                    Maps.newHashMap());
+        }
         final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is {}", finalPrincipal);
