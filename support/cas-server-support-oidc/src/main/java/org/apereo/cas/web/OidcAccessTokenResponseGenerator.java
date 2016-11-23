@@ -120,7 +120,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
 
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
-        setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
+        setView.immutableCopy().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());

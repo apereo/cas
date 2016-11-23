@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -18,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -80,8 +81,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             }
             
             if (agent.matches(pattern) || clientIp.matches(pattern)) {
-                logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for "
-                             + "adaptive authentication and is required to use [{}]",
+                logger.debug("Current user agent [{}] at [{}] matches the provided pattern {} for adaptive authentication and is required to use [{}]",
                             agent, clientIp, pattern, mfaMethod);
 
                 return buildEvent(context, service, authentication, providerFound.get());
@@ -93,8 +93,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                 if (loc != null) {
                     final String address = loc.buildAddress();
                     if (address.matches(pattern)) {
-                        logger.debug("Current address [{}] at [{}] matches the provided pattern {} for "
-                                        + "adaptive authentication and is required to use [{}]",
+                        logger.debug("Current address [{}] at [{}] matches the provided pattern {} for adaptive authentication and is required to use [{}]",
                                 address, clientIp, pattern, mfaMethod);
                         return buildEvent(context, service, authentication, providerFound.get());
                     }
@@ -108,16 +107,14 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                                   final Authentication authentication, 
                                   final MultifactorAuthenticationProvider provider) {
         if (provider.isAvailable(service)) {
-            logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                    provider, service.getName());
+            logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-            return ImmutableSet.of(event);
+            return new HashSet<>(Collections.singletonList(event));
         }
         logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
