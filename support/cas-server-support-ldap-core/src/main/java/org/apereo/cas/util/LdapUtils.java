@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties.Ldap.LdapType;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +58,6 @@ public final class LdapUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
     private static final String LDAP_PREFIX = "ldap";
-
 
     /**
      * Instantiates a new ldap utils.
@@ -293,13 +291,9 @@ public final class LdapUtils {
      * @param entry             the entry
      * @return true/false
      */
-    public static boolean executeModifyOperation(final String currentDn,
-                                                 final ConnectionFactory connectionFactory,
-                                                 final LdapEntry entry) {
-        final Map<String, Set<String>> attributes = new HashMap<>(entry.getAttribute().size());
-        for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
-            attributes.put(ldapAttribute.getName(), ImmutableSet.copyOf(ldapAttribute.getStringValues()));
-        }
+    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
+        final Map<String, Set<String>> attributes = entry.getAttributes().stream()
+                .collect(Collectors.toMap(LdapAttribute::getName, c -> new HashSet<>(c.getStringValues())));
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
 

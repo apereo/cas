@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.ImmutableSet;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -19,6 +18,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +80,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return ImmutableSet.of(event);
+                return new HashSet<>(Collections.singletonList(event));
             }
             logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
             return null;

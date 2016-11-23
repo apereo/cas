@@ -2,13 +2,11 @@ package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -149,9 +147,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-                service, credentialProvided,
-                expirationPolicy);
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
         
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
@@ -200,15 +196,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
-     * Unlike {@link java.util.Collections#unmodifiableMap(java.util.Map)},
-     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
-     * contains its own data and will never change.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        return ImmutableMap.copyOf(this.services);
+        return Collections.unmodifiableMap(new HashMap<>(this.services));
     }
 
     @Override
