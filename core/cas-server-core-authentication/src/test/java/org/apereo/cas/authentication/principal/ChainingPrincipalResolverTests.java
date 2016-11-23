@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Credential;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 
 import java.util.Collections;
 
