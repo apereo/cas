@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -19,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcAuthorizationRequestSupport}.
@@ -37,7 +37,6 @@ public class OidcAuthorizationRequestSupport {
     
     private TicketRegistrySupport ticketRegistrySupport;
 
-
     /**
      * Gets oidc prompt from authorization request.
      *
@@ -46,15 +45,11 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
         Assert.notNull(url, "URL cannot be null");
-        final URIBuilder builderContext = new URIBuilder(url);
-        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
+        return new URIBuilder(url).getQueryParams()
                 .stream().filter(p -> OidcConstants.PROMPT.equals(p.getName()))
-                .findFirst();
-
-        if (parameter.isPresent()) {
-            return ImmutableSet.copyOf(parameter.get().getValue().split(" "));
-        }
-        return Collections.emptySet();
+                .map(p -> p.getValue().split(" "))
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toSet());
     }
     
     /**
@@ -74,16 +69,10 @@ public class OidcAuthorizationRequestSupport {
      * @return the oidc max age from authorization request
      */
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
-        final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
+        return new URIBuilder(context.getFullRequestURL()).getQueryParams()
                 .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+                .map(p -> NumberUtils.toLong(p.getValue(), -1))
                 .findFirst();
-
-        if (parameter.isPresent()) {
-            final long maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
-            return Optional.of(maxAge);
-        }
-        return Optional.empty();
     }
 
     /**
@@ -125,16 +114,14 @@ public class OidcAuthorizationRequestSupport {
      * @param authenticationDate the authentication date
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final ZonedDateTime authenticationDate) {
+    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context, final ZonedDateTime authenticationDate) {
         final Optional<Long> maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
             final long now = ZonedDateTime.now().toEpochSecond();
             final long authTime = authenticationDate.toEpochSecond();
             final long diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
-                LOGGER.info("Authentication is too old: {} and was created {} seconds ago.",
-                        authTime, diffInSeconds);
+                LOGGER.info("Authentication is too old: {} and was created {} seconds ago.", authTime, diffInSeconds);
                 return true;
             }
         }
@@ -148,8 +135,7 @@ public class OidcAuthorizationRequestSupport {
      * @param authentication the authentication
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final Authentication authentication) {
+    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context, final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
 
@@ -160,11 +146,8 @@ public class OidcAuthorizationRequestSupport {
      * @param profile the profile
      * @return true/false
      */
-    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
-                                                                       final UserProfile profile) {
-
-        final Object authTime =
-                profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context, final UserProfile profile) {
+        final Object authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             return false;
         }
@@ -181,8 +164,7 @@ public class OidcAuthorizationRequestSupport {
      * @param context        the context
      * @param authentication the authentication
      */
-    public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
-                                                             final Authentication authentication) {
+    public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context, final Authentication authentication) {
         if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
             casClient.getConfiguration().setRenew(true);
         }
@@ -195,8 +177,7 @@ public class OidcAuthorizationRequestSupport {
      * @param context   the context
      */
     public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
+        if (getOidcPromptFromAuthorizationRequest(context).contains(OidcConstants.PROMPT_LOGIN)) {
             casClient.getConfiguration().setRenew(true);
         }
     }
@@ -208,8 +189,7 @@ public class OidcAuthorizationRequestSupport {
      * @param context   the context
      */
     public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_NONE)) {
+        if (getOidcPromptFromAuthorizationRequest(context).contains(OidcConstants.PROMPT_NONE)) {
             casClient.getConfiguration().setRenew(false);
             casClient.getConfiguration().setGateway(true);
         }
