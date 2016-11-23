@@ -138,8 +138,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
-                                                                 final MessageContext messageContext) {
+    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final MessageDescriptor message : entry.getValue().getWarnings()) {
@@ -148,7 +147,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             }
         }
         return foundAndAddedWarnings;
-
     }
 
     /**
@@ -161,7 +159,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event newEvent(final String id, final Exception error) {
         return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
-
 
     /**
      * Gets credential from context.
@@ -210,13 +207,11 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         final TicketGrantingTicket tgt;
         if (issueTicketGrantingTicket) {
             tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-
         } else {
             tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);
         }
-
 
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
@@ -261,8 +256,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
             final Event event = new Event(this, eventId, attributesMap);
 
-            logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
-                    event.getId());
+            logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...", event.getId());
 
             final TransitionDefinition def = context.getMatchingTransition(event.getId());
             if (def == null) {
