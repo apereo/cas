@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +23,15 @@ import java.util.Map;
 public abstract class BaseTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = Maps.newConcurrentMap();
 
+    private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
+
     /**
      * Gets proxy granting ticket serializer.
      *
      * @return the proxy granting ticket serializer
      */
     public static StringSerializer<ProxyGrantingTicket> getProxyGrantingTicketSerializer() {
-        return new AbstractJacksonBackedStringSerializer<ProxyGrantingTicket>() {
+        return new AbstractJacksonBackedStringSerializer<ProxyGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
             @Override
             protected Class<ProxyGrantingTicket> getTypeToSerialize() {
                 return ProxyGrantingTicket.class;
@@ -41,7 +45,7 @@ public abstract class BaseTicketSerializers {
      * @return the proxy ticket serializer
      */
     public static StringSerializer<ProxyTicket> getProxyTicketSerializer() {
-        return new AbstractJacksonBackedStringSerializer<ProxyTicket>() {
+        return new AbstractJacksonBackedStringSerializer<ProxyTicket>(MINIMAL_PRETTY_PRINTER) {
             @Override
             protected Class<ProxyTicket> getTypeToSerialize() {
                 return ProxyTicket.class;
@@ -55,7 +59,7 @@ public abstract class BaseTicketSerializers {
      * @return the ticket granting ticket serializer
      */
     public static StringSerializer<TicketGrantingTicket> getTicketGrantingTicketSerializer() {
-        return new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>() {
+        return new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
             @Override
             protected Class<TicketGrantingTicket> getTypeToSerialize() {
                 return TicketGrantingTicket.class;
@@ -69,7 +73,7 @@ public abstract class BaseTicketSerializers {
      * @return the service ticket serializer
      */
     public static StringSerializer<ServiceTicket> getServiceTicketSerializer() {
-        return new AbstractJacksonBackedStringSerializer<ServiceTicket>() {
+        return new AbstractJacksonBackedStringSerializer<ServiceTicket>(MINIMAL_PRETTY_PRINTER) {
             @Override
             protected Class<ServiceTicket> getTypeToSerialize() {
                 return ServiceTicket.class;
