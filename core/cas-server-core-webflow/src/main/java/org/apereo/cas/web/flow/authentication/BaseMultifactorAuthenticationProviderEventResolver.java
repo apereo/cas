@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderResolver;
@@ -11,7 +10,10 @@ import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,22 +30,20 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
         final Optional<MultifactorAuthenticationProvider> providerFound = providers.values().stream()
-                .filter(p -> requestMfaMethod.stream().filter(m -> p.matches(m)).findFirst().isPresent())
+                .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                 .findFirst();
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();
             if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
                 final VariegatedMultifactorAuthenticationProvider multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
-                final Optional<MultifactorAuthenticationProvider> instance = multi.getProviders().stream()
-                        .filter(p -> requestMfaMethod.stream().filter(m -> p.matches(m)).findFirst().isPresent())
+                return multi.getProviders().stream()
+                        .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
                         .findFirst();
-                return instance;
             }
         }
 
         return providerFound;
     }
-
 
     /**
      * Locate the provider in the collection, and have it match the requested mfa.
@@ -55,7 +55,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String... requestMfaMethod) {
-        return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
+        return resolveProvider(providers, new HashSet<>(Arrays.asList(requestMfaMethod)));
     }
 
     /**
@@ -68,13 +68,13 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
-        return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
+        return resolveProvider(providers, new HashSet<>(Collections.singletonList(requestMfaMethod)));
     }
 
     @Override
     public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<? extends MultifactorAuthenticationProvider> providers) {
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = Sets.newHashSet();
-        providers.stream().forEach(p -> {
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = new HashSet<>();
+        providers.forEach(p -> {
             if (p instanceof VariegatedMultifactorAuthenticationProvider) {
                 flattenedProviders.addAll(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
             } else {
