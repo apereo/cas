@@ -73,15 +73,20 @@ public class JwtTicketRegistryTests {
 
     @Test
     public void verifyJwtTicketFactories() {
-        final Map attrs = CoreAuthenticationTestUtils.getAttributeRepository()
+        final Map attributes = CoreAuthenticationTestUtils.getAttributeRepository()
                 .getPerson(CoreAuthenticationTestUtils.CONST_USERNAME)
                 .getAttributes();
         final Authentication authn =
                 CoreAuthenticationTestUtils.getAuthentication(
-                        CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attrs), attrs);
+                        CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes), attributes);
         final TicketGrantingTicket ticket = defaultTicketGrantingTicketFactory.create(authn);
         assertNotNull(ticket);
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
+
+        final TicketGrantingTicket tgtDecoded = ticketRegistry.getTicket(ticket.getId(), TicketGrantingTicket.class);
+        assertNotNull(tgtDecoded);
+        assertNotNull(tgtDecoded.getAuthentication());
+        assertNotNull(tgtDecoded.getExpirationPolicy());
+        assertNull(tgtDecoded.getGrantingTicket());
 
         final ServiceTicket st = defaultServiceTicketFactory.create(ticket, RegisteredServiceTestUtils.getService(), true);
         assertNotNull(st);
@@ -103,10 +108,10 @@ public class JwtTicketRegistryTests {
 
         final ProxyTicket pt = defaultProxyTicketFactory.create(pgt, RegisteredServiceTestUtils.getService());
         assertNotNull(pt);
+
         final ProxyTicket ptDecoded = ticketRegistry.getTicket(pt.getId(), ProxyTicket.class);
         assertNotNull(ptDecoded);
         assertNotNull(ptDecoded.getExpirationPolicy());
         assertNotNull(ptDecoded.getGrantingTicket());
     }
-
 }
