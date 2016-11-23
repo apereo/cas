@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -108,7 +106,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * Instantiates a new ticket granting ticket impl.
      */
     public TicketGrantingTicketImpl() {
-        System.out.println();
     }
 
     /**

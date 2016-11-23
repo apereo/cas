@@ -25,7 +25,6 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
      * Instantiates a new Proxy ticket.
      */
     public ProxyTicketImpl() {
-        System.out.println();
     }
 
     /**
