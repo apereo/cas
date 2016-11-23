@@ -47,7 +47,7 @@ public class ChainingPrincipalResolverTests {
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Principal.class)))
-                .thenReturn(principalFactory.createPrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+                .thenReturn(principalFactory.createPrincipal("output", Collections.<String, Object>singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Lists.newArrayList(resolver1, resolver2));
