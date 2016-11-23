@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,6 +13,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -25,8 +26,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RequestParameterMultifactorAuthenticationPolicyEventResolver
-        extends BaseMultifactorAuthenticationProviderEventResolver {
+public class RequestParameterMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -45,8 +45,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
         if (values != null && values.length > 0) {
             logger.debug("Received request parameter {} as {}", casProperties.getAuthn().getMfa().getRequestParameter(), values);
 
-            final Map<String, MultifactorAuthenticationProvider> providerMap =
-                    WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+            final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
                 logger.error("No multifactor authentication providers are available in the application context to satisfy {}", (Object[]) values);
                 throw new AuthenticationException();
@@ -56,11 +55,10 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
             if (providerFound.isPresent()) {
                 final MultifactorAuthenticationProvider provider = providerFound.get();
                 if (provider.isAvailable(service)) {
-                    logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                            provider, service.getName());
+                    logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                             buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                    return ImmutableSet.of(event);
+                    return new HashSet<>(Collections.singletonList(event));
                 }
                 logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
                 return null;

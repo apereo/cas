@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.PersistenceConfiguration;
@@ -19,6 +18,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+
+import java.util.Collections;
+import java.util.HashSet;
 
 /**
  * This is {@link EhcacheTicketRegistryConfiguration}.
@@ -64,18 +66,16 @@ public class EhcacheTicketRegistryConfiguration {
 
     @Lazy
     @Bean
-    public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager")
-                                                  final CacheManager manager) {
+    public EhCacheFactoryBean ehcacheTicketsCache(@Qualifier("cacheManager") final CacheManager manager) {
         final EhCacheFactoryBean bean = new EhCacheFactoryBean();
         bean.setCacheName(casProperties.getTicket().getRegistry().getEhcache().getCacheName());
-        bean.setCacheEventListeners(ImmutableSet.of(ticketRMISynchronousCacheReplicator()));
+        bean.setCacheEventListeners(new HashSet<>(Collections.singletonList(ticketRMISynchronousCacheReplicator())));
         bean.setTimeToIdle(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToIdle());
         bean.setTimeToLive(casProperties.getTicket().getRegistry().getEhcache().getCacheTimeToLive());
 
         bean.setCacheManager(manager);
         bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
-        bean.setDiskExpiryThreadIntervalSeconds(
-                casProperties.getTicket().getRegistry().getEhcache().getDiskExpiryThreadIntervalSeconds());
+        bean.setDiskExpiryThreadIntervalSeconds(casProperties.getTicket().getRegistry().getEhcache().getDiskExpiryThreadIntervalSeconds());
         
         bean.setEternal(casProperties.getTicket().getRegistry().getEhcache().isEternal());
         bean.setMaxEntriesLocalHeap(casProperties.getTicket().getRegistry().getEhcache().getMaxElementsInMemory());
@@ -93,12 +93,9 @@ public class EhcacheTicketRegistryConfiguration {
 
     @RefreshScope
     @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
-    public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache")
-                                                final Cache ehcacheTicketsCache) {
+    public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
         final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getEhcache().getCrypto()
-        ));
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(casProperties.getTicket().getRegistry().getEhcache().getCrypto()));
         return r;
     }
 }
