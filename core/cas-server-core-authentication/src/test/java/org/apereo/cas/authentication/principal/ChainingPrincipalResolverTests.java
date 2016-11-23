@@ -46,19 +46,14 @@ public class ChainingPrincipalResolverTests {
         when(resolver1.resolve(eq(credential), any(Principal.class))).thenReturn(principalFactory.createPrincipal("output"));
 
         final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
-        when(resolver2.supports(any(Credential.class))).thenReturn(false);
-        when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
-            @Override
-            public boolean matches(final Object o) {
-                return "output".equals(((Credential) o).getId());
-            }
-        }), any(Principal.class)))
+        when(resolver2.supports(any(Credential.class))).thenReturn(true);
+        when(resolver2.resolve(any(Credential.class), any(Principal.class)))
                 .thenReturn(principalFactory.createPrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Lists.newArrayList(resolver1, resolver2));
         final Principal principal = resolver.resolve(credential, any(Principal.class));
-        assertEquals("final", principal.getId());
+        assertEquals("output", principal.getId());
         assertEquals("final@example.com", principal.getAttributes().get("mail"));
     }
 
