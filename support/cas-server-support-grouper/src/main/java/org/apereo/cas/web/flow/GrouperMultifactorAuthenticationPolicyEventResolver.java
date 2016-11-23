@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -58,20 +57,19 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final GrouperGroupField groupField =
-                GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
+        final GrouperGroupField groupField = GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
 
-        final Set<String> values = Sets.newHashSet();
-        results.stream().forEach(wr -> Arrays.stream(wr.getWsGroups()).map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
-                .collect(Collectors.toSet())
-                .forEach(g -> values.add(g)));
+        final Set<String> values = results.stream()
+                .map(WsGetGroupsResult::getWsGroups)
+                .flatMap(Arrays::stream)
+                .map(group -> GrouperFacade.getGrouperGroupAttribute(groupField, group))
+                .collect(Collectors.toSet());
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
 
