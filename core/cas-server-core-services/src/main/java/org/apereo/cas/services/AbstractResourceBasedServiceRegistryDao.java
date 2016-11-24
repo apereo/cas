@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.LockedOutputStream;
 import org.apereo.cas.util.ResourceUtils;
@@ -17,11 +16,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Watchable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -163,28 +162,34 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
     public synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
         final int[] errorCount = {0};
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
-        c.stream().filter(file -> file.length() > 0).forEach(file -> {
-            final RegisteredService service = load(file);
-            if (service == null) {
-                LOGGER.warn("Could not load service definition from file {}", file);
-                errorCount[0]++;
+        try {
+            Files.list(this.serviceRegistryDirectory)
+                    .map(Path::toFile)
+                    .filter(path -> path.getName().endsWith(getExtension()))
+                    .filter(file -> file.length() > 0)
+                    .map(this::load)
+                    .forEach(service -> {
+                        if (service == null) {
+                            errorCount[0]++;
+                        } else {
+                            if (temp.containsKey(service.getId())) {
+                                LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                                + "This will overwrite previous service definitions and is likely a "
+                                                + "configuration problem. Make sure all services have a unique id and try again.",
+                                        service.getServiceId(), service.getId());
+                            }
+                            temp.put(service.getId(), service);
+                        }
+                    });
+            if (errorCount[0] == 0) {
+                this.serviceMap = temp;
             } else {
-                if (temp.containsKey(service.getId())) {
-                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                    + "This will overwrite previous service definitions and is likely a "
-                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                            service.getServiceId(), service.getId());
-                }
-                temp.put(service.getId(), service);
+                LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are corrected", errorCount[0]);
             }
-        });
-
-        if (errorCount[0] == 0) {
-            this.serviceMap = temp;
-        } else {
-            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are corrected", errorCount[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return new ArrayList<>(this.serviceMap.values());
     }
 
