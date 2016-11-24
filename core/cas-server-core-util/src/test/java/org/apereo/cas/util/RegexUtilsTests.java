@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  * Tests for {@link RegexUtils}
  *
  * @author David Rodriguez
- * @since 5.0.0
+ * @since 5.1.0
  */
 public class RegexUtilsTests {
 
