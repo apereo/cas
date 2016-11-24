@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.pac4j.web.flow.ClientAction;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -12,7 +11,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * The {@link Pac4jWebflowConfigurer} is responsible for
@@ -40,10 +38,8 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 protected Event doExecute(final RequestContext requestContext) throws Exception {
                     final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
                     final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
-                    final Optional<ModelAndView> mv = ClientAction.hasDelegationRequestFailed(request, response.getStatus());
-                    if (mv.isPresent()) {
-                        mv.get().getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v));
-                    }
+                    ClientAction.hasDelegationRequestFailed(request, response.getStatus())
+                            .ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
                     return null;
                 }
             });

@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link MongoDbPropertySource}.
@@ -34,10 +33,6 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
     
     @Override
     public Object getProperty(final String s) {
-        final Optional<MongoDbProperty> p = list.stream().filter(prop -> prop.getName().equals(s)).findFirst();
-        if (p.isPresent()) {
-            return p.get().getValue();
-        }
-        return null;
+        return list.stream().filter(prop -> prop.getName().equals(s)).findFirst().map(MongoDbProperty::getValue).orElse(null);
     }
 }

@@ -116,7 +116,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return null;
     }
 
-
     /**
      * Validate authentication context pair.
      *
@@ -145,9 +144,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         // validate the requested strategy
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
-        return result;
+        return this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
     }
 
     /**
@@ -303,8 +300,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @param assertion the assertion
      */
-    protected void onSuccessfulValidation(final String serviceTicketId, 
-                                          final Assertion assertion) {
+    protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
         // template method with nothing to do.
     }
 
@@ -324,14 +320,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final ModelAndView modelAndView = getModelAndView(request, false, service);
         final String convertedDescription = this.applicationContext.getMessage(code, args, code, request.getLocale());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));
-        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, 
-                StringEscapeUtils.escapeHtml4(convertedDescription));
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, StringEscapeUtils.escapeHtml4(convertedDescription));
 
         return modelAndView;
     }
 
-    private ModelAndView getModelAndView(final HttpServletRequest request, 
-                                         final boolean isSuccess, final WebApplicationService service) {
+    private ModelAndView getModelAndView(final HttpServletRequest request, final boolean isSuccess, final WebApplicationService service) {
 
         ValidationResponseType type = service != null ? service.getFormat() : ValidationResponseType.XML;
         final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
@@ -397,8 +391,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
         return Collections.emptyMap();  
     }
-    
-    
+
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;

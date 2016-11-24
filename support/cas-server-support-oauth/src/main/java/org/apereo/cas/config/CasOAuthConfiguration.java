@@ -164,22 +164,16 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
                         .stream().filter(p -> p.getName().equals(OAuthConstants.CLIENT_ID))
                         .findFirst();
 
-                if (parameter.isPresent()) {
-                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
-                }
+                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
                 parameter = builderContext.getQueryParams()
                         .stream().filter(p -> p.getName().equals(OAuthConstants.REDIRECT_URI))
                         .findFirst();
-                if (parameter.isPresent()) {
-                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
-                }
+                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
 
                 parameter = builderContext.getQueryParams()
                         .stream().filter(p -> p.getName().equals(OAuthConstants.ACR_VALUES))
                         .findFirst();
-                if (parameter.isPresent()) {
-                    builder.addParameter(parameter.get().getName(), parameter.get().getValue());
-                }
+                parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));
                 return builder.build().toString();
             }
             return url;
