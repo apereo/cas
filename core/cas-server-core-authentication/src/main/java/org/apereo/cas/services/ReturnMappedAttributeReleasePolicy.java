@@ -101,8 +101,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             } else if (matcherFile.find()) {
                 try {
                     LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
-                    final String script = Files.readAllLines(Paths.get(matcherFile.group(1)), StandardCharsets.UTF_8).stream()
-                            .collect(Collectors.joining());
+                    final String script = Files.lines(Paths.get(matcherFile.group(1)), StandardCharsets.UTF_8).collect(Collectors.joining());
                     final Object result = getGroovyAttributeValue(script, resolvedAttributes);
                     if (result != null) {
                         LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);

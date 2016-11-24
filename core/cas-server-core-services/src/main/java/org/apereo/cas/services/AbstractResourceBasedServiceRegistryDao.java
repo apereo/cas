@@ -183,10 +183,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao implements Resourc
         if (errorCount[0] == 0) {
             this.serviceMap = temp;
         } else {
-            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
-                    + "corrected", errorCount[0]);
+            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are corrected", errorCount[0]);
         }
-        return new ArrayList(this.serviceMap.values());
+        return new ArrayList<>(this.serviceMap.values());
     }
 
     /**
