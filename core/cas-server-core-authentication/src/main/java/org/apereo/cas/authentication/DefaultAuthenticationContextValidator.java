@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -12,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.OrderComparator;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -68,14 +65,12 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        final Map<String, MultifactorAuthenticationProvider> providerMap = getAllMultifactorAuthenticationProvidersFromApplicationContext();
         if (providerMap == null) {
             logger.debug("No providers have been configured");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
-        final Optional<MultifactorAuthenticationProvider> requestedProvider =
-                locateRequestedProvider(providerMap.values(), requestedContext);
+        final Optional<MultifactorAuthenticationProvider> requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
             logger.debug("Requested authentication provider cannot be recognized.");
@@ -86,7 +81,6 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             logger.debug("Requested authentication context {} is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
-
 
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName)
                 && attrs.containsKey(this.mfaTrustedAuthnAttributeName)) {
@@ -111,18 +105,13 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                     requestedProvider, bypassedId);
         }
 
-        final Collection<MultifactorAuthenticationProvider> satisfiedProviders =
-                getSatisfiedAuthenticationProviders(authentication, providerMap.values());
+        final Collection<MultifactorAuthenticationProvider> satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
 
         if (satisfiedProviders == null) {
             logger.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return Pair.of(Boolean.FALSE, requestedProvider);
-        }
-
-        if (!satisfiedProviders.isEmpty()) {
-            final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
-            OrderComparator.sortIfNecessary(providers);
-            final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers)
+        } else if (!satisfiedProviders.isEmpty()) {
+            final Optional<MultifactorAuthenticationProvider> result = satisfiedProviders.stream().sorted()
                     .filter(provider -> {
                         final MultifactorAuthenticationProvider p = requestedProvider.get();
                         return provider.equals(p) || provider.getOrder() >= p.getOrder();
@@ -178,23 +167,20 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
             final Authentication authentication,
             final Collection<MultifactorAuthenticationProvider> providers) {
-        final Collection<Object> contexts = CollectionUtils.convertValueToCollection(
-                authentication.getAttributes().get(this.authenticationContextAttribute));
+        final Collection<Object> contexts = CollectionUtils.convertValueToCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
 
         if (contexts == null || contexts.isEmpty()) {
-            logger.debug("No authentication context could be determined based on authentication attribute {}",
-                    this.authenticationContextAttribute);
+            logger.debug("No authentication context could be determined based on authentication attribute {}", this.authenticationContextAttribute);
             return null;
         }
 
-        contexts.stream().forEach(context ->
+        contexts.forEach(context ->
                 providers.removeIf(provider -> !provider.getId().equals(context))
         );
 
         logger.debug("Found {} providers that may satisfy the context", providers.size());
         return providers;
     }
-
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
             final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
