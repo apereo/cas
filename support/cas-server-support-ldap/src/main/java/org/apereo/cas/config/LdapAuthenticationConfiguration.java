@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.principal.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -31,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.time.Period;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -90,6 +93,7 @@ public class LdapAuthenticationConfiguration {
 
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                     handler.setServicesManager(servicesManager);
+                    handler.setName(l.getName());
 
                     final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
@@ -154,14 +158,10 @@ public class LdapAuthenticationConfiguration {
                     LOGGER.debug("Initializing ldap authentication handler...");
                     handler.initialize();
 
-                    if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
-                        LOGGER.debug("Ldap authentication for {} is to delegate to principal resolvers for attributes", l.getLdapUrl());
-                        this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
-                    } else {
-                        LOGGER.debug("Ldap authentication for {} and baseDn {} is retrieving attributes. Principal resolvers are inactive.",
-                                l.getLdapUrl(), l.getBaseDn());
-                        this.authenticationHandlersResolvers.put(handler, null);
-                    }
+                    LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
+                    final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                    this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
                 });
     }
 
@@ -174,7 +174,7 @@ public class LdapAuthenticationConfiguration {
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
             handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
             handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), 
+            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
                     cfg.getLoginFailures()));
         }
         handlers.add(new PasswordPolicyAuthenticationResponseHandler());

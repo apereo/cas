@@ -692,6 +692,7 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 # cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
 # cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
 # cas.authn.digest.realm=CAS
+# cas.authn.digest.name=
 # cas.authn.digest.authenticationMethod=auth
 ```
 
@@ -716,6 +717,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.client.inetAddress=localhost
 # cas.authn.radius.client.accountingPort=1813
 
+# cas.authn.radius.name=
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 
@@ -737,6 +739,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 ```properties
 # cas.authn.file.separator=::
 # cas.authn.file.filename=file:///path/to/users/file
+# cas.authn.file.name=
 
 # cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.file.passwordEncoder.characterEncoding=
@@ -755,6 +758,7 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 
 ```properties
 # cas.authn.reject.users=user1,user2
+# cas.authn.reject.name=
 
 # cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.reject.passwordEncoder.characterEncoding=
@@ -794,6 +798,7 @@ Authenticates a user by comparing the user password (which can be encoded with a
 # cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.query[0].idleTimeout=5000
 # cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.query[0].name=
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -831,6 +836,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.search[0].idleTimeout=5000
 # cas.authn.jdbc.search[0].credentialCriteria=
+# cas.authn.jdbc.search[0].name=
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -864,7 +870,8 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].autocommit=false
 # cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.bind[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.bind[0].credentialCriteria=
+# cas.authn.jdbc.bind[0].name=
 
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
@@ -911,7 +918,8 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].autocommit=false
 # cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.encode[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.encode[0].credentialCriteria=
+# cas.authn.jdbc.encode[0].name=
 
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
@@ -934,6 +942,7 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.attributes=
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
+# cas.authn.mongo.name=
 
 # cas.authn.mongo.principalTransformation.suffix=
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
@@ -951,18 +960,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with `sAMAccountName`.
-- Authenticated Search - Manager bind/search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Anonymous Search - Anonymous search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
-
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
@@ -970,7 +967,39 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+retrieved from [other attribute repository sources](#authentication-attributes), if any.
+Attributes retrieved directly as part of LDAP authentication trump all other attributes.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
+
+### Active Directory
+
+Users authenticate with `sAMAccountName`.
+
+### Authenticated Search
+
+Manager bind/search type of authentication.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Anonymous Search 
+
+Anonymous search.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Direct Bind 
+
+Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. 
+
+There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
@@ -1020,6 +1049,8 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
 
+# cas.authn.ldap[0].name=
+
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
@@ -1056,6 +1087,7 @@ To learn more about this topic, [please review this guide](Rest-Authentication.h
 
 ```properties
 # cas.authn.rest.uri=https://...
+# cas.authn.rest.name=
 
 # cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.rest.passwordEncoder.characterEncoding=
@@ -1084,6 +1116,7 @@ To learn more about this topic, [please review this guide](../protocol/OpenID-Pr
 # cas.authn.openid.enforceRpId=false
 # cas.authn.openid.principal.principalAttribute=
 # cas.authn.openid.principal.returnNull=false
+# cas.authn.openid.name=
 ```
 
 ## SPNEGO Authentication
@@ -1118,6 +1151,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.jcifsServicePassword=
 # cas.authn.spnego.jcifsPassword=
 # cas.authn.spnego.spnegoAttributeName=distinguishedName
+# cas.authn.spnego.name=
 
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
@@ -1165,6 +1199,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.realm=CAS
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
+# cas.authn.jaas.name=
 
 # cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jaas.passwordEncoder.characterEncoding=
@@ -1177,6 +1212,18 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.principalTransformation.prefix=
 ```
 
+## JWT/Token Authentication
+
+To learn more about this topic, [please review this guide](JWT-Authentication.html).
+
+```properties
+# cas.authn.token.name=
+
+# cas.authn.token.principalTransformation.suffix=
+# cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.token.principalTransformation.prefix=
+```
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
@@ -1185,6 +1232,7 @@ To learn more about this topic, [please review this guide](Stormpath-Authenticat
 # cas.authn.stormpath.apiKey=
 # cas.authn.stormpath.secretkey=
 # cas.authn.stormpath.applicationId=
+# cas.authn.stormpath.name=
 
 # cas.authn.stormpath.principalTransformation.suffix=
 # cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
@@ -1197,6 +1245,7 @@ To learn more about this topic, [please review this guide](Remote-Address-Authen
 
 ```properties
 # cas.authn.remoteAddress.ipAddressRange=
+# cas.authn.remoteAddress.name=
 ```
 
 
@@ -1209,6 +1258,7 @@ prior to production rollouts.</p></div>
 
 ```properties
 # cas.authn.accept.users=
+# cas.authn.accept.name=
 
 # cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.accept.passwordEncoder.characterEncoding=
@@ -1278,6 +1328,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
 # cas.authn.x509.trustedIssuerDnPattern=.+
 
+# cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
@@ -1333,6 +1384,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
 # cas.authn.shiro.config.location=classpath:shiro.ini
+# cas.authn.shiro.name=
 
 # cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.shiro.passwordEncoder.characterEncoding=
@@ -1351,6 +1403,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.ntlm.includePattern=
 # cas.authn.ntlm.loadBalance=true
 # cas.authn.ntlm.domainController=
+# cas.authn.ntlm.name=
 ```
 
 ## Trusted Authentication
@@ -1360,6 +1413,7 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 ```properties
 # cas.authn.trusted.principalAttribute=
 # cas.authn.trusted.returnNull=false
+# cas.authn.trusted.name=
 ```
 
 ## WS-Fed Authentication
@@ -1376,6 +1430,7 @@ To learn more about this topic, [please review this guide](../integration/ADFS-I
 # cas.authn.wsfed.identityAttribute=upn
 # cas.authn.wsfed.attributeResolverEnabled=true
 # cas.authn.wsfed.autoRedirect=true
+# cas.authn.wsfed.name=
 
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
@@ -1483,6 +1538,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
+# cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
@@ -1535,6 +1591,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=true
+# cas.authn.mfa.yubikey.name=
 
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
@@ -1554,6 +1611,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trustedDeviceEnabled=true
+# cas.authn.mfa.radius.name=
 
 # cas.authn.mfa.radius.client.socketTimeout=0
 # cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
@@ -1592,6 +1650,7 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].duoApiHost=
 # cas.authn.mfa.duo[0].trustedDeviceEnabled=true
 # cas.authn.mfa.duo[0].id=mfa-duo
+# cas.authn.mfa.duo[0].name=
 
 # cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
@@ -1613,6 +1672,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=true
+# cas.authn.mfa.authy.name=
 
 # cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
@@ -1793,6 +1853,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
 # cas.authn.pac4j.autoRedirect=false
+# cas.authn.pac4j.name=
 ```
 
 ### CAS

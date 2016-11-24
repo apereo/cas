@@ -193,6 +193,7 @@ public class X509AuthenticationConfiguration {
         }
         h.setPrincipalFactory(x509PrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(x509.getName());
         return h;
     }
 
