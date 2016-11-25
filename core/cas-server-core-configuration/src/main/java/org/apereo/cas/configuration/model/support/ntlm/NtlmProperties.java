@@ -11,6 +11,15 @@ public class NtlmProperties {
     private String domainController;
     private String includePattern;
     private boolean loadBalance = true;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public String getDomainController() {
         return domainController;

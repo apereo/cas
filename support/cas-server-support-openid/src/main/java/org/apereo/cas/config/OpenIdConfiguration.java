@@ -201,6 +201,7 @@ public class OpenIdConfiguration {
         h.setTicketRegistry(this.ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getOpenid().getName());
         return h;
     }
 

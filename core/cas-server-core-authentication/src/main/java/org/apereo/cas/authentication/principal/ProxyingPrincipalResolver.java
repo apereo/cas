@@ -10,14 +10,12 @@ import org.apereo.cas.authentication.Credential;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class BasicPrincipalResolver implements PrincipalResolver {
+public class ProxyingPrincipalResolver implements PrincipalResolver {
 
-    /** Factory to create the principal type. **/
-    
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override
-    public Principal resolve(final Credential credential) {
+    public Principal resolve(final Credential credential, final Principal currentPrincipal) {
         return this.principalFactory.createPrincipal(credential.getId());
     }
 
