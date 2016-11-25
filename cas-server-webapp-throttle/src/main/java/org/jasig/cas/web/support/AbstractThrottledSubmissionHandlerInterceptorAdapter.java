@@ -33,6 +33,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
+    private static final String AUTHENTICATION_RESULT = "authenticationResult";
+
     /** Logger object. **/
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -87,7 +89,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
 
         MutableAttributeMap<Object> flowScope = context.getFlowScope();
-        if (flowScope != null && "success".equals(flowScope.get("authenticationResult"))) {
+        if (flowScope != null && SUCCESSFUL_AUTHENTICATION_EVENT.equals(flowScope.get(AUTHENTICATION_RESULT))) {
             return;
         }
 
