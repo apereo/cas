@@ -86,6 +86,7 @@ public class CasGenericConfiguration {
         bean.setIpNetworkRange(casProperties.getAuthn().getRemoteAddress().getIpAddressRange());
         bean.setPrincipalFactory(remoteAddressPrincipalFactory());
         bean.setServicesManager(servicesManager);
+        bean.setName(casProperties.getAuthn().getRemoteAddress().getName());
         return bean;
     }
 
@@ -113,7 +114,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getFile().getPrincipalTransformation()));
-
+        h.setName(casProperties.getAuthn().getFile().getName());
 
         return h;
     }
@@ -148,7 +149,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getReject().getPrincipalTransformation()));
-
+        h.setName(casProperties.getAuthn().getReject().getName());
         return h;
     }
 
@@ -167,6 +168,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getShiro().getPrincipalTransformation()));
+        h.setName(casProperties.getAuthn().getShiro().getName());
         return h;
     }
 

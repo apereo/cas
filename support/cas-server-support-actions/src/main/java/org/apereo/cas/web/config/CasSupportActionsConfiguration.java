@@ -26,7 +26,6 @@ import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
-import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -215,10 +214,7 @@ public class CasSupportActionsConfiguration {
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
         a.setWarnCookieGenerator(warnCookieGenerator);
-
-        final ApplicationLogoutController controller = new ApplicationLogoutController();
-        controller.setConfig(pac4jSecurityConfig);
-        a.setApplicationLogoutController(controller);
+        a.setPac4jSecurityConfig(pac4jSecurityConfig);
         return a;
     }
 
