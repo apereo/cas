@@ -109,7 +109,8 @@ public class CasJdbcConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-        
+
+        h.setName(b.getName());
         return h;
     }
 
@@ -141,6 +142,7 @@ public class CasJdbcConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
+        h.setName(b.getName());
         return h;
     }
 
@@ -165,7 +167,7 @@ public class CasJdbcConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-
+        h.setName(b.getName());
         return h;
     }
 
@@ -192,6 +194,7 @@ public class CasJdbcConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
+        h.setName(b.getName());
         return h;
     }
 

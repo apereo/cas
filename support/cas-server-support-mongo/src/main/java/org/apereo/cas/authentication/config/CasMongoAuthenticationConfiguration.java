@@ -65,6 +65,7 @@ public class CasMongoAuthenticationConfiguration {
         handler.setMongoPasswordEncoder(new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder())));
         handler.setPrincipalFactory(mongoPrincipalFactory());
         handler.setServicesManager(servicesManager);
+        handler.setName(mongo.getName());
 
         return handler;
     }

@@ -32,7 +32,7 @@ import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolic
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
-import org.apereo.cas.authentication.principal.BasicPrincipalResolver;
+import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -160,6 +160,7 @@ public class CasCoreAuthenticationConfiguration {
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getAccept().getPrincipalTransformation()));
         h.setPrincipalFactory(acceptUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getAccept().getName());
         return h;
     }
 
@@ -286,7 +287,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public PrincipalResolver proxyPrincipalResolver() {
-        final BasicPrincipalResolver p = new BasicPrincipalResolver();
+        final ProxyingPrincipalResolver p = new ProxyingPrincipalResolver();
         p.setPrincipalFactory(proxyPrincipalFactory());
         return p;
     }
@@ -308,6 +309,7 @@ public class CasCoreAuthenticationConfiguration {
 
         h.setPrincipalFactory(jaasPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getJaas().getName());
         return h;
     }
 

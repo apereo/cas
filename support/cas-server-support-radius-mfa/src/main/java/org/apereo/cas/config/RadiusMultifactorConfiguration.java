@@ -192,7 +192,7 @@ public class RadiusMultifactorConfiguration {
         a.setServers(radiusTokenServers());
         a.setFailoverOnAuthenticationFailure(radius.isFailoverOnAuthenticationFailure());
         a.setFailoverOnException(radius.isFailoverOnException());
-
+        a.setName(radius.getName());
         return a;
     }
 

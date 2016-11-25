@@ -79,6 +79,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationHandler r = new RestAuthenticationHandler();
         r.setApi(restAuthenticationApi());
+        r.setName(casProperties.getAuthn().getRest().getName());
         r.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRest().getPasswordEncoder()));
         return r;
     }
