@@ -88,7 +88,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        MutableAttributeMap<Object> flowScope = context.getFlowScope();
+        final MutableAttributeMap<Object> flowScope = context.getFlowScope();
         if (flowScope != null && SUCCESSFUL_AUTHENTICATION_EVENT.equals(flowScope.get(AUTHENTICATION_RESULT))) {
             return;
         }
