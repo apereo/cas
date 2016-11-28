@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.HashMap;
@@ -76,7 +75,8 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    private final ObjectWriter jacksonPrettyWriter =
+            new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.
@@ -88,7 +88,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                                            final HttpServletRequest request) throws JsonProcessingException {
+                                                             final HttpServletRequest request) throws JsonProcessingException {
 
         try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
@@ -231,10 +231,5 @@ public class TicketsResource {
 
     public void setCredentialFactory(final CredentialFactory credentialFactory) {
         this.credentialFactory = credentialFactory;
-    }
-    
-    @PostConstruct
-    private void init() {
-        this.jacksonObjectMapper.findAndRegisterModules();
     }
 }
