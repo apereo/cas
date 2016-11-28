@@ -127,28 +127,35 @@ public final class CompressionUtils {
      * @return the string, or null
      */
     public static String decompress(final String zippedBase64Str) {
-        final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
-        try (GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+        GZIPInputStream zi = null;
+        try {
+            final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
+            zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
             return IOUtils.toString(zi);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(zi);
         }
         return null;
     }
 
     /**
      * Use ZipOutputStream to zip text to byte array, then convert
-     * byte array to base64 string, so it can be trasnfered via http request.
+     * byte array to base64 string, so it can be transferred via http request.
      *
      * @param srcTxt the src txt
-     * @return the string
+     * @return the string in UTF-8 format and base64'ed, or null.
      */
     public static String compress(final String srcTxt) {
-        try (ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
-             GZIPOutputStream zos = new GZIPOutputStream(rstBao)) {
+        try {
+            final ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+            final GZIPOutputStream zos = new GZIPOutputStream(rstBao);
             zos.write(srcTxt.getBytes());
+            IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
-            return Base64.encodeBase64String(bytes);
+            final String base64 = Base64.encodeBase64String(bytes);
+            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

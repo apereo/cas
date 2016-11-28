@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public final class RegexUtils {
 
+    /** A pattern match that does not match anything. */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
