@@ -52,7 +52,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
+            final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper().findAndRegisterModules());
             try(JsonGenerator jsonGenerator = jsonFactory.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
