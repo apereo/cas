@@ -1,13 +1,18 @@
 package org.apereo.cas.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
@@ -24,7 +29,7 @@ public final class CompressionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
 
     private static final int INFLATED_ARRAY_LENGTH = 10000;
-    
+
     /**
      * Private ctor for a utility class.
      */
@@ -114,4 +119,39 @@ public final class CompressionUtils {
         }
     }
 
+    /**
+     * First decode base64 String to byte array, then use ZipInputStream to revert the byte array to a
+     * string.
+     *
+     * @param zippedBase64Str the zipped base 64 str
+     * @return the string, or null
+     */
+    public static String decompress(final String zippedBase64Str) {
+        final byte[] bytes = Base64.decodeBase64(zippedBase64Str);
+        try (GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+            return IOUtils.toString(zi);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Use ZipOutputStream to zip text to byte array, then convert
+     * byte array to base64 string, so it can be trasnfered via http request.
+     *
+     * @param srcTxt the src txt
+     * @return the string
+     */
+    public static String compress(final String srcTxt) {
+        try (ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+             GZIPOutputStream zos = new GZIPOutputStream(rstBao)) {
+            zos.write(srcTxt.getBytes());
+            final byte[] bytes = rstBao.toByteArray();
+            return Base64.encodeBase64String(bytes);
+        } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
 }
