@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
 
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
+
+    private static final String AUTHENTICATION_RESULT = "authenticationResult";
 
     /** Logger object. **/
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
@@ -85,8 +88,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        // User successfully authenticated
-        if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
+        final MutableAttributeMap<Object> flowScope = context.getFlowScope();
+        if (flowScope != null && SUCCESSFUL_AUTHENTICATION_EVENT.equals(flowScope.get(AUTHENTICATION_RESULT))) {
             return;
         }
 
