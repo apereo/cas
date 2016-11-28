@@ -258,7 +258,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
             final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
-            if (pattern != null) {
+            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 final Predicate<String> patternPredicate = pattern.asPredicate();
                 differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
             } else {
@@ -301,7 +301,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
             final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
-            if (pattern != null) {
+            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 final Predicate<String> patternPredicate = pattern.asPredicate();
                 differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
             } else {

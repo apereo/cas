@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
@@ -41,15 +40,13 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     @Override
     public boolean matches(final String serviceId) {
         if (this.servicePattern == null) {
-            RegexUtils.createPattern(this.serviceId).ifPresent(pattern -> this.servicePattern = pattern);
+            this.servicePattern = RegexUtils.createPattern(this.serviceId);
         }
-        return StringUtils.isNotBlank(serviceId) && this.servicePattern != null
-                && this.servicePattern.matcher(serviceId).matches();
+        return this.servicePattern.matcher(serviceId).matches();
     }
 
     @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
-    
 }

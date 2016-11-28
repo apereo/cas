@@ -176,4 +176,14 @@ public class AbstractRegisteredServiceTests {
         final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
     }
+
+    @Test
+    public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() throws Exception {
+        final String invalidId = "***";
+        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
+
+        service.matches("notRelevant");
+
+        assertEquals(service.getServiceId(), invalidId);
+    }
 }
