@@ -2,11 +2,11 @@ package org.apereo.cas.impl;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
-import org.apereo.cas.util.Pair;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 import java.time.ZonedDateTime;
@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
  * @since 5.1.0
  */
 public class MockTicketGrantingTicketCreatedEventProducer {
-        
+
     private static final List<String> ALL_USER_AGENTS = Lists.newArrayList(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
@@ -59,31 +59,31 @@ public class MockTicketGrantingTicketCreatedEventProducer {
     );
 
     private static final List<Pair<String, String>> ALL_GEOLOCS = Lists.newArrayList(
-            new Pair<>("40.71", "-74.005"),
-            new Pair<>("48.85", "2.35"),
-            new Pair<>("45.46", "9.18"),
-            new Pair<>("34.04", "-111.09"),
-            new Pair<>("36.204", "138.25"),
-            new Pair<>("29.59", "52.58"),
-            new Pair<>("55.75", "37.61"),
-            new Pair<>("41.902", "12.49"),
-            new Pair<>("35.68", "51.38"),
-            new Pair<>("42.36", "-71.05"),
-            new Pair<>("36.77", "-119.417"),
-            new Pair<>("36.169", "-115.13"),
-            new Pair<>("32.77", "-96.796"),
-            new Pair<>("43.65", "-79.38"),
-            new Pair<>("51.507", "-0.127"),
-            new Pair<>("53.48", "-2.242"),
-            new Pair<>("40.05", "-74.405"),
-            new Pair<>("35", "-97.09"),
-            new Pair<>("53.41", "-8.24"),
-            new Pair<>("-38.41", "-63.61")
+            Pair.of("40.71", "-74.005"),
+            Pair.of("48.85", "2.35"),
+            Pair.of("45.46", "9.18"),
+            Pair.of("34.04", "-111.09"),
+            Pair.of("36.204", "138.25"),
+            Pair.of("29.59", "52.58"),
+            Pair.of("55.75", "37.61"),
+            Pair.of("41.902", "12.49"),
+            Pair.of("35.68", "51.38"),
+            Pair.of("42.36", "-71.05"),
+            Pair.of("36.77", "-119.417"),
+            Pair.of("36.169", "-115.13"),
+            Pair.of("32.77", "-96.796"),
+            Pair.of("43.65", "-79.38"),
+            Pair.of("51.507", "-0.127"),
+            Pair.of("53.48", "-2.242"),
+            Pair.of("40.05", "-74.405"),
+            Pair.of("35", "-97.09"),
+            Pair.of("53.41", "-8.24"),
+            Pair.of("-38.41", "-63.61")
     );
 
     protected MockTicketGrantingTicketCreatedEventProducer() {
     }
-    
+
     private static String getMockUserAgent() {
         final int index = ThreadLocalRandom.current().nextInt(ALL_USER_AGENTS.size());
         return ALL_USER_AGENTS.get(index);
@@ -93,8 +93,8 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         final int index = ThreadLocalRandom.current().nextInt(ALL_GEOLOCS.size());
         final GeoLocationRequest location = new GeoLocationRequest();
         final Pair<String, String> pair = ALL_GEOLOCS.get(index);
-        location.setLatitude(pair.getFirst());
-        location.setLongitude(pair.getSecond());
+        location.setLatitude(pair.getKey());
+        location.setLongitude(pair.getValue());
         location.setAccuracy("50");
         location.setTimestamp(String.valueOf(new Date().getTime()));
         return location;
@@ -121,7 +121,6 @@ public class MockTicketGrantingTicketCreatedEventProducer {
     }
 
 
-    
     public static void createEvents(final CasEventRepository casEventRepository) {
         IntStream.range(1, 1000).forEach(i -> createEvent(i, casEventRepository));
     }
