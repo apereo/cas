@@ -58,7 +58,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
