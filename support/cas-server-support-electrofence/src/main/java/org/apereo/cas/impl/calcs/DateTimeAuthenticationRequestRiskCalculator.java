@@ -6,6 +6,7 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -23,8 +24,8 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
     }
 
     @Override
-    protected double calculateScore(final HttpServletRequest request, final Authentication authentication, 
-                                    final RegisteredService service, final Collection<CasEvent> events) {
+    protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
+                                        final RegisteredService service, final Collection<CasEvent> events) {
         final ZonedDateTime timestamp = ZonedDateTime.now();
         logger.debug("Filtering authentication events for timestamp {}", timestamp);
         
@@ -37,6 +38,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
             logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), timestamp);
             return LOWEST_RISK_SCORE;
         }
-        return HIGHEST_RISK_SCORE - (count / events.size());
+        final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
+        return HIGHEST_RISK_SCORE.subtract(score);
     }
 }

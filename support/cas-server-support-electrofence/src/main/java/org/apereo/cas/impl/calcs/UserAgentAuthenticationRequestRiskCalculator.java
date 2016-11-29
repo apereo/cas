@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.web.support.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 /**
@@ -21,11 +22,11 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
     }
 
     @Override
-    protected double calculateScore(final HttpServletRequest request,
-                                    final Authentication authentication,
-                                    final RegisteredService service,
-                                    final Collection<CasEvent> events) {
-        
+    protected BigDecimal calculateScore(final HttpServletRequest request,
+                                        final Authentication authentication,
+                                        final RegisteredService service,
+                                        final Collection<CasEvent> events) {
+
         final String agent = WebUtils.getHttpServletRequestUserAgent(request);
         logger.debug("Filtering authentication events for user agent {}", agent);
         final long count = events.stream().filter(e -> e.getAgent().equalsIgnoreCase(agent)).count();
@@ -34,6 +35,7 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
             logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), agent);
             return LOWEST_RISK_SCORE;
         }
-        return HIGHEST_RISK_SCORE - (count / events.size());
+        final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
+        return HIGHEST_RISK_SCORE.subtract(score);
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -39,12 +40,11 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         if (this.calculators.isEmpty()) {
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
         }
-        
+
         final List<AuthenticationRiskScore> scores = Lists.newArrayList();
         this.calculators.stream().forEach(r -> scores.add(r.calculate(authentication, service, request)));
-        final double sum = scores.stream().map(r -> r.getScore()).reduce(0D, (a, b) -> a + b);
-        
-   
-        return new AuthenticationRiskScore(sum / this.calculators.size());
+        final BigDecimal sum = scores.stream().map(r -> r.getScore()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
+        final BigDecimal score = sum.divide(BigDecimal.valueOf(this.calculators.size()));
+        return new AuthenticationRiskScore(score);
     }
 }
