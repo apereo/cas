@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleMapsGeoLocationService.class);
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -71,7 +71,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
     @Override
     public GeoLocationResponse locate(final Double latitude, final Double longitude) {
         if (latitude == null || longitude == null) {
-            LOGGER.debug("latitude/longitude must not be null in order for geolocation to proceed");    
+            LOGGER.debug("latitude/longitude must not be null in order for geolocation to proceed");
             return null;
         }
 
@@ -84,8 +84,8 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
                 Arrays.stream(results)
-                      .map(result -> result.formattedAddress)
-                      .forEach(r::addAddress);
+                        .map(result -> result.formattedAddress)
+                        .forEach(r::addAddress);
 
                 return r;
             }
