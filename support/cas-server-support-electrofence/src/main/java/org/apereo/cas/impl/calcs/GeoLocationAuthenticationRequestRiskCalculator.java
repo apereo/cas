@@ -45,8 +45,7 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
                 logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), loc);
                 return LOWEST_RISK_SCORE;
             }
-            final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
-            return HIGHEST_RISK_SCORE.subtract(score);
+            return getFinalAveragedScore(count, events.size());
         }
         logger.debug("Request does not contain enough geolocation data");
         return HIGHEST_RISK_SCORE;

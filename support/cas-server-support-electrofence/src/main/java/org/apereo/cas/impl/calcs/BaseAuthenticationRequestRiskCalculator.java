@@ -83,4 +83,16 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
                 .minusDays(casProperties.getAuthn().getAdaptive().getRisk().getDaysInRecentHistory());
         return casEventRepository.getEventsOfTypeForPrincipal(type, principal, date);
     }
+
+    /**
+     * Gets final averaged score.
+     *
+     * @param eventCount the event count
+     * @param total      the total
+     * @return the final averaged score
+     */
+    protected BigDecimal getFinalAveragedScore(final long eventCount, final long total) {
+        final BigDecimal score = BigDecimal.valueOf(eventCount).divide(BigDecimal.valueOf(total), 2, BigDecimal.ROUND_HALF_UP);
+        return HIGHEST_RISK_SCORE.subtract(score);
+    }
 }

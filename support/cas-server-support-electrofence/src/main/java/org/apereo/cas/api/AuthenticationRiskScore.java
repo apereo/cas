@@ -30,11 +30,11 @@ public class AuthenticationRiskScore {
     }
 
     public boolean isHighestRisk() {
-        return getScore().compareTo(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE) > 0;
+        return getScore().compareTo(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE) == 0;
     }
 
     public boolean isLowestRisk() {
-        return getScore().compareTo(AuthenticationRequestRiskCalculator.LOWEST_RISK_SCORE) < 0;
+        return getScore().compareTo(AuthenticationRequestRiskCalculator.LOWEST_RISK_SCORE) == 0;
     }
 
     /**

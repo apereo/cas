@@ -35,7 +35,6 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
             logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), agent);
             return LOWEST_RISK_SCORE;
         }
-        final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
-        return HIGHEST_RISK_SCORE.subtract(score);
+        return getFinalAveragedScore(count, events.size());
     }
 }
