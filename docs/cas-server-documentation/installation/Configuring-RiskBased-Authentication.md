@@ -16,7 +16,7 @@ mitigate that risk.
 
 Simply put, the story told is:
 
-> If an authentication request is at least [X%] risky, take action to mitigate that risk. 
+>If an authentication request is at least [X%] risky, take action to mitigate that risk. 
 
 The functionality of this feature is **ENTIRELY** dependant upon collected statistics and authentication events in the past.
 Without data, there is nothing to analyze and no risk to detect.
