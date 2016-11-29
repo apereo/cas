@@ -22,6 +22,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
@@ -40,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link IpAddressAuthenticationRequestRiskCalculatorTests}.
+ * This is {@link UserAgentAuthenticationRequestRiskCalculatorTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -61,10 +62,10 @@ import static org.junit.Assert.*;
         CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreEventsConfiguration.class})
-@TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
+@TestPropertySource(properties = "cas.authn.adaptive.risk.agent.enabled=true")
 @DirtiesContext
 @EnableScheduling
-public class IpAddressAuthenticationRequestRiskCalculatorTests {
+public class UserAgentAuthenticationRequestRiskCalculatorTests {
 
     @Autowired
     @Qualifier("casEventRepository")
@@ -84,7 +85,7 @@ public class IpAddressAuthenticationRequestRiskCalculatorTests {
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("nobody");
+        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
@@ -96,6 +97,7 @@ public class IpAddressAuthenticationRequestRiskCalculatorTests {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
         ClientInfoHolder.setClientInfo(new ClientInfo("127.0.0.1", "107.181.69.221"));
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));

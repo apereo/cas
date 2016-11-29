@@ -111,6 +111,15 @@ public class RiskBasedAuthenticationProperties {
 
     public static class DateTime {
         private boolean enabled;
+        private int windowInHours = 2;
+
+        public int getWindowInHours() {
+            return windowInHours;
+        }
+
+        public void setWindowInHours(final int windowInHours) {
+            this.windowInHours = windowInHours;
+        }
 
         public boolean isEnabled() {
             return enabled;
