@@ -672,12 +672,17 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.threshold=0.6
 # cas.authn.adaptive.risk.daysInRecentHistory=30
 
-# cas.authn.adaptive.risk.ip.enabled=true
-# cas.authn.adaptive.risk.agent.enabled=true
-# cas.authn.adaptive.risk.geoLocation.enabled=true
-# cas.authn.adaptive.risk.dateTime.enabled=true
+# cas.authn.adaptive.risk.ip.enabled=false
+
+# cas.authn.adaptive.risk.agent.enabled=false
+
+# cas.authn.adaptive.risk.geoLocation.enabled=false
+
+# cas.authn.adaptive.risk.dateTime.enabled=false
+# cas.authn.adaptive.risk.dateTime.windowInHours=2
 
 # cas.authn.adaptive.risk.response.blockAttempt=false
+
 # cas.authn.adaptive.risk.response.mfaProvider=
 # cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
 
@@ -688,6 +693,7 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # spring.mail.properties.mail.smtp.auth=true
 # spring.mail.protocol=smtp
 # spring.mail.test-connection=false
+
 # cas.authn.adaptive.risk.response.mail.from=
 # cas.authn.adaptive.risk.response.mail.text=
 # cas.authn.adaptive.risk.response.mail.subject=
