@@ -12,4 +12,7 @@ dependencies {
     compile libraries.springcloud
     compile libraries.springboot
     compile libraries.hibernate
+    testCompile project(path: ":core:cas-server-core")
+    testCompile project(":core:cas-server-core-logout")
+    testCompile project(":support:cas-server-support-cookie")
 }

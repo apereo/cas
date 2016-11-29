@@ -1,15 +1,19 @@
 package org.apereo.cas.impl.calcs;
 
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
+import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.impl.MockTicketGrantingTicketCreatedEventProducer;
+import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
+import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +41,12 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreServicesConfiguration.class,
         GoogleMapsGeoCodingConfiguration.class,
         CasCoreWebConfiguration.class,
+        CasCoreWebflowConfiguration.class,
         CasCoreEventsConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
