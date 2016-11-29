@@ -24,6 +24,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
+import javax.annotation.PostConstruct;
 import java.util.Set;
 
 /**
@@ -65,6 +67,10 @@ public class ElectronicFenceConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
     @Bean
@@ -199,5 +205,10 @@ public class ElectronicFenceConfiguration {
                 && StringUtils.isNotBlank(sms.getTwilio().getAccountId())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(riskAwareAuthenticationWebflowEventResolver(), 0);
     }
 }

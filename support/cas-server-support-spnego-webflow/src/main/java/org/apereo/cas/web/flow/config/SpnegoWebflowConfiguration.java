@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.SpnegoNegociateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchFilter;
@@ -48,7 +49,7 @@ public class SpnegoWebflowConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
