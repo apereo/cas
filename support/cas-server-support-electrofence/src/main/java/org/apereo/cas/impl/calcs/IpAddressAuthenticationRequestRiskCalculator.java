@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 /**
@@ -22,10 +23,10 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
     }
 
     @Override
-    protected double calculateScore(final HttpServletRequest request,
-                                    final Authentication authentication,
-                                    final RegisteredService service,
-                                    final Collection<CasEvent> events) {
+    protected BigDecimal calculateScore(final HttpServletRequest request,
+                                        final Authentication authentication,
+                                        final RegisteredService service,
+                                        final Collection<CasEvent> events) {
         final String remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         logger.debug("Filtering authentication events for ip address {}", remoteAddr);
         final long count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();
@@ -34,6 +35,7 @@ public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthentica
             logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), remoteAddr);
             return LOWEST_RISK_SCORE;
         }
-        return HIGHEST_RISK_SCORE - (count / events.size());
+        final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
+        return HIGHEST_RISK_SCORE.subtract(score);
     }
 }

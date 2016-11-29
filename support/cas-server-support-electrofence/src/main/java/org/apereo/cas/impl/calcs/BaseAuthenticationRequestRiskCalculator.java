@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -61,7 +62,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @param events         the events
      * @return the authentication risk score
      */
-    protected double calculateScore(final HttpServletRequest request,
+    protected BigDecimal calculateScore(final HttpServletRequest request,
                                     final Authentication authentication,
                                     final RegisteredService service,
                                     final Collection<CasEvent> events) {
