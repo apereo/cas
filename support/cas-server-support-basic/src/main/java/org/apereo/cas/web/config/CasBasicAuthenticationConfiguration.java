@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.BasicAuthenticationAction;
 import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,7 +39,7 @@ public class CasBasicAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("loginFlowRegistry")

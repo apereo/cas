@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
@@ -56,7 +57,7 @@ public class CasSupportActionsConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("servicesManager")

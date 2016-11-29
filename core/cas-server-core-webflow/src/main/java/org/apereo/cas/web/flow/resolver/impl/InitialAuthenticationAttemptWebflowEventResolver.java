@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver
         implements CasDelegatingWebflowEventResolver {
-    
+
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
     private CasWebflowEventResolver selectiveResolver;
@@ -119,6 +119,11 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     @Override
     public void addDelegate(final CasWebflowEventResolver r) {
         orderedResolvers.add(r);
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r, final int index) {
+        orderedResolvers.add(index, r);
     }
 
     public void setSelectiveResolver(final CasWebflowEventResolver r) {
