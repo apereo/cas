@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
         classes = {CasCoreAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreUtilConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCoreConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,

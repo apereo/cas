@@ -3,7 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.StormpathAuthenticationConfiguration;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
         classes = {StormpathAuthenticationConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/stormpath.properties"})
