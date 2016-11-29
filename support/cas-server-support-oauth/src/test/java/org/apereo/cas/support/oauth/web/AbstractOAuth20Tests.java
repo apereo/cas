@@ -7,7 +7,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasOAuthConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import java.util.Map;
                 CasCoreServicesConfiguration.class,
                 CasOAuthConfiguration.class,
                 CasCoreTicketsConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 CasCoreUtilConfiguration.class})
