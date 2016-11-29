@@ -5,7 +5,9 @@ title: CAS - OIDC Authentication
 
 # OpenID Connect Authentication
 
-Allow CAS to act as an OpenId Connect Provider (OP). Support is enabled by including the following dependency in the WAR overlay:
+Allow CAS to act as an OpenId Connect Provider (OP). 
+
+Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
 <dependency>

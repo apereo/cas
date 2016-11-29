@@ -75,7 +75,8 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+    private final ObjectWriter jacksonPrettyWriter =
+            new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.
@@ -87,7 +88,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                                            final HttpServletRequest request) throws JsonProcessingException {
+                                                             final HttpServletRequest request) throws JsonProcessingException {
 
         try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
@@ -231,6 +232,4 @@ public class TicketsResource {
     public void setCredentialFactory(final CredentialFactory credentialFactory) {
         this.credentialFactory = credentialFactory;
     }
-
-
 }

@@ -159,6 +159,8 @@ public class CasCoreAuditConfiguration {
 
         map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER",
                 new DefaultAuditActionResolver("_TRIGGERED", "_NOT_TRIGGERED"));
+        final AuditActionResolver adResolver = new DefaultAuditActionResolver();
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", adResolver);
 
         map.put("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 
@@ -178,6 +180,7 @@ public class CasCoreAuditConfiguration {
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", this.ticketResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
+        map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver());
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         return map;
     }
