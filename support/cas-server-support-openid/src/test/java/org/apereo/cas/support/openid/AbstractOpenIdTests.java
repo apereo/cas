@@ -8,7 +8,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.OpenIdConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCookieConfiguration.class,
                 CasValidationConfiguration.class,
                 CasCoreLogoutConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCoreConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreWebConfiguration.class,
