@@ -77,7 +77,7 @@ Prevent the authentication flow to proceed and disallow the establishment of the
 
 ### Multifactor Authentication
 
-Force the authentication event into a [multifactor flow of choice](Configuring-Multifactor-Authentication.md),
+Force the authentication event into a [multifactor flow of choice](Configuring-Multifactor-Authentication.html),
 identified by the provider id.
 
 ## Configuration
