@@ -8,15 +8,15 @@ title: CAS - Adaptive Risk-based Authentication
 <div class="alert alert-warning"><strong>Achtung, liebe Leser</strong><p>This feature swings more towards the experimental.</p></div>
 
 Risk-based authentication allows CAS to detect suspicious and seemingly-fraudulent authentication requests based on past user behavior
-and collected authentication events, statistics, etc. Once *after* primary authentication where the principal is identified,
+and collected authentication events, statistics, etc. Once and *after* primary authentication where the principal is identified,
 the authentication transaction is analyzed via a number of configurable criteria and fences to determine how *risky* the attempt may be.
-The result of the evaluation step is a comulative risk score that is then weighed against a risk threshold set by the CAS operator.
+The result of the evaluation step is a cumulative risk score that is then weighed against a risk threshold set by the CAS operator.
 In the event that the authentication attempt is considered risky well beyond the risk threshold, CAS may be allowed to take action and
 mitigate that risk. 
 
 Simply put, the story told is:
 
-> If an authentication request is at least [60%] risky, take action to mitigate that risk. 
+> If an authentication request is at least [X%] risky, take action to mitigate that risk. 
 
 The functionality of this feature is **ENTIRELY** dependant upon collected statistics and authentication events in the past.
 Without data, there is nothing to analyze and no risk to detect.
@@ -39,11 +39,21 @@ request safe.
 
 ### IP Address
 
+This calculator looks into past authentication events that match the client ip address. It is applicable if you wish
+to consider authentication requests from unknown ip addresses suspicious for the user. The story here is:
+
+> Find all authentication events that match the current client ip address and calculate an averaged score.
+
 ### Browser User Agent
 
 ### Geolocation
 
 ### Date/Time
+
+This calculator looks into past authentication events that fit within the defined time-window. It is applicable if you wish
+to consider authentication requests outside that window suspicious for the user. The story here is:
+
+> Find all authentication events that are established X hours before/after now and calculate an averaged score.
 
 ## Risk Mitigation
 
