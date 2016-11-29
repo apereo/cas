@@ -15,6 +15,9 @@ import java.util.Set;
 public class GeoLocationResponse {
     private Set<String> addresses = Sets.newConcurrentHashSet();
 
+    private double latitude;
+    private double longitude;
+
     /**
      * Add address.
      *
@@ -40,5 +43,25 @@ public class GeoLocationResponse {
         return new ToStringBuilder(this)
                 .append("addresses", this.addresses)
                 .toString();
+    }
+
+    public Set<String> getAddresses() {
+        return addresses;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(final double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(final double longitude) {
+        this.longitude = longitude;
     }
 }
