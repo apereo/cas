@@ -139,7 +139,8 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator() {
-        return new DateTimeAuthenticationRequestRiskCalculator(this.casEventRepository);
+        return new DateTimeAuthenticationRequestRiskCalculator(this.casEventRepository,
+                casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours());
     }
 
     @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
