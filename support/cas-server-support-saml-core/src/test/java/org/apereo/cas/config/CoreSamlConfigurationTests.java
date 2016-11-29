@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreUtilConfiguration.class,
                 CoreSamlConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCoreServicesConfiguration.class})
 @EnableScheduling
 public class CoreSamlConfigurationTests {
