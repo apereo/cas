@@ -73,7 +73,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             final RegisteredService registeredService) {
         logger.debug("Locating multifactor providers to determine support for this authentication sequence");
         final Map<String, MultifactorAuthenticationProvider> providers =
-                WebUtils.getAllMultifactorAuthenticationProviders(applicationContext);
+                WebUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
             logger.debug("No providers are available to honor this request. Moving on...");

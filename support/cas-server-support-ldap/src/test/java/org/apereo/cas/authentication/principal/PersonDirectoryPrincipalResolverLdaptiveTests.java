@@ -1,6 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.junit.BeforeClass;
@@ -22,7 +26,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(locations={"/ldap-context.xml", "/resolver-context.xml"})
+@ContextConfiguration(locations = {"/ldap-context.xml", "/resolver-context.xml"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
 
     @Autowired
@@ -40,11 +44,32 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
             final String psw = entry.getAttribute("userPassword").getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeDao);
-            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw));
+            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw),
+                    CoreAuthenticationTestUtils.getPrincipal());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
         }
 
+    }
+
+    @Test
+    public void verifyChainedResolver() {
+        for (final LdapEntry entry : this.getEntries()) {
+            final String username = getUsername(entry);
+            final String psw = entry.getAttribute("userPassword").getStringValue();
+            final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
+            resolver.setAttributeRepository(this.attributeDao);
+
+            final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
+            chain.setChain(Lists.newArrayList(resolver, new EchoingPrincipalResolver()));
+            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw),
+                    CoreAuthenticationTestUtils.getPrincipal(username,
+                            ImmutableMap.of("a1", "v1", "a2", "v2")));
+            assertNotNull(p);
+            assertTrue(p.getAttributes().containsKey("displayName"));
+            assertTrue(p.getAttributes().containsKey("a1"));
+            assertTrue(p.getAttributes().containsKey("a2"));
+        }
     }
 
 }

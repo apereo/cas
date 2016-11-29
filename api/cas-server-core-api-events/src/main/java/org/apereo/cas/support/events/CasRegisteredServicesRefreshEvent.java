@@ -19,6 +19,5 @@ public class CasRegisteredServicesRefreshEvent extends AbstractCasEvent {
     public CasRegisteredServicesRefreshEvent(final Object source) {
         super(source);
     }
-
-
+    
 }
