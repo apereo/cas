@@ -187,7 +187,7 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 }
 ```
 
-## Fail-Open vs Fail-Closed
+## Failure Modes
 
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
