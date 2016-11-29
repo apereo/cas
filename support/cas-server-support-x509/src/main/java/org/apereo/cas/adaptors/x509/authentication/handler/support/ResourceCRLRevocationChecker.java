@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -11,9 +10,11 @@ import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -76,10 +77,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * @param crls the crls
      * @since 4.1
      */
-    public ResourceCRLRevocationChecker(final CRLFetcher fetcher,
-                                        final Resource[] crls) {
+    public ResourceCRLRevocationChecker(final CRLFetcher fetcher, final Resource[] crls) {
         this.fetcher = fetcher;
-        this.resources = ImmutableSet.copyOf(crls);
+        this.resources = new HashSet<>(Arrays.asList(crls));
     }
 
     /**
@@ -90,7 +90,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public void setRefreshInterval(final int seconds) {
         this.refreshInterval = seconds;
     }
-
 
     public void setResources(final Set<Resource> resources) {
         this.resources = resources;
@@ -132,36 +131,27 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
             }
         };
         try {
-            this.scheduler.scheduleAtFixedRate(
-                    scheduledFetcher,
-                    this.refreshInterval,
-                    this.refreshInterval,
-                    TimeUnit.SECONDS);
+            this.scheduler.scheduleAtFixedRate(scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-
     }
 
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
-            logger.debug("{} is not configured with resources. Skipping configuration...",
-                    this.getClass().getSimpleName());
+            logger.debug("{} is not configured with resources. Skipping configuration...", this.getClass().getSimpleName());
             return false;
         }
         if (this.fetcher == null) {
-            logger.debug("{} is not configured with a CRL fetcher. Skipping configuration...",
-                    this.getClass().getSimpleName());
+            logger.debug("{} is not configured with a CRL fetcher. Skipping configuration...", this.getClass().getSimpleName());
             return false;
         }
         if (getExpiredCRLPolicy() == null) {
-            logger.debug("{} is not configured with a CRL expiration policy. Skipping configuration...",
-                    this.getClass().getSimpleName());
+            logger.debug("{} is not configured with a CRL expiration policy. Skipping configuration...", this.getClass().getSimpleName());
             return false;
         }
         if (getUnavailableCRLPolicy()== null) {
-            logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...",
-                    this.getClass().getSimpleName());
+            logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...", this.getClass().getSimpleName());
             return false;
         }
         return true;

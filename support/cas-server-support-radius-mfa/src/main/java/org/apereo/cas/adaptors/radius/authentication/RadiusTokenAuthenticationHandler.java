@@ -58,8 +58,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                     RadiusUtils.authenticate(username, password, this.servers,
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()),
-                        new ArrayList<>());
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()), new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Exception e) {

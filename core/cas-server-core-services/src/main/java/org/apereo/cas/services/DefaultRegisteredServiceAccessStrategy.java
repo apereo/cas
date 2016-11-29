@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -249,9 +251,9 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
-                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
+                availableValues = new HashSet<>(((Collection<String>) objVal));
             } else {
-                availableValues = Sets.newHashSet(objVal.toString());
+                availableValues = new HashSet<>(Collections.singletonList(objVal.toString()));
             }
 
             final Set<?> differenceInValues;
@@ -272,8 +274,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
-        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
-                this.rejectedAttributes, principalAttributes);
+        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", this.rejectedAttributes, principalAttributes);
         final Sets.SetView<String> rejectedDifference = Sets.intersection(this.rejectedAttributes.keySet(), principalAttributes.keySet());
         final Set<String> rejectedCopy = rejectedDifference.immutableCopy();
 
@@ -293,9 +294,9 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
-                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
+                availableValues = new HashSet<>(((Collection<String>) objVal));
             } else {
-                availableValues = Sets.newHashSet(objVal.toString());
+                availableValues = new HashSet<>(Collections.singletonList(objVal.toString()));
             }
 
             final Set<?> differenceInValues;
@@ -308,8 +309,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             }
 
             if (!differenceInValues.isEmpty()) {
-                LOGGER.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}",
-                        key, differenceInValues);
+                LOGGER.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}", key, differenceInValues);
                 return true;
             }
             return false;

@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.ldap;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -27,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,8 +107,7 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
             final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), c.getId());
             final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
-            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory,
-                    ldap.getBaseDn(), filter);
+            final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
 
             if (LdapUtils.containsResultEntry(response)) {
                 final String dn = response.getResult().getEntry().getDn();
@@ -172,7 +171,7 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map<String, String> set = Maps.newLinkedHashMap();
+        final Map<String, String> set = new LinkedHashMap<>();
 
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
@@ -181,8 +180,7 @@ public class LdapPasswordManagementService implements PasswordManagementService 
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
                 final LdapEntry entry = response.getResult().getEntry();
-                final Map<String, String> qs = casProperties.getAuthn().getPm().getReset().getSecurityQuestionsAttributes();
-                qs.forEach((k, v) -> {
+                casProperties.getAuthn().getPm().getReset().getSecurityQuestionsAttributes().forEach((k, v) -> {
                     final LdapAttribute q = entry.getAttribute(k);
                     final LdapAttribute a = entry.getAttribute(v);
                     if (q != null && a != null

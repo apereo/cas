@@ -1,12 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -63,9 +65,9 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
                 restTemplate.getForEntity(url, MultifactorAuthenticationTrustRecord[].class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             final MultifactorAuthenticationTrustRecord[] results = responseEntity.getBody();
-            return Sets.newHashSet(results);
+            return new HashSet<>(Arrays.asList(results));
         }
 
-        return Sets.newHashSet();
+        return Collections.emptySet();
     }
 }

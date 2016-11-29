@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,10 +7,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -122,14 +121,12 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
         private RegisteredServiceSamlTypeEditBean saml = new RegisteredServiceSamlTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
-        private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider =
-                new RegisteredServiceUsernameAttributeProviderEditBean();
+        private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = new RegisteredServiceUsernameAttributeProviderEditBean();
         private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
         private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
-        private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
-                = new RegisteredServiceAttributeReleasePolicyEditBean();
+        private RegisteredServiceAttributeReleasePolicyEditBean attrRelease = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
-        private Set<PropertyBean> properties = Sets.newLinkedHashSet();
+        private Set<PropertyBean> properties = new LinkedHashSet<>();
 
         public void setProperties(final Set<PropertyBean> properties) {
             this.properties = properties;

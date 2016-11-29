@@ -68,8 +68,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         final ProfileManager manager = new ProfileManager(context);
         final Optional<UserProfile> profile = manager.get(true);
 
-        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout,
-                oidcRegisteredService, profile.get(), context);
+        final JwtClaims claims = produceIdTokenClaims(request, accessTokenId, timeout, oidcRegisteredService, profile.get(), context);
         final Optional<JsonWebKeySet> jwks = buildJsonWebKeySet(oidcRegisteredService);
         final String idToken = signIdTokenClaim(oidcRegisteredService, jwks, claims);
         jsonGenerator.writeStringField(OidcConstants.ID_TOKEN, idToken);
@@ -121,7 +120,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
 
         final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
-        setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
+        setView.immutableCopy().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());

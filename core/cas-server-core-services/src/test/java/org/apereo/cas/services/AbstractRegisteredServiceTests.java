@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Lists;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,13 +67,11 @@ public class AbstractRegisteredServiceTests {
 
         assertEquals(ALLOWED_TO_PROXY, this.r.getProxyPolicy().isAllowedToProxy());
         assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.getAccessStrategy()
-                .isServiceAccessAllowed());
+        assertEquals(ENABLED, this.r.getAccessStrategy().isServiceAccessAllowed());
         assertEquals(ID, this.r.getId());
         assertEquals(NAME, this.r.getName());
         assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.getAccessStrategy()
-                .isServiceAccessAllowedForSso());
+        assertEquals(SSO_ENABLED, this.r.getAccessStrategy().isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
         assertNotNull(this.r);
@@ -109,7 +107,7 @@ public class AbstractRegisteredServiceTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -122,14 +120,14 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("attr1", "attr3"));
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         this.r.setAttributeReleasePolicy(policy);
         final Principal p = mock(Principal.class);
         
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -155,7 +153,7 @@ public class AbstractRegisteredServiceTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
         
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");

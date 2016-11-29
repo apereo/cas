@@ -1,8 +1,6 @@
 package org.apereo.cas.util.http;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -46,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * The factory to build a {@link SimpleHttpClient}.
@@ -104,7 +104,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * List of HTTP status codes considered valid by the caller.
      */
-    private List<Integer> acceptableCodes = Ints.asList(DEFAULT_ACCEPTABLE_CODES);
+    private List<Integer> acceptableCodes = IntStream.of(DEFAULT_ACCEPTABLE_CODES).boxed().collect(Collectors.toList());
 
     private long connectionTimeout = DEFAULT_TIMEOUT;
 
@@ -315,11 +315,11 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     public List<Integer> getAcceptableCodes() {
-        return ImmutableList.copyOf(this.acceptableCodes);
+        return this.acceptableCodes;
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = Ints.asList(acceptableCodes);
+        this.acceptableCodes = IntStream.of(acceptableCodes).boxed().collect(Collectors.toList());
     }
 
     public long getConnectionTimeout() {
@@ -334,9 +334,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return this.readTimeout;
     }
 
-
-    public void setReadTimeout(
-            final int readTimeout) {
+    public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
@@ -460,8 +458,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
     }
-
-
 
     /**
      * The type Ssl trust store aware http client.

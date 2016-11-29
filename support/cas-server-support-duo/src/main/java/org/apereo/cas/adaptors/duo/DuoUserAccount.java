@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.duo;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,7 +13,6 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class DuoUserAccount {
-
 
     /**
      * Duo account status.
@@ -60,7 +59,7 @@ public class DuoUserAccount {
     /**
      * The Groups.
      */
-    private Set<String> groups = Sets.newHashSet();
+    private Set<String> groups = new HashSet<>();
 
     /**
      * Instantiates a new Duo user account.
@@ -230,5 +229,4 @@ public class DuoUserAccount {
                 .append("groups", groups)
                 .toString();
     }
-
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -17,6 +16,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -145,7 +146,10 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         @Override
         public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceViewBean bean) {
             base.mapRegisteredService(svc, bean);
-            bean.setCustomComponent("customComponent1", ImmutableMap.of("key1", "string", "key2", 100));
+            HashMap<String, Object> properties = new HashMap<>();
+            properties.put("key1", "string");
+            properties.put("key2", 100);
+            bean.setCustomComponent("customComponent1", properties);
         }
 
         @Override

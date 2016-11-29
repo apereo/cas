@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
@@ -22,7 +21,7 @@ import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,12 +44,9 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      */
-    public FileTrustStoreSslSocketFactory(
-            final Resource trustStoreFile,
-            final String trustStorePassword) {
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
-    
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
@@ -58,9 +54,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @param trustStorePassword the trust store password
      * @param trustStoreType the trust store type
      */
-    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, 
-                                          final String trustStorePassword,
-                                          final String trustStoreType) {
+    public FileTrustStoreSslSocketFactory(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         super(getTrustedSslContext(trustStoreFile, trustStorePassword, trustStoreType));
     }
 
@@ -72,10 +66,8 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @param trustStoreType the trust store type
      * @return the trusted ssl context
      */
-    private static SSLContext getTrustedSslContext(final Resource trustStoreFile, final String trustStorePassword,
-                                            final String trustStoreType) {
+    private static SSLContext getTrustedSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         try {
-
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
             final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
@@ -89,13 +81,9 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
             final X509TrustManager customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
             final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
 
-            final KeyManager[] keyManagers = {
-                    new CompositeX509KeyManager(Lists.newArrayList(jvmKeyManager, customKeyManager))
-            };
-            final TrustManager[] trustManagers = {
-                    new CompositeX509TrustManager(Lists.newArrayList(jvmTrustManager, customTrustManager))
-            };
-            
+            final KeyManager[] keyManagers = {new CompositeX509KeyManager(Arrays.asList(jvmKeyManager, customKeyManager))};
+            final TrustManager[] trustManagers = {new CompositeX509TrustManager(Arrays.asList(jvmTrustManager, customTrustManager))};
+
             final SSLContext context = SSLContexts.custom().useProtocol("SSL").build();
             context.init(keyManagers, trustManagers, null);
             return context;
@@ -115,8 +103,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @return the key manager
      * @throws Exception the exception
      */
-    private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore,
-                                                final char[] password) throws Exception {
+    private static X509KeyManager getKeyManager(final String algorithm, final KeyStore keystore, final char[] password) throws Exception {
         final KeyManagerFactory factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return (X509KeyManager) factory.getKeyManagers()[0];
@@ -130,8 +117,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
      * @return the trust manager
      * @throws Exception the exception
      */
-    private static X509TrustManager getTrustManager(final String algorithm,
-                                                    final KeyStore keystore) throws Exception{
+    private static X509TrustManager getTrustManager(final String algorithm, final KeyStore keystore) throws Exception {
         final TrustManagerFactory factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return (X509TrustManager) factory.getTrustManagers()[0];
@@ -179,16 +165,18 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
-            this.keyManagers.forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getClientAliases(keyType, issuers))));
-            return aliases.toArray(new String[] {});
+            return keyManagers.stream()
+                    .map(manager -> manager.getClientAliases(keyType, issuers))
+                    .flatMap(Arrays::stream)
+                    .toArray(String[]::new);
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
-            final List<String> aliases = new ArrayList<>();
-            this.keyManagers.forEach(keyManager -> aliases.addAll(Lists.newArrayList(keyManager.getServerAliases(keyType, issuers))));
-            return aliases.toArray(new String[] {});
+            return keyManagers.stream()
+                    .map(manager -> manager.getServerAliases(keyType, issuers))
+                    .flatMap(Arrays::stream)
+                    .toArray(String[]::new);
         }
     }
 
@@ -213,7 +201,7 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            final boolean notTrusted = this.trustManagers.stream().noneMatch(trustManager -> {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
                     return true;
@@ -222,16 +210,14 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return false;
                 }
             });
-
-            if (!trusted) {
+            if (notTrusted) {
                 throw new CertificateException("None of the TrustManagers can trust this certificate chain");
             }
         }
 
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-
-            final boolean trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+            final boolean notTrusted = this.trustManagers.stream().noneMatch(trustManager -> {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
                     return true;
@@ -240,16 +226,17 @@ public class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
                     return false;
                 }
             });
-            if (!trusted) {
+            if (notTrusted) {
                 throw new CertificateException("None of the TrustManagers trust this certificate chain");
             }
         }
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
-            final List<X509Certificate> certificates = new ArrayList<>();
-            this.trustManagers.forEach(trustManager -> certificates.addAll(Lists.newArrayList(trustManager.getAcceptedIssuers())));
-            return certificates.toArray(new X509Certificate[certificates.size()]);
+            return trustManagers.stream()
+                    .map(X509TrustManager::getAcceptedIssuers)
+                    .flatMap(Arrays::stream)
+                    .toArray(X509Certificate[]::new);
         }
     }
 }

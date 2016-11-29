@@ -1,14 +1,13 @@
 package org.apereo.cas.services.support;
 
-import com.google.common.collect.Lists;
-import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -86,14 +85,13 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
 
             if (attributeValue instanceof Collection) {
                 LOGGER.trace("Attribute value {} is a collection", attributeValue);
-                final List filteredAttributes = filterAttributes(
-                        (Collection<String>) attributeValue, attributeName);
+                final List filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue.getClass().isArray()) {
                 LOGGER.trace("Attribute value {} is an array", attributeValue);
-                final List filteredAttributes = filterAttributes(Lists.newArrayList((String[]) attributeValue), attributeName);
+                final List filteredAttributes = filterAttributes(Arrays.asList((String[]) attributeValue), attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }

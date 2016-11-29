@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
@@ -52,6 +51,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 
 
 /**
@@ -89,11 +89,7 @@ public class CasWebflowContextConfiguration {
     
     @Bean
     public ExpressionParser expressionParser() {
-        final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
-                new SpelExpressionParser(),
-                logoutConversionService());
-
-        return parser;
+        return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), logoutConversionService());
     }
 
     @Bean
@@ -105,7 +101,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public ViewFactoryCreator viewFactoryCreator() {
         final MvcViewFactoryCreator resolver = new MvcViewFactoryCreator();
-        resolver.setViewResolvers(ImmutableList.of(this.registeredServiceViewResolver));
+        resolver.setViewResolvers(Collections.singletonList(this.registeredServiceViewResolver));
         return resolver;
     }
 
@@ -127,8 +123,7 @@ public class CasWebflowContextConfiguration {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
+                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
             }
         };
         handler.setFlowExecutor(logoutFlowExecutor());
@@ -192,8 +187,7 @@ public class CasWebflowContextConfiguration {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
+                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
             }
         };
         handler.setFlowExecutor(loginFlowExecutor());
@@ -268,8 +262,7 @@ public class CasWebflowContextConfiguration {
                     new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
             flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
 
-            final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
-                    flowExecutionSnapshotFactory);
+            final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager, flowExecutionSnapshotFactory);
             executionFactory.setExecutionKeyFactory(repository);
             return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
         }

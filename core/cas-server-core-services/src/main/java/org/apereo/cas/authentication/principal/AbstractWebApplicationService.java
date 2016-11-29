@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.logout.SingleLogoutService;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -23,8 +23,6 @@ import java.util.Map;
 public abstract class AbstractWebApplicationService implements SingleLogoutService {
 
     private static final long serialVersionUID = 610105280927740076L;
-
-    private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /** Logger instance. **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -78,7 +76,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     /**
@@ -155,7 +153,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     public Response getResponse(final String ticketId) {
         return this.responseBuilder.build(this, ticketId);
     }
-
 
     @Override
     public boolean equals(final Object obj) {

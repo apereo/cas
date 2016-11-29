@@ -24,9 +24,7 @@ public class Pac4jErrorViewResolver implements ErrorViewResolver {
     private ErrorViewResolver conventionErrorViewResolver;
     
     @Override
-    public ModelAndView resolveErrorView(final HttpServletRequest request,
-                                         final HttpStatus status, final Map<String, Object> map) {
-
+    public ModelAndView resolveErrorView(final HttpServletRequest request, final HttpStatus status, final Map<String, Object> map) {
         final Optional<ModelAndView> mv = ClientAction.hasDelegationRequestFailed(request, status.value());
         if (mv.isPresent()) {
             return mv.get();

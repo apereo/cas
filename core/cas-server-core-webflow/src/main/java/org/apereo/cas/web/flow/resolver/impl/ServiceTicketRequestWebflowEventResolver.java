@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -14,6 +13,8 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,11 +25,12 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
             logger.debug("Authentication request is asking for service tickets");
-            return ImmutableSet.of(grantServiceTicket(context));
+            return new HashSet<>(Collections.singletonList(grantServiceTicket(context)));
         }
         return null;
     }

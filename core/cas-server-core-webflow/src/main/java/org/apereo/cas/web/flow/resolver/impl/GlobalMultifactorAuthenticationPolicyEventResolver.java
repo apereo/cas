@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -45,8 +46,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         }
         logger.debug("Attempting to globally activate {}", mfaId);
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -54,14 +54,12 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, mfaId);
 
-
         if (providerFound.isPresent()) {
             if (providerFound.get().isAvailable(service)) {
-                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        providerFound.get(), service.getName());
+                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return ImmutableSet.of(event);
+                return new HashSet<>(Collections.singletonList(event));
             }
             logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
             return null;
@@ -69,7 +67,6 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         logger.warn("No multifactor provider could be found for {}", mfaId);
         throw new AuthenticationException();
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")

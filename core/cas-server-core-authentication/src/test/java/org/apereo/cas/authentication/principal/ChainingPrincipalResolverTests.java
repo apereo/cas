@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Credential;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -31,7 +31,7 @@ public class ChainingPrincipalResolverTests {
         when(resolver2.supports(eq(credential))).thenReturn(false);
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-        resolver.setChain(Lists.newArrayList(resolver1, resolver2));
+        resolver.setChain(Arrays.asList(resolver1, resolver2));
         assertTrue(resolver.supports(credential));
     }
 
@@ -50,10 +50,9 @@ public class ChainingPrincipalResolverTests {
                 .thenReturn(principalFactory.createPrincipal("output", Collections.<String, Object>singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-        resolver.setChain(Lists.newArrayList(resolver1, resolver2));
+        resolver.setChain(Arrays.asList(resolver1, resolver2));
         final Principal principal = resolver.resolve(credential, any(Principal.class));
         assertEquals("output", principal.getId());
         assertEquals("final@example.com", principal.getAttributes().get("mail"));
     }
-
 }

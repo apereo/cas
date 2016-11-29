@@ -1,16 +1,15 @@
 package org.apereo.cas;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -36,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
-
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -80,12 +79,17 @@ public class MultifactorAuthenticationTests {
 
     @PostConstruct
     public void init() {
-        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(
-                ImmutableMap.of("alice", "alice", "bob", "bob", "mallory", "mallory")
-        ), null);
-        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(
-                ImmutableMap.of("alice", "31415", "bob", "62831", "mallory", "14142")
-        ), null);
+        HashMap<String, String> users = new HashMap<>();
+        users.put("alice", "alice");
+        users.put("bob", "bob");
+        users.put("mallory", "mallory");
+        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(users), null);
+
+        HashMap<String, String> credentials = new HashMap<>();
+        credentials.put("alice", "31415");
+        credentials.put("bob", "62831");
+        credentials.put("mallory", "14142");
+        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(credentials), null);
     }
 
     @Test
@@ -146,21 +150,15 @@ public class MultifactorAuthenticationTests {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx2);
         assertNotNull(tgt);
 
-        final ServiceTicket st = cas.grantServiceTicket(
-                tgt.getId(),
-                HIGH_SERVICE,
-                ctx2);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx2);
 
         assertNotNull(st);
         // Confirm the authentication in the assertion is the one that satisfies security policy
         final Assertion assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
-        assertTrue(assertion.getPrimaryAuthentication()
-                .getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
-        assertTrue(assertion.getPrimaryAuthentication()
-                .getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
-        assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
-                AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
+        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
+        assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
@@ -174,9 +172,7 @@ public class MultifactorAuthenticationTests {
         return CoreAuthenticationTestUtils.getService(id);
     }
 
-    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws
-            AuthenticationException {
-
+    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
         return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
 }

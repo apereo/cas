@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -18,6 +17,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,14 +74,14 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver
 
                 if (restProvider != null) {
                     logger.debug("Found multifactor authentication provider {}", restProvider.getId());
-                    return Sets.newHashSet(new Event(this, restProvider.getId()));
+                    return new HashSet<>(Collections.singletonList(new Event(this, restProvider.getId())));
                 }
                 logger.debug("No multifactor authentication provider could be matched against {}", results);
-                return Sets.newHashSet();
+                return Collections.emptySet();
             }
         }
         logger.debug("No providers are available to match rest endpoint results");
-        return Sets.newHashSet();
+        return Collections.emptySet();
     }
 
 

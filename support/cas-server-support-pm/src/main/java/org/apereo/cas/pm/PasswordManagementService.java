@@ -1,8 +1,8 @@
 package org.apereo.cas.pm;
 
-import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.Credential;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -61,6 +61,6 @@ public interface PasswordManagementService {
      * @return the security questions
      */
     default Map<String, String> getSecurityQuestions(final String username) {
-        return Maps.newLinkedHashMap();
+        return new LinkedHashMap<>();
     }
 }

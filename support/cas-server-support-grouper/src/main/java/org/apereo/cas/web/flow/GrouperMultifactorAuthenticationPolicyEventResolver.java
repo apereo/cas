@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -20,6 +18,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,20 +58,19 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             return null;
         }
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap = WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             logger.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        final GrouperGroupField groupField =
-                GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
+        final GrouperGroupField groupField = GrouperGroupField.valueOf(casProperties.getAuthn().getMfa().getGrouperGroupField().toUpperCase());
 
-        final Set<String> values = Sets.newHashSet();
-        results.stream().forEach(wr -> Arrays.stream(wr.getWsGroups()).map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
-                .collect(Collectors.toSet())
-                .forEach(g -> values.add(g)));
+        final Set<String> values = results.stream()
+                .map(WsGetGroupsResult::getWsGroups)
+                .flatMap(Arrays::stream)
+                .map(group -> GrouperFacade.getGrouperGroupAttribute(groupField, group))
+                .collect(Collectors.toSet());
 
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values);
 
@@ -81,7 +80,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return ImmutableSet.of(event);
+                return new HashSet<>(Collections.singletonList(event));
             }
             logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
             return null;

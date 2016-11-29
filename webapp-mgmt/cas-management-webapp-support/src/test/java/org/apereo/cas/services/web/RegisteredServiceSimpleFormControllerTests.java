@@ -1,8 +1,5 @@
 package org.apereo.cas.services.web;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -31,6 +28,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +56,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Lists.newArrayList(new Object[] {"test"}));
+        attributes.put("test", Collections.singletonList("test"));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
@@ -71,8 +69,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.registeredServiceFactory.setProxyPolicyMapper(new DefaultProxyPolicyMapper());
         this.registeredServiceFactory.setRegisteredServiceMapper(new DefaultRegisteredServiceMapper());
         this.registeredServiceFactory.setUsernameAttributeProviderMapper(new DefaultUsernameAttributeProviderMapper());
-        this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this
-                .repository)));
+        this.registeredServiceFactory.setFormDataPopulators(Collections.unmodifiableList(Collections.singletonList(new AttributeFormDataPopulator(this.repository))));
         this.registeredServiceFactory.initializeDefaults();
 
         this.manager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
@@ -103,9 +100,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        assertTrue(services.stream().allMatch(service -> service instanceof RegexRegisteredService));
     }
 
     @Test
@@ -152,9 +147,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegexRegisteredService);
-        }
+        assertTrue(manager.getAllServices().stream().allMatch(service -> service instanceof RegexRegisteredService));
     }
 
     @Test
@@ -205,7 +198,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
+        assertTrue(services.stream().allMatch(rs -> rs instanceof MockRegisteredService));
     }
 
     @Test
@@ -246,11 +239,12 @@ public class RegisteredServiceSimpleFormControllerTests {
         private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
-        public void mapRegisteredService(final RegisteredService svc,
-                                         final RegisteredServiceEditBean.ServiceData bean) {
+        public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceEditBean.ServiceData bean) {
             base.mapRegisteredService(svc, bean);
             if (svc instanceof MockRegisteredService) {
-                bean.setCustomComponent("mock", ImmutableMap.of("service_type", "MockRegisteredService"));
+                HashMap<String, String> properties = new HashMap<>();
+                properties.put("service_type", "MockRegisteredService");
+                bean.setCustomComponent("mock", Collections.unmodifiableMap(properties));
             }
         }
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,10 +64,13 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
 
 /**
  * A re-usable collection of utility methods for object instantiations and configurations used cross various
@@ -178,11 +180,8 @@ public final class Beans {
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map<String, List<Object>> pdirMap = new HashMap<>();
-            p.getAttributes().entrySet().forEach(entry -> {
-                final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList((Object[]) vals));
-            });
+            final Map<String, List<Object>> pdirMap = p.getAttributes().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> Arrays.asList(commaDelimitedListToStringArray(e.getValue()))));
             dao.setBackingMap(pdirMap);
             return dao;
         } catch (final Exception e) {
@@ -212,7 +211,6 @@ public final class Beans {
         }
     }
 
-
     /**
      * New principal name transformer.
      *
@@ -236,7 +234,6 @@ public final class Beans {
                 final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer(res);
                 t.setToUpperCase(true);
                 return t;
-
             case LOWERCASE:
                 final ConvertCasePrincipalNameTransformer t1 = new ConvertCasePrincipalNameTransformer(res);
                 t1.setToUpperCase(false);
@@ -261,7 +258,6 @@ public final class Beans {
         entryResolver.setConnectionFactory(Beans.newPooledConnectionFactory(l));
         return entryResolver;
     }
-
 
     /**
      * New connection config connection config.

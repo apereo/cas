@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.stream.Collectors;
 
 /**
  * The {@link SamlMetadataController} will attempt
@@ -61,7 +62,7 @@ public class SamlMetadataController {
     @RequestMapping(method = RequestMethod.GET, value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
-        final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
+        final String contents = Files.lines(metadataFile.toPath(), StandardCharsets.UTF_8).collect(Collectors.joining());
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = response.getWriter()) {

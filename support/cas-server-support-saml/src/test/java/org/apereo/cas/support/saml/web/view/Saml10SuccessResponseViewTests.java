@@ -1,28 +1,28 @@
 package org.apereo.cas.support.saml.web.view;
 
-import com.google.common.collect.Lists;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.ImmutableAssertion;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.ImmutableAssertion;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +69,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
-        attributes.put("testAttributeCollection", Lists.newArrayList("tac1", "tac2"));
+        attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<>();
@@ -78,8 +78,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary =
-                CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),
                 CoreAuthenticationTestUtils.getService(), true);
@@ -144,8 +143,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
-        final Authentication primary =
-                CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
+        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
                 primary, Collections.singletonList(primary),

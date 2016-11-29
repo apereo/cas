@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -78,6 +77,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -201,7 +201,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
@@ -231,8 +231,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
 
             if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
-                return commonProfile -> commonProfile.addRoles(
-                        StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
+                return commonProfile -> commonProfile.addRoles(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
                 );
             }
             return new FromAttributesAuthorizationGenerator(
@@ -351,31 +350,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
+            @Qualifier("servicesManager") final ServicesManager servicesManager) {
 
-        final ManageRegisteredServicesMultiActionController c =
-                new ManageRegisteredServicesMultiActionController(
-                        servicesManager,
-                        registeredServiceFactory(),
-                        getDefaultServiceUrl());
-        return c;
+        return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(), getDefaultServiceUrl());
     }
 
     @Bean
-    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
-        final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
-                servicesManager,
-                registeredServiceFactory()
-        );
-        return c;
+    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+        return new RegisteredServiceSimpleFormController(servicesManager, registeredServiceFactory());
     }
 
     private String getDefaultServiceUrl() {
-        return casProperties.getMgmt().getServerName()
-                .concat(serverProperties.getContextPath()).concat("/callback");
+        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/callback");
     }
 
     @Bean

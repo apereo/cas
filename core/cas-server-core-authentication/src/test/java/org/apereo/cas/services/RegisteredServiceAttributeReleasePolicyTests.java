@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
@@ -18,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +91,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -101,8 +101,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey("newAttr1"));
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
+        final ReturnMappedAttributeReleasePolicy p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -110,13 +109,13 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("attr1", "attr3"));
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
 
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -127,8 +126,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey("attr3"));
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -155,7 +153,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -164,8 +162,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(attr.size(), map.size());
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
+        final ReturnAllAttributeReleasePolicy p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
 
@@ -174,21 +171,19 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
 
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("values", Lists.newArrayList(new Object[]{"v1", "v2", "v3"}));
-        attributes.put("cn", Lists.newArrayList(new Object[]{"commonName"}));
-        attributes.put("username", Lists.newArrayList(new Object[]{"uid"}));
+        attributes.put("values", Arrays.asList("v1", "v2", "v3"));
+        attributes.put("cn", Collections.singletonList("commonName"));
+        attributes.put("username", Collections.singletonList("uid"));
 
         final IPersonAttributeDao dao = new StubPersonAttributeDao(attributes);
         final IPersonAttributes person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
-        final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
+        final CachingPrincipalAttributesRepository repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepository(dao);
 
-        final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
-                Collections.singletonMap("mail", "final@example.com"));
+        final Principal p = new DefaultPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
 
         policy.setPrincipalAttributesRepository(repository);
 

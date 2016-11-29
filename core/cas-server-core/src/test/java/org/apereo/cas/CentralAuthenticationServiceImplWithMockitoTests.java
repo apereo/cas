@@ -1,11 +1,11 @@
 package org.apereo.cas;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -35,7 +35,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -45,6 +44,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,7 +89,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
             final Service s = (Service) argument;
             return s != null && s.getId().equals(this.id);
         }
-
     }
 
     @Before
@@ -100,7 +99,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
-        when(this.authentication.getCredentials()).thenReturn(Lists.newArrayList(metadata));
+        when(this.authentication.getCredentials()).thenReturn(Collections.singletonList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
 
@@ -109,8 +108,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         final TicketGrantingTicket tgtRootMock = createRootTicketGrantingTicket();
 
-        final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
-                tgtRootMock, new ArrayList<>());
+        final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false, tgtRootMock, new ArrayList<>());
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
@@ -138,12 +136,9 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         factory.initialize();
 
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
-                factory, smMock, mock(LogoutManager.class));
-        this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(
-                new DefaultAuthenticationRequestServiceSelectionStrategy()));
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, factory, smMock, mock(LogoutManager.class));
+        this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy()));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
-
     }
 
     private AuthenticationResult getAuthenticationContext() {
@@ -171,7 +166,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
-        when(ticketRegMock.getTickets()).thenReturn(Lists.newArrayList(tgtMock, tgtMock2, stMock, stMock2));
+        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
     }
 
     @Test(expected = InvalidTicketException.class)
@@ -228,8 +223,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtRootMock;
     }
 
-    private TicketGrantingTicket createMockTicketGrantingTicket(final String id,
-                                                                final ServiceTicket svcTicket, final boolean isExpired,
+    private TicketGrantingTicket createMockTicketGrantingTicket(final String id, final ServiceTicket svcTicket, final boolean isExpired,
                                                                 final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(isExpired);
@@ -262,8 +256,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return new RegexMatchingRegisteredServiceProxyPolicy(".*");
     }
 
-    private static RegisteredService createMockRegisteredService(final String svcId,
-                                                                 final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
+    private static RegisteredService createMockRegisteredService(final String svcId, final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
@@ -280,6 +273,4 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
     }
-
-
 }

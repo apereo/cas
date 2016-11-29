@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -109,7 +108,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketIou(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
     }
-
 
     /**
      * Gets the authentication from the model.
@@ -208,20 +206,16 @@ public abstract class AbstractCasView extends AbstractView {
         return authnMethod != null && authnMethod.contains(Boolean.TRUE) && isAssertionBackedByNewLogin(model);
     }
 
-
     /**
      * Gets satisfied multifactor authentication provider.
      *
      * @param model the model
      * @return the satisfied multifactor authentication provider
      */
-    protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
-            final Map<String, Object> model) {
+    protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(final Map<String, Object> model) {
         if (StringUtils.isNotBlank(authenticationContextAttribute)
                 && model.containsKey(this.authenticationContextAttribute)) {
-            final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
-            return result;
+            return (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
         }
         return Optional.empty();
     }
@@ -243,8 +237,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the map of attributes to return
      */
     private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
-        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             final Object value = entry.getValue();
             if (value instanceof Collection || value instanceof Map || value instanceof Object[]
                     || value instanceof Iterator || value instanceof Enumeration) {

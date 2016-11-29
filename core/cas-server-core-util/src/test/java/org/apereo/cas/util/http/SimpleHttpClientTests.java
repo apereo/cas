@@ -19,23 +19,22 @@ import static org.junit.Assert.*;
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() throws Exception {
-        final SimpleHttpClient httpClient = new SimpleHttpClientFactoryBean().getObject();
-        return httpClient;
+        return new SimpleHttpClientFactoryBean().getObject();
     }
 
     @Test
     public void verifyOkayUrl() throws Exception {
-        assertTrue(this.getHttpClient().isValidEndPoint("http://www.google.com"));
+        assertTrue(getHttpClient().isValidEndPoint("http://www.google.com"));
     }
 
     @Test
     public void verifyBadUrl() throws Exception {
-        assertFalse(this.getHttpClient().isValidEndPoint("https://www.abc1234.org"));
+        assertFalse(getHttpClient().isValidEndPoint("https://www.abc1234.org"));
     }
 
     @Test
     public void verifyInvalidHttpsUrl() throws Exception {
-        final HttpClient client = this.getHttpClient();
+        final HttpClient client = getHttpClient();
         assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
 

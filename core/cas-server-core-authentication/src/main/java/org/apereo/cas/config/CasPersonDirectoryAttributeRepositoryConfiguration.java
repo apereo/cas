@@ -2,10 +2,8 @@ package org.apereo.cas.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableMap;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
@@ -38,6 +36,7 @@ import org.springframework.core.io.Resource;
 import javax.naming.directory.SearchControls;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,10 +141,10 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
     private void addStubAttributeRepositoryIfNothingElse(final List<IPersonAttributeDao> list) {
         if (!casProperties.getAuthn().getAttributeRepository().getAttributes().isEmpty() && list.isEmpty()) {
-            final boolean foundAttrs = casProperties.getAuthn().getLdap().stream().filter(p ->
+            final boolean foundAttrs = casProperties.getAuthn().getLdap().stream().anyMatch(p ->
                     p.getPrincipalAttributeList() != null && !p.getPrincipalAttributeList().isEmpty()
                             || p.getAdditionalAttributes() != null && !p.getAdditionalAttributes().isEmpty()
-            ).findAny().isPresent();
+            );
 
             if (foundAttrs) {
                 LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");
@@ -180,7 +179,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
                 }
 
-                jdbcDao.setQueryAttributeMapping(ImmutableMap.of("username", jdbc.getUsername()));
+                jdbcDao.setQueryAttributeMapping(Collections.singletonMap("username", jdbc.getUsername()));
                 final Map<String, String> mapping = attrs.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for {} to be {}", jdbc.getUrl(), attrs.getAttributes());
@@ -266,7 +265,7 @@ public class CasPersonDirectoryAttributeRepositoryConfiguration {
 
         @Override
         public Map<String, Object> getAttributesForUser(final String uid) {
-            final Map<String, Object> finalAttributes = new HashedMap();
+            final Map<String, Object> finalAttributes = new HashMap<>();
             casProperties.getAuthn().getAttributeRepository().getGroovy().forEach(groovy -> {
                 final ClassLoader parent = getClass().getClassLoader();
                 try (GroovyClassLoader loader = new GroovyClassLoader(parent)) {

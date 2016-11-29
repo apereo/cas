@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
@@ -14,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is {@link AuthenticationEventsController}.
@@ -46,8 +46,7 @@ public class AuthenticationEventsController {
      * @throws Exception the exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -61,13 +60,10 @@ public class AuthenticationEventsController {
      */
     @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
     @ResponseBody
-    public Collection<CasEvent> getRecords(final HttpServletRequest request,
-                                           final HttpServletResponse response)
-            throws Exception {
+    public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if (this.eventRepository != null) {
             return this.eventRepository.load();
         }
-        return Sets.newHashSet();
+        return Collections.emptySet();
     }
-
 }

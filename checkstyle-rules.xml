@@ -500,10 +500,10 @@
     </module>
 
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Lists.newArrayList() method call"/>
         <property name="severity" value="error"/>
-        <property name="format" value="Arrays\.asList\(.+"/>
-        <property name="message" value="Use Lists.newArrayList() instead."/>
+        <property name="format" value="Lists\.newArrayList(.+"/>
+        <property name="message" value="Use Arrays.asList() instead."/>
     </module>
 
     <module name="RegexpSingleline">

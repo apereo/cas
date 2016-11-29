@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -15,6 +14,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -51,8 +52,6 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
         return resolveEventPerAuthenticationProvider(authentication.getPrincipal(), context, service);
     }
 
-
-
     /**
      * Resolve event per authentication provider event.
      *
@@ -64,13 +63,10 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
     protected Set<Event> resolveEventPerAuthenticationProvider(final Principal principal,
                                                                final RequestContext context,
                                                                final RegisteredService service) {
-
         try {
-            final Collection<MultifactorAuthenticationProvider> providers =
-                    flattenProviders(getAuthenticationProviderForService(service));
+            final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
             if (providers != null && !providers.isEmpty()) {
-                final MultifactorAuthenticationProvider provider =
-                        this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+                final MultifactorAuthenticationProvider provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
                 logger.debug("Selected multifactor authentication provider for this transaction is {}", provider);
 
@@ -79,17 +75,13 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
                     return null;
                 }
                 final String identifier = provider.getId();
-                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        provider, service.getName());
+                logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
 
-                final Event event = validateEventIdForMatchingTransitionInContext(identifier, context,
-                        buildEventAttributeMap(principal, service, provider));
-                return ImmutableSet.of(event);
+                final Event event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, service, provider));
+                return new HashSet<>(Collections.singletonList(event));
             }
-
             logger.debug("No multifactor authentication providers could be located for {}", service);
             return null;
-
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

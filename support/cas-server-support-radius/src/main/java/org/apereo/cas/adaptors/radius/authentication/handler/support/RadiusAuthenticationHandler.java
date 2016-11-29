@@ -56,8 +56,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                     RadiusUtils.authenticate(username, credential.getPassword(), this.servers, 
                             this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
-                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()),
-                        new ArrayList<>());
+                return createHandlerResult(credential, this.principalFactory.createPrincipal(username, result.getValue().get()), new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Exception e) {

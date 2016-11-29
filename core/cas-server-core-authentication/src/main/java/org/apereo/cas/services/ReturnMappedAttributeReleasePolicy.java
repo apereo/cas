@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,14 +9,16 @@ import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -100,7 +101,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             } else if (matcherFile.find()) {
                 try {
                     LOGGER.debug("Found groovy script to execute for attribute mapping {}", entry[0]);
-                    final String script = FileUtils.readFileToString(new File(matcherFile.group(1)), StandardCharsets.UTF_8);
+                    final String script = Files.lines(Paths.get(matcherFile.group(1)), StandardCharsets.UTF_8).collect(Collectors.joining());
                     final Object result = getGroovyAttributeValue(script, resolvedAttributes);
                     if (result != null) {
                         LOGGER.debug("Mapped attribute {} to {} from script", entry[0], result);
@@ -120,20 +121,17 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return attributesToRelease;
     }
 
-    private static Object getGroovyAttributeValue(final String groovyScript,
-                                           final Map<String, Object> resolvedAttributes) {
+    private static Object getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
         try {
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
             binding.setVariable("attributes", resolvedAttributes);
-            final Object res = shell.evaluate(groovyScript);
-            return res;
+            return shell.evaluate(groovyScript);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
-
 
     @Override
     public boolean equals(final Object obj) {

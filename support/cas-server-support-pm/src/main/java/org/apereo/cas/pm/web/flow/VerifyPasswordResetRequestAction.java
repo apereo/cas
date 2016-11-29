@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.web.flow;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -50,8 +49,7 @@ public class VerifyPasswordResetRequestAction extends AbstractAction {
             LOGGER.error("Password reset token could not be verified");
             return error();
         }
-        final Collection<String> questions =
-                Lists.newArrayList(passwordManagementService.getSecurityQuestions(username).keySet());
+        final Collection<String> questions = passwordManagementService.getSecurityQuestions(username).keySet();
         if (questions.isEmpty()) {
             LOGGER.error("No security questions could be found for " + username);
             return error();

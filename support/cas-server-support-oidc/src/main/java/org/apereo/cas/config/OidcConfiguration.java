@@ -226,16 +226,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
                 final OidcAuthorizationRequestSupport oidcAuthzSupport = oidcAuthorizationRequestSupport();
                 boolean clearCreds = false;
-                final Optional<UserProfile> auth = oidcAuthzSupport.isAuthenticationProfileAvailable(ctx);
+                final Optional<UserProfile> auth = OidcAuthorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
                 if (auth.isPresent()) {
-                    final Optional<Long> maxAge = oidcAuthzSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
+                    final Optional<Long> maxAge = OidcAuthorizationRequestSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
                     if (maxAge.isPresent()) {
                         clearCreds = oidcAuthzSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
                     }
                 }
 
-                final Set<String> prompts = oidcAuthzSupport.getOidcPromptFromAuthorizationRequest(ctx);
+                final Set<String> prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
                 if (!clearCreds) {
                     clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
                 }

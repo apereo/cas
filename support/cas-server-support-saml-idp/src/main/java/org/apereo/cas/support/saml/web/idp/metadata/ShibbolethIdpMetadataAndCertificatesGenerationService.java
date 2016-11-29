@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -36,7 +35,6 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
      */
     @PostConstruct
     public void initialize() {
-
         try {
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
             final Resource metadataLocation = idp.getMetadata().getLocation();
@@ -51,7 +49,6 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
             throw Throwables.propagate(e);
         }
     }
-
 
     /**
      * Is metadata missing?
@@ -105,7 +102,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(idp.getHostName());
         generator.setCertificateFile(idp.getMetadata().getEncryptionCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getEncryptionKeyFile().getFile());
-        generator.setURISubjectAltNames(Lists.newArrayList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Collections.singletonList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 
@@ -120,7 +117,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setHostName(idp.getHostName());
         generator.setCertificateFile(idp.getMetadata().getSigningCertFile().getFile());
         generator.setPrivateKeyFile(idp.getMetadata().getSigningKeyFile().getFile());
-        generator.setURISubjectAltNames(Lists.newArrayList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
+        generator.setURISubjectAltNames(Collections.singletonList(idp.getHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
 

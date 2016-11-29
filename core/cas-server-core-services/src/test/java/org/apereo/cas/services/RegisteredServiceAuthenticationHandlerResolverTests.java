@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -9,7 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,11 +33,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final List<RegisteredService> list = new ArrayList<>();
 
         AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
-        svc.setRequiredHandlers(ImmutableSet.of("handler1", "handler3"));
+        svc.setRequiredHandlers(new HashSet<>(Arrays.asList("handler1", "handler3")));
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(Collections.EMPTY_SET);
+        svc.setRequiredHandlers(Collections.emptySet());
         list.add(svc);
 
         dao.setRegisteredServices(list);
@@ -53,13 +54,12 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler();
         handler3.setName("handler3");
 
-        this.handlers = ImmutableSet.of(handler1, handler2, handler3);
+        this.handlers = new HashSet<>(Arrays.asList(handler1, handler2, handler3));
     }
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
 
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid1"),
@@ -71,8 +71,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid2"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));

@@ -1,16 +1,15 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import com.google.common.collect.Maps;
-import org.apereo.cas.authentication.principal.Principal;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import org.apereo.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,8 +25,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static final Logger LOGGER = LoggerFactory.getLogger(CachingPrincipalAttributesRepository.class);
     
     private transient Cache<String, Map<String, Object>> cache;
-    private transient PrincipalAttributesCacheLoader cacheLoader =
-            new PrincipalAttributesCacheLoader();
+    private transient PrincipalAttributesCacheLoader cacheLoader = new PrincipalAttributesCacheLoader();
 
     private long maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
 
@@ -46,8 +44,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @param timeUnit the time unit
      * @param expiryDuration the expiry duration
      */
-    public CachingPrincipalAttributesRepository(final String timeUnit,
-                                                final long expiryDuration) {
+    public CachingPrincipalAttributesRepository(final String timeUnit, final long expiryDuration) {
         this(DEFAULT_MAXIMUM_CACHE_SIZE, timeUnit, expiryDuration);
     }
 
@@ -57,9 +54,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * @param timeUnit the time unit
      * @param expiryDuration the expiry duration
      */
-    public CachingPrincipalAttributesRepository(final long maxCacheSize,
-                                                final String timeUnit,
-                                                final long expiryDuration) {
+    public CachingPrincipalAttributesRepository(final long maxCacheSize, final String timeUnit, final long expiryDuration) {
         super(expiryDuration, timeUnit);
         this.maxCacheSize = maxCacheSize;
 
@@ -78,7 +73,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
         try {
             return this.cache.get(p.getId(), () -> {
                 LOGGER.debug("No cached attributes could be found for {}", p.getId());
-                return Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+                return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -94,7 +89,7 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
     private static class PrincipalAttributesCacheLoader extends CacheLoader<String, Map<String, Object>> {
         @Override
         public Map<String, Object> load(final String key) throws Exception {
-            return Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+            return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         }
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.util.http;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -24,8 +23,9 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -49,7 +49,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     /**
      * the acceptable codes supported by this client.
      */
-    private List<Integer> acceptableCodes;
+    private Set<Integer> acceptableCodes;
 
     /**
      * the HTTP client for this client.
@@ -68,18 +68,16 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      * @param httpClient             the HTTP client used by the client
      * @param requestExecutorService the request executor service used by the client
      */
-    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
-                     final FutureRequestExecutionService requestExecutorService) {
-        Collections.sort(acceptableCodes);
-        this.acceptableCodes = ImmutableList.copyOf(acceptableCodes);
+    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient, final FutureRequestExecutionService requestExecutorService) {
+        Assert.notNull(httpClient);
+
+        this.acceptableCodes = new HashSet<>(acceptableCodes);
         this.httpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
     }
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {
-        Assert.notNull(this.httpClient);
-
         try {
             final HttpPost request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
@@ -88,8 +86,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             request.setEntity(entity);
 
             final ResponseHandler<Boolean> handler = response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request,
-                    HttpClientContext.create(), handler);
+            final HttpRequestFutureTask<Boolean> task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             if (message.isAsynchronous()) {
                 return true;
             }
@@ -105,8 +102,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
-        Assert.notNull(this.httpClient);
-
         HttpEntity entity = null;
 
         try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
@@ -122,12 +117,10 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     return msg;
                 }
             }
-            LOGGER.warn("Response code from {}} did not match any of the acceptable response codes. Code returned {}",
-                    url, responseCode);
+            LOGGER.warn("Response code from {}} did not match any of the acceptable response codes. Code returned {}", url, responseCode);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(),
-                        value);
+                LOGGER.error("There was an error contacting the endpoint: {}; The error:\n{}", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -150,15 +143,12 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        Assert.notNull(this.httpClient);
-
         HttpEntity entity = null;
 
         try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
-            final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
-            if (idx >= 0) {
+            if (acceptableCodes.contains(responseCode)) {
                 LOGGER.debug("Response code from server matched {}.", responseCode);
                 return true;
             }

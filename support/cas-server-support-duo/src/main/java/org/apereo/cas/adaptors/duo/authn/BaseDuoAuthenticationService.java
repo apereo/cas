@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.client.utils.URIBuilder;
@@ -18,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -182,7 +182,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
                                             getJsonNodeFieldValue(response, "status",
                                                     DuoUserAccount.DuoAccountStatus.DISABLED.name()).toUpperCase()));
                     if (response.has("groups")) {
-                        final Set<String> groups = Sets.newHashSet();
+                        final Set<String> groups = new HashSet<>();
                         response.get("groups").elements().forEachRemaining(n -> groups.add(n.get("name").asText()));
                         account.setGroups(groups);
                     }
