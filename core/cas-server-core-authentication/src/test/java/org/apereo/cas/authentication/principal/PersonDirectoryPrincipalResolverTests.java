@@ -72,7 +72,7 @@ public class PersonDirectoryPrincipalResolverTests {
                 CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey("attr1"));
         assertTrue(p.getAttributes().containsKey("cn"));
-        assertTrue(CollectionUtils.convertValueToCollection(p.getAttributes().get("cn")).contains("changedCN"));
+        assertTrue(CollectionUtils.toCollection(p.getAttributes().get("cn")).contains("changedCN"));
     }
 
     @Test
