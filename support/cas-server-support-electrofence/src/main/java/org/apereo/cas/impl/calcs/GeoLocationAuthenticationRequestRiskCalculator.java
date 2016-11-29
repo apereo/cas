@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 /**
@@ -32,8 +33,8 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     }
 
     @Override
-    protected double calculateScore(final HttpServletRequest request, final Authentication authentication, 
-                                    final RegisteredService service, final Collection<CasEvent> events) {
+    protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
+                                        final RegisteredService service, final Collection<CasEvent> events) {
 
         final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation();
         if (loc.isValid()) {
@@ -44,7 +45,8 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
                 logger.debug("Principal {} has always authenticated from {}", authentication.getPrincipal(), loc);
                 return LOWEST_RISK_SCORE;
             }
-            return HIGHEST_RISK_SCORE - (count / events.size());
+            final BigDecimal score = BigDecimal.valueOf(count).divide(BigDecimal.valueOf(events.size()));
+            return HIGHEST_RISK_SCORE.subtract(score);
         }
         logger.debug("Request does not contain enough geolocation data");
         return HIGHEST_RISK_SCORE;

@@ -71,7 +71,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         logger.debug("Evaluating possible suspicious authentication attempt for {}", authentication.getPrincipal());
         final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
                 
-        if (score.getScore() >= casProperties.getAuthn().getAdaptive().getRisk().getThreshold()) {
+        if (score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold())) {
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             logger.debug("Calculated risk score {} for authentication request by {} is above the risk threshold {}.",
