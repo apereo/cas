@@ -663,6 +663,51 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+## Risk-based Authentication
+
+Evaluate suspicious authentication requests and take action.
+To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+
+```properties
+# cas.authn.adaptive.risk.threshold=0.6
+# cas.authn.adaptive.risk.daysInRecentHistory=30
+
+# cas.authn.adaptive.risk.ip.enabled=false
+
+# cas.authn.adaptive.risk.agent.enabled=false
+
+# cas.authn.adaptive.risk.geoLocation.enabled=false
+
+# cas.authn.adaptive.risk.dateTime.enabled=false
+# cas.authn.adaptive.risk.dateTime.windowInHours=2
+
+# cas.authn.adaptive.risk.response.blockAttempt=false
+
+# cas.authn.adaptive.risk.response.mfaProvider=
+# cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
+
+# spring.mail.host=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.port=
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.protocol=smtp
+# spring.mail.test-connection=false
+
+# cas.authn.adaptive.risk.response.mail.from=
+# cas.authn.adaptive.risk.response.mail.text=
+# cas.authn.adaptive.risk.response.mail.subject=
+# cas.authn.adaptive.risk.response.mail.cc=
+# cas.authn.adaptive.risk.response.mail.bcc=
+# cas.authn.adaptive.risk.response.mail.attributeName=mail
+
+# cas.authn.adaptive.risk.response.sms.from=
+# cas.authn.adaptive.risk.response.sms.text=
+# cas.authn.adaptive.risk.response.sms.attributeName=phone
+# cas.authn.adaptive.risk.response.sms.twilio.accountId=
+# cas.authn.adaptive.risk.response.sms.twilio.token=
+```
+
 ## GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.
@@ -960,18 +1005,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with `sAMAccountName`.
-- Authenticated Search - Manager bind/search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Anonymous Search - Anonymous search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
-
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
@@ -979,7 +1012,39 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+retrieved from [other attribute repository sources](#authentication-attributes), if any.
+Attributes retrieved directly as part of LDAP authentication trump all other attributes.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
+
+### Active Directory
+
+Users authenticate with `sAMAccountName`.
+
+### Authenticated Search
+
+Manager bind/search type of authentication.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Anonymous Search 
+
+Anonymous search.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Direct Bind 
+
+Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. 
+
+There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL

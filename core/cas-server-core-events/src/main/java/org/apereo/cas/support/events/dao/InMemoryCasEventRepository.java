@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * This is {@link InMemoryCasEventRepository}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
 public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     private final LoadingCache<String, CasEvent> cache;
@@ -28,7 +28,7 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
     public Collection<CasEvent> load() {
         return cache.asMap().values();
     }
-
+    
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
         return cache.asMap().values().stream().filter(e -> e.getPrincipalId().equalsIgnoreCase(id)).collect(Collectors.toSet());

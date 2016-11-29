@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     private AuthenticationContextValidator authenticationContextValidator;
 
@@ -96,9 +96,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         return super.resolveSingle(context);
     }
 
-    public void setInitialAuthenticationAttemptWebflowEventResolver(
-            final CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        this.initialAuthenticationAttemptWebflowEventResolver = initialAuthenticationAttemptWebflowEventResolver;
+    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver init) {
+        this.initialAuthenticationAttemptWebflowEventResolver = init;
     }
 
     public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
@@ -65,7 +66,7 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         this.serviceTicketRequestWebflowEventResolver = r;
     }
 
-    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasWebflowEventResolver r) {
+    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver r) {
         this.initialAuthenticationAttemptWebflowEventResolver = r;
     }
 

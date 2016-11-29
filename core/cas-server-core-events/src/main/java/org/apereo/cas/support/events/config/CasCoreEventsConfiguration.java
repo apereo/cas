@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreEventsConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreEventsConfiguration.class);
-
+    
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1000;
 
