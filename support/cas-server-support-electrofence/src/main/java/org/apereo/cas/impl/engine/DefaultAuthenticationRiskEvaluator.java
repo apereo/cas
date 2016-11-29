@@ -44,7 +44,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         final List<AuthenticationRiskScore> scores = Lists.newArrayList();
         this.calculators.stream().forEach(r -> scores.add(r.calculate(authentication, service, request)));
         final BigDecimal sum = scores.stream().map(r -> r.getScore()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
-        final BigDecimal score = sum.divide(BigDecimal.valueOf(this.calculators.size()));
+        final BigDecimal score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, BigDecimal.ROUND_UP);
         return new AuthenticationRiskScore(score);
     }
 }
