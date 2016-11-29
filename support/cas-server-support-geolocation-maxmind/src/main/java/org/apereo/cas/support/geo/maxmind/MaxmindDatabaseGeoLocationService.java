@@ -62,6 +62,8 @@ public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationServic
             if (this.cityDatabaseReader != null) {
                 final CityResponse response = this.cityDatabaseReader.city(address);
                 location.addAddress(response.getCity().getName());
+                location.setLatitude(response.getLocation().getLatitude());
+                location.setLongitude(response.getLocation().getLongitude());
             }
             if (this.countryDatabaseReader != null) {
                 final CountryResponse response = this.countryDatabaseReader.country(address);

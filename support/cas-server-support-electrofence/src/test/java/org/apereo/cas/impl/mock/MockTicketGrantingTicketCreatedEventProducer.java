@@ -1,4 +1,4 @@
-package org.apereo.cas.impl;
+package org.apereo.cas.impl.mock;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;

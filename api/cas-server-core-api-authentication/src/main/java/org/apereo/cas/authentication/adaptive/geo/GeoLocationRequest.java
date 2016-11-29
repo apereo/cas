@@ -17,6 +17,14 @@ public class GeoLocationRequest {
     private String accuracy;
     private String timestamp;
 
+    public GeoLocationRequest() {
+    }
+
+    public GeoLocationRequest(final double latitude, final double longitude) {
+        this.latitude = String.valueOf(latitude);
+        this.longitude = String.valueOf(longitude);
+    }
+
     public String getLatitude() {
         return this.latitude;
     }

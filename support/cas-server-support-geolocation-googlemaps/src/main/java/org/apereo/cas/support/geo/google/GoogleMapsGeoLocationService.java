@@ -74,20 +74,24 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             LOGGER.debug("latitude/longitude must not be null in order for geolocation to proceed");    
             return null;
         }
-        
+
+        final GeoLocationResponse r = new GeoLocationResponse();
+        r.setLatitude(latitude);
+        r.setLongitude(longitude);
+
         final LatLng latlng = new LatLng(latitude, longitude);
         try {
             final GeocodingResult[] results = GeocodingApi.reverseGeocode(this.context, latlng).await();
             if (results != null && results.length > 0) {
-                final GeoLocationResponse r = new GeoLocationResponse();
                 Arrays.stream(results)
                       .map(result -> result.formattedAddress)
                       .forEach(r::addAddress);
+
                 return r;
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return null;
+        return r;
     }
 }

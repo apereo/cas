@@ -42,9 +42,14 @@ request safe.
 This calculator looks into past authentication events that match the client ip address. It is applicable if you wish
 to consider authentication requests from unknown ip addresses suspicious for the user. The story here is:
 
-> Find all authentication events that match the current client ip address and calculate an averaged score.
+> Find all past authentication events that match the current client ip address and calculate an averaged score.
 
 ### Browser User Agent
+
+This calculator looks into past authentication events that match the client `user-agent` string. It is applicable if you wish
+to consider authentication requests from unknown browsers suspicious for the user. The story here is:
+
+> Find all past authentication events that match the current client browser and calculate an averaged score.
 
 ### Geolocation
 
@@ -53,7 +58,7 @@ to consider authentication requests from unknown ip addresses suspicious for the
 This calculator looks into past authentication events that fit within the defined time-window. It is applicable if you wish
 to consider authentication requests outside that window suspicious for the user. The story here is:
 
-> Find all authentication events that are established X hours before/after now and calculate an averaged score.
+> Find all past authentication events that are established X hours before/after now and calculate an averaged score.
 
 ## Risk Mitigation
 
@@ -66,7 +71,8 @@ Prevent the authentication flow to proceed and disallow the establishment of the
 
 ### Multifactor Authentication
 
-Force the authentication event into a multifactor flow of choice.
+Force the authentication event into a [multifactor flow of choice](Configuring-Multifactor-Authentication.md),
+identified by the provider id.
 
 ## Configuration
 
@@ -87,4 +93,4 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 - You **MUST** allow and configure CAS to track and record [authentication events](Configuring-Authentication-Events.html).
 - You **MUST** allow and configure CAS to [geolocate authentication requests](GeoTracking-Authentication-Requests.html).
 - If the selected contingency plan is to force the user into a multifactor authentication flow, you then **MUST** configure CAS for 
-[multifactor authentication](Configuring-Multifactor-Authentication.html).
+[multifactor authentication](Configuring-Multifactor-Authentication.html) and the relevant provider.

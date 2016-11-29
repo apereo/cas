@@ -11,4 +11,4 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class OAuthTestSuite {}
+public class AllTestsSuite {}
