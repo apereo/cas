@@ -2888,12 +2888,15 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
 ```properties
-# cas.mgmt.adminRoles=ROLE_ADMIN
+# cas.mgmt.adminRoles[0]=ROLE_ADMIN
+# cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
+
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 # cas.mgmt.serverName=https://localhost:8443
 # cas.mgmt.defaultLocale=en
 
-# cas.mgmt.authzAttributes=memberOf,groupMembership
+# cas.mgmt.authzAttributes[0]=memberOf
+# cas.mgmt.authzAttributes[1]=groupMembership
 
 # cas.mgmt.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldapAuthz.allowMultipleResults=false
