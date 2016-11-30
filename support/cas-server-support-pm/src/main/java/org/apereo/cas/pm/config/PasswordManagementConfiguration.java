@@ -102,7 +102,7 @@ public class PasswordManagementConfiguration {
                     casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
                     casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
         }
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeService")
