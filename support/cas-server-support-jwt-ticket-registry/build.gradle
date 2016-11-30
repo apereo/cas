@@ -3,11 +3,14 @@ dependencies {
     compile libraries.spring
     compile libraries.springboot
     compile libraries.springcloud
-    runtime libraries.hibernate
     compile libraries.jose4j
 
     compile project(":api:cas-server-core-api")
     compile project(":core:cas-server-core-tickets")
+
+    compileOnly project(":support:cas-server-support-cookie")
+
+    runtime libraries.hibernate
 
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(":core:cas-server-core-services")

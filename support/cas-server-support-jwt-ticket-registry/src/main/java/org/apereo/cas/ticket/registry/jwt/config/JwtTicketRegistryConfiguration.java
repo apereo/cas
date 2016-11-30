@@ -9,15 +9,21 @@ import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.jwt.JwtTicketRegistry;
+import org.apereo.cas.ticket.registry.jwt.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyTicketFactory;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtServiceTicketFactory;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketCipherExecutor;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtTicketGrantingTicketFactory;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketRegistry;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.cipher.Base64CipherExecutor;
+import org.apereo.cas.web.config.CasCookieConfiguration;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +39,9 @@ import java.util.Map;
  */
 @Configuration("infinispanTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureBefore(CasCookieConfiguration.class)
 public class JwtTicketRegistryConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtTicketRegistryConfiguration.class);
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
@@ -52,6 +60,10 @@ public class JwtTicketRegistryConfiguration {
     private Map uniqueIdGeneratorsMap;
 
     @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
     @Qualifier("ticketGrantingTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator;
 
@@ -61,7 +73,7 @@ public class JwtTicketRegistryConfiguration {
     @Bean(name = {"jwtTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry jwtTicketRegistry() {
-        final JwtTicketRegistry r = new JwtTicketRegistry();
+        final JwtTicketRegistry r = new JwtTicketRegistry(ticketGrantingTicketCookieGenerator);
         r.setCipherExecutor(protocolTicketCipherExecutor());
         return r;
     }
@@ -109,4 +121,10 @@ public class JwtTicketRegistryConfiguration {
         return new JwtTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
     }
 
+    @Bean
+    public CipherExecutor cookieCipherExecutor() {
+        LOGGER.info("Ticket-granting cookie encryption/signing is handled internally via JWTed tickets. "
+                + "Therefore, ticket-granting cookie cipher execution is turned off automatically.");
+        return Base64CipherExecutor.getInstance();
+    }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -49,7 +50,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get("ticketGrantingTicketId");
 
-        if (ticketGrantingTicketId == null) {
+        if (StringUtils.isBlank(ticketGrantingTicketId)) {
             return success();
         }
 
