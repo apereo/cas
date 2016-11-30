@@ -45,7 +45,7 @@ ignored by CAS and likely the feature it controls will never be activated in the
 If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
 
-### Time UoM
+### Time Unit of Measure
 
 All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
 
