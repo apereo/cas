@@ -115,7 +115,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public Authorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
+        return new RequireAnyRoleAuthorizer(casProperties.getMgmt().getAdminRoles());
     }
 
     @RefreshScope
@@ -174,7 +174,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ParametersAsStringResourceResolver saveServiceResourceResolver() {
+    public AuditResourceResolver saveServiceResourceResolver() {
         return new ParametersAsStringResourceResolver();
     }
 
@@ -228,17 +228,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public AuthorizationGenerator authorizationGenerator() {
-        if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
-
-            if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
-                return commonProfile -> commonProfile.addRoles(
-                        StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
-                );
+        final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
+        if (!authzAttributes.isEmpty()) {
+            if ("*".equals(authzAttributes)) {
+                return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             }
-            return new FromAttributesAuthorizationGenerator(
-                    StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    new String[]{}
-            );
+            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[] {}), new String[]{});
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
