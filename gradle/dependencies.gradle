@@ -197,13 +197,14 @@ ext.libraries = [
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "dom4j", module: "dom4j")
                     exclude(group: "com.fasterxml", module: "classmate")
-
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "dom4j", module: "dom4j")
                     exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
@@ -1115,6 +1116,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
