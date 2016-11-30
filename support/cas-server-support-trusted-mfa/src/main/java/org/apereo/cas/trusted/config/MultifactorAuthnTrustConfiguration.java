@@ -124,7 +124,7 @@ public class MultifactorAuthnTrustConfiguration {
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")

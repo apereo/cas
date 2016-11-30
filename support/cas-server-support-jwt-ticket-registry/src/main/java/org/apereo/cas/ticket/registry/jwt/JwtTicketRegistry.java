@@ -3,12 +3,16 @@ package org.apereo.cas.ticket.registry.jwt;
 import com.google.common.collect.Lists;
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.codec.binary.StringUtils;
+import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
-import org.apereo.cas.ticket.BaseTicketSerializers;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 
 
@@ -23,10 +27,15 @@ import java.util.Collection;
  */
 public class JwtTicketRegistry extends AbstractTicketRegistry {
 
+    private final CookieRetrievingCookieGenerator cookieRetrievingCookieGenerator;
+
     /**
      * Instantiates a new Infinispan ticket registry.
+     *
+     * @param cookieGenerator the cookie generator
      */
-    public JwtTicketRegistry() {
+    public JwtTicketRegistry(final CookieRetrievingCookieGenerator cookieGenerator) {
+        this.cookieRetrievingCookieGenerator = cookieGenerator;
     }
 
     /**
@@ -96,14 +105,21 @@ public class JwtTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        logger.debug("deleteSingleTicket() is not supported by {}", getClass().getSimpleName());
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromRequestAttributes();
+        if (response != null) {
+            this.cookieRetrievingCookieGenerator.removeCookie(response);
+        }
         return true;
     }
 
-
     @Override
     public Collection<Ticket> getTickets() {
-        logger.debug("getTickets() is not supported by {}", getClass().getSimpleName());
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+        if (request != null) {
+            final String value = this.cookieRetrievingCookieGenerator.retrieveCookieValue(request);
+            final Ticket ticket = getTicket(value);
+            return Lists.newArrayList(ticket);
+        }
         return Lists.newArrayList();
     }
 

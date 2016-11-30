@@ -55,8 +55,8 @@ function areCookiesEnabled() {
     
     $.cookie('cookiesEnabled', 'true');
     var value = $.cookie('cookiesEnabled');
+    $.removeCookie('cookiesEnabled');
     if (value != undefined) {
-        $.removeCookie('cookiesEnabled');
         return true;
     }
     return false;

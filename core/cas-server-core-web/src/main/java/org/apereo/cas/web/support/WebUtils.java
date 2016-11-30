@@ -106,9 +106,9 @@ public final class WebUtils {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
-        } else {
-            return null;
         }
+        return null;
+
     }
 
     /**
@@ -562,7 +562,7 @@ public final class WebUtils {
         }
         return loc;
     }
-    
+
     /**
      * Gets http servlet request geo location.
      *
