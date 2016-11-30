@@ -27,7 +27,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private CipherExecutor<Serializable, String> cipherExecutor = new NoOpCipherExecutor();
+    private CipherExecutor<Serializable, String> cipherExecutor = NoOpCipherExecutor.getInstance();
 
     /**
      * Instantiates a new Cas cookie value manager.
