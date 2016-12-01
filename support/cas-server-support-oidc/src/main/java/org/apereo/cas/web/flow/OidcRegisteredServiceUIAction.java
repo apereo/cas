@@ -23,9 +23,9 @@ import java.io.Serializable;
 public class OidcRegisteredServiceUIAction extends AbstractAction implements Serializable {
 
     private static final long serialVersionUID = -8016284160122109307L;
-    private final ServicesManager servicesManager;
+    private final transient ServicesManager servicesManager;
 
-    private final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
+    private final transient AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
 
     public OidcRegisteredServiceUIAction(final ServicesManager servicesManager,
                                          final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy) {
