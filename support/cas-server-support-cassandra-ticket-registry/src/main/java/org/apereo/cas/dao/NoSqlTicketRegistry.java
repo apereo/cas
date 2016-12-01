@@ -1,6 +1,8 @@
 package org.apereo.cas.dao;
 
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +12,6 @@ import java.util.Collection;
 public class NoSqlTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
-    private static final String TICKET_GRANTING_TICKET_PREFIX = "TGT";
-    private static final String SERVICE_TICKET_PREFIX = "ST";
 
     private NoSqlTicketRegistryDao ticketRegistryDao;
 
@@ -86,10 +86,10 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
     }
 
     private static boolean isSt(final String id) {
-        return id.startsWith(SERVICE_TICKET_PREFIX);
+        return id.startsWith(ServiceTicket.PREFIX);
     }
 
     private static boolean isTgt(final String id) {
-        return id.startsWith(TICKET_GRANTING_TICKET_PREFIX);
+        return id.startsWith(TicketGrantingTicket.PREFIX);
     }
 }
