@@ -71,7 +71,7 @@ public class CasCookieConfiguration {
                 configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()),
                         casProperties.getTgc());
         bean.setCookieDomain(casProperties.getTgc().getDomain());
-        bean.setRememberMeMaxAge(casProperties.getTgc().getRememberMeMaxAge());
+        bean.setRememberMeMaxAge(Long.valueOf(casProperties.getTgc().getRememberMeMaxAge()).intValue());
         return bean;
     }
 

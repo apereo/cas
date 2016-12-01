@@ -29,6 +29,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -70,7 +71,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     
     @Autowired
     @Qualifier("cas3ServiceJsonView")
@@ -201,6 +202,7 @@ public class OpenIdConfiguration {
         h.setTicketRegistry(this.ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
         h.setServicesManager(servicesManager);
+        h.setName(casProperties.getAuthn().getOpenid().getName());
         return h;
     }
 

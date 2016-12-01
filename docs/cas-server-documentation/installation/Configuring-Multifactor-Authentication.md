@@ -20,49 +20,17 @@ interface with the authentication subsystem accept one or more credentials to au
 
 The following multifactor providers are supported by CAS.
 
-### Duo Security
-
-Configure authentication per instructions [here](DuoSecurity-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-duo`
-
-### Authy Authenticator
-
-Configure authentication per instructions [here](AuthyAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-authy`
-
-### YubiKey
-
-Configure authentication per instructions [here](YubiKey-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-yubikey`
-
-### RSA/RADIUS
-
-Configure authentication per instructions [here](RADIUS-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-radius`
-
-### Google Authenticator
-
-Configure authentication per instructions [here](GoogleAuthenticator-Authentication.html). 
-
-| Field                | Description
-|----------------------|----------------------------------
-| `id`                 | `mfa-gauth`
+| Provider              | Id              | Instructions
+|-----------------------|-----------------|----------------------------------------------------------
+| Duo Security          | `mfa-duo`       | [See this guide](DuoSecurity-Authentication.html). 
+| Authy Authenticator   | `mfa-authy`     | [See this guide](AuthyAuthenticator-Authentication.html). 
+| YubiKey               | `mfa-yubikey`   | [See this guide](YubiKey-Authentication.html). 
+| RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html). 
+| Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html). 
 
 ## Triggers
 
-Multifactor authentication can be activated based on the following triggers:
+Multifactor authentication can be activated based on the following triggers.
 
 ### Global
 
@@ -104,6 +72,32 @@ MFA can be triggered based on the specific nature of a request that may be consi
 you may want all requests that are submitted from a specific IP pattern, or from a particular geographical location
 to be forced to go through MFA. CAS is able to adapt itself to various properties of the incoming request
 and will route the flow to execute MFA. See [this guide](Configuring-Adaptive-Authentication.html) for more info.
+
+### Grouper
+
+MFA can be triggered by [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) 
+groups to which the authenticated principal is assigned. 
+Groups are collected by CAS and then cross-checked against all available/configured MFA providers.
+The group's comparing factor **MUST** be defined in CAS to activate this behavior
+and it can be based on the group's name, display name, etc where
+a successful match against a provider id shall activate the chosen MFA provider. 
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-grouper</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+You will also need to ensure `grouper.client.properties` is available on the classpath
+with the following configured properties:
+
+```properties
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.login = banderson
+grouperClient.webService.password = password
+```
 
 ### REST
 
@@ -164,7 +158,36 @@ A few simple examples follow:
 - Trigger MFA except if the method of primary authentication is SPNEGO.
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
-## Fail-Open vs Fail-Closed
+Note that in addition to the above options, some multifactor authentication providers
+may also skip and bypass the authentication request in the event that the authentiated principal doesn't quite "qualify"
+for multifactor authentication. See the documentation for each specific provider to learn more. 
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+Note that ticket validation requests shall successfully go through if multifactor authentication is
+bypassed for the given provider. In such cases, no authentication context is passed back to the application and
+additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
+
+### Applications
+
+MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
+MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
+whose access should bypass MFA may be defined as such in the CAS service registry:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
+    "bypassEnabled" : "true"
+  }
+}
+```
+
+## Failure Modes
 
 The authentication policy by default supports fail-closed mode, which means that if you attempt to exercise a particular
 provider available to CAS and the provider cannot be reached, authentication will be stopped and an error
@@ -192,6 +215,9 @@ The following failure modes are supported:
 | `OPEN`                    | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
 | `PHANTOM`                 | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`                    | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Ranking Providers
 
@@ -225,5 +251,3 @@ both for admins and end-users.
 ## Settings
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
-
-

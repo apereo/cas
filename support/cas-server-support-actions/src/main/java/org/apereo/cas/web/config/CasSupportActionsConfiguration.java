@@ -9,11 +9,11 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
-import org.apereo.cas.web.flow.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
 import org.apereo.cas.web.flow.GenericSuccessViewAction;
+import org.apereo.cas.web.flow.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.InitializeLoginAction;
@@ -23,10 +23,10 @@ import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.ServiceWarningAction;
 import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
-import org.pac4j.springframework.web.ApplicationLogoutController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,7 +57,7 @@ public class CasSupportActionsConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -81,15 +81,15 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
-    
+
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -97,7 +97,7 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
-    
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -105,7 +105,7 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
     private CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
-    
+
     @Bean
     public HandlerExceptionResolver errorHandlerResolver() {
         return new FlowExecutionExceptionResolver();
@@ -113,7 +113,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action authenticationViaFormAction() {
-        final AbstractAuthenticationAction a = new AbstractAuthenticationAction() {};
+        final InitialAuthenticationAction a = new InitialAuthenticationAction();
         a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
         a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
         a.setAdaptiveAuthenticationPolicy(this.adaptiveAuthenticationPolicy);
@@ -215,10 +215,7 @@ public class CasSupportActionsConfiguration {
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
         a.setWarnCookieGenerator(warnCookieGenerator);
-        
-        final ApplicationLogoutController controller = new ApplicationLogoutController();
-        controller.setConfig(pac4jSecurityConfig);
-        a.setApplicationLogoutController(controller);
+        a.setPac4jSecurityConfig(pac4jSecurityConfig);
         return a;
     }
 

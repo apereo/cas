@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -36,7 +37,8 @@ import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.client.direct.DirectCasClient;
+import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.Authorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
@@ -56,7 +58,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.ModelAndView;
@@ -82,6 +83,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+
 /**
  * This is {@link CasManagementWebAppConfiguration}.
  *
@@ -104,7 +106,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
@@ -122,14 +124,16 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public IPersonAttributeDao stubAttributeRepository() {
         return Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository());
     }
-    
+
     @Bean
     public Client casClient() {
-        final CasClient client = new CasClient(casProperties.getServer().getLoginUrl());
+        final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
+        final DirectCasClient client = new DirectCasClient(cfg);
         client.setAuthorizationGenerator(authorizationGenerator());
+        client.setName("CasClient");
         return client;
     }
-    
+
     @Bean
     public Config config() {
         final Config cfg = new Config(getDefaultServiceUrl(), casClient());
@@ -166,16 +170,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
-        final SecurityInterceptor interceptor = new SecurityInterceptor(config(), "CasClient",
-                "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
-
-        interceptor.setSecurityLogic(new DefaultSecurityLogic() {
-            @Override
-            protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
-                return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
-            }
-        });
-        return interceptor;
+        return new CasManagementSecurityInterceptor();
     }
 
     @Bean
@@ -234,7 +229,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public AuthorizationGenerator authorizationGenerator() {
         if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
-            
+
             if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
                 return commonProfile -> commonProfile.addRoles(
                         StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
@@ -242,7 +237,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             }
             return new FromAttributesAuthorizationGenerator(
                     StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    new String[] {}
+                    new String[]{}
             );
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
@@ -268,7 +263,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public LocaleChangeInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
     }
-    
+
     @Bean
     public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
@@ -295,11 +290,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
         return new SimpleControllerHandlerAdapter();
-    }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
     }
 
     @Bean
@@ -401,5 +391,41 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public List authenticationMetadataPopulators() {
         return new ArrayList<>();
+    }
+
+    /**
+     * The Cas management security interceptor.
+     */
+    public class CasManagementSecurityInterceptor extends SecurityInterceptor {
+
+        public CasManagementSecurityInterceptor() {
+            super(config(), "CasClient", "securityHeaders,csrfToken,RequireAnyRoleAuthorizer");
+            final DefaultSecurityLogic logic = new DefaultSecurityLogic() {
+                @Override
+                protected HttpAction forbidden(final WebContext context, final List currentClients, final List list, final String authorizers) {
+                    return HttpAction.redirect("Authorization failed", context, "authorizationFailure");
+                }
+
+                @Override
+                protected boolean loadProfilesFromSession(final WebContext context, final List currentClients) {
+                    return true;
+                }
+            };
+
+            logic.setSaveProfileInSession(true);
+            setSecurityLogic(logic);
+        }
+
+        @Override
+        public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                               final Object handler, final ModelAndView modelAndView) throws Exception {
+            if (!StringUtils.isEmpty(request.getQueryString())
+                    && request.getQueryString().contains(CasProtocolConstants.PARAMETER_TICKET)) {
+                final RedirectView v = new RedirectView(request.getRequestURL().toString());
+                v.setExposeModelAttributes(false);
+                v.setExposePathVariables(false);
+                modelAndView.setView(v);
+            }
+        }
     }
 }

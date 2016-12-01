@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -12,7 +13,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
         CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
         CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
         CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
@@ -63,7 +64,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
         final MockRequestContext context = new MockRequestContext();
-        context.setCurrentEvent(new Event("", "error"));
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

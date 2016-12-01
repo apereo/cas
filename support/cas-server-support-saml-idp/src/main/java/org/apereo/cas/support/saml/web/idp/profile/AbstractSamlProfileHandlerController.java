@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -25,7 +26,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.Pair;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
@@ -64,7 +64,6 @@ import java.util.Optional;
 @Controller
 public abstract class AbstractSamlProfileHandlerController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     /**
      * The Saml object signer.
@@ -264,7 +263,7 @@ public abstract class AbstractSamlProfileHandlerController {
             }
 
             logger.debug("Decoded SAML object [{}] from http request", object.getElementQName());
-            return new Pair<>(object, messageContext);
+            return Pair.of(object, messageContext);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -388,7 +387,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                                  final HttpServletResponse response,
                                                  final HttpServletRequest request) throws Exception {
                 
-        final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getFirst());
+        final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getKey());
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
@@ -396,7 +395,7 @@ public abstract class AbstractSamlProfileHandlerController {
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);
 
-        final MessageContext ctx = pair.getSecond();
+        final MessageContext ctx = pair.getValue();
         if (!SAMLBindingSupport.isMessageSigned(ctx)) {
             if (adaptor.isAuthnRequestsSigned()) {
                 logger.error("Metadata for [{}] says authentication requests are signed, yet this authentication request is not",

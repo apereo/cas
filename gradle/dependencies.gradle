@@ -1083,6 +1083,14 @@ ext.libraries = [
                     force = true
                 }
         ],
+        twillio                 : dependencies.create("com.twilio.sdk:twilio:$twilioVersion") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "javax.xml.bind", module: "jaxb-api")
+            force = true
+        },
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -1109,6 +1117,10 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "com.fasterxml", module: "classmate")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-mail:$springBootVersion") {
+                    force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1311,12 +1323,15 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.apache.zookeeper", module: "zookeeper")
                     exclude(group: "org.springframework.kafka", module: "spring-kafka")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.scala-lang", module: "scala-library")
+                    exclude(group: "org.apache.kafka", module: "kafka-clients")
                     force = true
                 },
                 dependencies.create("org.apache.zookeeper:zookeeper:$zookeeperVersion") {
@@ -1362,8 +1377,11 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-bus-amqp:$springCloudBusVersion") {
@@ -1392,6 +1410,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     force = true
                 },
@@ -1415,6 +1435,7 @@ ext.libraries = [
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     force = true
                 }
         ],
@@ -1429,6 +1450,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "commons-codec", module: "commons-codec")
                     force = true
                 }
@@ -1466,6 +1488,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     force = true
@@ -1490,6 +1514,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-config-client")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     force = true
@@ -1514,6 +1539,7 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     force = true
                 },
@@ -1541,6 +1567,7 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-starter:$springCloudStarterVersion") {
@@ -1742,6 +1769,15 @@ ext.libraries = [
                 dependencies.create("com.github.duosecurity:duo_client_java:master-SNAPSHOT") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "com.squareup.okhttp", module: "okhttp-urlconnection")
+                    exclude(group: "com.squareup.okhttp", module: "okhttp")
+                    force = true
+                },
+                dependencies.create("com.squareup.okhttp:okhttp-urlconnection:$okioHttpVersion") {
+                    exclude(group: "com.squareup.okio", module: "okio")
+                    force = true
+                },
+                dependencies.create("com.squareup.okio:okio:$okioVersion") {
                     force = true
                 }
         ],

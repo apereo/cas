@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
@@ -8,13 +9,17 @@ import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsern
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link CasThrottlingConfiguration}.
@@ -24,7 +29,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class CasThrottlingConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasThrottlingConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,6 +51,7 @@ public class CasThrottlingConfiguration {
         return neverThrottle();
     }
 
+    @Lazy
     @Bean
     public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle")
                                               final ThrottledSubmissionHandlerInterceptor adapter) {
@@ -63,8 +71,7 @@ public class CasThrottlingConfiguration {
 
 
     private static ThrottledSubmissionHandlerInterceptor neverThrottle() {
-        return new ThrottledSubmissionHandlerInterceptor() {
-        };
+        return () -> LOGGER.debug("Throttling is turned off. No cleanup will take place");
     }
 
     private AbstractThrottledSubmissionHandlerInterceptorAdapter

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -158,8 +159,8 @@ public class TicketRegistryProperties {
     
     public static class Cleaner {
         private boolean enabled = true;
-        private long startDelay = 10000;
-        private long repeatInterval = 60000;
+        private String startDelay = "PT10S";
+        private String repeatInterval = "PT1M";
 
         private String appId = "cas-ticket-registry-cleaner";
 
@@ -180,18 +181,18 @@ public class TicketRegistryProperties {
         }
 
         public long getStartDelay() {
-            return startDelay;
+            return Beans.newDuration(startDelay).toMillis();
         }
 
-        public void setStartDelay(final long startDelay) {
+        public void setStartDelay(final String startDelay) {
             this.startDelay = startDelay;
         }
 
         public long getRepeatInterval() {
-            return repeatInterval;
+            return Beans.newDuration(repeatInterval).toMillis();
         }
 
-        public void setRepeatInterval(final long repeatInterval) {
+        public void setRepeatInterval(final String repeatInterval) {
             this.repeatInterval = repeatInterval;
         }
     }

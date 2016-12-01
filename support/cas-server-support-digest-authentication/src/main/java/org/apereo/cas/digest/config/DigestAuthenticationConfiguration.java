@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
 import org.apereo.cas.digest.DigestAuthenticationHandler;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
@@ -13,6 +14,7 @@ import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationWebflowConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +71,7 @@ public class DigestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Bean
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
@@ -107,18 +109,21 @@ public class DigestAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
+        final DigestProperties digest = casProperties.getAuthn().getDigest();
         final DefaultDigestHashedCredentialRetriever r = new DefaultDigestHashedCredentialRetriever();
-        casProperties.getAuthn().getDigest().getUsers().forEach((k, v) ->
-                r.getStore().put(k, casProperties.getAuthn().getDigest().getRealm(), v));
+        digest.getUsers().forEach((k, v) ->
+                r.getStore().put(k, digest.getRealm(), v));
         return r;
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler digestAuthenticationHandler() {
+        final DigestProperties digest = casProperties.getAuthn().getDigest();
         final DigestAuthenticationHandler r = new DigestAuthenticationHandler();
         r.setPrincipalFactory(digestAuthenticationPrincipalFactory());
         r.setServicesManager(servicesManager);
+        r.setName(digest.getName());
         return r;
     }
 

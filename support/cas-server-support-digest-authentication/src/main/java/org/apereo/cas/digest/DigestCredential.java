@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.AbstractCredential;
  * @since 5.0.0
  */
 public class DigestCredential extends AbstractCredential {
+    private static final long serialVersionUID = 1523693794392289803L;
     private String realm;
 
     private String hash;

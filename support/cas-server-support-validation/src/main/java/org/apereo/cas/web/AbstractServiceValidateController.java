@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -27,7 +28,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationContextTicketValidationException;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
-import org.apereo.cas.util.Pair;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.validation.ValidationSpecification;
@@ -141,7 +141,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         // no MFA auth context found
         if (!requestedContext.isPresent()) {
             logger.debug("No particular authentication context is required for this request");
-            return new Pair<>(Boolean.TRUE, Optional.empty());
+            return Pair.of(Boolean.TRUE, Optional.empty());
         }
 
         // validate the requested strategy
@@ -248,7 +248,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
-        if (!ctxResult.getFirst()) {
+        if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
 
@@ -267,7 +267,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         onSuccessfulValidation(serviceTicketId, assertion);
         logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
         return generateSuccessView(assertion, proxyIou, service, request, 
-                ctxResult.getSecond(), proxyGrantingTicketId);
+                ctxResult.getValue(), proxyGrantingTicketId);
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, 

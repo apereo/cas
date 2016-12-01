@@ -29,7 +29,7 @@ public class AbstractRegisteredServiceTests {
     private static final boolean ALLOWED_TO_PROXY = false;
     private static final boolean SSO_ENABLED = false;
     
-    private AbstractRegisteredService r = new AbstractRegisteredService() {
+    private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -44,6 +44,11 @@ public class AbstractRegisteredServiceTests {
 
         @Override
         public boolean matches(final Service service) {
+            return true;
+        }
+
+        @Override
+        public boolean matches(final String serviceId) {
             return true;
         }
     };
@@ -71,15 +76,15 @@ public class AbstractRegisteredServiceTests {
                 .isServiceAccessAllowedForSso());
         assertEquals(THEME, this.r.getTheme());
 
-        assertFalse(this.r.equals(null));
+        assertNotNull(this.r);
         assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
+        assertEquals(this.r, this.r);
     }
 
     @Test
     public void verifyEquals() throws Exception {
         assertTrue(r.equals(r.clone()));
-        assertFalse(new RegexRegisteredService().equals(null));
+        assertNotNull(new RegexRegisteredService());
         assertFalse(new RegexRegisteredService().equals(new Object()));
     }
     
@@ -172,5 +177,15 @@ public class AbstractRegisteredServiceTests {
         final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
+    }
+
+    @Test
+    public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() throws Exception {
+        final String invalidId = "***";
+        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
+
+        service.matches("notRelevant");
+
+        assertEquals(service.getServiceId(), invalidId);
     }
 }

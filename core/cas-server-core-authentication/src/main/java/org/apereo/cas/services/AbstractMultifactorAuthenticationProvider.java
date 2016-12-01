@@ -5,10 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 
 import java.io.Serializable;
@@ -26,28 +24,58 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * CAS Properties.
-     */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
-
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
+
+    private String globalFailureMode;
+
+    private String id;
+
+    private int order;
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public void setOrder(final int order) {
+        this.order = order;
+    }
+
+    public void setGlobalFailureMode(final String globalFailureMode) {
+        this.globalFailureMode = globalFailureMode;
+    }
 
     @Override
     public final boolean supports(final Event e,
                                   final Authentication authentication,
                                   final RegisteredService registeredService) {
-        if (e == null || !e.getId().equals(getId())) {
+        if (e == null || !e.getId().matches(getId())) {
             logger.debug("Provided event id {} is not applicable to this provider identified by {}", getId());
             return false;
         }
-        if (!bypassEvaluator.eval(authentication)) {
-            logger.debug("Request cannot be supported by provider {}", getId());
+        if (bypassEvaluator != null && !bypassEvaluator.isAuthenticationRequestHonored(
+                authentication, registeredService, this)) {
+            logger.debug("Request cannot be supported by provider {} as it's configured for bypass", getId());
             return false;
         }
 
-        return supportsInternal(e, authentication, registeredService);
+        if (supportsInternal(e, authentication, registeredService)) {
+            logger.debug("{} voted to support this authentication request", getClass().getSimpleName());
+            return true;
+        }
+
+        logger.debug("{} voted does not support this authentication request", getClass().getSimpleName());
+        return false;
     }
 
     /**
@@ -72,8 +100,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         if (policy != null) {
             failureMode = policy.getFailureMode();
             logger.debug("Multifactor failure mode for {} is defined as {}", service.getServiceId(), failureMode);
-        } else if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGlobalFailureMode())) {
-            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        } else if (StringUtils.isNotBlank(this.globalFailureMode)) {
+            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
             logger.debug("Using global multifactor failure mode for {} defined as {}", service.getServiceId(), failureMode);
         }
 
@@ -102,7 +130,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      * @return the true/false
      */
     protected abstract boolean isAvailable();
-    
+
     public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
         this.bypassEvaluator = bypassEvaluator;
     }
@@ -136,5 +164,10 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public boolean matches(final String identifier) {
+        return getId().matches(identifier);
     }
 }

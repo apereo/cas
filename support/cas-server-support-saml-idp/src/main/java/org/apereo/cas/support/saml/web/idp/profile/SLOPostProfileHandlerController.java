@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.util.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -64,8 +64,8 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
         }
 
         final Pair<? extends SignableSAMLObject, MessageContext> pair = decodeRequest(request, decoder, LogoutRequest.class);
-        final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getFirst());
-        final MessageContext ctx = pair.getSecond();
+        final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
+        final MessageContext ctx = pair.getValue();
         
         if (isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");

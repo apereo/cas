@@ -23,6 +23,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -81,6 +82,10 @@ public class YubiKeyConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+
 
     @Autowired(required = false)
     @Qualifier("yubiKeyAccountRegistry")
@@ -129,15 +134,18 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
 
-        if (StringUtils.isBlank(this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey())) {
+        final MultifactorAuthenticationProperties.YubiKey yubi =
+                this.casProperties.getAuthn().getMfa().getYubikey();
+
+        if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
         }
-        if (this.casProperties.getAuthn().getMfa().getYubikey().getClientId() <= 0) {
+        if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
-                this.casProperties.getAuthn().getMfa().getYubikey().getClientId(),
-                this.casProperties.getAuthn().getMfa().getYubikey().getSecretKey());
+                yubi.getClientId(),
+                yubi.getSecretKey());
 
         if (registry != null) {
             handler.setRegistry(this.registry);
@@ -150,6 +158,7 @@ public class YubiKeyConfiguration {
             final String[] urls = casProperties.getAuthn().getMfa().getYubikey().getApiUrls().toArray(new String[]{});
             handler.getClient().setWsapiUrls(urls);
         }
+        handler.setName(yubi.getName());
         return handler;
     }
 
@@ -168,17 +177,19 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getYubikey().getBypass()
+                casProperties.getAuthn().getMfa().getYubikey().getBypass(),
+                ticketRegistrySupport
         );
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
-        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(
-                yubikeyAuthenticationHandler(),
-                this.httpClient);
+        final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(yubikeyAuthenticationHandler(), this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
+        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
         return p;
     }
 
@@ -209,6 +220,7 @@ public class YubiKeyConfiguration {
         r.setServicesManager(servicesManager);
         r.setTicketRegistrySupport(ticketRegistrySupport);
         r.setWarnCookieGenerator(warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
     }
 
@@ -233,7 +245,6 @@ public class YubiKeyConfiguration {
         @Bean
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
             final YubiKeyMultifactorTrustWebflowConfigurer r = new YubiKeyMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(yubikeyFlowRegistry());
             r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
             r.setFlowBuilderServices(flowBuilderServices);
             r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());

@@ -5,7 +5,6 @@ import org.apereo.cas.util.RegexUtils;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -35,19 +34,19 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     
     @Override
     public boolean matches(final Service service) {
+        return service != null && matches(service.getId());
+    }
+
+    @Override
+    public boolean matches(final String serviceId) {
         if (this.servicePattern == null) {
-            final Optional<Pattern> parsedPattern = RegexUtils.createPattern(this.serviceId);
-            if (parsedPattern.isPresent()) {
-                this.servicePattern = parsedPattern.get();
-            }
+            this.servicePattern = RegexUtils.createPattern(this.serviceId);
         }
-        return service != null && this.servicePattern != null
-                && this.servicePattern.matcher(service.getId()).matches();
+        return this.servicePattern.matcher(serviceId).matches();
     }
 
     @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
-    
 }

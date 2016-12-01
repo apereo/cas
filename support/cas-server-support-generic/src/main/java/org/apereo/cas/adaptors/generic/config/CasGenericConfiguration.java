@@ -11,10 +11,11 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class CasGenericConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Bean
     @RefreshScope
@@ -86,6 +87,7 @@ public class CasGenericConfiguration {
         bean.setIpNetworkRange(casProperties.getAuthn().getRemoteAddress().getIpAddressRange());
         bean.setPrincipalFactory(remoteAddressPrincipalFactory());
         bean.setServicesManager(servicesManager);
+        bean.setName(casProperties.getAuthn().getRemoteAddress().getName());
         return bean;
     }
 
@@ -113,7 +115,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getFile().getPrincipalTransformation()));
-
+        h.setName(casProperties.getAuthn().getFile().getName());
 
         return h;
     }
@@ -148,7 +150,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getReject().getPrincipalTransformation()));
-
+        h.setName(casProperties.getAuthn().getReject().getName());
         return h;
     }
 
@@ -167,6 +169,7 @@ public class CasGenericConfiguration {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getShiro().getPrincipalTransformation()));
+        h.setName(casProperties.getAuthn().getShiro().getName());
         return h;
     }
 

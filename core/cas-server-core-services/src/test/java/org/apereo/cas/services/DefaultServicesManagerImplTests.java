@@ -67,7 +67,7 @@ public class DefaultServicesManagerImplTests {
 
         this.defaultServicesManagerImpl.save(r);
 
-        /** Added 2 above, plus another that is added during @Setup **/
+        /* Added 2 above, plus another that is added during @Setup */
         assertEquals(3, this.defaultServicesManagerImpl.getAllServices().size());
     }
 
@@ -151,8 +151,7 @@ public class DefaultServicesManagerImplTests {
     public void verifyEmptyServicesRegistry() {
         final SimpleService s = new SimpleService("http://www.google.com");
 
-        defaultServicesManagerImpl.getAllServices().stream()
-                .forEach(svc -> defaultServicesManagerImpl.delete(svc.getId()));
+        defaultServicesManagerImpl.getAllServices().forEach(svc -> defaultServicesManagerImpl.delete(svc.getId()));
 
         assertTrue(this.defaultServicesManagerImpl.getAllServices().size() == 0);
         assertNull(this.defaultServicesManagerImpl.findServiceBy(s));
@@ -183,8 +182,7 @@ public class DefaultServicesManagerImplTests {
         this.defaultServicesManagerImpl.save(r3);
         this.defaultServicesManagerImpl.save(r2);
 
-        final List<RegisteredService> allServices = new ArrayList<>(
-                this.defaultServicesManagerImpl.getAllServices());
+        final List<RegisteredService> allServices = new ArrayList<>(this.defaultServicesManagerImpl.getAllServices());
 
         //We expect the 3 newly added services, plus the one added in setUp()
         assertEquals(4, allServices.size());
@@ -202,7 +200,7 @@ public class DefaultServicesManagerImplTests {
          */
         private static final long serialVersionUID = 6572142033945243669L;
 
-        private String id;
+        private final String id;
 
         protected SimpleService(final String id) {
             this.id = id;

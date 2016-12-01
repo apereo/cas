@@ -2,11 +2,11 @@ package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.util.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -91,7 +91,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         nameIDPolicy.setAllowCreate(Boolean.TRUE);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
-        final String id = "_" + String.valueOf(Math.abs(new SecureRandom().nextLong()));
+        final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
         if (NumberUtils.isNumber(time)) {
             authnRequest.setID(id + time);
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS), 
@@ -109,7 +109,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         ctx.setAutoCreateSubcontexts(true);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
 
-        final Pair<SignableSAMLObject, MessageContext> pair = new Pair<>(authnRequest, ctx);
+        final Pair<SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
     }
 }

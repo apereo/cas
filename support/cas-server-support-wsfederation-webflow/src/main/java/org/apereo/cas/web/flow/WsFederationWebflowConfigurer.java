@@ -20,14 +20,16 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
-        createEndState(flow, WS_FEDERATION_REDIRECT, "flowScope.WsFederationIdentityProviderUrl", true);
-        final ActionState actionState = createActionState(flow, WS_FEDERATION_ACTION, createEvaluateAction(WS_FEDERATION_ACTION));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, WS_FEDERATION_REDIRECT));
-        
-        if (this.autoRedirect) {
-            setStartState(flow, actionState);
+        if (flow != null) {
+            createEndState(flow, WS_FEDERATION_REDIRECT, "flowScope.WsFederationIdentityProviderUrl", true);
+            final ActionState actionState = createActionState(flow, WS_FEDERATION_ACTION, createEvaluateAction(WS_FEDERATION_ACTION));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                    CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, WS_FEDERATION_REDIRECT));
+
+            if (this.autoRedirect) {
+                setStartState(flow, actionState);
+            }
         }
     }
 

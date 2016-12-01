@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -51,6 +52,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @ContextConfiguration(locations = {"/ldap-context.xml", "/ldap-regservice-test.xml"})
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@EnableScheduling
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
@@ -205,7 +207,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setDescription("Here is another description");
         rs.setRequiredHandlers(new HashSet<>(Lists.newArrayList("handler1", "handler2")));
 
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
 
         final Set<String> values = new HashSet<>();
@@ -217,6 +219,4 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
         return rs;
     }
-
-
 }

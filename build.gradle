@@ -39,7 +39,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:5.0.0"
+        classpath "com.netflix.nebula:gradle-lint-plugin:5.1.3"
         classpath "org.standardout:gradle-versioneye-plugin:1.4.0"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
         classpath "com.gradle:build-scan-plugin:1.0"
@@ -84,8 +84,12 @@ allprojects {
 }
 
 subprojects {
-    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") << {}
-    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {}
+    task allDependenciesInsight(type: DependencyInsightReportTask, description: "Produce insight information for all dependencies") {
+        doLast {}
+    }
+    task allDependencies(type: DependencyReportTask, description: "Display a graph of all project dependencies") {
+        doLast {}
+    }
 
     apply plugin: "java"
     apply plugin: "checkstyle"
@@ -148,8 +152,8 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
-            cacheDynamicVersionsFor 24, 'hours'
-            cacheChangingModulesFor 24, 'hours'
+            cacheDynamicVersionsFor 72, 'hours'
+            cacheChangingModulesFor 72, 'hours'
         }
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -174,7 +178,11 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
     
-    compileJava.options.fork = true 
+    compileJava.options.fork = true
+
+    if (Boolean.getBoolean("enableIncremental")) {
+        compileJava.options.incremental = true
+    }
 
     def currentTime = java.time.ZonedDateTime.now()
     compileJava.doLast {

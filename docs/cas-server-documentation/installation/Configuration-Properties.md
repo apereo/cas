@@ -28,6 +28,10 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 
 ## Remember
 
+Take note of the following suggestions before you start with the configuration.
+
+### Naming Convention
+
 - Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
 and syntax. **BE CAREFUL** with the distinction.
@@ -36,8 +40,25 @@ and syntax. **BE CAREFUL** with the distinction.
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
 
-- If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
+### Trust But Verify
+
+If you are unsure about the meaning of a given CAS setting, do **NOT** simply turn it on without hesitation.
 Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to clarify the intended behavior.
+
+### Time Unit of Measure
+
+All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
+
+```bash
+"PT20S"     -- parses as "20 seconds"
+"PT15M"     -- parses as "15 minutes"
+"PT10H"     -- parses as "10 hours"
+"P2D"       -- parses as "2 days" 
+"P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
+```
+
+The native numeric syntax is still supported though you will have to refer to the docs
+in each case to learn the exact unit of measure.
 
 ## Configuration Storage
 
@@ -312,6 +333,9 @@ To learn more about this topic, [please review this guide](Logging.html).
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
 server.contextParameters.isLog4jAutoInitializationDisabled=true
+
+# Control log levels via properties
+# logging.level.org.apereo.cas=DEBUG
 ```
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
@@ -404,6 +428,14 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].prunePeriod=600
 # cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
 # cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+
+# cas.authn.attributeRepository.ldap[0].type=SEARCH|COMPARE
+# cas.authn.attributeRepository.ldap[0].baseDn=
+# cas.authn.attributeRepository.ldap[0].searchFilter=(objectClass=*)
+# cas.authn.attributeRepository.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.attributeRepository.ldap[0].attributeName=objectClass
+# cas.authn.attributeRepository.ldap[0].attributeValues=top
+# cas.authn.attributeRepository.ldap[0].dn=
 ```
 
 ### Groovy
@@ -431,7 +463,7 @@ class SampleGroovyPersonAttributeDao {
         def casApplicationContext = args[3]
 
         logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
-        return[name:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+        return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
 ```
@@ -631,6 +663,51 @@ To learn more about this topic, [please review this guide](Configuring-Adaptive-
 # cas.authn.adaptive.requireMultifactor.mfa-duo=127.+|United.+|Gecko.+
 ```
 
+## Risk-based Authentication
+
+Evaluate suspicious authentication requests and take action.
+To learn more about this topic, [please review this guide](Configuring-RiskBased-Authentication.html).
+
+```properties
+# cas.authn.adaptive.risk.threshold=0.6
+# cas.authn.adaptive.risk.daysInRecentHistory=30
+
+# cas.authn.adaptive.risk.ip.enabled=false
+
+# cas.authn.adaptive.risk.agent.enabled=false
+
+# cas.authn.adaptive.risk.geoLocation.enabled=false
+
+# cas.authn.adaptive.risk.dateTime.enabled=false
+# cas.authn.adaptive.risk.dateTime.windowInHours=2
+
+# cas.authn.adaptive.risk.response.blockAttempt=false
+
+# cas.authn.adaptive.risk.response.mfaProvider=
+# cas.authn.adaptive.risk.response.riskyAuthenticationAttribute=triggeredRiskBasedAuthentication
+
+# spring.mail.host=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.port=
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.protocol=smtp
+# spring.mail.test-connection=false
+
+# cas.authn.adaptive.risk.response.mail.from=
+# cas.authn.adaptive.risk.response.mail.text=
+# cas.authn.adaptive.risk.response.mail.subject=
+# cas.authn.adaptive.risk.response.mail.cc=
+# cas.authn.adaptive.risk.response.mail.bcc=
+# cas.authn.adaptive.risk.response.mail.attributeName=mail
+
+# cas.authn.adaptive.risk.response.sms.from=
+# cas.authn.adaptive.risk.response.sms.text=
+# cas.authn.adaptive.risk.response.sms.attributeName=phone
+# cas.authn.adaptive.risk.response.sms.twilio.accountId=
+# cas.authn.adaptive.risk.response.sms.twilio.token=
+```
+
 ## GoogleMaps GeoTracking
 
 Used to geo-profile authentication events.
@@ -660,6 +737,7 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 # cas.authn.digest.users.casuser=3530292c24102bac7ced2022e5f1036a
 # cas.authn.digest.users.anotheruser=7530292c24102bac7ced2022e5f1036b
 # cas.authn.digest.realm=CAS
+# cas.authn.digest.name=
 # cas.authn.digest.authenticationMethod=auth
 ```
 
@@ -684,6 +762,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.client.inetAddress=localhost
 # cas.authn.radius.client.accountingPort=1813
 
+# cas.authn.radius.name=
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 
@@ -698,13 +777,14 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.principalTransformation.prefix=
 ```
 
-## File Authentication
+## File (Whitelist) Authentication
 
 To learn more about this topic, [please review this guide](Whitelist-Authentication.html).
 
 ```properties
 # cas.authn.file.separator=::
-# cas.authn.file.filename=
+# cas.authn.file.filename=file:///path/to/users/file
+# cas.authn.file.name=
 
 # cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.file.passwordEncoder.characterEncoding=
@@ -717,12 +797,13 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.principalTransformation.prefix=
 ```
 
-## Reject Users Authentication
+## Reject Users (Blacklist) Authentication
 
 To learn more about this topic, [please review this guide](Blacklist-Authentication.html).
 
 ```properties
 # cas.authn.reject.users=user1,user2
+# cas.authn.reject.name=
 
 # cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.reject.passwordEncoder.characterEncoding=
@@ -762,6 +843,7 @@ Authenticates a user by comparing the user password (which can be encoded with a
 # cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.query[0].idleTimeout=5000
 # cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.query[0].name=
 
 # cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
@@ -799,6 +881,7 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.search[0].idleTimeout=5000
 # cas.authn.jdbc.search[0].credentialCriteria=
+# cas.authn.jdbc.search[0].name=
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
@@ -832,7 +915,8 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].autocommit=false
 # cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.bind[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.bind[0].credentialCriteria=
+# cas.authn.jdbc.bind[0].name=
 
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
@@ -879,7 +963,8 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].autocommit=false
 # cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.encode[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.encode[0].credentialCriteria=
+# cas.authn.jdbc.encode[0].name=
 
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
@@ -902,6 +987,7 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.attributes=
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
+# cas.authn.mongo.name=
 
 # cas.authn.mongo.principalTransformation.suffix=
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
@@ -919,18 +1005,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
 
-- Active Directory - Users authenticate with `sAMAccountName`.
-- Authenticated Search - Manager bind/search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Anonymous Search - Anonymous search
-  - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
-  - otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
-- Direct Bind - Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. There are two requirements for this use case:
-1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
-2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
-
 Note that CAS will automatically create the appropriate components internally
 based on the settings specified below. If you wish to authenticate against more than one LDAP
 server, simply increment the index and specify the settings for the next LDAP server.
@@ -938,7 +1012,39 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+retrieved from [other attribute repository sources](#authentication-attributes), if any.
+Attributes retrieved directly as part of LDAP authentication trump all other attributes.
+
 To learn more about this topic, [please review this guide](LDAP-Authentication.html).
+
+### Active Directory
+
+Users authenticate with `sAMAccountName`.
+
+### Authenticated Search
+
+Manager bind/search type of authentication.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Anonymous Search 
+
+Anonymous search.
+
+- If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
+- Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
+
+### Direct Bind 
+
+Compute user DN from format string and perform simple bind. This is relevant when
+no search is required to compute the DN needed for a bind operation. 
+
+There are two requirements for this use case:
+
+1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
+2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
@@ -988,6 +1094,8 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
 
+# cas.authn.ldap[0].name=
+
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
@@ -997,6 +1105,14 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].principalTransformation.suffix=
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
+
+# cas.authn.ldap[0].type=SEARCH|COMPARE
+# cas.authn.ldap[0].baseDn=
+# cas.authn.ldap[0].searchFilter=(objectClass=*)
+# cas.authn.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.ldap[0].attributeName=objectClass
+# cas.authn.ldap[0].attributeValues=top
+# cas.authn.ldap[0].dn=
 
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
@@ -1016,6 +1132,7 @@ To learn more about this topic, [please review this guide](Rest-Authentication.h
 
 ```properties
 # cas.authn.rest.uri=https://...
+# cas.authn.rest.name=
 
 # cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.rest.passwordEncoder.characterEncoding=
@@ -1044,6 +1161,7 @@ To learn more about this topic, [please review this guide](../protocol/OpenID-Pr
 # cas.authn.openid.enforceRpId=false
 # cas.authn.openid.principal.principalAttribute=
 # cas.authn.openid.principal.returnNull=false
+# cas.authn.openid.name=
 ```
 
 ## SPNEGO Authentication
@@ -1078,6 +1196,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.jcifsServicePassword=
 # cas.authn.spnego.jcifsPassword=
 # cas.authn.spnego.spnegoAttributeName=distinguishedName
+# cas.authn.spnego.name=
 
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
@@ -1107,6 +1226,14 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.useStartTls=false
 # cas.authn.spnego.ldap.baseDn=false
 # cas.authn.spnego.ldap.searchFilter=host={0}
+
+# cas.authn.spnego.ldap.type=SEARCH|COMPARE
+# cas.authn.spnego.ldap.baseDn=
+# cas.authn.spnego.ldap.searchFilter=(objectClass=*)
+# cas.authn.spnego.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.spnego.ldap.attributeName=objectClass
+# cas.authn.spnego.ldap.attributeValues=top
+# cas.authn.spnego.ldap.dn=
 ```
 
 ## JAAS Authentication
@@ -1117,6 +1244,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.realm=CAS
 # cas.authn.jaas.kerberosKdcSystemProperty=
 # cas.authn.jaas.kerberosRealmSystemProperty=
+# cas.authn.jaas.name=
 
 # cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jaas.passwordEncoder.characterEncoding=
@@ -1129,6 +1257,18 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.principalTransformation.prefix=
 ```
 
+## JWT/Token Authentication
+
+To learn more about this topic, [please review this guide](JWT-Authentication.html).
+
+```properties
+# cas.authn.token.name=
+
+# cas.authn.token.principalTransformation.suffix=
+# cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# cas.authn.token.principalTransformation.prefix=
+```
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
@@ -1137,6 +1277,7 @@ To learn more about this topic, [please review this guide](Stormpath-Authenticat
 # cas.authn.stormpath.apiKey=
 # cas.authn.stormpath.secretkey=
 # cas.authn.stormpath.applicationId=
+# cas.authn.stormpath.name=
 
 # cas.authn.stormpath.principalTransformation.suffix=
 # cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
@@ -1149,6 +1290,7 @@ To learn more about this topic, [please review this guide](Remote-Address-Authen
 
 ```properties
 # cas.authn.remoteAddress.ipAddressRange=
+# cas.authn.remoteAddress.name=
 ```
 
 
@@ -1161,6 +1303,7 @@ prior to production rollouts.</p></div>
 
 ```properties
 # cas.authn.accept.users=
+# cas.authn.accept.name=
 
 # cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.accept.passwordEncoder.characterEncoding=
@@ -1230,6 +1373,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.regExTrustedIssuerDnPattern=.+
 # cas.authn.x509.trustedIssuerDnPattern=.+
 
+# cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
@@ -1264,6 +1408,14 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
+# cas.authn.x509.ldap.type=SEARCH|COMPARE
+# cas.authn.x509.ldap.baseDn=
+# cas.authn.x509.ldap.searchFilter=(objectClass=*)
+# cas.authn.x509.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.x509.ldap.attributeName=objectClass
+# cas.authn.x509.ldap.attributeValues=top
+# cas.authn.x509.ldap.dn=
+
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
 # cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
@@ -1277,6 +1429,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
 # cas.authn.shiro.config.location=classpath:shiro.ini
+# cas.authn.shiro.name=
 
 # cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.shiro.passwordEncoder.characterEncoding=
@@ -1295,6 +1448,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.ntlm.includePattern=
 # cas.authn.ntlm.loadBalance=true
 # cas.authn.ntlm.domainController=
+# cas.authn.ntlm.name=
 ```
 
 ## Trusted Authentication
@@ -1304,6 +1458,7 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 ```properties
 # cas.authn.trusted.principalAttribute=
 # cas.authn.trusted.returnNull=false
+# cas.authn.trusted.name=
 ```
 
 ## WS-Fed Authentication
@@ -1320,6 +1475,7 @@ To learn more about this topic, [please review this guide](../integration/ADFS-I
 # cas.authn.wsfed.identityAttribute=upn
 # cas.authn.wsfed.attributeResolverEnabled=true
 # cas.authn.wsfed.autoRedirect=true
+# cas.authn.wsfed.name=
 
 # cas.authn.wsfed.principal.principalAttribute=
 # cas.authn.wsfed.principal.returnNull=false
@@ -1342,6 +1498,8 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # cas.authn.mfa.globalPrincipalAttributeValueRegex=faculty|staff
 
 # cas.authn.mfa.restEndpoint=https://entity.example.org/mfa
+
+# cas.authn.mfa.grouperGroupField=NAME|EXTENSION|DISPLAY_NAME|DISPLAY_EXTENSION
 
 # cas.authn.mfa.requestParameter=authn_method
 # cas.authn.mfa.globalFailureMode=CLOSED
@@ -1425,6 +1583,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=true
+# cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
@@ -1477,6 +1636,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=true
+# cas.authn.mfa.yubikey.name=
 
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
@@ -1496,6 +1656,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trustedDeviceEnabled=true
+# cas.authn.mfa.radius.name=
 
 # cas.authn.mfa.radius.client.socketTimeout=0
 # cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
@@ -1527,20 +1688,22 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 To learn more about this topic, [please review this guide](DuoSecurity-Authentication.html).
 
 ```properties
-# cas.authn.mfa.duo.duoSecretKey=
-# cas.authn.mfa.duo.rank=0
-# cas.authn.mfa.duo.duoApplicationKey=
-# cas.authn.mfa.duo.duoIntegrationKey=
-# cas.authn.mfa.duo.duoApiHost=
-# cas.authn.mfa.duo.trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].duoSecretKey=
+# cas.authn.mfa.duo[0].rank=0
+# cas.authn.mfa.duo[0].duoApplicationKey=
+# cas.authn.mfa.duo[0].duoIntegrationKey=
+# cas.authn.mfa.duo[0].duoApiHost=
+# cas.authn.mfa.duo[0].trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].id=mfa-duo
+# cas.authn.mfa.duo[0].name=
 
-# cas.authn.mfa.duo.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.duo.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.duo.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.duo.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.duo.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.duo.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.duo.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
+# cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
+# cas.authn.mfa.duo[0].bypass.authenticationAttributeName=bypass|skip
+# cas.authn.mfa.duo[0].bypass.authenticationAttributeValue=allowed.+|enabled.+
+# cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
+# cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
+# cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
 ```
 
 ### Authy
@@ -1554,6 +1717,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=true
+# cas.authn.mfa.authy.name=
 
 # cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
@@ -1733,6 +1897,8 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
+# cas.authn.pac4j.autoRedirect=false
+# cas.authn.pac4j.name=
 ```
 
 ### CAS
@@ -1755,6 +1921,17 @@ Delegate authentication to Facebook.
 # cas.authn.pac4j.facebook.scope=
 ```
 
+### LinkedIn
+
+Delegate authentication to LinkedIn.
+
+```properties
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.id=
+# cas.authn.pac4j.linkedIn.secret=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
 ### Twitter
 
 Delegate authentication to Twitter.
@@ -1773,6 +1950,7 @@ Delegate authentication to an external OpenID Connect server.
 # cas.authn.pac4j.oidc.maxClockSkew=
 # cas.authn.pac4j.oidc.customParamKey2=
 # cas.authn.pac4j.oidc.customParamValue2=
+# cas.authn.pac4j.oidc.scope=
 # cas.authn.pac4j.oidc.id=
 # cas.authn.pac4j.oidc.secret=
 # cas.authn.pac4j.oidc.customParamKey1=
@@ -2107,6 +2285,14 @@ used for authentication, etc.
 # cas.monitor.ldap.subtreeSearch=true
 # cas.monitor.ldap.useSsl=true
 # cas.monitor.ldap.useStartTls=false
+
+# cas.monitor.ldap.type=SEARCH|COMPARE
+# cas.monitor.ldap.baseDn=
+# cas.monitor.ldap.searchFilter=(objectClass=*)
+# cas.monitor.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.monitor.ldap.attributeName=objectClass
+# cas.monitor.ldap.attributeValues=top
+# cas.monitor.ldap.dn=
 ```
 
 ### Memory
@@ -2163,6 +2349,14 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.blockWaitTime=5000
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
+
+# cas.acceptableUsagePolicy.ldap.type=SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.baseDn=
+# cas.acceptableUsagePolicy.ldap.searchFilter=(objectClass=*)
+# cas.acceptableUsagePolicy.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.acceptableUsagePolicy.ldap.attributeName=objectClass
+# cas.acceptableUsagePolicy.ldap.attributeValues=top
+# cas.acceptableUsagePolicy.ldap.dn=
 ```
 
 ## Events
@@ -2326,6 +2520,14 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.blockWaitTime=5000
 # cas.serviceRegistry.ldap.useSsl=true
 # cas.serviceRegistry.ldap.useStartTls=false
+
+# cas.serviceRegistry.ldap.type=SEARCH|COMPARE
+# cas.serviceRegistry.ldap.baseDn=
+# cas.serviceRegistry.ldap.searchFilter=(objectClass=*)
+# cas.serviceRegistry.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.serviceRegistry.ldap.attributeName=objectClass
+# cas.serviceRegistry.ldap.attributeValues=top
+# cas.serviceRegistry.ldap.dn=
 ```
 
 ### Couchbase Service Registry
@@ -2450,7 +2652,6 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
 # cas.ticket.registry.hazelcast.cluster.multicastEnabled=false
-# cas.ticket.registry.hazelcast.cluster.evictionPercentage=10
 # cas.ticket.registry.hazelcast.cluster.tcpipEnabled=true
 # cas.ticket.registry.hazelcast.cluster.members=localhost
 # cas.ticket.registry.hazelcast.cluster.loggingType=slf4j
@@ -2908,4 +3109,12 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.prunePeriod=600
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+
+# cas.authn.pm.ldap.type=SEARCH|COMPARE
+# cas.authn.pm.ldap.baseDn=
+# cas.authn.pm.ldap.searchFilter=(objectClass=*)
+# cas.authn.pm.ldap.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.pm.ldap.attributeName=objectClass
+# cas.authn.pm.ldap.attributeValues=top
+# cas.authn.pm.ldap.dn=
 ```

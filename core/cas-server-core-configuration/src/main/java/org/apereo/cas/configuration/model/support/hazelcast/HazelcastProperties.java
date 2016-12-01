@@ -78,7 +78,6 @@ public class HazelcastProperties {
         private int maxHeapSizePercentage = 85;
         private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
         private String evictionPolicy = "LRU";
-        private int evictionPercentage = 10;
         private int backupCount = 1;
         private int asyncBackupCount;
     
@@ -194,14 +193,6 @@ public class HazelcastProperties {
 
         public void setEvictionPolicy(final String evictionPolicy) {
             this.evictionPolicy = evictionPolicy;
-        }
-
-        public int getEvictionPercentage() {
-            return evictionPercentage;
-        }
-
-        public void setEvictionPercentage(final int evictionPercentage) {
-            this.evictionPercentage = evictionPercentage;
         }
 
         public String getMulticastTrustedInterfaces() {

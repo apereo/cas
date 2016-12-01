@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -8,7 +9,7 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.*;
                 CasCoreTicketsConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
-                CasPersonDirectoryAttributeRepositoryConfiguration.class,
+                CasPersonDirectoryConfiguration.class,
                 CasCookieConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreServicesConfiguration.class})
@@ -64,7 +65,7 @@ public class InitialFlowSetupActionCookieTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private InitialFlowSetupAction action = new InitialFlowSetupAction();
+    private final InitialFlowSetupAction action = new InitialFlowSetupAction();
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
@@ -75,9 +76,9 @@ public class InitialFlowSetupActionCookieTests {
     @Before
     public void setUp() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.warnCookieGenerator.setCookiePath("");
+        this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.tgtCookieGenerator.setCookiePath("");
+        this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(

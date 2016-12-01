@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author Misagh Moayyed
@@ -19,5 +20,9 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     @Override
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
+    }
+
+    public ConfigurableApplicationContext getConfigurableApplicationContext() {
+        return (ConfigurableApplicationContext) CONTEXT;
     }
 }

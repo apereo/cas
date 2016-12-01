@@ -55,6 +55,7 @@ public class RegisteredServiceEditBean implements Serializable {
      * The type Form data.
      */
     public static class FormData implements Serializable {
+        private static final long serialVersionUID = -5201796557461644152L;
         private List<String> availableAttributes = new ArrayList<>();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
@@ -104,6 +105,7 @@ public class RegisteredServiceEditBean implements Serializable {
      * The type Service data.
      */
     public static class ServiceData implements Serializable {
+        private static final long serialVersionUID = -8953615891363204511L;
         private String assignedId;
         private String serviceId;
         private String name;

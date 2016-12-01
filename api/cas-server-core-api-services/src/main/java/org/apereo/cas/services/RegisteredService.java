@@ -124,6 +124,13 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean matches(Service service);
 
     /**
+     * Returns whether the service id matches the registered service.
+     * @param serviceId the service id to match.
+     * @return true if they match, false otherwise.
+     */
+    boolean matches(String serviceId);
+
+    /**
      * Clone this service.
      *
      * @return the registered service

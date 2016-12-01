@@ -35,7 +35,9 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,6 +73,7 @@ public final class WebUtils {
     private static final String PARAMETER_SERVICE = "service";
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
+    private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
 
     /**
      * Instantiates a new web utils instance.
@@ -248,8 +251,7 @@ public final class WebUtils {
      * @param context the context
      * @return the ticket granting ticket id
      */
-    public static String getTicketGrantingTicketId(
-            final RequestContext context) {
+    public static String getTicketGrantingTicketId(final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
         final String tgtFromFlow = (String) context.getFlowScope().get(PARAMETER_TICKET_GRANTING_TICKET_ID);
 
@@ -338,7 +340,7 @@ public final class WebUtils {
         final String val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
         return Boolean.valueOf(val);
     }
-    
+
     /**
      * Put registered service into flowscope.
      *
@@ -448,7 +450,7 @@ public final class WebUtils {
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
                 warnCookieGenerator.addCookie(response, "true");
-            } 
+            }
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
@@ -539,15 +541,14 @@ public final class WebUtils {
     /**
      * Gets http servlet request geo location.
      *
+     * @param request the request
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
         final int latIndex = 0;
         final int longIndex = 1;
-        final int accuIndex = 2;
+        final int accuracyIndex = 2;
         final int timeIndex = 3;
-
-        final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final GeoLocationRequest loc = new GeoLocationRequest();
         if (request != null) {
             final String geoLocationParam = request.getParameter("geolocation");
@@ -555,11 +556,20 @@ public final class WebUtils {
                 final String[] geoLocation = geoLocationParam.split(",");
                 loc.setLatitude(geoLocation[latIndex]);
                 loc.setLongitude(geoLocation[longIndex]);
-                loc.setAccuracy(geoLocation[accuIndex]);
+                loc.setAccuracy(geoLocation[accuracyIndex]);
                 loc.setTimestamp(geoLocation[timeIndex]);
             }
         }
         return loc;
+    }
+    
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation() {
+        return getHttpServletRequestGeoLocation(WebUtils.getHttpServletRequest());
     }
 
     /**
@@ -653,13 +663,14 @@ public final class WebUtils {
         context.getFlowScope().put("rememberMeAuthenticationEnabled", enabled);
     }
 
+
     /**
      * Gets all multifactor authentication providers from application context.
      *
      * @param applicationContext the application context
      * @return the all multifactor authentication providers from application context
      */
-    public static Map<String, MultifactorAuthenticationProvider> getAllMultifactorAuthenticationProviders(
+    public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
             final ApplicationContext applicationContext) {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
@@ -668,4 +679,53 @@ public final class WebUtils {
         }
         return Maps.newHashMap();
     }
+
+    /**
+     * Put resolved multifactor authentication providers into scope.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
+                                                                     final Collection<MultifactorAuthenticationProvider> value) {
+        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", value);
+    }
+
+    /**
+     * Gets resolved multifactor authentication providers.
+     *
+     * @param context the context
+     * @return the resolved multifactor authentication providers
+     */
+    public static Collection<MultifactorAuthenticationProvider> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
+        return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
+    }
+
+    /**
+     * Sets service user interface metadata.
+     *
+     * @param requestContext the request context
+     * @param mdui           the mdui
+     */
+    public static void putServiceUserInterfaceMetadata(final RequestContext requestContext, final Serializable mdui) {
+        if (mdui != null) {
+            requestContext.getFlowScope().put(PARAMETER_SERVICE_UI_METADATA, mdui);
+        }
+    }
+
+    /**
+     * Gets service user interface metadata.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clz            the clz
+     * @return the service user interface metadata
+     */
+    public static <T> T getServiceUserInterfaceMetadata(final RequestContext requestContext, final Class<T> clz) {
+        if (requestContext.getFlowScope().contains(PARAMETER_SERVICE_UI_METADATA)) {
+            return requestContext.getFlowScope().get(PARAMETER_SERVICE_UI_METADATA, clz);
+        }
+        return null;
+    }
+
 }

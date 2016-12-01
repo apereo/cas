@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Describes how the WS-FED principal resolution machinery
@@ -63,7 +63,7 @@ public class WsFederationConfiguration implements Serializable {
     
     private String relyingPartyIdentifier;
     
-    private int tolerance;
+    private long tolerance;
     
     private WsFedPrincipalResolutionAttributesType attributesType;
     
@@ -185,7 +185,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @return the tolerance in milliseconds
      */
-    public int getTolerance() {
+    public long getTolerance() {
         return this.tolerance;
     }
 
@@ -194,7 +194,7 @@ public class WsFederationConfiguration implements Serializable {
      *
      * @param tolerance the tolerance in milliseconds
      */
-    public void setTolerance(final int tolerance) {
+    public void setTolerance(final long tolerance) {
         this.tolerance = tolerance;
     }
 

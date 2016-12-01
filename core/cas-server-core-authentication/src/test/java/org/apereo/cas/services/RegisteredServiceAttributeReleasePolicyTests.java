@@ -188,7 +188,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         repository.setAttributeRepository(dao);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
-                Collections.<String, Object>singletonMap("mail", "final@example.com"));
+                Collections.singletonMap("mail", "final@example.com"));
 
         policy.setPrincipalAttributesRepository(repository);
 

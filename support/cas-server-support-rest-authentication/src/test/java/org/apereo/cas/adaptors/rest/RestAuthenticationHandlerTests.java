@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +21,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -46,9 +47,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         RefreshAutoConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(properties = "cas.authn.rest.uri=http://localhost:8081/authn")
+@EnableScheduling
 public class RestAuthenticationHandlerTests {
 
     @Autowired

@@ -100,7 +100,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    private FlowBuilderServices flowBuilderServices;
+    /** Flow builder services. */
+    protected FlowBuilderServices flowBuilderServices;
     
     @PostConstruct
     @Override
@@ -638,9 +639,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
-        providerMap.forEach((k, v) -> {
-            createTransitionForState(state, v.getId(), v.getId());
-        });
+                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
     }
 }

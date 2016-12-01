@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication;
 
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
@@ -8,10 +11,6 @@ import org.apereo.cas.support.events.CasAuthenticationPrincipalResolvedEvent;
 import org.apereo.cas.support.events.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.inspektr.audit.annotation.Audit;
-
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ import java.util.Map;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
     private static final String MESSAGE = "At least one authentication handler is required";
-    
+
     /**
      * Log instance for logging events, errors, warnings, etc.
      */
@@ -138,13 +137,14 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param handlerName the handler name
      * @param resolver    the resolver
      * @param credential  the credential
+     * @param principal   the current authenticated principal from a handler, if any.
      * @return the principal
      */
-    protected Principal resolvePrincipal(
-            final String handlerName, final PrincipalResolver resolver, final Credential credential) {
+    protected Principal resolvePrincipal(final String handlerName, final PrincipalResolver resolver,
+                                         final Credential credential, final Principal principal) {
         if (resolver.supports(credential)) {
             try {
-                final Principal p = resolver.resolve(credential);
+                final Principal p = resolver.resolve(credential, principal);
                 logger.debug("{} resolved {} from {}", resolver, p, credential);
                 return p;
             } catch (final Exception e) {
@@ -179,7 +179,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated principal [{}] and attributes {} with credentials {}.", 
+        logger.info("Authenticated principal [{}] with attributes {} via credentials {}.",
                 principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
@@ -203,28 +203,27 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             throws GeneralSecurityException, PreventedException {
 
         Principal principal;
-        
+
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
-        
+
         final HandlerResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
-        logger.info("{} successfully authenticated {}", handler.getName(), credential);
+        logger.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
-        
+        principal = result.getPrincipal();
+
         if (resolver == null) {
-            principal = result.getPrincipal();
             logger.debug(
-                    "No resolver configured for {}. Falling back to handler principal {}",
+                    "No principal resolution is configured for {}. Falling back to handler principal {}",
                     handler.getName(),
                     principal);
         } else {
-            principal = resolvePrincipal(handler.getName(), resolver, credential);
+            principal = resolvePrincipal(handler.getName(), resolver, credential, principal);
             if (principal == null) {
                 logger.warn("Principal resolution handled by {} produced a null principal. "
                         + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                         + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
-                principal = result.getPrincipal();
             }
         }
         if (principal != null) {
@@ -261,7 +260,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     public void setHandlerResolverMap(final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap) {
         this.handlerResolverMap = handlerResolverMap;
     }
-    
+
     private void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             this.eventPublisher.publishEvent(event);

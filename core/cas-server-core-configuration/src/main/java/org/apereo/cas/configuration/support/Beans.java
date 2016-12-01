@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
@@ -21,9 +22,11 @@ import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
@@ -33,12 +36,14 @@ import org.ldaptive.ad.extended.FastBindOperation;
 import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.CompareValidator;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.ldaptive.sasl.CramMd5Config;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.ExternalConfig;
@@ -49,7 +54,6 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -62,6 +66,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -72,7 +77,7 @@ import java.util.Properties;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public class Beans {
+public final class Beans {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
@@ -94,7 +99,7 @@ public class Beans {
             bean.setPassword(jpaProperties.getPassword());
 
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(jpaProperties.getPool().getMaxIdleTime());
+            bean.setMinimumIdle(Long.valueOf(jpaProperties.getPool().getMaxIdleTime()).intValue());
             bean.setIdleTimeout(jpaProperties.getIdleTimeout());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailFast(jpaProperties.isFailFast());
@@ -102,7 +107,7 @@ public class Beans {
             bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
             bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
             bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setLoginTimeout(jpaProperties.getPool().getMaxWait());
+            bean.setLoginTimeout(Long.valueOf(jpaProperties.getPool().getMaxWait()).intValue());
             bean.setValidationTimeout(jpaProperties.getPool().getMaxWait());
             return bean;
         } catch (final Exception e) {
@@ -133,7 +138,7 @@ public class Beans {
         final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
         bean.setCorePoolSize(config.getMinSize());
         bean.setMaxPoolSize(config.getMaxSize());
-        bean.setKeepAliveSeconds(config.getMaxWait());
+        bean.setKeepAliveSeconds(Long.valueOf(config.getMaxWait()).intValue());
         return bean;
     }
 
@@ -173,13 +178,12 @@ public class Beans {
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
         try {
             final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map pdirMap = new HashMap<>();
+            final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList(vals));
+                pdirMap.put(entry.getKey(), Lists.newArrayList((Object[]) vals));
             });
             dao.setBackingMap(pdirMap);
-            dao.setOrder(Ordered.LOWEST_PRECEDENCE);
             return dao;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -195,15 +199,16 @@ public class Beans {
 
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
-            case NONE:
-                return NoOpPasswordEncoder.getInstance();
             case DEFAULT:
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
                 return new StandardPasswordEncoder(properties.getSecret());
-            default:
+            case BCRYPT:
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
+            case NONE:
+            default:
+                return NoOpPasswordEncoder.getInstance();
         }
     }
 
@@ -270,6 +275,7 @@ public class Beans {
         cc.setUseSSL(l.isUseSsl());
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
+        cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
@@ -374,7 +380,23 @@ public class Beans {
         strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
-        cp.setValidator(new SearchValidator());
+        if (StringUtils.equalsIgnoreCase("compare", l.getValidator().getType())) {
+            final CompareRequest compareRequest = new CompareRequest();
+            compareRequest.setDn(l.getValidator().getDn());
+            compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
+                    l.getValidator().getAttributeValues().toArray(new String[]{})));
+            compareRequest.setReferralHandler(new SearchReferralHandler());
+            cp.setValidator(new CompareValidator(compareRequest));
+        } else {
+            final SearchRequest searchRequest = new SearchRequest();
+            searchRequest.setBaseDn(l.getValidator().getBaseDn());
+            searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
+            searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+            searchRequest.setSearchScope(l.getValidator().getScope());
+            searchRequest.setSizeLimit(1L);
+            cp.setValidator(new SearchValidator(searchRequest));
+        }
+
         cp.setFailFastInitialize(l.isFailFast());
 
         LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
@@ -394,13 +416,22 @@ public class Beans {
     }
 
     /**
-     * New duration.
+     * New duration. If the provided length is duration,
+     * it will be parsed accordingly, or if it's a numeric value
+     * it will be pared as a duration assuming it's provided as seconds.
      *
      * @param length the length in seconds.
      * @return the duration
      */
-    public static Duration newDuration(final long length) {
-        return Duration.ofSeconds(length);
+    public static Duration newDuration(final String length) {
+        try {
+            if (NumberUtils.isNumber(length)) {
+                return Duration.ofSeconds(Long.valueOf(length));
+            }
+            return Duration.parse(length);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     /**
@@ -454,7 +485,7 @@ public class Beans {
         filter.setFilter(filterQuery);
         if (params != null) {
             for (int i = 0; i < params.length; i++) {
-                if (filter.getFilter().contains("{" + i + "}")) {
+                if (filter.getFilter().contains("{" + i + '}')) {
                     filter.setParameter(i, params[i]);
                 } else {
                     filter.setParameter("user", params[i]);

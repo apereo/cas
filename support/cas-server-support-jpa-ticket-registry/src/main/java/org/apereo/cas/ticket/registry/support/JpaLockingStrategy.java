@@ -42,7 +42,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
-    private int lockTimeout;
+    private long lockTimeout;
 
     /**
      * @param  id  Application identifier that identifies a row in the lock
@@ -71,7 +71,7 @@ public class JpaLockingStrategy implements LockingStrategy {
      *                  Use of a reasonable timeout facilitates recovery from node failures,
      *                  so setting to zero is discouraged.
      */
-    public void setLockTimeout(final int seconds) {
+    public void setLockTimeout(final long seconds) {
         if (seconds < 0) {
             throw new IllegalArgumentException("Lock timeout must be non-negative.");
         }
@@ -174,7 +174,8 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Entity
     @Table(name = "locks")
     private static class Lock implements Serializable {
-        
+
+        private static final long serialVersionUID = -5750740484289616656L;
         /** column name that holds application identifier. */
         @Id
         @Column(name="application_id")

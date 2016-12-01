@@ -34,7 +34,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     private YubiKeyAccountRegistry registry;
 
-    private YubicoClient client;
+    private final YubicoClient client;
 
     /**
      * Prepares the Yubico client with the received clientId and secretKey. If you wish to
@@ -58,7 +58,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     public void afterPropertiesSet() {
         if (this.registry == null) {
             logger.warn("No YubiKey account registry is defined. All credentials are considered "
-                    + "eligible for YubiKey authentication. Consider providing an account registry via [{}]",
+                    + "eligible for YubiKey authentication. Consider providing an account registry implementation via [{}]",
                     YubiKeyAccountRegistry.class.getName());
         }
     }

@@ -4,14 +4,14 @@
   As boot is upgraded, some of these enforcements below
   may become unnecessary when/if version numbers match.
  */
-ext["hibernateVersion"] = "5.2.2.Final"
+ext["hibernateVersion"] = "5.2.4.Final"
 ext["springBootTomcatVersion"] = "8.5.6"
 ext["hazelcastVersion"] = "3.7.2"
 ext["infinispanVersion"] = "8.2.2.Final"
-ext["springVersion"] = "4.3.3.RELEASE"
-ext["jacksonDatabindVersion"] = "2.8.3"
-ext["thymeleafVersion"] = "3.0.1.RELEASE"
-ext["thymeleafDialectVersion"] = "2.0.3"
+ext["springVersion"] = "4.3.4.RELEASE"
+ext["jacksonDatabindVersion"] = "2.8.4"
+ext["thymeleafVersion"] = "3.0.2.RELEASE"
+ext["thymeleafDialectVersion"] = "2.0.5"
 ext["springSessionVersion"] = "1.2.2.RELEASE"
 ext["hsqlVersion"] = "2.3.4"
 ext["httpCoreVersion"] = "4.4.4"

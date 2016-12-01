@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.http.MediaType;
 
@@ -13,8 +14,9 @@ import java.net.URL;
  */
 public class LogoutHttpMessage extends HttpMessage {
 
+    private static final long serialVersionUID = 399581521957873727L;
     /** The parameter name that contains the logout request. */
-    private String logoutParameterName = "logoutRequest";
+    private final String logoutParameterName = "logoutRequest";
     
     private boolean prefixLogoutParameterName = true;
 
@@ -36,7 +38,7 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return (this.prefixLogoutParameterName ? this.logoutParameterName + '=' : "") 
+        return (this.prefixLogoutParameterName ? this.logoutParameterName + '=' : StringUtils.EMPTY)
                 + super.formatOutputMessageInternal(message);
     }
 

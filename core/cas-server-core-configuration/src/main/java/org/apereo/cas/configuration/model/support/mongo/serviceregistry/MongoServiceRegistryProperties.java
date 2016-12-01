@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.mongo.serviceregistry;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.support.Beans;
+
 /**
  * Configuration properties class mongodb service registry.
  *
@@ -12,17 +15,17 @@ public class MongoServiceRegistryProperties {
 
     private int port = 27017;
 
-    private String userId = "";
+    private String userId = StringUtils.EMPTY;
 
-    private String userPassword = "";
+    private String userPassword = StringUtils.EMPTY;
 
     private String serviceRegistryCollection = "cas-service-registry";
 
     private boolean dropCollection;
 
-    private int timeout = 5000;
+    private String timeout = "PT5S";
 
-    private int idleTimeout = 30000;
+    private String idleTimeout = "PT30S";
 
     private String writeConcern = "NORMAL";
 
@@ -78,19 +81,19 @@ public class MongoServiceRegistryProperties {
         this.dropCollection = dropCollection;
     }
 
-    public int getTimeout() {
-        return timeout;
+    public long getTimeout() {
+        return Beans.newDuration(timeout).toMillis();
     }
 
-    public void setTimeout(final int timeout) {
+    public void setTimeout(final String timeout) {
         this.timeout = timeout;
     }
 
-    public int getIdleTimeout() {
-        return idleTimeout;
+    public long getIdleTimeout() {
+        return Beans.newDuration(idleTimeout).toMillis();
     }
 
-    public void setIdleTimeout(final int idleTimeout) {
+    public void setIdleTimeout(final String idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 

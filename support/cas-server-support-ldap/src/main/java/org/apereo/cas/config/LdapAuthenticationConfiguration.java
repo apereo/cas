@@ -1,9 +1,10 @@
 package org.apereo.cas.config;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
+import org.apereo.cas.authentication.principal.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -38,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link LdapAuthenticationConfiguration} that attempts to create
@@ -90,6 +93,7 @@ public class LdapAuthenticationConfiguration {
 
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                     handler.setServicesManager(servicesManager);
+                    handler.setName(l.getName());
 
                     final List<String> additionalAttrs = Lists.newArrayList(l.getAdditionalAttributes());
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
@@ -102,8 +106,8 @@ public class LdapAuthenticationConfiguration {
 
                     if (StringUtils.isNotBlank(l.getCredentialCriteria())) {
                         LOGGER.debug("Ldap authentication for {} is filtering credentials by {}", l.getCredentialCriteria());
-                        handler.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(l.getCredentialCriteria())
-                                .apply(credential.getId()));
+                        final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
+                        handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
                     }
 
                     final Map<String, String> attributes = new HashMap<>();
@@ -154,14 +158,10 @@ public class LdapAuthenticationConfiguration {
                     LOGGER.debug("Initializing ldap authentication handler...");
                     handler.initialize();
 
-                    if (l.getAdditionalAttributes().isEmpty() && l.getPrincipalAttributeList().isEmpty()) {
-                        LOGGER.debug("Ldap authentication for {} is to delegate to principal resolvers for attributes", l.getLdapUrl());
-                        this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
-                    } else {
-                        LOGGER.debug("Ldap authentication for {} and baseDn {} is retrieving attributes. Principal resolvers are inactive.",
-                                l.getLdapUrl(), l.getBaseDn());
-                        this.authenticationHandlersResolvers.put(handler, null);
-                    }
+                    LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
+                    final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+                    resolver.setChain(Lists.newArrayList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                    this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
                 });
     }
 
@@ -174,7 +174,7 @@ public class LdapAuthenticationConfiguration {
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
             handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
             handlers.add(new ActiveDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));
-            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()), 
+            handlers.add(new FreeIPAAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays()),
                     cfg.getLoginFailures()));
         }
         handlers.add(new PasswordPolicyAuthenticationResponseHandler());

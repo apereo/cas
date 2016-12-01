@@ -27,11 +27,11 @@ public class RegexRegisteredServiceTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private RegexRegisteredService service;
+    private final RegexRegisteredService service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
     public RegexRegisteredServiceTests(
             final RegexRegisteredService service,

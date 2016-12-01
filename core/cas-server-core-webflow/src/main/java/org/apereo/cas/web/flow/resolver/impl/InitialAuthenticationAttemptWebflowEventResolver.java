@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
@@ -31,10 +32,11 @@ import java.util.Set;
  */
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver
         implements CasDelegatingWebflowEventResolver {
-    
+
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
     private CasWebflowEventResolver selectiveResolver;
+
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -94,7 +96,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
                                                               final RegisteredService registeredService) {
 
-        final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
+        final Set<Event> eventBuilder = Sets.newLinkedHashSet();
         this.orderedResolvers
                 .stream()
                 .filter(r -> r != null)
@@ -111,12 +113,17 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     }
                 });
 
-        return eventBuilder.build();
+        return eventBuilder;
     }
 
     @Override
     public void addDelegate(final CasWebflowEventResolver r) {
         orderedResolvers.add(r);
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r, final int index) {
+        orderedResolvers.add(index, r);
     }
 
     public void setSelectiveResolver(final CasWebflowEventResolver r) {

@@ -1,8 +1,11 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
+import org.apereo.cas.configuration.support.Beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -13,26 +16,28 @@ import java.util.concurrent.TimeUnit;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
-public class MultifactorAuthenticationProperties {
+public class MultifactorAuthenticationProperties implements Serializable {
+    private static final long serialVersionUID = 7416521468929733907L;
 
     private String authenticationContextAttribute = "authnContextClass";
     private String globalFailureMode = "CLOSED";
     private String requestParameter = "authn_method";
-    
+
     private String restEndpoint;
-    
+
     private String globalPrincipalAttributeNameTriggers;
     private String globalPrincipalAttributeValueRegex;
-    
+
     private String contentType = "application/cas";
     private String globalProviderId;
-    
+
+    private String grouperGroupField;
+
     private Trusted trusted = new Trusted();
     private YubiKey yubikey = new YubiKey();
     private Radius radius = new Radius();
     private GAuth gauth = new GAuth();
-    private Duo duo = new Duo();
+    private List<Duo> duo = new ArrayList<>();
     private Authy authy = new Authy();
 
     public Trusted getTrusted() {
@@ -83,11 +88,19 @@ public class MultifactorAuthenticationProperties {
         this.globalPrincipalAttributeNameTriggers = globalPrincipalAttributeNameTriggers;
     }
 
-    public Duo getDuo() {
+    public String getGrouperGroupField() {
+        return grouperGroupField;
+    }
+
+    public void setGrouperGroupField(final String grouperGroupField) {
+        this.grouperGroupField = grouperGroupField;
+    }
+
+    public List<Duo> getDuo() {
         return duo;
     }
 
-    public void setDuo(final Duo duo) {
+    public void setDuo(final List<Duo> duo) {
         this.duo = duo;
     }
 
@@ -147,8 +160,20 @@ public class MultifactorAuthenticationProperties {
         this.yubikey = yubikey;
     }
 
-    public abstract static class BaseProvider {
+    public abstract static class BaseProvider implements Serializable {
+        private static final long serialVersionUID = -2690281104343633871L;
+        private int rank;
+        private String id;
         private Bypass bypass = new Bypass();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
 
         public Bypass getBypass() {
             return bypass;
@@ -158,7 +183,24 @@ public class MultifactorAuthenticationProperties {
             this.bypass = bypass;
         }
 
-        public static class Bypass {
+        public int getRank() {
+            return rank;
+        }
+
+        public void setRank(final int rank) {
+            this.rank = rank;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        public static class Bypass implements Serializable {
+            private static final long serialVersionUID = -9181362378365850397L;
             private String principalAttributeName;
             private String principalAttributeValue;
             private String authenticationAttributeName;
@@ -224,13 +266,18 @@ public class MultifactorAuthenticationProperties {
             }
         }
     }
-    
+
     public static class YubiKey extends BaseProvider {
+        private static final long serialVersionUID = 9138057706201201089L;
         private Integer clientId;
-        private String secretKey = "";
-        private int rank;
+        private String secretKey = StringUtils.EMPTY;
+
         private List<String> apiUrls = new ArrayList<>();
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
+
+        public YubiKey() {
+            setId("mfa-yubikey");
+        }
 
         public boolean isTrustedDeviceEnabled() {
             return trustedDeviceEnabled;
@@ -256,13 +303,6 @@ public class MultifactorAuthenticationProperties {
             this.secretKey = secretKey;
         }
 
-        public int getRank() {
-            return rank;
-        }
-
-        public void setRank(final int rank) {
-            this.rank = rank;
-        }
 
         public List<String> getApiUrls() {
             return apiUrls;
@@ -274,15 +314,19 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Radius extends BaseProvider {
-        private int rank;
-
+        private static final long serialVersionUID = 7021301814775348087L;
         private boolean failoverOnException;
         private boolean failoverOnAuthenticationFailure;
 
         private Server server = new Server();
         private Client client = new Client();
 
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
+
+
+        public Radius() {
+            setId("mfa-radius");
+        }
 
         public boolean isTrustedDeviceEnabled() {
             return trustedDeviceEnabled;
@@ -291,7 +335,7 @@ public class MultifactorAuthenticationProperties {
         public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
             this.trustedDeviceEnabled = trustedDeviceEnabled;
         }
-        
+
         public boolean isFailoverOnException() {
             return failoverOnException;
         }
@@ -306,14 +350,6 @@ public class MultifactorAuthenticationProperties {
 
         public void setFailoverOnAuthenticationFailure(final boolean failoverOnAuthenticationFailure) {
             this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
-        }
-
-        public int getRank() {
-            return rank;
-        }
-
-        public void setRank(final int rank) {
-            this.rank = rank;
         }
 
         public Server getServer() {
@@ -468,12 +504,16 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Duo extends BaseProvider {
-        private int rank;
+        private static final long serialVersionUID = -4445375354167880807L;
         private String duoIntegrationKey;
         private String duoSecretKey;
         private String duoApplicationKey;
         private String duoApiHost;
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
+
+        public Duo() {
+            setId("mfa-duo");
+        }
 
         public boolean isTrustedDeviceEnabled() {
             return trustedDeviceEnabled;
@@ -481,13 +521,6 @@ public class MultifactorAuthenticationProperties {
 
         public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
             this.trustedDeviceEnabled = trustedDeviceEnabled;
-        }
-        public int getRank() {
-            return rank;
-        }
-
-        public void setRank(final int rank) {
-            this.rank = rank;
         }
 
         public String getDuoIntegrationKey() {
@@ -524,12 +557,19 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Authy extends BaseProvider {
+        private static final long serialVersionUID = -3746749663459157641L;
         private String apiKey;
         private String apiUrl;
         private String phoneAttribute = "phone";
         private String mailAttribute = "mail";
         private boolean forceVerification = true;
-        private boolean trustedDeviceEnabled = true;
+        private boolean trustedDeviceEnabled;
+
+
+
+        public Authy() {
+            setId("mfa-authy");
+        }
 
         public boolean isTrustedDeviceEnabled() {
             return trustedDeviceEnabled;
@@ -538,7 +578,7 @@ public class MultifactorAuthenticationProperties {
         public void setTrustedDeviceEnabled(final boolean trustedDeviceEnabled) {
             this.trustedDeviceEnabled = trustedDeviceEnabled;
         }
-        
+
         public String getPhoneAttribute() {
             return phoneAttribute;
         }
@@ -581,26 +621,27 @@ public class MultifactorAuthenticationProperties {
     }
 
     public static class Trusted extends BaseProvider {
+        private static final long serialVersionUID = 1505013239016790473L;
         private String authenticationContextAttribute = "isFromTrustedMultifactorAuthentication";
-        
-        private String encryptionKey = "";
 
-        private String signingKey = "";
+        private String encryptionKey = StringUtils.EMPTY;
+
+        private String signingKey = StringUtils.EMPTY;
 
         private boolean cipherEnabled = true;
 
         private boolean deviceRegistrationEnabled = true;
 
         private long expiration = 30;
-        
+
         private TimeUnit timeUnit = TimeUnit.DAYS;
 
         private Rest rest = new Rest();
-        
+
         private Jpa jpa = new Jpa();
 
         private Cleaner cleaner = new Cleaner();
-        
+
         private Mongodb mongodb = new Mongodb();
 
         public Rest getRest() {
@@ -674,7 +715,7 @@ public class MultifactorAuthenticationProperties {
         public void setCipherEnabled(final boolean cipherEnabled) {
             this.cipherEnabled = cipherEnabled;
         }
-        
+
         public boolean isDeviceRegistrationEnabled() {
             return deviceRegistrationEnabled;
         }
@@ -702,7 +743,7 @@ public class MultifactorAuthenticationProperties {
                 this.endpoint = endpoint;
             }
         }
-        
+
         public static class Jpa extends AbstractJpaProperties {
         }
 
@@ -711,12 +752,13 @@ public class MultifactorAuthenticationProperties {
                 setCollection("MongoDbCasTrustedAuthnMfaRepository");
             }
         }
-        
+
         public static class Cleaner {
             private boolean enabled = true;
-            private long startDelay = 10000;
-            private long repeatInterval = 60000;
-            
+            private String startDelay = "PT15S";
+
+            private String repeatInterval = "PT2M";
+
             public boolean isEnabled() {
                 return enabled;
             }
@@ -726,35 +768,39 @@ public class MultifactorAuthenticationProperties {
             }
 
             public long getStartDelay() {
-                return startDelay;
+                return Beans.newDuration(startDelay).toMillis();
             }
 
-            public void setStartDelay(final long startDelay) {
+            public void setStartDelay(final String startDelay) {
                 this.startDelay = startDelay;
             }
 
             public long getRepeatInterval() {
-                return repeatInterval;
+                return Beans.newDuration(repeatInterval).toMillis();
             }
 
-            public void setRepeatInterval(final long repeatInterval) {
+            public void setRepeatInterval(final String repeatInterval) {
                 this.repeatInterval = repeatInterval;
             }
         }
     }
-    
+
     public static class GAuth extends BaseProvider {
+        private static final long serialVersionUID = -7401748853833491119L;
         private String issuer = "CASIssuer";
         private String label = "CASLabel";
-        private int rank;
 
         private int codeDigits = 6;
         private long timeStepSize = 30;
         private int windowSize = 3;
 
         private Mongodb mongodb = new Mongodb();
-        
+
         private Jpa jpa = new Jpa();
+
+        public GAuth() {
+            setId("mfa-gauth");
+        }
 
         public Mongodb getMongodb() {
             return mongodb;
@@ -770,14 +816,6 @@ public class MultifactorAuthenticationProperties {
 
         public void setJpa(final Jpa jpa) {
             this.jpa = jpa;
-        }
-
-        public int getRank() {
-            return rank;
-        }
-
-        public void setRank(final int rank) {
-            this.rank = rank;
         }
 
         public int getCodeDigits() {
@@ -825,7 +863,7 @@ public class MultifactorAuthenticationProperties {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
             }
         }
-        
+
         public static class Jpa {
             private Database database = new Database();
 

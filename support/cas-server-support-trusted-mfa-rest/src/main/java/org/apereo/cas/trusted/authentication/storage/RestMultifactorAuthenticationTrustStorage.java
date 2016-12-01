@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
-    private String endpoint;
+    private final String endpoint;
 
     public RestMultifactorAuthenticationTrustStorage(final String endpoint) {
         this.endpoint = endpoint;

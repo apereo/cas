@@ -2,6 +2,7 @@ package org.apereo.cas.support.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -32,9 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Formatter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +57,13 @@ import java.util.stream.Collectors;
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
+    private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
+    private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
+    private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
+    private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
+    private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
+            + "type=\"submit\" value=\"Submit\"></form></body></html>";
+    private static final int SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH = DOCTYPE_AND_OPENING_FORM.length() + REST_OF_THE_FORM_AND_CLOSING_TAGS.length();
 
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -69,8 +75,8 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
-
+    private final ObjectWriter jacksonPrettyWriter =
+            new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.
@@ -83,7 +89,8 @@ public class TicketsResource {
     @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) throws JsonProcessingException {
-        try (Formatter fmt = new Formatter()) {
+
+        try {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
             final AuthenticationResult authenticationResult =
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
@@ -93,25 +100,27 @@ public class TicketsResource {
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
-            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
-                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+            final String tgtUrl = ticketReference.toString();
+            final String response = new StringBuilder(SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH + tgtUrl.length())
+                    .append(DOCTYPE_AND_OPENING_FORM)
+                    .append(tgtUrl)
+                    .append(REST_OF_THE_FORM_AND_CLOSING_TAGS)
+                    .toString();
+            return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
 
         } catch (final AuthenticationException e) {
-            final List<String> authnExceptions = e.getHandlerErrors().entrySet().stream()
-                    .map(handlerErrorEntry -> handlerErrorEntry.getValue().getSimpleName())
-                    .collect(Collectors.toCollection(LinkedList::new));
+            final List<String> authnExceptions = e.getHandlerErrors().values().stream()
+                    .map(Class::getSimpleName)
+                    .collect(Collectors.toList());
             final Map<String, List<String>> errorsMap = new HashMap<>();
             errorsMap.put("authentication_exceptions", authnExceptions);
-            LOGGER.error(e.getMessage(), e);
-            LOGGER.error(String.format("Caused by: %s", authnExceptions));
-            return new ResponseEntity<>(this.jacksonObjectMapper
-                    .writer()
-                    .withDefaultPrettyPrinter()
-                    .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            LOGGER.error("{} Caused by: {}", e.getMessage(), authnExceptions, e);
+            try {
+                return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+            } catch (final JsonProcessingException exception) {
+                LOGGER.error(e.getMessage(), e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -120,7 +129,7 @@ public class TicketsResource {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
      *
@@ -223,6 +232,4 @@ public class TicketsResource {
     public void setCredentialFactory(final CredentialFactory credentialFactory) {
         this.credentialFactory = credentialFactory;
     }
-
-
 }

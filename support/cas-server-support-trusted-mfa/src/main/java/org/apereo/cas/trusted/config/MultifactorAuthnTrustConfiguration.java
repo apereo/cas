@@ -4,7 +4,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -18,11 +20,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
@@ -35,11 +39,16 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class MultifactorAuthnTrustConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1000;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -49,7 +58,8 @@ public class MultifactorAuthnTrustConfiguration {
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationSetTrustAction a = new MultifactorAuthenticationSetTrustAction();
         a.setStorage(storage);
-        a.setMfaTrustedAuthnAttributeName(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute());
+        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
         return a;
     }
 
@@ -67,6 +77,7 @@ public class MultifactorAuthnTrustConfiguration {
         final MultifactorAuthenticationVerifyTrustAction a = new MultifactorAuthenticationVerifyTrustAction();
         a.setStorage(storage);
         a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
+        a.setTicketRegistrySupport(this.ticketRegistrySupport);
         return a;
     }
 
@@ -116,6 +127,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
+    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         final MultifactorAuthenticationTrustStorageCleaner c = new MultifactorAuthenticationTrustStorageCleaner();

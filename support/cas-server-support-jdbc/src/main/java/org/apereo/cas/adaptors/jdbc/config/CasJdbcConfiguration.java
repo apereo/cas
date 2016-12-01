@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
-import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
@@ -10,7 +9,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.support.PasswordPolicyConfiguration;
+import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -23,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasJdbcConfiguration}.
@@ -105,10 +106,11 @@ public class CasJdbcConfiguration {
         h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
-                    .apply(credential.getId()));
+            final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
+            h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-        
+
+        h.setName(b.getName());
         return h;
     }
 
@@ -137,9 +139,10 @@ public class CasJdbcConfiguration {
         h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
-                    .apply(credential.getId()));
+            final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
+            h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
+        h.setName(b.getName());
         return h;
     }
 
@@ -161,10 +164,10 @@ public class CasJdbcConfiguration {
         h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
-                    .apply(credential.getId()));
+            final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
+            h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-
+        h.setName(b.getName());
         return h;
     }
 
@@ -188,9 +191,10 @@ public class CasJdbcConfiguration {
         h.setServicesManager(servicesManager);
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(credential -> Predicates.containsPattern(b.getCredentialCriteria())
-                    .apply(credential.getId()));
+            final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
+            h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
+        h.setName(b.getName());
         return h;
     }
 

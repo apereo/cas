@@ -26,7 +26,7 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
 
     private static final String VIEW_MODEL_KEY_PARAMETERS = "parameters";
     
-    private transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
+    private final transient Logger logger = LoggerFactory.getLogger(OpenIdValidateController.class);
 
     private ServerManager serverManager;
 

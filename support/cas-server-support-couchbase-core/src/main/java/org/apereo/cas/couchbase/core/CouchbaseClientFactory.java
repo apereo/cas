@@ -6,6 +6,7 @@ import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import com.google.common.base.Throwables;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2
  */
 public class CouchbaseClientFactory {
-    private transient Logger logger = LoggerFactory.getLogger(getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private Cluster cluster;
     private Bucket bucket;
@@ -39,7 +40,7 @@ public class CouchbaseClientFactory {
     private String bucketName = "default";
 
     /* Password for the bucket if any. */
-    private String password = "";
+    private String password = StringUtils.EMPTY;
 
     /* Design document and views to create in the bucket, if any. */
     private String designDocument;

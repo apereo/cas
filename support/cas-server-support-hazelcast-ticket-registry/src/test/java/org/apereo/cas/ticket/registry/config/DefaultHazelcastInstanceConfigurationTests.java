@@ -9,7 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAttributeRepositoryConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.HazelcastInstanceConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
         HazelcastInstanceConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
-        CasPersonDirectoryAttributeRepositoryConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreLogoutConfiguration.class})
@@ -67,7 +67,6 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertNotNull(mapConfig);
         assertEquals(28800, mapConfig.getMaxIdleSeconds());
         assertEquals(EvictionPolicy.LRU, mapConfig.getEvictionPolicy());
-        assertEquals(10, mapConfig.getEvictionPercentage());
     }
 
     @After

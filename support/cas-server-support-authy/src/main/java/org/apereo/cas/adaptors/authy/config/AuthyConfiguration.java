@@ -18,13 +18,14 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -105,6 +106,10 @@ public class AuthyConfiguration {
     @Qualifier("authenticationMetadataPopulators")
     private List authenticationMetadataPopulators;
 
+    @Autowired
+    @Qualifier("authenticationRequestServiceSelectionStrategies")
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
+
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -121,7 +126,7 @@ public class AuthyConfiguration {
             h.setServicesManager(servicesManager);
             h.setPrincipalFactory(authyPrincipalFactory());
             h.setForceVerification(casProperties.getAuthn().getMfa().getAuthy().isForceVerification());
-
+            h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
@@ -148,9 +153,12 @@ public class AuthyConfiguration {
 
     @Bean
     @RefreshScope
-    public AbstractMultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
         final AuthyMultifactorAuthenticationProvider p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
+        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
+        p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
         return p;
     }
 
@@ -158,10 +166,11 @@ public class AuthyConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
         return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAuthy().getBypass()
+                casProperties.getAuthn().getMfa().getAuthy().getBypass(),
+                ticketRegistrySupport
         );
     }
-    
+
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
@@ -172,6 +181,7 @@ public class AuthyConfiguration {
         r.setServicesManager(this.servicesManager);
         r.setTicketRegistrySupport(this.ticketRegistrySupport);
         r.setWarnCookieGenerator(this.warnCookieGenerator);
+        r.setAuthenticationRequestServiceSelectionStrategies(this.authenticationRequestServiceSelectionStrategies);
         return r;
     }
 

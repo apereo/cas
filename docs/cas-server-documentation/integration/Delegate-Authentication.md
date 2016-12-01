@@ -42,6 +42,8 @@ to be defined in the CAS configuration as well.
 ## User Interface
 
 All available clients are automatically displayed on the login page as clickable buttons.
+CAS does allow options for auto-redirection of the authentication flow to a provider,
+if only there is a single provider available and configured.
 
 ## Authenticated User Id
 
