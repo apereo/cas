@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.ClientRegistrationRequest;
+import org.apereo.cas.ClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -21,11 +23,14 @@ import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.OidcAuthorizationRequestSupport;
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
+import org.apereo.cas.web.controllers.OidcDynamicClientRegistrationEndpointController;
 import org.apereo.cas.web.controllers.OidcJwksEndpointController;
 import org.apereo.cas.web.controllers.OidcProfileEndpointController;
 import org.apereo.cas.web.controllers.OidcWellKnownEndpointController;
@@ -293,6 +298,26 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
         c.setValidator(oAuthValidator);
+        return c;
+    }
+
+    @Bean
+    public StringSerializer<ClientRegistrationRequest> clientRegistrationRequestSerializer() {
+        return new ClientRegistrationRequestSerializer();
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
+        final OidcDynamicClientRegistrationEndpointController c = new OidcDynamicClientRegistrationEndpointController();
+        c.setPrincipalFactory(oidcPrincipalFactory());
+        c.setAccessTokenFactory(defaultAccessTokenFactory);
+        c.setServicesManager(servicesManager);
+        c.setTicketRegistry(ticketRegistry);
+        c.setValidator(oAuthValidator);
+        c.setClientRegistrationRequestSerializer(clientRegistrationRequestSerializer());
+        c.setClientIdGenerator(new DefaultRandomStringGenerator());
+        c.setClientSecretGenerator(new DefaultRandomStringGenerator());
         return c;
     }
 
