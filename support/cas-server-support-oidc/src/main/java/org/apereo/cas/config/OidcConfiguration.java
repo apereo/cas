@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationRequestSerializer;
-import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -28,6 +28,7 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.web.OidcSecurityInterceptor;
 import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
@@ -56,6 +57,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -192,7 +194,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
         return new OidcSecurityInterceptor(oauthSecConfig, name, oidcAuthorizationRequestSupport());
     }
@@ -339,6 +341,13 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public Action oidcRegisteredServiceUIAction() {
         return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
+    }
+
+    @Autowired
+    @Bean
+    public HandlerInterceptorAdapter oauthInterceptor(@Qualifier("requiresAuthenticationAccessTokenInterceptor")
+                                                      final HandlerInterceptorAdapter tokenInterceptor) {
+        return new OidcHandlerInterceptorAdapter(tokenInterceptor, requiresAuthenticationAuthorizeInterceptor());
     }
 
     @PostConstruct
