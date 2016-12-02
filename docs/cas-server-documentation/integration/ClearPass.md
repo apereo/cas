@@ -46,7 +46,6 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
-openssl req -new -x509 -key private.key -out x509.pem -days 365
 ```
 
 ## Register Service
@@ -65,7 +64,7 @@ as an attribute for the given attribute release policy of choice.
   },
   "publicKey" : {
     "@class" : "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
-    "location" : "classpath:RSA1024Public.key",
+    "location" : "classpath:public.key",
     "algorithm" : "RSA"
   }
 }
