@@ -12,10 +12,11 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
@@ -82,8 +83,9 @@ public abstract class BaseOAuthWrapperController {
      * @param registeredService the registered service
      * @return the OAuth service
      */
-    protected OAuthWebApplicationService createService(final RegisteredService registeredService) {
-        return new OAuthWebApplicationService(registeredService);
+    protected WebApplicationService createService(final RegisteredService registeredService) {
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        return factory.createService(registeredService.getServiceId());
     }
 
     /**
