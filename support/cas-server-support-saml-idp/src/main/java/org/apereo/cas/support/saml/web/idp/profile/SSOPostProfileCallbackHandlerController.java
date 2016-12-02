@@ -59,8 +59,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
             return;
         }
 
-        MessageContext<SAMLObject> messageContext = new MessageContext<>();
-        String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
+        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         logger.debug("RelayState is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
         final Pair<? extends SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, messageContext);
