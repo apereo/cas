@@ -113,9 +113,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
                         final Properties properties = new Properties();
                         properties.load(file.getInputStream());
                         client.setAuthorizationGenerator(new SpringSecurityPropertiesAuthorizationGenerator(properties));
-                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(
-                                org.springframework.util.StringUtils.commaDelimitedListToSet(
-                                        casProperties.getAdminPagesSecurity().getAdminRoles())));
+                        cfg.setAuthorizer(new RequireAnyRoleAuthorizer(casProperties.getAdminPagesSecurity().getAdminRoles()));
                     }
                 }
                 return cfg;

@@ -275,7 +275,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
-# cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
+# cas.adminPagesSecurity.adminRoles[0]=ROLE_ADMIN
 
 # cas.adminPagesSecurity.actuatorEndpointsEnabled=true
 ```
