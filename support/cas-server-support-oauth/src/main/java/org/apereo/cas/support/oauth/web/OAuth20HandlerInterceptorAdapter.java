@@ -14,8 +14,11 @@ import java.util.regex.Pattern;
  * @since 5.1.0
  */
 public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
-    private final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
-    private final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor;
+    /** Access token interceptor. */
+    protected final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
+
+    /** Authorization interceptor. */
+    protected final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor;
 
     public OAuth20HandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
                                             final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor) {
