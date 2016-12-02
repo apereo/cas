@@ -205,7 +205,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+    public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 

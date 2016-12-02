@@ -26,17 +26,45 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) throws Exception {
-        final String requestPath = request.getRequestURI();
-        Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
-
-        if (pattern.matcher(requestPath).find()) {
+        if (isAccessTokenRequestRequest(request.getRequestURI())) {
             return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
         }
 
-        pattern = Pattern.compile('/' + OAuthConstants.AUTHORIZE_URL + "(/)*$");
-        if (pattern.matcher(requestPath).find()) {
+        if (isAuthorizationRequest(request.getRequestURI())) {
             return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
         }
         return true;
+    }
+
+    /**
+     * Is access token request request.
+     *
+     * @param requestPath the request path
+     * @return the boolean
+     */
+    protected boolean isAccessTokenRequestRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, OAuthConstants.ACCESS_TOKEN_URL);
+    }
+
+    /**
+     * Is authorization request.
+     *
+     * @param requestPath the request path
+     * @return the boolean
+     */
+    protected boolean isAuthorizationRequest(final String requestPath) {
+        return doesUriMatchPattern(requestPath, OAuthConstants.AUTHORIZE_URL);
+    }
+
+    /**
+     * Does uri match pattern.
+     *
+     * @param requestPath the request path
+     * @param patternUrl  the pattern
+     * @return the boolean
+     */
+    protected boolean doesUriMatchPattern(final String requestPath, final String patternUrl) {
+        final Pattern pattern = Pattern.compile('/' + patternUrl + "(/)*$");
+        return pattern.matcher(requestPath).find();
     }
 }
