@@ -46,7 +46,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,7 +53,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -76,6 +74,9 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
+    @Autowired
+    @Qualifier("requiresAuthenticationAccessTokenInterceptor")
+    private HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor;
 
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -117,10 +118,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("oauthInterceptor")
-    private HandlerInterceptor oauthInterceptor;
-
-    @Autowired
     @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
 
@@ -149,7 +146,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("oAuth20Validator")
+    @Qualifier("oAuthValidator")
     private OAuth20Validator oAuth20Validator;
 
     @Autowired
@@ -163,10 +160,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(oidcInterceptor())
-                .addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
+        registry.addInterceptor(oauthInterceptor()).addPathPatterns('/' + OidcConstants.BASE_OIDC_URL.concat("/").concat("*"));
     }
-
 
     @Bean
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
@@ -181,12 +176,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public HandlerInterceptor oidcInterceptor() {
-        return this.oauthInterceptor;
-    }
-
-
-    @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         final OidcCasClientRedirectActionBuilder builder = new OidcCasClientRedirectActionBuilder();
         builder.setOidcAuthorizationRequestSupport(oidcAuthorizationRequestSupport());
@@ -343,11 +332,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return new OidcRegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationRequestServiceSelectionStrategy);
     }
 
-    @Autowired
     @Bean
-    public HandlerInterceptorAdapter oauthInterceptor(@Qualifier("requiresAuthenticationAccessTokenInterceptor")
-                                                      final HandlerInterceptorAdapter tokenInterceptor) {
-        return new OidcHandlerInterceptorAdapter(tokenInterceptor, requiresAuthenticationAuthorizeInterceptor());
+    public HandlerInterceptorAdapter oauthInterceptor() {
+        return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor());
     }
 
     @PostConstruct
