@@ -27,7 +27,11 @@ ext.libraries = [
             exclude(group: "org.slf4j", module: "slf4j-api")
             force = true
         },
-        cassandra               : dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion"),
+        cassandra               : dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            exclude(group: "io.netty", module: "netty-handler")
+            force = true
+        },
         cassecurityfilter       : dependencies.create("org.apereo.cas:cas-server-security-filter:$casSecurityFilterVersion") {
             force = true
         },
@@ -706,7 +710,20 @@ ext.libraries = [
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
                 },
-                dependencies.create("org.cassandraunit:cassandra-unit:$cassandraUnitVersion")
+                dependencies.create("org.cassandraunit:cassandra-unit:$cassandraUnitVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "org.apache.thrift", module: "libthrift")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
+                    exclude(group: "org.codehaus.jackson", module: "jackson-core-asl")
+                    exclude(group: "com.lmax", module: "disruptor")
+                    exclude(group: "net.java.dev.jna", module: "jna")
+                    exclude(group: "io.netty", module: "netty-handler")
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    force = true
+                }
         ],
         kryo                    : [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
