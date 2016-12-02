@@ -16,7 +16,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -54,7 +54,7 @@ public abstract class BaseOAuthWrapperController {
     /**
      * The OAuth validator.
      */
-    protected OAuthValidator validator;
+    protected OAuth20Validator validator;
 
     private AccessTokenFactory accessTokenFactory;
 
@@ -151,11 +151,11 @@ public abstract class BaseOAuthWrapperController {
         this.accessTokenFactory = accessTokenFactory;
     }
 
-    public OAuthValidator getValidator() {
+    public OAuth20Validator getValidator() {
         return this.validator;
     }
 
-    public void setValidator(final OAuthValidator validator) {
+    public void setValidator(final OAuth20Validator validator) {
         this.validator = validator;
     }
 

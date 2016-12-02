@@ -16,7 +16,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
@@ -241,8 +241,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public OAuthValidator oAuthValidator() {
-        return new OAuthValidator();
+    public OAuth20Validator oAuthValidator() {
+        return new OAuth20Validator();
     }
 
     @Bean

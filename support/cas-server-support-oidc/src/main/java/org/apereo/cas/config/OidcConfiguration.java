@@ -12,7 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
@@ -147,8 +147,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("oAuthValidator")
-    private OAuthValidator oAuthValidator;
+    @Qualifier("oAuth20Validator")
+    private OAuth20Validator oAuth20Validator;
 
     @Autowired
     @Qualifier("defaultOAuthCodeFactory")
@@ -235,7 +235,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setRefreshTokenFactory(defaultRefreshTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
         return c;
     }
 
@@ -252,7 +252,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
         c.setClientRegistrationRequestSerializer(clientRegistrationRequestSerializer());
         c.setClientIdGenerator(new DefaultRandomStringGenerator());
         c.setClientSecretGenerator(new DefaultRandomStringGenerator());
@@ -268,7 +268,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
 
         return c;
     }
@@ -281,7 +281,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
         return c;
     }
 
@@ -292,7 +292,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
         c.setPrincipalFactory(oidcPrincipalFactory());
         return c;
     }
@@ -304,7 +304,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         c.setAccessTokenFactory(defaultAccessTokenFactory);
         c.setServicesManager(servicesManager);
         c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator);
+        c.setValidator(oAuth20Validator);
         c.setPrincipalFactory(oidcPrincipalFactory());
         c.setConsentApprovalViewResolver(consentApprovalViewResolver());
         c.setoAuthCodeFactory(defaultOAuthCodeFactory);

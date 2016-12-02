@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-public class OAuthValidator {
+public class OAuth20Validator {
 
     /** The logger. */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
