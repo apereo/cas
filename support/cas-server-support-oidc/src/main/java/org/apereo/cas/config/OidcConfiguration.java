@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.ClientRegistrationRequest;
-import org.apereo.cas.ClientRegistrationRequestSerializer;
+import org.apereo.cas.OidcClientRegistrationRequest;
+import org.apereo.cas.OidcClientRegistrationRequestSerializer;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -240,8 +240,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public StringSerializer<ClientRegistrationRequest> clientRegistrationRequestSerializer() {
-        return new ClientRegistrationRequestSerializer();
+    public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
+        return new OidcClientRegistrationRequestSerializer();
     }
 
     @RefreshScope

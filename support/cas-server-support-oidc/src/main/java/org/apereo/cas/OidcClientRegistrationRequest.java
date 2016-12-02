@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * This is {@link ClientRegistrationRequest}.
+ * This is {@link OidcClientRegistrationRequest}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ClientRegistrationRequest implements Serializable {
+public class OidcClientRegistrationRequest implements Serializable {
     private static final long serialVersionUID = 1832102135613155844L;
 
     @JsonProperty("redirect_uris")
@@ -42,7 +42,7 @@ public class ClientRegistrationRequest implements Serializable {
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
 
-    public ClientRegistrationRequest() {
+    public OidcClientRegistrationRequest() {
     }
 
     public String getScope() {
