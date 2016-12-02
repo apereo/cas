@@ -12,7 +12,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.validator.OAuthValidator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
@@ -27,7 +26,9 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.OidcAccessTokenResponseGenerator;
+import org.apereo.cas.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.web.OidcSecurityInterceptor;
 import org.apereo.cas.web.controllers.OidcAccessTokenEndpointController;
 import org.apereo.cas.web.controllers.OidcAuthorizeEndpointController;
 import org.apereo.cas.web.controllers.OidcDynamicClientRegistrationEndpointController;
@@ -44,10 +45,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,24 +54,15 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -187,21 +175,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
-        return new OAuth20CallbackAuthorizeViewResolver() {
-            @Override
-            public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
-                if (oidcAuthorizationRequestSupport().getOidcPromptFromAuthorizationRequest(url)
-                        .contains(OidcConstants.PROMPT_NONE)) {
-                    if (manager.get(true) != null) {
-                        return new ModelAndView(url);
-                    }
-                    final Map<String, String> model = new HashMap<>();
-                    model.put(OAuthConstants.ERROR, OidcConstants.LOGIN_REQUIRED);
-                    return new ModelAndView(new MappingJackson2JsonView(), model);
-                }
-                return new ModelAndView(new RedirectView(url));
-            }
-        };
+        return new OidcCallbackAuthorizeViewResolver(oidcAuthorizationRequestSupport());
     }
 
     @Bean
@@ -218,43 +192,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
+    public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor() {
         final String name = oauthSecConfig.getClients().findClient(CasClient.class).getName();
-        return new SecurityInterceptor(oauthSecConfig, name) {
-
-            @Override
-            public boolean preHandle(final HttpServletRequest request,
-                                     final HttpServletResponse response,
-                                     final Object handler) throws Exception {
-                final J2EContext ctx = new J2EContext(request, response);
-                final ProfileManager manager = new ProfileManager(ctx);
-
-                final OidcAuthorizationRequestSupport oidcAuthzSupport = oidcAuthorizationRequestSupport();
-                boolean clearCreds = false;
-                final Optional<UserProfile> auth = oidcAuthzSupport.isAuthenticationProfileAvailable(ctx);
-
-                if (auth.isPresent()) {
-                    final Optional<Long> maxAge = oidcAuthzSupport.getOidcMaxAgeFromAuthorizationRequest(ctx);
-                    if (maxAge.isPresent()) {
-                        clearCreds = oidcAuthzSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(ctx, auth.get());
-                    }
-                }
-
-                final Set<String> prompts = oidcAuthzSupport.getOidcPromptFromAuthorizationRequest(ctx);
-                if (!clearCreds) {
-                    clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
-                }
-
-                if (clearCreds) {
-                    clearCreds = !prompts.contains(OidcConstants.PROMPT_NONE);
-                }
-
-                if (clearCreds) {
-                    manager.remove(true);
-                }
-                return super.preHandle(request, response, handler);
-            }
-        };
+        return new OidcSecurityInterceptor(oauthSecConfig, name, oidcAuthorizationRequestSupport());
     }
 
     @Bean
@@ -266,11 +206,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     public AccessTokenResponseGenerator oidcAccessTokenResponseGenerator() {
         final OidcAccessTokenResponseGenerator gen = new OidcAccessTokenResponseGenerator();
-
         gen.setIssuer(casProperties.getAuthn().getOidc().getIssuer());
         gen.setJwksFile(casProperties.getAuthn().getOidc().getJwksFile());
         gen.setSkew(casProperties.getAuthn().getOidc().getSkew());
-
         return gen;
     }
 
