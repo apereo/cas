@@ -203,11 +203,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
+    @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 
+    @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
         return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
@@ -225,6 +227,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
 
+    @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         final OAuthClientAuthenticator c = new OAuthClientAuthenticator();
@@ -233,6 +236,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         final OAuthUserAuthenticator w = new OAuthUserAuthenticator();
@@ -240,11 +244,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return w;
     }
 
+    @ConditionalOnMissingBean(name = "oAuthValidator")
     @Bean
     public OAuth20Validator oAuthValidator() {
         return new OAuth20Validator();
     }
 
+    @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
     public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
