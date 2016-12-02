@@ -42,10 +42,6 @@ public class CasOAuthWebflowConfiguration {
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("oauthSecConfig")
-    private Config oauthSecConfig;
-
-    @Autowired
     @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
     private AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy;
 
