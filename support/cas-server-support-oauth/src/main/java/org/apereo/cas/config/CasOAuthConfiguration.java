@@ -25,6 +25,7 @@ import org.apereo.cas.support.oauth.web.OAuth20AuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -66,11 +67,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
 
@@ -212,25 +210,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                     final Object handler) throws Exception {
-                final String requestPath = request.getRequestURI();
-                Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
-
-                if (pattern.matcher(requestPath).find()) {
-                    return requiresAuthenticationAccessTokenInterceptor().preHandle(request, response, handler);
-                }
-
-                pattern = Pattern.compile('/' + OAuthConstants.AUTHORIZE_URL + "(/)*$");
-                if (pattern.matcher(requestPath).find()) {
-                    return requiresAuthenticationAuthorizeInterceptor().preHandle(request, response, handler);
-                }
-                return true;
-
-            }
-        };
+        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
+                requiresAuthenticationAuthorizeInterceptor());
     }
 
     @Override
