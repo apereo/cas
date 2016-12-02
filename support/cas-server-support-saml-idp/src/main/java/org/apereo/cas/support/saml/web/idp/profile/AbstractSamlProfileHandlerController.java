@@ -287,9 +287,9 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * Redirect request for authentication.
      *
-     * @param authnRequest the authn request
-     * @param request      the request
-     * @param response     the response
+     * @param pair     the pair
+     * @param request  the request
+     * @param response the response
      * @throws Exception the exception
      */
     protected void issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
@@ -344,9 +344,9 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * Construct service url string.
      *
-     * @param request      the request
-     * @param response     the response
-     * @param authnRequest the authn request
+     * @param request  the request
+     * @param response the response
+     * @param pair     the pair
      * @return the string
      * @throws SamlException the saml exception
      */
