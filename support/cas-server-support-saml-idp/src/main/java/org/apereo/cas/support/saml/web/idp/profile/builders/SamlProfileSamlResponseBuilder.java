@@ -138,12 +138,14 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @param samlResponse the saml response
      * @param httpResponse the http response
      * @param adaptor      the adaptor
+     * @param relayState   the relay state
      * @return the response
      * @throws SamlException the saml exception
      */
     protected Response encode(final SamlRegisteredService service, final Response samlResponse,
                               final HttpServletResponse httpResponse,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final String relayState) throws SamlException {
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                              final String relayState) throws SamlException {
         try {
             final HTTPPostEncoder encoder = new HTTPPostEncoder();
             encoder.setHttpServletResponse(httpResponse);
