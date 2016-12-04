@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.mdui.config;
 
 import com.google.common.collect.ImmutableList;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
