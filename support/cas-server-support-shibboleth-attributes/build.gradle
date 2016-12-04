@@ -7,7 +7,7 @@ dependencies {
     compile libraries.spring
     compile libraries.shibattributes
     compile libraries.springcloud
-
+    compile libraries.hibernate
     compile project(":support:cas-server-support-saml-core")
     
     testCompile libraries.tests

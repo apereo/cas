@@ -5,19 +5,23 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver
 import net.shibboleth.idp.attribute.resolver.DataConnector
 import net.shibboleth.idp.attribute.resolver.ResolutionException
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext
+import org.apereo.cas.config.CasCoreUtilConfiguration
 import org.apereo.cas.config.ShibbolethAttributeResolverConfiguration
-import org.apereo.cas.config.TestShibbolethAttributeResolverConfiguration
 import org.apereo.services.persondir.IPersonAttributeDao
 import org.apereo.services.persondir.support.NamedPersonImpl
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import javax.annotation.Nonnull
 import javax.annotation.Resource
 
-@ContextConfiguration(classes = [TestShibbolethAttributeResolverConfiguration, ShibbolethAttributeResolverConfiguration])
-class ShibbolethPersonAttributeDaoSpec extends Specification {
+@SpringBootTest(classes = [ShibbolethAttributeResolverConfiguration, CasCoreUtilConfiguration])
+@ContextConfiguration
+@TestPropertySource(properties = "cas.shibAttributeResolver.resources=classpath:/attribute-resolver-static.xml")
+class ShibbolethPersonAttributeDaoStaticResolverTests extends Specification {
     @Resource(name = 'shibbolethPersonAttributeDao')
     IPersonAttributeDao iPersonAttributeDao
 
@@ -73,9 +77,5 @@ class ShibbolethPersonAttributeDaoSpec extends Specification {
         'getPeopleWithMultivaluedAttributes' | [:]          | UnsupportedOperationException
         'getPossibleUserAttributeNames'      | null         | UnsupportedOperationException
         'getAvailableQueryAttributes'        | null         | UnsupportedOperationException
-        'getMultivaluedUserAttributes'       | ['here': []] | UnsupportedOperationException
-        'getMultivaluedUserAttributes'       | 'hahah!'     | UnsupportedOperationException
-        'getUserAttributes'                  | ['here': []] | UnsupportedOperationException
-        'getUserAttributes'                  | 'hahah!'     | UnsupportedOperationException
     }
 }
