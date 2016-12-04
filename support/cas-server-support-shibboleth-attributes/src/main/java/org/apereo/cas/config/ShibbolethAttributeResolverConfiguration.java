@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -66,13 +67,10 @@ public class ShibbolethAttributeResolverConfiguration {
                     this.applicationContext
             );
 
-            final AttributeResolverImpl impl = new AttributeResolverImpl(
-                    getClass().getSimpleName(),
-                    BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, AttributeDefinition.class).values(),
-                    BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values(),
-                    null
-            );
-
+            final AttributeResolverImpl impl = new AttributeResolverImpl();
+            impl.setId(getClass().getSimpleName());
+            impl.setAttributeDefinitions(BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, AttributeDefinition.class).values());
+            impl.setDataConnectors(BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values());
             if (!impl.isInitialized()) {
                 impl.initialize();
             }
