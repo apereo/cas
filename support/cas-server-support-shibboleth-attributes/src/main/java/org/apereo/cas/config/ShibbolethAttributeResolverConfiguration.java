@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Properties;
  */
 @Configuration("shibbolethAttributeResolverConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableScheduling
 public class ShibbolethAttributeResolverConfiguration {
 
     @Autowired

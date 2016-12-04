@@ -14,7 +14,6 @@ import java.util.Locale;
  * Configures the {@link javax.validation.Validator} to check the Spring Messages.
  *
  * @author Scott Battaglia
-
  * @since 3.4
  */
 public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
