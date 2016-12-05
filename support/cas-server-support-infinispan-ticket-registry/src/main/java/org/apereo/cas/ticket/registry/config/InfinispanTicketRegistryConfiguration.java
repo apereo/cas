@@ -28,7 +28,6 @@ public class InfinispanTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @Bean(name = {"infinispanTicketRegistry", "ticketRegistry"})
     public TicketRegistry infinispanTicketRegistry() {
         final InfinispanProperties span = casProperties.getTicket().getRegistry().getInfinispan();
@@ -47,7 +46,7 @@ public class InfinispanTicketRegistryConfiguration {
     public EmbeddedCacheManager cacheManager() {
         try {
             final Resource loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
-            return new DefaultCacheManager(loc.getFilename());
+            return new DefaultCacheManager(loc.getInputStream());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }

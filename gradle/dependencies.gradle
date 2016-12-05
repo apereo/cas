@@ -221,8 +221,13 @@ ext.libraries = [
                     exclude(group: "xml-apis", module: "xml-apis")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
+                },
+                dependencies.create("javax.el:el-api:2.2") {
+                    force = true
+                },
+                dependencies.create("org.glassfish.web:el-impl:2.2") {
+                    force = true
                 }
-
         ],
         httpclient              : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
