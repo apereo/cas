@@ -115,6 +115,14 @@ public final class ClearPassController extends AbstractController {
         return mv;
     }
 
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
+
+    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+    }
+
     public void setSuccessView(final String successView) {
         this.successView = successView;
     }
