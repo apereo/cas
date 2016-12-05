@@ -47,6 +47,10 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
         //To use in dev server, modify a serviceToUse's protocol from https to http
         //Because components communicate with each other with http, not https
+        //Differentiate service id and originalUrl
+        //Because the originaUrl will be used for "Location" value of http status 302
+        //The value is for sending to a user browser, not for internal components
+        final String originalUrl = serviceToUse;
         try {
             final URL url = new URL(serviceToUse);
             if(url.getProtocol().equalsIgnoreCase("https")) {
@@ -72,7 +76,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
                 : Response.ResponseType.REDIRECT;
 
         final SimpleWebApplicationServiceImpl webApplicationService =
-                new SimpleWebApplicationServiceImpl(id, serviceToUse,
+                new SimpleWebApplicationServiceImpl(id, originalUrl,
                         artifactId, new WebApplicationServiceResponseBuilder(type));
 
         try {
