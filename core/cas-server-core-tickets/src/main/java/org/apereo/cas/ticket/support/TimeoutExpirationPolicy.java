@@ -42,9 +42,12 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
+        if (ticketState == null) {
+            return true;
+        }
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-        final ZonedDateTime expirationTime = now.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        return ticketState == null || now.isAfter(expirationTime);
+        final ZonedDateTime expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return now.isAfter(expirationTime);
     }
 
     @Override

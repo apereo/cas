@@ -428,7 +428,7 @@ class SampleGroovyPersonAttributeDao {
         def casApplicationContext = args[3]
 
         logger.debug("[{}]: The received uid is {}", this.class.simpleName, uid)
-        return[name:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
+        return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
     }
 }
 ```
@@ -827,7 +827,7 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].autocommit=false
 # cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.bind[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.bind[0].credentialCriteria=
 
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
@@ -874,7 +874,7 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].autocommit=false
 # cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
 # cas.authn.jdbc.encode[0].idleTimeout=5000
-# cas.authn.jdbc.query[0].credentialCriteria=
+# cas.authn.jdbc.encode[0].credentialCriteria=
 
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
