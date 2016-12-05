@@ -80,4 +80,11 @@ public class ClientCredential implements Credential, Serializable {
     public void setTypedIdUsed(final boolean typedIdUsed) {
         this.typedIdUsed = typedIdUsed;
     }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", getId())
+                .toString();
+    }
 }
