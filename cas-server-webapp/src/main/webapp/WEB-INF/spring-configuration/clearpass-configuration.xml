@@ -68,7 +68,7 @@
     <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
         <sec:filter-chain-map request-matcher="ant">
             <sec:filter-chain pattern="/clearPass"
-                              filters="casValidationFilter,httpServletRequestWrappingFilter"/>
+                              filters="casValidationFilter,assertionThreadLocalFilter,httpServletRequestWrappingFilter"/>
         </sec:filter-chain-map>
     </bean>
     <!-- NOTE:
@@ -89,7 +89,7 @@
     <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
         <constructor-arg>
             <list>
-                <value>...</value>
+                <value>https://mydvl.csus.edu/uPortal/CasProxyServlet</value>
             </list>
         </constructor-arg>
     </bean>
@@ -98,11 +98,14 @@
           p:serverName="${server.name}" p:exceptionOnValidationFailure="false"
           p:useSession="true" p:ticketValidator-ref="clearPassTicketValidator"/>
 
+    <bean id="assertionThreadLocalFilter" class="org.jasig.cas.client.util.AssertionThreadLocalFilter" />
+
     <bean id="clearPassTicketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator"
-          p:allowEmptyProxyChain="false"
-          p:acceptAnyProxy="false"
-          c:casServerUrlPrefix="${server.prefix}" p:allowedProxyChains-ref="clearPassProxyList"/>
+          p:allowEmptyProxyChain="true"
+          p:acceptAnyProxy="true"
+          c:casServerUrlPrefix="${server.prefix}" />
 
     <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
 
 </beans>
+

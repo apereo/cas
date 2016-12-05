@@ -34,7 +34,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <AsyncLogger  name="org.jasig" level="info" additivity="false" includeLocation="true">
+        <AsyncLogger  name="org.jasig" level="debug" additivity="false" includeLocation="true">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>

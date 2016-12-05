@@ -29,6 +29,8 @@ dependencies {
     exclude(group: 'org.slf4j', module: 'slf4j-api')
     exclude(group: 'org.jboss.logging', module: 'jboss-logging')
   }
+  compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
+
   testCompile group: 'org.hsqldb', name: 'hsqldb', version:hsqlVersion
   testCompile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(group: 'commons-logging', module: 'commons-logging')

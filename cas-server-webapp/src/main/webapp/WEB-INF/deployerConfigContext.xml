@@ -24,6 +24,8 @@
     <util:list id="authenticationMetadataPopulators">
         <ref bean="successfulHandlerMetaDataPopulator" />
         <ref bean="rememberMeAuthenticationMetaDataPopulator" />
+        <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
+              c:credentialCache-ref="encryptedMap" />
     </util:list>
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
@@ -50,7 +52,7 @@
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
-    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <alias name="jpaTicketRegistry" alias="ticketRegistryValue" />
     
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />

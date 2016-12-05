@@ -1,8 +1,13 @@
 package org.jasig.cas.extension.clearpass;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
+import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -45,6 +50,14 @@ public final class ClearPassController extends AbstractController {
     @NotNull
     private final Map<String, String> credentialsCache;
 
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
     /**
      * Instantiates a new clear pass controller.
      *
@@ -57,8 +70,20 @@ public final class ClearPassController extends AbstractController {
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
-        final String userName = request.getRemoteUser();
-
+        String userName = request.getRemoteUser();
+        if (StringUtils.isBlank(userName)) {
+            LOGGER.debug("Username could not be detected from the request.");
+            final String ticketGrantingTicket = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
+            if (StringUtils.isBlank(ticketGrantingTicket)) {
+                return returnError("No ticketGrantingTicket could be detected.");
+            }
+            LOGGER.debug("Found ticket-granting ticket id in the request", ticketGrantingTicket);
+            final Principal p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(ticketGrantingTicket);
+            if (p == null) {
+                return returnError("No principal could be detected from the ticket-granting ticket.");
+            }
+            userName = p.getId();
+        }
         LOGGER.debug("Handling clearPass request for user [{}]", userName);
 
         if (StringUtils.isBlank(userName)) {

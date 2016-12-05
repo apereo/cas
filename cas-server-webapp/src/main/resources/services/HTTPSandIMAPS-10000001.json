@@ -4,9 +4,6 @@
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
   "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
-  "proxyPolicy" : {
-    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
-  },
   "evaluationOrder" : 10000,
   "usernameAttributeProvider" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
@@ -24,5 +21,9 @@
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true
+  },
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*"
   }
 }

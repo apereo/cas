@@ -103,7 +103,7 @@
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -178,7 +178,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/statistics/healthcheck</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/statistics/ssosessions/*</url-pattern>
@@ -198,7 +198,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/status/config</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/authorizationFailure.html</url-pattern>
@@ -212,7 +212,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/v1/services/*</url-pattern>
     </servlet-mapping>
-    
+
     <session-config>
         <!-- Default to 5 minute session timeouts -->
         <session-timeout>5</session-timeout>
