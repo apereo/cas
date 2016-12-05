@@ -17,8 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
@@ -76,8 +75,7 @@ public class RegisteredServiceResource {
      * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType
-            .APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/v1/services/add/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
                                                 @PathVariable("tgtId") final String tgtId) {
         try {
