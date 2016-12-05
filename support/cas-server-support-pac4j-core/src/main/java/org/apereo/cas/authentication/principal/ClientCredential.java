@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
