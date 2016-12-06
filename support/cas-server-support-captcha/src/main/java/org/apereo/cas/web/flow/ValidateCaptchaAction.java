@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,7 +30,9 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 public class ValidateCaptchaAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCaptchaAction.class);
+    private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
     private static final String CODE = "captchaError";
 
     private final GoogleRecaptchaProperties recaptchaProperties;
@@ -74,9 +77,7 @@ public class ValidateCaptchaAction extends AbstractAction {
                         response.append(inputLine);
                     }
                     LOGGER.debug("Google captcha response received: {}", response);
-                    final ObjectMapper mapper = new ObjectMapper();
-                    mapper.findAndRegisterModules();
-                    final JsonNode node = mapper.reader().readTree(response.toString());
+                    final JsonNode node = READER.readTree(response.toString());
                     if (node.has("success") && node.get("success").booleanValue()) {
                         return null;
                     }

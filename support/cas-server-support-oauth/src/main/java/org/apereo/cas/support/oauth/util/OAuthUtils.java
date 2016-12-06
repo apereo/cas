@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -27,6 +28,7 @@ import java.util.Map;
 public final class OAuthUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
+    private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     private OAuthUtils() {}
 
@@ -95,13 +97,7 @@ public final class OAuthUtils {
      */
     public static String jsonify(final Map map) {
         try {
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.findAndRegisterModules();
-            final String value = mapper
-                    .writer()
-                    .withDefaultPrettyPrinter()
-                    .writeValueAsString(map);
-            return value;
+            return WRITER.writeValueAsString(map);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
