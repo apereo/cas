@@ -47,7 +47,7 @@ public class InfinispanTicketRegistryConfiguration {
     public EmbeddedCacheManager cacheManager() {
         try {
             final Resource loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
-            return new DefaultCacheManager(loc.getFilename());
+            return new DefaultCacheManager(loc.getInputStream());
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
