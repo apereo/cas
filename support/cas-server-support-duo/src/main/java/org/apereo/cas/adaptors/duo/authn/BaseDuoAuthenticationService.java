@@ -44,6 +44,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     /**
      * Creates the duo authentication service.
+     *
+     * @param duoProperties the duo properties
      */
     public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         this.duoProperties = duoProperties;
