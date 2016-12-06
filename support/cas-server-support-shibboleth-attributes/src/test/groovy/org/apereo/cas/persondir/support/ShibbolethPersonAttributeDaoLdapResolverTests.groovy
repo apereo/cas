@@ -10,5 +10,5 @@ import org.springframework.test.context.TestPropertySource
  */
 @TestPropertySource(properties = "cas.shibAttributeResolver.resources=classpath:/attribute-resolver-ldap.xml")
 @Ignore
-class ShibbolethPersonAttributeDaoLdapResolverTests extends BaseShibbolethPersonAttributeDaoTests {
+class ShibbolethPersonAttributeDaoLdapResolverTests extends BaseShibbolethPersonAttributeDao {
 }
