@@ -76,8 +76,7 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectWriter jacksonPrettyWriter =
-            new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
+    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.

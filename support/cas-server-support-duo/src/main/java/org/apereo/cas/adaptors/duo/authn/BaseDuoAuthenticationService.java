@@ -29,6 +29,7 @@ import java.util.Set;
  */
 public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
     private static final long serialVersionUID = -8044100706027708789L;
@@ -44,6 +45,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     /**
      * Creates the duo authentication service.
+     *
+     * @param duoProperties the duo properties
      */
     public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         this.duoProperties = duoProperties;
@@ -59,9 +62,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             if (msg != null) {
                 final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 logger.debug("Received Duo ping response {}", response);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(response);
+
+                final JsonNode result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                         && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
                         && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
@@ -126,9 +128,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             if (msg != null) {
                 final String jsonResponse = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 logger.debug("Received Duo admin response {}", jsonResponse);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(jsonResponse);
+
+                final JsonNode result = MAPPER.readTree(jsonResponse);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                         && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
@@ -165,9 +166,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             if (msg != null) {
                 final String jsonResponse = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 logger.debug("Received Duo admin response {}", jsonResponse);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(jsonResponse);
+
+                final JsonNode result = MAPPER.readTree(jsonResponse);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                         && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 

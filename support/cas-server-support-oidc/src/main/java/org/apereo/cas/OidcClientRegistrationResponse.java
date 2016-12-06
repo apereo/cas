@@ -6,12 +6,12 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * This is {@link ClientRegistrationResponse}.
+ * This is {@link OidcClientRegistrationResponse}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class ClientRegistrationResponse implements Serializable {
+public class OidcClientRegistrationResponse implements Serializable {
     private static final long serialVersionUID = 1436206039117219598L;
 
     @JsonProperty("client_id")

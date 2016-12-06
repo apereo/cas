@@ -3,8 +3,8 @@ package org.apereo.cas.web.controllers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ClientRegistrationRequest;
-import org.apereo.cas.ClientRegistrationResponse;
+import org.apereo.cas.OidcClientRegistrationRequest;
+import org.apereo.cas.OidcClientRegistrationResponse;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWrapperController {
-    private StringSerializer<ClientRegistrationRequest> clientRegistrationRequestSerializer;
+    private StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
     private RandomStringGenerator clientIdGenerator;
     private RandomStringGenerator clientSecretGenerator;
 
@@ -41,7 +41,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
         this.clientSecretGenerator = clientSecretGenerator;
     }
 
-    public void setClientRegistrationRequestSerializer(final StringSerializer<ClientRegistrationRequest> clientRegistrationRequestSerializer) {
+    public void setClientRegistrationRequestSerializer(final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer) {
         this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
     }
 
@@ -55,11 +55,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
      * @throws Exception the exception
      */
     @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ClientRegistrationResponse> handleRequestInternal(@RequestBody final String jsonInput,
+    public ResponseEntity<OidcClientRegistrationResponse> handleRequestInternal(@RequestBody final String jsonInput,
                                                                             final HttpServletRequest request,
                                                                             final HttpServletResponse response) throws Exception {
         try {
-            final ClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
+            final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
             logger.debug("Received client registration request {}", registrationRequest);
 
             final OidcRegisteredService registeredService = new OidcRegisteredService();
@@ -77,7 +77,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
             registeredService.setClientSecret(clientSecretGenerator.getNewString());
             registeredService.setEvaluationOrder(Integer.MIN_VALUE);
 
-            final ClientRegistrationResponse clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
+            final OidcClientRegistrationResponse clientResponse = getClientRegistrationResponse(registrationRequest, registeredService);
             registeredService.setDescription("Dynamically registered service "
                     .concat(registeredService.getName())
                     .concat(" with grant types ")
@@ -101,9 +101,9 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
      * @param registeredService   the registered service
      * @return the client registration response
      */
-    protected ClientRegistrationResponse getClientRegistrationResponse(final ClientRegistrationRequest registrationRequest,
-                                                                       final OidcRegisteredService registeredService) {
-        final ClientRegistrationResponse clientResponse = new ClientRegistrationResponse();
+    protected OidcClientRegistrationResponse getClientRegistrationResponse(final OidcClientRegistrationRequest registrationRequest,
+                                                                           final OidcRegisteredService registeredService) {
+        final OidcClientRegistrationResponse clientResponse = new OidcClientRegistrationResponse();
         clientResponse.setApplicationType("web");
         clientResponse.setClientId(registeredService.getClientId());
         clientResponse.setClientSecret(registeredService.getClientSecret());

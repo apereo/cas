@@ -19,7 +19,7 @@ public class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
@@ -27,9 +27,9 @@ public class SimplePrincipalTests {
         attributes.put("attribute", "value");
         final SimplePrincipal principalWritten = new SimplePrincipal("id", attributes);
 
-        mapper.writeValue(JSON_FILE, principalWritten);
+        MAPPER.writeValue(JSON_FILE, principalWritten);
 
-        final SimplePrincipal principalRead = mapper.readValue(JSON_FILE, SimplePrincipal.class);
+        final SimplePrincipal principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
 
         assertEquals(principalWritten, principalRead);
     }
@@ -38,9 +38,9 @@ public class SimplePrincipalTests {
     public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws IOException {
         final SimplePrincipal principalWritten = new SimplePrincipal("id", Collections.emptyMap());
 
-        mapper.writeValue(JSON_FILE, principalWritten);
+        MAPPER.writeValue(JSON_FILE, principalWritten);
 
-        final SimplePrincipal principalRead = mapper.readValue(JSON_FILE, SimplePrincipal.class);
+        final SimplePrincipal principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
 
         assertEquals(principalWritten, principalRead);
     }
