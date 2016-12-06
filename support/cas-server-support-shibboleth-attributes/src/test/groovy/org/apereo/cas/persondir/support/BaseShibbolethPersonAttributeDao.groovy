@@ -20,7 +20,7 @@ import javax.annotation.Resource
 
 @SpringBootTest(classes = [ShibbolethAttributeResolverConfiguration, CasCoreUtilConfiguration])
 @ContextConfiguration
-abstract class BaseShibbolethPersonAttributeDaoTests extends Specification {
+abstract class BaseShibbolethPersonAttributeDao extends Specification {
     @Resource(name = 'shibbolethPersonAttributeDao')
     IPersonAttributeDao iPersonAttributeDao
 
