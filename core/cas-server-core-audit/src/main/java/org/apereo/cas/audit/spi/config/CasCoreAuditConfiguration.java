@@ -137,7 +137,7 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public Map auditActionResolverMap() {
+    public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
 
         final AuditActionResolver resolver = authenticationActionResolver();
@@ -168,7 +168,7 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public Map auditResourceResolverMap() {
+    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());

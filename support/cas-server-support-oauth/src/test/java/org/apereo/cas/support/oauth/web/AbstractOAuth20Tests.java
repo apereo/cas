@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -53,11 +54,10 @@ public abstract class AbstractOAuth20Tests {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @PostConstruct
     public void init() {
-        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        authenticationHandlersResolvers.put(new SimpleTestUsernamePasswordAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

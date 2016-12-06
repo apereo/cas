@@ -41,13 +41,12 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map map = ImmutableMap.of(
+            final Map<String, Class<? extends Exception>> map = ImmutableMap.of(
                     UnauthorizedAuthenticationException.class.getSimpleName(),
                     UnauthorizedAuthenticationException.class);
             final AuthenticationException error = new AuthenticationException(msg, map, Collections.emptyMap());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                    new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-
+                    new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }
 
 

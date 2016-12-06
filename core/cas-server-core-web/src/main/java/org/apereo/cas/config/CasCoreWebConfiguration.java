@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -30,7 +32,7 @@ public class CasCoreWebConfiguration {
 
     @Autowired
     @Qualifier("serviceFactoryList")
-    private List serviceFactoryList;
+    private List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
     
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {

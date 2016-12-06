@@ -166,7 +166,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the event
      */
     protected Event newEvent(final String id, final Exception error) {
-        return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
+        return new Event(this, id, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
 
 

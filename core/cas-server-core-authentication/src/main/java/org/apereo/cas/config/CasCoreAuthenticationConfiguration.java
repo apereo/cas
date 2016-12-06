@@ -216,8 +216,8 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public List authenticationMetadataPopulators() {
-        final List list = new ArrayList<>();
+    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
+        final List<AuthenticationMetaDataPopulator> list = new ArrayList<>();
         list.add(successfulHandlerMetaDataPopulator());
         list.add(rememberMeAuthenticationMetaDataPopulator());
 
@@ -228,9 +228,7 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            @Qualifier(BEAN_NAME_HTTP_CLIENT)
-            final HttpClient httpClient) {
+    public AuthenticationManager authenticationManager(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
@@ -242,8 +240,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        final RegisteredServiceAuthenticationHandlerResolver r =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver r = new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);
         return r;
     }
@@ -327,9 +324,8 @@ public class CasCoreAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
-    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                               final HttpClient httpClient) {
-        final Map map = new HashMap<>();
+    public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
+        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
 
         if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {

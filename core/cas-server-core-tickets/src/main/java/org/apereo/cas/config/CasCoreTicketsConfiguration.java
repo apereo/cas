@@ -272,10 +272,9 @@ public class CasCoreTicketsConfiguration {
 
     @ConditionalOnMissingBean(name = "uniqueIdGeneratorsMap")
     @Bean
-    public Map uniqueIdGeneratorsMap() {
+    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl",
-                serviceTicketUniqueIdGenerator());
+        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl", serviceTicketUniqueIdGenerator());
         return map;
     }
 

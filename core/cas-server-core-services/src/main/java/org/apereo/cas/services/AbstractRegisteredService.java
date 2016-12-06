@@ -124,7 +124,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name="RegisteredServiceImpl_Props")
-    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
+    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
     public long getId() {
@@ -471,11 +471,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Override
     public Map<String, RegisteredServiceProperty> getProperties() {
-        return (Map) this.properties;
+        return this.properties;
     }
 
     public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
-        this.properties = (Map) properties;
+        this.properties = properties;
     }
 
     public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {

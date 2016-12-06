@@ -33,7 +33,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    private CipherExecutor cipherExecutor;
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**
      * Default constructor.
@@ -211,12 +211,9 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
 
         logger.info("Encoding [{}]", ticket);
-        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
-                this.cipherExecutor, ticket);
+        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
-        final Ticket encodedTicket = new EncodedTicket(
-                ByteSource.wrap(encodedTicketObject),
-                encodedTicketId);
+        final Ticket encodedTicket = new EncodedTicket(ByteSource.wrap(encodedTicketObject), encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }
