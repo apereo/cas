@@ -136,7 +136,7 @@ public class RegisteredServiceResourceTests {
         when(tgt.getId()).thenReturn("TGT-1");
         when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(
                 CoreAuthenticationTestUtils.getPrincipal("casuser",
-                        new HashMap(RegisteredServiceTestUtils.getTestAttributes()))));
+                        new HashMap<>(RegisteredServiceTestUtils.getTestAttributes()))));
         final Class<TicketGrantingTicket> clazz = TicketGrantingTicket.class;
 
         when(this.casMock.getTicket(anyString(), any(clazz.getClass()))).thenReturn(tgt);

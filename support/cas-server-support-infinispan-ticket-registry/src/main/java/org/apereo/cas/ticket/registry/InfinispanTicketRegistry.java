@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
-    private Cache cache;
+    private Cache<String, Ticket> cache;
 
     /**
      * Instantiates a new Infinispan ticket registry.
@@ -61,8 +61,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         if (ticketId == null) {
             return null;
         }
-        final Ticket ticket = Ticket.class.cast(cache.get(encTicketId));
-        return ticket;
+        return Ticket.class.cast(cache.get(encTicketId));
     }
 
     @Override

@@ -69,13 +69,12 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport =
-            new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Bean
     @RefreshScope

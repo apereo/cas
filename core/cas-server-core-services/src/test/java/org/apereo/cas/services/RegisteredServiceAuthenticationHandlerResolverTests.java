@@ -36,7 +36,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(Collections.EMPTY_SET);
+        svc.setRequiredHandlers(Collections.emptySet());
         list.add(svc);
 
         dao.setRegisteredServices(list);

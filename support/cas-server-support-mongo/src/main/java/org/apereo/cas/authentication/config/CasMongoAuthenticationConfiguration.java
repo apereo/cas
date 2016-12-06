@@ -43,7 +43,7 @@ public class CasMongoAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {

@@ -20,7 +20,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
     public void verifyModifyAttributes() {
         final Map<String, List<Object>> attributes = new HashMap<>();
 
-        final List values = new ArrayList();
+        final List<Object> values = new ArrayList<>();
         values.add("test@example.com");
         attributes.put("upn", values);
         
@@ -38,11 +38,11 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
 
         @Override
         public void modifyAttributes(final Map<String, List<Object>> attributes) {
-            List values = new ArrayList();
+            List<Object> values = new ArrayList<>();
             values.add("newtest");
             attributes.put("test", values);
 
-            values = new ArrayList();
+            values = new ArrayList<>();
             values.add("testing");
             attributes.put("upn", values);
         }

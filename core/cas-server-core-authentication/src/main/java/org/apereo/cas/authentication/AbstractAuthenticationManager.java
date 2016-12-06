@@ -43,7 +43,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * An array of AuthenticationAttributesPopulators.
      */
-    protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
+    protected List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
             new ArrayList<>();
 
     /**

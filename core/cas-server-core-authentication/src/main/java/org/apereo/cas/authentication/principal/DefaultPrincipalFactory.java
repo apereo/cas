@@ -15,7 +15,7 @@ public class DefaultPrincipalFactory implements PrincipalFactory {
 
     @Override
     public Principal createPrincipal(final String id) {
-        return new SimplePrincipal(id, Collections.EMPTY_MAP);
+        return new SimplePrincipal(id, Collections.emptyMap());
     }
 
     @Override

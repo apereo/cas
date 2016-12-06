@@ -109,11 +109,11 @@ public class DuoSecurityConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @RefreshScope
     @Bean

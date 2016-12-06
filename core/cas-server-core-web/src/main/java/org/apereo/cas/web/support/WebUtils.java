@@ -240,8 +240,7 @@ public final class WebUtils {
      * @param map         the map
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map,
-                                                      final String ticketValue) {
+    public static void putTicketGrantingTicketIntoMap(final MutableAttributeMap map, final String ticketValue) {
         map.put(PARAMETER_TICKET_GRANTING_TICKET_ID, ticketValue);
     }
 

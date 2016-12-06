@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -53,7 +54,7 @@ public class ServiceThemeResolverTests {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
-        final MutableAttributeMap scope = new LocalAttributeMap();
+        final MutableAttributeMap<Object> scope = new LocalAttributeMap<>();
         scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);

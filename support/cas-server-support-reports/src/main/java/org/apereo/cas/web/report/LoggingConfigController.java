@@ -206,7 +206,7 @@ public class LoggingConfigController {
 
             configuredLoggers.add(loggerMap);
         }
-        final Map<String, Object> responseMap = new HashMap();
+        final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("loggers", configuredLoggers);
         return responseMap;
     }

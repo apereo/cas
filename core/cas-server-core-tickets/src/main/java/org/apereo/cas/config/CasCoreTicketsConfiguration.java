@@ -303,7 +303,7 @@ public class CasCoreTicketsConfiguration {
 
     @RefreshScope
     @Bean
-    public CipherExecutor protocolTicketCipherExecutor() {
+    public CipherExecutor<String, String> protocolTicketCipherExecutor() {
         if (casProperties.getTicket().getSecurity().isCipherEnabled()) {
             return new ProtocolTicketCipherExecutor(
                     casProperties.getTicket().getSecurity().getEncryptionKey(),

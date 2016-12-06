@@ -39,7 +39,7 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -56,8 +56,6 @@ public class CasRemoteAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(
-                remoteAddressAuthenticationHandler,
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(remoteAddressAuthenticationHandler, personDirectoryPrincipalResolver);
     }
 }

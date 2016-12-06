@@ -79,22 +79,22 @@ public class SamlObjectSigner {
     /**
      * The Override signature reference digest methods.
      */
-    protected List overrideSignatureReferenceDigestMethods;
+    protected List<String> overrideSignatureReferenceDigestMethods;
 
     /**
      * The Override signature algorithms.
      */
-    protected List overrideSignatureAlgorithms;
+    protected List<String> overrideSignatureAlgorithms;
 
     /**
      * The Override black listed signature algorithms.
      */
-    protected List overrideBlackListedSignatureAlgorithms;
+    protected List<String> overrideBlackListedSignatureAlgorithms;
 
     /**
      * The Override white listed signature signing algorithms.
      */
-    protected List overrideWhiteListedAlgorithms;
+    protected List<String> overrideWhiteListedAlgorithms;
 
 
     @Autowired
@@ -435,19 +435,19 @@ public class SamlObjectSigner {
         }
     }
 
-    public void setOverrideSignatureReferenceDigestMethods(final List overrideSignatureReferenceDigestMethods) {
+    public void setOverrideSignatureReferenceDigestMethods(final List<String> overrideSignatureReferenceDigestMethods) {
         this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
     }
 
-    public void setOverrideSignatureAlgorithms(final List overrideSignatureAlgorithms) {
+    public void setOverrideSignatureAlgorithms(final List<String> overrideSignatureAlgorithms) {
         this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
     }
 
-    public void setOverrideBlackListedSignatureAlgorithms(final List overrideBlackListedSignatureAlgorithms) {
+    public void setOverrideBlackListedSignatureAlgorithms(final List<String> overrideBlackListedSignatureAlgorithms) {
         this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
     }
 
-    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+    public void setOverrideWhiteListedAlgorithms(final List<String> overrideWhiteListedAlgorithms) {
         this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
     }
 

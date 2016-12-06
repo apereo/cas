@@ -147,8 +147,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                                                    final boolean associated, final boolean successFullAuthentication,
                                                    final String id) {
 
-        final Message response = serverManager.authResponse(this.parameterList, id, id,
-                successFullAuthentication, true);
+        final Message response = serverManager.authResponse(this.parameterList, id, id, successFullAuthentication, true);
         parameters.putAll(response.getParameterMap());
         LOGGER.debug("Parameters passed for the OpenID response are {}", parameters.keySet());
         return buildRedirect(service, parameters);

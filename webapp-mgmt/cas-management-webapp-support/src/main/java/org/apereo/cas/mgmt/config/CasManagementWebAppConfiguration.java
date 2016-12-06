@@ -3,6 +3,7 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -49,6 +50,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
 import org.pac4j.core.exception.HttpAction;
+import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,7 +101,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
-    private List formDataPopulators = new ArrayList<>();
+    private List<FormDataPopulator> formDataPopulators = new ArrayList<>();
 
     @Autowired
     private ServerProperties serverProperties;
@@ -111,7 +113,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
-
 
     @Bean
     public Authorizer requireAnyRoleAuthorizer() {
@@ -227,15 +228,15 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "authorizationGenerator")
     @Bean
     @RefreshScope
-    public AuthorizationGenerator authorizationGenerator() {
+    public AuthorizationGenerator<CommonProfile> authorizationGenerator() {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if ("*".equals(authzAttributes)) {
                 return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             }
-            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[] {}), new String[]{});
+            return new FromAttributesAuthorizationGenerator<>(authzAttributes.toArray(new String[] {}), new String[]{});
         }
-        return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
+        return new SpringSecurityPropertiesAuthorizationGenerator<>(userProperties());
     }
 
     @Bean
@@ -260,7 +261,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Map auditResourceResolverMap() {
+    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", saveServiceResourceResolver());
@@ -268,7 +269,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Map auditActionResolverMap() {
+    public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
         map.put("SAVE_SERVICE_ACTION_RESOLVER", saveServiceActionResolver());
@@ -375,7 +376,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public List serviceFactoryList() {
-        return new ArrayList();
+        return new ArrayList<>();
     }
 
     @Bean
@@ -384,7 +385,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public List authenticationMetadataPopulators() {
+    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
         return new ArrayList<>();
     }
 

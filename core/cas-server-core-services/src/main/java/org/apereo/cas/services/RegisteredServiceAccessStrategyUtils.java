@@ -86,7 +86,7 @@ public final class RegisteredServiceAccessStrategyUtils {
             final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>();
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
                     UnauthorizedServiceForPrincipalException.class);
-            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap());
+            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
         }
     }
 
@@ -165,5 +165,4 @@ public final class RegisteredServiceAccessStrategyUtils {
         LOGGER.debug("Current authentication via ticket {} allows service {} to participate in the existing SSO session",
                 ticketGrantingTicket.getId(), service.getId());
     }
-    
 }

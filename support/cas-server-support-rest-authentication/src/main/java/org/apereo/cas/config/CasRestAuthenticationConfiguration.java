@@ -30,7 +30,6 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.Map;
 
-
 /**
  * This is {@link CasRestAuthenticationConfiguration}.
  *
@@ -50,7 +49,7 @@ public class CasRestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Bean
     @RefreshScope

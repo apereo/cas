@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
