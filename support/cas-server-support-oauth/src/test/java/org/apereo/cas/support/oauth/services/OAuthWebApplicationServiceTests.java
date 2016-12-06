@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class OAuthWebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
@@ -30,8 +30,8 @@ public class OAuthWebApplicationServiceTests {
         service.setDescription("description");
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService serviceWritten =factory.createService(service.getServiceId());
-        mapper.writeValue(JSON_FILE, serviceWritten);
-        final WebApplicationService serviceRead = mapper.readValue(JSON_FILE, WebApplicationService.class);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
+        final WebApplicationService serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }
