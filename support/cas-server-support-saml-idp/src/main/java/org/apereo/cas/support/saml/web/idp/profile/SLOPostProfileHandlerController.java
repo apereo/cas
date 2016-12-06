@@ -13,8 +13,7 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +40,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST, method = RequestMethod.POST)
+    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SLO_PROFILE_POST)
     protected void handleSaml2ProfileSLOPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
         handleSloPostProfileRequest(response, request, new HTTPPostDecoder());

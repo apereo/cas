@@ -6,8 +6,8 @@ import org.apereo.cas.support.events.dao.CasEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -46,9 +46,8 @@ public class AuthenticationEventsController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    @GetMapping
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -60,12 +59,9 @@ public class AuthenticationEventsController {
      * @return the records
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
+    @GetMapping(value = "/getEvents")
     @ResponseBody
-    public Collection<CasEvent> getRecords(final HttpServletRequest request,
-                                           final HttpServletResponse response)
-            throws Exception {
+    public Collection<CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return this.eventRepository.load();
     }
-
 }
