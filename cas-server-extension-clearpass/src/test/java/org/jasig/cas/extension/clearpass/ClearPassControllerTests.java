@@ -39,7 +39,7 @@ public class ClearPassControllerTests {
         this.manager.shutdown();
     }
 
-    @Test
+    @Test                                                                                 w
     public void verifyClearPassWithNoUsername() throws Exception {
         final ClearPassController controller = new ClearPassController(this.map);
         controller.setTicketGrantingTicketCookieGenerator(new TGCCookieRetrievingCookieGenerator(new NoOpCookieValueManager()));
