@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -29,7 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ImportResource(locations = {
         "classpath:/deployerConfigContext.groovy",
         "classpath:/deployerConfigContext.xml"})
-@SpringBootApplication(
+@SpringBootConfiguration
+@EnableAutoConfiguration(
         exclude = {HibernateJpaAutoConfiguration.class,
                 JerseyAutoConfiguration.class,
                 GroovyTemplateAutoConfiguration.class,

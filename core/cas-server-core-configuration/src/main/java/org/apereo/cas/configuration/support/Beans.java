@@ -196,7 +196,6 @@ public final class Beans {
      * @param properties the properties
      * @return the password encoder
      */
-
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
             case DEFAULT:
