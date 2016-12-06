@@ -77,14 +77,13 @@ import static org.mockito.Mockito.*;
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;
 
     private GoogleAccountsService googleAccountsService;
-
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
