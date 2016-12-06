@@ -5,8 +5,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -58,7 +57,7 @@ public class SamlMetadataController {
      * @param response servlet response
      * @throws IOException the iO exception
      */
-    @RequestMapping(method = RequestMethod.GET, value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
+    @GetMapping(value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
         final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);

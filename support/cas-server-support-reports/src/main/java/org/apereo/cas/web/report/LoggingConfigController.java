@@ -28,8 +28,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -118,7 +119,7 @@ public class LoggingConfigController {
      * @return the default view
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public ModelAndView getDefaultView() throws Exception {
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
@@ -133,7 +134,7 @@ public class LoggingConfigController {
      * @return the active loggers
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getActiveLoggers", method = RequestMethod.GET)
+    @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request,
                                                 final HttpServletResponse response)
@@ -154,10 +155,9 @@ public class LoggingConfigController {
      * @return the configuration
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getConfiguration", method = RequestMethod.GET)
+    @GetMapping(value = "/getConfiguration")
     @ResponseBody
-    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         for (final LoggerConfig config : getLoggerConfigurations()) {
@@ -250,7 +250,7 @@ public class LoggingConfigController {
      * @param response    the response
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/updateLoggerLevel", method = RequestMethod.POST)
+    @PostMapping(value = "/updateLoggerLevel")
     @ResponseBody
     public void updateLoggerLevel(@RequestParam final String loggerName,
                                   @RequestParam final String loggerLevel,
@@ -277,12 +277,9 @@ public class LoggingConfigController {
      * @return the audit log
      * @throws Exception the exception
      */
-    @RequestMapping(value = "/getAuditLog", method = RequestMethod.GET)
+    @GetMapping(value = "/getAuditLog")
     @ResponseBody
-    public Set<AuditActionContext> getAuditLog(
-            final HttpServletRequest request,
-            final HttpServletResponse response)
-            throws Exception {
+    public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return this.auditTrailManager.get();
     }
 

@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ValidateCaptchaAction}.
@@ -71,11 +72,7 @@ public class ValidateCaptchaAction extends AbstractAction {
 
             if (responseCode == HttpStatus.OK.value()) {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
-                    String inputLine;
-                    final StringBuilder response = new StringBuilder();
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
+                    final String response = in.lines().collect(Collectors.joining());
                     LOGGER.debug("Google captcha response received: {}", response);
                     final JsonNode node = READER.readTree(response.toString());
                     if (node.has("success") && node.get("success").booleanValue()) {

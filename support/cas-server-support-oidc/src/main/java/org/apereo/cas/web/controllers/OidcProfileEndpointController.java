@@ -9,8 +9,7 @@ import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,17 +28,14 @@ public class OidcProfileEndpointController extends OAuth20ProfileController {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL,
-            method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.PROFILE_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     @Override
-    protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
-                                                           final HttpServletResponse response) throws Exception {
+    protected ResponseEntity<String> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication,
-                                                          final Principal principal) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final Authentication authentication, final Principal principal) throws IOException {
         final Map<String, Object> map = new HashMap<>(principal.getAttributes());
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());

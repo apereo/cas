@@ -56,8 +56,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * @throws Exception the exception
      */
     @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.AUTHORIZE_URL)
-    public ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                              final HttpServletResponse response) throws Exception {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);

@@ -8,8 +8,8 @@ import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +37,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = RequestMethod.GET)
+    @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT)
     protected void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Exception {
         handleSsoPostProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
@@ -50,7 +50,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST, method = RequestMethod.POST)
+    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST)
     protected void handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
         handleSsoPostProfileRequest(response, request, new HTTPPostDecoder());

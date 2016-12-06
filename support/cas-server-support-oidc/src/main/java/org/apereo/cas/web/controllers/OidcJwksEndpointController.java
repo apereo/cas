@@ -19,8 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,8 +54,7 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
      * @return the jwk set
      * @throws Exception the exception
      */
-    @RequestMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL,
-            method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         final Model model) throws Exception {

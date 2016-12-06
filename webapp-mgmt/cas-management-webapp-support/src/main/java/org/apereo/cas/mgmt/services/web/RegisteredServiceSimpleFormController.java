@@ -9,9 +9,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param result   the result
      * @param service  the edit bean
      */
-    @RequestMapping(method = RequestMethod.POST, value = {"saveService.html"})
+    @PostMapping(value = "saveService.html")
     public void saveService(final HttpServletRequest request,
                             final HttpServletResponse response,
                             @RequestBody final RegisteredServiceEditBean.ServiceData service,
@@ -88,7 +88,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param request  the request
      * @param response the response
      */
-    @RequestMapping(method = RequestMethod.GET, value = {"getService"})
+    @GetMapping(value = "getService")
     public void getServiceById(@RequestParam(value = "id", required = false) final Long id,
                                final HttpServletRequest request, final HttpServletResponse response) {
 

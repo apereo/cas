@@ -9,8 +9,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.serialization.JsonUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -81,7 +81,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      *
      * @return the view name.
      */
-    @RequestMapping(value = "/authorizationFailure", method = {RequestMethod.GET})
+    @GetMapping(value = "/authorizationFailure")
     public String authorizationFailureView() {
         return "authorizationFailure";
     }
@@ -93,7 +93,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param session the session
      * @return the view name.
      */
-    @RequestMapping(value = "/logout", method = {RequestMethod.GET})
+    @GetMapping(value = "/logout")
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
         logger.debug("Invalidating application session...");
         session.invalidate();
@@ -108,7 +108,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param idAsLong the id
      * @param response the response
      */
-    @RequestMapping(value = "/deleteRegisteredService", method = {RequestMethod.POST})
+    @PostMapping(value = "/deleteRegisteredService")
     public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
                                         final HttpServletResponse response) {
         final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
@@ -133,7 +133,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param response the response
      * @return the Model and View to go to after the services are loaded.
      */
-    @RequestMapping(value = "/manage.html", method = {RequestMethod.GET})
+    @GetMapping(value = "/manage.html")
     public ModelAndView manage(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
@@ -147,7 +147,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      *
      * @param response the response
      */
-    @RequestMapping(value = "/getServices", method = {RequestMethod.GET})
+    @GetMapping(value = "/getServices")
     public void getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
@@ -165,7 +165,7 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
      * @param response the response
      * @param id       the service ids, whose order also determines the service evaluation order
      */
-    @RequestMapping(value = "/updateRegisteredServiceEvaluationOrder", method = {RequestMethod.POST})
+    @PostMapping(value = "/updateRegisteredServiceEvaluationOrder")
     public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
                                                        @RequestParam("id") final long... id) {
         if (id == null || id.length == 0) {
