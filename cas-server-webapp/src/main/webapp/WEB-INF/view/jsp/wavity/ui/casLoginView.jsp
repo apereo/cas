@@ -123,6 +123,15 @@
 		<main role="main" id="ot-main" class="main">
 
 		</main>
+		
+		<form:errors path="*" />
+		
+		<c:forEach var="message" items="${flowRequestContext.messageContext.allMessages}">
+    <c:if test="${message.severity eq 'ERROR'}">
+        <span>${message.text}</span>
+    </c:if>
+</c:forEach>
+  
 		<c:if test="${!empty pac4jUrls}">
             <div id="list-providers" style="color:#fff">
                 <h3><spring:message code="screen.welcome.label.loginwith" /></h3>
@@ -132,6 +141,7 @@
                             <li id="${entry.key}"><a href="${entry.value}" style="color:#fff">${entry.key}</a></li>
                         </c:forEach>
                     </ul>
+                    
                 </form>
             </div>
         </c:if>

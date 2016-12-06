@@ -59,7 +59,9 @@
 
     <action-state id="generateLoginTicket">
         <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)"/>
-        <transition on="generated" to="viewLoginForm"/>
+        <transition on="generated" to="viewLoginForm">
+        <!-- <evaluate expression="requestScope.messageContext.addMessage(new MessageBuilder().error().source(null).code('FailedLoginException').build())" />-->
+        </transition>
     </action-state>
 
     <view-state id="viewLoginForm" view="casLoginView" model="credential">
@@ -67,6 +69,7 @@
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
         </binder>
+        
         <on-entry>
             <set name="viewScope.commandName" value="'credential'"/>
 
@@ -75,7 +78,12 @@
             -->
         </on-entry>
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-    </view-state>
+        <!--  <view-state id="edit_contact_details" model="CreateEditPersonModel" view="edit_contact_details">
+        <transition on-exception="javax.persistence.OptimisticLockException" to="back_to_search_person_OptimisticLockException" >
+                <evaluate expression="requestScope.messageContext.addMessage(new MessageBuilder().error().source(null).code('OptimisticLockException').build())" />
+        </transition>
+    </view-state>-->
+     </view-state> 
 
     <action-state id="realSubmit">
         <evaluate
