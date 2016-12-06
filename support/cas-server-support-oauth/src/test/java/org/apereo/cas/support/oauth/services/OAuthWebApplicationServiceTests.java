@@ -19,8 +19,7 @@ import static org.junit.Assert.*;
 public class OAuthWebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
-
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {

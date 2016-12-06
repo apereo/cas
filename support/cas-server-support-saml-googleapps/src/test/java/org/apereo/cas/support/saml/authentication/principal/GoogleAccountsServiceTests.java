@@ -84,7 +84,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private GoogleAccountsService googleAccountsService;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -140,8 +140,8 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Test
     public void serializeGoogleAccountService() throws Exception {
         final GoogleAccountsService service = getGoogleAccountsService();
-        mapper.writeValue(FILE, service);
-        final GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
+        MAPPER.writeValue(FILE, service);
+        final GoogleAccountsService service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
         Assert.equals(service, service2);
     }
 }

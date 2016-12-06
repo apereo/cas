@@ -41,6 +41,8 @@ import static org.junit.Assert.*;
 
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private static final String CONTEXT = "/oauth2.0/";
 
     private static final String ID = "1234";
@@ -127,12 +129,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final ObjectMapper mapper = new ObjectMapper();
-
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(entity.getBody());
+        final JsonNode expectedObj = MAPPER.readTree(expected);
+        final JsonNode receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
@@ -163,12 +163,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final ObjectMapper mapper = new ObjectMapper();
-
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(entity.getBody());
+        final JsonNode expectedObj = MAPPER.readTree(expected);
+        final JsonNode receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
