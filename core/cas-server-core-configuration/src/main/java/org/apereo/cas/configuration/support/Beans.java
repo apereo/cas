@@ -425,7 +425,7 @@ public final class Beans {
      */
     public static Duration newDuration(final String length) {
         try {
-            if (NumberUtils.isNumber(length)) {
+            if (NumberUtils.isCreatable(length)) {
                 return Duration.ofSeconds(Long.valueOf(length));
             }
             return Duration.parse(length);

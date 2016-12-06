@@ -92,7 +92,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        if (NumberUtils.isNumber(time)) {
+        if (NumberUtils.isCreatable(time)) {
             authnRequest.setID(id + time);
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS), 
                     ISOChronology.getInstanceUTC()));
