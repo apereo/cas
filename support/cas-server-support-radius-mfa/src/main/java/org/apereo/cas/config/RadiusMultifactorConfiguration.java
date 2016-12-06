@@ -77,7 +77,6 @@ public class RadiusMultifactorConfiguration {
     @Qualifier("authenticationMetadataPopulators")
     private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
-
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;

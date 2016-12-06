@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -244,7 +245,6 @@ public class Pac4jConfiguration {
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

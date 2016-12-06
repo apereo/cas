@@ -43,8 +43,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * An array of AuthenticationAttributesPopulators.
      */
-    protected List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
-            new ArrayList<>();
+    protected List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators = new ArrayList<>();
 
     /**
      * Map of authentication handlers to resolvers to be used when handler does not resolve a principal.
@@ -111,9 +110,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param builder     the builder
      * @param credentials the credentials
      */
-    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder,
-                                                            final Collection<Credential> credentials) {
-        for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
+    protected void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Collection<Credential> credentials) {
+        for (final AuthenticationMetaDataPopulator populator : this.authenticationMetadataPopulators) {
             credentials.stream().filter(populator::supports).forEach(credential -> populator.populateAttributes(builder, credential));
         }
     }
@@ -250,7 +248,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param populators Non-null list of metadata populators.
      */
     public void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
-        this.authenticationMetaDataPopulators = populators;
+        this.authenticationMetadataPopulators = populators;
     }
 
     public void setAuthenticationHandlerResolver(final AuthenticationHandlerResolver authenticationHandlerResolver) {
