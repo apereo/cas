@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -17,8 +16,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
         
 /**
  * @author Scott Battaglia
