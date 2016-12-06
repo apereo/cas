@@ -50,6 +50,10 @@ public class OAuth20Validator {
      * @return whether the service is valid
      */
     public boolean checkServiceValid(final RegisteredService registeredService) {
+        if (registeredService == null) {
+            return false;
+        }
+
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(registeredService.getServiceId());
         logger.debug("Check registered service: {}", registeredService);
