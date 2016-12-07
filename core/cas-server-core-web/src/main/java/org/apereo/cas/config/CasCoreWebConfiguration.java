@@ -32,11 +32,11 @@ public class CasCoreWebConfiguration {
 
     @Autowired
     @Qualifier("serviceFactoryList")
-    private List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
+    private List serviceFactoryList;
     
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
-        return new DefaultArgumentExtractor(serviceFactoryList);
+        return new DefaultArgumentExtractor((List<ServiceFactory<? extends WebApplicationService>>) serviceFactoryList);
     }
     
     @RefreshScope
