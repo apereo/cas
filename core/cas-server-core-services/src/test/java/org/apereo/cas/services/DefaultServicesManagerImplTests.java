@@ -21,10 +21,11 @@ import static org.junit.Assert.*;
 public class DefaultServicesManagerImplTests {
 
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
+    private InMemoryServiceRegistryDaoImpl dao;
 
     @Before
     public void setUp() throws Exception {
-        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<>();
 
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -190,7 +191,58 @@ public class DefaultServicesManagerImplTests {
         assertEquals(allServices.get(0).getId(), r3.getId());
         assertEquals(allServices.get(1).getId(), r2.getId());
         assertEquals(allServices.get(2).getId(), r.getId());
+    }
 
+    @Test
+    public void verifyServiceCanBeUpdated() throws Exception {
+        int serviceId = 100;
+        String newName = "newName";
+
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(serviceId);
+        service.setName("test");
+        service.setServiceId("test");
+        service.setEvaluationOrder(200);
+
+        defaultServicesManagerImpl.save(service);
+
+        int evaluationOrderExpected = service.getEvaluationOrder() + 1;
+        service.setEvaluationOrder(evaluationOrderExpected);
+        service.setName(newName);
+
+        defaultServicesManagerImpl.save(service);
+
+        RegisteredService serviceRetrieved = defaultServicesManagerImpl.findServiceBy(serviceId);
+
+        assertEquals(evaluationOrderExpected, serviceRetrieved.getEvaluationOrder());
+        assertEquals(newName, serviceRetrieved.getName());
+    }
+
+    @Test
+    public void verifyServiceIsUpdatedAfterALoad() throws Exception {
+        int serviceId = 100;
+        String newName = "newName";
+
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(serviceId);
+        service.setName("test");
+        service.setServiceId("test");
+        service.setEvaluationOrder(200);
+
+        dao.save(service);
+
+        int evaluationOrderExpected = service.getEvaluationOrder() + 1;
+        service.setEvaluationOrder(evaluationOrderExpected);
+        service.setName(newName);
+
+        dao.save(service);
+
+        defaultServicesManagerImpl.load();
+
+        RegisteredService serviceRetrieved = defaultServicesManagerImpl.findServiceBy(serviceId);
+
+        assertEquals(evaluationOrderExpected, serviceRetrieved.getEvaluationOrder());
+        assertEquals(newName, serviceRetrieved.getName());
     }
 
     private static class SimpleService implements Service {
