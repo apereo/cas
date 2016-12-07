@@ -1810,11 +1810,11 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Office365
 
 ```properties
-# cas.samlSP.dropbox.metadata=/etc/cas/saml/azure.xml
-# cas.samlSP.dropbox.name=O365
-# cas.samlSP.dropbox.description=O365 Integration
-# cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
-# cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
+# cas.samlSP.office365.name=O365
+# cas.samlSP.office365.description=O365 Integration
+# cas.samlSP.office365.nameIdAttribute=scopedImmutableID
+# cas.samlSP.office365.attributes=IDPEmail,ImmutableID
 ```
 
 ### SAManage
