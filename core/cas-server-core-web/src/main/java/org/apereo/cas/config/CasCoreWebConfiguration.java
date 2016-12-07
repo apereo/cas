@@ -52,7 +52,7 @@ public class CasCoreWebConfiguration {
     }
     
     @Bean
-    public List argumentExtractors() {
+    public List<ArgumentExtractor> argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
         list.add(defaultArgumentExtractor());
         return list;
