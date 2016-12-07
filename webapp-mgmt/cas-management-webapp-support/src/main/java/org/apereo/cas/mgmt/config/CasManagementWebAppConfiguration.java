@@ -3,9 +3,6 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -42,7 +39,6 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.authorization.authorizer.Authorizer;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
@@ -103,7 +99,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
-    private List<FormDataPopulator> formDataPopulators = new ArrayList<>();
+    private List formDataPopulators = new ArrayList<>();
 
     @Autowired
     private ServerProperties serverProperties;
@@ -233,9 +229,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             if ("*".equals(authzAttributes)) {
                 return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             }
-            return new FromAttributesAuthorizationGenerator<>(authzAttributes.toArray(new String[] {}), new String[]{});
+            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[] {}), new String[]{});
         }
-        return new SpringSecurityPropertiesAuthorizationGenerator<>(userProperties());
+        return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
     @Bean
@@ -259,7 +255,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
+    public Map auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", saveServiceResourceResolver());
@@ -267,7 +263,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Map<String, AuditActionResolver> auditActionResolverMap() {
+    public Map auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
         map.put("SAVE_SERVICE_ACTION_RESOLVER", saveServiceActionResolver());
@@ -363,8 +359,8 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList() {
-        return new ArrayList<>();
+    public List serviceFactoryList() {
+        return new ArrayList();
     }
 
     @Bean
@@ -373,7 +369,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
+    public List authenticationMetadataPopulators() {
         return new ArrayList<>();
     }
 
