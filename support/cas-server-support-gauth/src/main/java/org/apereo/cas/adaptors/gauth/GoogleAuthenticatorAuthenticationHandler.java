@@ -36,7 +36,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
-        if (!NumberUtils.isNumber(tokenCredential.getToken())) {
+        if (!NumberUtils.isCreatable(tokenCredential.getToken())) {
             throw new PreventedException("Invalid non-numeric OTP format specified.", new IllegalArgumentException());
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
