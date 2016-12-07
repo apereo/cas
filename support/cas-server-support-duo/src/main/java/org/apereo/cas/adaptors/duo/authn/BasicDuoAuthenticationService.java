@@ -23,7 +23,7 @@ import org.springframework.http.HttpMethod;
  * @since 4.2
  */
 public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService {
-    private static final int API_VERSION = 2;
+
     private static final long serialVersionUID = -6690808348975271382L;
 
     /**
@@ -104,24 +104,5 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
                 .toHashCode();
-    }
-
-    private void signHttpRequest(final Http request, final String id) {
-        try {
-            request.addParam("username", id);
-            request.addParam("factor", "auto");
-            request.addParam("device", "auto");
-            request.signRequest(
-                    duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey(), API_VERSION);
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
-    private Http getHttpRequest() {
-        return new Http(HttpMethod.POST.name(),
-                duoProperties.getDuoApiHost(),
-                "/auth/v" + API_VERSION + "/auth");
     }
 }
