@@ -227,7 +227,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "authorizationGenerator")
     @Bean
     @RefreshScope
-    public AuthorizationGenerator<CasProfile> authorizationGenerator() {
+    public AuthorizationGenerator authorizationGenerator() {
         final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
         if (!authzAttributes.isEmpty()) {
             if ("*".equals(authzAttributes)) {
