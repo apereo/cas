@@ -137,7 +137,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
         orderedServices.addAll(this.services.values());
-        LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded {} service(s) from {}.", this.services.size(), this.serviceRegistryDao);
     }
 
     @Override
