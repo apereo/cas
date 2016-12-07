@@ -51,10 +51,10 @@ public interface DuoAuthenticationService extends Serializable {
     /**
      * Gets duo user account.
      *
-     * @param uid the uid
+     * @param username the actual user name
      * @return the duo user account
      */
-    Optional<DuoUserAccount> getDuoUserAccount(String uid);
+    Optional<DuoUserAccount> getDuoUserAccount(String username);
 
     /**
      * Gets duo user enrollment policy.
