@@ -2454,7 +2454,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.watcherEnabled=true
 # cas.serviceRegistry.repeatInterval=120000
 # cas.serviceRegistry.startDelay=15000
-# cas.serviceRegistry.initFromJson=true
+# cas.serviceRegistry.initFromJson=false
 ```
 
 ### Resource-based Service Registry
