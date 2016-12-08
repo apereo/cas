@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
     /**
-     * Determine response type response . response type.
+     * Determine response type response.
      *
      * @param request the request
      * @return the response . response type
@@ -44,11 +44,11 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      *
      * @param request               the request
      * @param webApplicationService the web application service
-     * @return the boolean
+     * @return the service itself.
      */
     private AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
                                                                         final AbstractWebApplicationService webApplicationService) {
-        final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
+        final String format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
         try {
             if (StringUtils.isNotBlank(format)) {
                 final ValidationResponseType formatType = ValidationResponseType.valueOf(format.toUpperCase());
