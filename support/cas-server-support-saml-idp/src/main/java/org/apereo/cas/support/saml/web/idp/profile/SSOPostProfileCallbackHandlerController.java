@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
@@ -20,8 +17,10 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link SSOPostProfileCallbackHandlerController}, which handles
@@ -39,9 +38,8 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
-    protected void handleCallbackProfileRequest(final HttpServletResponse response,
-                                                final HttpServletRequest request) throws Exception {
+    @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK)
+    protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
 
         logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
         final AuthnRequest authnRequest = retrieveAuthnRequest(request);

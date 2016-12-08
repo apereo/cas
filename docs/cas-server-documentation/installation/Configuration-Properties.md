@@ -1060,6 +1060,7 @@ There are two requirements for this use case:
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
+# cas.authn.ldap[0].enhanceWithEntryResolver=true
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=userPassword
@@ -1605,25 +1606,25 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JPA
 
 ```properties
-# cas.authn.mfa.gauth.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.mfa.gauth.jpa.isolateInternalQueries=false
-# cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.failFast=true
-# cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.gauth.jpa.leakThreshold=10
-# cas.authn.mfa.gauth.jpa.batchSize=1
-# cas.authn.mfa.gauth.jpa.user=sa
-# cas.authn.mfa.gauth.jpa.ddlAuto=create-drop
-# cas.authn.mfa.gauth.jpa.password=
-# cas.authn.mfa.gauth.jpa.autocommit=false
-# cas.authn.mfa.gauth.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.gauth.jpa.idleTimeout=5000
+# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
+# cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
+# cas.authn.mfa.gauth.jpa.database.failFast=true
+# cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.gauth.jpa.database.leakThreshold=10
+# cas.authn.mfa.gauth.jpa.database.batchSize=1
+# cas.authn.mfa.gauth.jpa.database.user=sa
+# cas.authn.mfa.gauth.jpa.database.ddlAuto=create-drop
+# cas.authn.mfa.gauth.jpa.database.password=
+# cas.authn.mfa.gauth.jpa.database.autocommit=false
+# cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
 
-# cas.authn.mfa.gauth.jpa.pool.suspension=false
-# cas.authn.mfa.gauth.jpa.pool.minSize=6
-# cas.authn.mfa.gauth.jpa.pool.maxSize=18
-# cas.authn.mfa.gauth.jpa.pool.maxIdleTime=1000
-# cas.authn.mfa.gauth.jpa.pool.maxWait=2000
+# cas.authn.mfa.gauth.jpa.database.pool.suspension=false
+# cas.authn.mfa.gauth.jpa.database.pool.minSize=6
+# cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
+# cas.authn.mfa.gauth.jpa.database.pool.maxIdleTime=1000
+# cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
 ```
 
 ### YubiKey
@@ -1809,11 +1810,11 @@ To learn more about this topic, [please review this guide](../integration/Config
 ### Office365
 
 ```properties
-# cas.samlSP.dropbox.metadata=/etc/cas/saml/azure.xml
-# cas.samlSP.dropbox.name=O365
-# cas.samlSP.dropbox.description=O365 Integration
-# cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
-# cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
+# cas.samlSP.office365.name=O365
+# cas.samlSP.office365.description=O365 Integration
+# cas.samlSP.office365.nameIdAttribute=scopedImmutableID
+# cas.samlSP.office365.attributes=IDPEmail,ImmutableID
 ```
 
 ### SAManage
@@ -2453,7 +2454,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.watcherEnabled=true
 # cas.serviceRegistry.repeatInterval=120000
 # cas.serviceRegistry.startDelay=15000
-# cas.serviceRegistry.initFromJson=true
+# cas.serviceRegistry.initFromJson=false
 ```
 
 ### Resource-based Service Registry

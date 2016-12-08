@@ -20,6 +20,7 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
@@ -246,20 +247,30 @@ public class LdapAuthenticationConfiguration {
         } else {
             auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
         }
-        auth.setEntryResolver(Beans.newSearchEntryResolver(l));
 
+        if (l.isEnhanceWithEntryResolver()) {
+            auth.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
         return auth;
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getBaseDn());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authenticator.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
+        return authenticator;
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-        authn.setEntryResolver(Beans.newSearchEntryResolver(l));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authn.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
         return authn;
     }
 

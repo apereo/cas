@@ -13,8 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -178,7 +179,7 @@ public class SingleSignOnSessionsReportController {
      * @param type the type
      * @return the sso sessions
      */
-    @RequestMapping(value = "/getSsoSessions", method = RequestMethod.GET)
+    @GetMapping(value = "/getSsoSessions")
     @ResponseBody
     public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
 
@@ -231,7 +232,7 @@ public class SingleSignOnSessionsReportController {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return result map
      */
-    @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
+    @PostMapping(value = "/destroySsoSession")
     @ResponseBody
     public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
@@ -254,7 +255,7 @@ public class SingleSignOnSessionsReportController {
      * @param type the type
      * @return result map
      */
-    @RequestMapping(value = "/destroySsoSessions", method = RequestMethod.POST)
+    @PostMapping(value = "/destroySsoSessions")
     @ResponseBody
     public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>();
@@ -288,7 +289,7 @@ public class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }
