@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketRegistry;
 import org.apereo.cas.ticket.registry.jwt.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.jwt.factories.JwtProxyTicketFactory;

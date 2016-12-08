@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.BaseTicketSerializers;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.apereo.cas.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

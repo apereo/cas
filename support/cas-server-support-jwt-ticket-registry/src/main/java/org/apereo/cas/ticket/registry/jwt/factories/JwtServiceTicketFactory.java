@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.BaseTicketSerializers;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;

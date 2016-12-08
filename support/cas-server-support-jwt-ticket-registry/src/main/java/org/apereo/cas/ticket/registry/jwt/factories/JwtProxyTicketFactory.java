@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.apereo.cas.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,8 +34,6 @@ public class JwtProxyTicketFactory extends DefaultProxyTicketFactory {
                             .audience(service.getId())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(pt.getId())
-                            .claim(JwtTicketClaims.CONTENT_BODY, BaseTicketSerializers.serializeTicket(pt))
-                            .claim(JwtTicketClaims.TYPE, ProxyTicket.class.getName())
                             .issueTime(DateTimeUtils.dateOf(proxyGrantingTicket.getCreationTime()))
                             .subject(proxyGrantingTicket.getAuthentication().getPrincipal().getId());
 
