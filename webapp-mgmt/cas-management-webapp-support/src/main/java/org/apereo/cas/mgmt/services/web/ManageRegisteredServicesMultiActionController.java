@@ -1,7 +1,8 @@
 package org.apereo.cas.mgmt.services.web;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -50,10 +51,11 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     public ManageRegisteredServicesMultiActionController(
             final ServicesManager servicesManager,
             final RegisteredServiceFactory registeredServiceFactory,
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final String defaultServiceUrl) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
-        this.defaultService = new WebApplicationServiceFactory().createService(defaultServiceUrl);
+        this.defaultService = webApplicationServiceFactory.createService(defaultServiceUrl);
     }
 
     /**

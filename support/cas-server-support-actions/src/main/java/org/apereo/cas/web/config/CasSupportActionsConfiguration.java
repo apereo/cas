@@ -140,7 +140,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action logoutAction() {
         final LogoutAction a = new LogoutAction();
-
+        a.setWebApplicationServiceFactory(webApplicationServiceFactory);
         a.setFollowServiceRedirects(casProperties.getLogout().isFollowServiceRedirects());
         a.setServicesManager(this.servicesManager);
         return a;
