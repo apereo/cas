@@ -54,9 +54,8 @@ public class BasicDuoAuthenticationService extends BaseDuoAuthenticationService 
         try {
             final DuoDirectCredential credential = DuoDirectCredential.class.cast(crds);
             final Principal p = credential.getAuthentication().getPrincipal();
-            final Http request = getHttpRequest();
-            signHttpRequest(request, p.getId());
-
+            final Http request = buildHttpPostAuthRequest();
+            signHttpAuthRequest(request, p.getId());
             final JSONObject result = (JSONObject) request.executeRequest();
             logger.debug("Duo authentication response: {}", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
