@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.registry.jwt.JwtTicketClaims;
 import org.apereo.cas.util.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
