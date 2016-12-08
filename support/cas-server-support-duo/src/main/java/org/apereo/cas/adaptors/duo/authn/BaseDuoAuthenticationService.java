@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoIntegration;
@@ -121,6 +122,10 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     @Override
     public Optional<DuoIntegration> getDuoIntegrationPolicy() {
+        if (!isDuoAdminApiDefined()) {
+            return Optional.empty();
+        }
+
         try {
             final Http integrationRequest = buildHttpGetIntegrationsRequest(duoProperties.getDuoIntegrationKey());
             signHttpIntegrationsRequest(integrationRequest);
@@ -156,8 +161,11 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     @Override
     public Optional<DuoUserAccount> getDuoUserAccount(final String username) {
-        try {
+        if (!isDuoAdminApiDefined()) {
+            return Optional.empty();
+        }
 
+        try {
             final Http userRequest = buildHttpGetUsersRequest(username);
             signHttpUsersRequest(userRequest);
             logger.debug("Contacting Duo to inquire about username {}", username);
@@ -206,12 +214,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     protected Http buildHttpPostAuthRequest() {
         return new Http(HttpMethod.POST.name(),
                 duoProperties.getDuoApiHost(),
-                String.format("/auth/v%s/auth", AUTH_API_VERSION);
+                String.format("/auth/v%s/auth", AUTH_API_VERSION));
     }
 
     protected Http buildHttpGetUsersRequest(final String username) {
         final Http usersRequest = new Http(HttpMethod.GET.name(),
-                duoProperties.getDuoApiHost(),
+                duoProperties.getDuoAdminApiHost(),
                 String.format("/admin/v%s/users", ADMIN_API_VERSION));
         usersRequest.addParam("username", username);
         return usersRequest;
@@ -219,7 +227,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     protected Http buildHttpGetIntegrationsRequest(final String integrationKey) {
         return new Http(HttpMethod.GET.name(),
-                duoProperties.getDuoApiHost(),
+                duoProperties.getDuoAdminApiHost(),
                 String.format("/admin/v%s/integrations/%s", ADMIN_API_VERSION, integrationKey));
     }
 
@@ -229,37 +237,45 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      * @param request the request
      * @param id      the id
      */
-    protected void signHttpAuthRequest(final Http request, final String id) {
+    protected Http signHttpAuthRequest(final Http request, final String id) {
         try {
             request.addParam("username", id);
             request.addParam("factor", "auto");
             request.addParam("device", "auto");
             request.signRequest(
                     duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey(), AUTH_API_VERSION);
+                    duoProperties.getDuoSecretKey());
+            return request;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    protected void signHttpIntegrationsRequest(final Http request) {
+    protected Http signHttpIntegrationsRequest(final Http request) {
         try {
             request.signRequest(
-                    duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey(), ADMIN_API_VERSION);
+                    duoProperties.getDuoAdminIntegrationKey(),
+                    duoProperties.getDuoAdminSecretKey());
+            return request;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    protected void signHttpUsersRequest(final Http request) {
+    protected Http signHttpUsersRequest(final Http request) {
         try {
             request.signRequest(
-                    duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey(), ADMIN_API_VERSION);
+                    duoProperties.getDuoAdminIntegrationKey(),
+                    duoProperties.getDuoAdminSecretKey());
+            return request;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    private boolean isDuoAdminApiDefined() {
+        return StringUtils.isNotBlank(duoProperties.getDuoAdminIntegrationKey())
+                && StringUtils.isNotBlank(duoProperties.getDuoAdminIntegrationKey());
     }
 
     private static String getJsonNodeFieldValue(final JsonNode node, final String fieldName) {
