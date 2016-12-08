@@ -117,7 +117,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
-        this.orderedServices.add(r);
+        this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
         publishEvent(new CasRegisteredServiceSavedEvent(this, r));
         return r;
     }
@@ -136,7 +136,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
                     LOGGER.debug("Adding registered service {}", r.getServiceId());
                     return r.getId();
                 }, r -> r, (r, s) -> s == null ? r : s));
-        orderedServices.addAll(this.services.values());
+        this.orderedServices = new ConcurrentSkipListSet<>(this.services.values());
         LOGGER.info("Loaded {} services from {}.", this.services.size(), this.serviceRegistryDao);
     }
 
