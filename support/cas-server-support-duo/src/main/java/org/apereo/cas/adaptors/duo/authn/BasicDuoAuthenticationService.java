@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWeb;
-import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,7 +10,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.json.JSONObject;
-import org.springframework.http.HttpMethod;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.

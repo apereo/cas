@@ -211,12 +211,23 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         return url;
     }
 
+    /**
+     * Build http post auth request http.
+     *
+     * @return the http
+     */
     protected Http buildHttpPostAuthRequest() {
         return new Http(HttpMethod.POST.name(),
                 duoProperties.getDuoApiHost(),
                 String.format("/auth/v%s/auth", AUTH_API_VERSION));
     }
 
+    /**
+     * Build http get users request http.
+     *
+     * @param username the username
+     * @return the http
+     */
     protected Http buildHttpGetUsersRequest(final String username) {
         final Http usersRequest = new Http(HttpMethod.GET.name(),
                 duoProperties.getDuoAdminApiHost(),
@@ -225,6 +236,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         return usersRequest;
     }
 
+    /**
+     * Build http get integrations request http.
+     *
+     * @param integrationKey the integration key
+     * @return the http
+     */
     protected Http buildHttpGetIntegrationsRequest(final String integrationKey) {
         return new Http(HttpMethod.GET.name(),
                 duoProperties.getDuoAdminApiHost(),
@@ -236,6 +253,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      *
      * @param request the request
      * @param id      the id
+     * @return the http
      */
     protected Http signHttpAuthRequest(final Http request, final String id) {
         try {
@@ -251,6 +269,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         }
     }
 
+    /**
+     * Sign http integrations request http.
+     *
+     * @param request the request
+     * @return the http
+     */
     protected Http signHttpIntegrationsRequest(final Http request) {
         try {
             request.signRequest(
@@ -262,6 +286,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         }
     }
 
+    /**
+     * Sign http users request http.
+     *
+     * @param request the request
+     * @return the http
+     */
     protected Http signHttpUsersRequest(final Http request) {
         try {
             request.signRequest(

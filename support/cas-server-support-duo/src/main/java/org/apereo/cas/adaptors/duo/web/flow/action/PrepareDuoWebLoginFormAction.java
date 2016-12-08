@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import com.duosecurity.duoweb.DuoWeb;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;

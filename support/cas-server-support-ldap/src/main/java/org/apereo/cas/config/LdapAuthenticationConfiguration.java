@@ -19,7 +19,6 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledCompareAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;

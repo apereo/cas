@@ -7,7 +7,6 @@ import org.apereo.cas.util.CasBanner;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
