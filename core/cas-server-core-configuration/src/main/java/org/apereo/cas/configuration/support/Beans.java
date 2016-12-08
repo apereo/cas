@@ -196,7 +196,6 @@ public final class Beans {
      * @param properties the properties
      * @return the password encoder
      */
-
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
             case DEFAULT:
@@ -425,7 +424,7 @@ public final class Beans {
      */
     public static Duration newDuration(final String length) {
         try {
-            if (NumberUtils.isNumber(length)) {
+            if (NumberUtils.isCreatable(length)) {
                 return Duration.ofSeconds(Long.valueOf(length));
             }
             return Duration.parse(length);
