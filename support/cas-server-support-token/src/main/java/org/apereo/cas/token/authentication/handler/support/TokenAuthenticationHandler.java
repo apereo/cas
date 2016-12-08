@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication.handler.support;
+package org.apereo.cas.token.authentication.handler.support;
 
 import com.google.common.collect.Sets;
 import com.nimbusds.jose.Algorithm;
@@ -6,7 +6,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.TokenConstants;
+import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
