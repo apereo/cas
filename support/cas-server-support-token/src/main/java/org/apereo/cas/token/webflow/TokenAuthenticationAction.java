@@ -1,13 +1,13 @@
-package org.apereo.cas.web.flow.token;
+package org.apereo.cas.token.webflow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.TokenConstants;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.handler.support.TokenCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.token.authentication.handler.support.TokenCredential;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
