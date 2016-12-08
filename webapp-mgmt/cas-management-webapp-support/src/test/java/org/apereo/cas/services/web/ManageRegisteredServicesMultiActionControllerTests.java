@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import com.google.common.collect.ImmutableMap;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -41,7 +42,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.registeredServiceFactory.initializeDefaults();
 
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
-                .registeredServiceFactory, "https://cas.example.org");
+                .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
     }
 
     @Test
