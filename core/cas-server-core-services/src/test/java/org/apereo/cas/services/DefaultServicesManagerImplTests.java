@@ -196,8 +196,8 @@ public class DefaultServicesManagerImplTests {
 
     @Test
     public void verifyServiceCanBeUpdated() throws Exception {
-        int serviceId = 2500;
-        String description = "desc";
+        final int serviceId = 2500;
+        final String description = "desc";
 
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(serviceId);
@@ -211,15 +211,15 @@ public class DefaultServicesManagerImplTests {
 
         defaultServicesManagerImpl.save(service);
 
-        Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
 
     @Test
     public void verifyServiceIsUpdatedAfterALoad() throws Exception {
-        int serviceId = 2500;
-        String description = "desc";
+        final int serviceId = 2500;
+        final String description = "desc";
 
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(serviceId);
@@ -235,7 +235,7 @@ public class DefaultServicesManagerImplTests {
 
         defaultServicesManagerImpl.load();
 
-        Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
