@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +22,11 @@ import static org.junit.Assert.*;
 public class DefaultServicesManagerImplTests {
 
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
+    private InMemoryServiceRegistryDaoImpl dao;
 
     @Before
     public void setUp() throws Exception {
-        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<>();
 
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -190,7 +192,52 @@ public class DefaultServicesManagerImplTests {
         assertEquals(allServices.get(0).getId(), r3.getId());
         assertEquals(allServices.get(1).getId(), r2.getId());
         assertEquals(allServices.get(2).getId(), r.getId());
+    }
 
+    @Test
+    public void verifyServiceCanBeUpdated() throws Exception {
+        final int serviceId = 2500;
+        final String description = "desc";
+
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(serviceId);
+        service.setName("serviceName");
+        service.setServiceId("serviceId");
+        service.setEvaluationOrder(1000);
+
+        defaultServicesManagerImpl.save(service);
+
+        service.setDescription(description);
+
+        defaultServicesManagerImpl.save(service);
+
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+
+        assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
+    }
+
+    @Test
+    public void verifyServiceIsUpdatedAfterALoad() throws Exception {
+        final int serviceId = 2500;
+        final String description = "desc";
+
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(serviceId);
+        service.setName("serviceName");
+        service.setServiceId("serviceId");
+        service.setEvaluationOrder(1000);
+
+        dao.save(service);
+
+        service.setDescription(description);
+
+        dao.save(service);
+
+        defaultServicesManagerImpl.load();
+
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+
+        assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
 
     private static class SimpleService implements Service {

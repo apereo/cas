@@ -116,7 +116,7 @@ public final class LdapUtils {
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
         final String v = getString(entry, attribute, nullValue.toString());
-        if (v != null && NumberUtils.isNumber(v)) {
+        if (v != null && NumberUtils.isCreatable(v)) {
             return Long.valueOf(v);
         }
         return nullValue;
