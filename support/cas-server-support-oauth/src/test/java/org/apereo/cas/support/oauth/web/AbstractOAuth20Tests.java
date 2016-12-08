@@ -43,7 +43,7 @@ import java.util.Map;
                 CasCoreUtilConfiguration.class})
 @DirtiesContext
 @ContextConfiguration(locations = "classpath:/oauth-context.xml")
-@ComponentScan(basePackages = {"org.pac4j.springframework", "org.apereo.cas"})
+@ComponentScan(basePackages = {"org.apereo.cas"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOAuth20Tests {
 
