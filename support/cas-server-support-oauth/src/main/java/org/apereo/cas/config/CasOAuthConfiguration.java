@@ -44,12 +44,13 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.client.RedirectAction;
+import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
+import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.CallbackController;
@@ -109,13 +110,11 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
-    @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
-    @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
