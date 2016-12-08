@@ -520,6 +520,13 @@
     </module>
 
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="method = RequestMethod\."/>
+        <property name="fileExtensions" value="java"/>
+        <property name="message" value="Use specific request annotation from org.springframework.web.bind.annotation package"/>
+    </module>
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
         <property name="severity" value="error"/>
         <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>

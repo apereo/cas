@@ -39,7 +39,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         Service service = WebUtils.getService(requestContext);
-        if (service != null) {
+        if (service != null && serviceSelectionStrategy.supports(service)) {
             service = serviceSelectionStrategy.resolveServiceFrom(service);
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);

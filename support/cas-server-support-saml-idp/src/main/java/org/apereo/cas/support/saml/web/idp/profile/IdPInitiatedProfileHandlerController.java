@@ -19,8 +19,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +44,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO, method = RequestMethod.GET)
+    @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
     protected void handleIdPInitiatedSsoRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
 
@@ -92,7 +91,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
         final String id = '_' + String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        if (NumberUtils.isNumber(time)) {
+        if (NumberUtils.isCreatable(time)) {
             authnRequest.setID(id + time);
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS), 
                     ISOChronology.getInstanceUTC()));

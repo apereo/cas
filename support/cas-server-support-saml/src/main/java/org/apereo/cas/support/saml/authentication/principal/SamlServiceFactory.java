@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
+import java.util.stream.Collectors;
 
 /**
  * The {@link SamlServiceFactory} creates {@link SamlService} objects.
@@ -34,8 +35,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         final String requestId;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            logger.debug("Request does not specify a {} or request body is empty",
-                    SamlProtocolConstants.CONST_PARAM_TARGET);
+            logger.debug("Request does not specify a {} or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
 
@@ -104,18 +104,12 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @return the request body
      */
     private String getRequestBody(final HttpServletRequest request) {
-        final StringBuilder builder = new StringBuilder();
         try(BufferedReader reader = request.getReader()) {
-
             if (reader == null) {
                 logger.debug("Request body could not be read because it's empty.");
                 return null;
             }
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-            return builder.toString();
+            return reader.lines().collect(Collectors.joining());
         } catch (final Exception e) {
             logger.trace("Could not obtain the saml request body from the http request", e);
             return null;

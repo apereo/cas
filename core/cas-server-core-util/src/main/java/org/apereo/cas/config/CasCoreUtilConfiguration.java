@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
@@ -15,6 +16,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 
 import javax.annotation.PostConstruct;
+import javax.validation.MessageInterpolator;
 import java.time.Duration;
 
 /**
@@ -31,6 +33,11 @@ public class CasCoreUtilConfiguration {
     @Bean
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
+    }
+
+    @Bean
+    public MessageInterpolator messageInterpolator() {
+        return new SpringAwareMessageMessageInterpolator();
     }
 
     @PostConstruct

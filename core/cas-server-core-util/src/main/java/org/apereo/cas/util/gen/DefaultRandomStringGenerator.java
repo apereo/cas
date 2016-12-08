@@ -55,7 +55,6 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
     @Override
     public String getNewString() {
         final byte[] random = getNewStringAsBytes();
-
         return convertBytesToString(random);
     }
 

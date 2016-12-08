@@ -60,19 +60,19 @@ public final class LdapTestUtils {
      * @throws IOException On IO errors reading LDIF.
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
-        final StringBuilder builder = new StringBuilder();
+        final String ldapString;
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(BASE_DN_PLACEHOLDER)) {
-                    builder.append(line.replace(BASE_DN_PLACEHOLDER, baseDn));
-                } else {
-                    builder.append(line);
-                }
-                builder.append(NEWLINE);
-            }
+            ldapString = reader.lines()
+                    .map(line -> {
+                        if (line.contains(BASE_DN_PLACEHOLDER)) {
+                            return line.replace(BASE_DN_PLACEHOLDER, baseDn);
+                        } else {
+                            return line;
+                        }
+                    })
+                    .collect(Collectors.joining(NEWLINE));
         }
-        return new LdifReader(new StringReader(builder.toString())).read().getEntries();
+        return new LdifReader(new StringReader(ldapString)).read().getEntries();
     }
 
     /**

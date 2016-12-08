@@ -4,7 +4,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -18,7 +18,7 @@ import org.pac4j.core.exception.CredentialsException;
  */
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
-    private OAuthValidator validator;
+    private OAuth20Validator validator;
 
     private ServicesManager servicesManager;
 
@@ -42,11 +42,11 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
         credentials.setUserProfile(profile);
     }
 
-    public OAuthValidator getValidator() {
+    public OAuth20Validator getValidator() {
         return this.validator;
     }
 
-    public void setValidator(final OAuthValidator validator) {
+    public void setValidator(final OAuth20Validator validator) {
         this.validator = validator;
     }
 

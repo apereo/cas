@@ -132,6 +132,9 @@ CAS overlay to be able to resolve dependencies:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
+<div class="alert alert-warning"><strong>Connector Compatibility</strong><p>Note that at this time given LDAP library compatibilities between CAS and Shibboleth,
+the LDAP data connector is not quite supported by CAS.</p></div>
+
 An example `attribue-resolver.xml` file could be:
 
 ```xml
@@ -164,5 +167,4 @@ An example `attribue-resolver.xml` file could be:
         </dc:Attribute>
     </resolver:DataConnector>
 </resolver:AttributeResolver>
-
 ```

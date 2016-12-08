@@ -16,7 +16,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthenticationRequestServiceSelectionStrategy;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenController;
@@ -25,6 +25,7 @@ import org.apereo.cas.support.oauth.web.OAuth20AuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeController;
 import org.apereo.cas.support.oauth.web.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.OAuth20ConsentApprovalViewResolver;
+import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileController;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -43,12 +44,13 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.client.RedirectAction;
+import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.http.CallbackUrlResolver;
+import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.CallbackController;
@@ -66,11 +68,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
 
@@ -111,13 +110,11 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
-    @Bean(autowire = Autowire.BY_NAME)
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
 
     @ConditionalOnMissingBean(name = "oauthCasClientRedirectActionBuilder")
-    @Bean(autowire = Autowire.BY_NAME)
     public OAuthCasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
@@ -205,32 +202,17 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
     }
 
+    @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
-    public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
+    public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), "clientBasicAuth,clientForm,userForm");
     }
 
+    @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                     final Object handler) throws Exception {
-                final String requestPath = request.getRequestURI();
-                Pattern pattern = Pattern.compile('/' + OAuthConstants.ACCESS_TOKEN_URL + "(/)*$");
-
-                if (pattern.matcher(requestPath).find()) {
-                    return requiresAuthenticationAccessTokenInterceptor().preHandle(request, response, handler);
-                }
-
-                pattern = Pattern.compile('/' + OAuthConstants.AUTHORIZE_URL + "(/)*$");
-                if (pattern.matcher(requestPath).find()) {
-                    return requiresAuthenticationAuthorizeInterceptor().preHandle(request, response, handler);
-                }
-                return true;
-
-            }
-        };
+        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
+                requiresAuthenticationAuthorizeInterceptor());
     }
 
     @Override
@@ -244,6 +226,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultOAuthCasClientRedirectActionBuilder();
     }
 
+    @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         final OAuthClientAuthenticator c = new OAuthClientAuthenticator();
@@ -252,6 +235,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         final OAuthUserAuthenticator w = new OAuthUserAuthenticator();
@@ -259,11 +243,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return w;
     }
 
+    @ConditionalOnMissingBean(name = "oAuthValidator")
     @Bean
-    public OAuthValidator oAuthValidator() {
-        return new OAuthValidator();
+    public OAuth20Validator oAuthValidator() {
+        return new OAuth20Validator();
     }
 
+    @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
     public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();

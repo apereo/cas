@@ -25,7 +25,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlService.json");
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifyResponse() {
@@ -109,9 +109,9 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
         final SamlService serviceWritten = new SamlServiceFactory().createService(request);
 
-        mapper.writeValue(JSON_FILE, serviceWritten);
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
 
-        final SamlService serviceRead = mapper.readValue(JSON_FILE, SamlService.class);
+        final SamlService serviceRead = MAPPER.readValue(JSON_FILE, SamlService.class);
 
         assertEquals(serviceWritten, serviceRead);
     }

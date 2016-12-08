@@ -51,7 +51,6 @@ public class ShibbolethPersonAttributeDao extends BasePersonAttributeDao {
         }
     }
 
-
     @Override
     public Set<IPersonAttributes> getPeople(final Map<String, Object> query) {
         throw new UnsupportedOperationException();

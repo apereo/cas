@@ -32,7 +32,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenAuthenticationConfiguration {
 
-
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -87,7 +86,6 @@ public class TokenAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

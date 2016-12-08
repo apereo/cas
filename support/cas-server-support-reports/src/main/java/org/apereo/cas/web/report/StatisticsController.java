@@ -10,8 +10,8 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,10 +56,9 @@ public class StatisticsController implements ServletContextAware {
      * @param httpServletResponse the http servlet response
      * @return the availability
      */
-    @RequestMapping(value = "/getAvailability", method = RequestMethod.GET)
+    @GetMapping(value = "/getAvailability")
     @ResponseBody
-    public Map<String, Object> getAvailability(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getAvailability(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
         final Map<String, Object> model = new HashMap<>();
         final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
         model.put("upTime", diff.getSeconds());
@@ -73,10 +72,9 @@ public class StatisticsController implements ServletContextAware {
      * @param httpServletResponse the http servlet response
      * @return the memory stats
      */
-    @RequestMapping(value = "/getMemStats", method = RequestMethod.GET)
+    @GetMapping(value = "/getMemStats")
     @ResponseBody
-    public Map<String, Object> getMemoryStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getMemoryStats(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
         final Map<String, Object> model = new HashMap<>();
         model.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
         model.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
@@ -91,10 +89,9 @@ public class StatisticsController implements ServletContextAware {
      * @param httpServletResponse the http servlet response
      * @return the ticket stats
      */
-    @RequestMapping(value = "/getTicketStats", method = RequestMethod.GET)
+    @GetMapping(value = "/getTicketStats")
     @ResponseBody
-    public Map<String, Object> getTicketStats(final HttpServletRequest httpServletRequest,
-                                              final HttpServletResponse httpServletResponse) {
+    public Map<String, Object> getTicketStats(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;
@@ -137,10 +134,8 @@ public class StatisticsController implements ServletContextAware {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, 
-                                                 final HttpServletResponse httpServletResponse)
-                throws Exception {
+    @GetMapping
+    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws Exception {
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());

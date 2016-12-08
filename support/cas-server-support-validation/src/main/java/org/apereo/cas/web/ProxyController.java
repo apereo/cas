@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +71,7 @@ public class ProxyController {
      * @return ModelAndView containing a view name of either
      * {@code casProxyFailureView} or {@code casProxySuccessView}
      */
-    @RequestMapping(path = "/proxy", method = RequestMethod.GET)
+    @GetMapping(path = "/proxy")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
         final Service targetService = getTargetService(request);

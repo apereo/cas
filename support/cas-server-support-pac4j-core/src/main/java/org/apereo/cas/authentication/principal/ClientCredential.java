@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
 public class ClientCredential implements Credential, Serializable {
 
     /**
-     * The servialVersionUID.
+     * The serialVersionUID.
      */
     private static final long serialVersionUID = -7883301304291894763L;
 
@@ -79,5 +80,12 @@ public class ClientCredential implements Credential, Serializable {
 
     public void setTypedIdUsed(final boolean typedIdUsed) {
         this.typedIdUsed = typedIdUsed;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", getId())
+                .toString();
     }
 }
