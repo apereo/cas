@@ -18,6 +18,7 @@
     <Loggers>
         <AsyncLogger name="org.springframework" level="warn" />
         <AsyncLogger name="org.springframework.amqp" level="off" />
+        <AsyncLogger name="org.springframework.boot.devtools" level="off" additivity="false" />
         <AsyncLogger name="org.springframework.webflow" level="warn" />
         <AsyncLogger name="org.springframework.web" level="warn" />
         <AsyncLogger name="org.springframework.context.annotation" level="off" />

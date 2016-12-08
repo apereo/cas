@@ -1,9 +1,12 @@
 package org.apereo.cas.configuration.model.webapp.mgmt;
 
+import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.util.List;
 
 /**
  * This is {@link ManagementWebappProperties}.
@@ -12,21 +15,21 @@ import org.springframework.core.io.Resource;
  * @since 5.0.0
  */
 public class ManagementWebappProperties {
-    private String adminRoles = "ROLE_ADMIN";
+    private List<String> adminRoles = Lists.newArrayList("ROLE_ADMIN");
     private String serverName = "https://localhost:8443";
     private String defaultLocale = "en";
-    private String authzAttributes;
-    
+    private List<String> authzAttributes = Lists.newArrayList();
+
     @NestedConfigurationProperty
     private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
 
     private Resource userPropertiesFile = new ClassPathResource("user-details.properties");
-    
-    public String getAdminRoles() {
+
+    public List<String> getAdminRoles() {
         return adminRoles;
     }
 
-    public void setAdminRoles(final String adminRoles) {
+    public void setAdminRoles(final List<String> adminRoles) {
         this.adminRoles = adminRoles;
     }
 
@@ -54,11 +57,11 @@ public class ManagementWebappProperties {
         this.ldapAuthz = ldapAuthz;
     }
 
-    public String getAuthzAttributes() {
+    public List<String> getAuthzAttributes() {
         return authzAttributes;
     }
 
-    public void setAuthzAttributes(final String authzAttributes) {
+    public void setAuthzAttributes(final List<String> authzAttributes) {
         this.authzAttributes = authzAttributes;
     }
 

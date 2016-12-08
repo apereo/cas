@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseGenerator {
+
+    private static final JsonFactory JSON_FACTORY = new JsonFactory(new ObjectMapper().findAndRegisterModules());
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -52,8 +54,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
 
         if (registeredService.isJsonFormat()) {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper().findAndRegisterModules());
-            try(JsonGenerator jsonGenerator = jsonFactory.createGenerator(response.getWriter())) {
+            try(JsonGenerator jsonGenerator = JSON_FACTORY.createGenerator(response.getWriter())) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
                         refreshTokenId, timeout, service, registeredService);

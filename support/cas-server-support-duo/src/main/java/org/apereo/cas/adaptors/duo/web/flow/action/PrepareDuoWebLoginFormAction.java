@@ -24,6 +24,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
         this.provider = provider;
     }
 
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();

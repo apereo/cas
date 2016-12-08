@@ -147,8 +147,7 @@ public class CasJdbcConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
-        final QueryDatabaseAuthenticationHandler h =
-                new QueryDatabaseAuthenticationHandler();
+        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler();
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setSql(b.getSql());
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -159,7 +158,6 @@ public class CasJdbcConfiguration {
         }
 
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
 
