@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders;
 import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -13,6 +14,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -66,7 +68,9 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest, 
                 request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
-        return encode(service, finalResponse, response, adaptor);
+        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        logger.debug("RelayState is [{}]", relayState);
+        return encode(service, finalResponse, response, adaptor, relayState);
     }
 
     /**
@@ -134,12 +138,14 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @param samlResponse the saml response
      * @param httpResponse the http response
      * @param adaptor      the adaptor
+     * @param relayState   the relay state
      * @return the response
      * @throws SamlException the saml exception
      */
     protected Response encode(final SamlRegisteredService service, final Response samlResponse,
                               final HttpServletResponse httpResponse,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                              final String relayState) throws SamlException {
         try {
             final HTTPPostEncoder encoder = new HTTPPostEncoder();
             encoder.setHttpServletResponse(httpResponse);
@@ -147,6 +153,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
             final MessageContext outboundMessageContext = new MessageContext<>();
             SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
             outboundMessageContext.setMessage(samlResponse);
+            SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
             encoder.setMessageContext(outboundMessageContext);
             encoder.initialize();
             encoder.encode();

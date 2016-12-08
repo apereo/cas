@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Lists;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;

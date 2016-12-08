@@ -287,15 +287,16 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * Redirect request for authentication.
      *
-     * @param authnRequest the authn request
-     * @param request      the request
-     * @param response     the response
+     * @param pair     the pair
+     * @param request  the request
+     * @param response the response
      * @throws Exception the exception
      */
-    protected void issueAuthenticationRequestRedirect(final AuthnRequest authnRequest,
+    protected void issueAuthenticationRequestRedirect(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                       final HttpServletRequest request,
                                                       final HttpServletResponse response) throws Exception {
-        final String serviceUrl = constructServiceUrl(request, response, authnRequest);
+        final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getLeft());
+        final String serviceUrl = constructServiceUrl(request, response, pair);
         logger.debug("Created service url [{}]", serviceUrl);
 
         final String initialUrl = CommonUtils.constructRedirectUrl(this.loginUrl,
@@ -343,16 +344,19 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * Construct service url string.
      *
-     * @param request      the request
-     * @param response     the response
-     * @param authnRequest the authn request
+     * @param request  the request
+     * @param response the response
+     * @param pair     the pair
      * @return the string
      * @throws SamlException the saml exception
      */
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
-                                         final AuthnRequest authnRequest)
+                                         final Pair<? extends SignableSAMLObject, MessageContext> pair)
             throws SamlException {
+        final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getLeft());
+        final MessageContext messageContext = pair.getRight();
+
         try (StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(
@@ -363,6 +367,9 @@ public abstract class AbstractSamlProfileHandlerController {
             builder.getQueryParams().add(
                     new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, 
                     samlRequest));
+            builder.getQueryParams().add(
+                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, 
+                    SAMLBindingSupport.getRelayState(messageContext)));
             final String url = builder.buildURL();
 
             logger.debug("Built service callback url [{}]", url);
@@ -408,7 +415,7 @@ public abstract class AbstractSamlProfileHandlerController {
         }
 
         SamlUtils.logSamlObject(this.configBean, authnRequest);
-        issueAuthenticationRequestRedirect(authnRequest, request, response);
+        issueAuthenticationRequestRedirect(pair, request, response);
     }
 
     public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {

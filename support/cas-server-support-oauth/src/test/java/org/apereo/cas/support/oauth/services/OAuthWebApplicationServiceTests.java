@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.junit.Test;
 
@@ -17,8 +19,7 @@ import static org.junit.Assert.*;
 public class OAuthWebApplicationServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthWebApplicationService.json");
-
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void verifySerializeACompletePrincipalToJson() throws IOException {
@@ -27,12 +28,10 @@ public class OAuthWebApplicationServiceTests {
         service.setServiceId("testId");
         service.setTheme("theme");
         service.setDescription("description");
-        final OAuthWebApplicationService serviceWritten = new OAuthWebApplicationService(service);
-
-        mapper.writeValue(JSON_FILE, serviceWritten);
-
-        final OAuthWebApplicationService serviceRead = mapper.readValue(JSON_FILE, OAuthWebApplicationService.class);
-
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final WebApplicationService serviceWritten =factory.createService(service.getServiceId());
+        MAPPER.writeValue(JSON_FILE, serviceWritten);
+        final WebApplicationService serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);
     }
 }
