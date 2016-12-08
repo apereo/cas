@@ -11,8 +11,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class TokenAuthenticationProperties {
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     private String name;
 

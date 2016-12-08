@@ -25,10 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,8 +76,7 @@ public class TicketsResource {
 
     private TicketRegistrySupport ticketRegistrySupport;
 
-    private final ObjectWriter jacksonPrettyWriter =
-            new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
+    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     /**
      * Create new ticket granting ticket.
@@ -86,7 +86,7 @@ public class TicketsResource {
      * @return ResponseEntity representing RESTful response
      * @throws JsonProcessingException in case of JSON parsing failure
      */
-    @RequestMapping(value = "/v1/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) throws JsonProcessingException {
 
@@ -136,7 +136,7 @@ public class TicketsResource {
      * @param id ticket id
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/tickets/{id:.+}", method = RequestMethod.GET)
+    @GetMapping(value = "/v1/tickets/{id:.+}")
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             this.centralAuthenticationService.getTicket(id);
@@ -156,7 +156,7 @@ public class TicketsResource {
      * @param tgtId       ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = "/v1/tickets/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
@@ -187,7 +187,7 @@ public class TicketsResource {
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
-    @RequestMapping(value = "/v1/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/v1/tickets/{tgtId:.+}")
     public ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);

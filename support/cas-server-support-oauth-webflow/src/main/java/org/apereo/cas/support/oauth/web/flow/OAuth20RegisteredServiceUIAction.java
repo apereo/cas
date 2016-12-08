@@ -12,13 +12,16 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
+
 /**
  * This is {@link OAuth20RegisteredServiceUIAction}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class OAuth20RegisteredServiceUIAction extends AbstractAction {
+public class OAuth20RegisteredServiceUIAction extends AbstractAction implements Serializable {
+    private static final long serialVersionUID = 5588216693657081923L;
     private final ServicesManager servicesManager;
 
     private final AuthenticationRequestServiceSelectionStrategy serviceSelectionStrategy;
@@ -41,6 +44,7 @@ public class OAuth20RegisteredServiceUIAction extends AbstractAction {
                 final OAuthRegisteredService oauthService = OAuthRegisteredService.class.cast(registeredService);
                 WebUtils.putServiceUserInterfaceMetadata(requestContext,
                         new BaseRegisteredServiceUserInterfaceInfo(oauthService) {
+                            private static final long serialVersionUID = 5929362835967717414L;
                         });
             }
         }
