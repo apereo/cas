@@ -196,14 +196,14 @@ public class DefaultServicesManagerImplTests {
 
     @Test
     public void verifyServiceCanBeUpdated() throws Exception {
-        int serviceId = 100;
+        int serviceId = 2500;
         String description = "desc";
 
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(serviceId);
-        service.setName("test");
-        service.setServiceId("test");
-        service.setEvaluationOrder(200);
+        service.setName("serviceName");
+        service.setServiceId("serviceId");
+        service.setEvaluationOrder(1000);
 
         defaultServicesManagerImpl.save(service);
 
@@ -218,14 +218,14 @@ public class DefaultServicesManagerImplTests {
 
     @Test
     public void verifyServiceIsUpdatedAfterALoad() throws Exception {
-        int serviceId = 100;
+        int serviceId = 2500;
         String description = "desc";
 
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(serviceId);
-        service.setName("test");
-        service.setServiceId("test");
-        service.setEvaluationOrder(200);
+        service.setName("serviceName");
+        service.setServiceId("serviceId");
+        service.setEvaluationOrder(1000);
 
         dao.save(service);
 
