@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
@@ -27,7 +29,8 @@ import java.util.List;
  */
 public class LogoutAction extends AbstractLogoutAction {
 
-    /** The services manager. */
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     private ServicesManager servicesManager;
 
     /**
@@ -69,6 +72,10 @@ public class LogoutAction extends AbstractLogoutAction {
             // otherwise, finish the logout process
             return new Event(this, FINISH_EVENT);
         }
+    }
+
+    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
