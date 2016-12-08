@@ -45,7 +45,8 @@ and will also **NOT** report back a multifactor-enabled authentication context b
 
 <div class="alert alert-info"><strong>Subscription Qualification</strong><p>This behavior
 requires that the Duo Security integration provides sufficient access so CAS can query
-the account status via <a href="https://duo.com/docs/adminapi">Duo Security Admin APIs</a>.</p></div>
+the account status via <a href="https://duo.com/docs/adminapi">Duo Security Admin APIs</a>. Be sure
+to configure the relevant settings and allow the account full Admin API permissions and access</p>.</div>
 
 ## Non-Browser MFA
 
