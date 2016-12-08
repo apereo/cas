@@ -80,11 +80,9 @@ public class CasCoreConfiguration {
     @Autowired
     @Bean
     public CentralAuthenticationService centralAuthenticationService(@Qualifier("authenticationRequestServiceSelectionStrategies")
-                                                                     final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
-                                                                     @Qualifier("principalFactory")
-                                                                     final PrincipalFactory principalFactory,
-                                                                     @Qualifier("protocolTicketCipherExecutor")
-                                                                     final CipherExecutor<String, String> cipherExecutor) {
+                                        final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+                                        @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+                                        @Qualifier("protocolTicketCipherExecutor") final CipherExecutor<String, String> cipherExecutor) {
         final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
         impl.setTicketRegistry(this.ticketRegistry);
         impl.setServicesManager(this.servicesManager);

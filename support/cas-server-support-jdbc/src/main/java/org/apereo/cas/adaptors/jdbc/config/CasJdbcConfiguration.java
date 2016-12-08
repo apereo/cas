@@ -64,7 +64,7 @@ public class CasJdbcConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
+    private Map authenticationHandlersResolvers;
 
     @PostConstruct
     public void initializeJdbcAuthenticationHandlers() {
