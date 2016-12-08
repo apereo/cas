@@ -1,4 +1,4 @@
-package org.apereo.cas;
+package org.apereo.cas.token;
 
 /**
  * This is {@link TokenConstants}, an interface to hold constants relates to token authentication.

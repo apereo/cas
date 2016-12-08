@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
-import org.apereo.cas.configuration.model.support.jwt.JwtTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -22,11 +21,11 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
-    
+
     @NestedConfigurationProperty
     private CouchbaseTicketRegistryProperties couchbase =
             new CouchbaseTicketRegistryProperties();
-    
+
     @NestedConfigurationProperty
     private EhcacheProperties ehcache = new EhcacheProperties();
 
@@ -42,20 +41,8 @@ public class TicketRegistryProperties {
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
 
-    @NestedConfigurationProperty
-    private JwtTicketRegistryProperties jwt = new JwtTicketRegistryProperties();
-
-
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
-
-    public JwtTicketRegistryProperties getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(final JwtTicketRegistryProperties jwt) {
-        this.jwt = jwt;
-    }
 
     public InMemory getInMemory() {
         return inMemory;
@@ -144,7 +131,7 @@ public class TicketRegistryProperties {
         public void setCrypto(final CryptographyProperties crypto) {
             this.crypto = crypto;
         }
-        
+
         public int getInitialCapacity() {
             return initialCapacity;
         }
@@ -169,7 +156,7 @@ public class TicketRegistryProperties {
             this.concurrency = concurrency;
         }
     }
-    
+
     public static class Cleaner {
         private boolean enabled = true;
         private String startDelay = "PT10S";

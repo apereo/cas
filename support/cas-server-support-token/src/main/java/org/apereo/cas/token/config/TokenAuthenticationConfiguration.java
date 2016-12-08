@@ -1,17 +1,17 @@
-package org.apereo.cas.config;
+package org.apereo.cas.token.config;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.token.authentication.handler.support.TokenAuthenticationHandler;
+import org.apereo.cas.token.webflow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

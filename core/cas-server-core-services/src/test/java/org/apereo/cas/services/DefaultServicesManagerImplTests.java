@@ -205,13 +205,13 @@ public class DefaultServicesManagerImplTests {
         service.setServiceId("serviceId");
         service.setEvaluationOrder(1000);
 
-        defaultServicesManagerImpl.save(service);
+        defaultServicesManager.save(service);
 
         service.setDescription(description);
 
-        defaultServicesManagerImpl.save(service);
+        defaultServicesManager.save(service);
 
-        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(s -> s instanceof RegexRegisteredService);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
@@ -226,16 +226,13 @@ public class DefaultServicesManagerImplTests {
         service.setName("serviceName");
         service.setServiceId("serviceId");
         service.setEvaluationOrder(1000);
-
         dao.save(service);
-
         service.setDescription(description);
 
         dao.save(service);
+        defaultServicesManager.load();
 
-        defaultServicesManagerImpl.load();
-
-        final Collection<RegisteredService> serviceRetrieved = defaultServicesManagerImpl.findServiceBy(s -> s instanceof RegexRegisteredService);
+        final Collection<RegisteredService> serviceRetrieved = defaultServicesManager.findServiceBy(s -> s instanceof RegexRegisteredService);
 
         assertEquals(description, serviceRetrieved.toArray(new RegisteredService[]{})[0].getDescription());
     }
