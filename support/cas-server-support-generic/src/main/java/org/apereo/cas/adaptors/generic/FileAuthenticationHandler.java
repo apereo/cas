@@ -1,19 +1,17 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
 /**
@@ -89,20 +87,14 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-
-        try (BufferedReader bufferedReader =
-                     new BufferedReader(new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                final String[] lineFields = line.split(this.separator);
-                final String userOnRecord = lineFields[0];
-                final String passOnRecord = lineFields[1];
-                if (username.equals(userOnRecord)) {
-                    return passOnRecord;
-                }
-                line = bufferedReader.readLine();
-            }
-        }
-        return null;
+        return Files.lines(fileName.getFile().toPath())
+                .map(line -> line.split(this.separator))
+                .filter(lineFields -> {
+                    final String userOnRecord = lineFields[0];
+                    return username.equals(userOnRecord);
+                })
+                .map(lineFields -> lineFields[1])
+                .findFirst()
+                .orElse(null);
     }
 }
