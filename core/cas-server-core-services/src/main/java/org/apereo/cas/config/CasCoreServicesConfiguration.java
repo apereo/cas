@@ -46,7 +46,7 @@ import java.util.List;
 public class CasCoreServicesConfiguration {
 
     private static final String BEAN_NAME_SERVICE_REGISTRY_DAO = "serviceRegistryDao";
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -55,15 +55,15 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    
+
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
         final DefaultMultifactorTriggerSelectionStrategy s = new DefaultMultifactorTriggerSelectionStrategy();
-        
+
         s.setGlobalPrincipalAttributeNameTriggers(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
         s.setRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-        
+
         return s;
     }
 
@@ -73,6 +73,7 @@ public class CasCoreServicesConfiguration {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
 
+    @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
     @Bean
     public ServiceFactory webApplicationServiceFactory() {
         return new WebApplicationServiceFactory();
@@ -146,7 +147,7 @@ public class CasCoreServicesConfiguration {
         list.add(webApplicationServiceFactory());
         return list;
     }
-    
+
     /**
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
