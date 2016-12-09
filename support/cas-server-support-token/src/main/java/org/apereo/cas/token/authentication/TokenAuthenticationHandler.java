@@ -1,4 +1,4 @@
-package org.apereo.cas.token.authentication.handler.support;
+package org.apereo.cas.token.authentication;
 
 import com.google.common.collect.Sets;
 import com.nimbusds.jose.Algorithm;
@@ -6,7 +6,6 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -14,6 +13,7 @@ import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractT
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.token.TokenConstants;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -70,7 +70,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
             final JwtAuthenticator a = new JwtAuthenticator();
             a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, signingAlg));
-            
+
             if (StringUtils.isNotBlank(encryptionSecret)) {
                 sets = Sets.newHashSet();
                 sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
@@ -80,9 +80,9 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(JWEAlgorithm.Family.PBES2);
                 sets.addAll(JWEAlgorithm.Family.RSA);
                 sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
-                
+
                 final JWEAlgorithm encAlg = findAlgorithmFamily(sets, encryptionSecretAlg);
-                
+
                 sets = Sets.newHashSet();
                 sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
                 sets.addAll(EncryptionMethod.Family.AES_GCM);

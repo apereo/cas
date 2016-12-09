@@ -7,7 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.TokenConstants;
-import org.apereo.cas.token.authentication.handler.support.TokenCredential;
+import org.apereo.cas.token.authentication.TokenCredential;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.apereo.cas.token.authentication.handler.support;
+package org.apereo.cas.token.authentication;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
