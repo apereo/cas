@@ -14,19 +14,16 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author battags
  * @since 3.0.0
- *
  */
-public class DefaultServicesManagerImplTests {
+public class DefaultServicesManagerTests {
 
-    private DefaultServicesManager defaultServicesManager;
-    private InMemoryServiceRegistryDaoImpl dao;
+    private ServicesManager defaultServicesManager;
+    private ServiceRegistryDao dao;
 
     @Before
     public void setUp() throws Exception {
-        dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<>();
 
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -36,8 +33,7 @@ public class DefaultServicesManagerImplTests {
         r.setEvaluationOrder(1000);
 
         list.add(r);
-
-        dao.setRegisteredServices(list);
+        dao = new InMemoryServiceRegistryDaoImpl(list);
         this.defaultServicesManager = new DefaultServicesManager(dao);
         this.defaultServicesManager.load();
     }
@@ -134,7 +130,7 @@ public class DefaultServicesManagerImplTests {
         assertEquals(2, this.defaultServicesManager.getAllServices().size());
         assertTrue(this.defaultServicesManager.getAllServices().contains(r));
     }
-    
+
     @Test
     public void verifyRegexService() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -142,7 +138,7 @@ public class DefaultServicesManagerImplTests {
         r.setName("regex test");
         r.setServiceId("^http://www.test.edu.+");
         r.setEvaluationOrder(10000);
-                
+
         this.defaultServicesManager.save(r);
 
         final SimpleService service = new SimpleService("HTTP://www.TEST.edu/param=hello");
@@ -159,7 +155,7 @@ public class DefaultServicesManagerImplTests {
         assertNull(this.defaultServicesManager.findServiceBy(s));
         assertNull(this.defaultServicesManager.findServiceBy(1000));
     }
-    
+
     @Test
     public void verifyEvaluationOrderOfServices() {
         final RegexRegisteredService r = new RegexRegisteredService();
