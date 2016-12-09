@@ -1,5 +1,7 @@
 ---
+layout: null
 ---
+
 
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
