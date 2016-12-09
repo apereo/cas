@@ -31,7 +31,8 @@ public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
-    private static final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
+    private static final String ID = "test";
+    private static final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl(ID,
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     private static final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
@@ -111,7 +112,7 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsExpiredTrueBecauseOfRoot() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(ID,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
@@ -123,7 +124,7 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifyIsExpiredFalse() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(ID,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 CoreAuthenticationTestUtils.getService(),
@@ -135,7 +136,7 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyTicketGrantingTicket() throws AbstractTicketException {
         final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(ID,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 CoreAuthenticationTestUtils.getService(),
@@ -150,7 +151,7 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyTicketGrantingTicketGrantedTwice() throws AbstractTicketException {
         final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", 
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl(ID,
                 CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 CoreAuthenticationTestUtils.getService(),
