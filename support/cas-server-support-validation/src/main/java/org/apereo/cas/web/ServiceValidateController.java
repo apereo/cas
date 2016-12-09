@@ -24,8 +24,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
      */
     @GetMapping(path="/serviceValidate")
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 
