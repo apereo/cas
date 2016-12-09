@@ -72,4 +72,9 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     public int hashCode() {
         return new HashCodeBuilder().toHashCode();
     }
+
+    @Override
+    public int compareTo(final WebApplicationService o) {
+        return Integer.MIN_VALUE;
+    }
 }

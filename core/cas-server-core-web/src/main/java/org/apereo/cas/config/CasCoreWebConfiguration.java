@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -12,7 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
 
 import java.util.ArrayList;
@@ -32,21 +29,12 @@ public class CasCoreWebConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    @Qualifier("serviceFactoryList")
+    private List serviceFactoryList;
 
-    @Lazy
-    @Bean
-    public List serviceFactoryList() {
-        final List<ServiceFactory> list = new ArrayList<>();
-        list.add(webApplicationServiceFactory);
-        return list;
-    }
-
-    @Lazy
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
-        return new DefaultArgumentExtractor(serviceFactoryList());
+        return new DefaultArgumentExtractor(serviceFactoryList);
     }
 
     @RefreshScope

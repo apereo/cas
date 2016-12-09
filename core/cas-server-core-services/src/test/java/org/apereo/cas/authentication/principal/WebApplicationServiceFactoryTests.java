@@ -16,9 +16,7 @@ public class WebApplicationServiceFactoryTests {
 
     @Test
     public void verifyServiceCreationSuccessfullyById() {
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService("testservice");
         assertNotNull(service);
     }
@@ -27,9 +25,7 @@ public class WebApplicationServiceFactoryTests {
     public void verifyServiceCreationSuccessfullyByService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
     }
@@ -38,9 +34,7 @@ public class WebApplicationServiceFactoryTests {
     public void verifyServiceCreationSuccessfullyByTargetService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
     }
@@ -51,10 +45,7 @@ public class WebApplicationServiceFactoryTests {
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
         request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "post");
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
-
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
         assertEquals(service.getArtifactId(), "ticket");
@@ -64,9 +55,7 @@ public class WebApplicationServiceFactoryTests {
     public void verifyServiceCreationNoService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
 
         final WebApplicationService service = factory.createService(request);
         assertNull(service);

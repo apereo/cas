@@ -16,12 +16,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
-    private final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder;
-
-    public WebApplicationServiceFactory(final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder) {
-        this.webApplicationServiceResponseBuilder = webApplicationServiceResponseBuilder;
-    }
-
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
         final String serviceToUse = getRequestedService(request);
@@ -64,8 +58,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
                                                                      final String serviceToUse) {
         final String artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
         final String id = cleanupUrl(serviceToUse);
-        final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse,
-                artifactId, this.webApplicationServiceResponseBuilder);
+        final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
         return newService;
     }
