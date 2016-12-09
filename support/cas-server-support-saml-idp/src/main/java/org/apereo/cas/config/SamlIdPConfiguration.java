@@ -89,7 +89,8 @@ public class SamlIdPConfiguration {
     @Qualifier("shibboleth.ParserPool")
     private BasicParserPool parserPool;
 
-    @javax.annotation.Resource(name = "webApplicationServiceFactory")
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired(required = false)

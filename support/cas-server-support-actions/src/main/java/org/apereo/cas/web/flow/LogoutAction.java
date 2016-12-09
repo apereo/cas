@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,9 +39,17 @@ public class LogoutAction extends AbstractLogoutAction {
      */
     private boolean followServiceRedirects;
 
+    public LogoutAction(final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                        final ServicesManager servicesManager,
+                        final boolean followServiceRedirects) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.servicesManager = servicesManager;
+        this.followServiceRedirects = followServiceRedirects;
+    }
+
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-            final RequestContext context) throws Exception {
+                                      final RequestContext context) throws Exception {
 
         boolean needFrontSlo = false;
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
@@ -57,7 +65,7 @@ public class LogoutAction extends AbstractLogoutAction {
 
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (this.followServiceRedirects && service != null) {
-            final Service webAppService = new WebApplicationServiceFactory().createService(service);
+            final Service webAppService = webApplicationServiceFactory.createService(service);
             final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
@@ -74,15 +82,7 @@ public class LogoutAction extends AbstractLogoutAction {
         }
     }
 
-    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
-
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
         this.followServiceRedirects = followServiceRedirects;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }

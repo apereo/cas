@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.CasRegisteredServicesRefreshEvent;
@@ -15,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -25,21 +25,20 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Default implementation of the {@link ServicesManager} interface. 
+ * Default implementation of the {@link ServicesManager} interface.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
-public class DefaultServicesManager implements ServicesManager {
+public class DefaultServicesManager implements ServicesManager, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManager.class);
+    private static final long serialVersionUID = -8581398063126547772L;
 
     private ServiceRegistryDao serviceRegistryDao;
 
-    private ServiceFactory serviceFactory;
-    
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private transient ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
@@ -58,10 +57,6 @@ public class DefaultServicesManager implements ServicesManager {
 
     public void setServiceRegistryDao(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
-    }
-
-    public void setServiceFactory(final ServiceFactory serviceFactory) {
-        this.serviceFactory = serviceFactory;
     }
 
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
@@ -126,7 +121,7 @@ public class DefaultServicesManager implements ServicesManager {
      * Load services that are provided by the DAO.
      */
     @Scheduled(initialDelayString = "${cas.serviceRegistry.startDelay:20000}",
-               fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
+            fixedDelayString = "${cas.serviceRegistry.repeatInterval:60000}")
     @Override
     @PostConstruct
     public void load() {
@@ -142,12 +137,12 @@ public class DefaultServicesManager implements ServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final String serviceId) {
-        return findServiceBy(this.serviceFactory.createService(serviceId));
+        return orderedServices.stream().filter(r -> r.matches(serviceId)).findFirst().orElse(null);
     }
 
     @Override
     public boolean matchesExistingService(final String service) {
-        return matchesExistingService(this.serviceFactory.createService(service));
+        return findServiceBy(service) != null;
     }
 
     @Override

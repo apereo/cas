@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
@@ -82,7 +83,7 @@ public class InitialFlowSetupActionCookieTests {
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(
-                new WebApplicationServiceFactory()
+                new WebApplicationServiceFactory(new WebApplicationServiceResponseBuilder())
         )};
         this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
         this.action.setCasProperties(casProperties);

@@ -1,12 +1,12 @@
 package org.apereo.cas.ticket.registry.support.kryo.serial;
 
-import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 
 /**
  * Serializer for {@link SimpleWebApplicationServiceImpl} class.
@@ -24,6 +24,8 @@ public class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebA
     @Override
     public SimpleWebApplicationServiceImpl read(final Kryo kryo, final Input input, final Class<SimpleWebApplicationServiceImpl> type) {
         final String id = kryo.readObject(input, String.class);
-        return new WebApplicationServiceFactory().createService(id, SimpleWebApplicationServiceImpl.class);
+        return new WebApplicationServiceFactory(
+                new WebApplicationServiceResponseBuilder()
+        ).createService(id, SimpleWebApplicationServiceImpl.class);
     }
 }

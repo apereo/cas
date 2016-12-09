@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -65,7 +66,9 @@ public class TicketsResourceTests {
                         new DefaultPrincipalElectionStrategy()));
         this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(mgmr);
-        this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
+        this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory(
+                new WebApplicationServiceResponseBuilder()
+        ));
         this.ticketsResourceUnderTest.setCentralAuthenticationService(this.casMock);
 
         when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());

@@ -1,7 +1,14 @@
 package org.apereo.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -27,6 +34,21 @@ public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperControll
 
     private OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver;
 
+    public OAuth20CallbackAuthorizeController(final ServicesManager servicesManager,
+                                              final TicketRegistry ticketRegistry,
+                                              final OAuth20Validator validator,
+                                              final AccessTokenFactory accessTokenFactory,
+                                              final PrincipalFactory principalFactory,
+                                              final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                              final Config config,
+                                              final CallbackController callbackController,
+                                              final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+        this.config = config;
+        this.callbackController = callbackController;
+        this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
+    }
+
     @PostConstruct
     private void postConstruct() {
         this.callbackController.setConfig(this.config);
@@ -47,17 +69,5 @@ public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperControll
         final J2EContext ctx = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(ctx);
         return oAuth20CallbackAuthorizeViewResolver.resolve(ctx, manager, url);
-    }
-
-    public void setConfig(final Config config) {
-        this.config = config;
-    }
-
-    public void setCallbackController(final CallbackController callbackController) {
-        this.callbackController = callbackController;
-    }
-
-    public void setAuth20CallbackAuthorizeViewResolver(final OAuth20CallbackAuthorizeViewResolver oAuth20CallbackAuthorizeViewResolver) {
-        this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
     }
 }

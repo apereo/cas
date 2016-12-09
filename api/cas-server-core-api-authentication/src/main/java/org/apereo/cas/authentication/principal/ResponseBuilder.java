@@ -7,11 +7,12 @@ import java.io.Serializable;
 /**
  * Represents the task of building a CAS response
  * that is returned by a service.
+ *
+ * @param <T> the type parameter
  * @author Misagh Moayyed
- * @param <T>   the type parameter
  * @since 4.2.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
 
     /**
@@ -21,7 +22,7 @@ public interface ResponseBuilder<T extends WebApplicationService> extends Serial
      * as part of the response. If the response type
      * is not recognized, an error must be thrown back.
      *
-     * @param service the service
+     * @param service  the service
      * @param ticketId the ticket id
      * @return the response
      */

@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth;
 
 /**
  * The OAuth response types (on the authorize request).

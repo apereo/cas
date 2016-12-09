@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.logout.DefaultLogoutRequest;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
@@ -72,8 +73,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
 
-        this.logoutAction = new LogoutAction();
-        this.logoutAction.setServicesManager(this.serviceManager);
+        this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, false);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "TestService");
         this.logoutAction.setFollowServiceRedirects(false);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
@@ -106,7 +106,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
 
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "TestService");
         final RegexRegisteredService impl = new RegexRegisteredService();
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");

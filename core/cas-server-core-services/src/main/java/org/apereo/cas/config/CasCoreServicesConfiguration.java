@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
@@ -29,10 +30,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,15 +75,14 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
     @Bean
     public ServiceFactory webApplicationServiceFactory() {
-        return new WebApplicationServiceFactory();
+        return new WebApplicationServiceFactory(new WebApplicationServiceResponseBuilder());
     }
 
     @RefreshScope
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
+    public CasAttributeEncoder casAttributeEncoder(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO)
                                                    final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultCasAttributeEncoder e =
-                new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao));
+        final DefaultCasAttributeEncoder e = new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao));
         e.setCipherExecutor(registeredServiceCipherExecutor());
         return e;
     }
@@ -104,12 +102,11 @@ public class CasCoreServicesConfiguration {
                                            final ServiceRegistryDao serviceRegistryDao) {
         final DefaultServicesManager impl = new DefaultServicesManager();
         impl.setServiceRegistryDao(serviceRegistryDao);
-        impl.setServiceFactory(this.webApplicationServiceFactory());
         return impl;
     }
 
-    @ConditionalOnMissingBean(name = "serviceRegistryDao")
-    @Bean(name = {"serviceRegistryDao", "inMemoryServiceRegistryDao"})
+    @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
+    @Bean(name = {BEAN_NAME_SERVICE_REGISTRY_DAO, "inMemoryServiceRegistryDao"})
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
         final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
         if (context.containsBean("inMemoryRegisteredServices")) {
@@ -138,14 +135,6 @@ public class CasCoreServicesConfiguration {
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    @Lazy
-    @Bean
-    public List serviceFactoryList() {
-        final List<ServiceFactory> list = new ArrayList<>();
-        list.add(webApplicationServiceFactory());
-        return list;
     }
 
     /**

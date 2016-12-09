@@ -1,14 +1,15 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
@@ -32,7 +33,8 @@ public final class RegisteredServiceTestUtils {
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
 
-    private RegisteredServiceTestUtils() {}
+    private RegisteredServiceTestUtils() {
+    }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -65,6 +67,7 @@ public final class RegisteredServiceTestUtils {
 
         return usernamePasswordCredentials;
     }
+
     public static Service getService() {
         return getService(CONST_TEST_URL);
     }
@@ -77,7 +80,9 @@ public final class RegisteredServiceTestUtils {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         final AbstractWebApplicationService result = (AbstractWebApplicationService)
-                new WebApplicationServiceFactory().createService(request);
+                new WebApplicationServiceFactory(
+                        new WebApplicationServiceResponseBuilder()
+                ).createService(request);
         return result;
     }
 

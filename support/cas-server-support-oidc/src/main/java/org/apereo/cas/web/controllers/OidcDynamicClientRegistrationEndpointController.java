@@ -6,10 +6,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationResponse;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
-import org.apereo.cas.support.oauth.web.OAuthGrantType;
-import org.apereo.cas.support.oauth.web.OAuthResponseType;
+import org.apereo.cas.support.oauth.OAuthGrantType;
+import org.apereo.cas.support.oauth.OAuthResponseType;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.http.HttpStatus;
@@ -33,16 +40,19 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
     private RandomStringGenerator clientIdGenerator;
     private RandomStringGenerator clientSecretGenerator;
 
-    public void setClientIdGenerator(final RandomStringGenerator clientIdGenerator) {
-        this.clientIdGenerator = clientIdGenerator;
-    }
-
-    public void setClientSecretGenerator(final RandomStringGenerator clientSecretGenerator) {
-        this.clientSecretGenerator = clientSecretGenerator;
-    }
-
-    public void setClientRegistrationRequestSerializer(final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer) {
+    public OidcDynamicClientRegistrationEndpointController(final ServicesManager servicesManager,
+                                                           final TicketRegistry ticketRegistry,
+                                                           final OAuth20Validator validator,
+                                                           final AccessTokenFactory accessTokenFactory,
+                                                           final PrincipalFactory principalFactory,
+                                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                           final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer,
+                                                           final RandomStringGenerator clientIdGenerator,
+                                                           final RandomStringGenerator clientSecretGenerator) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
         this.clientRegistrationRequestSerializer = clientRegistrationRequestSerializer;
+        this.clientIdGenerator = clientIdGenerator;
+        this.clientSecretGenerator = clientSecretGenerator;
     }
 
     /**
@@ -85,7 +95,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                     .concat(clientResponse.getGrantTypes().toString())
                     .concat(" and response types ")
                     .concat(clientResponse.getResponseTypes().toString()));
-            this.servicesManager.save(registeredService);
+            getServicesManager().save(registeredService);
             return new ResponseEntity(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);

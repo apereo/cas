@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
@@ -62,7 +63,7 @@ public class SamlRegisteredServiceTests {
         final DefaultServicesManager impl = new DefaultServicesManager(dao);
         impl.load();
 
-        final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
+        final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory(new WebApplicationServiceResponseBuilder())
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
         assertNotNull(s);
     }
