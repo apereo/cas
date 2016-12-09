@@ -28,7 +28,7 @@ public class RejectUsersAuthenticationHandlerTests {
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        Set<String> users = new HashSet<>();
+        final Set<String> users = new HashSet<>();
         users.add("scott");
         users.add("dima");
         users.add("bill");
