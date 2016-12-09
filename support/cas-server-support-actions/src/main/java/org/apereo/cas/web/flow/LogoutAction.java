@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;

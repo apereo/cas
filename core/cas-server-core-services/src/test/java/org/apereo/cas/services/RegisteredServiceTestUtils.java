@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -80,9 +79,7 @@ public final class RegisteredServiceTestUtils {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         final AbstractWebApplicationService result = (AbstractWebApplicationService)
-                new WebApplicationServiceFactory(
-                        new WebApplicationServiceResponseBuilder()
-                ).createService(request);
+                new WebApplicationServiceFactory().createService(request);
         return result;
     }
 

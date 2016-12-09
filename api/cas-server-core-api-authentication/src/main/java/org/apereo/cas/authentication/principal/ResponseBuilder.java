@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @since 4.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
+public interface ResponseBuilder<T extends WebApplicationService> extends Serializable, Comparable<WebApplicationService> {
 
     /**
      * Build response. The implementation must produce
@@ -22,9 +22,17 @@ public interface ResponseBuilder<T extends WebApplicationService> extends Serial
      * as part of the response. If the response type
      * is not recognized, an error must be thrown back.
      *
-     * @param service  the service
-     * @param ticketId the ticket id
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
      * @return the response
      */
-    Response build(T service, String ticketId);
+    Response build(T service, String serviceTicketId);
+
+    /**
+     * Supports this service.
+     *
+     * @param service the service
+     * @return true/false
+     */
+    boolean supports(T service);
 }

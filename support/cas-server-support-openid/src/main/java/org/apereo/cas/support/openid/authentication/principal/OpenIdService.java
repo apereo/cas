@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 
 /**
  * @author Scott Battaglia
@@ -24,15 +22,14 @@ public class OpenIdService extends AbstractWebApplicationService {
      * @param originalUrl     the original url
      * @param artifactId      the artifact id
      * @param identity        the OpenID identity
-     * @param responseBuilder the response builder
      */
 
     @JsonCreator
-    protected OpenIdService(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,
+    protected OpenIdService(@JsonProperty("id") final String id,
+                            @JsonProperty("originalUrl") final String originalUrl,
                             @JsonProperty("artifactId") final String artifactId,
-                            @JsonProperty("identity") final String identity,
-                            @JsonProperty("responseBuilder") final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, originalUrl, artifactId, responseBuilder);
+                            @JsonProperty("identity") final String identity) {
+        super(id, originalUrl, artifactId);
         this.identity = identity;
     }
     

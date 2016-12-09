@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.jasig.cas.client.util.URIBuilder;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.jasig.cas.client.util.URIBuilder;
 
 import java.net.URL;
 
@@ -30,7 +31,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService,
-                                  final org.apereo.cas.logout.SingleLogoutService singleLogoutService) {
+                                  final WebApplicationService singleLogoutService) {
 
         try {
             if (registeredService instanceof SamlRegisteredService) {

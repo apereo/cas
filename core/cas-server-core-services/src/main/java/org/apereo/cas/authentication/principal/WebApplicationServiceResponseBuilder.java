@@ -19,18 +19,14 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -851233878780818494L;
 
-    /**
-     * Instantiates a new Web application service response builder.
-     */
     public WebApplicationServiceResponseBuilder() {
     }
 
     @Override
-    public Response build(final WebApplicationService service, final String ticketId) {
+    public Response build(final WebApplicationService service, final String serviceTicketId) {
         final Map<String, String> parameters = new HashMap<>();
-
-        if (StringUtils.hasText(ticketId)) {
-            parameters.put(CasProtocolConstants.PARAMETER_TICKET, ticketId);
+        if (StringUtils.hasText(serviceTicketId)) {
+            parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
         }
 
         final WebApplicationService finalService = buildInternal(service, parameters);
@@ -79,5 +75,15 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
                 .toHashCode();
+    }
+
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service instanceof WebApplicationService;
+    }
+
+    @Override
+    public int compareTo(final WebApplicationService o) {
+        return Integer.MAX_VALUE;
     }
 }

@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -64,7 +63,7 @@ public class TokenAuthenticationConfiguration {
     private ServicesManager servicesManager;
 
     @Bean
-    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
+    public ResponseBuilder webApplicationServiceResponseBuilder() {
         return new TokenizedWebApplicationServiceResponseBuilder(servicesManager);
     }
 

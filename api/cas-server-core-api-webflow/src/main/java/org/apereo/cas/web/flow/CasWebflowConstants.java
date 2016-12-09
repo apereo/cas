@@ -184,11 +184,6 @@ public interface CasWebflowConstants {
     String STATE_ID_REDIRECT = "redirect";
 
     /**
-     * The state id 'postRedirectDecision'.
-     */
-    String STATE_ID_POST_REDIR_DECISION = "postRedirectDecision";
-    
-    /**
      * The view id 'casGenericSuccessView'.
      */
     String VIEW_ID_GENERIC_SUCCESS = "casGenericSuccessView";

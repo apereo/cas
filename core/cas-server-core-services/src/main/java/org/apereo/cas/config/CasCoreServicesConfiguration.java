@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
+import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -34,6 +36,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,10 +64,8 @@ public class CasCoreServicesConfiguration {
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
         final DefaultMultifactorTriggerSelectionStrategy s = new DefaultMultifactorTriggerSelectionStrategy();
-
         s.setGlobalPrincipalAttributeNameTriggers(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
         s.setRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-
         return s;
     }
 
@@ -74,12 +75,14 @@ public class CasCoreServicesConfiguration {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
 
-    @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
     @Bean
-    @Autowired
-    public ServiceFactory webApplicationServiceFactory(@Qualifier("webApplicationServiceResponseBuilder")
-                                                       final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder) {
-        return new WebApplicationServiceFactory(webApplicationServiceResponseBuilder);
+    public ServiceFactory webApplicationServiceFactory() {
+        return new WebApplicationServiceFactory();
+    }
+
+    @Bean
+    public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
+        return new DefaultWebApplicationResponseBuilderLocator();
     }
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
@@ -143,6 +146,13 @@ public class CasCoreServicesConfiguration {
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    @Bean
+    public List serviceFactoryList() {
+        final List<ServiceFactory> list = new ArrayList<>();
+        list.add(webApplicationServiceFactory());
+        return list;
     }
 
     /**

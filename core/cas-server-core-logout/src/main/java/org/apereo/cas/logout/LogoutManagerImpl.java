@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
@@ -63,10 +64,10 @@ public class LogoutManagerImpl implements LogoutManager {
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof SingleLogoutService).forEach(entry -> {
+        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof WebApplicationService).forEach(entry -> {
             final Service service = entry.getValue();
             LOGGER.debug("Handling single logout callback for {}", service);
-            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((SingleLogoutService) service,
+            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service,
                     entry.getKey());
             if (logoutRequest != null) {
                 LOGGER.debug("Captured logout request [{}]", logoutRequest);

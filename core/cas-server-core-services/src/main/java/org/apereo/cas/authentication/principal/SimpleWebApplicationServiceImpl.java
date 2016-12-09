@@ -19,22 +19,20 @@ public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationServi
     /**
      * Instantiates a new simple web application service impl.
      *
-     * @param id the id
+     * @param id          the id
      * @param originalUrl the original url
-     * @param artifactId the artifact id
-     * @param responseBuilder the response builder
+     * @param artifactId  the artifact id
      */
-    protected SimpleWebApplicationServiceImpl(final String id, final String originalUrl, final String artifactId,
-                                              final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, originalUrl, artifactId, responseBuilder);
+    protected SimpleWebApplicationServiceImpl(final String id, final String originalUrl, final String artifactId) {
+        super(id, originalUrl, artifactId);
     }
 
     @JsonCreator
-    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,
+    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id,
+                                              @JsonProperty("originalUrl") final String originalUrl,
                                               @JsonProperty("artifactId") final String artifactId,
-                                              @JsonProperty("principal") final Principal principal,
-                                              @JsonProperty("responseBuilder") final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, originalUrl, artifactId, responseBuilder);
+                                              @JsonProperty("principal") final Principal principal) {
+        super(id, originalUrl, artifactId);
     }
 }
 
