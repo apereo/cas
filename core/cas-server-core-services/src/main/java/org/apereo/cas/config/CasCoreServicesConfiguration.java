@@ -4,8 +4,10 @@ import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
@@ -74,8 +76,16 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "webApplicationServiceFactory")
     @Bean
-    public ServiceFactory webApplicationServiceFactory() {
-        return new WebApplicationServiceFactory(new WebApplicationServiceResponseBuilder());
+    @Autowired
+    public ServiceFactory webApplicationServiceFactory(@Qualifier("webApplicationServiceResponseBuilder")
+                                                       final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder) {
+        return new WebApplicationServiceFactory(webApplicationServiceResponseBuilder);
+    }
+
+    @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
+    @Bean
+    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
+        return new WebApplicationServiceResponseBuilder();
     }
 
     @RefreshScope
@@ -100,9 +110,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao")
                                            final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultServicesManager impl = new DefaultServicesManager();
-        impl.setServiceRegistryDao(serviceRegistryDao);
-        return impl;
+        return new DefaultServicesManager(serviceRegistryDao);
     }
 
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)

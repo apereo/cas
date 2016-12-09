@@ -55,10 +55,6 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
         this.serviceRegistryDao = serviceRegistryDao;
     }
 
-    public void setServiceRegistryDao(final ServiceRegistryDao serviceRegistryDao) {
-        this.serviceRegistryDao = serviceRegistryDao;
-    }
-
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
