@@ -6,9 +6,10 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.authentication.handler.support.TokenAuthenticationHandler;
+import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 import org.apereo.cas.token.webflow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -66,11 +67,12 @@ public class TokenAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
+        final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
         final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getToken().getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
         h.setPrincipalFactory(tokenPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getToken().getName());
+        h.setName(token.getName());
         return h;
     }
 
