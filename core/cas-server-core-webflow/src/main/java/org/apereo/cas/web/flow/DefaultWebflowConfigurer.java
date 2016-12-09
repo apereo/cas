@@ -94,9 +94,13 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createDefaultEndStates(final Flow flow) {
         createRedirectUnauthorizedServiceUrlEndState(flow);
         createServiceErrorEndState(flow);
-
+        createRedirectEndState(flow);
         createGenericLoginSuccessEndState(flow);
         createServiceWarningViewState(flow);
+    }
+
+    private void createRedirectEndState(final Flow flow) {
+        createEndState(flow, CasWebflowConstants.STATE_ID_REDIR_VIEW, "requestScope.url", true);
     }
 
 

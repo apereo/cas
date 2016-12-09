@@ -302,6 +302,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     @Override
     public boolean supports(final WebApplicationService service) {
-        return service.getClass().equals(GoogleAccountsService.class);
+        return service instanceof GoogleAccountsService;
     }
 }

@@ -83,7 +83,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     }
 
     @Override
-    public int compareTo(final WebApplicationService o) {
+    public int getOrder() {
         return Integer.MAX_VALUE;
     }
 }

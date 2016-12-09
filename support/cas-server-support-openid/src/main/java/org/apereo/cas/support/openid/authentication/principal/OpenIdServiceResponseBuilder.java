@@ -169,7 +169,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     @Override
     public boolean supports(final WebApplicationService service) {
-        return service.getClass().equals(OpenIdService.class);
+        return service instanceof OpenIdService;
     }
 
     /**

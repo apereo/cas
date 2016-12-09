@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * @since 4.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public interface ResponseBuilder<T extends WebApplicationService> extends Serializable, Comparable<WebApplicationService> {
+public interface ResponseBuilder<T extends WebApplicationService> extends Serializable, Ordered {
 
     /**
      * Build response. The implementation must produce
