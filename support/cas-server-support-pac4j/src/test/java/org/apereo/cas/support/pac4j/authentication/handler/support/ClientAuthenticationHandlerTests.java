@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -20,8 +22,9 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the {@link ClientAuthenticationHandler}.
@@ -33,13 +36,14 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 public class ClientAuthenticationHandlerTests {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
     private static final String ID = "123456789";
 
     private MockFacebookClient fbClient;
-
     private ClientAuthenticationHandler handler;
-
     private ClientCredential clientCredential;
 
     @Before
@@ -78,8 +82,11 @@ public class ClientAuthenticationHandlerTests {
         assertEquals(ID, principal.getId());
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyNoProfile() throws GeneralSecurityException, PreventedException {
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage(startsWith("Authentication did not produce a user profile for"));
+
         this.handler.authenticate(this.clientCredential);
     }
 }
