@@ -13,7 +13,9 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
@@ -31,6 +33,9 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class TicketGrantingTicketImplTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
     private static final String TGT_ID = "test";
@@ -71,8 +76,11 @@ public class TicketGrantingTicketImplTests {
         assertTrue(t.equals(t));
     }
 
-    @Test(expected=Exception.class)
+    @Test
     public void verifyNullAuthentication() {
+        this.thrown.expect(Exception.class);
+        this.thrown.expectMessage("authentication cannot be null");
+
         new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy());
     }
 
