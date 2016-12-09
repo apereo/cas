@@ -2,7 +2,9 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -17,6 +19,9 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 public class PolicyBasedAuthenticationManagerTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
             mock(Credential.class), mock(Credential.class));
@@ -46,12 +51,17 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void verifyAuthenticateAnyFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
+
+        this.thrown.expect(AuthenticationException.class);
+        this.thrown.expectMessage("2 errors, 0 successes");
+
         manager.authenticate(transaction);
+
         fail("Should have thrown authentication exception");
     }
 
@@ -67,13 +77,18 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void verifyAuthenticateAllFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
+
+        this.thrown.expect(AuthenticationException.class);
+        this.thrown.expectMessage("2 errors, 0 successes");
+
         manager.authenticate(transaction);
+
         fail("Should have thrown authentication exception");
     }
 
@@ -89,13 +104,18 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerB"));
+
+        this.thrown.expect(AuthenticationException.class);
+        this.thrown.expectMessage("1 errors, 1 successes");
+
         manager.authenticate(transaction);
+
         fail("Should have thrown AbstractAuthenticationException");
     }
 
@@ -155,5 +175,4 @@ public class PolicyBasedAuthenticationManagerTests {
         }
         return mock;
     }
-
 }
