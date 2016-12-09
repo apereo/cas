@@ -1,10 +1,12 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.PreventedException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +41,9 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class QueryDatabaseAuthenticationHandlerTests {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private static final String SQL = "SELECT password FROM casusers where username=?";
 
     @Autowired
@@ -66,8 +71,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         c.setAutoCommit(true);
 
         for (int i = 0; i < 5; i++) {
-            final String sql = String.format("delete from casusers;");
-            s.execute(sql);
+            s.execute("delete from casusers;");
         }
         c.close();
     }
@@ -86,44 +90,56 @@ public class QueryDatabaseAuthenticationHandlerTests {
         private String password;
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
+
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("usernotfound not found with SQL query");
+
         q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), "psw1");
-
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyPasswordInvalid() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Password does not match value on record.");
+
         q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"), "psw11");
-
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyMultipleRecords() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Multiple records found for user0");
+
         q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
-
     }
 
-    @Test(expected = PreventedException.class)
+    @Test
     public void verifyBadQuery() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
+
+        this.thrown.expect(PreventedException.class);
+        this.thrown.expectMessage("SQL exception while executing query for user0");
+
         q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), "psw0");
-
     }
 
     public void verifySuccess() throws Exception {
@@ -132,7 +148,6 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setSql(SQL);
         assertNotNull(q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
-
     }
 
     /**
@@ -140,19 +155,21 @@ public class QueryDatabaseAuthenticationHandlerTests {
      * with FailedLoginException
      * @throws Exception in case encoding fails
      */
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyBCryptFail() throws Exception {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8,
-                new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, new SecureRandom("secret".getBytes(StandardCharsets.UTF_8)));
 
         q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc1") +"' password"));
 
         q.setPasswordEncoder(encoder);
-        q.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"));
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Multiple records found for user0");
+
+        q.authenticateUsernamePasswordInternal(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "pswbc1"));
     }
 
     /**
@@ -163,14 +180,12 @@ public class QueryDatabaseAuthenticationHandlerTests {
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler();
         q.setDataSource(this.dataSource);
 
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6,
-                new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, new SecureRandom("secret2".getBytes(StandardCharsets.UTF_8)));
 
         q.setSql(SQL.replace("password", "'" + encoder.encode("pswbc2") +"' password"));
 
         q.setPasswordEncoder(encoder);
         assertNotNull(q.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2"), "pswbc2"));
-
     }
 }
