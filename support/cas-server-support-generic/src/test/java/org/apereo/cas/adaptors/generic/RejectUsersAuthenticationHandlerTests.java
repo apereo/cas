@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.generic;
 
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -20,20 +22,19 @@ import static org.junit.Assert.*;
  */
 public class RejectUsersAuthenticationHandlerTests {
 
-    private final Set<String> users;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new HashSet<>();
-
-        this.users.add("scott");
-        this.users.add("dima");
-        this.users.add("bill");
+        Set<String> users = new HashSet<>();
+        users.add("scott");
+        users.add("dima");
+        users.add("bill");
 
         this.authenticationHandler = new RejectUsersAuthenticationHandler();
-
-        this.authenticationHandler.setUsers(this.users);
+        this.authenticationHandler.setUsers(users);
     }
 
     @Test
@@ -56,12 +57,15 @@ public class RejectUsersAuthenticationHandlerTests {
         }
     }
 
-    @Test(expected=FailedLoginException.class)
+    @Test
     public void verifyFailsUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
+
+        this.thrown.expect(FailedLoginException.class);
+
         this.authenticationHandler.authenticate(c);
     }
 
@@ -75,18 +79,24 @@ public class RejectUsersAuthenticationHandlerTests {
         assertNotNull(this.authenticationHandler.authenticate(c));
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyPassesNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
 
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(c);
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyPassesNullUserNameAndPassword() throws Exception {
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }
 }
