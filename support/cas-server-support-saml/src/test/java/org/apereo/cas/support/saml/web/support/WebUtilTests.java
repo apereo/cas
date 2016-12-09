@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
@@ -24,9 +23,7 @@ public class WebUtilTests {
     @Test
     public void verifyFindService() {
         final DefaultArgumentExtractor casArgumentExtractor =
-                new DefaultArgumentExtractor(new WebApplicationServiceFactory(
-                        new WebApplicationServiceResponseBuilder()
-                ));
+                new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 

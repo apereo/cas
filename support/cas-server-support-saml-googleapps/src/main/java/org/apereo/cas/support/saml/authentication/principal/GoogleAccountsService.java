@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -27,30 +25,27 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     /**
      * Instantiates a new google accounts service.
      *
-     * @param id              the id
-     * @param relayState      the relay state
-     * @param requestId       the request id
-     * @param responseBuilder the response builder
+     * @param id         the id
+     * @param relayState the relay state
+     * @param requestId  the request id
      */
-    protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-                                    final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, id, null, responseBuilder);
+    protected GoogleAccountsService(final String id, final String relayState, final String requestId) {
+        super(id, id, null);
         this.relayState = relayState;
         this.requestId = requestId;
     }
 
     @JsonCreator
     public GoogleAccountsService(@JsonProperty("id") final String id,
-                                 @JsonProperty("originalUrl") final String originalUrl, 
+                                 @JsonProperty("originalUrl") final String originalUrl,
                                  @JsonProperty("artifactId") final String artifactId,
-                                 @JsonProperty("responseBuilder") final ResponseBuilder<WebApplicationService> responseBuilder,
-                                 @JsonProperty("relayState") final String relayState, 
+                                 @JsonProperty("relayState") final String relayState,
                                  @JsonProperty("requestId") final String requestId) {
-        super(id, originalUrl, artifactId, responseBuilder);
+        super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.requestId = requestId;
     }
-    
+
     public String getRelayState() {
         return this.relayState;
     }

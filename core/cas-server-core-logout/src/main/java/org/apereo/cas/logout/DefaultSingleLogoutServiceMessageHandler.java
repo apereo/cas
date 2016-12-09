@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -53,7 +54,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      * @return the logout request
      */
     @Override
-    public LogoutRequest handle(final SingleLogoutService singleLogoutService, final String ticketId) {
+    public LogoutRequest handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(singleLogoutService);
@@ -91,7 +92,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             final String logoutRequest = this.logoutMessageBuilder.create(request);
-            final SingleLogoutService logoutService = request.getService();
+            final WebApplicationService logoutService = request.getService();
             logoutService.setLoggedOutAlready(true);
 
             LOGGER.debug("Sending logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());

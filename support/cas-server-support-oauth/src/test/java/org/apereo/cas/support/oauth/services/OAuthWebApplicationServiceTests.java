@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.junit.Test;
 
@@ -29,10 +28,8 @@ public class OAuthWebApplicationServiceTests {
         service.setServiceId("testId");
         service.setTheme("theme");
         service.setDescription("description");
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory(
-                new WebApplicationServiceResponseBuilder()
-        );
-        final WebApplicationService serviceWritten =factory.createService(service.getServiceId());
+        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
+        final WebApplicationService serviceWritten = factory.createService(service.getServiceId());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final WebApplicationService serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);

@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
@@ -457,7 +456,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return new WebApplicationServiceFactory(new WebApplicationServiceResponseBuilder()).createService(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 
     private static Service getService() {
