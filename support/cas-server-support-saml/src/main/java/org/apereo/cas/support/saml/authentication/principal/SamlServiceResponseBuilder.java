@@ -53,7 +53,7 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
 
     @Override
     public boolean supports(final WebApplicationService service) {
-        return service.getClass().equals(SamlService.class);
+        return service instanceof SamlService;
     }
 }
 
