@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.support.DefaultCasAttributeEncoderTests;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProviderTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
-import org.apereo.cas.services.DefaultServicesManagerImplTests;
+import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImplTests;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RegexRegisteredServiceTests;
@@ -37,7 +37,7 @@ import org.junit.runners.Suite;
         AnonymousRegisteredServiceUsernameAttributeProviderTests.class,
         DefaultRegisteredServiceAccessStrategyTests.class,
         DefaultRegisteredServiceUsernameProviderTests.class,
-        DefaultServicesManagerImplTests.class,
+        DefaultServicesManagerTests.class,
         InMemoryServiceRegistryDaoImplTests.class,
         PrincipalAttributeRegisteredServiceUsernameProviderTests.class,
         RegexRegisteredServiceTests.class,

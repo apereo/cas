@@ -23,8 +23,11 @@ import java.util.Map;
 public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
-    @JsonIgnore
-    private ServicesManager servicesManager;
+    private transient ServicesManager servicesManager;
+
+    public TokenizedWebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     @Override
     protected WebApplicationService buildInternal(final WebApplicationService service,
