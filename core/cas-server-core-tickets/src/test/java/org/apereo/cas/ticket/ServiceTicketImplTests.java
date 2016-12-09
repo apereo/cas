@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket;
 
-import static org.junit.Assert.*;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,17 +13,24 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 public class ServiceTicketImplTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static final String ST_ID = "stest1";
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
@@ -57,13 +62,19 @@ public class ServiceTicketImplTests {
         assertEquals(stWritten, stRead);
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void verifyNoService() {
+        this.thrown.expect(Exception.class);
+        this.thrown.expectMessage("service cannot be null");
+
         new ServiceTicketImpl(ST_ID, this.ticketGrantingTicket, null, false, new NeverExpiresExpirationPolicy());
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void verifyNoTicket() {
+        this.thrown.expect(Exception.class);
+        this.thrown.expectMessage("ticket cannot be null");
+
         new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, new NeverExpiresExpirationPolicy());
     }
 
