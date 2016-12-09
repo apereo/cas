@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
  */
 public class FileTrustStoreSslSocketFactoryTests {
 
+    private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {

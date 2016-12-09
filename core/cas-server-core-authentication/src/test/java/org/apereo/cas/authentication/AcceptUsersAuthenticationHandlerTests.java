@@ -28,7 +28,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
-        Map<String, String> users = new HashMap<>();
+        final Map<String, String> users = new HashMap<>();
         users.put("scott", "rutgers");
         users.put("dima", "javarules");
         users.put("bill", "thisisAwesoME");
