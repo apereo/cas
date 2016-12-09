@@ -69,8 +69,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     private Map<?, ?> renderView() throws Exception{
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
-        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                new GenericWebApplicationContext(req.getServletContext()));
+        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         final Cas30ResponseView view = new Cas30ResponseView();
         view.setServicesManager(this.servicesManager);
@@ -82,8 +81,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) 
-                    throws Exception {
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 map.forEach(request::setAttribute);
             }
         });
@@ -99,7 +97,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN));
         assertTrue(attributes.containsKey(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME));
-
     }
 
     @Test
@@ -109,8 +106,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
         final String encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         final String password = decryptCredential(encodedPsw);
-        final UsernamePasswordCredential creds =
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredential creds = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertEquals(password, creds.getPassword());
     }
 
@@ -147,5 +143,4 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             throw Throwables.propagate(e);
         }
     }
-
 }

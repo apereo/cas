@@ -86,8 +86,7 @@ public class ProxyController {
         } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), new Object[]{proxyGrantingTicket}, request);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
-                    new Object[]{targetService}, request);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, new Object[]{targetService}, request);
         }
     }
 
@@ -112,14 +111,11 @@ public class ProxyController {
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
         final ModelAndView modelAndView = new ModelAndView(CONST_PROXY_FAILURE);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
-        modelAndView.addObject("description", 
-                StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale())));
-
+        modelAndView.addObject("description", StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale())));
         return modelAndView;
     }
 
-    public void setCentralAuthenticationService(
-            final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

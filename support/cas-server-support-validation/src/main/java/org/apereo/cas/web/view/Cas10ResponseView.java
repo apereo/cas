@@ -17,13 +17,10 @@ import java.util.Map;
 public class Cas10ResponseView extends AbstractCasView {
 
     @Override
-    protected void renderMergedOutputModel(final Map model,
-            final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
+    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (this.successResponse) {
-            response.getWriter().print(
-                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
+            response.getWriter().print("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
         } else {
             response.getWriter().print("no\n\n");
         }
