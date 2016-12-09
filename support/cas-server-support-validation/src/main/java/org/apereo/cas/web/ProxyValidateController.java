@@ -25,9 +25,7 @@ public class ProxyValidateController extends AbstractServiceValidateController {
      */
     @GetMapping(path="/proxyValidate")
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, 
-                                                 final HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 }

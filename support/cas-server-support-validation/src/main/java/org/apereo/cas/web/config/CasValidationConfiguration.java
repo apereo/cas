@@ -125,7 +125,6 @@ public class CasValidationConfiguration {
         v.setCasAttributeEncoder(casAttributeEncoder);
         return v;
     }
-    
 
     @Bean
     public View cas2ServiceSuccessView() {

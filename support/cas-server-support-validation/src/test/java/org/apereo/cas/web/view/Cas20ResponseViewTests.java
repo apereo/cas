@@ -54,8 +54,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
     public void verifyView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
-        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                new GenericWebApplicationContext(req.getServletContext()));
+        req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         final Cas20ResponseView view = new Cas20ResponseView();
         final MockHttpServletResponse resp = new MockHttpServletResponse();
@@ -67,8 +66,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response)
-                    throws Exception {
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 map.forEach(request::setAttribute);
             }
         });
@@ -79,5 +77,4 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));
     }
-
 }
