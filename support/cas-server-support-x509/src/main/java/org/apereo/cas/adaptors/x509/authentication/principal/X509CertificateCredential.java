@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
 import org.apereo.cas.authentication.AbstractCredential;
 
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 /**
  * An X.509 certificate credential.
@@ -46,11 +46,11 @@ public class X509CertificateCredential extends AbstractCredential {
      * @param certificates the certificates
      */
     public X509CertificateCredential(final X509Certificate[] certificates) {
-        this.certificates = ImmutableList.copyOf(certificates).toArray(new X509Certificate[certificates.length]);
+        this.certificates = Arrays.copyOf(certificates, certificates.length);
     }
 
     public X509Certificate[] getCertificates() {
-        return ImmutableList.copyOf(this.certificates).toArray(new X509Certificate[this.certificates.length]);
+        return Arrays.copyOf(this.certificates, this.certificates.length);
     }
 
     public void setCertificate(final X509Certificate certificate) {
