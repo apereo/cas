@@ -6,16 +6,15 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.ApplicationContextProvider;
-
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -52,25 +51,25 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -4584732364007702423L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
-    
+
     @JsonIgnore
     private PrivateKey privateKey;
-    
+
     @JsonIgnore
     private PublicKey publicKey;
 
     @JsonProperty
     private String publicKeyLocation;
-    
+
     @JsonProperty
     private String privateKeyLocation;
-    
+
     @JsonProperty
     private String keyAlgorithm;
 
     @JsonProperty
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
-    
+
     @JsonProperty
     private int skewAllowance;
 
@@ -84,10 +83,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation,
-                                                final String keyAlgorithm,
-                                                final GoogleSaml20ObjectBuilder samlObjectBuilder) {
+                                                final String keyAlgorithm) {
 
-        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, samlObjectBuilder, 0);
+        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, 0);
     }
 
     /**
@@ -96,18 +94,15 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param privateKeyLocation the private key
      * @param publicKeyLocation  the public key
      * @param keyAlgorithm       the key algorithm
-     * @param samlObjectBuilder  the saml object builder
      * @param skewAllowance      the skew allowance
      */
     @JsonCreator
     public GoogleAccountsServiceResponseBuilder(@JsonProperty("privateKeyLocation") final String privateKeyLocation,
                                                 @JsonProperty("publicKeyLocation") final String publicKeyLocation,
                                                 @JsonProperty("keyAlgorithm") final String keyAlgorithm,
-                                                @JsonProperty("samlObjectBuilder") final GoogleSaml20ObjectBuilder samlObjectBuilder,
                                                 @JsonProperty("skewAllowance") final int skewAllowance) {
         Assert.notNull(privateKeyLocation);
         Assert.notNull(publicKeyLocation);
-        Assert.notNull(samlObjectBuilder);
 
         this.privateKeyLocation = privateKeyLocation;
         this.publicKeyLocation = publicKeyLocation;
@@ -119,12 +114,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-
-        this.samlObjectBuilder = samlObjectBuilder;
     }
 
     @Override
-    public Response build(final WebApplicationService webApplicationService, final String ticketId) {
+    public Response build(final WebApplicationService webApplicationService, final String serviceTicket) {
         final GoogleAccountsService service = (GoogleAccountsService) webApplicationService;
 
         final Map<String, String> parameters = new HashMap<>();
@@ -305,5 +298,10 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                 .append(skewAllowance)
                 .append(samlObjectBuilder)
                 .toHashCode();
+    }
+
+    @Override
+    public boolean supports(final WebApplicationService service) {
+        return service.getClass().equals(GoogleAccountsService.class);
     }
 }

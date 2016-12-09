@@ -1,9 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.services.RegisteredService;
@@ -23,7 +19,7 @@ import java.util.Map;
 public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
-    private transient ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     public TokenizedWebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
@@ -32,6 +28,7 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
     @Override
     protected WebApplicationService buildInternal(final WebApplicationService service,
                                                   final Map<String, String> parameters) {
+
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         final Map.Entry<String, RegisteredServiceProperty> property = registeredService.getProperties()
@@ -46,9 +43,5 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
         }
 
         return service;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }
