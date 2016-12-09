@@ -29,16 +29,14 @@ import static org.junit.Assert.*;
  */
 public class ServiceTicketImplTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static final String ST_ID = "stest1";
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
-    
-    private final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
+    private static final TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl("test",
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-    
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private static final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private ObjectMapper mapper;
 

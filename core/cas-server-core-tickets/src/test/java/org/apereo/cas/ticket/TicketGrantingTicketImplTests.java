@@ -34,12 +34,12 @@ import static org.junit.Assert.*;
  */
 public class TicketGrantingTicketImplTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
     private static final String TGT_ID = "test";
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private static final UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private ObjectMapper mapper;
 
