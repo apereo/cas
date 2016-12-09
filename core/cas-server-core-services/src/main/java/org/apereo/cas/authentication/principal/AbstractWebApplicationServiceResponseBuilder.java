@@ -74,7 +74,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     }
 
     @Override
-    public int compareTo(final WebApplicationService o) {
-        return Integer.MIN_VALUE;
+    public int getOrder() {
+        return 0;
     }
 }
