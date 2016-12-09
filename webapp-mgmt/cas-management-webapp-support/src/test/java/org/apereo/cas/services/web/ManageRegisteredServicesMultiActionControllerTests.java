@@ -12,7 +12,9 @@ import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -26,6 +28,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(JUnit4.class)
 public class ManageRegisteredServicesMultiActionControllerTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private ManageRegisteredServicesMultiActionController controller;
 
@@ -62,22 +67,28 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         assertTrue(response.getContentAsString().contains("serviceName"));
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void verifyDeleteServiceNoService() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("The default service https://cas.example.org cannot be deleted. The definition is required for accessing the application.");
+
         this.controller.deleteRegisteredService(1200, response);
         assertNull(this.servicesManager.findServiceBy(1200));
         assertFalse(response.getContentAsString().contains("serviceName"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateEvaluationOrderInvalidServiceId() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
         r.setEvaluationOrder(2);
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Service id 5000 cannot be found.");
 
         this.servicesManager.save(r);
         this.controller.updateRegisteredServiceEvaluationOrder(new MockHttpServletResponse(), 5000, 1000);
