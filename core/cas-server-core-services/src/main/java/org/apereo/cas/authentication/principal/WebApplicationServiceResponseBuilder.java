@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
@@ -13,6 +11,7 @@ import java.util.Map;
 /**
  * Default response builder that passes back the ticket
  * id to the original url of the service based on the response type.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -20,16 +19,10 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -851233878780818494L;
 
-    @JsonProperty("responseType")
-    private Response.ResponseType responseType;
-
     /**
      * Instantiates a new Web application service response builder.
-     * @param type the type
      */
-    @JsonCreator
-    public WebApplicationServiceResponseBuilder(@JsonProperty("responseType") final Response.ResponseType type) {
-        this.responseType = type;
+    public WebApplicationServiceResponseBuilder() {
     }
 
     @Override
@@ -40,16 +33,29 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, ticketId);
         }
 
-        if (this.responseType == Response.ResponseType.POST) {
-            return buildPost(service, parameters);
+        final WebApplicationService finalService = buildInternal(service, parameters);
+
+        final Response.ResponseType responseType = getWebApplicationServiceResponseType();
+        if (responseType == Response.ResponseType.POST) {
+            return buildPost(finalService, parameters);
         }
-        if (this.responseType == Response.ResponseType.REDIRECT) {
-            return buildRedirect(service, parameters);
+        if (responseType == Response.ResponseType.REDIRECT) {
+            return buildRedirect(finalService, parameters);
         }
 
         throw new IllegalArgumentException("Response type is valid. Only POST/REDIRECT are supported");
     }
 
+    /**
+     * Build internal service.
+     *
+     * @param service    the service
+     * @param parameters the parameters
+     * @return the service
+     */
+    protected WebApplicationService buildInternal(final WebApplicationService service, final Map<String, String> parameters) {
+        return service;
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -65,7 +71,6 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
         final WebApplicationServiceResponseBuilder rhs = (WebApplicationServiceResponseBuilder) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(this.responseType, rhs.responseType)
                 .isEquals();
     }
 
@@ -73,7 +78,6 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(responseType)
                 .toHashCode();
     }
 }

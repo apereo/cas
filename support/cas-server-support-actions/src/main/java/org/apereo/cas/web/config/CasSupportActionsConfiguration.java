@@ -139,11 +139,8 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action logoutAction() {
-        final LogoutAction a = new LogoutAction();
-        a.setWebApplicationServiceFactory(webApplicationServiceFactory);
-        a.setFollowServiceRedirects(casProperties.getLogout().isFollowServiceRedirects());
-        a.setServicesManager(this.servicesManager);
-        return a;
+        return new LogoutAction(webApplicationServiceFactory, servicesManager,
+                casProperties.getLogout().isFollowServiceRedirects());
     }
 
     @Bean

@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.springframework.http.HttpMethod;
+import org.apereo.cas.web.support.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,15 +16,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
-    /**
-     * Determine response type response.
-     *
-     * @param request the request
-     * @return the response . response type
-     */
-    protected Response.ResponseType determineResponseType(final HttpServletRequest request) {
-        final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
-        return HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST : Response.ResponseType.REDIRECT;
+    private final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder;
+
+    public WebApplicationServiceFactory(final ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder) {
+        this.webApplicationServiceResponseBuilder = webApplicationServiceResponseBuilder;
     }
 
     @Override
@@ -34,9 +29,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             logger.debug("No service is specified in the request. Skipping service creation");
             return null;
         }
-
-        final Response.ResponseType type = determineResponseType(request);
-        return newWebApplicationService(request, serviceToUse, type);
+        return newWebApplicationService(request, serviceToUse);
     }
 
     /**
@@ -65,30 +58,18 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      *
      * @param request      the request
      * @param serviceToUse the service to use
-     * @param type         the type
      * @return the simple web application service
      */
     protected AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
-                                                                     final String serviceToUse,
-                                                                     final Response.ResponseType type) {
+                                                                     final String serviceToUse) {
         final String artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
         final String id = cleanupUrl(serviceToUse);
         final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse,
-                artifactId, newWebApplicationServiceResponseBuilder(type));
+                artifactId, this.webApplicationServiceResponseBuilder);
         determineWebApplicationFormat(request, newService);
         return newService;
     }
 
-
-    /**
-     * New web application service response builder.
-     *
-     * @param type the type
-     * @return the response builder
-     */
-    protected ResponseBuilder<WebApplicationService> newWebApplicationServiceResponseBuilder(final Response.ResponseType type) {
-        return new WebApplicationServiceResponseBuilder(type);
-    }
 
     /**
      * Gets requested service.
@@ -122,6 +103,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final String id) {
-        return newWebApplicationService(null, id, Response.ResponseType.REDIRECT);
+        return newWebApplicationService(WebUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
 }
