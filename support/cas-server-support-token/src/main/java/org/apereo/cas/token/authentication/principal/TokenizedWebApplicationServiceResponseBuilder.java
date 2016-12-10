@@ -20,6 +20,7 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -87,6 +88,7 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
                             .audience(service.getId())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(ticketId)
+                            .expirationTime(new Date())
                             .issueTime(assertion.getAuthenticationDate())
                             .subject(assertion.getPrincipal().getName());
             assertion.getAttributes().forEach((k, v) -> claims.claim(k, v));

@@ -33,7 +33,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         final SamlService impl = new SamlServiceFactory().createService(request);
 
-        final Response response =  new SamlServiceResponseBuilder().build(impl, "ticketId");
+        final Response response = new SamlServiceResponseBuilder().build(impl, "ticketId");
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertTrue(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
