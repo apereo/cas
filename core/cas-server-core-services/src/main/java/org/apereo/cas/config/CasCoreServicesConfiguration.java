@@ -80,12 +80,8 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
-                                                   final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultCasAttributeEncoder e =
-                new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao));
-        e.setCipherExecutor(registeredServiceCipherExecutor());
-        return e;
+    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
     }
 
     @Bean
@@ -99,12 +95,8 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao")
-                                           final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
-        impl.setServiceRegistryDao(serviceRegistryDao);
-        impl.setServiceFactory(this.webApplicationServiceFactory());
-        return impl;
+    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultServicesManagerImpl(serviceRegistryDao, webApplicationServiceFactory());
     }
 
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
@@ -121,8 +113,7 @@ public class CasCoreServicesConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO)
-                                                                 final ServiceRegistryDao serviceRegistryDao) {
+    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
         return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher),
                 serviceRegistryDao, servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
