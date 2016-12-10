@@ -38,7 +38,7 @@ public class DefaultServicesManagerImplTests {
         list.add(r);
 
         dao.setRegisteredServices(list);
-        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
+        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao, null);
         this.defaultServicesManagerImpl.load();
     }
 

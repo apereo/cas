@@ -1,9 +1,8 @@
 package org.apereo.cas.monitor;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple health check monitor that reports the overall health as the greatest reported
@@ -16,9 +15,9 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
     /**
      * Individual monitors that comprise health check.
      */
-    private Collection<Monitor> monitors = Collections.emptySet();
+    private final Set<Monitor> monitors;
 
-    public void setMonitors(final Collection monitors) {
+    public HealthCheckMonitor(final Set<Monitor> monitors) {
         this.monitors = monitors;
     }
 
