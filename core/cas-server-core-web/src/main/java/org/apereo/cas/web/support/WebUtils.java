@@ -118,7 +118,12 @@ public final class WebUtils {
      * @return the http servlet request from request attributes
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        try {
+            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**

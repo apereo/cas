@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.config;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceResponseBuilder;
@@ -28,6 +29,10 @@ import javax.annotation.PostConstruct;
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SamlGoogleAppsConfiguration {
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
@@ -65,7 +70,9 @@ public class SamlGoogleAppsConfiguration {
         final GoogleAccountsServiceResponseBuilder responseBuilder =
                 new GoogleAccountsServiceResponseBuilder(casProperties.getGoogleApps().getPrivateKeyLocation(),
                         casProperties.getGoogleApps().getPublicKeyLocation(),
-                        casProperties.getGoogleApps().getKeyAlgorithm());
+                        casProperties.getGoogleApps().getKeyAlgorithm(),
+                        servicesManager,
+                        googleSaml20ObjectBuilder());
         responseBuilder.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
         return responseBuilder;
     }
