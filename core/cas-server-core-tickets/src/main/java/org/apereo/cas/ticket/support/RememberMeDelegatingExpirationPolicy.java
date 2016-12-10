@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.RememberMeCredential;
@@ -19,6 +20,7 @@ import javax.annotation.PostConstruct;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class RememberMeDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

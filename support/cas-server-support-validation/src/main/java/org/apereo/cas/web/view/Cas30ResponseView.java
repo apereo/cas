@@ -114,7 +114,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
         encodedAttributes.forEach((k, v) -> {
-            final Set<Object> values = CollectionUtils.convertValueToCollection(v);
+            final Set<Object> values = CollectionUtils.toCollection(v);
             values.forEach(value -> {
                 final StringBuilder builder = new StringBuilder();
                 builder.append("<cas:".concat(k).concat(">"));

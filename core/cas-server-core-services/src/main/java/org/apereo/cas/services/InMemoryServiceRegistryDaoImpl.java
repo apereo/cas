@@ -28,6 +28,15 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     /**
+     * Instantiates a new In memory service registry dao.
+     *
+     * @param registeredServices the registered services
+     */
+    public InMemoryServiceRegistryDaoImpl(final List<RegisteredService> registeredServices) {
+        this.registeredServices = registeredServices;
+    }
+
+    /**
      * Init.
      */
     @PostConstruct

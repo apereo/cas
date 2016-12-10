@@ -24,11 +24,11 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
-import org.apereo.cas.ticket.DefaultProxyTicketFactory;
-import org.apereo.cas.ticket.DefaultServiceTicketFactory;
-import org.apereo.cas.ticket.DefaultTicketFactory;
-import org.apereo.cas.ticket.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -73,7 +73,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     private static final String PRINCIPAL = "principal";
 
-    private CentralAuthenticationServiceImpl cas;
+    private DefaultCentralAuthenticationService cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
 
@@ -272,7 +272,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", name);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
         return new WebApplicationServiceFactory().createService(request);
     }
 }

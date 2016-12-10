@@ -65,7 +65,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                                                                                final RegisteredService service) {
         final Map<String, Object> attrs = authentication.getAttributes();
         final Object ctxAttr = attrs.get(this.authenticationContextAttribute);
-        final Collection<Object> contexts = CollectionUtils.convertValueToCollection(ctxAttr);
+        final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
         logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
@@ -178,7 +178,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
             final Authentication authentication,
             final Collection<MultifactorAuthenticationProvider> providers) {
-        final Collection<Object> contexts = CollectionUtils.convertValueToCollection(
+        final Collection<Object> contexts = CollectionUtils.toCollection(
                 authentication.getAttributes().get(this.authenticationContextAttribute));
 
         if (contexts == null || contexts.isEmpty()) {
