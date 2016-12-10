@@ -59,7 +59,7 @@ public class SamlRegisteredServiceTests {
 
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao);
+        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao, null);
         impl.load();
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()

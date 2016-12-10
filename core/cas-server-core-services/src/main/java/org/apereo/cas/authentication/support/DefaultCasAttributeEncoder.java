@@ -45,8 +45,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param servicesManager the services manager
      * @param cipherExecutor  the cipher executor
      */
-    public DefaultCasAttributeEncoder(final ServicesManager servicesManager,
-                                      final RegisteredServiceCipherExecutor cipherExecutor) {
+    public DefaultCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
         super(servicesManager, cipherExecutor);
     }
 
@@ -106,8 +105,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
             final String encodedValue = cipher.encode(cachedAttribute, registeredService);
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
-                logger.debug("Encrypted and encoded [{}] as an attribute to [{}].",
-                        cachedAttributeName, encodedValue);
+                logger.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
             }
         } else {
             logger.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);

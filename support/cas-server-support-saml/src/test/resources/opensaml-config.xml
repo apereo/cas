@@ -12,8 +12,10 @@
                            http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd">
     
 
-    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl"
-          c:serviceRegistryDao-ref="serviceRegistryDao"/>
+    <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManagerImpl">
+        <constructor-arg name="serviceRegistryDao" ref="serviceRegistryDao"/>
+        <constructor-arg name="serviceFactory"><null/></constructor-arg>
+    </bean>
 
     <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">
