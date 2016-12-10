@@ -94,21 +94,14 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
-        final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
-        f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
-        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
-        return f;
+        return new DefaultProxyGrantingTicketFactory(grantingTicketExpirationPolicy(), ticketGrantingTicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
     @RefreshScope
     @Bean
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        final DefaultProxyTicketFactory f = new DefaultProxyTicketFactory();
-        f.setProxyTicketExpirationPolicy(proxyTicketExpirationPolicy());
-        f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
-        f.setCipherExecutor(protocolTicketCipherExecutor());
-        return f;
+        return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(), uniqueIdGeneratorsMap(), protocolTicketCipherExecutor(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
@@ -151,10 +144,7 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
     public ProxyHandler proxy20Handler() {
-        final Cas20ProxyHandler h = new Cas20ProxyHandler();
-        h.setHttpClient(httpClient);
-        h.setUniqueTicketIdGenerator(proxy20TicketUniqueIdGenerator());
-        return h;
+        return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
