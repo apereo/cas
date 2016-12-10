@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -23,21 +24,11 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class Cas20ProxyHandler implements ProxyHandle {
+public class Cas20ProxyHandler implements ProxyHandler {
   
     private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProxyHandler.class);
 
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
-
-    /**
-     * The proxy granting ticket identifier parameter.
-     */
-    private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
-
-    /**
-     * The Constant proxy granting ticket parameter.
-     */
-    private static final String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
 
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
     private final HttpClient httpClient;
@@ -71,11 +62,11 @@ public class Cas20ProxyHandler implements ProxyHandle {
             stringBuffer.append('?');
         }
 
-        stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_IOU)
+        stringBuffer.append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU)
                 .append('=')
                 .append(proxyIou)
                 .append('&')
-                .append(PARAMETER_PROXY_GRANTING_TICKET_ID)
+                .append(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET)
                 .append('=')
                 .append(proxyGrantingTicketId);
 

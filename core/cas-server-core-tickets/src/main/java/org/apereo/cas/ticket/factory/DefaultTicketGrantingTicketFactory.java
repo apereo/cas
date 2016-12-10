@@ -25,8 +25,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketGrantingTicketFactory.class);
 
     /**
-     * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
-     * created.
+     * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s created.
      */
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
@@ -39,6 +38,14 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * The ticket cipher, if any.
      */
     protected CipherExecutor<Serializable, String> cipherExecutor;
+
+    public DefaultTicketGrantingTicketFactory(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+                                              final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+                                              final CipherExecutor<Serializable, String> cipherExecutor) {
+        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
+        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+        this.cipherExecutor = cipherExecutor;
+    }
 
     @Override
     public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
@@ -79,17 +86,5 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
             LOGGER.debug("Encoded ticket-granting ticket id {}", tgtId);
         }
         return tgtId;
-    }
-
-    public void setTicketGrantingTicketUniqueTicketIdGenerator(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator) {
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-    }
-
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-    }
-
-    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 }

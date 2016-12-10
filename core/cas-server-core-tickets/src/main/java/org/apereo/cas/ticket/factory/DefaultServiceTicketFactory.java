@@ -27,17 +27,14 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceTicketFactory.class);
 
     /**
-    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+     * The Cipher executor.
      */
-
-    /**
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-     */
-
-    /**
-    private final ExpirationPolicy serviceTicketExpirationPolicy;
-    private final CipherExecutor<String, String> cipherExecutor;
     protected CipherExecutor<String, String> cipherExecutor;
+
+    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    private final ExpirationPolicy serviceTicketExpirationPolicy;
+
     private boolean trackMostRecentSession = true;
 
     public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGeneratorMap,
@@ -50,8 +47,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service, final boolean credentialProvided) {
-            LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
-            LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator...", uniqueTicketIdGenKey);
+        String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode service ticket {}", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);
@@ -71,7 +67,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @return the ticket
      */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket, final Service service,
-                                               final boolean credentialProvided, final String ticketId) {
+                                                 final boolean credentialProvided, final String ticketId) {
         final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
                 ticketId,
                 service,
@@ -94,12 +90,12 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         final String uniqueTicketIdGenKey = service.getClass().getName();
         UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = null;
         if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
-            logger.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
+            LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
             serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
             serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
-            logger.debug("Service ticket id generator not found for [{}]. Using the default generator...",
+            LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator...",
                     uniqueTicketIdGenKey);
         }
 

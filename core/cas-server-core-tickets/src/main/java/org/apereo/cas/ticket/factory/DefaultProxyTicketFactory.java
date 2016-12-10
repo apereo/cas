@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -43,7 +42,6 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final ExpirationPolicy proxyTicketExpirationPolicy;
     private final CipherExecutor<String, String> cipherExecutor;
     private final boolean onlyTrackMostRecentSession;
-    protected CipherExecutor<String, String> cipherExecutor;
 
     public DefaultProxyTicketFactory(final ExpirationPolicy expirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGenerators,
                                      final CipherExecutor<String, String> cipherExecutor, final boolean onlyTrackMostRecentSession) {
@@ -73,7 +71,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
                 ticketId,
                 service,
                 this.proxyTicketExpirationPolicy,
-                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+                this.onlyTrackMostRecentSession);
         return (T) serviceTicket;
     }
 

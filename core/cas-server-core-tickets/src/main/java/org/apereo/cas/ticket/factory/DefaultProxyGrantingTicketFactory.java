@@ -35,8 +35,18 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
-    /** The ticket cipher. */
+    /**
+     * The ticket cipher.
+     */
     protected CipherExecutor<String, String> cipherExecutor;
+
+    public DefaultProxyGrantingTicketFactory(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+                                             final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+                                             final CipherExecutor<String, String> cipherExecutor) {
+        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
+        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+        this.cipherExecutor = cipherExecutor;
+    }
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
@@ -79,17 +89,5 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
-    }
-
-    public void setTicketGrantingTicketUniqueTicketIdGenerator(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator) {
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-    }
-
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-    }
-
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 }
