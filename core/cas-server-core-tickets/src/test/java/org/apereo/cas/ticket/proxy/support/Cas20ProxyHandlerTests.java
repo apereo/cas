@@ -1,10 +1,9 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
