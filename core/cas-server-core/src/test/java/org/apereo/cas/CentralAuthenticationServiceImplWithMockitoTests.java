@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -35,7 +36,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.authentication.DefaultAuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -89,7 +89,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
             final Service s = (Service) argument;
             return s != null && s.getId().equals(this.id);
         }
-
     }
 
     @Before
@@ -130,12 +129,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
-        final DefaultTicketFactory factory = new DefaultTicketFactory();
-        factory.setTicketGrantingTicketFactory(new DefaultTicketGrantingTicketFactory());
-        factory.setProxyGrantingTicketFactory(new DefaultProxyGrantingTicketFactory());
-        factory.setServiceTicketFactory(new DefaultServiceTicketFactory());
-        factory.setProxyTicketFactory(new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, null));
 
+        final DefaultTicketFactory factory = new DefaultTicketFactory(new DefaultProxyGrantingTicketFactory(null, null),
+                new DefaultTicketGrantingTicketFactory(null, null),
+                new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null),
+                new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
         factory.initialize();
 
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, factory, smMock, mock(LogoutManager.class));
@@ -226,8 +224,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtRootMock;
     }
 
-    private TicketGrantingTicket createMockTicketGrantingTicket(final String id,
-                                                                final ServiceTicket svcTicket, final boolean isExpired,
+    private TicketGrantingTicket createMockTicketGrantingTicket(final String id, final ServiceTicket svcTicket, final boolean isExpired,
                                                                 final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(isExpired);
@@ -278,6 +275,4 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
     }
-
-
 }
