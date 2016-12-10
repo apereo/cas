@@ -99,6 +99,9 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
         }
     }
 
+    /**
+     * Token/JWT web application service.
+     */
     public static class TokenWebApplicationService extends AbstractWebApplicationService {
 
         private static final long serialVersionUID = -8844121291312069964L;

@@ -34,7 +34,8 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeController 
                                            final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                            final OAuthCodeFactory oAuthCodeFactory,
                                            final ConsentApprovalViewResolver consentApprovalViewResolver) {
-        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver);
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
+                webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver);
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuthConstants.AUTHORIZE_URL)
