@@ -24,17 +24,23 @@ import java.util.stream.Collectors;
  */
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    private LogoutManager logoutManager;
+    private final CasConfigurationProperties casProperties;
+    private final LogoutManager logoutManager;
+    private final TicketRegistry ticketRegistry;
+    private final LockingStrategy lockingStrategy;
 
-    private TicketRegistry ticketRegistry;
-    
-    private LockingStrategy lockingStrategy;
-    
+    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+                                        final CasConfigurationProperties casProperties) {
+
+        this.lockingStrategy = lockingStrategy;
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+        this.casProperties = casProperties;
+    }
+
     @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
                fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
@@ -100,17 +106,5 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      */
     protected boolean isCleanerSupported() {
         return true;
-    }
-
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setLockingStrategy(final LockingStrategy lockingStrategy) {
-        this.lockingStrategy = lockingStrategy;
     }
 }

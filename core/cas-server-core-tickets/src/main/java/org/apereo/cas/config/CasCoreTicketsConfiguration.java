@@ -165,19 +165,15 @@ public class CasCoreTicketsConfiguration {
                 casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),
                 casProperties.getTicket().getRegistry().getInMemory().getLoadFactor(),
                 casProperties.getTicket().getRegistry().getInMemory().getConcurrency());
-        r.setCipherExecutor(
-                Beans.newTicketRegistryCipherExecutor(
-                        casProperties.getTicket().getRegistry().getInMemory().getCrypto())
-        );
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
+                        casProperties.getTicket().getRegistry().getInMemory().getCrypto()));
         return r;
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        final DefaultTicketRegistrySupport s = new DefaultTicketRegistrySupport();
-        s.setTicketRegistry(this.ticketRegistry);
-        return s;
+        return new DefaultTicketRegistrySupport(ticketRegistry);
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
@@ -272,10 +268,9 @@ public class CasCoreTicketsConfiguration {
 
     @ConditionalOnMissingBean(name = "uniqueIdGeneratorsMap")
     @Bean
-    public Map uniqueIdGeneratorsMap() {
+    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         final Map<String, UniqueTicketIdGenerator> map = new HashMap<>();
-        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl",
-                serviceTicketUniqueIdGenerator());
+        map.put("org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl", serviceTicketUniqueIdGenerator());
         return map;
     }
 
@@ -289,11 +284,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     @Lazy
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        final DefaultTicketRegistryCleaner c = new DefaultTicketRegistryCleaner();
-        c.setLockingStrategy(lockingStrategy());
-        c.setLogoutManager(logoutManager);
-        c.setTicketRegistry(this.ticketRegistry);
-        return c;
+        return new DefaultTicketRegistryCleaner(lockingStrategy(), logoutManager, ticketRegistry, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "ticketTransactionManager")

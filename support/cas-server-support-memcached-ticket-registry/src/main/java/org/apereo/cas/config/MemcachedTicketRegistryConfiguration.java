@@ -8,10 +8,12 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +43,6 @@ public class MemcachedTicketRegistryConfiguration {
     @Lazy
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
-
         try {
             final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
             bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
@@ -63,8 +64,7 @@ public class MemcachedTicketRegistryConfiguration {
     
     @Autowired
     @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
-    public TicketRegistry memcachedTicketRegistry(
-            @Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
+    public TicketRegistry memcachedTicketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
         registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
                 casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
@@ -80,6 +80,15 @@ public class MemcachedTicketRegistryConfiguration {
      * The type Memcached ticket registry cleaner.
      */
     public static class MemcachedTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
+
+        public MemcachedTicketRegistryCleaner(LockingStrategy lockingStrategy, LogoutManager logoutManager, TicketRegistry ticketRegistry, CasConfigurationProperties casProperties) {
+            super(lockingStrategy, logoutManager, ticketRegistry, casProperties);
+        }
+
+        public MemcachedTicketRegistryCleaner() {
+            super(null, null, null, null);
+        }
+
         @Override
         protected boolean isCleanerSupported() {
             return false;
