@@ -1,8 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.web.support.WebUtils;
+import org.springframework.http.HttpMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -26,7 +31,6 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getRedirectResponse(service.getOriginalUrl(), parameters);
     }
 
-
     /**
      * Build post.
      *
@@ -38,6 +42,17 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getPostResponse(service.getOriginalUrl(), parameters);
     }
 
+    /**
+     * Determine response type response.
+     *
+     * @return the response type
+     */
+    protected Response.ResponseType getWebApplicationServiceResponseType() {
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
+        final String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        return StringUtils.isNotBlank(method)
+                && HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST : Response.ResponseType.REDIRECT;
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -56,5 +71,10 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     @Override
     public int hashCode() {
         return new HashCodeBuilder().toHashCode();
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

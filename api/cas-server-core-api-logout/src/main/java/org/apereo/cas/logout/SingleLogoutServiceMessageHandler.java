@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
+
 /**
  * This is {@link SingleLogoutServiceMessageHandler} which defines how a logout message
  * for a service that supports SLO should be handled.
@@ -16,5 +18,5 @@ public interface SingleLogoutServiceMessageHandler {
      * @param ticketId the ticket id
      * @return the logout request
      */
-    LogoutRequest handle(SingleLogoutService singleLogoutService, String ticketId);
+    LogoutRequest handle(WebApplicationService singleLogoutService, String ticketId);
 }

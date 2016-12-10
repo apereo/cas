@@ -12,8 +12,8 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
@@ -42,24 +42,31 @@ import java.util.Map;
 public abstract class BaseOAuthWrapperController {
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * The services manager.
-     */
-    protected ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
-    /**
-     * The ticket registry.
-     */
-    protected TicketRegistry ticketRegistry;
+    private TicketRegistry ticketRegistry;
 
-    /**
-     * The OAuth validator.
-     */
-    protected OAuth20Validator validator;
+    private OAuth20Validator validator;
 
     private AccessTokenFactory accessTokenFactory;
 
     private PrincipalFactory principalFactory;
+
+    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
+    public BaseOAuthWrapperController(final ServicesManager servicesManager,
+                                      final TicketRegistry ticketRegistry,
+                                      final OAuth20Validator validator,
+                                      final AccessTokenFactory accessTokenFactory,
+                                      final PrincipalFactory principalFactory,
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        this.servicesManager = servicesManager;
+        this.ticketRegistry = ticketRegistry;
+        this.validator = validator;
+        this.accessTokenFactory = accessTokenFactory;
+        this.principalFactory = principalFactory;
+        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+    }
 
     /**
      * Generate an access token from a service and authentication.
@@ -84,8 +91,7 @@ public abstract class BaseOAuthWrapperController {
      * @return the OAuth service
      */
     protected WebApplicationService createService(final RegisteredService registeredService) {
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        return factory.createService(registeredService.getServiceId());
+        return webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
     }
 
     /**
@@ -130,42 +136,14 @@ public abstract class BaseOAuthWrapperController {
     }
 
     public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        return servicesManager;
     }
 
     public TicketRegistry getTicketRegistry() {
-        return this.ticketRegistry;
-    }
-
-    public AccessTokenFactory getAccessTokenFactory() {
-        return this.accessTokenFactory;
-    }
-
-    public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
-        this.accessTokenFactory = accessTokenFactory;
+        return ticketRegistry;
     }
 
     public OAuth20Validator getValidator() {
-        return this.validator;
-    }
-
-    public void setValidator(final OAuth20Validator validator) {
-        this.validator = validator;
-    }
-
-    public PrincipalFactory getPrincipalFactory() {
-        return this.principalFactory;
-    }
-
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
+        return validator;
     }
 }

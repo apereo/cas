@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link WebApplicationServiceFactory}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -45,7 +46,6 @@ public class WebApplicationServiceFactoryTests {
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
         request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "post");
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
         assertEquals(service.getArtifactId(), "ticket");

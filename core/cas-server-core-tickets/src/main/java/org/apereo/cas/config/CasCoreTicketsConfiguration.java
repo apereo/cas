@@ -1,15 +1,16 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.DefaultProxyGrantingTicketFactory;
-import org.apereo.cas.ticket.DefaultProxyTicketFactory;
-import org.apereo.cas.ticket.DefaultServiceTicketFactory;
-import org.apereo.cas.ticket.DefaultTicketFactory;
-import org.apereo.cas.ticket.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
@@ -95,6 +96,7 @@ public class CasCoreTicketsConfiguration {
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         return new DefaultProxyGrantingTicketFactory(grantingTicketExpirationPolicy(), ticketGrantingTicketUniqueIdGenerator());
+        f.setCipherExecutor(protocolTicketCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
@@ -113,6 +115,16 @@ public class CasCoreTicketsConfiguration {
                 protocolTicketCipherExecutor());
     }
 
+    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
+    @Bean
+    public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
+        final DefaultTicketGrantingTicketFactory f = new DefaultTicketGrantingTicketFactory();
+        f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
+        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
+        f.setCipherExecutor(protocolTicketCipherExecutor());
+        return f;
+    }
+
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
@@ -120,12 +132,7 @@ public class CasCoreTicketsConfiguration {
                 defaultProxyTicketFactory());
     }
 
-    @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
-    @Bean
-    public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         return new DefaultTicketGrantingTicketFactory(grantingTicketExpirationPolicy(), ticketGrantingTicketUniqueIdGenerator());
-    }
-
     @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
     public ProxyHandler proxy10Handler() {
@@ -195,41 +202,6 @@ public class CasCoreTicketsConfiguration {
         return buildTicketGrantingTicketExpirationPolicy();
     }
 
-    private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
-        if (tgt.getMaxTimeToLiveInSeconds() < 0 && tgt.getTimeToKillInSeconds() < 0) {
-            LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
-            return new NeverExpiresExpirationPolicy();
-        }
-
-        if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout");
-            return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
-        }
-
-        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts");
-            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
-        }
-
-        if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
-                && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
-            final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
-            p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
-            p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a throttled timeouts");
-            return p;
-        }
-
-        if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout");
-            return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
-        }
-
-        LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
-        return new AlwaysExpiresExpirationPolicy();
-    }
-
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
@@ -276,6 +248,7 @@ public class CasCoreTicketsConfiguration {
 
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "protocolTicketCipherExecutor")
     public CipherExecutor protocolTicketCipherExecutor() {
         if (casProperties.getTicket().getSecurity().isCipherEnabled()) {
             return new ProtocolTicketCipherExecutor(
@@ -283,6 +256,41 @@ public class CasCoreTicketsConfiguration {
                     casProperties.getTicket().getSecurity().getSigningKey());
         }
         LOGGER.info("Protocol tickets generated by CAS are not signed/encrypted.");
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    private ExpirationPolicy buildTicketGrantingTicketExpirationPolicy() {
+        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        if (tgt.getMaxTimeToLiveInSeconds() < 0 && tgt.getTimeToKillInSeconds() < 0) {
+            LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
+            return new NeverExpiresExpirationPolicy();
+        }
+
+        if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout");
+            return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
+        }
+
+        if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts");
+            return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+        }
+
+        if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
+                && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
+            final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
+            p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
+            p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a throttled timeouts");
+            return p;
+        }
+
+        if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout");
+            return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
+        }
+
+        LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
+        return new AlwaysExpiresExpirationPolicy();
     }
 }

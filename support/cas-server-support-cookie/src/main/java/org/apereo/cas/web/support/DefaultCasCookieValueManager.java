@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * The {@link DefaultCasCookieValueManager} is responsible creating
@@ -26,7 +27,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private CipherExecutor<String, String> cipherExecutor = new NoOpCipherExecutor();
+    private CipherExecutor<Serializable, String> cipherExecutor = NoOpCipherExecutor.getInstance();
 
     /**
      * Instantiates a new Cas cookie value manager.

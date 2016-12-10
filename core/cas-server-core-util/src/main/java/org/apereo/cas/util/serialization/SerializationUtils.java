@@ -101,10 +101,10 @@ public final class SerializationUtils {
      * @return the byte []
      * @since 4.2
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
+    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object) {
         final byte[] outBytes = serialize(object);
-        return cipher.encode(outBytes);
+        return (byte[]) cipher.encode(outBytes);
     }
 
     /**

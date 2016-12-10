@@ -146,8 +146,9 @@ public class DistributedTicketRegistryTests {
         }
 
         @Override
-        public void updateTicket(final Ticket ticket) {
+        public Ticket updateTicket(final Ticket ticket) {
             this.parent.setWasTicketUpdated(true);
+            return ticket;
         }
 
         @Override

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -12,11 +13,11 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
-import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
@@ -40,6 +41,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link GoogleAccountsServiceFactory}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -68,13 +70,17 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     private ServiceFactory factory;
 
     @Autowired
+    @Qualifier("googleAccountsServiceResponseBuilder")
+    private ResponseBuilder<GoogleAccountsService> googleAccountsServiceResponseBuilder;
+
+    @Autowired
     private ApplicationContextProvider applicationContextProvider;
-    
+
     @Before
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }
-    
+
     @Test
     public void verifyNoService() {
         assertNull(factory.createService(new MockHttpServletRequest()));
@@ -93,7 +99,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
         service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
         assertNotNull(service);
-        final Response response = service.getResponse("SAMPLE_TICKET");
+        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET");
         assertNotNull(response);
     }
 

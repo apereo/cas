@@ -30,7 +30,7 @@ public final class CollectionUtils {
      * @return The collection instance containing the object provided
      */
     @SuppressWarnings("unchecked")
-    public static Set<Object> convertValueToCollection(final Object obj) {
+    public static Set<Object> toCollection(final Object obj) {
         final Set<Object> c = new HashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");

@@ -1,6 +1,6 @@
 package org.apereo.cas.services.web;
 
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -27,11 +27,11 @@ public class ServiceThemeResolverTests {
 
     private ServiceThemeResolver serviceThemeResolver;
 
-    private DefaultServicesManagerImpl servicesManager;
+    private DefaultServicesManager servicesManager;
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl(), null);
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
 
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");

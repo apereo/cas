@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ import java.util.Set;
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    private CipherExecutor<String, String> cipherExecutor;
+    private CipherExecutor<Serializable, String> cipherExecutor;
 
     @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
             resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
@@ -66,7 +67,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
         return cipherExecutor.encode(MultifactorAuthenticationTrustUtils.generateKey(r));
     }
 
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 

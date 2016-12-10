@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequest;
@@ -106,9 +107,9 @@ public final class WebUtils {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
-        } else {
-            return null;
         }
+        return null;
+
     }
 
     /**
@@ -117,7 +118,12 @@ public final class WebUtils {
      * @return the http servlet request from request attributes
      */
     public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        try {
+            return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
@@ -562,7 +568,7 @@ public final class WebUtils {
         }
         return loc;
     }
-    
+
     /**
      * Gets http servlet request geo location.
      *
@@ -728,4 +734,24 @@ public final class WebUtils {
         return null;
     }
 
+    /**
+     * Put service response into request scope.
+     *
+     * @param requestContext the request context
+     * @param response       the response
+     */
+    public static void putServiceResponseIntoRequestScope(final RequestContext requestContext, final Response response) {
+        requestContext.getRequestScope().put("parameters", response.getAttributes());
+        requestContext.getRequestScope().put("url", response.getUrl());
+    }
+
+    /**
+     * Put service original url into request scope.
+     *
+     * @param requestContext the request context
+     * @param service        the service
+     */
+    public static void putServiceOriginalUrlIntoRequestScope(final RequestContext requestContext, final WebApplicationService service) {
+        requestContext.getRequestScope().put("originalUrl", service.getOriginalUrl());
+    }
 }

@@ -29,7 +29,7 @@ public class OAuthWebApplicationServiceTests {
         service.setTheme("theme");
         service.setDescription("description");
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        final WebApplicationService serviceWritten =factory.createService(service.getServiceId());
+        final WebApplicationService serviceWritten = factory.createService(service.getServiceId());
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         final WebApplicationService serviceRead = MAPPER.readValue(JSON_FILE, WebApplicationService.class);
         assertEquals(serviceWritten, serviceRead);

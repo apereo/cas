@@ -1270,6 +1270,16 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.principalTransformation.prefix=
 ```
 
+### JWT Service Tickets
+
+```properties
+# cas.authn.token.crypto.signing.key=
+# cas.authn.token.crypto.signing.keySize=512
+# cas.authn.token.crypto.encryption.key=
+# cas.authn.token.crypto.encryption.keySize=16
+# cas.authn.token.crypto.alg=AES
+```
+
 ## Stormpath Authentication
 
 To learn more about this topic, [please review this guide](Stormpath-Authentication.html).

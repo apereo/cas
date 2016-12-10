@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web;
+package org.apereo.cas.support.oauth;
 
 /**
  * The OAuth grant types (on the access token request).

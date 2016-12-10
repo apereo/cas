@@ -5,8 +5,8 @@ dependencies {
     compile libraries.quartz
     compile libraries.jackson
 
-
     compile project(":core:cas-server-core-authentication")
+    compileOnly project(":core:cas-server-core-services")
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-web")
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")

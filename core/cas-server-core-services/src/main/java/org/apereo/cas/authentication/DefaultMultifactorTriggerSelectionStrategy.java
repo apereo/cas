@@ -71,7 +71,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             provider = StreamSupport.stream(ATTR_NAMES.split(globalPrincipalAttributeNameTriggers).spliterator(), false)
                     // principal.getAttribute(name).values
                     .map(principal.getAttributes()::get).filter(Objects::nonNull)
-                    .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
+                    .map(CollectionUtils::toCollection).flatMap(Set::stream)
                     // validProviderIds.contains((String) value)
                     .filter(String.class::isInstance).map(String.class::cast).filter(validProviderIds::contains)
                     .findFirst();

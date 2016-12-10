@@ -62,7 +62,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             final SerializableDocument document =
@@ -74,6 +74,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
         }
+        return ticket;
     }
 
     @Override

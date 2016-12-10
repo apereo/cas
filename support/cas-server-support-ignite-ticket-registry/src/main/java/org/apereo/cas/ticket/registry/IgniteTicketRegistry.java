@@ -132,8 +132,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
+        return ticket;
     }
 
     /**

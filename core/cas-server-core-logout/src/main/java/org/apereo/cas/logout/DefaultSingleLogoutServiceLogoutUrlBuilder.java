@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public URL determineLogoutUrl(final RegisteredService registeredService, final SingleLogoutService singleLogoutService) {
+    public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {
         try {
             URL logoutUrl = new URL(singleLogoutService.getOriginalUrl());
             final URL serviceLogoutUrl = registeredService.getLogoutUrl();
