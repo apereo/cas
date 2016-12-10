@@ -79,8 +79,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
-        final Optional<MultifactorAuthenticationProvider> contextProvider =
-                getSatisfiedMultifactorAuthenticationProvider(model);
+        final Optional<MultifactorAuthenticationProvider> contextProvider = getSatisfiedMultifactorAuthenticationProvider(model);
         if (contextProvider.isPresent() && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute,
                     Collections.singleton(contextProvider.get().getId()));
@@ -96,8 +95,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      * @param registeredService the registered service
      * @return the cas principal attributes
      */
-    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model,
-                                                            final RegisteredService registeredService) {
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
         return super.getPrincipalAttributesAsMultiValuedAttributes(model);
     }
 
@@ -112,9 +110,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
         final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
-        super.putIntoModel(model,
-                CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
-                encodedAttributes);
+        super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
         encodedAttributes.forEach((k, v) -> {
@@ -127,9 +123,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                 formattedAttributes.add(builder.toString());
             });
         });
-        super.putIntoModel(model,
-                CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES,
-                formattedAttributes);
+        super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
     }
 
     public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
