@@ -76,7 +76,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
         this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
-        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy());
+        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy("", ""));
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {

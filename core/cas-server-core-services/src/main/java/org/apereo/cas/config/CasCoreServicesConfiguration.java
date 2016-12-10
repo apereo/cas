@@ -59,12 +59,10 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        final DefaultMultifactorTriggerSelectionStrategy s = new DefaultMultifactorTriggerSelectionStrategy();
-        
-        s.setGlobalPrincipalAttributeNameTriggers(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
-        s.setRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-        
-        return s;
+        final String attributeNameTriggers = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers();
+        final String requestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
+
+        return new DefaultMultifactorTriggerSelectionStrategy(attributeNameTriggers, requestParameter);
     }
 
     @RefreshScope
@@ -114,8 +112,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher),
-                serviceRegistryDao, servicesManager(serviceRegistryDao),
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher), serviceRegistryDao, servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
@@ -132,7 +129,7 @@ public class CasCoreServicesConfiguration {
 
     @Lazy
     @Bean
-    public List serviceFactoryList() {
+    public List<ServiceFactory> serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
         list.add(webApplicationServiceFactory());
         return list;
