@@ -98,12 +98,10 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         // check to see if any of the specified attributes match the attrValue pattern
         final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
         return StreamSupport.stream(ATTR_NAMES.split(attrName).spliterator(), false)
-                // principal.getAttribute(name).values
                 .map(principal.getAttributes()::get)
                 .filter(Objects::nonNull)
-                .map(CollectionUtils::convertValueToCollection)
+                .map(CollectionUtils::toCollection)
                 .flatMap(Set::stream)
-                // value =~ /attrValue/
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
                 .anyMatch(attrValuePredicate);
