@@ -132,7 +132,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final ServicesManager smMock = getServicesManager(service1, service2);
         final DefaultTicketFactory factory = new DefaultTicketFactory();
         factory.setTicketGrantingTicketFactory(new DefaultTicketGrantingTicketFactory());
-        factory.setProxyGrantingTicketFactory(new DefaultProxyGrantingTicketFactory());
+        factory.setProxyGrantingTicketFactory(new DefaultProxyGrantingTicketFactory(null, null));
         factory.setServiceTicketFactory(new DefaultServiceTicketFactory());
         factory.setProxyTicketFactory(new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, null));
 

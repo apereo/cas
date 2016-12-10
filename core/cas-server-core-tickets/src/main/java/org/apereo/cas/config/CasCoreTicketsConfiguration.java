@@ -94,10 +94,7 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
-        final DefaultProxyGrantingTicketFactory f = new DefaultProxyGrantingTicketFactory();
-        f.setTicketGrantingTicketExpirationPolicy(grantingTicketExpirationPolicy());
-        f.setTicketGrantingTicketUniqueTicketIdGenerator(ticketGrantingTicketUniqueIdGenerator());
-        return f;
+        return new DefaultProxyGrantingTicketFactory(grantingTicketExpirationPolicy(), ticketGrantingTicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
