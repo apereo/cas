@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
 /**
@@ -26,20 +27,14 @@ public class HealthCheckMonitorTests {
 
     @Test
     public void verifyObserveOk() throws Exception {
-        final Set<Monitor> monitors = new HashSet<>();
-        monitors.add(new MemoryMonitor());
-        monitors.add(newSessionMonitor());
+        final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(0), newSessionMonitor()));
         final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
         assertEquals(StatusCode.OK, monitor.observe().getCode());
     }
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final Set<Monitor> monitors = new HashSet<>();
-        final MemoryMonitor memoryMonitor = new MemoryMonitor();
-        memoryMonitor.setFreeMemoryWarnThreshold(100);
-        monitors.add(memoryMonitor);
-        monitors.add(newSessionMonitor());
+        final Set<Monitor> monitors = new HashSet<>(asList(new MemoryMonitor(100), newSessionMonitor()));
         final HealthCheckMonitor monitor = new HealthCheckMonitor(monitors);
         assertEquals(StatusCode.WARN, monitor.observe().getCode());
     }

@@ -47,10 +47,9 @@ public class CasCoreMonitorConfiguration {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
 
-        if (casProperties.getMonitor().getFreeMemThreshold() > 0) {
-            final MemoryMonitor bean = new MemoryMonitor();
-            bean.setFreeMemoryWarnThreshold(casProperties.getMonitor().getFreeMemThreshold());
-            monitors.add(bean);
+        final int freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        if (freeMemThreshold > 0) {
+            monitors.add(new MemoryMonitor(freeMemThreshold));
         }
 
         final MonitorProperties.Warn warn = casProperties.getMonitor().getSt().getWarn();
