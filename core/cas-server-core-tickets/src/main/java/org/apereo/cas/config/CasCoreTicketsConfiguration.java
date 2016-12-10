@@ -151,10 +151,7 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
     public ProxyHandler proxy20Handler() {
-        final Cas20ProxyHandler h = new Cas20ProxyHandler();
-        h.setHttpClient(httpClient);
-        h.setUniqueTicketIdGenerator(proxy20TicketUniqueIdGenerator());
-        return h;
+        return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
