@@ -24,7 +24,7 @@ import java.security.GeneralSecurityException;
 
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the {@link ClientAuthenticationHandler}.
