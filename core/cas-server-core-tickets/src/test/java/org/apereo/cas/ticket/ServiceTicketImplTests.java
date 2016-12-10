@@ -32,12 +32,12 @@ public class ServiceTicketImplTests {
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
     private static final String ID = "test";
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl(ID,
             CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     private final UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private ObjectMapper mapper;
 
