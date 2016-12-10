@@ -46,8 +46,7 @@ public class MemcachedTicketRegistryConfiguration {
         try {
             final MemcachedClientFactoryBean bean = new MemcachedClientFactoryBean();
             bean.setServers(casProperties.getTicket().getRegistry().getMemcached().getServers());
-            bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(
-                    casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
+            bean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(casProperties.getTicket().getRegistry().getMemcached().getLocatorType()));
             bean.setTranscoder(kryoTranscoder());
             bean.setFailureMode(FailureMode.valueOf(casProperties.getTicket().getRegistry().getMemcached().getFailureMode()));
             bean.setHashAlg(DefaultHashAlgorithm.valueOf(casProperties.getTicket().getRegistry().getMemcached().getHashAlgorithm()));
@@ -82,11 +81,11 @@ public class MemcachedTicketRegistryConfiguration {
 
         public MemcachedTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
                                               final CasConfigurationProperties casProperties) {
-            super(lockingStrategy, logoutManager, ticketRegistry, casProperties);
+            super(lockingStrategy, logoutManager, ticketRegistry, false);
         }
 
         public MemcachedTicketRegistryCleaner() {
-            super(null, null, null, null);
+            super(null, null, null, false);
         }
 
         @Override

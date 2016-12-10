@@ -62,7 +62,8 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new CouchbaseTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, couchbaseTicketRegistry(), casProperties);
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        return new CouchbaseTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, couchbaseTicketRegistry(), isCleanerEnabled);
     }
 
     /**
@@ -71,8 +72,8 @@ public class CouchbaseTicketRegistryConfiguration {
     public static class CouchbaseTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
 
         public CouchbaseTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
-                                              final CasConfigurationProperties casProperties) {
-            super(lockingStrategy, logoutManager, ticketRegistry, casProperties);
+                                              final boolean isCleanerEnabled) {
+            super(lockingStrategy, logoutManager, ticketRegistry, isCleanerEnabled);
         }
 
         @Override

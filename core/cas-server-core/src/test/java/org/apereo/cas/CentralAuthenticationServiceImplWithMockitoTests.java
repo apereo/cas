@@ -132,7 +132,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final DefaultTicketFactory factory = new DefaultTicketFactory(new DefaultProxyGrantingTicketFactory(null, null),
                 new DefaultTicketGrantingTicketFactory(null, null),
                 new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null),
-                new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, null));
+                new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
 
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, factory, smMock, mock(LogoutManager.class));
         this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy()));

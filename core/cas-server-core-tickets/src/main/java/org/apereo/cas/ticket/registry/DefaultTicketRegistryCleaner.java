@@ -27,18 +27,18 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    private final CasConfigurationProperties casProperties;
     private final LogoutManager logoutManager;
     private final TicketRegistry ticketRegistry;
     private final LockingStrategy lockingStrategy;
+    private final boolean isCleanerEnabled;
 
     public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
-                                        final CasConfigurationProperties casProperties) {
+                                        final boolean isCleanerEnabled) {
 
         this.lockingStrategy = lockingStrategy;
         this.logoutManager = logoutManager;
         this.ticketRegistry = ticketRegistry;
-        this.casProperties = casProperties;
+        this.isCleanerEnabled = isCleanerEnabled;
     }
 
     @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
@@ -47,7 +47,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     public void clean() {
         try {
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            if (!casProperties.getTicket().getRegistry().getCleaner().isEnabled()) {
+            if (!isCleanerEnabled) {
                 LOGGER.trace("Ticket registry cleaner is disabled for {}. No cleaner processes will run.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;

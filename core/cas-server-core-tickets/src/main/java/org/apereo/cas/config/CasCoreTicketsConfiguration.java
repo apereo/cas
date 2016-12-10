@@ -101,7 +101,8 @@ public class CasCoreTicketsConfiguration {
     @RefreshScope
     @Bean
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(), uniqueIdGeneratorsMap(), protocolTicketCipherExecutor(), casProperties);
+        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(), uniqueIdGeneratorsMap(), protocolTicketCipherExecutor(), onlyTrackMostRecentSession);
     }
 
     @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
@@ -235,7 +236,6 @@ public class CasCoreTicketsConfiguration {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
                 casProperties.getTicket().getSt().getNumberOfUses(),
                 casProperties.getTicket().getSt().getTimeToKillInSeconds());
-
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
@@ -264,7 +264,8 @@ public class CasCoreTicketsConfiguration {
     @Bean
     @Lazy
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new DefaultTicketRegistryCleaner(lockingStrategy(), logoutManager, ticketRegistry, casProperties);
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        return new DefaultTicketRegistryCleaner(lockingStrategy(), logoutManager, ticketRegistry, isCleanerEnabled);
     }
 
     @ConditionalOnMissingBean(name = "ticketTransactionManager")
