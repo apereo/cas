@@ -14,7 +14,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.apereo.cas.util.ApplicationContextProvider;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -27,7 +26,6 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.Assert;
@@ -58,6 +56,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     @JsonIgnore
     private PublicKey publicKey;
 
+    @JsonIgnore
+    private ServicesManager servicesManager;
+
     @JsonProperty
     private String publicKeyLocation;
 
@@ -83,9 +84,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation,
-                                                final String keyAlgorithm) {
+                                                final String keyAlgorithm,
+                                                final ServicesManager servicesManager,
+                                                final GoogleSaml20ObjectBuilder samlObjectBuilder) {
 
         this(privateKeyLocation, publicKeyLocation, keyAlgorithm, 0);
+        this.samlObjectBuilder = samlObjectBuilder;
+        this.servicesManager = servicesManager;
     }
 
     /**
@@ -140,14 +145,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     protected String constructSamlResponse(final GoogleAccountsService service) {
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
-
-        /*
-         * Must be looked up directly from the context
-         * because the services manager is not serializable
-         * and cannot be class field.
-         */
-        final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-        final ServicesManager servicesManager = context.getBean("servicesManager", ServicesManager.class);
         final RegisteredService registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
