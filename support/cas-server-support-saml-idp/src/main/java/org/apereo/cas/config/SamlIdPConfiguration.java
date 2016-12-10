@@ -94,7 +94,7 @@ public class SamlIdPConfiguration {
 
     @Autowired(required = false)
     @Qualifier("authenticationContextClassMappings")
-    private Map authenticationContextClassMappings;
+    private Map<String, String> authenticationContextClassMappings;
 
     @Autowired(required = false)
     @Qualifier("overrideDataEncryptionAlgorithms")

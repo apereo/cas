@@ -134,7 +134,7 @@ public final class RegisteredServiceTestUtils {
             repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
-            policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
+            policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
             s.setAttributeReleasePolicy(policy);
 
             return s;

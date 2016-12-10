@@ -19,7 +19,7 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         Set<String> successes = builder.getSuccesses().keySet();
         if (successes != null && !successes.isEmpty()) {
-            successes = new HashSet(successes);
+            successes = new HashSet<>(successes);
         }
         
         builder.mergeAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);

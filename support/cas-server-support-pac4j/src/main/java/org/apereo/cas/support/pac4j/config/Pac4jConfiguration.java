@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -65,11 +66,11 @@ public class Pac4jConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -244,7 +245,6 @@ public class Pac4jConfiguration {
         }
         return new Clients(casProperties.getServer().getLoginUrl(), allClients);
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

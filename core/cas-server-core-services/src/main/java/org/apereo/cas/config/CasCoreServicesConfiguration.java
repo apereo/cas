@@ -141,7 +141,7 @@ public class CasCoreServicesConfiguration {
 
     @Lazy
     @Bean
-    public List serviceFactoryList() {
+    public List<ServiceFactory> serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
         list.add(webApplicationServiceFactory());
         return list;

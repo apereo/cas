@@ -94,7 +94,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
-    private List authenticationRequestServiceSelectionStrategies;
+    private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")

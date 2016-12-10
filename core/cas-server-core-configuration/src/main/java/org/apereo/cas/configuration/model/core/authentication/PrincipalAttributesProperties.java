@@ -26,12 +26,12 @@ public class PrincipalAttributesProperties {
     private String merger = "REPLACE";
     
     private Set<String> defaultAttributesToRelease = new HashSet<>();
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<>();
 
     private List<Jdbc> jdbc = new ArrayList<>();
-    private List<Groovy> groovy = new ArrayList();
-    private List<Ldap> ldap = new ArrayList();
-    private List<Json> json = new ArrayList();
+    private List<Groovy> groovy = new ArrayList<>();
+    private List<Ldap> ldap = new ArrayList<>();
+    private List<Json> json = new ArrayList<>();
 
     public List<Groovy> getGroovy() {
         return groovy;

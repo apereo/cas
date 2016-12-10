@@ -74,7 +74,7 @@ public class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
         return registeredService;
     }
 
-    public void setRegisteredServices(final List registeredServices) {
+    public void setRegisteredServices(final List<RegisteredService> registeredServices) {
         this.registeredServices = ObjectUtils.defaultIfNull(registeredServices, new ArrayList<>());
     }
 

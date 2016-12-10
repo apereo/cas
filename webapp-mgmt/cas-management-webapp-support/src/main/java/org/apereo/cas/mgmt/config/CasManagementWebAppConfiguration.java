@@ -112,7 +112,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
 
-
     @Bean
     public Authorizer requireAnyRoleAuthorizer() {
         return new RequireAnyRoleAuthorizer(casProperties.getMgmt().getAdminRoles());
@@ -145,13 +144,10 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
-            protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response)
-                    throws Exception {
+            protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 final String url = request.getContextPath() + "/manage.html";
                 return new ModelAndView(new RedirectView(response.encodeURL(url)));
             }
-
         };
     }
 
@@ -240,7 +236,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public CookieLocaleResolver localeResolver() {
-        final CookieLocaleResolver bean = new CookieLocaleResolver() {
+        return new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
@@ -251,7 +247,6 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 return new Locale(casProperties.getMgmt().getDefaultLocale());
             }
         };
-        return bean;
     }
 
     @Bean
@@ -346,26 +341,16 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
-
-        final ManageRegisteredServicesMultiActionController c =
-                new ManageRegisteredServicesMultiActionController(
+            @Qualifier("servicesManager") final ServicesManager servicesManager) {
+        return new ManageRegisteredServicesMultiActionController(
                         servicesManager,
                         registeredServiceFactory(),
                         getDefaultServiceUrl());
-        return c;
     }
 
     @Bean
-    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
-        final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
-                servicesManager,
-                registeredServiceFactory()
-        );
-        return c;
+    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+        return new RegisteredServiceSimpleFormController(servicesManager, registeredServiceFactory());
     }
 
     private String getDefaultServiceUrl() {

@@ -72,9 +72,9 @@ public final class JsonUtils {
      * @param model the model
      * @param response the response
      */
-    private static void renderException(final Map model, final HttpServletResponse response) {
+    private static void renderException(final Map<String, String> model, final HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        model.put("status", HttpServletResponse.SC_BAD_REQUEST);
+        model.put("status", String.valueOf(HttpServletResponse.SC_BAD_REQUEST));
         render(model, response);
     }
 

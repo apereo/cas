@@ -123,7 +123,7 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         mapping.setOrder(1);
         mapping.setAlwaysUseFullPath(true);
         mapping.setRootHandler(root);
-        final Map urls = new HashMap();
+        final Map<String, Controller> urls = new HashMap<>();
         urls.put("/", root);
         
         mapping.setUrlMap(urls);

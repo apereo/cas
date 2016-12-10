@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
     
     private ServicesManager servicesManager;
-    private List argumentExtractors;
+    private List<ArgumentExtractor> argumentExtractors;
     private String prefix;
     private String suffix;
     
@@ -90,7 +91,7 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
         this.servicesManager = servicesManager;
     }
 
-    public void setArgumentExtractors(final List argumentExtractors) {
+    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 

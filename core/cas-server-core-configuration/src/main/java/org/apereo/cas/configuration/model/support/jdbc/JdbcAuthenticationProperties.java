@@ -15,10 +15,10 @@ import java.util.List;
  * @since 5.0.0
  */
 public class JdbcAuthenticationProperties {
-    private List<Search> search = new ArrayList();
-    private List<Encode> encode = new ArrayList();
-    private List<Query> query = new ArrayList();
-    private List<Bind> bind = new ArrayList();
+    private List<Search> search = new ArrayList<>();
+    private List<Encode> encode = new ArrayList<>();
+    private List<Query> query = new ArrayList<>();
+    private List<Bind> bind = new ArrayList<>();
 
     public List<Search> getSearch() {
         return search;

@@ -16,8 +16,8 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
         
 /**
  * @author Scott Battaglia
@@ -53,7 +53,7 @@ public class ServiceThemeResolverTests {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
-        final MutableAttributeMap scope = new LocalAttributeMap();
+        final MutableAttributeMap<Object> scope = new LocalAttributeMap<>();
         scope.put("service", RegisteredServiceTestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);

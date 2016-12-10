@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -34,7 +36,7 @@ public class CasCoreWebConfiguration {
     
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
-        return new DefaultArgumentExtractor(serviceFactoryList);
+        return new DefaultArgumentExtractor((List<ServiceFactory<? extends WebApplicationService>>) serviceFactoryList);
     }
     
     @RefreshScope
@@ -50,7 +52,7 @@ public class CasCoreWebConfiguration {
     }
     
     @Bean
-    public List argumentExtractors() {
+    public List<ArgumentExtractor> argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();
         list.add(defaultArgumentExtractor());
         return list;

@@ -54,7 +54,7 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      */
     private SimplePrincipal(final String id) {
-        this(id, Collections.EMPTY_MAP);
+        this(id, Collections.emptyMap());
     }
 
     /**

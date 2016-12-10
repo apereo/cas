@@ -99,7 +99,7 @@ public final class CoreAuthenticationTestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return getPrincipal(name, Collections.EMPTY_MAP);
+        return getPrincipal(name, Collections.emptyMap());
     }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {

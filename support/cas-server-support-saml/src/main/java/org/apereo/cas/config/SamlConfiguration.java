@@ -93,11 +93,11 @@ public class SamlConfiguration {
     
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
+    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
     
     @RefreshScope
     @Bean

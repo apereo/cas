@@ -3,9 +3,9 @@ package org.apereo.cas.support.wsfederation.authentication.handler.support;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;

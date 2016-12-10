@@ -3,10 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
+import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -35,7 +37,7 @@ public class RadiusConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -91,8 +93,8 @@ public class RadiusConfiguration {
      */
     @RefreshScope
     @Bean
-    public List radiusServers() {
-        final List<JRadiusServerImpl> list = new ArrayList<>();
+    public List<RadiusServer> radiusServers() {
+        final List<RadiusServer> list = new ArrayList<>();
         list.add(radiusServer());
         return list;
     }

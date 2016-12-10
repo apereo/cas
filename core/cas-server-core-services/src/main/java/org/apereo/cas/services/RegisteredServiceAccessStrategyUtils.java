@@ -161,5 +161,4 @@ public final class RegisteredServiceAccessStrategyUtils {
         LOGGER.debug("Current authentication via ticket {} allows service {} to participate in the existing SSO session",
                 ticketGrantingTicket.getId(), service.getId());
     }
-    
 }

@@ -18,7 +18,7 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
      */
     private Collection<Monitor> monitors = Collections.emptySet();
 
-    public void setMonitors(final Collection monitors) {
+    public void setMonitors(final Collection<Monitor> monitors) {
         this.monitors = monitors;
     }
 

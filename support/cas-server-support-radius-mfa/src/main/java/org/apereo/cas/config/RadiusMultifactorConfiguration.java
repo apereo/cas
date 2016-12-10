@@ -5,15 +5,19 @@ import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
+import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -67,12 +71,11 @@ public class RadiusMultifactorConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
-
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -110,7 +113,6 @@ public class RadiusMultifactorConfiguration {
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
-
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder =
@@ -120,11 +122,10 @@ public class RadiusMultifactorConfiguration {
         return builder.build();
     }
 
-
     @RefreshScope
     @Bean
-    public List radiusTokenServers() {
-        final List<JRadiusServerImpl> list = new ArrayList<>();
+    public List<RadiusServer> radiusTokenServers() {
+        final List<RadiusServer> list = new ArrayList<>();
         final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
 
         final RadiusClientFactory factory = new RadiusClientFactory();
@@ -200,7 +201,6 @@ public class RadiusMultifactorConfiguration {
     public PrincipalFactory radiusTokenPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
 
     @Bean
     public Action radiusAuthenticationWebflowAction() {

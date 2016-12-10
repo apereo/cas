@@ -56,9 +56,9 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private String dnFormat;
     private String principalAttributeId;
     private String principalAttributePassword;
-    private List principalAttributeList = new ArrayList();
+    private List principalAttributeList = new ArrayList<>();
     private boolean allowMultiplePrincipalAttributeValues;
-    private List additionalAttributes = new ArrayList();
+    private List<String> additionalAttributes = new ArrayList<>();
     private AuthenticationTypes type;
 
     private boolean subtreeSearch = true;
@@ -171,7 +171,7 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
         this.allowMultiplePrincipalAttributeValues = allowMultiplePrincipalAttributeValues;
     }
 
-    public List getAdditionalAttributes() {
+    public List<String> getAdditionalAttributes() {
         return additionalAttributes;
     }
 

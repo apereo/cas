@@ -49,22 +49,22 @@ public class SamlObjectEncrypter {
     /**
      * The Override data encryption algorithms.
      */
-    protected List overrideDataEncryptionAlgorithms;
+    protected List<String> overrideDataEncryptionAlgorithms;
 
     /**
      * The Override key encryption algorithms.
      */
-    protected List overrideKeyEncryptionAlgorithms;
+    protected List<String> overrideKeyEncryptionAlgorithms;
 
     /**
      * The Override black listed encryption signing algorithms.
      */
-    protected List overrideBlackListedEncryptionAlgorithms;
+    protected List<String> overrideBlackListedEncryptionAlgorithms;
 
     /**
      * The Override white listed encryption signing algorithms.
      */
-    protected List overrideWhiteListedAlgorithms;
+    protected List<String> overrideWhiteListedAlgorithms;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -248,19 +248,19 @@ public class SamlObjectEncrypter {
         return privateKeyFactoryBean.getObject();
     }
 
-    public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {
+    public void setOverrideDataEncryptionAlgorithms(final List<String> overrideDataEncryptionAlgorithms) {
         this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
     }
 
-    public void setOverrideKeyEncryptionAlgorithms(final List overrideKeyEncryptionAlgorithms) {
+    public void setOverrideKeyEncryptionAlgorithms(final List<String> overrideKeyEncryptionAlgorithms) {
         this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
     }
 
-    public void setOverrideBlackListedEncryptionAlgorithms(final List overrideBlackListedEncryptionAlgorithms) {
+    public void setOverrideBlackListedEncryptionAlgorithms(final List<String> overrideBlackListedEncryptionAlgorithms) {
         this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
     }
 
-    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+    public void setOverrideWhiteListedAlgorithms(final List<String> overrideWhiteListedAlgorithms) {
         this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
     }
 }

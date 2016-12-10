@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
@@ -138,11 +139,11 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
+    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
 
 
     @Autowired
@@ -194,7 +195,6 @@ public class OpenIdConfiguration {
         LOGGER.info("Creating openid server manager with OP endpoint {}", casProperties.getServer().getLoginUrl());
         return manager;
     }
-
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
@@ -261,7 +261,6 @@ public class OpenIdConfiguration {
         m.setMappings(mappings);
         return m;
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
