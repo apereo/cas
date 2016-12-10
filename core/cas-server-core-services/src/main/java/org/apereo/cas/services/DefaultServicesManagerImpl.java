@@ -34,9 +34,8 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
-    private ServiceRegistryDao serviceRegistryDao;
-
-    private ServiceFactory serviceFactory;
+    private final ServiceRegistryDao serviceRegistryDao;
+    private final ServiceFactory serviceFactory;
     
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -44,23 +43,14 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManagerImpl() {
-    }
-
     /**
      * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
+     * @param serviceFactory
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao, final ServiceFactory serviceFactory) {
         this.serviceRegistryDao = serviceRegistryDao;
-    }
-
-    public void setServiceRegistryDao(final ServiceRegistryDao serviceRegistryDao) {
-        this.serviceRegistryDao = serviceRegistryDao;
-    }
-
-    public void setServiceFactory(final ServiceFactory serviceFactory) {
         this.serviceFactory = serviceFactory;
     }
 

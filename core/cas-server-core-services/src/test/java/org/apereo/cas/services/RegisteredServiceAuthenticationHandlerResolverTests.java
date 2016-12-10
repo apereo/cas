@@ -36,12 +36,12 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         list.add(svc);
 
         svc = RegisteredServiceTestUtils.getRegisteredService("serviceid2");
-        svc.setRequiredHandlers(Collections.EMPTY_SET);
+        svc.setRequiredHandlers(Collections.emptySet());
         list.add(svc);
 
         dao.setRegisteredServices(list);
 
-        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
+        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao, null);
         this.defaultServicesManagerImpl.load();
 
         final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler();
@@ -58,8 +58,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
 
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid1"),
@@ -71,8 +70,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid2"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));

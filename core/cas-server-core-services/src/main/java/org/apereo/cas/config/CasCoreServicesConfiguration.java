@@ -59,12 +59,10 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        final DefaultMultifactorTriggerSelectionStrategy s = new DefaultMultifactorTriggerSelectionStrategy();
-        
-        s.setGlobalPrincipalAttributeNameTriggers(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
-        s.setRequestParameter(casProperties.getAuthn().getMfa().getRequestParameter());
-        
-        return s;
+        final String attributeNameTriggers = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers();
+        final String requestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
+
+        return new DefaultMultifactorTriggerSelectionStrategy(attributeNameTriggers, requestParameter);
     }
 
     @RefreshScope
@@ -80,12 +78,8 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao")
-                                                   final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultCasAttributeEncoder e =
-                new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao));
-        e.setCipherExecutor(registeredServiceCipherExecutor());
-        return e;
+    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
     }
 
     @Bean
@@ -99,12 +93,8 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao")
-                                           final ServiceRegistryDao serviceRegistryDao) {
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl();
-        impl.setServiceRegistryDao(serviceRegistryDao);
-        impl.setServiceFactory(this.webApplicationServiceFactory());
-        return impl;
+    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultServicesManagerImpl(serviceRegistryDao, webApplicationServiceFactory());
     }
 
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
@@ -121,10 +111,8 @@ public class CasCoreServicesConfiguration {
     @Autowired
     @ConditionalOnMissingBean(name = "jsonServiceRegistryDao")
     @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO)
-                                                                 final ServiceRegistryDao serviceRegistryDao) {
-        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher),
-                serviceRegistryDao, servicesManager(serviceRegistryDao),
+    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier(BEAN_NAME_SERVICE_REGISTRY_DAO) final ServiceRegistryDao serviceRegistryDao) {
+        return new ServiceRegistryInitializer(embeddedJsonServiceRegistry(eventPublisher), serviceRegistryDao, servicesManager(serviceRegistryDao),
                 casProperties.getServiceRegistry().isInitFromJson());
     }
 
@@ -141,7 +129,7 @@ public class CasCoreServicesConfiguration {
 
     @Lazy
     @Bean
-    public List serviceFactoryList() {
+    public List<ServiceFactory> serviceFactoryList() {
         final List<ServiceFactory> list = new ArrayList<>();
         list.add(webApplicationServiceFactory());
         return list;

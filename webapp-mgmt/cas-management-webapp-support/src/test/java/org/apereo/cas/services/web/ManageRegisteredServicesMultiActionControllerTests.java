@@ -35,7 +35,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl(), null);
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
         this.registeredServiceFactory.initializeDefaults();

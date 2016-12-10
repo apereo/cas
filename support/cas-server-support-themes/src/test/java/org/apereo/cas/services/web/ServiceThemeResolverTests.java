@@ -31,7 +31,7 @@ public class ServiceThemeResolverTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl(), null);
 
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");

@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor.config;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
@@ -16,8 +15,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,27 +43,21 @@ public class CasCoreMonitorConfiguration {
     @Bean
     public Monitor healthCheckMonitor() {
         final Map<String, Monitor> beans = applicationContext.getBeansOfType(Monitor.class, false, true);
-        final Collection monitors = Sets.newHashSet(beans.entrySet().stream()
+        final Set<Monitor> monitors = beans.entrySet().stream()
                 .map(Map.Entry::getValue)
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
 
-        if (casProperties.getMonitor().getFreeMemThreshold() > 0) {
-            final MemoryMonitor bean = new MemoryMonitor();
-            bean.setFreeMemoryWarnThreshold(casProperties.getMonitor().getFreeMemThreshold());
-            monitors.add(bean);
+        final int freeMemThreshold = casProperties.getMonitor().getFreeMemThreshold();
+        if (freeMemThreshold > 0) {
+            monitors.add(new MemoryMonitor(freeMemThreshold));
         }
 
         final MonitorProperties.Warn warn = casProperties.getMonitor().getSt().getWarn();
         if (warn.getThreshold() > 0) {
-            final SessionMonitor bean = new SessionMonitor();
-            bean.setTicketRegistry(ticketRegistry);
-            bean.setServiceTicketCountWarnThreshold(warn.getThreshold());
-            bean.setSessionCountWarnThreshold(warn.getThreshold());
+            final SessionMonitor bean = new SessionMonitor(ticketRegistry, warn.getThreshold(), warn.getThreshold());
             monitors.add(bean);
         }
 
-        final HealthCheckMonitor bean = new HealthCheckMonitor();
-        bean.setMonitors(monitors);
-        return bean;
+        return new HealthCheckMonitor(monitors);
     }
 }

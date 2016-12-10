@@ -21,36 +21,11 @@ public class SessionMonitor implements Monitor<SessionStatus> {
     /** Threshold above which warnings are issued for service ticket count. */
     private int serviceTicketCountWarnThreshold = -1;
 
-
-    /**
-     * Sets the ticket registry that exposes state information that may be queried by this monitor.
-     * @param state the ticket registry state instance
-     */
-    public void setTicketRegistry(final TicketRegistry state) {
-        this.registryState = state;
+    public SessionMonitor(final TicketRegistry ticketRegistry, final int stCountThreshold, final int sessionCountWarnThreshold) {
+        this.registryState = ticketRegistry;
+        this.serviceTicketCountWarnThreshold = stCountThreshold;
+        this.sessionCountWarnThreshold = sessionCountWarnThreshold;
     }
-
-
-    /**
-     * Sets the threshold above which warnings are issued for session counts in excess of value.
-     *
-     * @param threshold Warn threshold if non-negative value, otherwise warnings are disabled.
-     */
-    public void setSessionCountWarnThreshold(final int threshold) {
-        this.sessionCountWarnThreshold = threshold;
-    }
-
-
-    /**
-     * Sets the threshold above which warnings are issued for service ticket counts in excess of value.
-     *
-     * @param threshold Warn threshold if non-negative value, otherwise warnings are disabled.
-     */
-    public void setServiceTicketCountWarnThreshold(final int threshold) {
-        this.serviceTicketCountWarnThreshold = threshold;
-    }
-
-
 
     @Override
     public String getName() {

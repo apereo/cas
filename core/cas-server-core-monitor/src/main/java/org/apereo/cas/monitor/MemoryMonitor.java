@@ -10,22 +10,15 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
 
     private static final int PERCENTAGE_VALUE = 100;
 
-    
-    /** Percent free memory warning threshold. */
-    private long freeMemoryWarnThreshold;
+    /** Percent free memory below which a warning is reported. */
+    private final long freeMemoryWarnThreshold;
 
-    /**
-     * Sets the percent of free memory below which a warning is reported.
-     *
-     * @param threshold Percent free memory warning threshold.
-     */
-    public void setFreeMemoryWarnThreshold(final long threshold) {
+    public MemoryMonitor(final long threshold) {
         if (threshold < 0) {
             throw new IllegalArgumentException("Warning threshold must be non-negative.");
         }
         this.freeMemoryWarnThreshold = threshold;
     }
-
 
     /**
      * {@inheritDoc}
@@ -34,7 +27,6 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
     public String getName() {
         return MemoryMonitor.class.getSimpleName();
     }
-
 
     /**
      * {@inheritDoc}

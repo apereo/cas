@@ -26,9 +26,15 @@ import java.util.stream.StreamSupport;
  * @since 5.0.0
  */
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
+
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
-    private String requestParameter;
-    private String globalPrincipalAttributeNameTriggers;
+    private final String requestParameter;
+    private final String globalPrincipalAttributeNameTriggers;
+
+    public DefaultMultifactorTriggerSelectionStrategy(final String attributeNameTriggers, final String requestParameter) {
+        this.globalPrincipalAttributeNameTriggers = attributeNameTriggers;
+        this.requestParameter = requestParameter;
+    }
 
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
@@ -75,9 +81,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return provider;
     }
 
-    private static boolean shouldApplyRegisteredServiceMultifactorPolicy(
-            final RegisteredServiceMultifactorPolicy policy,
-            final Principal principal) {
+    private static boolean shouldApplyRegisteredServiceMultifactorPolicy(final RegisteredServiceMultifactorPolicy policy, final Principal principal) {
         final String attrName = policy.getPrincipalAttributeNameTrigger();
         final String attrValue = policy.getPrincipalAttributeValueToMatch();
 
@@ -95,18 +99,13 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
         return StreamSupport.stream(ATTR_NAMES.split(attrName).spliterator(), false)
                 // principal.getAttribute(name).values
-                .map(principal.getAttributes()::get).filter(Objects::nonNull)
-                .map(CollectionUtils::convertValueToCollection).flatMap(Set::stream)
+                .map(principal.getAttributes()::get)
+                .filter(Objects::nonNull)
+                .map(CollectionUtils::convertValueToCollection)
+                .flatMap(Set::stream)
                 // value =~ /attrValue/
-                .filter(String.class::isInstance).map(String.class::cast)
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
                 .anyMatch(attrValuePredicate);
-    }
-
-    public void setRequestParameter(final String requestParameter) {
-        this.requestParameter = requestParameter;
-    }
-
-    public void setGlobalPrincipalAttributeNameTriggers(final String globalPrincipalAttributeNameTriggers) {
-        this.globalPrincipalAttributeNameTriggers = globalPrincipalAttributeNameTriggers;
     }
 }
