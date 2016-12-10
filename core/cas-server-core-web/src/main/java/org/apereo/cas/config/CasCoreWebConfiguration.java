@@ -31,12 +31,12 @@ public class CasCoreWebConfiguration {
     @Autowired
     @Qualifier("serviceFactoryList")
     private List serviceFactoryList;
-    
+
     @Bean
     public ArgumentExtractor defaultArgumentExtractor() {
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
-    
+
     @RefreshScope
     @Bean
     public AbstractResourceBasedMessageSource messageSource() {
@@ -48,7 +48,7 @@ public class CasCoreWebConfiguration {
         bean.setBasenames(casProperties.getMessageBundle().getBaseNames());
         return bean;
     }
-    
+
     @Bean
     public List argumentExtractors() {
         final List<ArgumentExtractor> list = new ArrayList<>();

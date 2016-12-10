@@ -3,9 +3,16 @@ package org.apereo.cas.support.oauth.web;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +37,15 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final String ID = "id";
     private static final String ATTRIBUTES = "attributes";
+
+    public OAuth20ProfileController(final ServicesManager servicesManager,
+                                    final TicketRegistry ticketRegistry,
+                                    final OAuth20Validator validator,
+                                    final AccessTokenFactory accessTokenFactory,
+                                    final PrincipalFactory principalFactory,
+                                    final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+    }
 
     /**
      * Handle request internal response entity.
@@ -60,7 +76,7 @@ public class OAuth20ProfileController extends BaseOAuthWrapperController {
             return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
         }
 
-        final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
+        final AccessToken accessTokenTicket = getTicketRegistry().getTicket(accessToken, AccessToken.class);
         if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
             logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
             final LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>(1);

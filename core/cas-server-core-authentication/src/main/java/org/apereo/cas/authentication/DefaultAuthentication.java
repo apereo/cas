@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -23,6 +24,7 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public class DefaultAuthentication implements Authentication {
 
     /** UID for serializing. */

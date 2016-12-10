@@ -67,8 +67,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
+        return ticket;
     }
     
     @Override

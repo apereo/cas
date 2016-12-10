@@ -33,6 +33,8 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
+import java.io.Serializable;
+
 /**
  * This is {@link PasswordManagementConfiguration}.
  *
@@ -94,13 +96,13 @@ public class PasswordManagementConfiguration {
 
     @RefreshScope
     @Bean
-    public CipherExecutor<String, String> passwordManagementCipherExecutor() {
+    public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
         if (casProperties.getAuthn().getPm().isEnabled()) {
             return new PasswordResetTokenCipherExecutor(
                     casProperties.getAuthn().getPm().getReset().getSecurity().getEncryptionKey(),
                     casProperties.getAuthn().getPm().getReset().getSecurity().getSigningKey());
         }
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeService")

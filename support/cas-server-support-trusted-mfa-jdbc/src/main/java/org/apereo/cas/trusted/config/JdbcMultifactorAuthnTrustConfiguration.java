@@ -37,7 +37,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor<String, String> mfaTrustCipherExecutor;
+    private CipherExecutor mfaTrustCipherExecutor;
     
     @RefreshScope
     @Bean

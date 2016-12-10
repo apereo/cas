@@ -21,11 +21,11 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
-    
+
     @NestedConfigurationProperty
     private CouchbaseTicketRegistryProperties couchbase =
             new CouchbaseTicketRegistryProperties();
-    
+
     @NestedConfigurationProperty
     private EhcacheProperties ehcache = new EhcacheProperties();
 
@@ -40,7 +40,7 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
-    
+
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
 
@@ -131,7 +131,7 @@ public class TicketRegistryProperties {
         public void setCrypto(final CryptographyProperties crypto) {
             this.crypto = crypto;
         }
-        
+
         public int getInitialCapacity() {
             return initialCapacity;
         }
@@ -156,7 +156,7 @@ public class TicketRegistryProperties {
             this.concurrency = concurrency;
         }
     }
-    
+
     public static class Cleaner {
         private boolean enabled = true;
         private String startDelay = "PT10S";

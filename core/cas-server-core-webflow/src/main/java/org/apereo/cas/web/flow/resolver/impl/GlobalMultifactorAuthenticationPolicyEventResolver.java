@@ -48,7 +48,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context");
+            logger.error("No multifactor authentication providers are available in the application context to handle " + mfaId);
             throw new AuthenticationException();
         }
 

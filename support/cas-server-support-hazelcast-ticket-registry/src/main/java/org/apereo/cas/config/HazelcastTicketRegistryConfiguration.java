@@ -40,12 +40,13 @@ import java.util.Set;
  * not set nor a valid location, creates HazelcastInstance programmatically
  * with a handful properties and their defaults (if not set) that it exposes to CAS deployers.
  *
+ * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Configuration("hazelcastInstanceConfiguration")
+@Configuration("hazelcastTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class HazelcastInstanceConfiguration {
+public class HazelcastTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
@@ -59,7 +59,7 @@ public class SamlRegisteredServiceTests {
 
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao, null);
+        final DefaultServicesManager impl = new DefaultServicesManager(dao);
         impl.load();
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()

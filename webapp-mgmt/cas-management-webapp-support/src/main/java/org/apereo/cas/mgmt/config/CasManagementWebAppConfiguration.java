@@ -3,6 +3,8 @@ package org.apereo.cas.mgmt.config;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -107,11 +109,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
-
 
     @Bean
     public Authorizer requireAnyRoleAuthorizer() {
@@ -233,7 +238,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
             if ("*".equals(authzAttributes)) {
                 return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             }
-            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[] {}), new String[]{});
+            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
@@ -353,6 +358,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 new ManageRegisteredServicesMultiActionController(
                         servicesManager,
                         registeredServiceFactory(),
+                        webApplicationServiceFactory,
                         getDefaultServiceUrl());
         return c;
     }
