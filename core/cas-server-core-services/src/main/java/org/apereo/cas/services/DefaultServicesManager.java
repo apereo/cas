@@ -36,22 +36,22 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistryDao serviceRegistryDao;
-    private final ServiceFactory serviceFactory;
+
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManager() {
     /**
      * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
-     * @param serviceFactory
      */
     public DefaultServicesManager(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
+    }
+
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
