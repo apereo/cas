@@ -41,10 +41,10 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class QueryDatabaseAuthenticationHandlerTests {
 
+    private static final String SQL = "SELECT password FROM casusers where username=?";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    private static final String SQL = "SELECT password FROM casusers where username=?";
 
     @Autowired
     @Qualifier("dataSource")

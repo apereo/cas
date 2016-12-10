@@ -44,13 +44,13 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("dataSource")
