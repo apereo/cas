@@ -38,18 +38,15 @@ public final class RegisteredServiceTestUtils {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
     }
 
-    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
-            final String url) {
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url),
-                    RegisteredServiceTestUtils.getRegisteredService(url));
+            return new HttpBasedServiceCredential(new URL(url), RegisteredServiceTestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
     }
 
-    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
-            final String username) {
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
         final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(username);
@@ -57,14 +54,14 @@ public final class RegisteredServiceTestUtils {
         return usernamePasswordCredentials;
     }
 
-    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
-            final String username, final String password) {
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
         final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
         return usernamePasswordCredentials;
     }
+
     public static Service getService() {
         return getService(CONST_TEST_URL);
     }
@@ -76,9 +73,7 @@ public final class RegisteredServiceTestUtils {
     public static AbstractWebApplicationService getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        final AbstractWebApplicationService result = (AbstractWebApplicationService)
-                new WebApplicationServiceFactory().createService(request);
-        return result;
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
     public static Map<String, Set<String>> getTestAttributes() {
@@ -134,7 +129,7 @@ public final class RegisteredServiceTestUtils {
             repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
-            policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
+            policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
             s.setAttributeReleasePolicy(policy);
 
             return s;
