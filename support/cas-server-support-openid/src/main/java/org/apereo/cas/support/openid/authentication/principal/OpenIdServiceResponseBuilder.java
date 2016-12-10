@@ -131,6 +131,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @param parameters                the parameters
      * @param successFullAuthentication the success full authentication
      * @param id                        the id
+     * @param parameterList             the parameter list
      * @return response response
      */
     protected Response buildAuthenticationResponse(final OpenIdService service,
