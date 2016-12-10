@@ -54,10 +54,7 @@ public class CasCoreMonitorConfiguration {
 
         final MonitorProperties.Warn warn = casProperties.getMonitor().getSt().getWarn();
         if (warn.getThreshold() > 0) {
-            final SessionMonitor bean = new SessionMonitor();
-            bean.setTicketRegistry(ticketRegistry);
-            bean.setServiceTicketCountWarnThreshold(warn.getThreshold());
-            bean.setSessionCountWarnThreshold(warn.getThreshold());
+            final SessionMonitor bean = new SessionMonitor(ticketRegistry, warn.getThreshold(), warn.getThreshold());
             monitors.add(bean);
         }
 

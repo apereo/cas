@@ -57,8 +57,6 @@ public class HealthCheckMonitorTests {
     }
 
     private static SessionMonitor newSessionMonitor() {
-        final SessionMonitor sessionMonitor = new SessionMonitor();
-        sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());
-        return sessionMonitor;
+        return new SessionMonitor(new DefaultTicketRegistry(), 0, 0);
     }
 }
