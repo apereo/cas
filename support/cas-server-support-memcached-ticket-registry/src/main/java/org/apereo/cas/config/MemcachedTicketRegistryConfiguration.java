@@ -66,8 +66,7 @@ public class MemcachedTicketRegistryConfiguration {
     @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
     public TicketRegistry memcachedTicketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
-        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
+        registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
         return registry;
     }
 
@@ -81,7 +80,8 @@ public class MemcachedTicketRegistryConfiguration {
      */
     public static class MemcachedTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
 
-        public MemcachedTicketRegistryCleaner(LockingStrategy lockingStrategy, LogoutManager logoutManager, TicketRegistry ticketRegistry, CasConfigurationProperties casProperties) {
+        public MemcachedTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+                                              final CasConfigurationProperties casProperties) {
             super(lockingStrategy, logoutManager, ticketRegistry, casProperties);
         }
 

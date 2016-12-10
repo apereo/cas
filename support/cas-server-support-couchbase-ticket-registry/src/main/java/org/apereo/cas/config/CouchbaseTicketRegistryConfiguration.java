@@ -70,7 +70,8 @@ public class CouchbaseTicketRegistryConfiguration {
      */
     public static class CouchbaseTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
 
-        public CouchbaseTicketRegistryCleaner(LockingStrategy lockingStrategy, LogoutManager logoutManager, TicketRegistry ticketRegistry, CasConfigurationProperties casProperties) {
+        public CouchbaseTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+                                              final CasConfigurationProperties casProperties) {
             super(lockingStrategy, logoutManager, ticketRegistry, casProperties);
         }
 
