@@ -2,7 +2,6 @@
 layout: null
 ---
 
-
 * [Planning](#planning)
     *   [Architecture](/$version/planning/Architecture.html)
     *   [Installation Requirements](/$version/planning/Installation-Requirements.html)
