@@ -39,15 +39,12 @@ public final class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.",
-                    service);
+            final String msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.",
-                    service);
-
+            final String msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
@@ -80,13 +77,12 @@ public final class RegisteredServiceAccessStrategyUtils {
         final Principal principal = authentication.getPrincipal();
         final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
-            LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].",
-                    service.getId(), principal);
+            LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principal);
 
             final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>();
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
                     UnauthorizedServiceForPrincipalException.class);
-            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap());
+            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
         }
     }
 

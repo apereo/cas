@@ -23,8 +23,7 @@ public class LegacyValidateController extends AbstractServiceValidateController 
      * @throws Exception the exception
      */
     @GetMapping(path = "/validate")
-    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 }

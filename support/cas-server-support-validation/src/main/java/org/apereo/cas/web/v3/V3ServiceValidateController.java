@@ -23,9 +23,7 @@ public class V3ServiceValidateController extends AbstractServiceValidateControll
      * @throws Exception the exception
      */
     @GetMapping(path = "/p3/serviceValidate")
-    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
-
 }

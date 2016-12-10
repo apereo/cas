@@ -23,9 +23,7 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
      */
     @GetMapping(path="/p3/proxyValidate")
     @Override
-    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
-
 }
