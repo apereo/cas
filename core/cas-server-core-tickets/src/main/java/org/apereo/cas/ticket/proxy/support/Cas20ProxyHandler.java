@@ -25,7 +25,7 @@ import java.net.URL;
  */
 public class Cas20ProxyHandler implements ProxyHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(Cas20ProxyHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProxyHandler.class);
 
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
@@ -81,11 +81,11 @@ public class Cas20ProxyHandler implements ProxyHandler {
                 .append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            logger.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+            LOGGER.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
             return proxyIou;
         }
 
-        logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
+        LOGGER.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
         return null;
     }
     

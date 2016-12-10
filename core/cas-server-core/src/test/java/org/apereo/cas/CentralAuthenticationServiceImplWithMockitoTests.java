@@ -133,7 +133,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final DefaultTicketFactory factory = new DefaultTicketFactory();
         factory.setTicketGrantingTicketFactory(new DefaultTicketGrantingTicketFactory(null, null));
         factory.setProxyGrantingTicketFactory(new DefaultProxyGrantingTicketFactory(null, null));
-        factory.setServiceTicketFactory(new DefaultServiceTicketFactory());
+        factory.setServiceTicketFactory(new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null));
         factory.setProxyTicketFactory(new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, null));
 
         factory.initialize();

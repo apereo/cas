@@ -107,12 +107,9 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
     @Bean
     public ServiceTicketFactory defaultServiceTicketFactory() {
-        final DefaultServiceTicketFactory f = new DefaultServiceTicketFactory();
-        f.setServiceTicketExpirationPolicy(serviceTicketExpirationPolicy());
-        f.setUniqueTicketIdGeneratorsForService(uniqueIdGeneratorsMap());
-        f.setTrackMostRecentSession(casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
-        f.setCipherExecutor(protocolTicketCipherExecutor());
-        return f;
+        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(), uniqueIdGeneratorsMap(), onlyTrackMostRecentSession,
+                protocolTicketCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
