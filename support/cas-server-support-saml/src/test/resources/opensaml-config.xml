@@ -13,9 +13,7 @@
     
 
     <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManager"
-        <constructor-arg name="serviceRegistryDao" ref="serviceRegistryDao"/>
-        <constructor-arg name="serviceFactory"><null/></constructor-arg>
-    </bean>
+          c:serviceRegistryDao-ref="serviceRegistryDao" />
 
     <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
         <property name="registeredServices">

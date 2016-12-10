@@ -24,16 +24,16 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
 import org.junit.Before;
@@ -130,16 +130,14 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
 
-        final DefaultTicketFactory factory = new DefaultTicketFactory(new DefaultProxyGrantingTicketFactory(null, null),
-                new DefaultTicketGrantingTicketFactory(null, null),
+        final DefaultTicketFactory factory = new DefaultTicketFactory(
+                new DefaultProxyGrantingTicketFactory(null, null, null),
+                new DefaultTicketGrantingTicketFactory(null, null, null),
                 new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null),
                 new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
-        factory.initialize();
-
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, factory, smMock, mock(LogoutManager.class));
+        this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class));
         this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy()));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
-
     }
 
     private AuthenticationResult getAuthenticationContext() {
