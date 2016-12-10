@@ -115,12 +115,8 @@ public class CasCoreTicketsConfiguration {
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
-        final DefaultTicketFactory f = new DefaultTicketFactory();
-        f.setProxyGrantingTicketFactory(defaultProxyGrantingTicketFactory());
-        f.setTicketGrantingTicketFactory(defaultTicketGrantingTicketFactory());
-        f.setServiceTicketFactory(defaultServiceTicketFactory());
-        f.setProxyTicketFactory(defaultProxyTicketFactory());
-        return f;
+        return new DefaultTicketFactory(defaultProxyGrantingTicketFactory(), defaultTicketGrantingTicketFactory(), defaultServiceTicketFactory(),
+                defaultProxyTicketFactory());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
