@@ -109,7 +109,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultServicesManagerImpl(serviceRegistryDao, webApplicationServiceFactory());
+        return new DefaultServicesManager(serviceRegistryDao);
     }
 
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
