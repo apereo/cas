@@ -31,41 +31,36 @@ public class Cas20ProxyHandlerTests {
     public Cas20ProxyHandlerTests() {
         MockitoAnnotations.initMocks(this);
     }
+
     @Before
     public void setUp() throws Exception {
-        this.handler = new Cas20ProxyHandler();
-
         final SimpleHttpClientFactoryBean factory = new SimpleHttpClientFactoryBean();
         factory.setConnectionTimeout(10000);
         factory.setReadTimeout(10000);
-        this.handler.setHttpClient(factory.getObject());
-        this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.handler = new Cas20ProxyHandler(factory.getObject(), new DefaultUniqueTicketIdGenerator());
         when(this.proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
     }
 
     @Test
     public void verifyValidProxyTicketWithoutQueryString() throws Exception {
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
-            new URL("https://www.google.com/"),
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/"),
                 CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
     public void verifyValidProxyTicketWithQueryString() throws Exception {
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
-            new URL("https://www.google.com/?test=test"),
-                        CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")),
-                proxyGrantingTicket));
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredential(new URL("https://www.google.com/?test=test"),
+                        CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
     public void verifyNonValidProxyTicket() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(new int[] {900});
-        final HttpClient httpClient = clientFactory.getObject();
-        this.handler.setHttpClient(httpClient);
-        assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
-            "http://www.rutgers.edu"),
+
+        this.handler = new Cas20ProxyHandler(clientFactory.getObject(), new DefaultUniqueTicketIdGenerator());
+
+        assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL("http://www.rutgers.edu"),
                 CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 }
