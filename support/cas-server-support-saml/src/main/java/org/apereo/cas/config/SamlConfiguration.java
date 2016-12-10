@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -13,6 +14,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.apereo.cas.support.saml.authentication.principal.SamlServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator;
 import org.apereo.cas.support.saml.web.SamlValidateController;
@@ -24,6 +26,7 @@ import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -132,6 +135,12 @@ public class SamlConfiguration {
     @Bean
     public ServiceFactory<SamlService> samlServiceFactory() {
         return new SamlServiceFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
+    @Bean
+    public ResponseBuilder samlServiceResponseBuilder() {
+        return new SamlServiceResponseBuilder();
     }
 
     @Bean

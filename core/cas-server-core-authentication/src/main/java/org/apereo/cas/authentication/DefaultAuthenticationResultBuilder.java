@@ -130,9 +130,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                     final Object oldValue = authenticationAttributes.remove(attrName);
 
                     LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = CollectionUtils.convertValueToCollection(oldValue);
+                    final Collection<Object> listOfValues = CollectionUtils.toCollection(oldValue);
                     final Object newValue = authn.getAttributes().get(attrName);
-                    listOfValues.addAll(CollectionUtils.convertValueToCollection(newValue));
+                    listOfValues.addAll(CollectionUtils.toCollection(newValue));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 } else {

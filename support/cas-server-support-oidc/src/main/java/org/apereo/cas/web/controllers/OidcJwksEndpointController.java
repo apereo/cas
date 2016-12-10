@@ -5,14 +5,19 @@ import com.stormpath.sdk.lang.Assert;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
@@ -33,17 +38,21 @@ import java.nio.charset.StandardCharsets;
  */
 public class OidcJwksEndpointController extends BaseOAuthWrapperController {
 
-    /**
-     * The Resource loader.
-     */
     @Autowired
-    protected ResourceLoader resourceLoader;
-    
+    private ResourceLoader resourceLoader;
+
     private Resource jwksFile;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    public OidcJwksEndpointController(final ServicesManager servicesManager,
+                                      final TicketRegistry ticketRegistry,
+                                      final OAuth20Validator validator,
+                                      final AccessTokenFactory accessTokenFactory,
+                                      final PrincipalFactory principalFactory,
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                      final Resource jwksFile) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+        this.jwksFile = jwksFile;
+    }
 
     /**
      * Handle request for jwk set.
@@ -60,12 +69,12 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
                                                         final Model model) throws Exception {
 
         Assert.notNull(this.jwksFile, "JWKS file cannot be undefined or null.");
-        
+
         try {
             final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
-            this.servicesManager.getAllServices()
+            getServicesManager().getAllServices()
                     .stream()
                     .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
                     .forEach(
@@ -82,9 +91,5 @@ public class OidcJwksEndpointController extends BaseOAuthWrapperController {
             logger.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    public void setJwksFile(final Resource jwksFile) {
-        this.jwksFile = jwksFile;
     }
 }

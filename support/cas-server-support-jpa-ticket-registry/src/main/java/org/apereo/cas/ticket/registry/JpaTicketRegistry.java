@@ -48,9 +48,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         this.entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
+        return ticket;
     }
 
     @Override

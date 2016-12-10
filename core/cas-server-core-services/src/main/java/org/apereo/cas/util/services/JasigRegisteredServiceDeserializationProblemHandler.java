@@ -68,10 +68,12 @@ public class JasigRegisteredServiceDeserializationProblemHandler extends Deseria
                     repo.setExpiration(expiration);
 
                     LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
-                            + "It is STRONGLY recommended that you review the configuration and upgrade the legacy syntax.",
+                                    + "It is STRONGLY recommended that you review the configuration and upgrade the legacy syntax.",
                             propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
 
                     handled = true;
+                    break;
+                default:
                     break;
             }
         }

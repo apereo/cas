@@ -1,8 +1,12 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
@@ -39,6 +43,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final ExpirationPolicy proxyTicketExpirationPolicy;
     private final CipherExecutor<String, String> cipherExecutor;
     private final boolean onlyTrackMostRecentSession;
+    protected CipherExecutor<String, String> cipherExecutor;
 
     public DefaultProxyTicketFactory(final ExpirationPolicy expirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGenerators,
                                      final CipherExecutor<String, String> cipherExecutor, final boolean onlyTrackMostRecentSession) {
@@ -50,6 +55,35 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service) {
+        final String ticketId = produceTicketIdentifier(service);
+        return produceTicket(proxyGrantingTicket, service, ticketId);
+    }
+
+    /**
+     * Produce ticket.
+     *
+     * @param <T>                 the type parameter
+     * @param proxyGrantingTicket the proxy granting ticket
+     * @param service             the service
+     * @param ticketId            the ticket id
+     * @return the ticket
+     */
+    protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket, final Service service, final String ticketId) {
+        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
+                ticketId,
+                service,
+                this.proxyTicketExpirationPolicy,
+                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+        return (T) serviceTicket;
+    }
+
+    /**
+     * Produce ticket identifier.
+     *
+     * @param service the service
+     * @return the ticket id
+     */
+    protected String produceTicketIdentifier(final Service service) {
         final String uniqueTicketIdGenKey = service.getClass().getName();
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
         UniqueTicketIdGenerator generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
@@ -64,9 +98,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
             ticketId = this.cipherExecutor.encode(ticketId);
             LOGGER.debug("Encoded proxy ticket id {}", ticketId);
         }
-        
-        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(ticketId, service, proxyTicketExpirationPolicy, onlyTrackMostRecentSession);
-        return (T) serviceTicket;
+        return ticketId;
     }
 
     @Override

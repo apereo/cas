@@ -44,7 +44,6 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -55,7 +54,6 @@ import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.CallbackController;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -107,7 +105,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
 
     @ConditionalOnMissingBean(name = "accessTokenResponseGenerator")
     public AccessTokenResponseGenerator accessTokenResponseGenerator() {
@@ -246,7 +243,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oAuthValidator")
     @Bean
     public OAuth20Validator oAuthValidator() {
-        return new OAuth20Validator();
+        return new OAuth20Validator(webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
@@ -300,51 +297,40 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(name = "callbackAuthorizeController")
     public OAuth20CallbackAuthorizeController callbackAuthorizeController() {
-        final OAuth20CallbackAuthorizeController c = new OAuth20CallbackAuthorizeController();
-        c.setCallbackController(callbackController());
-        c.setConfig(oauthSecConfig());
-        c.setAuth20CallbackAuthorizeViewResolver(callbackAuthorizeViewResolver());
-        return c;
+        return new OAuth20CallbackAuthorizeController(servicesManager, ticketRegistry,
+                oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(), webApplicationServiceFactory,
+                oauthSecConfig(), callbackController(), callbackAuthorizeViewResolver());
     }
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
     public OAuth20AccessTokenController accessTokenController() {
-        final OAuth20AccessTokenController c = new OAuth20AccessTokenController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory());
-        c.setAccessTokenResponseGenerator(accessTokenResponseGenerator());
-        c.setPrincipalFactory(oauthPrincipalFactory());
-        c.setRefreshTokenFactory(defaultRefreshTokenFactory());
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator());
-        return c;
+        return new OAuth20AccessTokenController(
+                servicesManager,
+                ticketRegistry,
+                oAuthValidator(), defaultAccessTokenFactory(),
+                oauthPrincipalFactory(),
+                webApplicationServiceFactory,
+                defaultRefreshTokenFactory(), accessTokenResponseGenerator()
+        );
     }
 
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
     public OAuth20ProfileController profileController() {
-        final OAuth20ProfileController c = new OAuth20ProfileController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory());
-        c.setPrincipalFactory(oauthPrincipalFactory());
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator());
-        return c;
+        return new OAuth20ProfileController(servicesManager,
+                ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
+                oauthPrincipalFactory(), webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "authorizeController")
     @Bean
     public OAuth20AuthorizeController authorizeController() {
-        final OAuth20AuthorizeController c = new OAuth20AuthorizeController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory());
-        c.setPrincipalFactory(oauthPrincipalFactory());
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuthValidator());
-        c.setConsentApprovalViewResolver(consentApprovalViewResolver());
-        c.setoAuthCodeFactory(defaultOAuthCodeFactory());
-        return c;
+        return new OAuth20AuthorizeController(
+                servicesManager, ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),
+                oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
+                consentApprovalViewResolver()
+        );
     }
 
     @Bean

@@ -336,7 +336,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("format", "NOTHING");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertFalse(modelAndView.getView().toString().contains(SUCCESS));
+        assertTrue(modelAndView.getView().toString().contains("Success"));
     }
 
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
