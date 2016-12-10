@@ -38,14 +38,14 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     private final ExpirationPolicy proxyTicketExpirationPolicy;
     private final CipherExecutor<String, String> cipherExecutor;
-    private final CasConfigurationProperties casProperties;
+    private final boolean onlyTrackMostRecentSession;
 
     public DefaultProxyTicketFactory(final ExpirationPolicy expirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGenerators,
-                                     final CipherExecutor<String, String> cipherExecutor, final CasConfigurationProperties casProperties) {
+                                     final CipherExecutor<String, String> cipherExecutor, final boolean onlyTrackMostRecentSession) {
         this.proxyTicketExpirationPolicy = expirationPolicy;
         this.uniqueTicketIdGeneratorsForService = ticketIdGenerators;
         this.cipherExecutor = cipherExecutor;
-        this.casProperties = casProperties;
+        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 
     @Override
@@ -65,11 +65,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
             LOGGER.debug("Encoded proxy ticket id {}", ticketId);
         }
         
-        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
-                ticketId,
-                service,
-                this.proxyTicketExpirationPolicy,
-                casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession());
+        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(ticketId, service, proxyTicketExpirationPolicy, onlyTrackMostRecentSession);
         return (T) serviceTicket;
     }
 

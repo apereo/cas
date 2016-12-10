@@ -17,13 +17,10 @@ import java.util.Map;
 @Transactional(readOnly = true, transactionManager = "ticketTransactionManager")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-
     private TicketRegistry ticketRegistry;
 
-    /**
-     * Instantiates a new Default ticket registry support.
-     */
-    public DefaultTicketRegistrySupport() {
+    public DefaultTicketRegistrySupport(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
     }
 
     @Override
@@ -49,9 +46,5 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         tgt.getAuthentication().update(authentication);
         this.ticketRegistry.updateTicket(tgt);
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
     }
 }

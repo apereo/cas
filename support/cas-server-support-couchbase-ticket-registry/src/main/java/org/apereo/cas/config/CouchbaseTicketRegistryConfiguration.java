@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,7 +39,6 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
-
         final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(cb.getNodeSet()));
@@ -62,17 +62,20 @@ public class CouchbaseTicketRegistryConfiguration {
 
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
-        final CouchbaseTicketRegistryCleaner c = new CouchbaseTicketRegistryCleaner();
-        c.setLockingStrategy(new NoOpLockingStrategy());
-        c.setLogoutManager(this.logoutManager);
-        c.setTicketRegistry(couchbaseTicketRegistry());
-        return c;
+        final boolean isCleanerEnabled = casProperties.getTicket().getRegistry().getCleaner().isEnabled();
+        return new CouchbaseTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, couchbaseTicketRegistry(), isCleanerEnabled);
     }
 
     /**
      * The type Couchbase ticket registry cleaner.
      */
     public static class CouchbaseTicketRegistryCleaner extends DefaultTicketRegistryCleaner {
+
+        public CouchbaseTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+                                              final boolean isCleanerEnabled) {
+            super(lockingStrategy, logoutManager, ticketRegistry, isCleanerEnabled);
+        }
+
         @Override
         protected boolean isCleanerSupported() {
             return false;
