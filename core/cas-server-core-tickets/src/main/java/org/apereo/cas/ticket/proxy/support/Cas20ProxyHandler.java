@@ -23,8 +23,8 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class Cas20ProxyHandler implements ProxyHandler {
-
+public class Cas20ProxyHandler implements ProxyHandle {
+  
     private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProxyHandler.class);
 
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
@@ -43,10 +43,9 @@ public class Cas20ProxyHandler implements ProxyHandler {
     private final HttpClient httpClient;
 
     /**
-     * Initializes the ticket id generator to
-     * {@link DefaultUniqueTicketIdGenerator}.
-     * @param httpClient
-     * @param uniqueTicketIdGenerator
+     * Initializes the ticket id generator to {@link DefaultUniqueTicketIdGenerator}.
+     * @param httpClient http client
+     * @param uniqueTicketIdGenerator ticket id generator
      */
     public Cas20ProxyHandler(final HttpClient httpClient, final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
         this.httpClient = httpClient;
