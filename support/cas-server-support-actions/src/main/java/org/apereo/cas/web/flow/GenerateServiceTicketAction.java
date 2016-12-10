@@ -76,7 +76,8 @@ public class GenerateServiceTicketAction extends AbstractAction {
                 return result(CasWebflowConstants.STATE_ID_WARN);
             }
 
-            final AuthenticationResultBuilder authenticationResultBuilder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+            final AuthenticationResultBuilder authenticationResultBuilder =
+                    this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
             final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
