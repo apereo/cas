@@ -12,8 +12,9 @@ import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
-import org.apereo.cas.token.authentication.principal.TokenizedWebApplicationServiceResponseBuilder;
+import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.apereo.cas.token.webflow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -65,9 +66,15 @@ public class TokenAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ExpirationPolicy grantingTicketExpirationPolicy;
+
     @Bean
     public ResponseBuilder webApplicationServiceResponseBuilder() {
-        return new TokenizedWebApplicationServiceResponseBuilder(servicesManager, tokenCipherExecutor());
+        return new TokenWebApplicationServiceResponseBuilder(servicesManager,
+                tokenCipherExecutor(),
+                grantingTicketExpirationPolicy);
     }
 
     @Bean
@@ -101,6 +108,7 @@ public class TokenAuthenticationConfiguration {
         final CryptographyProperties crypto = casProperties.getAuthn().getToken().getCrypto();
         return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
     }
+
     @PostConstruct
     public void initializeAuthenticationHandler() {
         this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
