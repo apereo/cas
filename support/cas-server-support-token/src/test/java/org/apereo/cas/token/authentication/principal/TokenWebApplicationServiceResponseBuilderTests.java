@@ -59,7 +59,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     private ServiceFactory<WebApplicationService> serviceFactory;
 
     @Test
-    public void testDecrypt() {
+    public void verifyDecrypt() {
         final String jwt = "eyJhbGciOiJIUzUxMiJ9.WlhsS05tRllRV2xQYVVwRlVsVlphVXhEU21oaVIyTnBUMmxLYT"
                 + "JGWVNXbE1RMHBzWW0xTmFVOXBTa0pOVkVrMFVUQktSRXhWYUZSTmFsVXlTVzR3TGk0M2JEVnNWVk5PWW5OTGFYbDNh"
                 + "MHhoTUhoUlIxZEJMa053VmpVNVEzTlpTVlprUm5wUVRYbFBjakoyU1MxdVJ6TlVZVGx2Y0ZSM1JUVXdhMnhZWW1sNmNu"
@@ -81,7 +81,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    public void testBuilderSupport() {
+    public void verifyBuilderSupport() {
         assertTrue(responseBuilder.supports(serviceFactory.createService("test")));
     }
 }
