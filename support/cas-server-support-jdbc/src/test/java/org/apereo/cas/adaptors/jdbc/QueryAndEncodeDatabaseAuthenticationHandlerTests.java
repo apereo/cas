@@ -4,14 +4,16 @@ import com.google.common.base.Throwables;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,10 +43,14 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
+
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("dataSource")
@@ -52,7 +58,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Before
     public void setUp() throws Exception {
-
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
@@ -68,10 +73,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static String getSqlInsertStatementToCreateUserAccount(final int i) {
         final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
 
-        final String sql = String.format(
+        return String.format(
                 "insert into users (username, password, salt, numIterations) values('%s', '%s', '%s', %s);",
                 "user" + i, psw, "salt" + i, NUM_ITERATIONS);
-        return sql;
     }
 
     @After
@@ -81,41 +85,48 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         c.setAutoCommit(true);
 
         for (int i = 0; i < 5; i++) {
-            final String sql = String.format("delete from users;");
-            s.execute(sql);
+            s.execute("delete from users;");
         }
         c.close();
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("test not found with SQL query");
+
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
-    @Test(expected = PreventedException.class)
+    @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql("makesNoSenseInSql"));
-        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
+        this.thrown.expect(PreventedException.class);
+        this.thrown.expectMessage("SQL exception while executing query for test");
+
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
         q.setDataSource(dataSource);
         q.setAlgorithmName(ALG_NAME);
         q.setSql(buildSql());
-        q.authenticate(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Multiple records found for user0");
+
+        q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
     }
 
     @Test
@@ -173,21 +184,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         return String.format(SQL, "username=?;");
     }
 
-
     private static String genPassword(final String psw, final String salt, final int iter) {
         try {
-
             final DefaultHashService hash = new DefaultHashService();
             hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
             hash.setHashIterations(iter);
             hash.setGeneratePublicSalt(false);
             hash.setHashAlgorithmName(ALG_NAME);
 
-            final String pswEnc = hash.computeHash(new HashRequest.Builder()
-                    .setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
-
-            return pswEnc;
-
+            return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
