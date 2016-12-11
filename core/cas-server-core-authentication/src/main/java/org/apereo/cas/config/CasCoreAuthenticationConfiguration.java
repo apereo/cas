@@ -180,10 +180,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
-        final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
-        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(httpClient));
-        r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
-        return r;
+        return new DefaultAuthenticationSystemSupport(defaultAuthenticationTransactionManager(httpClient), defaultPrincipalElectionStrategy());
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
