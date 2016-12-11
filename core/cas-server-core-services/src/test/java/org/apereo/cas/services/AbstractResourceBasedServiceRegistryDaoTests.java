@@ -7,7 +7,9 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
 import java.net.URI;
@@ -30,7 +32,11 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 public abstract class AbstractResourceBasedServiceRegistryDaoTests {
+
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     protected ServiceRegistryDao dao;
 
@@ -243,12 +249,15 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         assertTrue(r2 instanceof RegexRegisteredService);
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void verifyServiceWithInvalidFileName() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
+
+        this.thrown.expect(RuntimeException.class);
+        this.thrown.expectMessage("IO error opening file stream.");
 
         this.dao.save(r);
     }
