@@ -15,21 +15,23 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.util.DateTimeUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
- * This is {@link TokenizedWebApplicationServiceResponseBuilder}.
+ * This is {@link TokenWebApplicationServiceResponseBuilder}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
+public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
     @Autowired
@@ -39,10 +41,14 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
 
     private final CipherExecutor<String, String> tokenCipherExecutor;
 
-    public TokenizedWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
-                                                         final CipherExecutor tokenCipherExecutor) {
+    private final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+
+    public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
+                                                     final CipherExecutor tokenCipherExecutor,
+                                                     final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         this.servicesManager = servicesManager;
         this.tokenCipherExecutor = tokenCipherExecutor;
+        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
 
     @Override
@@ -88,11 +94,17 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
                             .audience(service.getId())
                             .issuer(casProperties.getServer().getPrefix())
                             .jwtID(ticketId)
-                            .expirationTime(new Date())
                             .issueTime(assertion.getAuthenticationDate())
                             .subject(assertion.getPrincipal().getName());
             assertion.getAttributes().forEach((k, v) -> claims.claim(k, v));
             assertion.getPrincipal().getAttributes().forEach((k, v) -> claims.claim(k, v));
+
+            if (assertion.getValidUntilDate() != null) {
+                claims.expirationTime(assertion.getValidUntilDate());
+            } else {
+                final ZonedDateTime dt = ZonedDateTime.now().plusSeconds(ticketGrantingTicketExpirationPolicy.getTimeToLive());
+                claims.expirationTime(DateTimeUtils.dateOf(dt));
+            }
             final JWTClaimsSet claimsSet = claims.build();
             final JSONObject object = claimsSet.toJSONObject();
             return tokenCipherExecutor.encode(object.toJSONString());
@@ -105,7 +117,6 @@ public class TokenizedWebApplicationServiceResponseBuilder extends WebApplicatio
      * Token/JWT web application service.
      */
     public static class TokenWebApplicationService extends AbstractWebApplicationService {
-
         private static final long serialVersionUID = -8844121291312069964L;
 
         public TokenWebApplicationService(final String id, final String originalUrl, final String artifactId) {
