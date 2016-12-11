@@ -3,6 +3,7 @@ package org.apereo.cas;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.nimbusds.openid.connect.sdk.claims.ACR;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,17 @@ import java.util.Set;
  * @since 5.0.0
  */
 public interface OidcConstants {
-    
+
+    /**
+     * Dnamic client registration mode.
+     */
+    enum DynamicClientRegistrationMode {
+        /** Registration is open to all. */
+        OPEN,
+
+        /** registration is protected for all. */
+        PROTECTED
+    }
     /**
      * ACR passed in the id token.
      */
