@@ -6,11 +6,11 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -25,7 +25,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +38,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -63,8 +64,12 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"/mfa-test-context.xml"})
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 public class MultifactorAuthenticationTests {
+
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
@@ -106,21 +111,27 @@ public class MultifactorAuthenticationTests {
         assertNotNull(st);
     }
 
-    @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
+    @Test
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
 
+        this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
+
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
+
         cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
     }
 
-    @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
+    @Test
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
+
+        this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
+
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
@@ -146,21 +157,15 @@ public class MultifactorAuthenticationTests {
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx2);
         assertNotNull(tgt);
 
-        final ServiceTicket st = cas.grantServiceTicket(
-                tgt.getId(),
-                HIGH_SERVICE,
-                ctx2);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx2);
 
         assertNotNull(st);
         // Confirm the authentication in the assertion is the one that satisfies security policy
         final Assertion assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
-        assertTrue(assertion.getPrimaryAuthentication()
-                .getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
-        assertTrue(assertion.getPrimaryAuthentication()
-                .getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
-        assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
-                AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
+        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
+        assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
@@ -174,9 +179,7 @@ public class MultifactorAuthenticationTests {
         return CoreAuthenticationTestUtils.getService(id);
     }
 
-    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws
-            AuthenticationException {
-
+    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
         return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
 }
