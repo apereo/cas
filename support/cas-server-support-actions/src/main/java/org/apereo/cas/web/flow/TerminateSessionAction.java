@@ -28,22 +28,28 @@ import java.util.List;
  * @since 4.0.0
  */
 public class TerminateSessionAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
 
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-
-    private CentralAuthenticationService centralAuthenticationService;
-
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
-
-     private Config pac4jSecurityConfig;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final Config pac4jSecurityConfig;
 
     /**
      * Creates a new instance with the given parameters.
+     * @param centralAuthenticationService
+     * @param tgtCookieGenerator
+     * @param warnCookieGenerator
+     * @param pac4jSecurityConfig
      */
-    public TerminateSessionAction() {
+    public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService, final CookieRetrievingCookieGenerator tgtCookieGenerator,
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator, final Config pac4jSecurityConfig) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
+        this.warnCookieGenerator = warnCookieGenerator;
+        this.pac4jSecurityConfig = pac4jSecurityConfig;
     }
 
     @Override
@@ -103,21 +109,5 @@ public class TerminateSessionAction extends AbstractAction {
         if (session != null) {
             session.invalidate();
         }
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    public void setPac4jSecurityConfig(final Config pac4jSecurityConfig) {
-        this.pac4jSecurityConfig = pac4jSecurityConfig;
     }
 }

@@ -164,8 +164,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action initialAuthenticationRequestValidationAction() {
-        final InitialAuthenticationRequestValidationAction a =
-                new InitialAuthenticationRequestValidationAction();
+        final InitialAuthenticationRequestValidationAction a = new InitialAuthenticationRequestValidationAction();
         a.setRankedAuthenticationProviderWebflowEventResolver(rankedAuthenticationProviderWebflowEventResolver);
         return a;
     }
@@ -203,12 +202,7 @@ public class CasSupportActionsConfiguration {
     @Autowired
     @Bean
     public Action terminateSessionAction(@Qualifier("config") final Config pac4jSecurityConfig) {
-        final TerminateSessionAction a = new TerminateSessionAction();
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setTicketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator);
-        a.setWarnCookieGenerator(warnCookieGenerator);
-        a.setPac4jSecurityConfig(pac4jSecurityConfig);
-        return a;
+        return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator, warnCookieGenerator, pac4jSecurityConfig);
     }
 
     @Bean
