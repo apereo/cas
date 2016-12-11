@@ -13,6 +13,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.springframework.web.CallbackController;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -62,7 +63,7 @@ public class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperControll
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
+    @GetMapping(path = OAuthConstants.BASE_OAUTH20_URL + '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL)
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         this.callbackController.callback(request, response);
         final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");

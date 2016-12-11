@@ -28,15 +28,16 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
-        if (super.preHandle(request, response, handler)) {
-            if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
-                if (isDynamicClientRegistrationRequestProtected()) {
-                    return requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, handler);
-                }
-                return true;
+        if (!super.preHandle(request, response, handler)) {
+            return false;
+        }
+
+        if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
+            if (isDynamicClientRegistrationRequestProtected()) {
+                return requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, handler);
             }
         }
-        return false;
+        return true;
     }
 
     private boolean isDynamicClientRegistrationRequestProtected() {
