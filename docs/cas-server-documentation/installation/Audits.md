@@ -59,3 +59,22 @@ for auditing functionality, enable the following module in your configuration:
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html). To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
+
+## Audit Events
+
+The following events are tracked and recorded in the audit log:
+
+| Event                                 | Action          
+|---------------------------------------|-----------------
+| `TICKET_GRANTING_TICKET`              | `CREATED`, `NOT_CREATED` 
+| `PROXY_GRANTING_TICKET`               | `CREATED`, `NOT_CREATED` 
+| `SERVICE_TICKET`                      | `CREATED`, `NOT_CREATED` 
+| `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED` 
+| `AUTHENTICATION`                      | `SUCCESS`, `FAILED`
+| `AUTHENTICATION_EVENT`                | `TRIGGERED`
+| `TICKET_GRANTING_TICKET_DESTROYED`    | N/A
+| `PROXY_GRANTING_TICKET_DESTROYED`     | N/A
+| `EVALUATE_RISKY_AUTHENTICATION`       | N/A
+| `MITIGATE_RISKY_AUTHENTICATION`       | N/A
+| `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
+| `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
