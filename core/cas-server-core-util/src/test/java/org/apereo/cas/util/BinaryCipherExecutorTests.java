@@ -2,7 +2,9 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BinaryCipherExecutor;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +14,9 @@ import static org.junit.Assert.*;
  * @since 4.2
  */
 public class BinaryCipherExecutorTests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void checkEncodingDecoding() {
@@ -23,10 +28,14 @@ public class BinaryCipherExecutorTests {
         assertEquals(new String(decoded), value);
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void checkEncodingDecodingBadKeys() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
         final CipherExecutor<byte[], byte[]> cc = new BinaryCipherExecutor("0000", "1234", 512, 16);
+
+        this.thrown.expect(RuntimeException.class);
+        this.thrown.expectMessage("Unable to init cipher instance.");
+
         cc.encode(value.getBytes());
     }
 }

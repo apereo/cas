@@ -49,8 +49,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * {@inheritDoc}
      **/
     @Override
-    public HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
@@ -68,8 +67,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      *                                  {@link #authenticate(Credential)}.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult doAuthentication(Credential credential)
-            throws GeneralSecurityException, PreventedException;
+    protected abstract HandlerResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
 
     /**
      * Helper method to construct a handler result
@@ -82,8 +80,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-                                                final List<MessageDescriptor> warnings) {
+    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal, final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }
