@@ -2,7 +2,9 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/ldap.properties"})
 public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Autowired
     @Qualifier("ldapAuthenticationHandler")
     private AuthenticationHandler handler;
@@ -58,19 +63,21 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
-    @Test(expected = FailedLoginException.class)
+    @Test
     public void verifyAuthenticateFailure() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
+            this.thrown.expect(FailedLoginException.class);
+
             final String username = getUsername(entry);
             this.handler.authenticate(new UsernamePasswordCredential(username, "badpassword"));
-            fail("Should have thrown FailedLoginException.");
-
         }
     }
 
-    @Test(expected = AccountNotFoundException.class)
+    @Test
     public void verifyAuthenticateNotFound() throws Exception {
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("notfound not found.");
+
         this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
-        fail("Should have thrown FailedLoginException.");
     }
 }
