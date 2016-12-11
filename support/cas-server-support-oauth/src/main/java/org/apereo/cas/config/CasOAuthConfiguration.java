@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -203,7 +204,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
         final String clients = StringUtils.join(
-                Arrays.asList(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
+                Lists.newArrayList(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
                         Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
                         Authenticators.CAS_OAUTH_CLIENT_USER_FORM), ",");
         return new SecurityInterceptor(oauthSecConfig(), clients);
