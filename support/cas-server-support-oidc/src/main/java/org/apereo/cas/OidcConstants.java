@@ -3,7 +3,6 @@ package org.apereo.cas;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.nimbusds.openid.connect.sdk.claims.ACR;
 
 import java.util.List;
 import java.util.Set;
