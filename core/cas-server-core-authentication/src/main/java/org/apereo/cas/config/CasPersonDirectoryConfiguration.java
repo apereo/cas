@@ -254,7 +254,7 @@ public class CasPersonDirectoryConfiguration {
                     final Map<String, Object> attrs = getAttributesForUser(a.get(0).toString());
                     LOGGER.debug("Groovy-based attributes found are {}", attrs);
                     attrs.forEach((k, v) -> {
-                        final List<Object> values = new ArrayList<>(CollectionUtils.convertValueToCollection(v));
+                        final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));
                         LOGGER.debug("Adding Groovy-based attribute {} with value(s) {}", k, values);
                         results.put(k, values);
                     });

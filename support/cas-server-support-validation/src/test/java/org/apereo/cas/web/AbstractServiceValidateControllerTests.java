@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
+import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.Cas20ProtocolValidationSpecification;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
@@ -69,14 +70,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
         this.serviceValidateController.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
-        final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
-        proxyHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
+        final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler(new SimpleHttpClientFactoryBean().getObject(), new DefaultUniqueTicketIdGenerator());
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
         this.serviceValidateController.setServicesManager(getServicesManager());
         this.serviceValidateController.setValidationSpecification(new Cas20WithoutProxyingValidationSpecification());
-        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy());
+        this.serviceValidateController.setMultifactorTriggerSelectionStrategy(new DefaultMultifactorTriggerSelectionStrategy("", ""));
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
@@ -97,7 +97,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController.setValidationSpecification(new Cas20ProtocolValidationSpecification());
-        this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
+        this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler(null, null));
     }
 
     @Test
@@ -336,7 +336,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("format", "NOTHING");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertFalse(modelAndView.getView().toString().contains(SUCCESS));
+        assertTrue(modelAndView.getView().toString().contains("Success"));
     }
 
     protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {

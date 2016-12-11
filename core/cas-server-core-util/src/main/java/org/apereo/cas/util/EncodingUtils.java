@@ -1,6 +1,9 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.OctJwkGenerator;
+import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Formatter;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -24,6 +28,12 @@ import java.util.stream.IntStream;
  * @since 5.0.0
  */
 public final class EncodingUtils {
+
+    /**
+     * JSON web key parameter that identifies the key..
+     */
+    public static final String JSON_WEB_KEY = "k";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EncodingUtils.class);
 
     private EncodingUtils() {
@@ -149,6 +159,18 @@ public final class EncodingUtils {
         }
     }
 
+
+    /**
+     * Generate octet json web key of given size .
+     *
+     * @param size the size
+     * @return the key
+     */
+    public static String generateJsonWebKey(final int size) {
+        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get(JSON_WEB_KEY).toString();
+    }
 
     /**
      * Sign jws.

@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.validator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -21,10 +21,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class OAuth20Validator {
 
-    /**
-     * The logger.
-     */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
+
+    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
+    public OAuth20Validator(final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+    }
 
     /**
      * Check if a parameter exists.
@@ -54,8 +57,7 @@ public class OAuth20Validator {
             return false;
         }
 
-        final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
-        final WebApplicationService service = factory.createService(registeredService.getServiceId());
+        final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
         logger.debug("Check registered service: {}", registeredService);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);

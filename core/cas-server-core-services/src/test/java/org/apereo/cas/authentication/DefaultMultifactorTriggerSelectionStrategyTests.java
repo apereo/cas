@@ -53,10 +53,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     @Before
     public void setUp() {
-        strategy = new DefaultMultifactorTriggerSelectionStrategy();
-
-        strategy.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
-        strategy.setRequestParameter(REQUEST_PARAM);
+        strategy = new DefaultMultifactorTriggerSelectionStrategy(P_ATTRS_12, REQUEST_PARAM);
 
         when(MFA_PROVIDER_1.getId()).thenReturn(MFA_PROVIDER_ID_1);
         when(MFA_PROVIDER_2.getId()).thenReturn(MFA_PROVIDER_ID_2);

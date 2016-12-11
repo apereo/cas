@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +53,7 @@ public class SimplePrincipal implements Principal {
      * @param id the id
      */
     private SimplePrincipal(final String id) {
-        this(id, Collections.EMPTY_MAP);
+        this(id, new HashMap<>());
     }
 
     /**
@@ -66,12 +65,15 @@ public class SimplePrincipal implements Principal {
     @JsonCreator
     protected SimplePrincipal(@JsonProperty("id") final String id,
                               @JsonProperty("attributes") final Map<String, Object> attributes) {
-                              
+
         Assert.notNull(id, "Principal id cannot be null");
-        Assert.notNull(attributes, "Principal attributes cannot be null");
- 
+
         this.id = id;
-        this.attributes = attributes;
+        if (attributes == null) {
+            this.attributes = new HashMap<>();
+        } else {
+            this.attributes = attributes;
+        }
     }
 
     /**

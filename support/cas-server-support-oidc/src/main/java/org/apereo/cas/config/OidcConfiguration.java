@@ -8,6 +8,7 @@ import org.apereo.cas.OidcConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
@@ -73,6 +74,10 @@ import java.util.List;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
@@ -218,15 +223,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public OidcAccessTokenEndpointController oidcAccessTokenController() {
-        final OidcAccessTokenEndpointController c = new OidcAccessTokenEndpointController();
-        c.setAccessTokenResponseGenerator(oidcAccessTokenResponseGenerator());
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setRefreshTokenFactory(defaultRefreshTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-        return c;
+        return new OidcAccessTokenEndpointController(
+                servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory, defaultRefreshTokenFactory, oidcAccessTokenResponseGenerator());
     }
 
     @Bean
@@ -237,68 +236,45 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController() {
-        final OidcDynamicClientRegistrationEndpointController c = new OidcDynamicClientRegistrationEndpointController();
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-        c.setClientRegistrationRequestSerializer(clientRegistrationRequestSerializer());
-        c.setClientIdGenerator(new DefaultRandomStringGenerator());
-        c.setClientSecretGenerator(new DefaultRandomStringGenerator());
-        return c;
+        return new OidcDynamicClientRegistrationEndpointController(
+                servicesManager, ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory, clientRegistrationRequestSerializer(),
+                new DefaultRandomStringGenerator(), new DefaultRandomStringGenerator()
+        );
     }
 
     @RefreshScope
     @Bean
     public OidcJwksEndpointController oidcJwksController() {
-        final OidcJwksEndpointController c = new OidcJwksEndpointController();
-        c.setJwksFile(casProperties.getAuthn().getOidc().getJwksFile());
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-
-        return c;
+        return new OidcJwksEndpointController(servicesManager,
+                ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory,
+                casProperties.getAuthn().getOidc().getJwksFile());
     }
 
     @RefreshScope
     @Bean
     public OidcWellKnownEndpointController oidcWellKnownController() {
-        final OidcWellKnownEndpointController c = new OidcWellKnownEndpointController();
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-        return c;
+        return new OidcWellKnownEndpointController(servicesManager,
+                ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory);
     }
 
     @RefreshScope
     @Bean
     public OidcProfileEndpointController oidcProfileController() {
-        final OidcProfileEndpointController c = new OidcProfileEndpointController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        return c;
+        return new OidcProfileEndpointController(servicesManager,
+                ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory);
     }
 
     @RefreshScope
     @Bean
     public OidcAuthorizeEndpointController oidcAuthorizeController() {
-        final OidcAuthorizeEndpointController c = new OidcAuthorizeEndpointController();
-        c.setAccessTokenFactory(defaultAccessTokenFactory);
-        c.setServicesManager(servicesManager);
-        c.setTicketRegistry(ticketRegistry);
-        c.setValidator(oAuth20Validator);
-        c.setPrincipalFactory(oidcPrincipalFactory());
-        c.setConsentApprovalViewResolver(consentApprovalViewResolver());
-        c.setoAuthCodeFactory(defaultOAuthCodeFactory);
-        return c;
+        return new OidcAuthorizeEndpointController(servicesManager,
+                ticketRegistry, oAuth20Validator, defaultAccessTokenFactory,
+                oidcPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory,
+                consentApprovalViewResolver());
     }
 
     @RefreshScope

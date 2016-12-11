@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +155,7 @@ public final class CompressionUtils {
             zos.write(srcTxt.getBytes());
             IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
-            final String base64 = Base64.encodeBase64String(bytes);
+            final String base64 = StringUtils.remove(Base64.encodeBase64String(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);

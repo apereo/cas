@@ -31,6 +31,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
-        ApplicationEventPublisherAware {
+                                                                      ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
 
@@ -154,8 +155,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param e the event
      */
     protected void doPublishEvent(final ApplicationEvent e) {
-        logger.debug("Publishing {}", e);
-        this.applicationEventPublisher.publishEvent(e);
+        if (applicationEventPublisher != null) {
+            logger.debug("Publishing {}", e);
+            this.applicationEventPublisher.publishEvent(e);
+        }
     }
 
     @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
@@ -170,7 +173,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         verifyTicketState(ticket, ticketId, null);
         return (T) ticket;
     }
-    
+
     /**
      * {@inheritDoc}
      * <p>
@@ -179,7 +182,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * access to critical section. The reason is that cache pulls serialized data and
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
-    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager", 
+    @Transactional(readOnly = true, transactionManager = "ticketTransactionManager",
             noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
@@ -203,7 +206,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 .filter(predicate)
                 .collect(Collectors.toSet());
     }
-    
+
     /**
      * Gets the authentication satisfied by policy.
      *
@@ -213,7 +216,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(
-            final Authentication authentication, 
+            final Authentication authentication,
             final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
@@ -299,6 +302,22 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 .findFirst()
                 .get()
                 .resolveServiceFrom(service);
+    }
+
+
+    /**
+     * Verify the ticket id received is actually legitimate
+     * before contacting downstream systems to find and process it.
+     *
+     * @param ticketId the ticket id
+     * @return true/false
+     */
+    protected boolean isTicketAuthenticityVerified(final String ticketId) {
+        if (this.cipherExecutor != null) {
+            logger.debug("Attempting to decode service ticket {} to verify authenticity", ticketId);
+            return !StringUtils.isEmpty(this.cipherExecutor.decode(ticketId));
+        }
+        return !StringUtils.isEmpty(ticketId);
     }
 
     @Override

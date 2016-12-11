@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
@@ -19,7 +20,7 @@ import java.time.ZonedDateTime;
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
  * updating).
- *
+ * <p>
  * AbstractTicket does not provide a logger instance to
  * avoid instantiating many such Loggers at runtime (there will be many instances
  * of subclasses of AbstractTicket in a typical running CAS server).  Instead
@@ -29,7 +30,8 @@ import java.time.ZonedDateTime;
  * @since 3.0.0
  */
 @MappedSuperclass
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -38,28 +40,38 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * The {@link ExpirationPolicy} this ticket is associated with.
      **/
     @Lob
-    @Column(name="EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable=false)
+    @Column(name = "EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable = false)
     private ExpirationPolicy expirationPolicy;
 
-    /** The unique identifier for this ticket. */
+    /**
+     * The unique identifier for this ticket.
+     */
     @Id
-    @Column(name="ID", nullable=false)
+    @Column(name = "ID", nullable = false)
     private String id;
 
-    /** The last time this ticket was used. */
-    @Column(name="LAST_TIME_USED")
+    /**
+     * The last time this ticket was used.
+     */
+    @Column(name = "LAST_TIME_USED")
     private ZonedDateTime lastTimeUsed;
 
-    /** The previous last time this ticket was used. */
-    @Column(name="PREVIOUS_LAST_TIME_USED")
+    /**
+     * The previous last time this ticket was used.
+     */
+    @Column(name = "PREVIOUS_LAST_TIME_USED")
     private ZonedDateTime previousLastTimeUsed;
 
-    /** The time the ticket was created. */
-    @Column(name="CREATION_TIME")
+    /**
+     * The time the ticket was created.
+     */
+    @Column(name = "CREATION_TIME")
     private ZonedDateTime creationTime;
 
-    /** The number of times this was used. */
-    @Column(name="NUMBER_OF_TIMES_USED")
+    /**
+     * The number of times this was used.
+     */
+    @Column(name = "NUMBER_OF_TIMES_USED")
     private int countOfUses;
 
     /**
@@ -73,12 +85,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * Constructs a new Ticket with a unique id, a possible parent Ticket (can
      * be null) and a specified Expiration Policy.
      *
-     * @param id the unique identifier for the ticket
+     * @param id               the unique identifier for the ticket
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
     public AbstractTicket(final String id,
-        final ExpirationPolicy expirationPolicy) {
+                          final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
 

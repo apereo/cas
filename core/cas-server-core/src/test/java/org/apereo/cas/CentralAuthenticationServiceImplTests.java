@@ -442,14 +442,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class), mock(ExpirationPolicy.class));
         final MockExpireUpdateTicketLogoutManager logoutManager = new MockExpireUpdateTicketLogoutManager(registry);
         registry.addTicket(tgt);
-        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry, null, null, logoutManager);
+        final DefaultCentralAuthenticationService cas = new DefaultCentralAuthenticationService(registry, null, null, logoutManager);
         cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 
     private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", name);
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
         return new WebApplicationServiceFactory().createService(request);
     }
 

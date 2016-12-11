@@ -1,17 +1,24 @@
-package org.apereo.cas.config;
+package org.apereo.cas.token.config;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.handler.support.TokenAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
+import org.apereo.cas.token.authentication.principal.TokenWebApplicationServiceResponseBuilder;
+import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
+import org.apereo.cas.token.webflow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.token.TokenAuthenticationAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +38,6 @@ import java.util.Map;
 @Configuration("tokenAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class TokenAuthenticationConfiguration {
-
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -60,6 +66,17 @@ public class TokenAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
+    private ExpirationPolicy grantingTicketExpirationPolicy;
+
+    @Bean
+    public ResponseBuilder webApplicationServiceResponseBuilder() {
+        return new TokenWebApplicationServiceResponseBuilder(servicesManager,
+                tokenCipherExecutor(),
+                grantingTicketExpirationPolicy);
+    }
+
     @Bean
     public PrincipalFactory tokenPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -67,11 +84,12 @@ public class TokenAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
+        final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
         final TokenAuthenticationHandler h = new TokenAuthenticationHandler();
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getToken().getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
         h.setPrincipalFactory(tokenPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getToken().getName());
+        h.setName(token.getName());
         return h;
     }
 
@@ -85,9 +103,14 @@ public class TokenAuthenticationConfiguration {
         return a;
     }
 
+    @Bean
+    public CipherExecutor tokenCipherExecutor() {
+        final CryptographyProperties crypto = casProperties.getAuthn().getToken().getCrypto();
+        return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey());
+    }
+
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(),
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(tokenAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 }

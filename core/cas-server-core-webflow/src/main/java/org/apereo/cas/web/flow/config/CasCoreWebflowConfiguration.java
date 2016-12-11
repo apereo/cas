@@ -5,6 +5,9 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
+import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
@@ -13,6 +16,7 @@ import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.ClearWebflowCredentialAction;
+import org.apereo.cas.web.flow.RedirectToServiceAction;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -50,6 +54,10 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreWebflowConfiguration {
 
+    @Autowired
+    @Qualifier("webApplicationServiceResponseBuilder")
+    private ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder;
+
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
@@ -69,6 +77,10 @@ public class CasCoreWebflowConfiguration {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("webApplicationResponseBuilderLocator")
+     private ResponseBuilderLocator responseBuilderLocator;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -146,7 +158,7 @@ public class CasCoreWebflowConfiguration {
         configureResolver(r, selector);
         return r;
     }
-    
+
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Autowired
     @Bean
@@ -168,7 +180,7 @@ public class CasCoreWebflowConfiguration {
         configureResolver(r, selector);
         return r;
     }
-    
+
     @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
     @Autowired
     @Bean
@@ -249,6 +261,14 @@ public class CasCoreWebflowConfiguration {
         final CheckWebAuthenticationRequestAction a = new CheckWebAuthenticationRequestAction();
         a.setContentType(casProperties.getAuthn().getMfa().getContentType());
         return a;
+    }
+
+    @Bean
+    public Action redirectToServiceAction() {
+        return new RedirectToServiceAction(servicesManager,
+                authenticationSystemSupport,
+                ticketRegistrySupport,
+                responseBuilderLocator);
     }
 
     private void configureResolver(final AbstractCasWebflowEventResolver r,

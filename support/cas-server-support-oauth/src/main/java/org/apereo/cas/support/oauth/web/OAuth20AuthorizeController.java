@@ -4,16 +4,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuthConstants;
+import org.apereo.cas.support.oauth.OAuthResponseType;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
-import org.apereo.cas.support.oauth.util.OAuthUtils;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
@@ -41,12 +49,25 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      * The code factory instance.
      */
     protected OAuthCodeFactory oAuthCodeFactory;
-    
+
     private ConsentApprovalViewResolver consentApprovalViewResolver;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    public OAuth20AuthorizeController(final ServicesManager servicesManager,
+                                      final TicketRegistry ticketRegistry,
+                                      final OAuth20Validator validator,
+                                      final AccessTokenFactory accessTokenFactory,
+                                      final PrincipalFactory principalFactory,
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                      final OAuthCodeFactory oAuthCodeFactory,
+                                      final ConsentApprovalViewResolver consentApprovalViewResolver) {
+        super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory, webApplicationServiceServiceFactory);
+        this.oAuthCodeFactory = oAuthCodeFactory;
+        this.consentApprovalViewResolver = consentApprovalViewResolver;
+    }
+
     /**
      * Handle request internal model and view.
      *
@@ -60,26 +81,26 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final J2EContext context = new J2EContext(request, response);
         final ProfileManager manager = new ProfileManager(context);
-        
+
         if (!verifyAuthorizeRequest(request) || !isRequestAuthenticated(manager, context)) {
             logger.error("Authorize request verification fails");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-        
+
         final String clientId = context.getRequestParameter(OAuthConstants.CLIENT_ID);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
         try {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(clientId, registeredService);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-        
+
         final ModelAndView mv = this.consentApprovalViewResolver.resolve(context, registeredService);
         if (!mv.isEmpty() && mv.hasView()) {
             return mv;
         }
-        
+
         return redirectToCallbackRedirectUrl(manager, registeredService, context, clientId);
 
     }
@@ -172,7 +193,7 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
         final OAuthCode code = this.oAuthCodeFactory.create(service, authentication);
         logger.debug("Generated OAuth code: {}", code);
-        this.ticketRegistry.addTicket(code);
+        getTicketRegistry().addTicket(code);
 
         final String state = authentication.getAttributes().get(OAuthConstants.STATE).toString();
         final String nonce = authentication.getAttributes().get(OAuthConstants.NONCE).toString();
@@ -197,19 +218,19 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      */
     private boolean verifyAuthorizeRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = this.validator.checkParameterExist(request, OAuthConstants.CLIENT_ID)
-                && this.validator.checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && this.validator.checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
+        final boolean checkParameterExist = getValidator().checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && getValidator().checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && getValidator().checkParameterExist(request, OAuthConstants.RESPONSE_TYPE);
 
         final String responseType = request.getParameter(OAuthConstants.RESPONSE_TYPE);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuthUtils.getRegisteredOAuthService(getServicesManager(), clientId);
 
         return checkParameterExist
                 && checkResponseTypes(responseType, OAuthResponseType.CODE, OAuthResponseType.TOKEN)
-                && this.validator.checkServiceValid(registeredService)
-                && this.validator.checkCallbackValid(registeredService, redirectUri);
+                && getValidator().checkServiceValid(registeredService)
+                && getValidator().checkCallbackValid(registeredService, redirectUri);
     }
 
     /**
@@ -240,27 +261,5 @@ public class OAuth20AuthorizeController extends BaseOAuthWrapperController {
      */
     private static boolean isResponseType(final String type, final OAuthResponseType expectedType) {
         return expectedType != null && expectedType.name().toLowerCase().equals(type);
-    }
-
-    /**
-     * Get the OAuth code factory.
-     *
-     * @return the OAuth code factory
-     */
-    public OAuthCodeFactory getoAuthCodeFactory() {
-        return this.oAuthCodeFactory;
-    }
-
-    /**
-     * Set the OAuth code factory.
-     *
-     * @param oAuthCodeFactory the OAuth code factory
-     */
-    public void setoAuthCodeFactory(final OAuthCodeFactory oAuthCodeFactory) {
-        this.oAuthCodeFactory = oAuthCodeFactory;
-    }
-
-    public void setConsentApprovalViewResolver(final ConsentApprovalViewResolver consentApprovalViewResolver) {
-        this.consentApprovalViewResolver = consentApprovalViewResolver;
     }
 }

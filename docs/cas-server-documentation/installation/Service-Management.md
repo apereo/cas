@@ -7,14 +7,13 @@ title: CAS - Service Management
 
 The CAS service management facility allows CAS server administrators to declare and configure which services
 (CAS clients) may make use of CAS in which ways. The core component of the service management facility is the
-service registry that stores one or more registered services
-containing metadata that drives a number of CAS behaviors:
+service registry that stores one or more registered services containing metadata that drives a number of CAS behaviors:
 
-* Authorized services - Control which services may participate in a CAS SSO session.
+* [Authorized services](Configuring-Service-Access-Strategy.html) - Control which services may participate in a CAS SSO session.
 * Forced authentication - Provides administrative control for forced authentication.
-* Attribute release - Provide user details to services for authorization and personalization.
-* Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
-* Theme control - Define alternate CAS themes to be used for particular services.
+* [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
+* [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
+* [Theme control](User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
 
 ## Service Management Webapp
 

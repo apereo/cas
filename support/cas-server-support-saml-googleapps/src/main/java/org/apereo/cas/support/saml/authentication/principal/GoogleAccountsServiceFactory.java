@@ -18,20 +18,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
     
-    private GoogleSaml20ObjectBuilder builder;
+    private GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
 
-    private String publicKeyLocation;
-
-    private String privateKeyLocation;
-
-    private String keyAlgorithm;
-    
-    private int skewAllowance;
-
-    /**
-     * Instantiates a new Google accounts service factory.
-     */
-    public GoogleAccountsServiceFactory() {
+    public GoogleAccountsServiceFactory(final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder) {
+        this.googleSaml20ObjectBuilder = googleSaml20ObjectBuilder;
     }
 
     @Override
@@ -39,7 +29,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
 
-        final String xmlRequest = this.builder.decodeSamlAuthnRequest(
+        final String xmlRequest = this.googleSaml20ObjectBuilder.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
         if (StringUtils.isBlank(xmlRequest)) {
@@ -47,8 +37,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        final Document document = this.builder.constructDocumentFromXml(xmlRequest);
-
+        final Document document = this.googleSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
         if (document == null) {
             return null;
         }
@@ -56,11 +45,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final Element root = document.getRootElement();
         final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
         final String requestId = root.getAttributeValue("ID");
-
-        final GoogleAccountsServiceResponseBuilder responseBuilder =
-                new GoogleAccountsServiceResponseBuilder(this.privateKeyLocation, this.publicKeyLocation, this.keyAlgorithm, this.builder);
-        responseBuilder.setSkewAllowance(this.skewAllowance);
-        final GoogleAccountsService s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, responseBuilder);
+        final GoogleAccountsService s = new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId);
         s.setLoggedOutAlready(true);
         return s;
     }
@@ -68,25 +53,5 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
     @Override
     public GoogleAccountsService createService(final String id) {
         throw new NotImplementedException("This operation is not supported.");
-    }
-
-    public void setSkewAllowance(final int skewAllowance) {
-        this.skewAllowance = skewAllowance;
-    }
-
-    public void setPublicKeyLocation(final String publicKeyLocation) {
-        this.publicKeyLocation = publicKeyLocation;
-    }
-
-    public void setPrivateKeyLocation(final String privateKeyLocation) {
-        this.privateKeyLocation = privateKeyLocation;
-    }
-
-    public void setKeyAlgorithm(final String keyAlgorithm) {
-        this.keyAlgorithm = keyAlgorithm;
-    }
-
-    public void setBuilder(final GoogleSaml20ObjectBuilder builder) {
-        this.builder = builder;
     }
 }
