@@ -25,24 +25,24 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 public class SendTicketGrantingTicketAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
-    
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    /** Instance of CentralAuthenticationService. */
     private CentralAuthenticationService centralAuthenticationService;
-    
     private ServicesManager servicesManager;
-
     private AuthenticationSystemSupport authenticationSystemSupport;
 
-    /**
-     * Instantiates a new Send ticket granting ticket action.
-     */
-    public SendTicketGrantingTicketAction() {
+    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                          final AuthenticationSystemSupport authenticationSystemSupport, final boolean renewedAuthn) {
         super();
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.servicesManager = servicesManager;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.createSsoSessionCookieOnRenewAuthentications = renewedAuthn;
     }
 
     @Override
@@ -87,8 +87,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
      */
     private boolean isAuthenticationRenewed(final RequestContext ctx) {
         if (ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
-            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
-                    CasProtocolConstants.PARAMETER_RENEW);
+            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.", CasProtocolConstants.PARAMETER_RENEW);
             return true;
         }
 
@@ -105,22 +104,4 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
 
         return false;
     }
-
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
 }
