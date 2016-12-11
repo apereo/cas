@@ -144,9 +144,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action initializeLoginAction() {
-        final InitializeLoginAction a = new InitializeLoginAction();
-        a.setServicesManager(this.servicesManager);
-        return a;
+        return new InitializeLoginAction(servicesManager);
     }
 
     @RefreshScope
