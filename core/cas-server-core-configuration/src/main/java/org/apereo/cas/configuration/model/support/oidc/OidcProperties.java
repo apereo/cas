@@ -9,12 +9,20 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
 public class OidcProperties {
 
     private String issuer = "http://localhost:8080/cas/oidc";
     private int skew = 5;
     private Resource jwksFile = new FileSystemResource("/etc/cas/keystore.jwks");
+    private String dynamicClientRegistrationMode;
+
+    public String getDynamicClientRegistrationMode() {
+        return dynamicClientRegistrationMode;
+    }
+
+    public void setDynamicClientRegistrationMode(final String dynamicClientRegistrationMode) {
+        this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
+    }
 
     public String getIssuer() {
         return issuer;

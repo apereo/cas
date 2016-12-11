@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.OidcClientRegistrationRequest;
@@ -13,6 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthCasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.ConsentApprovalViewResolver;
@@ -47,6 +49,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,6 +66,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -184,6 +188,16 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         final OidcCasClientRedirectActionBuilder builder = new OidcCasClientRedirectActionBuilder();
         builder.setOidcAuthorizationRequestSupport(oidcAuthorizationRequestSupport());
         return builder;
+    }
+
+    @Bean
+    public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
+        final String clients = StringUtils.join(
+                Arrays.asList(
+                        Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
+                        Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
+                        Authenticators.CAS_OAUTH_CLIENT_USER_FORM), ",");
+        return new SecurityInterceptor(oauthSecConfig, clients);
     }
 
     @Bean
@@ -309,7 +323,15 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor());
+        final OidcConstants.DynamicClientRegistrationMode mode =
+                OidcConstants.DynamicClientRegistrationMode.valueOf(StringUtils.defaultIfBlank(
+                        casProperties.getAuthn().getOidc().getDynamicClientRegistrationMode(),
+                        OidcConstants.DynamicClientRegistrationMode.PROTECTED.name()));
+
+        return new OidcHandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor,
+                requiresAuthenticationAuthorizeInterceptor(),
+                requiresAuthenticationDynamicRegistrationInterceptor(),
+                mode);
     }
 
     @PostConstruct

@@ -14,19 +14,33 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
+    private final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor;
+    private OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode;
+
     public OidcHandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
-                                         final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor) {
+                                         final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
+                                         final HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor,
+                                         final OidcConstants.DynamicClientRegistrationMode dynamicClientRegistrationMode) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor);
+        this.requiresAuthenticationDynamicRegistrationInterceptor = requiresAuthenticationDynamicRegistrationInterceptor;
+        this.dynamicClientRegistrationMode = dynamicClientRegistrationMode;
     }
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
         if (super.preHandle(request, response, handler)) {
             if (isDynamicClientRegistrationRequest(request.getRequestURI())) {
-                return requiresAuthenticationAccessTokenInterceptor.preHandle(request, response, handler);
+                if (isDynamicClientRegistrationRequestProtected()) {
+                    return requiresAuthenticationDynamicRegistrationInterceptor.preHandle(request, response, handler);
+                }
+                return true;
             }
         }
         return false;
+    }
+
+    private boolean isDynamicClientRegistrationRequestProtected() {
+        return this.dynamicClientRegistrationMode == OidcConstants.DynamicClientRegistrationMode.PROTECTED;
     }
 
     /**
