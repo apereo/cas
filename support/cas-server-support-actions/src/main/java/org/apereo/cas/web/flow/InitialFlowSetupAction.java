@@ -34,19 +34,25 @@ import java.util.List;
  * @since 3.1
  */
 public class InitialFlowSetupAction extends AbstractAction {
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    private ServicesManager servicesManager;
 
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitialFlowSetupAction.class);
     
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
-    private List<ArgumentExtractor> argumentExtractors;
-    
+    private final CasConfigurationProperties casProperties;
+    private final ServicesManager servicesManager;
+    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final List<ArgumentExtractor> argumentExtractors;
+
+    public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors, final ServicesManager servicesManager,
+                                  final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator, final CasConfigurationProperties casProperties) {
+        this.argumentExtractors = argumentExtractors;
+        this.servicesManager = servicesManager;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.warnCookieGenerator = warnCookieGenerator;
+        this.casProperties = casProperties;
+    }
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         configureCookieGenerators(context);
@@ -58,25 +64,25 @@ public class InitialFlowSetupAction extends AbstractAction {
     private void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
-            logger.debug("Placing service in context scope: [{}]", service.getId());
+            LOGGER.debug("Placing service in context scope: [{}]", service.getId());
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.debug("Placing registered service [{}] with id [{}] in context scope",
+                LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                         registeredService.getServiceId(),
                         registeredService.getId());
                 WebUtils.putRegisteredService(context, registeredService);
 
                 final RegisteredServiceAccessStrategy accessStrategy = registeredService.getAccessStrategy();
                 if (accessStrategy.getUnauthorizedRedirectUrl() != null) {
-                    logger.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
+                    LOGGER.debug("Placing registered service's unauthorized redirect url [{}] with id [{}] in context scope",
                             accessStrategy.getUnauthorizedRedirectUrl(),
                             registeredService.getServiceId());
                     WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
         } else if (!casProperties.getSso().isMissingService()) {
-            logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
+            LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
                     WebUtils.getHttpServletRequest(context).getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
                     new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
@@ -105,54 +111,22 @@ public class InitialFlowSetupAction extends AbstractAction {
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
         if (StringUtils.isBlank(this.warnCookieGenerator.getCookiePath())) {
-            logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
+            LOGGER.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
+            LOGGER.debug("Warning cookie path is set to {} and path {}", this.warnCookieGenerator.getCookieDomain(),
                     this.warnCookieGenerator.getCookiePath());
         }
         if (StringUtils.isBlank(this.ticketGrantingTicketCookieGenerator.getCookiePath())) {
-            logger.debug("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
+            LOGGER.debug("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
         } else {
-            logger.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
+            LOGGER.debug("TGC cookie path is set to {} and path {}", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
                     this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
     }
 
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator t) {
-        this.ticketGrantingTicketCookieGenerator = t;
-    }
-
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
     public ServicesManager getServicesManager() {
         return servicesManager;
-    }
-
-    public CookieRetrievingCookieGenerator getWarnCookieGenerator() {
-        return warnCookieGenerator;
-    }
-
-    public CookieRetrievingCookieGenerator getTicketGrantingTicketCookieGenerator() {
-        return ticketGrantingTicketCookieGenerator;
-    }
-
-    public List<ArgumentExtractor> getArgumentExtractors() {
-        return argumentExtractors;
-    }
-
-    public void setCasProperties(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
     }
 }

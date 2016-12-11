@@ -146,12 +146,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action initialFlowSetupAction() {
-        final InitialFlowSetupAction bean = new InitialFlowSetupAction();
-        bean.setArgumentExtractors(this.argumentExtractors);
-        bean.setServicesManager(this.servicesManager);
-        bean.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-        bean.setWarnCookieGenerator(this.warnCookieGenerator);
-        return bean;
+        return new InitialFlowSetupAction(argumentExtractors, servicesManager, ticketGrantingTicketCookieGenerator, warnCookieGenerator, casProperties);
     }
 
     @RefreshScope
