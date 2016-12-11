@@ -153,7 +153,7 @@ public class SamlServiceProviderProperties {
     }
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
-            setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
+            //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
             setAttributes(Lists.newArrayList("eduPersonPrincipalName"));
         }
     }
