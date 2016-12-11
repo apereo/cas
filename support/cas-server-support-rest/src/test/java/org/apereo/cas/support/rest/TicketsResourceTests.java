@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 /**
  * Unit tests for {@link TicketsResource}.
  *
@@ -58,18 +57,11 @@ public class TicketsResourceTests {
     public void setUp() throws Exception {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        this.ticketsResourceUnderTest.setAuthenticationSystemSupport(
-                new DefaultAuthenticationSystemSupport(
-                        new DefaultAuthenticationTransactionManager(mgmr),
-                        new DefaultPrincipalElectionStrategy()));
-        this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
-                .setAuthenticationManager(mgmr);
-        this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
-        this.ticketsResourceUnderTest.setCentralAuthenticationService(this.casMock);
+        this.ticketsResourceUnderTest = new TicketsResource(new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr), new DefaultPrincipalElectionStrategy()),
+                new DefaultCredentialFactory(), ticketSupport, new WebApplicationServiceFactory(), casMock);
 
-        when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        this.ticketsResourceUnderTest.setTicketRegistrySupport(ticketSupport);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
                         .contextPath("/cas")

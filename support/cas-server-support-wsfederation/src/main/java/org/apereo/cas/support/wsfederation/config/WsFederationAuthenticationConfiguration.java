@@ -69,21 +69,18 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport =
-            new DefaultAuthenticationSystemSupport();
-
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Bean
     @RefreshScope
     public WsFederationConfiguration wsFedConfig() {
         final WsFederationConfiguration config = new WsFederationConfiguration();
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
-        config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType
-                .valueOf(wsfed.getAttributesType()));
+        config.setAttributesType(WsFederationConfiguration.WsFedPrincipalResolutionAttributesType.valueOf(wsfed.getAttributesType()));
         config.setIdentityAttribute(wsfed.getIdentityAttribute());
         config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
         config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
@@ -126,8 +123,7 @@ public class WsFederationAuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver adfsPrincipalResolver() {
         final WsFederationProperties wsfed = casProperties.getAuthn().getWsfed();
-        final WsFederationCredentialsToPrincipalResolver r =
-                new WsFederationCredentialsToPrincipalResolver();
+        final WsFederationCredentialsToPrincipalResolver r = new WsFederationCredentialsToPrincipalResolver();
         r.setConfiguration(wsFedConfig());
         r.setAttributeRepository(attributeRepository);
         r.setPrincipalAttributeName(wsfed.getPrincipal().getPrincipalAttribute());

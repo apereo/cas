@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -68,11 +69,11 @@ public class MultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
-    private final AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -174,9 +175,7 @@ public class MultifactorAuthenticationTests {
         return CoreAuthenticationTestUtils.getService(id);
     }
 
-    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws
-            AuthenticationException {
-
+    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {
         return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
 }
