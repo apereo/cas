@@ -28,25 +28,24 @@ import java.util.Optional;
  */
 public class DefaultAuthenticationContextValidator implements AuthenticationContextValidator {
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(DefaultAuthenticationContextValidator.class);
 
-    private String authenticationContextAttribute;
-
-    private String globalFailureMode;
-
-    private String mfaTrustedAuthnAttributeName;
+    private final String authenticationContextAttribute;
+    private final String globalFailureMode;
+    private final String mfaTrustedAuthnAttributeName;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    public DefaultAuthenticationContextValidator(final String contextAttribute, final String failureMode, final String authnAttributeName) {
+        this.authenticationContextAttribute = contextAttribute;
+        this.globalFailureMode = failureMode;
+        this.mfaTrustedAuthnAttributeName = authnAttributeName;
+    }
+
     public String getAuthenticationContextAttribute() {
         return this.authenticationContextAttribute;
     }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -175,8 +174,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         return null;
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
-            final Authentication authentication,
+    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
             final Collection<MultifactorAuthenticationProvider> providers) {
         final Collection<Object> contexts = CollectionUtils.toCollection(
                 authentication.getAttributes().get(this.authenticationContextAttribute));
@@ -196,9 +194,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
     }
 
 
-    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
-            final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-
+    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(final Collection<MultifactorAuthenticationProvider> providersArray,
+                                                                                       final String requestedProvider) {
         return providersArray.stream()
                 .filter(provider -> provider.getId().equals(requestedProvider))
                 .findFirst();
@@ -210,13 +207,5 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
         return policy.getFailureMode();
-    }
-
-    public void setMfaTrustedAuthnAttributeName(final String mfaTrustedAuthnAttributeName) {
-        this.mfaTrustedAuthnAttributeName = mfaTrustedAuthnAttributeName;
-    }
-
-    public void setGlobalFailureMode(final String globalFailureMode) {
-        this.globalFailureMode = globalFailureMode;
     }
 }
