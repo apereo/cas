@@ -163,9 +163,8 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action genericSuccessViewAction() {
-        final GenericSuccessViewAction a = new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory);
-        a.setRedirectUrl(casProperties.getView().getDefaultRedirectUrl());
-        return a;
+        return new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory,
+                casProperties.getView().getDefaultRedirectUrl());
     }
 
     @Bean
