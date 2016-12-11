@@ -1899,6 +1899,7 @@ To learn more about this topic, [please review this guide](OIDC-Authentication.h
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
 # cas.authn.oidc.skew=5
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
+# cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 ```
 
 ## Pac4j
