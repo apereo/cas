@@ -113,11 +113,7 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action authenticationViaFormAction() {
-        final InitialAuthenticationAction a = new InitialAuthenticationAction();
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        a.setAdaptiveAuthenticationPolicy(this.adaptiveAuthenticationPolicy);
-        return a;
+        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
     @Bean

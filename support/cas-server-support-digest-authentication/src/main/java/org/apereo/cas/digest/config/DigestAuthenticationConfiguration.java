@@ -90,19 +90,11 @@ public class DigestAuthenticationConfiguration {
     @Autowired
     @RefreshScope
     @Bean
-    public DigestAuthenticationAction digestAuthenticationAction(
-            @Qualifier("defaultDigestCredentialRetriever")
-            final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
-        final DigestAuthenticationAction w = new DigestAuthenticationAction();
-        w.setRealm(casProperties.getAuthn().getDigest().getRealm());
-        w.setAuthenticationMethod(casProperties.getAuthn().getDigest().getAuthenticationMethod());
-        w.setCredentialRetriever(defaultDigestCredentialRetriever);
-
-        w.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        w.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        w.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-
-        return w;
+    public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
+                                                                     final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getDigest().getRealm(),
+                casProperties.getAuthn().getDigest().getAuthenticationMethod(), defaultDigestCredentialRetriever);
     }
 
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
