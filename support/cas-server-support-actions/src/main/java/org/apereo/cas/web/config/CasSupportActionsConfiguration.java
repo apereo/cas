@@ -139,8 +139,7 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action logoutAction() {
-        return new LogoutAction(webApplicationServiceFactory, servicesManager,
-                casProperties.getLogout().isFollowServiceRedirects());
+        return new LogoutAction(webApplicationServiceFactory, servicesManager, casProperties.getLogout().isFollowServiceRedirects());
     }
 
     @Bean
@@ -164,16 +163,13 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @Bean
     public Action initialAuthenticationRequestValidationAction() {
-        final InitialAuthenticationRequestValidationAction a = new InitialAuthenticationRequestValidationAction();
-        a.setRankedAuthenticationProviderWebflowEventResolver(rankedAuthenticationProviderWebflowEventResolver);
-        return a;
+        return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver);
     }
 
     @RefreshScope
     @Bean
     public Action genericSuccessViewAction() {
-        final GenericSuccessViewAction a = new GenericSuccessViewAction(
-                this.centralAuthenticationService, this.servicesManager, this.webApplicationServiceFactory);
+        final GenericSuccessViewAction a = new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory);
         a.setRedirectUrl(casProperties.getView().getDefaultRedirectUrl());
         return a;
     }
