@@ -255,8 +255,7 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public FlowDefinitionRegistry loginFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
         builder.setBasePath(BASE_CLASSPATH_WEBFLOW);
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
@@ -281,7 +280,7 @@ public class CasWebflowContextConfiguration {
 
         final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
         final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
-                new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
+                new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry);
         flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
 
         final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
