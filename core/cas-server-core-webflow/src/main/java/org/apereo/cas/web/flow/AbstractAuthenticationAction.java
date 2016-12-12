@@ -28,11 +28,16 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    public AbstractAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
+                                        final CasWebflowEventResolver webflowEventResolver, final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+        this.initialAuthenticationAttemptWebflowEventResolver = delegatingWebflowEventResolver;
+        this.serviceTicketRequestWebflowEventResolver = webflowEventResolver;
+        this.adaptiveAuthenticationPolicy = adaptiveAuthenticationPolicy;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -47,7 +52,6 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
             final AuthenticationException error = new AuthenticationException(msg, map, Collections.emptyMap());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                     new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-
         }
 
 
@@ -60,18 +64,6 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         final Event finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
-    }
-
-    public void setServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolver r) {
-        this.serviceTicketRequestWebflowEventResolver = r;
-    }
-
-    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver r) {
-        this.initialAuthenticationAttemptWebflowEventResolver = r;
-    }
-
-    public void setAdaptiveAuthenticationPolicy(final AdaptiveAuthenticationPolicy a) {
-        this.adaptiveAuthenticationPolicy = a;
     }
 
     private void fireEventHooks(final Event e, final RequestContext ctx) {
