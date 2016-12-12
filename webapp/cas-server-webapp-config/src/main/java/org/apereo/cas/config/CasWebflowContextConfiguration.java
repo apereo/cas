@@ -23,6 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerAdapter;
@@ -52,6 +53,8 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 import javax.naming.OperationNotSupportedException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -83,9 +86,6 @@ public class CasWebflowContextConfiguration {
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor webflowCipherExecutor;
 
-    @Autowired
-    @Qualifier("authenticationThrottle")
-    private HandlerInterceptor authenticationThrottle;
 
     @Bean
     public ExpressionParser expressionParser() {
@@ -216,13 +216,23 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    @Lazy
+    @Bean
+    public Object[] loginFlowHandlerMappingInterceptors() {
+        final List interceptors = new ArrayList<>();
+        interceptors.add(localeChangeInterceptor());
+        if (this.applicationContext.containsBean("authenticationThrottle")) {
+            interceptors.add(this.applicationContext.getBean("authenticationThrottle", HandlerInterceptor.class));
+        }
+        return interceptors.toArray();
+    }
+
     @Bean
     public HandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
         handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
         handler.setFlowRegistry(loginFlowRegistry());
-        final Object[] interceptors = new Object[]{localeChangeInterceptor(), this.authenticationThrottle};
-        handler.setInterceptors(interceptors);
+        handler.setInterceptors(loginFlowHandlerMappingInterceptors());
         return handler;
     }
 
@@ -255,22 +265,21 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
-        final FlowDefinitionRegistry loginFlowRegistry = loginFlowRegistry();
-
         if (casProperties.getWebflow().getSession().isStorage()) {
-            return getFlowExecutorViaServerSessionBindingExecution(loginFlowRegistry);
+            return flowExecutorViaServerSessionBindingExecution();
         }
-
-        return getFlowExecutorViaClientFlowExecution(loginFlowRegistry);
+        return flowExecutorViaClientFlowExecution();
     }
 
-    protected FlowExecutor getFlowExecutorViaServerSessionBindingExecution(final FlowDefinitionRegistry loginFlowRegistry) {
+    @Bean
+    public FlowExecutor flowExecutorViaServerSessionBindingExecution() {
+        final FlowDefinitionRegistry loginFlowRegistry = loginFlowRegistry();
+
         final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
         conversationManager.setLockTimeoutSeconds(Long.valueOf(casProperties.getWebflow().getSession().getLockTimeout()).intValue());
         conversationManager.setMaxConversations(casProperties.getWebflow().getSession().getMaxConversations());
 
         final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-
         final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
                 new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
         flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
@@ -281,7 +290,9 @@ public class CasWebflowContextConfiguration {
         return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
     }
 
-    protected FlowExecutor getFlowExecutorViaClientFlowExecution(final FlowDefinitionRegistry loginFlowRegistry) {
+    @Bean
+    public FlowExecutor flowExecutorViaClientFlowExecution() {
+        final FlowDefinitionRegistry loginFlowRegistry = loginFlowRegistry();
         final ClientFlowExecutionRepository repository = new ClientFlowExecutionRepository();
         repository.setFlowDefinitionLocator(loginFlowRegistry);
         repository.setTranscoder(loginFlowStateTranscoder());

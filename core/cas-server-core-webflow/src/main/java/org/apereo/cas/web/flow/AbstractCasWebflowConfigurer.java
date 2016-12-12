@@ -93,16 +93,18 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     @Autowired
     protected ApplicationContext applicationContext;
-    
+
     /**
      * CAS Properties.
      */
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    /** Flow builder services. */
+    /**
+     * Flow builder services.
+     */
     protected FlowBuilderServices flowBuilderServices;
-    
+
     @PostConstruct
     @Override
     public void initialize() {
@@ -133,14 +135,21 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         final FlowDefinitionRegistry registry = builder.build();
         return (Flow) registry.getFlowDefinition(id);
     }
-    
+
     @Override
     public Flow getLoginFlow() {
         if (this.loginFlowDefinitionRegistry == null) {
             logger.error("Login flow registry is not configured correctly.");
             return null;
         }
-        return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
+        final boolean found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds())
+                .filter(f -> f.equals(FLOW_ID_LOGIN)).findFirst().isPresent();
+        if (found) {
+            return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
+        }
+        logger.error("Could not find flow definition {}. Available flow definition ids are {}", FLOW_ID_LOGIN,
+                this.loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        return null;
     }
 
     @Override
@@ -519,7 +528,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                                                                     final FlowDefinitionRegistry registry) {
 
         final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
-        
+
         final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         final String targetStateId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 

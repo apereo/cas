@@ -1,17 +1,6 @@
+package org.apereo.cas.config;
+
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasApplicationContextConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasFiltersConfiguration;
-import org.apereo.cas.config.CasMetricsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasPropertiesConfiguration;
-import org.apereo.cas.config.CasSecurityContextConfiguration;
-import org.apereo.cas.config.CasWebAppConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -21,23 +10,21 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.spockframework.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import static org.junit.Assert.*;
+import org.springframework.webflow.executor.FlowExecutor;
 
 /**
- * This is {@link WiringConfigurationTests}.
+ * This is {@link CasWebflowContextConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -50,6 +37,7 @@ import static org.junit.Assert.*;
                 CasPropertiesConfiguration.class,
                 CasSecurityContextConfiguration.class,
                 CasWebAppConfiguration.class,
+                CasWebflowContextConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
                 CasCoreTicketsConfiguration.class,
@@ -67,18 +55,24 @@ import static org.junit.Assert.*;
                 ThymeleafAutoConfiguration.class,
                 AopAutoConfiguration.class,
                 RefreshAutoConfiguration.class
-                })
+        })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
-public class WiringConfigurationTests {
+public class CasWebflowContextConfigurationTests {
+
     @Autowired
-    private ApplicationContext applicationContext;
+    @Qualifier("flowExecutorViaClientFlowExecution")
+    private FlowExecutor flowExecutorViaClientFlowExecution;
+
+
+    @Autowired
+    @Qualifier("flowExecutorViaServerSessionBindingExecution")
+    private FlowExecutor flowExecutorViaServerSessionBindingExecution;
 
     @Test
     public void verifyConfigurationClasses() {
-        Assert.notNull(this.applicationContext);
-        assertTrue(this.applicationContext.getBeanDefinitionCount() > 0);
+
     }
 }
