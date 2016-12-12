@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
@@ -12,6 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -167,6 +168,6 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     
     private Principal mockPrincipal(final String attrName, final String... attrValues) {
         return principalFactory.createPrincipal("user",
-                ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Lists.newArrayList(attrValues)));
+                ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
     }
 }

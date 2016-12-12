@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +56,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal) {
-        final List<Principal> principals = Lists.newArrayList();
+        final List<Principal> principals = Arrays.asList();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
                 LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());

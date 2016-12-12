@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.authy;
 
 import com.authy.api.Token;
 import com.authy.api.User;
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
@@ -14,6 +13,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
-        return createHandlerResult(tokenCredential, principal, Lists.newArrayList());
+        return createHandlerResult(tokenCredential, principal, Arrays.asList());
     }
     
     public void setForceVerification(final Boolean forceVerification) {

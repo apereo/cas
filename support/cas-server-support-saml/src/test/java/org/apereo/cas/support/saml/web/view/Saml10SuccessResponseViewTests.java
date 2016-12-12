@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.view;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -23,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +69,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
-        attributes.put("testAttributeCollection", Lists.newArrayList("tac1", "tac2"));
+        attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<>();

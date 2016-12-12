@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -488,7 +488,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setAttributeReleasePolicy(
-                new ReturnAllowedAttributeReleasePolicy(Lists.newArrayList(new String[]{FIRST_NAME_ATTRIBUTE})));
+                new ReturnAllowedAttributeReleasePolicy(Arrays.asList(new String[]{FIRST_NAME_ATTRIBUTE})));
         return registeredServiceImpl;
     }
 
