@@ -87,7 +87,8 @@ public class PersonDirectoryPrincipalResolverTests {
         final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
         final Principal p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, ImmutableMap.of("attr1", "value")));
+                CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME,
+                        ImmutableMap.of("attr1", "value")));
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey("attr1"));
     }

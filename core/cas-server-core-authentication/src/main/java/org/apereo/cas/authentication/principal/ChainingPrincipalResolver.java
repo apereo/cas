@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal) {
-        final List<Principal> principals = Arrays.asList();
+        final List<Principal> principals = new ArrayList<>();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
                 LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());

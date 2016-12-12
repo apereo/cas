@@ -76,7 +76,7 @@ public final class SamlSPUtils {
                 return null;
             }
             
-            final List<String> builder = Arrays.asList();
+            final List<String> builder = new ArrayList<>();
             chainingResolver.getResolvers().forEach(r -> {
                 if (r instanceof AbstractBatchMetadataResolver) {
                     final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
