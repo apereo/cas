@@ -2,6 +2,9 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -23,7 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 public class BasicAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationAction.class);
-    
+
+    public BasicAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                     final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+    }
+
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);

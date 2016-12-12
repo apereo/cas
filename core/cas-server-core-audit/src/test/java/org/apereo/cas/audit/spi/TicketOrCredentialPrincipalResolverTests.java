@@ -2,12 +2,12 @@ package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.aspectj.lang.JoinPoint;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

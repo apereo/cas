@@ -70,18 +70,11 @@ public class SpnegoWebflowConfiguration {
         return w;
     }
 
-
     @Bean
     @RefreshScope
     public Action spnego() {
-        final SpnegoCredentialsAction a = new SpnegoCredentialsAction();
-        a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        a.setSend401OnAuthenticationFailure(casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
-
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy, casProperties.getAuthn().getSpnego().isNtlm(), casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
     }
 
     @Bean
@@ -126,8 +119,7 @@ public class SpnegoWebflowConfiguration {
         final SearchFilter filter = Beans.newSearchFilter(casProperties.getAuthn().getSpnego().getLdap().getSearchFilter());
 
         final SearchRequest searchRequest = Beans.newSearchRequest(
-                casProperties.getAuthn().getSpnego().getLdap().getBaseDn(),
-                filter);
+                casProperties.getAuthn().getSpnego().getLdap().getBaseDn(), filter);
 
         final LdapSpnegoKnownClientSystemsFilterAction l =
                 new LdapSpnegoKnownClientSystemsFilterAction(connectionFactory,

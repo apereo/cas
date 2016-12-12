@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -34,6 +33,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -59,19 +61,16 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(locations = "classpath:/core-context.xml")
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 public class InitialFlowSetupActionCookieTests {
+
     private static final String CONST_CONTEXT_PATH = "/test";
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private final InitialFlowSetupAction action = new InitialFlowSetupAction();
-
+    private InitialFlowSetupAction action;
     private CookieRetrievingCookieGenerator warnCookieGenerator;
-
     private CookieRetrievingCookieGenerator tgtCookieGenerator;
-
-    private ServicesManager servicesManager;
 
     @Before
     public void setUp() throws Exception {
@@ -79,20 +78,13 @@ public class InitialFlowSetupActionCookieTests {
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(
-                new WebApplicationServiceFactory()
-        )};
-        this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
-        this.action.setCasProperties(casProperties);
-        this.servicesManager = mock(ServicesManager.class);
-        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                RegisteredServiceTestUtils.getRegisteredService("test"));
-        this.action.setServicesManager(this.servicesManager);
+
+        final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
+        final ServicesManager servicesManager = mock(ServicesManager.class);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
+        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, tgtCookieGenerator, warnCookieGenerator, casProperties);
 
         this.action.afterPropertiesSet();
-
     }
 
     @Test
