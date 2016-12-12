@@ -110,19 +110,77 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Map<String, String> authenticationContextClassMappings = new CaseInsensitiveMap<>();
 
-    private String serverPrefix;
+    /** Server Prefix. **/
+    protected String serverPrefix;
 
-    private String serverName;
+    /** Server name. **/
+    protected String serverName;
 
-    private String authenticationContextRequestParameter;
+    /** authn context request parameter name. **/
+    protected String authenticationContextRequestParameter;
 
-    private String loginUrl;
+    /** Server login URL. **/
+    protected String loginUrl;
 
-    private String logoutUrl;
+    /** Server logout URL. **/
+    protected String logoutUrl;
 
-    private boolean forceSignedLogoutRequests;
+    /** Force SLO requests. **/
+    protected boolean forceSignedLogoutRequests;
 
-    private boolean singleLogoutCallbacksDisabled;
+    /** Disable SLO. **/
+    protected boolean singleLogoutCallbacksDisabled;
+
+    /**
+     * Instantiates a new Abstract saml profile handler controller.
+     *
+     * @param samlObjectSigner                             the saml object signer
+     * @param parserPool                                   the parser pool
+     * @param servicesManager                              the services manager
+     * @param webApplicationServiceFactory                 the web application service factory
+     * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
+     * @param configBean                                   the config bean
+     * @param responseBuilder                              the response builder
+     * @param authenticationContextClassMappings           the authentication context class mappings
+     * @param serverPrefix                                 the server prefix
+     * @param serverName                                   the server name
+     * @param authenticationContextRequestParameter        the authentication context request parameter
+     * @param loginUrl                                     the login url
+     * @param logoutUrl                                    the logout url
+     * @param forceSignedLogoutRequests                    the force signed logout requests
+     * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
+     */
+    public AbstractSamlProfileHandlerController(final SamlObjectSigner samlObjectSigner,
+                                                final ParserPool parserPool,
+                                                final ServicesManager servicesManager,
+                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                final OpenSamlConfigBean configBean,
+                                                final SamlProfileSamlResponseBuilder responseBuilder,
+                                                final Map<String, String> authenticationContextClassMappings,
+                                                final String serverPrefix,
+                                                final String serverName,
+                                                final String authenticationContextRequestParameter,
+                                                final String loginUrl,
+                                                final String logoutUrl,
+                                                final boolean forceSignedLogoutRequests,
+                                                final boolean singleLogoutCallbacksDisabled) {
+        this.samlObjectSigner = samlObjectSigner;
+        this.parserPool = parserPool;
+        this.servicesManager = servicesManager;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
+        this.configBean = configBean;
+        this.responseBuilder = responseBuilder;
+        this.authenticationContextClassMappings = authenticationContextClassMappings;
+        this.serverPrefix = serverPrefix;
+        this.serverName = serverName;
+        this.authenticationContextRequestParameter = authenticationContextRequestParameter;
+        this.loginUrl = loginUrl;
+        this.logoutUrl = logoutUrl;
+        this.forceSignedLogoutRequests = forceSignedLogoutRequests;
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+    }
 
     /**
      * Post constructor placeholder for additional
@@ -364,15 +422,15 @@ public abstract class AbstractSamlProfileHandlerController {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(
                     new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                    SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
+                            SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             builder.getQueryParams().add(
-                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST, 
-                    samlRequest));
+                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST,
+                            samlRequest));
             builder.getQueryParams().add(
-                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, 
-                    SAMLBindingSupport.getRelayState(messageContext)));
+                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
+                            SAMLBindingSupport.getRelayState(messageContext)));
             final String url = builder.buildURL();
 
             logger.debug("Built service callback url [{}]", url);
@@ -396,7 +454,7 @@ public abstract class AbstractSamlProfileHandlerController {
     protected void initiateAuthenticationRequest(final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                                  final HttpServletResponse response,
                                                  final HttpServletRequest request) throws Exception {
-                
+
         final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getKey());
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
@@ -419,99 +477,6 @@ public abstract class AbstractSamlProfileHandlerController {
 
         SamlUtils.logSamlObject(this.configBean, authnRequest);
         issueAuthenticationRequestRedirect(pair, request, response);
-    }
-
-    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
-        this.samlObjectSigner = samlObjectSigner;
-    }
-
-    public void setParserPool(final ParserPool parserPool) {
-        this.parserPool = parserPool;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
-
-    public void setSamlRegisteredServiceCachingMetadataResolver(
-            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
-        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
-    }
-
-    public void setConfigBean(final OpenSamlConfigBean configBean) {
-        this.configBean = configBean;
-    }
-
-    public void setResponseBuilder(final SamlProfileSamlResponseBuilder responseBuilder) {
-        this.responseBuilder = responseBuilder;
-    }
-
-    public Map<String, String> getAuthenticationContextClassMappings() {
-        return authenticationContextClassMappings;
-    }
-
-    public void setAuthenticationContextClassMappings(final Map<String, String> authenticationContextClassMappings) {
-        this.authenticationContextClassMappings = authenticationContextClassMappings;
-    }
-
-    public String getLoginUrl() {
-        return loginUrl;
-    }
-
-    public void setLoginUrl(final String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
-
-    public String getServerPrefix() {
-        return serverPrefix;
-    }
-
-    public void setServerPrefix(final String serverPrefix) {
-        this.serverPrefix = serverPrefix;
-    }
-
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(final String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getAuthenticationContextRequestParameter() {
-        return authenticationContextRequestParameter;
-    }
-
-    public void setAuthenticationContextRequestParameter(final String authenticationContextRequestParameter) {
-        this.authenticationContextRequestParameter = authenticationContextRequestParameter;
-    }
-
-    public boolean isSingleLogoutCallbacksDisabled() {
-        return singleLogoutCallbacksDisabled;
-    }
-
-    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
-        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
-    }
-
-    public boolean isForceSignedLogoutRequests() {
-        return forceSignedLogoutRequests;
-    }
-
-    public void setForceSignedLogoutRequests(final boolean forceSignedLogoutRequests) {
-        this.forceSignedLogoutRequests = forceSignedLogoutRequests;
-    }
-
-    public String getLogoutUrl() {
-        return logoutUrl;
-    }
-
-    public void setLogoutUrl(final String logoutUrl) {
-        this.logoutUrl = logoutUrl;
     }
 }
 
