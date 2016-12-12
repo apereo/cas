@@ -50,7 +50,8 @@ public class CasBasicAuthenticationConfiguration {
 
     @Bean
     public Action basicAuthenticationAction() {
-        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")

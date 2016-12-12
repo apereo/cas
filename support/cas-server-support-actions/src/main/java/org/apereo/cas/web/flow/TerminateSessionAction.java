@@ -37,13 +37,6 @@ public class TerminateSessionAction extends AbstractAction {
     private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final Config pac4jSecurityConfig;
 
-    /**
-     * Creates a new instance with the given parameters.
-     * @param centralAuthenticationService
-     * @param tgtCookieGenerator
-     * @param warnCookieGenerator
-     * @param pac4jSecurityConfig
-     */
     public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService, final CookieRetrievingCookieGenerator tgtCookieGenerator,
                                   final CookieRetrievingCookieGenerator warnCookieGenerator, final Config pac4jSecurityConfig) {
         this.centralAuthenticationService = centralAuthenticationService;

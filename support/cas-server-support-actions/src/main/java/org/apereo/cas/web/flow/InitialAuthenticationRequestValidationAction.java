@@ -15,7 +15,7 @@ public class InitialAuthenticationRequestValidationAction extends AbstractAction
 
     private final CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
 
-    public InitialAuthenticationRequestValidationAction(CasWebflowEventResolver eventResolver) {
+    public InitialAuthenticationRequestValidationAction(final CasWebflowEventResolver eventResolver) {
         this.rankedAuthenticationProviderWebflowEventResolver = eventResolver;
     }
 

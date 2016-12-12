@@ -33,7 +33,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -78,10 +79,10 @@ public class InitialFlowSetupActionCookieTests {
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(new WebApplicationServiceFactory())};
+        final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
-        this.action = new InitialFlowSetupAction(Arrays.asList(argExtractors), servicesManager, tgtCookieGenerator, warnCookieGenerator, casProperties);
+        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, tgtCookieGenerator, warnCookieGenerator, casProperties);
 
         this.action.afterPropertiesSet();
     }

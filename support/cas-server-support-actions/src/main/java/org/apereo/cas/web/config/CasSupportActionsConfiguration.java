@@ -113,7 +113,8 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action authenticationViaFormAction() {
-        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy);
     }
 
     @Bean
@@ -123,7 +124,8 @@ public class CasSupportActionsConfiguration {
 
     @Bean
     public Action sendTicketGrantingTicketAction() {
-        return new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager, ticketGrantingTicketCookieGenerator, authenticationSystemSupport, casProperties.getSso().isRenewedAuthn());
+        return new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager, ticketGrantingTicketCookieGenerator,
+                authenticationSystemSupport, casProperties.getSso().isRenewedAuthn());
     }
 
     @RefreshScope

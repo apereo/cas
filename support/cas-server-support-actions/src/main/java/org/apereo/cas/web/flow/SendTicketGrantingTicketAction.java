@@ -73,10 +73,6 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
         return success();
     }
 
-    public void setCreateSsoSessionCookieOnRenewAuthentications(final boolean createSsoSessionCookieOnRenewAuthentications) {
-        this.createSsoSessionCookieOnRenewAuthentications = createSsoSessionCookieOnRenewAuthentications;
-    }
-
     /**
      * Tries to determine if authentication was created as part of a "renew" event.
      * Renewed authentications can occur if the service is not allowed to participate

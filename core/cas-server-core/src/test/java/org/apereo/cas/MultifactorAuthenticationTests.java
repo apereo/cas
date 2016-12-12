@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.UsernamePasswordCredential;

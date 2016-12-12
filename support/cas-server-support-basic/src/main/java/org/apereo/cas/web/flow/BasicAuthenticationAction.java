@@ -27,7 +27,9 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationAction.class);
 
-    public BasicAuthenticationAction(CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver, CasWebflowEventResolver serviceTicketRequestWebflowEventResolver, AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+    public BasicAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                     final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                     final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
     }
 
