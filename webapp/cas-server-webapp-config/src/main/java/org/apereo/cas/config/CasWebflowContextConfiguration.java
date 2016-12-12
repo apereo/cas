@@ -86,7 +86,7 @@ public class CasWebflowContextConfiguration {
     @Autowired
     @Qualifier("authenticationThrottle")
     private HandlerInterceptor authenticationThrottle;
-    
+
     @Bean
     public ExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -113,14 +113,14 @@ public class CasWebflowContextConfiguration {
     public FlowUrlHandler loginFlowUrlHandler() {
         return new CasDefaultFlowUrlHandler();
     }
-    
+
     @Bean
     public FlowUrlHandler logoutFlowUrlHandler() {
         final CasDefaultFlowUrlHandler handler = new CasDefaultFlowUrlHandler();
         handler.setFlowExecutionKeyParameter("RelayState");
         return handler;
     }
-    
+
     @RefreshScope
     @Bean
     public HandlerAdapter logoutHandlerAdapter() {
@@ -135,7 +135,7 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
     }
-    
+
     @RefreshScope
     @Bean
     public CipherBean loginFlowCipherBean() {
@@ -177,7 +177,7 @@ public class CasWebflowContextConfiguration {
         builder.setDevelopmentMode(casProperties.getWebflow().isRefresh());
         return builder.build();
     }
-    
+
     @Bean
     public Transcoder loginFlowStateTranscoder() {
         try {
@@ -186,7 +186,7 @@ public class CasWebflowContextConfiguration {
             throw new BeanCreationException(e.getMessage(), e);
         }
     }
-    
+
     @Bean
     public HandlerAdapter loginHandlerAdapter() {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
@@ -200,12 +200,12 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
-    
+
     @Bean
     public AsyncHandlerInterceptor localeChangeInterceptor() {
         return new LocaleChangeInterceptor();
     }
-    
+
     @Bean
     public HandlerMapping logoutFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -215,7 +215,7 @@ public class CasWebflowContextConfiguration {
         handler.setInterceptors(interceptors);
         return handler;
     }
-    
+
     @Bean
     public HandlerMapping loginFlowHandlerMapping() {
         final FlowHandlerMapping handler = new FlowHandlerMapping();
@@ -225,7 +225,7 @@ public class CasWebflowContextConfiguration {
         handler.setInterceptors(interceptors);
         return handler;
     }
-    
+
     @RefreshScope
     @Bean
     public FlowExecutor logoutFlowExecutor() {
@@ -234,7 +234,7 @@ public class CasWebflowContextConfiguration {
         builder.setRedirectInSameState(casProperties.getWebflow().isRedirectSameState());
         return builder.build();
     }
-    
+
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
@@ -251,29 +251,37 @@ public class CasWebflowContextConfiguration {
         builder.addFlowLocationPattern("/login/*-webflow.xml");
         return builder.build();
     }
-    
+
     @RefreshScope
     @Bean
     public FlowExecutor loginFlowExecutor() {
         final FlowDefinitionRegistry loginFlowRegistry = loginFlowRegistry();
 
         if (casProperties.getWebflow().getSession().isStorage()) {
-            final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-            conversationManager.setLockTimeoutSeconds(Long.valueOf(casProperties.getWebflow().getSession().getLockTimeout()).intValue());
-            conversationManager.setMaxConversations(casProperties.getWebflow().getSession().getMaxConversations());
-
-            final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
-
-            final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
-                    new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
-            flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
-
-            final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
-                    flowExecutionSnapshotFactory);
-            executionFactory.setExecutionKeyFactory(repository);
-            return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
+            return getFlowExecutorViaServerSessionBindingExecution(loginFlowRegistry);
         }
 
+        return getFlowExecutorViaClientFlowExecution(loginFlowRegistry);
+    }
+
+    protected FlowExecutor getFlowExecutorViaServerSessionBindingExecution(final FlowDefinitionRegistry loginFlowRegistry) {
+        final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
+        conversationManager.setLockTimeoutSeconds(Long.valueOf(casProperties.getWebflow().getSession().getLockTimeout()).intValue());
+        conversationManager.setMaxConversations(casProperties.getWebflow().getSession().getMaxConversations());
+
+        final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
+
+        final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
+                new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry());
+        flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
+
+        final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
+                flowExecutionSnapshotFactory);
+        executionFactory.setExecutionKeyFactory(repository);
+        return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
+    }
+
+    protected FlowExecutor getFlowExecutorViaClientFlowExecution(final FlowDefinitionRegistry loginFlowRegistry) {
         final ClientFlowExecutionRepository repository = new ClientFlowExecutionRepository();
         repository.setFlowDefinitionLocator(loginFlowRegistry);
         repository.setTranscoder(loginFlowStateTranscoder());
