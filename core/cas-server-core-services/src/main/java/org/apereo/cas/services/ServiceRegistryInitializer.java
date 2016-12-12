@@ -65,7 +65,8 @@ public class ServiceRegistryInitializer {
         } else {
             LOGGER.info("The service registry database will not be initialized from default JSON services. "
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
-                    + "until service definitions are added to the registry.");
+                    + "until service definitions are added to the registry. To auto-initialize the service registry, "
+                    + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.");
         }
     }
 }
