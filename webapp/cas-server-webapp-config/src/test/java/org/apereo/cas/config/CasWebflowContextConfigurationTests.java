@@ -127,7 +127,7 @@ public class CasWebflowContextConfigurationTests {
         return ctx;
     }
 
-    @Configuration
+    @Configuration("testWebflowContextConfiguration")
     public static class TestWebflowContextConfiguration {
         @Bean
         public Action testWebflow() {
