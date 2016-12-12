@@ -59,8 +59,8 @@ public class TicketsResourceTests {
         when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
-        this.ticketsResourceUnderTest = new TicketsResource(new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr), new DefaultPrincipalElectionStrategy()),
-                new DefaultCredentialFactory(), ticketSupport, new WebApplicationServiceFactory(), casMock);
+        this.ticketsResourceUnderTest = new TicketsResource(new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
+                new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(), ticketSupport, new WebApplicationServiceFactory(), casMock);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
