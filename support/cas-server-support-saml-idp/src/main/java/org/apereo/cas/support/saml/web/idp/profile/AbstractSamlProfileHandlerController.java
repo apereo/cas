@@ -226,6 +226,9 @@ public abstract class AbstractSamlProfileHandlerController {
     protected AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) throws Exception {
         logger.debug("Retrieving authentication request from scope");
         final String requestValue = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        if (StringUtils.isBlank(requestValue)) {
+            throw new IllegalArgumentException("SAML request could not be determined from the authentication request");
+        }
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
         final AuthnRequest authnRequest = (AuthnRequest)
                 XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
