@@ -9,9 +9,9 @@
     </on-start>
 
     <action-state id="initializeLoginForm">
-        <evaluate expression="initializeLoginAction" />
+        <evaluate expression="testWebflow" />
         <transition on="success" to="end"/>
     </action-state>
 
-    <end-state id="end" view="end" />
+    <view-state id="end" view="end" />
 </flow>
