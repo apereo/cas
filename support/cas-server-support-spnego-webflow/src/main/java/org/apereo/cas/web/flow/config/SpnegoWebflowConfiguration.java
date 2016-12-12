@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.config;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -28,6 +27,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+
+import java.util.Arrays;
 
 /**
  * This is {@link SpnegoWebflowConfiguration}.
@@ -91,7 +92,7 @@ public class SpnegoWebflowConfiguration {
         a.setMixedModeAuthentication(casProperties.getAuthn().getSpnego().isMixedModeAuthentication());
         a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
         final String[] browsers = StringUtils.commaDelimitedListToStringArray(casProperties.getAuthn().getSpnego().getSupportedBrowsers());
-        a.setSupportedBrowsers(Lists.newArrayList(browsers));
+        a.setSupportedBrowsers(Arrays.asList(browsers));
         return a;
     }
 

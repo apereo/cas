@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
@@ -15,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -61,7 +62,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
             resolver.setAttributeRepository(this.attributeDao);
 
             final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
-            chain.setChain(Lists.newArrayList(resolver, new EchoingPrincipalResolver()));
+            chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
             final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw),
                     CoreAuthenticationTestUtils.getPrincipal(username,
                             ImmutableMap.of("a1", "v1", "a2", "v2")));

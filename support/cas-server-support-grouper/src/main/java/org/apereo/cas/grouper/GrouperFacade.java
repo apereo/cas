@@ -1,12 +1,12 @@
 package org.apereo.cas.grouper;
 
-import com.google.common.collect.Lists;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -60,15 +60,15 @@ public class GrouperFacade {
 
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
-                return Lists.newArrayList();
+                return Arrays.asList();
             }
             LOGGER.debug("Found {} groups for {}", results.length, subjectId);
-            return Lists.newArrayList(results);
+            return Arrays.asList(results);
         } catch (final Exception e) {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                     + ", the url endpoint for Grouper WS is correctly configured and the subject {}"
                     + "  exists in Grouper.", subjectId, e);
         }
-        return Lists.newArrayList();
+        return Arrays.asList();
     }
 }

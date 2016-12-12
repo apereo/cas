@@ -7,7 +7,6 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -20,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
 
-    private static final List<View> ALL_VIEWS = Lists.newArrayList(new View[]{
+    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{
             ALL_SERVICES_VIEW
     });
 

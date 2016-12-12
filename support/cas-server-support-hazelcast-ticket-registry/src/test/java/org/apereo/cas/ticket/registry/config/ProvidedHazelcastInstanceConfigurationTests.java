@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry.config;
 
-import com.google.common.collect.Lists;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MapConfig;
@@ -24,6 +23,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +57,7 @@ public class ProvidedHazelcastInstanceConfigurationTests {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
         assertTrue(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-        assertEquals(Lists.newArrayList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
+        assertEquals(Arrays.asList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertFalse(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5801, config.getNetworkConfig().getPort());
 
