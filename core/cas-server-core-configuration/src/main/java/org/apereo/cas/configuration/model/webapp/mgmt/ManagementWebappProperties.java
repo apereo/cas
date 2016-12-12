@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ManagementWebappProperties {
     private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
     private String serverName = "https://localhost:8443";
     private String defaultLocale = "en";
-    private List<String> authzAttributes = Arrays.asList();
+    private List<String> authzAttributes = new ArrayList<>();
 
     @NestedConfigurationProperty
     private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();

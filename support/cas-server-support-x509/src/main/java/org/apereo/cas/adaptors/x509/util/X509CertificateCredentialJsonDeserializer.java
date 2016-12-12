@@ -12,6 +12,7 @@ import org.springframework.core.io.InputStreamResource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
         final ObjectCodec oc = jp.getCodec();
         final JsonNode node = oc.readTree(jp);
 
-        final List<X509Certificate> certs = Arrays.asList();
+        final List<X509Certificate> certs = new ArrayList<>();
         node.findValues("certificates").forEach(n -> {
             final String cert = n.get(0).textValue();
             final byte[] data = EncodingUtils.decodeBase64(cert);
