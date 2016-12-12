@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -33,6 +32,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -84,7 +85,7 @@ public class InitialFlowSetupActionCookieTests {
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[]{new DefaultArgumentExtractor(
                 new WebApplicationServiceFactory()
         )};
-        this.action.setArgumentExtractors(Lists.newArrayList(argExtractors));
+        this.action.setArgumentExtractors(Arrays.asList(argExtractors));
         this.action.setCasProperties(casProperties);
         this.servicesManager = mock(ServicesManager.class);
         when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(

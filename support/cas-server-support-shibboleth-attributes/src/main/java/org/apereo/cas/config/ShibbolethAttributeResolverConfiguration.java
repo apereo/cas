@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -24,6 +23,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ public class ShibbolethAttributeResolverConfiguration {
             environment.getPropertySources().forEach(s -> {
                 if (s instanceof EnumerablePropertySource<?>) {
                     final EnumerablePropertySource<?> ps = (EnumerablePropertySource<?>) s;
-                    Lists.newArrayList(ps.getPropertyNames()).forEach(key -> result.put(key, ps.getProperty(key)));
+                    Arrays.asList(ps.getPropertyNames()).forEach(key -> result.put(key, ps.getProperty(key)));
                 }
             });
             final Properties p = new Properties();

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
@@ -22,6 +21,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.Cookie;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -131,7 +131,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        WebUtils.putLogoutRequests(this.requestContext, Lists.newArrayList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
@@ -142,7 +142,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
-        WebUtils.putLogoutRequests(this.requestContext, Lists.newArrayList(logoutRequest));
+        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);

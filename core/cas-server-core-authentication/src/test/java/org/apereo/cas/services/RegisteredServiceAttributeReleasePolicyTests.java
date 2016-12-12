@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
@@ -18,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +91,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -110,13 +110,13 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Lists.newArrayList("attr1", "attr3"));
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3"));
         final Principal p = mock(Principal.class);
 
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -155,7 +155,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> map = new HashMap<>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
-        map.put("attr3", Lists.newArrayList("v3", "v4"));
+        map.put("attr3", Arrays.asList("v3", "v4"));
 
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
@@ -174,9 +174,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
 
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("values", Lists.newArrayList(new Object[]{"v1", "v2", "v3"}));
-        attributes.put("cn", Lists.newArrayList(new Object[]{"commonName"}));
-        attributes.put("username", Lists.newArrayList(new Object[]{"uid"}));
+        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
+        attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
+        attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
         final IPersonAttributeDao dao = new StubPersonAttributeDao(attributes);
         final IPersonAttributes person = mock(IPersonAttributes.class);

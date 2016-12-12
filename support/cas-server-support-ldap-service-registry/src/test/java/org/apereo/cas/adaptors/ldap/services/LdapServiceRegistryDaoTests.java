@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -32,6 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -205,7 +205,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(new HashSet<>(Lists.newArrayList("handler1", "handler2")));
+        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler1", "handler2")));
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

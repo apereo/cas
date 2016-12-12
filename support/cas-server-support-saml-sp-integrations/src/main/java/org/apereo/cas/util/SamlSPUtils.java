@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
@@ -19,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +76,7 @@ public final class SamlSPUtils {
                 return null;
             }
             
-            final List<String> builder = Lists.newArrayList();
+            final List<String> builder = Arrays.asList();
             chainingResolver.getResolvers().forEach(r -> {
                 if (r instanceof AbstractBatchMetadataResolver) {
                     final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();

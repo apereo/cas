@@ -1,12 +1,13 @@
 package org.apereo.cas.audit.spi;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.aspectj.lang.JoinPoint;
 
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 
 import org.apereo.cas.util.AopUtils;
+
+import java.util.Arrays;
 
 /**
  * Converts the Credential object into a String resource identifier.
@@ -42,6 +43,6 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
             final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
             return new String[] {SUPPLIED_CREDENTIALS + transaction.getCredentials()};
         }
-        return new String[] {SUPPLIED_CREDENTIALS + Lists.newArrayList((Object[]) object)};
+        return new String[] {SUPPLIED_CREDENTIALS + Arrays.asList((Object[]) object)};
     }
 }

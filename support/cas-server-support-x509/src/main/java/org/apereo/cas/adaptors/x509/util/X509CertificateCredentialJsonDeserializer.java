@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.core.io.InputStreamResource;
@@ -13,6 +12,7 @@ import org.springframework.core.io.InputStreamResource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
         final ObjectCodec oc = jp.getCodec();
         final JsonNode node = oc.readTree(jp);
 
-        final List<X509Certificate> certs = Lists.newArrayList();
+        final List<X509Certificate> certs = Arrays.asList();
         node.findValues("certificates").forEach(n -> {
             final String cert = n.get(0).textValue();
             final byte[] data = EncodingUtils.decodeBase64(cert);

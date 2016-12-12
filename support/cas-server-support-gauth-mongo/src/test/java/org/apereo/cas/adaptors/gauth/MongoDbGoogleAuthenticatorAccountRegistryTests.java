@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.google.common.collect.Lists;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import org.apereo.cas.config.GoogleAuthentiacatorMongoDbConfiguration;
 import org.junit.Test;
@@ -14,6 +13,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +37,7 @@ public class MongoDbGoogleAuthenticatorAccountRegistryTests {
 
     @Test
     public void verifySave() {
-        registry.saveUserCredentials("uid", "secret", 143211, Lists.newArrayList(1, 2, 3, 4, 5, 6));
+        registry.saveUserCredentials("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
         final String s = registry.getSecretKey("uid");
         assertEquals(s, "secret");
     }

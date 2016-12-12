@@ -1,7 +1,6 @@
 package org.apereo.cas.web.controllers;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationResponse;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -121,10 +121,10 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
         clientResponse.setSubjectType("public");
         clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setGrantTypes(Lists.newArrayList(OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase(),
+        clientResponse.setGrantTypes(Arrays.asList(OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuthGrantType.REFRESH_TOKEN.name().toLowerCase()));
-        clientResponse.setRedirectUris(Lists.newArrayList(registeredService.getServiceId()));
-        clientResponse.setResponseTypes(Lists.newArrayList(OAuthResponseType.CODE.name().toLowerCase()));
+        clientResponse.setRedirectUris(Arrays.asList(registeredService.getServiceId()));
+        clientResponse.setResponseTypes(Arrays.asList(OAuthResponseType.CODE.name().toLowerCase()));
         return clientResponse;
     }
 }

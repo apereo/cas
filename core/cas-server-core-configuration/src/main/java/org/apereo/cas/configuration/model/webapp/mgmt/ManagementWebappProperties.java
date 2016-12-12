@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.webapp.mgmt;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,10 +15,10 @@ import java.util.List;
  * @since 5.0.0
  */
 public class ManagementWebappProperties {
-    private List<String> adminRoles = Lists.newArrayList("ROLE_ADMIN");
+    private List<String> adminRoles = Arrays.asList("ROLE_ADMIN");
     private String serverName = "https://localhost:8443";
     private String defaultLocale = "en";
-    private List<String> authzAttributes = Lists.newArrayList();
+    private List<String> authzAttributes = Arrays.asList();
 
     @NestedConfigurationProperty
     private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();

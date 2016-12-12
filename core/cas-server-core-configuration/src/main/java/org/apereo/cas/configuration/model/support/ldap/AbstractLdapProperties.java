@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.SearchScope;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -305,7 +305,7 @@ public abstract class AbstractLdapProperties {
         private String searchFilter = "(objectClass=*)";
         private SearchScope scope = SearchScope.OBJECT;
         private String attributeName = "objectClass";
-        private List<String> attributeValues = Lists.newArrayList("top");
+        private List<String> attributeValues = Arrays.asList("top");
         private String dn = StringUtils.EMPTY;
 
         public String getDn() {

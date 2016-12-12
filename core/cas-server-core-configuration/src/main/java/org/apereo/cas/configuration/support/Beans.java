@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +64,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,7 +181,7 @@ public final class Beans {
             final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList((Object[]) vals));
+                pdirMap.put(entry.getKey(), Arrays.asList((Object[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;

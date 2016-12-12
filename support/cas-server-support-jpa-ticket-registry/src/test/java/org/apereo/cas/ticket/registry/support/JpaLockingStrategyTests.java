@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -26,6 +25,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -143,7 +143,7 @@ public class JpaLockingStrategyTests {
     public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(getConcurrentLocks("concurrent-new")));
+            testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
@@ -162,7 +162,7 @@ public class JpaLockingStrategyTests {
         locks[0].release();
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
-            testConcurrency(executor, Lists.newArrayList(locks));
+            testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");

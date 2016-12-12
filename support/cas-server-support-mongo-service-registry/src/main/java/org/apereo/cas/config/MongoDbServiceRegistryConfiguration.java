@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -22,6 +21,7 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -92,7 +92,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Override
     public CustomConversions customConversions() {
-        return new CustomConversions(Lists.newArrayList(
+        return new CustomConversions(Arrays.asList(
                 new BaseConverters.LoggerConverter(),
                 new BaseConverters.ClassConverter(),
                 new BaseConverters.CommonsLogConverter(),
