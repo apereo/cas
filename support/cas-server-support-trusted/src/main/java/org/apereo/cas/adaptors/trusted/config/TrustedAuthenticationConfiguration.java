@@ -56,7 +56,7 @@ public class TrustedAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -92,26 +92,15 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action principalFromRemoteUserAction() {
-        final PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction a =
-                new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
-        a.setPrincipalFactory(trustedPrincipalFactory());
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-
-        return a;
+        return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, trustedPrincipalFactory());
     }
 
     @Bean
     @RefreshScope
     public Action principalFromRemoteUserPrincipalAction() {
-        final PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction a =
-                new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
-        a.setPrincipalFactory(trustedPrincipalFactory());
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, trustedPrincipalFactory());
     }
 
     @PostConstruct
