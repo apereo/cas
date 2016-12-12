@@ -46,25 +46,14 @@ public class CasCoreLogoutConfiguration {
 
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
-        final DefaultSingleLogoutServiceMessageHandler handler =
-                new DefaultSingleLogoutServiceMessageHandler();
-
-        handler.setHttpClient(this.httpClient);
-        handler.setAsynchronous(casProperties.getSlo().isAsynchronous());
-        handler.setLogoutMessageBuilder(logoutBuilder());
-        handler.setSingleLogoutServiceLogoutUrlBuilder(defaultSingleLogoutServiceLogoutUrlBuilder());
-        handler.setServicesManager(servicesManager);
-        return handler;
+        return new DefaultSingleLogoutServiceMessageHandler(httpClient, logoutBuilder(), servicesManager, defaultSingleLogoutServiceLogoutUrlBuilder(),
+                casProperties.getSlo().isAsynchronous());
     }
 
     @RefreshScope
     @Bean
     public LogoutManager logoutManager() {
-        final LogoutManagerImpl mgr = new LogoutManagerImpl();
-        mgr.setSingleLogoutCallbacksDisabled(casProperties.getSlo().isDisabled());
-        mgr.setLogoutMessageBuilder(logoutBuilder());
-        mgr.setSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
-        return mgr;
+        return new LogoutManagerImpl(logoutBuilder(), defaultSingleLogoutServiceMessageHandler(), casProperties.getSlo().isDisabled());
     }
 
     @Bean

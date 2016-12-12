@@ -21,7 +21,12 @@ import org.springframework.context.event.EventListener;
  * @since 5.0.0
  */
 public class DefaultCasEventListener {
-    private CasEventRepository casEventRepository;
+
+    private final CasEventRepository casEventRepository;
+
+    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
+        this.casEventRepository = casEventRepository;
+    }
 
     /**
      * Handle TGT creation event.
@@ -81,9 +86,5 @@ public class DefaultCasEventListener {
     
     public CasEventRepository getCasEventRepository() {
         return casEventRepository;
-    }
-
-    public void setCasEventRepository(final CasEventRepository casEventRepository) {
-        this.casEventRepository = casEventRepository;
     }
 }
