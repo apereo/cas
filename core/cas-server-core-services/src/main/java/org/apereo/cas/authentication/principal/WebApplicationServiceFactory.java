@@ -44,6 +44,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         } catch (final Exception e) {
             logger.error("Format specified in the request [{}] is not recognized", format);
         }
+        webApplicationService.setFormat(ValidationResponseType.JSON);
         return webApplicationService;
     }
 

@@ -26,21 +26,12 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 public class Cas30JsonResponseView extends Cas30ResponseView {
-    /**
-     * Instantiates a new json response view.
-     * Forces pretty printing of the JSON view.
-     */
-    public Cas30JsonResponseView() {
-        super();
-        setView(createDelegatedView());
-        logger.debug("Initializing {}", this.getClass().getSimpleName());
-    }
 
     private static MappingJackson2JsonView createDelegatedView() {
         final MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
         view.setDisableCaching(true);
-        view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         return view;
     }
 
@@ -53,10 +44,8 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
         final CasServiceResponse casResponse = new CasServiceResponse();
-
         try {
             super.prepareMergedOutputModel(model, request, response);
-            
             if (getAssertionFrom(model) != null) {
                 final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
                 casResponse.setAuthenticationSuccess(success);
@@ -72,6 +61,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casModel.put("serviceResponse", casResponse);
             model.clear();
             model.putAll(casModel);
+            setView(createDelegatedView());
         }
     }
 
