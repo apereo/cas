@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.RequiredHandlerAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -56,7 +57,7 @@ public class CasCoreConfiguration {
     private TicketFactory ticketFactory;
         
     @Bean(name={"authenticationPolicyFactory", "defaultAuthenticationPolicyFactory"})
-    public ContextualAuthenticationPolicyFactory authenticationPolicyFactory() {
+    public ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory() {
         if (casProperties.getAuthn().getPolicy().isRequiredHandlerAuthenticationPolicyEnabled()) {
             return new RequiredHandlerAuthenticationPolicyFactory();
         }
@@ -65,7 +66,7 @@ public class CasCoreConfiguration {
     
     @Bean
     public List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies() {
-        final List list = new ArrayList<>();
+        final List<AuthenticationRequestServiceSelectionStrategy> list = new ArrayList<>();
         list.add(defaultValidationServiceSelectionStrategy());
         return list;
     }
@@ -78,21 +79,11 @@ public class CasCoreConfiguration {
     
     @Autowired
     @Bean
-    public CentralAuthenticationService centralAuthenticationService(@Qualifier("authenticationRequestServiceSelectionStrategies")
-                                                                     final List authenticationRequestServiceSelectionStrategies,
-                                                                     @Qualifier("principalFactory")
-                                                                     final PrincipalFactory principalFactory,
-                                                                     @Qualifier("protocolTicketCipherExecutor")
-                                                                     final CipherExecutor cipherExecutor) {
-        final DefaultCentralAuthenticationService impl = new DefaultCentralAuthenticationService();
-        impl.setTicketRegistry(this.ticketRegistry);
-        impl.setServicesManager(this.servicesManager);
-        impl.setLogoutManager(this.logoutManager);
-        impl.setTicketFactory(this.ticketFactory);
-        impl.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        impl.setServiceContextAuthenticationPolicyFactory(authenticationPolicyFactory());
-        impl.setPrincipalFactory(principalFactory);
-        impl.setCipherExecutor(cipherExecutor);
-        return impl;
+    public CentralAuthenticationService centralAuthenticationService(
+            @Qualifier("authenticationRequestServiceSelectionStrategies") final List<AuthenticationRequestServiceSelectionStrategy> selectionStrategies,
+            @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+            @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
+        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, servicesManager, logoutManager,
+                selectionStrategies, authenticationPolicyFactory(), principalFactory, cipherExecutor);
     }
 }

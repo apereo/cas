@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import com.google.common.collect.Lists;
+import org.apereo.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -36,6 +37,7 @@ import org.apereo.cas.ticket.factory.DefaultTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -141,8 +143,10 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
                 new DefaultTicketGrantingTicketFactory(null, null, null),
                 new DefaultServiceTicketFactory(null, Collections.emptyMap(), false, null),
                 new DefaultProxyTicketFactory(null, Collections.emptyMap(), null, true));
-        this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class));
-        this.cas.setAuthenticationRequestServiceSelectionStrategies(Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy()));
+        final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies =
+                Collections.singletonList(new DefaultAuthenticationRequestServiceSelectionStrategy());
+        this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),
+                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(), new DefaultPrincipalFactory(), null);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
