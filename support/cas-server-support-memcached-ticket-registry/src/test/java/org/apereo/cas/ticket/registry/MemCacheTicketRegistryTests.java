@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.AbstractMemcachedTests;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -22,6 +21,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -47,7 +47,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() throws Exception {
-        return Lists.newArrayList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
+        return Arrays.asList(new Object[]{"testCase1"}, new Object[]{"testCase2"});
     }
 
 

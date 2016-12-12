@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.mock;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -11,6 +10,7 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  */
 public class MockTicketGrantingTicketCreatedEventProducer {
 
-    private static final List<String> ALL_USER_AGENTS = Lists.newArrayList(
+    private static final List<String> ALL_USER_AGENTS = Arrays.asList(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
             "Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:10.0) Gecko/20100101 Firefox/10.0",
             "Mozilla/5.0 (Windows NT 10.1; rv:10.0) Gecko/20100101 Firefox/10.0",
@@ -34,7 +34,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
             "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)"
     );
 
-    private static final List<String> ALL_IP_ADDRS = Lists.newArrayList(
+    private static final List<String> ALL_IP_ADDRS = Arrays.asList(
             "107.181.69.221",
             "85.90.227.224",
             "88.190.229.170",
@@ -58,7 +58,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
             "219.93.183.103"
     );
 
-    private static final List<Pair<String, String>> ALL_GEOLOCS = Lists.newArrayList(
+    private static final List<Pair<String, String>> ALL_GEOLOCS = Arrays.asList(
             Pair.of("40.71", "-74.005"),
             Pair.of("48.85", "2.35"),
             Pair.of("45.46", "9.18"),
