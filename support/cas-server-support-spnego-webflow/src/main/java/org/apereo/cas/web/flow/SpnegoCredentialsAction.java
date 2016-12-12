@@ -1,9 +1,12 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,9 +30,8 @@ import java.nio.charset.Charset;
  */
 public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private boolean ntlm;
-
-    private String messageBeginPrefix = constructMessagePrefix();
+    private final boolean ntlm;
+    private final String messageBeginPrefix;
 
     /**
      * Behavior in case of SPNEGO authentication failure :
@@ -38,6 +40,16 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      * </ul>
      */
     private boolean send401OnAuthenticationFailure = true;
+
+    public SpnegoCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                   final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                   final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final boolean ntlm,
+                                   final boolean send401OnAuthenticationFailure) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        this.ntlm = ntlm;
+        this.messageBeginPrefix = (ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
+        this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
+    }
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
@@ -65,15 +77,6 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         logger.warn("SPNEGO Authorization header not found under {} or it does not begin with the prefix {}",
                 SpnegoConstants.HEADER_AUTHORIZATION, this.messageBeginPrefix);
         return null;
-    }
-
-    /**
-     * Construct message prefix.
-     *
-     * @return the string
-     */
-    protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
     }
 
     @Override
@@ -116,19 +119,4 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
-
-    /**
-     * Sets the ntlm and generate message prefix.
-     *
-     * @param ntlm the new ntlm
-     */
-    public void setNtlm(final boolean ntlm) {
-        this.ntlm = ntlm;
-        this.messageBeginPrefix = constructMessagePrefix();
-    }
-
-    public void setSend401OnAuthenticationFailure(final boolean send401OnAuthenticationFailure) {
-        this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
-    }
-
 }

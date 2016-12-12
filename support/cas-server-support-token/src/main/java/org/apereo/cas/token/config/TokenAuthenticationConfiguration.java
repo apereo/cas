@@ -45,7 +45,7 @@ public class TokenAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -95,12 +95,8 @@ public class TokenAuthenticationConfiguration {
 
     @Bean
     public Action tokenAuthenticationAction() {
-        final TokenAuthenticationAction a = new TokenAuthenticationAction();
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        a.setServicesManager(this.servicesManager);
-        return a;
+        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy, servicesManager);
     }
 
     @Bean

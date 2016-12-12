@@ -28,25 +28,24 @@ import java.util.Optional;
  */
 public class DefaultAuthenticationContextValidator implements AuthenticationContextValidator {
 
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextValidator.class);
 
-    private String authenticationContextAttribute;
-
-    private String globalFailureMode;
-
-    private String mfaTrustedAuthnAttributeName;
+    private final String authenticationContextAttribute;
+    private final String globalFailureMode;
+    private final String mfaTrustedAuthnAttributeName;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    public DefaultAuthenticationContextValidator(final String contextAttribute, final String failureMode, final String authnAttributeName) {
+        this.authenticationContextAttribute = contextAttribute;
+        this.globalFailureMode = failureMode;
+        this.mfaTrustedAuthnAttributeName = authnAttributeName;
+    }
+
     public String getAuthenticationContextAttribute() {
         return this.authenticationContextAttribute;
     }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -66,31 +65,31 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         final Map<String, Object> attrs = authentication.getAttributes();
         final Object ctxAttr = attrs.get(this.authenticationContextAttribute);
         final Collection<Object> contexts = CollectionUtils.toCollection(ctxAttr);
-        logger.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
+        LOGGER.debug("Attempting to match requested authentication context {} against {}", requestedContext, contexts);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 getAllMultifactorAuthenticationProvidersFromApplicationContext();
         if (providerMap == null) {
-            logger.debug("No providers have been configured");
+            LOGGER.debug("No providers have been configured");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
         final Optional<MultifactorAuthenticationProvider> requestedProvider =
                 locateRequestedProvider(providerMap.values(), requestedContext);
 
         if (!requestedProvider.isPresent()) {
-            logger.debug("Requested authentication provider cannot be recognized.");
+            LOGGER.debug("Requested authentication provider cannot be recognized.");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
 
         if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
-            logger.debug("Requested authentication context {} is satisfied", requestedContext);
+            LOGGER.debug("Requested authentication context {} is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
 
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName)
                 && attrs.containsKey(this.mfaTrustedAuthnAttributeName)) {
-            logger.debug("Requested authentication context {} is satisfied since device is already trusted");
+            LOGGER.debug("Requested authentication context {} is satisfied since device is already trusted");
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
@@ -100,14 +99,14 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             final boolean isBypass = Boolean.class.cast(attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
             final String bypassedId = attrs.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
 
-            logger.debug("Found multifactor authentication bypass attributes for provider {}", bypassedId);
+            LOGGER.debug("Found multifactor authentication bypass attributes for provider {}", bypassedId);
 
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
-                logger.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt");
+                LOGGER.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt");
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
 
-            logger.debug("Either multifactor authentication was not bypassed or the requested context {} does not match the bypassed provider",
+            LOGGER.debug("Either multifactor authentication was not bypassed or the requested context {} does not match the bypassed provider",
                     requestedProvider, bypassedId);
         }
 
@@ -115,7 +114,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                 getSatisfiedAuthenticationProviders(authentication, providerMap.values());
 
         if (satisfiedProviders == null) {
-            logger.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
+            LOGGER.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
             return Pair.of(Boolean.FALSE, requestedProvider);
         }
 
@@ -130,18 +129,18 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                     .findFirst();
 
             if (result.isPresent()) {
-                logger.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
+                LOGGER.debug("Current provider {} already satisfies the authentication requirements of {}; proceed with flow normally.",
                         result.get(), requestedProvider);
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
 
-        logger.debug("No multifactor providers could be located to satisfy the requested context for {}", requestedProvider);
+        LOGGER.debug("No multifactor providers could be located to satisfy the requested context for {}", requestedProvider);
 
         final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
             if (!requestedProvider.get().isAvailable(service)) {
-                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy. "
+                LOGGER.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy. "
                                 + "Since provider {} is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                                 + "of the present authentication context", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
@@ -150,7 +149,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         }
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
             if (!requestedProvider.get().isAvailable(service)) {
-                logger.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
+                LOGGER.debug("Service {} is configured to use a {} failure mode for multifactor authentication policy and "
                                 + "since provider {} is unavailable at the moment, CAS will consider the authentication satisfied "
                                 + "without the presence of {}", service.getServiceId(),
                         mode, requestedProvider, requestedContext);
@@ -170,19 +169,18 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         try {
             return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
-            logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
+            LOGGER.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
         }
         return null;
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
-            final Authentication authentication,
+    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
             final Collection<MultifactorAuthenticationProvider> providers) {
         final Collection<Object> contexts = CollectionUtils.toCollection(
                 authentication.getAttributes().get(this.authenticationContextAttribute));
 
         if (contexts == null || contexts.isEmpty()) {
-            logger.debug("No authentication context could be determined based on authentication attribute {}",
+            LOGGER.debug("No authentication context could be determined based on authentication attribute {}",
                     this.authenticationContextAttribute);
             return null;
         }
@@ -191,14 +189,13 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                 providers.removeIf(provider -> !provider.getId().equals(context))
         );
 
-        logger.debug("Found {} providers that may satisfy the context", providers.size());
+        LOGGER.debug("Found {} providers that may satisfy the context", providers.size());
         return providers;
     }
 
 
-    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
-            final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-
+    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(final Collection<MultifactorAuthenticationProvider> providersArray,
+                                                                                       final String requestedProvider) {
         return providersArray.stream()
                 .filter(provider -> provider.getId().equals(requestedProvider))
                 .findFirst();
@@ -210,13 +207,5 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
         return policy.getFailureMode();
-    }
-
-    public void setMfaTrustedAuthnAttributeName(final String mfaTrustedAuthnAttributeName) {
-        this.mfaTrustedAuthnAttributeName = mfaTrustedAuthnAttributeName;
-    }
-
-    public void setGlobalFailureMode(final String globalFailureMode) {
-        this.globalFailureMode = globalFailureMode;
     }
 }
