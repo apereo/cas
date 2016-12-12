@@ -86,6 +86,12 @@ Support for authentication context class references is implemented in form of `a
 which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
+## Dynamic Registration
+
+Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode
+where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate
+in an `OPEN` mode.
+
 ## Keystores
 
 Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
