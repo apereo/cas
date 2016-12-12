@@ -37,8 +37,7 @@ public class CasLoggingConfiguration {
     public FilterRegistrationBean threadContextMDCServletFilter() {
         final Map<String, String> initParams = new HashMap<>();
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, 
-                this.ticketGrantingTicketCookieGenerator));
+        bean.setFilter(new ThreadContextMDCServletFilter(ticketRegistrySupport, this.ticketGrantingTicketCookieGenerator));
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setInitParameters(initParams);
         bean.setName("threadContextMDCServletFilter");
