@@ -2,9 +2,9 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -117,7 +117,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", SERVICE.getId());
         request.addParameter("ticket", sId.getId());
 
-        assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+        final ModelAndView mv = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertTrue(mv.getView().toString().contains(SUCCESS));
     }
 
     @Test
@@ -139,7 +140,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
                 new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
-    
+
     @Test
     public void verifyInvalidServiceTicket() throws Exception {
         final AuthenticationResult ctx = CoreAuthenticationTestUtils
@@ -173,7 +174,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("ticket", sId.getId());
         request.addParameter("pgtUrl", "https://www.github.com");
 
-        assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+        assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
+                .getView().toString().contains(SUCCESS));
     }
 
     @Test
