@@ -26,6 +26,9 @@ public interface SamlIdPConstants {
 
     /** The SAML2 IDP initiated endpoint. */
     String ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO = "/idp/profile/SAML2/Unsolicited/SSO";
+
+    /** The SAML2 IDP ECP endpoint. */
+    String ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO = "/idp/profile/SAML2/SOAP/ECP";
     
     /** The SAML2 SSO post callback profile endpoint. */
     String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/POST/SSO/Callback";
