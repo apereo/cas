@@ -93,8 +93,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
-    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
-            new AcceptAnyAuthenticationPolicyFactory();
+    protected ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory = new AcceptAnyAuthenticationPolicyFactory();
 
     /**
      * Factory to create the principal type.
@@ -107,48 +106,30 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected CipherExecutor<String, String> cipherExecutor;
 
     /**
-     * Instantiates a new Central authentication service impl.
-     */
-    protected AbstractCentralAuthenticationService() {
-    }
-
-    /**
      * Build the central authentication service implementation.
-     *
-     * @param ticketRegistry  the tickets registry.
+     *  @param ticketRegistry  the tickets registry.
      * @param ticketFactory   the ticket factory
      * @param servicesManager the services manager.
      * @param logoutManager   the logout manager.
+     * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
+     * @param authenticationPolicyFactory Authentication policy that uses a service context to produce stateful security policies to apply when
+     * authenticating credentials.
+     * @param principalFactory principal factory to create principal objects
+     * @param cipherExecutor Cipher executor to handle ticket validation.
      */
-    public AbstractCentralAuthenticationService(
-            final TicketRegistry ticketRegistry,
-            final TicketFactory ticketFactory,
-            final ServicesManager servicesManager,
-            final LogoutManager logoutManager) {
-
+    public AbstractCentralAuthenticationService(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory, final ServicesManager servicesManager,
+             final LogoutManager logoutManager, final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+             final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory, final PrincipalFactory principalFactory,
+             final CipherExecutor<String, String> cipherExecutor) {
         this.ticketRegistry = ticketRegistry;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
-    }
-
-    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
-        this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    public void setTicketFactory(final TicketFactory ticketFactory) {
-        this.ticketFactory = ticketFactory;
-    }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
         this.principalFactory = principalFactory;
+        this.serviceContextAuthenticationPolicyFactory = authenticationPolicyFactory;
+        this.cipherExecutor = cipherExecutor;
     }
-
     /**
      * Publish CAS events.
      *
@@ -188,8 +169,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz)
-            throws InvalidTicketException {
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
@@ -215,12 +195,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @return the authentication satisfied by policy
      * @throws AbstractTicketException the ticket exception
      */
-    protected Authentication getAuthenticationSatisfiedByPolicy(
-            final Authentication authentication,
-            final ServiceContext context) throws AbstractTicketException {
+    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context)
+            throws AbstractTicketException {
 
-        final ContextualAuthenticationPolicy<ServiceContext> policy =
-                this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
+        final ContextualAuthenticationPolicy<ServiceContext> policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         if (policy.isSatisfiedBy(authentication)) {
             return authentication;
         }
@@ -304,7 +282,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 .resolveServiceFrom(service);
     }
 
-
     /**
      * Verify the ticket id received is actually legitimate
      * before contacting downstream systems to find and process it.
@@ -323,25 +300,5 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-    }
-
-    public void setAuthenticationRequestServiceSelectionStrategies(final List<AuthenticationRequestServiceSelectionStrategy> s) {
-        this.authenticationRequestServiceSelectionStrategies = s;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
-
-    public void setCipherExecutor(final CipherExecutor<String, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 }

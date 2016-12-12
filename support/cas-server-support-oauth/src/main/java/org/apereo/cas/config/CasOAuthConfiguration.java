@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -68,9 +67,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apereo.cas.support.oauth.OAuthConstants.BASE_OAUTH20_URL;
 
@@ -202,24 +202,21 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor() {
-        final String clients = StringUtils.join(
-                Arrays.asList(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
+        final String clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
                         Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-                        Authenticators.CAS_OAUTH_CLIENT_USER_FORM), ",");
+                        Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
         return new SecurityInterceptor(oauthSecConfig(), clients);
     }
 
     @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(),
-                requiresAuthenticationAuthorizeInterceptor());
+        return new OAuth20HandlerInterceptorAdapter(requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor());
     }
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(oauthInterceptor())
-                .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
+        registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
     }
 
     @Bean
