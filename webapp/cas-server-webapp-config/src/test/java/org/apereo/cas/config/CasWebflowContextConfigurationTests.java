@@ -18,6 +18,8 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,10 +27,20 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +58,7 @@ import static org.junit.Assert.*;
                 CasPropertiesConfiguration.class,
                 CasSecurityContextConfiguration.class,
                 CasWebAppConfiguration.class,
+                CasWebflowContextConfigurationTests.TestWebflowContextConfiguration.class,
                 CasWebflowContextConfiguration.class,
                 CasCoreWebflowConfiguration.class,
                 CasCoreAuthenticationConfiguration.class,
@@ -87,15 +100,54 @@ public class CasWebflowContextConfigurationTests {
     }
 
     @Test
+    public void verifyFlowExecutorByServerSession() {
+        final RequestContext ctx = getMockRequestContext();
+        final LocalAttributeMap map = new LocalAttributeMap<>();
+        flowExecutorViaServerSessionBindingExecution.launchExecution("login",
+                map,
+                ctx.getExternalContext());
+
+    }
+
+    @Test
     public void verifyFlowExecutorByClient() {
+        final RequestContext ctx = getMockRequestContext();
+        final LocalAttributeMap map = new LocalAttributeMap<>();
+        flowExecutorViaClientFlowExecution.launchExecution("login",
+                map,
+                ctx.getExternalContext());
+    }
+
+    private RequestContext getMockRequestContext() {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
-        flowExecutorViaClientFlowExecution.launchExecution("login",
-                new LocalAttributeMap<>(),
-                new ServletExternalContext(sCtx, request, response));
+        return ctx;
+    }
 
+    @Configuration
+    public static class TestWebflowContextConfiguration {
+        @Bean
+        public Action testWebflow() {
+            return new AbstractAction() {
+                @Override
+                protected Event doExecute(final RequestContext requestContext) throws Exception {
+                    requestContext.getFlowScope().put("test0", Collections.singleton("test"));
+                    requestContext.getFlowScope().put("test1", Collections.singletonList("test"));
+                    requestContext.getFlowScope().put("test2", Collections.singletonMap("test", "test"));
+                    requestContext.getFlowScope().put("test3", Arrays.asList("test", "test"));
+                    requestContext.getFlowScope().put("test4", new ConcurrentSkipListSet());
+                    requestContext.getFlowScope().put("test5", Collections.unmodifiableList(Arrays.asList("test1")));
+                    requestContext.getFlowScope().put("test6", Collections.unmodifiableSet(Collections.singleton(1)));
+                    requestContext.getFlowScope().put("test7", Collections.unmodifiableMap(new HashMap<>()));
+                    requestContext.getFlowScope().put("test8", Collections.emptyMap());
+                    requestContext.getFlowScope().put("test9", new TreeMap<>());
+                    requestContext.getFlowScope().put("test10", Collections.emptySet());
+                    return success();
+                }
+            };
+        }
     }
 }
