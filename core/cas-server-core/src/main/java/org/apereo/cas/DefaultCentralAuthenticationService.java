@@ -7,11 +7,13 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MixedPrincipalException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRequest;
@@ -42,6 +44,7 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.validation.Assertion;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +53,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
@@ -69,26 +71,23 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     private static final long serialVersionUID = -8943828074939533986L;
 
     /**
-     * Instantiates a new Central authentication service impl.
-     */
-    public DefaultCentralAuthenticationService() {
-    }
-
-    /**
      * Build the central authentication service implementation.
-     *
-     * @param ticketRegistry  the tickets registry.
+     *  @param ticketRegistry  the tickets registry.
      * @param ticketFactory   the ticket factory
      * @param servicesManager the services manager.
      * @param logoutManager   the logout manager.
+     * @param authenticationRequestServiceSelectionStrategies The service selection strategy during validation events.
+     * @param authenticationPolicyFactory Authentication policy that uses a service context to produce stateful security policies to apply when
+     * authenticating credentials.
+     * @param principalFactory principal factory to create principal objects
+     * @param cipherExecutor Cipher executor to handle ticket validation.
      */
-    public DefaultCentralAuthenticationService(
-            final TicketRegistry ticketRegistry,
-            final TicketFactory ticketFactory,
-            final ServicesManager servicesManager,
-            final LogoutManager logoutManager) {
-
-        super(ticketRegistry, ticketFactory, servicesManager, logoutManager);
+    public DefaultCentralAuthenticationService(final TicketRegistry ticketRegistry, final TicketFactory ticketFactory, final ServicesManager servicesManager,
+            final LogoutManager logoutManager, final List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies,
+                                               final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
+                                               final PrincipalFactory principalFactory, final CipherExecutor<String, String> cipherExecutor) {
+        super(ticketRegistry, ticketFactory, servicesManager, logoutManager, authenticationRequestServiceSelectionStrategies, authenticationPolicyFactory,
+                principalFactory, cipherExecutor);
     }
 
     /**
@@ -136,9 +135,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     @Metered(name = "GRANT_SERVICE_TICKET_METER")
     @Counted(name = "GRANT_SERVICE_TICKET_COUNTER", monotonic = true)
     @Override
-    public ServiceTicket grantServiceTicket(
-            final String ticketGrantingTicketId,
-            final Service service, final AuthenticationResult authenticationResult)
+    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
@@ -261,7 +258,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     }
 
-
     @Audit(
             action = "SERVICE_TICKET_VALIDATE",
             actionResolverName = "VALIDATE_SERVICE_TICKET_RESOLVER",
@@ -348,7 +344,6 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
     }
 
-
     @Audit(
             action = "TICKET_GRANTING_TICKET",
             actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER",
@@ -379,8 +374,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         return ticketGrantingTicket;
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                       final TicketGrantingTicket ticketGrantingTicket)
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;
         if (context != null) {
@@ -395,5 +389,4 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
         return currentAuthentication;
     }
-
 }
