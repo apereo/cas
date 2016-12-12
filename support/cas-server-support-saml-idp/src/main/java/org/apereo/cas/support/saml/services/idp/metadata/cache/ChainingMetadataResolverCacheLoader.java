@@ -247,7 +247,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
     private void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            final List<QName> roles = Arrays.asList();
+            final List<QName> roles = new ArrayList<>();
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
             rolesSet.stream().forEach(s -> {
                 if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
