@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
@@ -60,7 +59,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public String getId() {
-        return StringUtils.join(providers.stream().map(p -> p.getId()).collect(Collectors.toList()), '|');
+        return providers.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.joining("|"));
     }
 
     @Override

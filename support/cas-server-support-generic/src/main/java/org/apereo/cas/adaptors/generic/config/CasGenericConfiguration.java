@@ -66,7 +66,7 @@ public class CasGenericConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -93,11 +93,8 @@ public class CasGenericConfiguration {
 
     @Bean
     public Action remoteAddressCheck() {
-        final RemoteAddressNonInteractiveCredentialsAction a = new RemoteAddressNonInteractiveCredentialsAction();
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy);
     }
 
     @RefreshScope
@@ -195,5 +192,4 @@ public class CasGenericConfiguration {
             this.authenticationHandlersResolvers.put(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
     }
-
 }

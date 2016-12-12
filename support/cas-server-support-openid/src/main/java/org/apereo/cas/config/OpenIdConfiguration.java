@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -141,12 +142,11 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
-
+    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -198,7 +198,6 @@ public class OpenIdConfiguration {
         return manager;
     }
 
-
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
@@ -227,8 +226,7 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"),
-                serverManager(), centralAuthenticationService);
+        return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
     }
 
     @Bean
@@ -245,16 +243,10 @@ public class OpenIdConfiguration {
         return new OpenIdProviderController();
     }
 
-
     @Bean
     public Action openIdSingleSignOnAction() {
-        final OpenIdSingleSignOnAction a = new OpenIdSingleSignOnAction();
-        a.setExtractor(defaultOpenIdUserNameExtractor());
-        a.setTicketRegistrySupport(ticketRegistrySupport);
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
     }
 
     @Bean
@@ -271,7 +263,6 @@ public class OpenIdConfiguration {
         m.setMappings(mappings);
         return m;
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

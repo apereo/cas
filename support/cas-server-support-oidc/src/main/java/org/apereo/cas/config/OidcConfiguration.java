@@ -66,8 +66,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -192,11 +193,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
-        final String clients = StringUtils.join(
-                Arrays.asList(
-                        Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
-                        Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-                        Authenticators.CAS_OAUTH_CLIENT_USER_FORM), ",");
+        final String clients = Stream.of(
+                Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
+                Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
+                Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
         return new SecurityInterceptor(oauthSecConfig, clients);
     }
 

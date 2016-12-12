@@ -6,6 +6,8 @@ import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
+import java.util.stream.Collectors;
+
 /**
  * This is {@link DefaultMultifactorAuthenticationMapper}.
  *
@@ -16,7 +18,7 @@ public class DefaultMultifactorAuthenticationMapper implements MultifactorAuthen
     @Override
     public void mapMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy, final RegisteredServiceEditBean.ServiceData bean) {
         bean.getMultiAuth().setFailureMode(multifactorPolicy.getFailureMode().name());
-        bean.getMultiAuth().setProviders(StringUtils.join(multifactorPolicy.getMultifactorAuthenticationProviders(), ','));
+        bean.getMultiAuth().setProviders(multifactorPolicy.getMultifactorAuthenticationProviders().stream().collect(Collectors.joining(",")));
 
         bean.getMultiAuth().getPrincipalAttr().setNameTrigger(multifactorPolicy.getPrincipalAttributeNameTrigger());
         bean.getMultiAuth().getPrincipalAttr().setValueMatch(multifactorPolicy.getPrincipalAttributeValueToMatch());

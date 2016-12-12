@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link MessageBundleAwareResourceResolver}.
@@ -34,7 +36,7 @@ public class MessageBundleAwareResourceResolver extends ReturnValueAsStringResou
         final Set<String> resolvedMessages = new HashSet<>(resolved.length);
         Arrays.stream(resolved).forEach(key -> {
             String defaultKey = e.getClass().getSimpleName();
-            defaultKey = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(defaultKey), "_").toUpperCase();
+            defaultKey = Stream.of(StringUtils.splitByCharacterTypeCamelCase(defaultKey)).collect(Collectors.joining("_")).toUpperCase();
             final String msg = this.context.getMessage(key, null, defaultKey, locale);
             resolvedMessages.add(msg);
         });

@@ -44,15 +44,11 @@ public class GenericSuccessViewAction extends AbstractAction {
      * @param servicesManager              the services manager
      * @param serviceFactory               the service factory
      */
-    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService,
-                                    final ServicesManager servicesManager,
-                                    final ServiceFactory serviceFactory) {
+    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                    final ServiceFactory serviceFactory, final String redirectUrl) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.servicesManager = servicesManager;
         this.serviceFactory = serviceFactory;
-    }
-    
-    public void setRedirectUrl(final String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
 
@@ -79,15 +75,13 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     public Principal getAuthenticationPrincipal(final String ticketGrantingTicketId) {
         try {
-            final TicketGrantingTicket ticketGrantingTicket =
-                    this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             return ticketGrantingTicket.getAuthentication().getPrincipal();
         } catch (final InvalidTicketException e) {
             logger.warn("Ticket-granting ticket [{}] cannot be found in the ticket registry.", e.getMessage());
             logger.debug(e.getMessage(), e);
         }
-        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}",
-                NullPrincipal.class.getSimpleName());
+        logger.warn("In the absence of valid TGT, the authentication principal cannot be determined. Returning {}", NullPrincipal.class.getSimpleName());
         return NullPrincipal.getInstance();
     }
 }
