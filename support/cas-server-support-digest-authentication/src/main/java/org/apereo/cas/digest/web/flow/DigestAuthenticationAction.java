@@ -1,10 +1,13 @@
 package org.apereo.cas.digest.web.flow;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.util.DigestAuthenticationUtils;
 import org.apereo.cas.web.flow.AbstractNonInteractiveCredentialsAction;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.J2EContext;
@@ -30,22 +33,18 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
 
     private String nonce = DigestAuthenticationUtils.createNonce();
 
-    private DigestHashedCredentialRetriever credentialRetriever;
-
+    private final DigestHashedCredentialRetriever credentialRetriever;
     private String realm = "CAS";
-
     private String authenticationMethod = "auth";
-    
-    public void setCredentialRetriever(final DigestHashedCredentialRetriever credentialRetriever) {
-        this.credentialRetriever = credentialRetriever;
-    }
 
-    public void setRealm(final String realm) {
+    public DigestAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                      final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                      final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy, final String realm,
+                                      final String authenticationMethod, final DigestHashedCredentialRetriever credentialRetriever) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.realm = realm;
-    }
-
-    public void setAuthenticationMethod(final String authenticationMethod) {
         this.authenticationMethod = authenticationMethod;
+        this.credentialRetriever = credentialRetriever;
     }
 
     @Override
