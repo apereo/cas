@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -10,13 +13,13 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -63,7 +66,19 @@ import static org.mockito.Mockito.*;
         CasCoreUtilConfiguration.class})
 @DirtiesContext
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
-    
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private SendTicketGrantingTicketAction action;
@@ -138,8 +153,9 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
-        this.action.setCreateSsoSessionCookieOnRenewAuthentications(false);
-        assertEquals("success", this.action.execute(this.context).getId());
+        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
+                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+        assertEquals("success", action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 
@@ -157,8 +173,10 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put("service", svc);
-        this.action.setCreateSsoSessionCookieOnRenewAuthentications(false);
-        assertEquals("success", this.action.execute(this.context).getId());
+
+        final SendTicketGrantingTicketAction action = new SendTicketGrantingTicketAction(centralAuthenticationService, servicesManager,
+                ticketGrantingTicketCookieGenerator, authenticationSystemSupport, false);
+        assertEquals("success", action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }
 }

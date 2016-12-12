@@ -4,6 +4,9 @@ import java.security.cert.X509Certificate;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -17,6 +20,12 @@ import org.springframework.webflow.execution.RequestContext;
 public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
 
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
+
+    public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+                                                          final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+        super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+    }
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {

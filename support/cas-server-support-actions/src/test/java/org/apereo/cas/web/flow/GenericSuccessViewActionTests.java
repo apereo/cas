@@ -35,7 +35,7 @@ public class GenericSuccessViewActionTests {
         when(tgt.getAuthentication()).thenReturn(authn);
         
         when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenReturn(tgt);
-        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory);
+        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertEquals(p.getId(), "cas");
@@ -47,7 +47,7 @@ public class GenericSuccessViewActionTests {
         final ServicesManager mgr = mock(ServicesManager.class);
         final ServiceFactory factory = mock(ServiceFactory.class);
         when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenThrow(new InvalidTicketException("TGT-1"));
-        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory);
+        final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
         assertTrue(p instanceof NullPrincipal);
