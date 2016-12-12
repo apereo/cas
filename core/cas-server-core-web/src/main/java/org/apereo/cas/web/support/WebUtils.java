@@ -121,7 +121,7 @@ public final class WebUtils {
         try {
             return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return null;
     }

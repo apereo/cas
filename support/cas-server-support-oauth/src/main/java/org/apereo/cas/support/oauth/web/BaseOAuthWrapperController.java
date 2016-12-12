@@ -111,8 +111,7 @@ public abstract class BaseOAuthWrapperController {
         final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
 
         final String authenticator = profile.getClass().getCanonicalName();
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-                new BasicIdentifiableCredential(profile.getId()));
+        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
