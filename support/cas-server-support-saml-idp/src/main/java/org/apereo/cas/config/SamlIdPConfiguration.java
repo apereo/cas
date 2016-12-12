@@ -15,8 +15,10 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIAction;
 import org.apereo.cas.support.saml.web.flow.SamlIdPMetadataUIWebflowConfigurer;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdpMetadataAndCertificatesGenerationService;
+import org.apereo.cas.support.saml.web.idp.metadata.SamlMetadataController;
 import org.apereo.cas.support.saml.web.idp.metadata.ShibbolethIdpMetadataAndCertificatesGenerationService;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
+import org.apereo.cas.support.saml.web.idp.profile.ECPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SLOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileCallbackHandlerController;
@@ -363,5 +365,15 @@ public class SamlIdPConfiguration {
         return c;
     }
 
+    @Bean
+    @RefreshScope
+    public ECPProfileHandlerController ecpProfileHandlerController() {
+        return new ECPProfileHandlerController();
+    }
 
+    @Bean
+    @RefreshScope
+    public SamlMetadataController samlMetadataController() {
+        return new SamlMetadataController(shibbolethIdpMetadataAndCertificatesGenerationService());
+    }
 }
