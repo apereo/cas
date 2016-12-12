@@ -10,7 +10,7 @@ import org.springframework.cloud.context.restart.RestartEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class DashboardController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping("/status/dashboard")
+    @GetMapping("/status/dashboard")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         final Map<String, Object> model = new HashMap<>();
