@@ -74,8 +74,11 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action spnego() {
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, casProperties.getAuthn().getSpnego().isNtlm(), casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                casProperties.getAuthn().getSpnego().isNtlm(),
+                casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
     }
 
     @Bean
