@@ -45,15 +45,16 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
 
     /**
      * Creates a new instance with the given required parameters.
-     *  @param factory            Source of LDAP connections for searches.
-     * @param userSearchExecutor Executes the LDAP search for user data.
+     * @param factory              Source of LDAP connections for searches.
+     * @param userSearchExecutor   Executes the LDAP search for user data.
      * @param allowMultipleResults allow multiple search results in which case the first result
-     *                      returned is used to construct user details, or false to indicate that
-     *                      a runtime exception should be raised on multiple search results for user details.
-     * @param roleAttribute
-     * @param rolePrefix
+     *                             returned is used to construct user details, or false to indicate that
+     *                             a runtime exception should be raised on multiple search results for user details.
+     * @param roleAttribute        the role attribute
+     * @param rolePrefix           the role prefix
      */
-    public LdapAuthorizationGenerator(final ConnectionFactory factory, final SearchExecutor userSearchExecutor, final boolean allowMultipleResults, final String roleAttribute, final String rolePrefix) {
+    public LdapAuthorizationGenerator(final ConnectionFactory factory, final SearchExecutor userSearchExecutor, final boolean allowMultipleResults,
+                                      final String roleAttribute, final String rolePrefix) {
         this.connectionFactory = factory;
         this.userSearchExecutor = userSearchExecutor;
         this.allowMultipleResults = allowMultipleResults;
