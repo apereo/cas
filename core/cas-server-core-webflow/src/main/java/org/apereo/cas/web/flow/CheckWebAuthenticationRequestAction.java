@@ -17,9 +17,14 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 public class CheckWebAuthenticationRequestAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckWebAuthenticationRequestAction.class);
 
-    private String contentType;
+    private final String contentType;
+
+    public CheckWebAuthenticationRequestAction(final String contentType) {
+        this.contentType = contentType;
+    }
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -33,9 +38,5 @@ public class CheckWebAuthenticationRequestAction extends AbstractAction {
 
         LOGGER.debug("Authenticated request is identified as web-based via type {}", request.getContentType());
         return new EventFactorySupport().yes(this);
-    }
-
-    public void setContentType(final String contentType) {
-        this.contentType = contentType;
     }
 }

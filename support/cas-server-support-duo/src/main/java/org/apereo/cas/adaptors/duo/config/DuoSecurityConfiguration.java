@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.DefaultVariegatedMultifactorAuthenticationProvider;
@@ -109,11 +110,11 @@ public class DuoSecurityConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @RefreshScope
     @Bean
@@ -196,15 +197,8 @@ public class DuoSecurityConfiguration {
 
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        final DuoAuthenticationWebflowEventResolver r = new DuoAuthenticationWebflowEventResolver();
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")

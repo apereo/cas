@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -100,11 +101,11 @@ public class AuthyConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
@@ -142,13 +143,11 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
-        final AuthyAuthenticationMetaDataPopulator g =
-                new AuthyAuthenticationMetaDataPopulator(
-                        casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                        authyAuthenticationHandler(),
-                        authyAuthenticatorAuthenticationProvider()
-                );
-        return g;
+        return new AuthyAuthenticationMetaDataPopulator(
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                authyAuthenticationHandler(),
+                authyAuthenticatorAuthenticationProvider()
+        );
     }
 
     @Bean
@@ -174,22 +173,14 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
-        final AuthyAuthenticationWebflowEventResolver r = new AuthyAuthenticationWebflowEventResolver();
-        r.setAuthenticationSystemSupport(this.authenticationSystemSupport);
-        r.setCentralAuthenticationService(this.centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(this.multifactorAuthenticationProviderSelector);
-        r.setServicesManager(this.servicesManager);
-        r.setTicketRegistrySupport(this.ticketRegistrySupport);
-        r.setWarnCookieGenerator(this.warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(this.authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        final AuthyMultifactorWebflowConfigurer c =
-                new AuthyMultifactorWebflowConfigurer();
+        final AuthyMultifactorWebflowConfigurer c = new AuthyMultifactorWebflowConfigurer();
         c.setFlowDefinitionRegistry(authyAuthenticatorFlowRegistry());
         c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         c.setFlowBuilderServices(flowBuilderServices);

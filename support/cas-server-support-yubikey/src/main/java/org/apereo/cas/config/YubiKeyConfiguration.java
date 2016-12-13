@@ -10,9 +10,12 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowActi
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -59,11 +62,11 @@ public class YubiKeyConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
@@ -85,7 +88,6 @@ public class YubiKeyConfiguration {
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
     private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
-
 
     @Autowired(required = false)
     @Qualifier("yubiKeyAccountRegistry")
@@ -109,8 +111,7 @@ public class YubiKeyConfiguration {
 
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new FirstMultifactorAuthenticationProviderSelector();
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector = new FirstMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -213,15 +214,8 @@ public class YubiKeyConfiguration {
 
     @Bean
     public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
-        final YubiKeyAuthenticationWebflowEventResolver r = new YubiKeyAuthenticationWebflowEventResolver();
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new YubiKeyAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @PostConstruct

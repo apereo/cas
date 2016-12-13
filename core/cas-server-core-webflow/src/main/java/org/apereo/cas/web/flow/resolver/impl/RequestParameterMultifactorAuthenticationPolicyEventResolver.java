@@ -1,19 +1,26 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -25,11 +32,22 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class RequestParameterMultifactorAuthenticationPolicyEventResolver
-        extends BaseMultifactorAuthenticationProviderEventResolver {
+public class RequestParameterMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final String mfaRequestParameter;
+
+    public RequestParameterMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                        final CentralAuthenticationService centralAuthenticationService,
+                                                                        final ServicesManager servicesManager,
+                                                                        final TicketRegistrySupport ticketRegistrySupport,
+                                                                        final CookieGenerator warnCookieGenerator,
+                                                                        final List<AuthenticationRequestServiceSelectionStrategy> authenticationStrategies,
+                                                                        final MultifactorAuthenticationProviderSelector selector,
+                                                                        final CasConfigurationProperties casProperties) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator, authenticationStrategies,
+                selector);
+        mfaRequestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -41,9 +59,9 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
             return null;
         }
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final String[] values = request.getParameterValues(casProperties.getAuthn().getMfa().getRequestParameter());
+        final String[] values = request.getParameterValues(mfaRequestParameter);
         if (values != null && values.length > 0) {
-            logger.debug("Received request parameter {} as {}", casProperties.getAuthn().getMfa().getRequestParameter(), values);
+            logger.debug("Received request parameter {} as {}", mfaRequestParameter, values);
 
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
@@ -56,8 +74,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
             if (providerFound.isPresent()) {
                 final MultifactorAuthenticationProvider provider = providerFound.get();
                 if (provider.isAvailable(service)) {
-                    logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                            provider, service.getName());
+                    logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                             buildEventAttributeMap(authentication.getPrincipal(), service, provider));
                     return ImmutableSet.of(event);
@@ -69,7 +86,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver
                 throw new AuthenticationException();
             }
         }
-        logger.debug("No value could be found for request parameter {}", casProperties.getAuthn().getMfa().getRequestParameter());
+        logger.debug("No value could be found for request parameter {}", mfaRequestParameter);
         return null;
     }
 
