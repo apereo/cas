@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link YubiKeyMultifactorWebflowConfigurer}.
@@ -14,14 +15,16 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasWebflowConfi
     /** Webflow event id. */
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
     
-    private FlowDefinitionRegistry yubikeyFlowRegistry;
+    private final FlowDefinitionRegistry yubikeyFlowRegistry;
+
+    public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry, final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices);
+        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        this.yubikeyFlowRegistry = flowDefinitionRegistry;
+    }
 
     @Override
     protected void doInitialize() throws Exception {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID, this.yubikeyFlowRegistry);
-    }
-
-    public void setYubikeyFlowRegistry(final FlowDefinitionRegistry yubikeyFlowRegistry) {
-        this.yubikeyFlowRegistry = yubikeyFlowRegistry;
     }
 }

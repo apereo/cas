@@ -220,11 +220,7 @@ public class RadiusMultifactorConfiguration {
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        final RadiusMultifactorWebflowConfigurer w = new RadiusMultifactorWebflowConfigurer();
-        w.setRadiusFlowRegistry(radiusFlowRegistry());
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry());
     }
 
     @PostConstruct

@@ -199,11 +199,7 @@ public class YubiKeyConfiguration {
     @ConditionalOnMissingBean(name = "yubikeyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        final YubiKeyMultifactorWebflowConfigurer r = new YubiKeyMultifactorWebflowConfigurer();
-        r.setYubikeyFlowRegistry(yubikeyFlowRegistry());
-        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        r.setFlowBuilderServices(flowBuilderServices);
-        return r;
+        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, yubikeyFlowRegistry());
     }
 
     @Bean

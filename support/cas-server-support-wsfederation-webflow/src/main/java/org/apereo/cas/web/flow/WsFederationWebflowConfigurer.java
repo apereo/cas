@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link WsFederationWebflowConfigurer} is responsible for
@@ -16,7 +18,13 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     private static final String WS_FEDERATION_REDIRECT = "wsFederationRedirect";
 
     private boolean autoRedirect = true;
-    
+
+    public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry, final boolean redirect) {
+        super(flowBuilderServices);
+        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        this.autoRedirect = redirect;
+    }
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
@@ -31,9 +39,5 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
                 setStartState(flow, actionState);
             }
         }
-    }
-
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
     }
 }
