@@ -93,15 +93,17 @@ public class CasCoreWebflowConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector selector;
+
+    @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
     private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
 
     @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
         return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, casProperties, geoLocationService);
     }
@@ -109,8 +111,7 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "principalAttributeAuthenticationPolicyWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
@@ -123,104 +124,86 @@ public class CasCoreWebflowConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         final InitialAuthenticationAttemptWebflowEventResolver r = new InitialAuthenticationAttemptWebflowEventResolver(authenticationSystemSupport,
                 centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
                 selector);
-        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(globalAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver(selector));
-        r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver(selector));
-        r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver(selector));
+        r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(globalAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver());
+        r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver());
         return r;
     }
 
     @ConditionalOnMissingBean(name = "restEndpointAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver() {
         return new RestEndpointMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
         return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector);
     }
 
     @ConditionalOnMissingBean(name = "globalAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver() {
         return new GlobalMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "selectiveAuthenticationProviderWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
         return new SelectiveAuthenticationProviderWebflowEventEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector);
     }
 
     @ConditionalOnMissingBean(name = "requestParameterAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver() {
         return new RequestParameterMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService,
                 servicesManager, ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector);
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServiceMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector);
     }
 
     @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
-    @Autowired
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
-            @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
+    public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
         return new RankedAuthenticationProviderWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
                 ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, selector, authenticationContextValidator,
-                initialAuthenticationAttemptWebflowEventResolver(selector));
+                initialAuthenticationAttemptWebflowEventResolver());
     }
 
     @Bean
