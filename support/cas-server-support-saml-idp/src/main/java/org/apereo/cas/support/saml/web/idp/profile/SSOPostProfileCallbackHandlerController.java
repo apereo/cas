@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -22,7 +21,6 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,25 +58,37 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
     public SSOPostProfileCallbackHandlerController(final SamlObjectSigner samlObjectSigner,
-                                           final ParserPool parserPool,
-                                           final ServicesManager servicesManager,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                           final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                           final OpenSamlConfigBean configBean,
-                                           final SamlProfileSamlResponseBuilder responseBuilder,
-                                           final Map<String, String> authenticationContextClassMappings,
-                                           final String serverPrefix,
-                                           final String serverName,
-                                           final String authenticationContextRequestParameter,
-                                           final String loginUrl,
-                                           final String logoutUrl,
-                                           final boolean forceSignedLogoutRequests,
-                                           final boolean singleLogoutCallbacksDisabled) {
-        super(samlObjectSigner, parserPool, servicesManager, webApplicationServiceFactory,
+                                                   final ParserPool parserPool,
+                                                   final ServicesManager servicesManager,
+                                                   final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                   final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                   final OpenSamlConfigBean configBean,
+                                                   final SamlProfileSamlResponseBuilder responseBuilder,
+                                                   final Map<String, String> authenticationContextClassMappings,
+                                                   final String serverPrefix,
+                                                   final String serverName,
+                                                   final String authenticationContextRequestParameter,
+                                                   final String loginUrl,
+                                                   final String logoutUrl,
+                                                   final boolean forceSignedLogoutRequests,
+                                                   final boolean singleLogoutCallbacksDisabled) {
+        super(samlObjectSigner,
+                parserPool,
+                servicesManager,
+                webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, authenticationContextClassMappings, serverPrefix, serverName,
-                authenticationContextRequestParameter, loginUrl, logoutUrl, forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                configBean,
+                responseBuilder,
+                authenticationContextClassMappings,
+                serverPrefix,
+                serverName,
+                authenticationContextRequestParameter,
+                loginUrl,
+                logoutUrl,
+                forceSignedLogoutRequests,
+                singleLogoutCallbacksDisabled);
     }
+
     /**
      * Handle callback profile request.
      *
@@ -105,33 +115,58 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
             return;
         }
 
+        final Pair<AuthnRequest, MessageContext> authenticationContext = buildAuthenticationContextPair(request, authnRequest);
+        final Assertion assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
+        buildSamlResponse(response, request, authenticationContext, assertion);
+    }
+
+    /**
+     * Build authentication context pair pair.
+     *
+     * @param request      the request
+     * @param authnRequest the authn request
+     * @return the pair
+     */
+    protected Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                final AuthnRequest authnRequest) {
+        final MessageContext<SAMLObject> messageContext = bindRelayStateParameter(request);
+        return Pair.of(authnRequest, messageContext);
+    }
+
+    private MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
         final MessageContext<SAMLObject> messageContext = new MessageContext<>();
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         logger.debug("RelayState is [{}]", relayState);
         SAMLBindingSupport.setRelayState(messageContext, relayState);
-        final Pair<? extends SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, messageContext);
+        return messageContext;
+    }
 
+    private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,
+                                                          final HttpServletRequest request,
+                                                          final Pair<AuthnRequest, MessageContext> pair) throws Exception {
+        final AuthnRequest authnRequest = pair.getKey();
+        final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
         final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.serverPrefix);
         validator.setRenew(authnRequest.isForceAuthn());
         final String serviceUrl = constructServiceUrl(request, response, pair);
         logger.debug("Created service url for validation: [{}]", serviceUrl);
         final Assertion assertion = validator.validate(ticket, serviceUrl);
-        Thread.sleep(1);
         logCasValidationAssertion(assertion);
+        return assertion;
+    }
 
-        if (!assertion.isValid()) {
-            throw new SamlException("CAS assertion received is invalid. This normally indicates that the assertion received has expired "
-                    + " and is not valid within the time constraints of the authentication event");
-        }
-        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+    private void buildSamlResponse(final HttpServletResponse response,
+                                   final HttpServletRequest request,
+                                   final Pair<AuthnRequest, MessageContext> authenticationContext,
+                                   final Assertion casAssertion) {
+        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
+                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
         logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
-        this.responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
+        this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, adaptor);
         logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
-
-        
     }
 
 }
