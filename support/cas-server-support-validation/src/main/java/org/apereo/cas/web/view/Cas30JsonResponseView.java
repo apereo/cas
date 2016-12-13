@@ -26,16 +26,6 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 public class Cas30JsonResponseView extends Cas30ResponseView {
-    /**
-     * Instantiates a new json response view.
-     * Forces pretty printing of the JSON view.
-     */
-    public Cas30JsonResponseView() {
-        super();
-        setView(createDelegatedView());
-        logger.debug("Initializing {}", this.getClass().getSimpleName());
-    }
-
     private static MappingJackson2JsonView createDelegatedView() {
         final MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
@@ -72,6 +62,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casModel.put("serviceResponse", casResponse);
             model.clear();
             model.putAll(casModel);
+            setView(createDelegatedView());
         }
     }
 
