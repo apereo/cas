@@ -17,9 +17,10 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
     
     private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public GoogleAuthenticatorMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry, final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+    public GoogleAuthenticatorMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                           final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                           final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

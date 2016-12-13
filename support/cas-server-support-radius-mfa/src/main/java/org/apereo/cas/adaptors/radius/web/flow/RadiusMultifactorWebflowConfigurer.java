@@ -19,8 +19,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasWebflowConfig
 
     public RadiusMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                               final FlowDefinitionRegistry radiusFlowRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.radiusFlowRegistry = radiusFlowRegistry;
     }
 

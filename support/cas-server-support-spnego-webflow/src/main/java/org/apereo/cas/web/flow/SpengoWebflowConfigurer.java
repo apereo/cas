@@ -20,8 +20,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

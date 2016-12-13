@@ -228,7 +228,8 @@ public class YubiKeyConfiguration {
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustConfiguration")
         @Bean
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
-            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices, casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
+            final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices, deviceRegistrationEnabled, loginFlowDefinitionRegistry);
         }
     }
 }

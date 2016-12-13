@@ -16,8 +16,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

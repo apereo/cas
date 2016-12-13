@@ -38,9 +38,9 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private final VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration,
-                                           final VariegatedMultifactorAuthenticationProvider provider) {
-        super(flowBuilderServices, enableDeviceRegistration);
+    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                           final boolean enableDeviceRegistration, final VariegatedMultifactorAuthenticationProvider provider) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
         this.provider = provider;
     }
 

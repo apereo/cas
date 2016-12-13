@@ -17,8 +17,9 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasWebflowConfigu
     
     private FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public AuthyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices);
+    public AuthyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                             final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

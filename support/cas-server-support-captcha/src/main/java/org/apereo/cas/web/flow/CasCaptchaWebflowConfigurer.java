@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -16,8 +17,8 @@ import java.util.List;
  */
 public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    public CasCaptchaWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
-        super(flowBuilderServices);
+    public CasCaptchaWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

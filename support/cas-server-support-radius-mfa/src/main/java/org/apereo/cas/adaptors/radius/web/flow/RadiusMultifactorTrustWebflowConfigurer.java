@@ -14,9 +14,9 @@ public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactor
 
     private FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public RadiusMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration,
-                                                   final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, enableDeviceRegistration);
+    public RadiusMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final boolean enableDeviceRegistration, final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

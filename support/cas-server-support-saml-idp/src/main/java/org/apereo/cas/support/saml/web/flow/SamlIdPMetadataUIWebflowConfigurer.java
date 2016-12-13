@@ -20,9 +20,8 @@ public class SamlIdPMetadataUIWebflowConfigurer extends AbstractCasWebflowConfig
 
     public SamlIdPMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                               final Action samlMetadataUIParserAction) {
-        super(flowBuilderServices);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.samlMetadataUIParserAction = samlMetadataUIParserAction;
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
     }
 
     @Override

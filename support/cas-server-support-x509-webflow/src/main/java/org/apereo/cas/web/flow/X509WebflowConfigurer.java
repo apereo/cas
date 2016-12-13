@@ -18,8 +18,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";
 
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

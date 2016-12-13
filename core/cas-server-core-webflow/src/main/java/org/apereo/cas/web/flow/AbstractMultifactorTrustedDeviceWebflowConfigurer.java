@@ -25,8 +25,10 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     private boolean enableDeviceRegistration = true;
 
-    public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration) {
-        super(flowBuilderServices);
+    public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                             final boolean enableDeviceRegistration) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 

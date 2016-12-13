@@ -19,9 +19,9 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     private boolean autoRedirect = true;
 
-    public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry, final boolean redirect) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+    public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                         final boolean redirect) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.autoRedirect = redirect;
     }
 

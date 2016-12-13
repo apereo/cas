@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
@@ -23,8 +24,8 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  */
 public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
-        super(flowBuilderServices);
+    public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, flowDefinitionRegistry);
     }
 
     @Override

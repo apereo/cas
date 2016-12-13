@@ -12,14 +12,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class AuthyMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public AuthyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration, final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, enableDeviceRegistration);
-        this.flowDefinitionRegistry = flowDefinitionRegistry;
-    }
-
-    public void setFlowDefinitionRegistry(final FlowDefinitionRegistry flowDefinitionRegistry) {
+    public AuthyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                  final boolean enableDeviceRegistration, final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

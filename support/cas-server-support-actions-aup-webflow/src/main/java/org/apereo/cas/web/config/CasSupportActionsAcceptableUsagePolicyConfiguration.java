@@ -47,9 +47,7 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
-        final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices);
-        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        return r;
+        return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")

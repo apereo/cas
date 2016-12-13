@@ -43,8 +43,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private Action passwordChangeAction;
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

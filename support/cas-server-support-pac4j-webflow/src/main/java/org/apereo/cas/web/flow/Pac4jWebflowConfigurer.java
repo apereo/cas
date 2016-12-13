@@ -4,6 +4,7 @@ import org.apereo.cas.support.pac4j.web.flow.ClientAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -24,8 +25,8 @@ import java.util.Optional;
  */
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
-        super(flowBuilderServices);
+    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

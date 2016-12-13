@@ -15,8 +15,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class RemoteAddressWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public RemoteAddressWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices);
-        super.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Override

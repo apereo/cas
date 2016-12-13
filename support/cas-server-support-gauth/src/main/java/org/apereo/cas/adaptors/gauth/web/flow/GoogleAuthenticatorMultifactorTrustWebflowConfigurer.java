@@ -14,9 +14,11 @@ public class GoogleAuthenticatorMultifactorTrustWebflowConfigurer extends Abstra
 
     private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public GoogleAuthenticatorMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration,
+    public GoogleAuthenticatorMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                final boolean enableDeviceRegistration,
                                                                 final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, enableDeviceRegistration);
+        super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

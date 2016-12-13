@@ -38,9 +38,7 @@ public class CasCaptchaConfiguration {
     @ConditionalOnMissingBean(name = "captchaWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer captchaWebflowConfigurer() {
-        final CasCaptchaWebflowConfigurer w = new CasCaptchaWebflowConfigurer(flowBuilderServices);
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        return w;
+        return new CasCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @RefreshScope

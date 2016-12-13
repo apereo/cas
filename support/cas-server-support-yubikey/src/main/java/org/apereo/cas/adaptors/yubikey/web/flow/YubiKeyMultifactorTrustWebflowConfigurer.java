@@ -12,10 +12,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean deviceRegistrationEnabled, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, deviceRegistrationEnabled);
+    public YubiKeyMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean deviceRegistrationEnabled,
+                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled);
         flowDefinitionRegistry = loginFlowDefinitionRegistry;
     }
 
@@ -23,6 +24,5 @@ public class YubiKeyMultifactorTrustWebflowConfigurer extends AbstractMultifacto
     protected void doInitialize() throws Exception {
         registerMultifactorTrustedAuthentication(this.flowDefinitionRegistry);
     }
-    
 }
 

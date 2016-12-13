@@ -207,9 +207,8 @@ public class DuoSecurityConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        final DuoMultifactorWebflowConfigurer r = new DuoMultifactorWebflowConfigurer(flowBuilderServices, deviceRegistrationEnabled, duoMultifactorAuthenticationProvider());
-        r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        return r;
+        return new DuoMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                duoMultifactorAuthenticationProvider());
     }
 
     @PostConstruct

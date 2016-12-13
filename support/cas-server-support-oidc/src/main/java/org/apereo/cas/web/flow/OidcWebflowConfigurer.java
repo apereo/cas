@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -15,8 +16,9 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action oidcRegisteredServiceUIAction;
 
-    public OidcWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final Action oidcRegisteredServiceUIAction) {
-        super(flowBuilderServices);
+    public OidcWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                 final Action oidcRegisteredServiceUIAction) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
         this.oidcRegisteredServiceUIAction = oidcRegisteredServiceUIAction;
     }
 
