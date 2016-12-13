@@ -86,11 +86,7 @@ public class SamlMetadataUIConfiguration {
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
-        w.setSamlMetadataUIParserAction(samlMetadataUIParserAction());
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlMetadataUIParserAction());
     }
 
     @Bean

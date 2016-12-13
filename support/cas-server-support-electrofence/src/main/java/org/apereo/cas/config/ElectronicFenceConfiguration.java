@@ -193,10 +193,7 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        final RiskAwareAuthenticationWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
