@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
@@ -31,6 +30,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +48,11 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
-
     private DefaultServicesManager manager;
-
     private StubPersonAttributeDao repository;
-
     private DefaultRegisteredServiceFactory registeredServiceFactory;
+    private final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+            new DefaultPrincipalAttributesRepositoryMapper());
 
     @Before
     public void setUp() throws Exception {
@@ -63,16 +62,9 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
 
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
-        this.registeredServiceFactory.setAccessStrategyMapper(new DefaultAccessStrategyMapper());
-        this.registeredServiceFactory.setAttributeReleasePolicyMapper(
-                new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-                        new DefaultPrincipalAttributesRepositoryMapper()));
-        this.registeredServiceFactory.setProxyPolicyMapper(new DefaultProxyPolicyMapper());
-        this.registeredServiceFactory.setRegisteredServiceMapper(new DefaultRegisteredServiceMapper());
-        this.registeredServiceFactory.setUsernameAttributeProviderMapper(new DefaultUsernameAttributeProviderMapper());
-        this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this.repository)));
-        this.registeredServiceFactory.initializeDefaults();
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
         this.manager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
@@ -182,7 +174,9 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
         final MockRegisteredService svc = new MockRegisteredService();
         svc.setDescription("description");
@@ -196,12 +190,14 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
     }
 
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);

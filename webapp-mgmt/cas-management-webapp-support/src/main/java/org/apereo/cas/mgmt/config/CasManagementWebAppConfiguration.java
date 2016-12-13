@@ -298,16 +298,9 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RegisteredServiceFactory registeredServiceFactory() {
-        final DefaultRegisteredServiceFactory f = new DefaultRegisteredServiceFactory();
-        f.setAccessStrategyMapper(defaultAccessStrategyMapper());
-        f.setAttributeReleasePolicyMapper(defaultAttributeReleasePolicyMapper());
-        f.setProxyPolicyMapper(defaultProxyPolicyMapper());
-        f.setRegisteredServiceMapper(defaultRegisteredServiceMapper());
-        f.setUsernameAttributeProviderMapper(usernameAttributeProviderMapper());
-
         this.formDataPopulators.add(attributeFormDataPopulator());
-        f.setFormDataPopulators(this.formDataPopulators);
-        return f;
+        return new DefaultRegisteredServiceFactory(defaultAccessStrategyMapper(), defaultAttributeReleasePolicyMapper(), defaultProxyPolicyMapper(),
+                defaultRegisteredServiceMapper(), usernameAttributeProviderMapper(), formDataPopulators);
     }
 
     @Bean
