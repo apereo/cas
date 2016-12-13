@@ -178,6 +178,8 @@ public class RegisteredServiceSimpleFormControllerTests {
                 new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
                 Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
+        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
+
         final MockRegisteredService svc = new MockRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
@@ -198,6 +200,8 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
                 new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
                 Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
+
+        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
