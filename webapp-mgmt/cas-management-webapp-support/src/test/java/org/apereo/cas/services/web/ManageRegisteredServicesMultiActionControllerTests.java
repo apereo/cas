@@ -5,8 +5,14 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAccessStrategyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeFilterMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultAttributeReleasePolicyMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultPrincipalAttributesRepositoryMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
+import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -21,6 +27,8 @@ import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 
 /**
@@ -34,17 +42,17 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     public ExpectedException thrown = ExpectedException.none();
 
     private ManageRegisteredServicesMultiActionController controller;
-
     private DefaultRegisteredServiceFactory registeredServiceFactory;
-
     private DefaultServicesManager servicesManager;
+    private final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+            new DefaultPrincipalAttributesRepositoryMapper());
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
 
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
-        this.registeredServiceFactory.initializeDefaults();
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(), Collections.emptyList());
 
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
                 .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
@@ -121,7 +129,11 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     @Test
     public void verifyCustomComponents() throws Exception {
         // override the RegisteredServiceMapper
-        this.registeredServiceFactory.setRegisteredServiceMapper(new CustomRegisteredServiceMapper());
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new CustomRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(), Collections.emptyList());
+
+        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
+                .registeredServiceFactory, new WebApplicationServiceFactory(), "https://cas.example.org");
 
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1200);

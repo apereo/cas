@@ -11,8 +11,6 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,63 +21,30 @@ import java.util.List;
  */
 public class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
 
-    private MultifactorAuthenticationMapper multifactorAuthenticationMapper = new DefaultMultifactorAuthenticationMapper();
-    
-    private AccessStrategyMapper accessStrategyMapper = new DefaultAccessStrategyMapper();
+    private final MultifactorAuthenticationMapper multifactorAuthenticationMapper = new DefaultMultifactorAuthenticationMapper();
+    private final AccessStrategyMapper accessStrategyMapper;
+    private final AttributeReleasePolicyMapper attributeReleasePolicyMapper;
+    private final ProxyPolicyMapper proxyPolicyMapper;
+    private final RegisteredServiceMapper registeredServiceMapper;
+    private final UsernameAttributeProviderMapper usernameAttributeProviderMapper;
+    private final List<? extends FormDataPopulator> formDataPopulators;
 
-    private AttributeReleasePolicyMapper attributeReleasePolicyMapper =
-            new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-                                                    new DefaultPrincipalAttributesRepositoryMapper());
-
-    private ProxyPolicyMapper proxyPolicyMapper = new DefaultProxyPolicyMapper();
-
-    private RegisteredServiceMapper registeredServiceMapper = new DefaultRegisteredServiceMapper();
-
-    private UsernameAttributeProviderMapper usernameAttributeProviderMapper = 
-            new DefaultUsernameAttributeProviderMapper();
-
-    private List<? extends FormDataPopulator> formDataPopulators = new ArrayList<>();
-
-    public void setMultifactorAuthenticationMapper(final MultifactorAuthenticationMapper multifactorAuthenticationMapper) {
-        this.multifactorAuthenticationMapper = multifactorAuthenticationMapper;
-    }
-
-    public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
+    public DefaultRegisteredServiceFactory(final AccessStrategyMapper accessStrategyMapper, final AttributeReleasePolicyMapper attributeReleasePolicyMapper,
+                                           final ProxyPolicyMapper proxyPolicyMapper, final RegisteredServiceMapper registeredServiceMapper,
+                                           final DefaultUsernameAttributeProviderMapper defaultUsernameAttributeProviderMapper,
+                                           final List<? extends FormDataPopulator> formDataPopulators) {
         this.accessStrategyMapper = accessStrategyMapper;
-    }
-
-    public void setAttributeReleasePolicyMapper(final AttributeReleasePolicyMapper attributeReleasePolicyMapper) {
         this.attributeReleasePolicyMapper = attributeReleasePolicyMapper;
-    }
-
-    public void setProxyPolicyMapper(final ProxyPolicyMapper proxyPolicyMapper) {
         this.proxyPolicyMapper = proxyPolicyMapper;
-    }
-
-    public void setRegisteredServiceMapper(final RegisteredServiceMapper registeredServiceMapper) {
         this.registeredServiceMapper = registeredServiceMapper;
-    }
-
-    public void setUsernameAttributeProviderMapper(
-            final UsernameAttributeProviderMapper usernameAttributeProviderMapper) {
-        this.usernameAttributeProviderMapper = usernameAttributeProviderMapper;
-    }
-
-    public void setFormDataPopulators(final List<? extends FormDataPopulator> formDataPopulators) {
+        this.usernameAttributeProviderMapper = defaultUsernameAttributeProviderMapper;
         this.formDataPopulators = formDataPopulators;
-    }
-
-    /**
-     * Initializes some default mappers after any custom mappers have been wired.
-     */
-    @PostConstruct
-    public void initializeDefaults() {
     }
 
     @Override
     public FormData createFormData() {
         final FormData data = new FormData();
-        this.formDataPopulators.stream().forEach(populator -> populator.populateFormData(data));
+        this.formDataPopulators.forEach(populator -> populator.populateFormData(data));
         return data;
     }
 
