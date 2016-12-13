@@ -241,9 +241,7 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     public Action checkWebAuthenticationRequestAction() {
-        final CheckWebAuthenticationRequestAction a = new CheckWebAuthenticationRequestAction();
-        a.setContentType(casProperties.getAuthn().getMfa().getContentType());
-        return a;
+        return new CheckWebAuthenticationRequestAction(casProperties.getAuthn().getMfa().getContentType());
     }
 
     @Bean
