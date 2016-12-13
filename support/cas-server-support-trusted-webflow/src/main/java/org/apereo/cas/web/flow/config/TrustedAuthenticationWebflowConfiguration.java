@@ -34,11 +34,6 @@ public class TrustedAuthenticationWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowConfigurer trustedWebflowConfigurer() {
-        final TrustedAuthenticationWebflowConfigurer w =
-                new TrustedAuthenticationWebflowConfigurer();
-
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 }

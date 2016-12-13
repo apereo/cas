@@ -81,10 +81,7 @@ public class DigestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
-        final DigestAuthenticationWebflowConfigurer w = new DigestAuthenticationWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Autowired

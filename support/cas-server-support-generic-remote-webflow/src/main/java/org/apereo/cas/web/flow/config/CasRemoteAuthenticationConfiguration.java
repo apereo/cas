@@ -26,6 +26,7 @@ import java.util.Map;
 @Configuration("casRemoteAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasRemoteAuthenticationConfiguration {
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -39,7 +40,7 @@ public class CasRemoteAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -48,16 +49,11 @@ public class CasRemoteAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
-        final RemoteAddressWebflowConfigurer w = new RemoteAddressWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @PostConstruct
     public void initializeAuthenticationHandler() {
-        this.authenticationHandlersResolvers.put(
-                remoteAddressAuthenticationHandler,
-                personDirectoryPrincipalResolver);
+        this.authenticationHandlersResolvers.put(remoteAddressAuthenticationHandler, personDirectoryPrincipalResolver);
     }
 }

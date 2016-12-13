@@ -5,6 +5,7 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.execution.Action;
 
@@ -23,6 +24,13 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
     private boolean enableDeviceRegistration = true;
+
+    public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                             final boolean enableDeviceRegistration) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+        this.enableDeviceRegistration = enableDeviceRegistration;
+    }
 
     /**
      * Register multifactor trusted authentication into webflow.
@@ -87,10 +95,6 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     public boolean isEnableDeviceRegistration() {
         return enableDeviceRegistration;
-    }
-
-    public void setEnableDeviceRegistration(final boolean enableDeviceRegistration) {
-        this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
     private static String isDeviceRegistrationRequired() {

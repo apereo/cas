@@ -65,10 +65,7 @@ public class SpnegoWebflowConfiguration {
     @ConditionalOnMissingBean(name = "spnegoWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        final SpengoWebflowConfigurer w = new SpengoWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Bean

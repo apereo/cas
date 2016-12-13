@@ -180,11 +180,7 @@ public class AuthyConfiguration {
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        final AuthyMultifactorWebflowConfigurer c = new AuthyMultifactorWebflowConfigurer();
-        c.setFlowDefinitionRegistry(authyAuthenticatorFlowRegistry());
-        c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        c.setFlowBuilderServices(flowBuilderServices);
-        return c;
+        return new AuthyMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry());
     }
 
     @RefreshScope
@@ -233,12 +229,9 @@ public class AuthyConfiguration {
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
-            final AuthyMultifactorTrustWebflowConfigurer r = new AuthyMultifactorTrustWebflowConfigurer();
-            r.setFlowDefinitionRegistry(authyAuthenticatorFlowRegistry());
-            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-            r.setFlowBuilderServices(flowBuilderServices);
-            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
-            return r;
+            final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                    authyAuthenticatorFlowRegistry());
         }
     }
 }
