@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -9,11 +10,15 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.StringReader;
 import java.util.Map;
 
 /**
@@ -68,11 +73,15 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      *
      * @param response the response
      * @param request  the request
+     * @param body     the body
      * @throws Exception the exception
      */
-    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO, consumes = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO, consumes = MediaType.TEXT_XML_VALUE)
     public void handleEcpRequest(final HttpServletResponse response,
-                                 final HttpServletRequest request) throws Exception {
-        System.out.println();
+                                 final HttpServletRequest request,
+                                 @RequestBody final String body) throws Exception {
+
     }
+
+
 }
