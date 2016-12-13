@@ -27,9 +27,14 @@ import java.util.Set;
  */
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final AuthenticationContextValidator authenticationContextValidator;
 
-    private AuthenticationContextValidator authenticationContextValidator;
+    public RankedAuthenticationProviderWebflowEventResolver(final AuthenticationContextValidator authenticationContextValidator,
+                                                            final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver) {
+        this.authenticationContextValidator = authenticationContextValidator;
+        this.initialAuthenticationAttemptWebflowEventResolver = casDelegatingWebflowEventResolver;
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -51,8 +56,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        final AuthenticationResultBuilder builder =
-                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+        final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
@@ -71,8 +75,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return ImmutableSet.of(event);
         }
 
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(authentication, id, service);
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
             logger.debug("Authentication context is successfully validated by {} for service {}", id, service);
@@ -85,23 +88,13 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
         logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
         return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
-
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
-    }
-
-    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver init) {
-        this.initialAuthenticationAttemptWebflowEventResolver = init;
-    }
-
-    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
-        this.authenticationContextValidator = authenticationContextValidator;
     }
 
     private Set<Event> resumeFlow() {

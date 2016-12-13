@@ -145,8 +145,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return true if warnings were found and added, false otherwise.
      * @since 4.1.0
      */
-    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
-                                                                 final MessageContext messageContext) {
+    private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final MessageDescriptor message : entry.getValue().getWarnings()) {
@@ -168,7 +167,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event newEvent(final String id, final Exception error) {
         return new Event(this, id, new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
     }
-
 
     /**
      * Gets credential from context.
@@ -253,7 +251,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return null;
     }
 
-
     /**
      * Validate event for transition.
      *
@@ -262,8 +259,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param attributes the attributes
      * @return the event
      */
-    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
-                                                                  final Map<String, Object> attributes) {
+    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context, final Map<String, Object> attributes) {
         try {
             final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
             final Event event = new Event(this, eventId, attributesMap);
@@ -438,7 +434,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return resolveInternal(context);
     }
 
-
     @Override
     public Event resolveSingle(final RequestContext context) {
         final Set<Event> events = resolve(context);
@@ -455,15 +450,13 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-
     /**
      * Find the MultifactorAuthenticationProvider in the application contact that matches the specified providerId (e.g. "mfa-duo").
      *
      * @param providerId the provider id
      * @return the registered service multifactor authentication provider
      */
-    protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(
-            final String providerId) {
+    protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
         try {
             logger.debug("Locating bean definition for {}", providerId);
             return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
@@ -484,7 +477,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected void putResolvedEventsAsAttribute(final RequestContext context, final Set<Event> resolvedEvents) {
         context.getAttributes().put(RESOLVED_AUTHENTICATION_EVENTS, resolvedEvents);
     }
-
 
     /**
      * Resolve service from authentication request.

@@ -232,10 +232,8 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver(
             @Qualifier("multifactorAuthenticationProviderSelector") final MultifactorAuthenticationProviderSelector selector) {
-        final RankedAuthenticationProviderWebflowEventResolver r =
-                new RankedAuthenticationProviderWebflowEventResolver();
-        r.setAuthenticationContextValidator(authenticationContextValidator);
-        r.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver(selector));
+        final RankedAuthenticationProviderWebflowEventResolver r = new RankedAuthenticationProviderWebflowEventResolver(authenticationContextValidator,
+                initialAuthenticationAttemptWebflowEventResolver(selector));
         configureResolver(r, selector);
         return r;
     }
@@ -265,14 +263,10 @@ public class CasCoreWebflowConfiguration {
 
     @Bean
     public Action redirectToServiceAction() {
-        return new RedirectToServiceAction(servicesManager,
-                authenticationSystemSupport,
-                ticketRegistrySupport,
-                responseBuilderLocator);
+        return new RedirectToServiceAction(servicesManager, authenticationSystemSupport, ticketRegistrySupport, responseBuilderLocator);
     }
 
-    private void configureResolver(final AbstractCasWebflowEventResolver r,
-                                   final MultifactorAuthenticationProviderSelector selector) {
+    private void configureResolver(final AbstractCasWebflowEventResolver r, final MultifactorAuthenticationProviderSelector selector) {
         r.setAuthenticationSystemSupport(authenticationSystemSupport);
         r.setCentralAuthenticationService(centralAuthenticationService);
         r.setMultifactorAuthenticationProviderSelector(selector);
