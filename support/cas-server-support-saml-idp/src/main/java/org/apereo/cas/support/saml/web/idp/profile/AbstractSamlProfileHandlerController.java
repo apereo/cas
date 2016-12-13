@@ -455,6 +455,19 @@ public abstract class AbstractSamlProfileHandlerController {
                                                  final HttpServletResponse response,
                                                  final HttpServletRequest request) throws Exception {
 
+        verifySamlAuthenticationRequest(pair, request);
+        issueAuthenticationRequestRedirect(pair, request, response);
+    }
+
+    /**
+     * Verify saml authentication request.
+     *
+     * @param pair    the pair
+     * @param request the request
+     * @throws Exception the exception
+     */
+    protected void verifySamlAuthenticationRequest(final Pair<? extends SignableSAMLObject, MessageContext> pair,
+                                                 final HttpServletRequest request) throws Exception {
         final AuthnRequest authnRequest = AuthnRequest.class.cast(pair.getKey());
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
@@ -476,7 +489,6 @@ public abstract class AbstractSamlProfileHandlerController {
         }
 
         SamlUtils.logSamlObject(this.configBean, authnRequest);
-        issueAuthenticationRequestRedirect(pair, request, response);
     }
 }
 
