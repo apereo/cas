@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * This is {@link RadiusMultifactorTrustWebflowConfigurer}.
@@ -13,7 +14,9 @@ public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactor
 
     private FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public void setFlowDefinitionRegistry(final FlowDefinitionRegistry flowDefinitionRegistry) {
+    public RadiusMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration,
+                                                   final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, enableDeviceRegistration);
         this.flowDefinitionRegistry = flowDefinitionRegistry;
     }
 

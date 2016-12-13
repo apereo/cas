@@ -193,9 +193,8 @@ public class ElectronicFenceConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        final RiskAwareAuthenticationWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer();
+        final RiskAwareAuthenticationWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices);
         w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
 

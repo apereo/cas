@@ -134,9 +134,7 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     public YubiKeyAuthenticationHandler yubikeyAuthenticationHandler() {
-
-        final MultifactorAuthenticationProperties.YubiKey yubi =
-                this.casProperties.getAuthn().getMfa().getYubikey();
+        final MultifactorAuthenticationProperties.YubiKey yubi = this.casProperties.getAuthn().getMfa().getYubikey();
 
         if (StringUtils.isBlank(yubi.getSecretKey())) {
             throw new IllegalArgumentException("Yubikey secret key cannot be blank");
@@ -144,9 +142,7 @@ public class YubiKeyConfiguration {
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(
-                yubi.getClientId(),
-                yubi.getSecretKey());
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(), yubi.getSecretKey());
 
         if (registry != null) {
             handler.setRegistry(this.registry);
@@ -197,9 +193,7 @@ public class YubiKeyConfiguration {
     @RefreshScope
     @Bean
     public Action yubikeyAuthenticationWebflowAction() {
-        final YubiKeyAuthenticationWebflowAction a = new YubiKeyAuthenticationWebflowAction();
-        a.setYubikeyAuthenticationWebflowEventResolver(yubikeyAuthenticationWebflowEventResolver());
-        return a;
+        return new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver());
     }
 
     @ConditionalOnMissingBean(name = "yubikeyMultifactorWebflowConfigurer")
@@ -238,11 +232,7 @@ public class YubiKeyConfiguration {
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustConfiguration")
         @Bean
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
-            final YubiKeyMultifactorTrustWebflowConfigurer r = new YubiKeyMultifactorTrustWebflowConfigurer();
-            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-            r.setFlowBuilderServices(flowBuilderServices);
-            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
-            return r;
+            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices, casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), loginFlowDefinitionRegistry);
         }
     }
 }

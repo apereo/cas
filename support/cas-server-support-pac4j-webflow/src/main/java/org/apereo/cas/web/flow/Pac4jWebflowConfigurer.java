@@ -7,6 +7,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,6 +23,10 @@ import java.util.Optional;
  * @since 4.2
  */
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
+        super(flowBuilderServices);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

@@ -38,8 +38,7 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
 
     @Autowired
     @Bean
-    public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository")
-                                                  final AcceptableUsagePolicyRepository repository) {
+    public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository") final AcceptableUsagePolicyRepository repository) {
         final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
         a.setRepository(repository);
         return a;
@@ -48,9 +47,8 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
-        final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer();
+        final AcceptableUsagePolicyWebflowConfigurer r = new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices);
         r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        r.setFlowBuilderServices(flowBuilderServices);
         return r;
     }
 

@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+
 /**
  * This is {@link BasicAuthenticationWebflowConfigurer}.
  *
@@ -9,6 +11,10 @@ import org.springframework.webflow.engine.Flow;
  * @since 4.2.0
  */
 public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public BasicAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
+        super(flowBuilderServices);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

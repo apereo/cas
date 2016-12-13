@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link OpenIdWebflowConfigurer} is responsible for
@@ -14,6 +15,10 @@ import org.springframework.webflow.engine.Flow;
 public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String OPEN_ID_SINGLE_SIGN_ON_ACTION = "openIdSingleSignOnAction";
+
+    public OpenIdWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
+        super(flowBuilderServices);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

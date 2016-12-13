@@ -48,11 +48,9 @@ public class CasOAuthWebflowConfiguration {
     @ConditionalOnMissingBean(name = "oauth20LogoutWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer();
-        c.setFlowBuilderServices(this.flowBuilderServices);
+        final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer(flowBuilderServices, oauth20RegisteredServiceUIAction());
         c.setLoginFlowDefinitionRegistry(this.loginFlowDefinitionRegistry);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
-        c.setOauth20RegisteredServiceUIAction(oauth20RegisteredServiceUIAction());
         return c;
     }
 

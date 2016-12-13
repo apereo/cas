@@ -103,7 +103,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Flow builder services.
      */
-    protected FlowBuilderServices flowBuilderServices;
+    protected final FlowBuilderServices flowBuilderServices;
+
+    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
+        this.flowBuilderServices = flowBuilderServices;
+    }
 
     @PostConstruct
     @Override
@@ -554,10 +558,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     public void setLoginFlowDefinitionRegistry(final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
         this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
-    }
-
-    public void setFlowBuilderServices(final FlowBuilderServices flowBuilderServices) {
-        this.flowBuilderServices = flowBuilderServices;
     }
 
     /**

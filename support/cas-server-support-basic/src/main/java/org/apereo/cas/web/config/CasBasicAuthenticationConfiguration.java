@@ -57,9 +57,8 @@ public class CasBasicAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer() {
-        final BasicAuthenticationWebflowConfigurer w = new BasicAuthenticationWebflowConfigurer();
+        final BasicAuthenticationWebflowConfigurer w = new BasicAuthenticationWebflowConfigurer(flowBuilderServices);
         w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
         return w;
     }
 

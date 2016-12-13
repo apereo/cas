@@ -4,6 +4,7 @@ import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -14,9 +15,10 @@ import org.springframework.webflow.execution.Action;
  */
 public class OAuth20WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private Action oauth20RegisteredServiceUIAction;
+    private final Action oauth20RegisteredServiceUIAction;
 
-    public void setOauth20RegisteredServiceUIAction(final Action oauth20RegisteredServiceUIAction) {
+    public OAuth20WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final Action oauth20RegisteredServiceUIAction) {
+        super(flowBuilderServices);
         this.oauth20RegisteredServiceUIAction = oauth20RegisteredServiceUIAction;
     }
 

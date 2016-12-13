@@ -305,10 +305,9 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer defaultWebflowConfigurer() {
-        final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer();
+        final DefaultWebflowConfigurer c = new DefaultWebflowConfigurer(builder());
         c.setLoginFlowDefinitionRegistry(loginFlowRegistry());
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
-        c.setFlowBuilderServices(builder());
         return c;
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
@@ -11,6 +12,7 @@ import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.model.AbstractActionModel;
 import org.springframework.webflow.engine.model.AbstractStateModel;
 import org.springframework.webflow.engine.model.ActionStateModel;
@@ -34,7 +36,13 @@ import java.util.LinkedList;
  */
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private VariegatedMultifactorAuthenticationProvider provider;
+    private final VariegatedMultifactorAuthenticationProvider provider;
+
+    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final boolean enableDeviceRegistration,
+                                           final VariegatedMultifactorAuthenticationProvider provider) {
+        super(flowBuilderServices, enableDeviceRegistration);
+        this.provider = provider;
+    }
 
     @Override
     protected void doInitialize() throws Exception {
@@ -47,7 +55,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         });
 
         casProperties.getAuthn().getMfa().getDuo().stream()
-                .filter(duo -> duo.isTrustedDeviceEnabled())
+                .filter(MultifactorAuthenticationProperties.Duo::isTrustedDeviceEnabled)
                 .forEach(duo -> {
                     final String id = duo.getId();
                     try {
@@ -58,10 +66,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
                         logger.error("Failed to register multifactor trusted authentication for " + id, e);
                     }
                 });
-    }
-
-    public void setProvider(final VariegatedMultifactorAuthenticationProvider provider) {
-        this.provider = provider;
     }
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final MultifactorAuthenticationProvider p) {

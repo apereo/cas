@@ -300,11 +300,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public CasWebflowConfigurer oidcWebflowConfigurer() {
-        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer();
-        cfg.setFlowBuilderServices(this.flowBuilderServices);
+        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices, oidcRegisteredServiceUIAction());
         cfg.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        cfg.setOidcRegisteredServiceUIAction(oidcRegisteredServiceUIAction());
         return cfg;
     }
 

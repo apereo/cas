@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ import java.util.List;
  * @since 5.0.0
  */
 public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public CasCaptchaWebflowConfigurer(final FlowBuilderServices flowBuilderServices) {
+        super(flowBuilderServices);
+    }
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();

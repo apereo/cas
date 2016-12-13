@@ -34,9 +34,8 @@ public class Pac4jWebflowConfiguration {
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer pac4jWebflowConfigurer() {
-        final Pac4jWebflowConfigurer r = new Pac4jWebflowConfigurer();
+        final Pac4jWebflowConfigurer r = new Pac4jWebflowConfigurer(flowBuilderServices);
         r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        r.setFlowBuilderServices(flowBuilderServices);
         return r;
     }
 
