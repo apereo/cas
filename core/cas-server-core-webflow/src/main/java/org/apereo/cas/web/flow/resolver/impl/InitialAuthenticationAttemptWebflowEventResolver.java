@@ -2,18 +2,25 @@ package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -37,6 +44,15 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+    public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                            final CentralAuthenticationService centralAuthenticationService,
+                                                            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                            final CookieGenerator warnCookieGenerator,
+                                                            final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                            final MultifactorAuthenticationProviderSelector selector) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -131,7 +147,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-
         final Exception ex;
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
             ex = e;
@@ -144,5 +159,4 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         logger.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
-
 }
