@@ -6,11 +6,13 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
@@ -21,6 +23,10 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  * @since 5.0.0
  */
 public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry flowDefinitionRegistry) {
+        super(flowBuilderServices, flowDefinitionRegistry);
+    }
 
     @Override
     protected void doInitialize() throws Exception {
@@ -103,7 +109,6 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createEndState(flow, CasWebflowConstants.STATE_ID_REDIR_VIEW, "requestScope.url", true);
     }
 
-
     private void createRedirectUnauthorizedServiceUrlEndState(final Flow flow) {
         createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL, "flowScope.unauthorizedRedirectUrl", true);
     }
@@ -113,16 +118,12 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createGenericLoginSuccessEndState(final Flow flow) {
-        final EndState state = createEndState(flow,
-                CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS,
-                CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
+        final EndState state = createEndState(flow, CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS, CasWebflowConstants.VIEW_ID_GENERIC_SUCCESS);
         state.getEntryActionList().add(createEvaluateAction("genericSuccessViewAction"));
     }
 
     private void createServiceWarningViewState(final Flow flow) {
-        final ViewState stateWarning = createViewState(flow,
-                CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
-                CasWebflowConstants.VIEW_ID_CONFIRM);
+        final ViewState stateWarning = createViewState(flow, CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW, CasWebflowConstants.VIEW_ID_CONFIRM);
         createTransitionForState(stateWarning, CasWebflowConstants.TRANSITION_ID_SUCCESS, "finalizeWarning");
         final ActionState finalizeWarn = createActionState(flow, "finalizeWarning", createEvaluateAction("serviceWarningAction"));
         createTransitionForState(finalizeWarn, CasWebflowConstants.STATE_ID_REDIRECT, CasWebflowConstants.STATE_ID_REDIRECT);
@@ -197,7 +198,5 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
                 CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
-
-
 }
 
