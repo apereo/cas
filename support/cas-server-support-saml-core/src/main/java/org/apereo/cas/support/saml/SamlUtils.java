@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.cryptacular.util.CertUtil;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public final class SamlUtils {
      * @return the string
      * @throws SamlException the saml exception
      */
-    public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
+    public static StringWriter transformSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
         final StringWriter writer = new StringWriter();
         try {
             final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
@@ -75,7 +76,7 @@ public final class SamlUtils {
      * @param samlObject the saml object
      * @throws SamlException the saml exception
      */
-    public static void logSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
+    public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
         LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject));
     }
 }
