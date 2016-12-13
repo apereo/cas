@@ -44,6 +44,7 @@ import java.io.Serializable;
 @Configuration("passwordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordManagementConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
 
     @Autowired
@@ -146,10 +147,7 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowConfigurer passwordManagementWebflowConfigurer() {
-        final PasswordManagementWebflowConfigurer w = new PasswordManagementWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new PasswordManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @RefreshScope
