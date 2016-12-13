@@ -15,6 +15,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/POST/SSO`
 - `/cas/idp/profile/SAML2/POST/SLO`
 - `/cas/idp/profile/SAML2/Unsolicited/SSO`
+- `/cas/idp/profile/SAML2/SOAP/ECP`
 
 SAML2 IdP `Unsolicited/Initiated` SSO profile supports the following parameters:
 
@@ -36,7 +37,8 @@ it will be displayed. If metadata is absent, one will be generated automatically
 CAS configuration below dictates where metadata files/keys will be generated and stored.
 
 <div class="alert alert-info"><strong>Review Metadata</strong><p>Due to the way CAS handles the generation of metadata via external 
-libraries, the generated metadata MUST be reviewed and massaged slightly to match the CAS configuration. All other elements MUST be 
+libraries, the generated metadata MUST be reviewed and massaged slightly to match the CAS configuration and to account for
+endpoints and bindings that may be of interest to the deployment, such as ECP. All other elements MUST be 
 removed.</p></div>
 
 Here is a generated metadata file as an example:
