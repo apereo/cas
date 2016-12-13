@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -113,11 +114,11 @@ public class GoogleAuthenticatorConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
@@ -201,15 +202,8 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
-        final GoogleAuthenticatorAuthenticationWebflowEventResolver r = new GoogleAuthenticatorAuthenticationWebflowEventResolver();
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new GoogleAuthenticatorAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @Bean
@@ -231,8 +225,7 @@ public class GoogleAuthenticatorConfiguration {
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        final GoogleAuthenticatorMultifactorWebflowConfigurer c =
-                new GoogleAuthenticatorMultifactorWebflowConfigurer();
+        final GoogleAuthenticatorMultifactorWebflowConfigurer c = new GoogleAuthenticatorMultifactorWebflowConfigurer();
         c.setFlowDefinitionRegistry(googleAuthenticatorFlowRegistry());
         c.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
         c.setFlowBuilderServices(flowBuilderServices);
