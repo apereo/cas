@@ -17,4 +17,5 @@ dependencies {
     testCompile project(":core:cas-server-core")
     testCompile project(":core:cas-server-core-logout")
     testCompile project(path: ":support:cas-server-support-json-service-registry")
+    testCompile project(":support:cas-server-support-cookie")
 }
