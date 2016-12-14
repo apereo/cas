@@ -25,7 +25,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.EncodingUtils;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
@@ -36,6 +35,8 @@ import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
@@ -110,7 +111,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * The Response builder.
      */
-    protected SamlProfileObjectBuilder responseBuilder;
+    protected SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
 
     /**
      * Maps authentication contexts to what CAS can support.
@@ -178,7 +179,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                 final OpenSamlConfigBean configBean,
-                                                final BaseSamlProfileSamlResponseBuilder responseBuilder,
+                                                final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
                                                 final Map<String, String> authenticationContextClassMappings,
                                                 final String serverPrefix,
                                                 final String serverName,
@@ -526,9 +527,9 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param casAssertion          the cas assertion
      */
     protected void buildSamlResponse(final HttpServletResponse response,
-                                   final HttpServletRequest request,
-                                   final Pair<AuthnRequest, MessageContext> authenticationContext,
-                                   final Assertion casAssertion) {
+                                     final HttpServletRequest request,
+                                     final Pair<AuthnRequest, MessageContext> authenticationContext,
+                                     final Assertion casAssertion) {
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
