@@ -294,24 +294,14 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver() {
-        final OidcAuthenticationContextWebflowEventEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver();
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @Bean
     public CasWebflowConfigurer oidcWebflowConfigurer() {
-        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer();
-        cfg.setFlowBuilderServices(this.flowBuilderServices);
-        cfg.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
+        final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction());
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        cfg.setOidcRegisteredServiceUIAction(oidcRegisteredServiceUIAction());
         return cfg;
     }
 

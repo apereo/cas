@@ -2,6 +2,7 @@ package org.apereo.cas.mgmt.config;
 
 import org.apereo.cas.authorization.LdapAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -28,13 +29,10 @@ public class CasManagementLdapAuthorizationConfiguration {
     @RefreshScope
     @Bean
     public AuthorizationGenerator authorizationGenerator() {
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getMgmt().getLdapAuthz());
-        final LdapAuthorizationGenerator gen = new LdapAuthorizationGenerator(connectionFactory,
-                ldapAuthorizationGeneratorUserSearchExecutor());
-        gen.setAllowMultipleResults(casProperties.getMgmt().getLdapAuthz().isAllowMultipleResults());
-        gen.setRoleAttribute(casProperties.getMgmt().getLdapAuthz().getRoleAttribute());
-        gen.setRolePrefix(casProperties.getMgmt().getLdapAuthz().getRolePrefix());
-        return gen;
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldapAuthz);
+        return new LdapAuthorizationGenerator(connectionFactory, ldapAuthorizationGeneratorUserSearchExecutor(), ldapAuthz.isAllowMultipleResults(),
+                ldapAuthz.getRoleAttribute(), ldapAuthz.getRolePrefix());
     }
     
     @RefreshScope

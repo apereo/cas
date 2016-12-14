@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link X509WebflowConfigurer} is responsible for
@@ -12,8 +14,13 @@ import org.springframework.webflow.engine.Transition;
  * @since 4.2
  */
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
+
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";
-    
+
+    public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
+
     @Override
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();

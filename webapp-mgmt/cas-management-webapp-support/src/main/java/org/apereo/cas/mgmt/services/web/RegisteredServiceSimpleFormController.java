@@ -31,8 +31,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     /**
      * Instance of the RegisteredServiceFactory.
      */
-
-    private RegisteredServiceFactory registeredServiceFactory;
+    private final RegisteredServiceFactory registeredServiceFactory;
 
     /**
      * Instantiates a new registered service simple form controller.
@@ -40,9 +39,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param servicesManager          the services manager
      * @param registeredServiceFactory the registered service factory
      */
-    public RegisteredServiceSimpleFormController(
-            final ServicesManager servicesManager,
-            final RegisteredServiceFactory registeredServiceFactory) {
+    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager, final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
     }
@@ -56,8 +53,7 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
      * @param service  the edit bean
      */
     @PostMapping(value = "saveService.html")
-    public void saveService(final HttpServletRequest request,
-                            final HttpServletResponse response,
+    public void saveService(final HttpServletRequest request, final HttpServletResponse response,
                             @RequestBody final RegisteredServiceEditBean.ServiceData service,
                             final BindingResult result) {
         try {
@@ -91,7 +87,6 @@ public class RegisteredServiceSimpleFormController extends AbstractManagementCon
     @GetMapping(value = "getService")
     public void getServiceById(@RequestParam(value = "id", required = false) final Long id,
                                final HttpServletRequest request, final HttpServletResponse response) {
-
         try {
             final RegisteredServiceEditBean bean = new RegisteredServiceEditBean();
             if (id == -1) {

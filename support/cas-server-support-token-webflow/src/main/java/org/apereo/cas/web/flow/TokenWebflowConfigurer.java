@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link TokenWebflowConfigurer} is responsible for
@@ -12,6 +14,10 @@ import org.springframework.webflow.engine.Flow;
  */
 
 public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

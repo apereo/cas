@@ -3,19 +3,27 @@ package org.apereo.cas.web.flow.resolver.impl;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,9 +35,22 @@ import java.util.Set;
  */
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final AuthenticationContextValidator authenticationContextValidator;
 
-    private AuthenticationContextValidator authenticationContextValidator;
+    public RankedAuthenticationProviderWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                            final CentralAuthenticationService centralAuthenticationService,
+                                                            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                            final CookieGenerator warnCookieGenerator,
+                                                            final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                            final MultifactorAuthenticationProviderSelector selector,
+                                                            final AuthenticationContextValidator authenticationContextValidator,
+                                                            final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+        this.authenticationContextValidator = authenticationContextValidator;
+        this.initialAuthenticationAttemptWebflowEventResolver = casDelegatingWebflowEventResolver;
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -51,8 +72,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        final AuthenticationResultBuilder builder =
-                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
+        final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
@@ -71,8 +91,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return ImmutableSet.of(event);
         }
 
-        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result =
-                this.authenticationContextValidator.validate(authentication, id, service);
+        final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
 
         if (result.getKey()) {
             logger.debug("Authentication context is successfully validated by {} for service {}", id, service);
@@ -85,23 +104,13 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
         logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
         return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
-
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
-    }
-
-    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver init) {
-        this.initialAuthenticationAttemptWebflowEventResolver = init;
-    }
-
-    public void setAuthenticationContextValidator(final AuthenticationContextValidator authenticationContextValidator) {
-        this.authenticationContextValidator = authenticationContextValidator;
     }
 
     private Set<Event> resumeFlow() {
