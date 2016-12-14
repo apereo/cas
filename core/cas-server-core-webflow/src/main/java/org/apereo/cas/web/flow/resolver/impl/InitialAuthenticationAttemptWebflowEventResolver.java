@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -27,7 +26,9 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
@@ -109,27 +110,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
-                                                              final RegisteredService registeredService) {
-
-        final Set<Event> eventBuilder = Sets.newLinkedHashSet();
-        this.orderedResolvers
-                .stream()
-                .filter(r -> r != null)
-                .forEach(r -> {
-                    logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
-                            r.getName(), registeredService.getServiceId(), service);
-                    final Event result = r.resolveSingle(context);
-
-                    if (result != null) {
-                        logger.debug("Recorded the resulting event {} for {}", result, r.getName());
-                        eventBuilder.add(result);
-                    } else {
-                        logger.debug("Resulting event for {} is blank/ignored", r.getName());
-                    }
-                });
-
-        return eventBuilder;
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
+        return this.orderedResolvers.stream()
+                .filter(Objects::nonNull)
+                .map(resolver -> resolver.resolveSingle(context))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     @Override
