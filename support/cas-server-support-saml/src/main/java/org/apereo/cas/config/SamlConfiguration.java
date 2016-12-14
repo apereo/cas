@@ -100,7 +100,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
     
     @RefreshScope
     @Bean

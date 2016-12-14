@@ -211,7 +211,7 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public List authenticationMetadataPopulators() {
+    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
         final List list = new ArrayList<>();
         list.add(successfulHandlerMetaDataPopulator());
         list.add(rememberMeAuthenticationMetaDataPopulator());
