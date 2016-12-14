@@ -100,8 +100,7 @@ By default, all CAS settings and configuration is controlled via the embedded `a
 
 CAS is also configured to load a `cas.properties` or `cas.yml` file from an external location that is `/etc/cas/config`. 
 This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to 
-exist, and does not require any special permissions
-or structure. The name of the configuration file that goes inside this directory needs to match the `spring.application.name` (i.e. cas.properties). If you want to use additional configuration files they need to have the form application-\<profile\>.properties or  application-\<profile\>.yml. A file named application.properties or application.yml will be included by default. The profile specific files can be activated by using the `spring.profile.include` configuration option.
+exist, and does not require any special permissions or structure. The name of the configuration file that goes inside this directory needs to match the `spring.application.name` (i.e. `cas.properties`). If you want to use additional configuration files, they need to have the form `application-\<profile\>.properties` or `application-\<profile\>.yml`. A file named `application.properties` or `application.yml` will be included by default. The profile specific files can be activated by using the `spring.profile.include` configuration option as is demonstrated below.
 
 The configuration of this behavior is controlled via the `src/main/resources/bootstrap.properties` file:
 
