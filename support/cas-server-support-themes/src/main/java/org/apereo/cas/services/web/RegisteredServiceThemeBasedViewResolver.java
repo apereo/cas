@@ -31,17 +31,20 @@ import java.util.Locale;
  * @since 4.1.0
  */
 public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolver {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
 
-    private ServicesManager servicesManager;
-    private List argumentExtractors;
-    private String prefix;
-    private String suffix;
+    private final ServicesManager servicesManager;
+    private final List argumentExtractors;
+    private final String prefix;
+    private final String suffix;
 
-    /**
-     * Instantiates a new Registered service theme based view resolver.
-     */
-    public RegisteredServiceThemeBasedViewResolver() {
+    public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager, final List argumentExtractors, final String prefix,
+                                                   final String suffix) {
+        this.servicesManager = servicesManager;
+        this.argumentExtractors = argumentExtractors;
+        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     @Override
@@ -83,42 +86,16 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String viewUrl = registeredService.getTheme() + '/' + thymeleafView.getTemplateName();
 
-            final String viewLocationUrl = getPrefix().concat(viewUrl).concat(getSuffix());
+            final String viewLocationUrl = prefix.concat(viewUrl).concat(suffix);
             LOGGER.debug("Attempting to locate view at {}", viewLocationUrl);
             final TemplateLocation location = new TemplateLocation(viewLocationUrl);
             if (location.exists(getApplicationContext())) {
                 LOGGER.debug("Found view {}", viewUrl);
                 thymeleafView.setTemplateName(viewUrl);
             } else {
-                LOGGER.debug("View {} does not exist. Falling back to default view at {}",
-                        viewLocationUrl, thymeleafView.getTemplateName());
+                LOGGER.debug("View {} does not exist. Falling back to default view at {}", viewLocationUrl, thymeleafView.getTemplateName());
             }
         }
-
         return view;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setArgumentExtractors(final List argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(final String suffix) {
-        this.suffix = suffix;
     }
 }
