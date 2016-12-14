@@ -29,27 +29,12 @@ import java.util.Map;
  */
 public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
 
-    private AttributeFilterMapper attributeFilterMapper;
+    private final AttributeFilterMapper attributeFilterMapper;
+    private final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
 
-    private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
-
-    public DefaultAttributeReleasePolicyMapper() {
-    }
-
-    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper,
-                                               final PrincipalAttributesRepositoryMapper mapper) {
-
+    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper, final PrincipalAttributesRepositoryMapper mapper) {
         this.attributeFilterMapper = attributeFilterMapper;
         this.principalAttributesRepositoryMapper = mapper;
-    }
-
-    public void setAttributeFilterMapper(final AttributeFilterMapper attributeFilterMapper) {
-        this.attributeFilterMapper = attributeFilterMapper;
-    }
-
-    public void setPrincipalAttributesRepositoryMapper(
-            final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper) {
-        this.principalAttributesRepositoryMapper = principalAttributesRepositoryMapper;
     }
 
     /**
@@ -60,31 +45,26 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
     }
 
     @Override
-    public void mapAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy,
-                                          final RegisteredServiceEditBean.ServiceData bean) {
+    public void mapAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy, final RegisteredServiceEditBean.ServiceData bean) {
         if (policy instanceof AbstractRegisteredServiceAttributeReleasePolicy) {
-            final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
-                    (AbstractRegisteredServiceAttributeReleasePolicy) policy;
+            final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy = (AbstractRegisteredServiceAttributeReleasePolicy) policy;
             final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
 
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
             this.attributeFilterMapper.mapAttributeFilter(attrPolicy.getAttributeFilter(), bean);
-            this.principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(),
-                    bean);
+            this.principalAttributesRepositoryMapper.mapPrincipalRepository(attrPolicy.getPrincipalAttributesRepository(), bean);
 
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
             if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy)
-                        attrPolicy;
+                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
             } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy)
-                        attrPolicy;
+                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
             } else if (attrPolicy instanceof DenyAllAttributeReleasePolicy) {
@@ -94,11 +74,9 @@ public class DefaultAttributeReleasePolicyMapper implements AttributeReleasePoli
     }
 
     @Override
-    public void mapAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy,
-                                          final RegisteredServiceViewBean bean) {
+    public void mapAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy, final RegisteredServiceViewBean bean) {
         if (policy instanceof AbstractRegisteredServiceAttributeReleasePolicy) {
-            final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
-                    (AbstractRegisteredServiceAttributeReleasePolicy) policy;
+            final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy = (AbstractRegisteredServiceAttributeReleasePolicy) policy;
 
             final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
