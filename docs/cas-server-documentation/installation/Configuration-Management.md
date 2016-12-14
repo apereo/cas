@@ -98,18 +98,19 @@ By default, all CAS settings and configuration is controlled via the embedded `a
 
 ### Native
 
-CAS is also configured to load `*.properties` or `*.yml` files from an external location that is `/etc/cas/config`. 
+CAS is also configured to load a `cas.properties` or `cas.yml` file from an external location that is `/etc/cas/config`. 
 This location is constantly monitored by CAS to detect external changes. Note that this location simply needs to 
 exist, and does not require any special permissions
-or structure. The names of the configuration files that go inside this directory also do
- not matter, and there can be many. 
+or structure. The name of the configuration file that goes inside this directory needs to match the `spring.application.name` (i.e. cas.properties). If you want to use additional configuration files they need to have the form application-\<profile\>.properties or  application-\<profile\>.yml. A file named application.properties or application.yml will be included by default. The profile specific files can be activated by using the `spring.profile.include` configuration option.
 
 The configuration of this behavior is controlled via the `src/main/resources/bootstrap.properties` file:
 
 ```properties
 spring.profiles.active=native
 spring.cloud.config.server.native.searchLocations=file:///etc/cas/config
+spring.profile.include=profile1,profile2
 ```
+
 
 An example of an external `.properties` file hosted by an external location follows:
 
