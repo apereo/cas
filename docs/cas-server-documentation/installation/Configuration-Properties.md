@@ -1902,13 +1902,17 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 ### InCommon
 
+Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
+EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry.
+The signature location MUST BE the public key used to sign the metadata.
+
 ```properties
 # cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
 # cas.samlSP.inCommon.name=InCommon Aggregate
 # cas.samlSP.inCommon.description=InCommon Metadata Aggregate
 # cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
 # cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
-# cas.samlSP.inCommon.entityIds[0]=sampleSP1
+# cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
 ## OpenID Connect
