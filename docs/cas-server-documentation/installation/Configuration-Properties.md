@@ -1806,6 +1806,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.name=Dropbox
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
+# cas.samlSP.dropbox.signatureLocation=
 ```
 
 ### TestShib
@@ -1815,6 +1816,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.testShib.name=TestShib
 # cas.samlSP.testShib.description=TestShib Integration
 # cas.samlSP.testShib.attributes=eduPersonPrincipalName
+# cas.samlSP.testShib.signatureLocation=
 ```
 
 ### Office365
@@ -1825,6 +1827,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.office365.description=O365 Integration
 # cas.samlSP.office365.nameIdAttribute=scopedImmutableID
 # cas.samlSP.office365.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.signatureLocation=
 ```
 
 ### SAManage
@@ -1834,6 +1837,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.saManage.name=SAManage
 # cas.samlSP.saManage.description=SAManage Integration
 # cas.samlSP.saManage.nameIdAttribute=mail
+# cas.samlSP.saManage.signatureLocation=
 ```
 
 ### Workday
@@ -1842,6 +1846,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
 # cas.samlSP.workday.name=Workday
 # cas.samlSP.workday.description=Workday Integration
+# cas.samlSP.workday.signatureLocation=
 ```
 
 ### Salesforce
@@ -1851,6 +1856,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.name=Salesforce
 # cas.samlSP.salesforce.description=Salesforce Integration
 # cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
+# cas.samlSP.salesforce.signatureLocation=
 ```
 
 ### Box
@@ -1860,6 +1866,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.box.name=Box
 # cas.samlSP.box.description=Box Integration
 # cas.samlSP.box.attributes=email,firstName,lastName
+# cas.samlSP.box.signatureLocation=
 ```
 
 ### Service Now
@@ -1869,6 +1876,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.serviceNow.name=ServiceNow
 # cas.samlSP.serviceNow.description=serviceNow Integration
 # cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
+# cas.samlSP.serviceNow.signatureLocation=
 ```
 
 ### Net Partner
@@ -1878,6 +1886,8 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.netPartner.name=Net Partner
 # cas.samlSP.netPartner.description=Net Partner Integration
 # cas.samlSP.netPartner.nameIdAttribute=studentId
+# cas.samlSP.netPartner.attributes=
+# cas.samlSP.netPartner.signatureLocation=
 ```
 
 ### Webex
@@ -1887,7 +1897,18 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webex.name=Webex
 # cas.samlSP.webex.description=Webex Integration
 # cas.samlSP.webex.nameIdAttribute=email
-# cas.samlSP.webex.attributes=firstName,lastName,
+# cas.samlSP.webex.attributes=firstName,lastName
+```
+
+### InCommon
+
+```properties
+# cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
+# cas.samlSP.inCommon.name=InCommon Aggregate
+# cas.samlSP.inCommon.description=InCommon Metadata Aggregate
+# cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
+# cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
+# cas.samlSP.inCommon.entityIds[0]=sampleSP1
 ```
 
 ## OpenID Connect

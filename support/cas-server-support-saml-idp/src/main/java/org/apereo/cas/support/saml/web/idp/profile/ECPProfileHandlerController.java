@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -12,23 +13,22 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.impl.SAMLSOAPDecoderBodyHandler;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.soap.messaging.context.SOAP11Context;
+import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.StringReader;
 import java.util.Map;
 
 /**
@@ -83,18 +83,14 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      *
      * @param response the response
      * @param request  the request
-     * @param body     the body
      * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO, consumes = MediaType.TEXT_XML_VALUE)
     public void handleEcpRequest(final HttpServletResponse response,
-                                 final HttpServletRequest request,
-                                 @RequestBody final String body) throws Exception {
-        final XMLObject objectBody = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(body));
-        SamlUtils.logSamlObject(configBean, objectBody);
-
+                                 final HttpServletRequest request) throws Exception {
+        final MessageContext soapContext = decodeSoapRequest(request);
         final Credential credential = extractBasicAuthenticationCredential(request, response);
-        final SOAP11Context soapContext = decodeSoapRequest(request);
+
         if (credential == null) {
             logger.error("Credentials could not be extracted from the SAML ECP request");
             return;
@@ -103,7 +99,12 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             logger.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
+        final Envelope envelope = soapContext.getSubcontext(SOAP11Context.class).getEnvelope();
+        SamlUtils.logSamlObject(configBean, envelope);
 
+        final AuthnRequest authnRequest = (AuthnRequest) soapContext.getMessage();
+        final Pair<AuthnRequest, MessageContext> authenticationContext = Pair.of(authnRequest, soapContext);
+        verifySamlAuthenticationRequest(authenticationContext, request);
     }
 
     /**
@@ -113,7 +114,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @return the soap 11 context
      * @throws Exception the exception
      */
-    protected SOAP11Context decodeSoapRequest(final HttpServletRequest request) {
+    protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
         try {
             final HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
             decoder.setParserPool(parserPool);
@@ -122,7 +123,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             decoder.setBodyHandler(new SAMLSOAPDecoderBodyHandler());
             decoder.initialize();
             decoder.decode();
-            return decoder.getMessageContext().getSubcontext(SOAP11Context.class);
+            return decoder.getMessageContext();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }

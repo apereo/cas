@@ -105,7 +105,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             return;
         }
 
-        final Pair<? extends SignableSAMLObject, MessageContext> pair = decodeRequest(request, decoder, LogoutRequest.class);
+        final Pair<? extends SignableSAMLObject, MessageContext> pair = decodeSamlContextFromHttpRequest(request, decoder, LogoutRequest.class);
         final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
         final MessageContext ctx = pair.getValue();
 

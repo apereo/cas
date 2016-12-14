@@ -123,7 +123,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      */
     protected Pair<? extends SignableSAMLObject, MessageContext> retrieveAuthnRequest(final HttpServletRequest request,
                                                                                       final BaseHttpServletRequestXMLMessageDecoder decoder) {
-        return decodeRequest(request, decoder, AuthnRequest.class);
+        return decodeSamlContextFromHttpRequest(request, decoder, AuthnRequest.class);
     }
 
 }
