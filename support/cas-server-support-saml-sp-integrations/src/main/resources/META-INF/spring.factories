@@ -1,1 +1,11 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasSamlSPWorkdayConfiguration,org.apereo.cas.config.CasSamlSPTestShibConfiguration,org.apereo.cas.config.CasSamlSPWebexConfiguration,org.apereo.cas.config.CasSamlSPSalesforceConfiguration,org.apereo.cas.config.CasSamlSPSaManageConfiguration,org.apereo.cas.config.CasSamlSPDropboxConfiguration,org.apereo.cas.config.CasSamlSPNetPartnerConfiguration,org.apereo.cas.config.CasSamlSPOffice365Configuration,org.apereo.cas.config.CasSamlSPBoxConfiguration,org.apereo.cas.config.CasSamlSPServiceNowConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasSamlSPWorkdayConfiguration,\
+org.apereo.cas.config.CasSamlSPTestShibConfiguration,\
+org.apereo.cas.config.CasSamlSPWebexConfiguration,\
+org.apereo.cas.config.CasSamlSPSalesforceConfiguration,\
+org.apereo.cas.config.CasSamlSPSaManageConfiguration,\
+org.apereo.cas.config.CasSamlSPDropboxConfiguration,\
+org.apereo.cas.config.CasSamlSPNetPartnerConfiguration,\
+org.apereo.cas.config.CasSamlSPOffice365Configuration,\
+org.apereo.cas.config.CasSamlSPBoxConfiguration,\
+org.apereo.cas.config.CasSamlSPServiceNowConfiguration,\
+org.apereo.cas.config.CasSamlSPInCommonConfiguration
