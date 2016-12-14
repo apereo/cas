@@ -47,6 +47,7 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
     runtime project(':cas-server-support-rest')
+	runtime project(':cas-server-integration-ehcache')
     
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
         exclude(module: 'spring-webmvc')
