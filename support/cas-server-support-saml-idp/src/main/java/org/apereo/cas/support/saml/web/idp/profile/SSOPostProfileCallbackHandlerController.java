@@ -100,7 +100,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
     protected void handleCallbackProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
 
         logger.info("Received SAML callback profile request [{}]", request.getRequestURI());
-        final AuthnRequest authnRequest = retrieveAuthnRequest(request);
+        final AuthnRequest authnRequest = retrieveSamlAuthenticationRequestFromHttpRequest(request);
         if (authnRequest == null) {
             logger.error("Can not validate the request because the original Authn request can not be found.");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

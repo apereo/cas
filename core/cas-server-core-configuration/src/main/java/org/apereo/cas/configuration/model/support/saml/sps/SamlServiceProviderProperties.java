@@ -19,6 +19,15 @@ public class SamlServiceProviderProperties {
     private Webex webex = new Webex();
     private Office365 office365 = new Office365();
     private TestShib testShib = new TestShib();
+    private InCommon inCommon = new InCommon();
+
+    public InCommon getInCommon() {
+        return inCommon;
+    }
+
+    public void setInCommon(final InCommon inCommon) {
+        this.inCommon = inCommon;
+    }
 
     public TestShib getTestShib() {
         return testShib;
@@ -154,6 +163,13 @@ public class SamlServiceProviderProperties {
     public static class TestShib extends AbstractSamlSPProperties {
         public TestShib() {
             //setMetadata("http://www.testshib.org/metadata/testshib-providers.xml");
+            setAttributes(Arrays.asList("eduPersonPrincipalName"));
+        }
+    }
+
+    public static class InCommon extends AbstractSamlSPProperties {
+        public InCommon() {
+            //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
             setAttributes(Arrays.asList("eduPersonPrincipalName"));
         }
     }
