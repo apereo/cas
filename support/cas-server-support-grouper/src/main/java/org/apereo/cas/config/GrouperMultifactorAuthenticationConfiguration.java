@@ -78,29 +78,21 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
-
         final AbstractCasWebflowEventResolver r;
         if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
-            r = new GrouperMultifactorAuthenticationPolicyEventResolver();
+            r = new GrouperMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+                    ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
+                    casProperties);
             LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         } else {
-            r = new NoOpCasWebflowEventResolver();
+            r = new NoOpCasWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+                    warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
         }
-
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
         return r;
     }
-
 
     @PostConstruct
     public void initConfig() {
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(grouperMultifactorAuthenticationWebflowEventResolver());
     }
-
 }
