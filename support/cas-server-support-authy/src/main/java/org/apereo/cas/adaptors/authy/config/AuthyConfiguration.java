@@ -19,6 +19,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -194,16 +195,11 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getAuthy().getApiKey())) {
+        final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+        if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
-        final AuthyClientInstance i = new AuthyClientInstance(
-                casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
-                casProperties.getAuthn().getMfa().getAuthy().getApiUrl()
-        );
-        i.setMailAttribute(casProperties.getAuthn().getMfa().getAuthy().getMailAttribute());
-        i.setPhoneAttribute(casProperties.getAuthn().getMfa().getAuthy().getPhoneAttribute());
-        return i;
+        return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(), authy.getMailAttribute(), authy.getPhoneAttribute());
     }
 
     @RefreshScope

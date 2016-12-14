@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +24,7 @@ import java.util.Map;
  * @since 5.0
  */
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
@@ -52,7 +53,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
-        return createHandlerResult(tokenCredential, principal, Arrays.asList());
+        return createHandlerResult(tokenCredential, principal, new ArrayList<>());
     }
     
     public void setForceVerification(final Boolean forceVerification) {
