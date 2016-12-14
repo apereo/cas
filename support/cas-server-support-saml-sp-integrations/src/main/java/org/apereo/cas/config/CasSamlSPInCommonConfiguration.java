@@ -5,6 +5,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +24,7 @@ import javax.annotation.PostConstruct;
 @Configuration("casSamlSPInCommonConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasSamlSPInCommonConfiguration {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasSamlSPInCommonConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -41,6 +45,18 @@ public class CasSamlSPInCommonConfiguration {
         if (service != null) {
             service.setSignResponses(true);
             SamlSPUtils.saveService(service, servicesManager);
+
+            LOGGER.info("Launching background thread to load the InCommon metadata. Depending on bandwidth, this might take a while...");
+            new Thread(() -> {
+                LOGGER.debug("Loading InCommon metadata at {}...", service.getMetadataLocation());
+                final ChainingMetadataResolver chainingResolver =
+                        samlRegisteredServiceCachingMetadataResolver.resolve(service);
+                if (!chainingResolver.getResolvers().isEmpty()) {
+                    LOGGER.info("Loaded InCommon metadata. {} metadata resolver(s) available.",
+                            chainingResolver.getResolvers().size());
+                }
+            }).start();
+
         }
     }
 }
