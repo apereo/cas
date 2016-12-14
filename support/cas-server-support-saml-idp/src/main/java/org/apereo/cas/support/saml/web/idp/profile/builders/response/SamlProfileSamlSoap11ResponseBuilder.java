@@ -27,6 +27,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                        final HttpServletRequest request,
                                        final HttpServletResponse response) throws SamlException {
+        slkdjaksdjlkasd
+                Maybe move stuff from the saml2 response to abstract and use that?
         return null;
     }
 
