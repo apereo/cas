@@ -187,9 +187,7 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public Action authyAuthenticationWebflowAction() {
-        final AuthyAuthenticationWebflowAction a = new AuthyAuthenticationWebflowAction();
-        a.setCasWebflowEventResolver(authyAuthenticationWebflowEventResolver());
-        return a;
+        return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
 
     @RefreshScope
