@@ -124,10 +124,10 @@ public class AuthyConfiguration {
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance());
+            final boolean forceVerification = casProperties.getAuthn().getMfa().getAuthy().isForceVerification();
+            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance(), forceVerification);
             h.setServicesManager(servicesManager);
             h.setPrincipalFactory(authyPrincipalFactory());
-            h.setForceVerification(casProperties.getAuthn().getMfa().getAuthy().isForceVerification());
             h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
@@ -165,10 +165,7 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAuthy().getBypass(),
-                ticketRegistrySupport
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass(), ticketRegistrySupport);
     }
 
     @RefreshScope

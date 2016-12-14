@@ -28,8 +28,9 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final AuthyClientInstance instance) {
+    public AuthyAuthenticationHandler(final AuthyClientInstance instance, final boolean forceVerification) {
         this.instance = instance;
+        this.forceVerification = forceVerification;
     }
 
     @Override
@@ -42,22 +43,17 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         if (!user.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
-        final Integer authyId = user.getId();
 
-        final Map<String, String> options = new HashMap<>();
+        final Map<String, String> options = new HashMap<>(1);
         options.put("force", this.forceVerification.toString());
 
-        final Token verification = this.instance.getAuthyTokens().verify(authyId, tokenCredential.getToken(), options);
+        final Token verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
 
         if (!verification.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
         return createHandlerResult(tokenCredential, principal, new ArrayList<>());
-    }
-    
-    public void setForceVerification(final Boolean forceVerification) {
-        this.forceVerification = forceVerification;
     }
     
     @Override
