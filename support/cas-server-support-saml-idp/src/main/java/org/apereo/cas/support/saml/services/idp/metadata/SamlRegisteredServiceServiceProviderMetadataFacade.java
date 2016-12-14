@@ -92,15 +92,18 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                          final SamlRegisteredService registeredService,
                                                                          final String entityID,
                                                                          final CriteriaSet criterions) {
+        LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
+                registeredService.getName(), entityID);
         try {
             criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
             criterions.add(new EntityIdCriterion(entityID));
 
-            LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
-                    registeredService.getName(), entityID);
-            LOGGER.info("Locating metadata for entityID [{}] with binding [{}]",
+            LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
                     entityID, SAMLConstants.SAML2_POST_BINDING_URI);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
+            LOGGER.info("Resolved metadata chain for service {}. Filtering the chain by entity ID {} and binding {}",
+                    registeredService, entityID, SAMLConstants.SAML2_POST_BINDING_URI);
+
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + entityID + " in metadata provider.");
@@ -110,7 +113,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         entityID, ssoDescriptor.getValidUntil());
-                return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver);
+                return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor,
+                        entityDescriptor, chainingMetadataResolver);
             }
             throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + entityID);
         } catch (final Exception e) {

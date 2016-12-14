@@ -3,7 +3,9 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
+import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -23,7 +25,9 @@ import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.security.credential.BasicCredential;
@@ -38,12 +42,16 @@ import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngin
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +91,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     private String basicAuthnUsername;
     private String basicAuthnPassword;
     private List<String> supportedContentTypes = new ArrayList<>();
+    private Resource metadataLocation;
 
     /**
      * Instantiates a new Chaining metadata resolver cache loader.
@@ -167,23 +176,53 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      *
      * @param service           the service
      * @param metadataResolvers the metadata resolvers
-     * @throws IOException the io exception
+     * @throws Exception the io exception
      */
-    protected void resolveMetadataFromResource(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
-            throws IOException {
+    protected void resolveMetadataFromResource(final SamlRegisteredService service,
+                                               final List<MetadataResolver> metadataResolvers) throws Exception {
+
         final String metadataLocation = service.getMetadataLocation();
         logger.info("Loading SAML metadata from [{}]", metadataLocation);
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-        try (InputStream in = metadataResource.getInputStream()) {
-            logger.debug("Parsing metadata from [{}]", metadataLocation);
-            final Document document = this.configBean.getParserPool().parse(in);
 
-            final Element metadataRoot = document.getDocumentElement();
-            final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+        if (metadataResource instanceof FileSystemResource) {
+            final ResourceBackedMetadataResolver metadataProvider = new ResourceBackedMetadataResolver(
+                    ResourceHelper.of(metadataResource));
             buildSingleMetadataResolver(metadataProvider, service);
             metadataResolvers.add(metadataProvider);
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            return;
+        }
+
+        if (metadataResource instanceof UrlResource) {
+            final File backupDirectory = new File(this.metadataLocation.getFile(), "metadata-backups");
+            final File backupFile = new File(backupDirectory, metadataResource.getFilename());
+
+            logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
+            FileUtils.forceMkdir(backupDirectory);
+
+            logger.debug("Metadata backup file will be at {}", backupFile.getCanonicalPath());
+            FileUtils.forceMkdirParent(backupFile);
+
+            final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
+                    this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
+                    backupFile.getCanonicalPath());
+            buildSingleMetadataResolver(metadataProvider, service);
+            metadataResolvers.add(metadataProvider);
+            return;
+        }
+
+        if (metadataResource instanceof ClassPathResource) {
+            try (InputStream in = metadataResource.getInputStream()) {
+                logger.debug("Parsing metadata from [{}]", metadataLocation);
+                final Document document = this.configBean.getParserPool().parse(in);
+
+                final Element metadataRoot = document.getDocumentElement();
+                final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+                buildSingleMetadataResolver(metadataProvider, service);
+                metadataResolvers.add(metadataProvider);
+            } catch (final Exception e) {
+                throw Throwables.propagate(e);
+            }
         }
     }
 
@@ -348,8 +387,8 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         }
     }
 
-    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
+    public void setMetadataLocation(final Resource metadataLocation) {
+        this.metadataLocation = metadataLocation;
     }
 
     public void setFailFastInitialization(final boolean failFastInitialization) {
@@ -378,6 +417,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
 
     public void setSupportedContentTypes(final List<String> supportedContentTypes) {
         this.supportedContentTypes = supportedContentTypes;
+    }
+
+    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
     }
 }
 
