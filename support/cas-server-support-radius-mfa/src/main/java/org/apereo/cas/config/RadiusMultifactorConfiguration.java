@@ -11,9 +11,12 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
@@ -67,12 +70,11 @@ public class RadiusMultifactorConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
-
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -119,7 +121,6 @@ public class RadiusMultifactorConfiguration {
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
     }
-
 
     @RefreshScope
     @Bean
@@ -212,25 +213,14 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        final RadiusAuthenticationWebflowEventResolver r = new RadiusAuthenticationWebflowEventResolver();
-        r.setAuthenticationSystemSupport(authenticationSystemSupport);
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setMultifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector);
-        r.setServicesManager(servicesManager);
-        r.setTicketRegistrySupport(ticketRegistrySupport);
-        r.setWarnCookieGenerator(warnCookieGenerator);
-        r.setAuthenticationRequestServiceSelectionStrategies(authenticationRequestServiceSelectionStrategies);
-        return r;
+        return new RadiusAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        final RadiusMultifactorWebflowConfigurer w = new RadiusMultifactorWebflowConfigurer();
-        w.setRadiusFlowRegistry(radiusFlowRegistry());
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry());
     }
 
     @PostConstruct
@@ -250,11 +240,9 @@ public class RadiusMultifactorConfiguration {
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
         @Bean
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
-            final RadiusMultifactorTrustWebflowConfigurer r = new RadiusMultifactorTrustWebflowConfigurer();
-            r.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-            r.setFlowBuilderServices(flowBuilderServices);
-            r.setEnableDeviceRegistration(casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled());
-            return r;
+            final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
+            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                    loginFlowDefinitionRegistry);
         }
     }
 }

@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link SpengoWebflowConfigurer} is responsible for
@@ -13,12 +15,13 @@ import org.springframework.webflow.engine.Flow;
 public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String SPNEGO = "spnego";
-
     private static final String START_SPNEGO_AUTHENTICATE = "startSpnegoAuthenticate";
-
     private static final String SPNEGO_NEGOTIATE = "negociateSpnego";
-
     private static final String EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
+
+    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

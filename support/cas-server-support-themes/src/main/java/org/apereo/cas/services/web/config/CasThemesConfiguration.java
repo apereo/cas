@@ -62,7 +62,8 @@ public class CasThemesConfiguration {
 
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver();
+        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
+                thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
 
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
         r.setCache(this.thymeleafProperties.isCache());
@@ -99,21 +100,14 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-        r.setServicesManager(this.servicesManager);
-        r.setArgumentExtractors(this.argumentExtractors);
-        r.setPrefix(this.thymeleafProperties.getPrefix());
-        r.setSuffix(this.thymeleafProperties.getSuffix());
 
         return r;
     }
 
     @Bean(name = {"serviceThemeResolver", "themeResolver"})
     public ThemeResolver serviceThemeResolver() {
-        final ServiceThemeResolver resolver = new ServiceThemeResolver();
-        resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());
-        resolver.setServicesManager(this.servicesManager);
-        resolver.setMobileBrowsers(serviceThemeResolverSupportedBrowsers);
-        return resolver;
+        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        return new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
     }
 
     /**
