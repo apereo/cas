@@ -2,13 +2,14 @@ package org.apereo.cas.support.saml.web.idp.profile;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -52,24 +53,37 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
      * @param singleLogoutCallbacksDisabled                the single logout callbacks disabled
      */
     public SSOPostProfileHandlerController(final SamlObjectSigner samlObjectSigner,
-                                                final ParserPool parserPool,
-                                                final ServicesManager servicesManager,
-                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                final OpenSamlConfigBean configBean,
-                                                final SamlProfileSamlResponseBuilder responseBuilder,
-                                                final Map<String, String> authenticationContextClassMappings,
-                                                final String serverPrefix,
-                                                final String serverName,
-                                                final String authenticationContextRequestParameter,
-                                                final String loginUrl,
-                                                final String logoutUrl,
-                                                final boolean forceSignedLogoutRequests,
-                                                final boolean singleLogoutCallbacksDisabled) {
-        super(samlObjectSigner, parserPool, servicesManager, webApplicationServiceFactory,
+                                           final ParserPool parserPool,
+                                           final AuthenticationSystemSupport authenticationSystemSupport,
+                                           final ServicesManager servicesManager,
+                                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                           final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                           final OpenSamlConfigBean configBean,
+                                           final BaseSamlProfileSamlResponseBuilder responseBuilder,
+                                           final Map<String, String> authenticationContextClassMappings,
+                                           final String serverPrefix,
+                                           final String serverName,
+                                           final String authenticationContextRequestParameter,
+                                           final String loginUrl,
+                                           final String logoutUrl,
+                                           final boolean forceSignedLogoutRequests,
+                                           final boolean singleLogoutCallbacksDisabled) {
+        super(samlObjectSigner,
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, authenticationContextClassMappings, serverPrefix, serverName,
-                authenticationContextRequestParameter, loginUrl, logoutUrl, forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                configBean,
+                responseBuilder,
+                authenticationContextClassMappings,
+                serverPrefix,
+                serverName,
+                authenticationContextRequestParameter,
+                loginUrl,
+                logoutUrl,
+                forceSignedLogoutRequests,
+                singleLogoutCallbacksDisabled);
     }
 
 

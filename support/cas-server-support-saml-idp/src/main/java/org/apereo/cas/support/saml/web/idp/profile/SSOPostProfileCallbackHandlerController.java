@@ -4,17 +4,15 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -59,11 +57,12 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      */
     public SSOPostProfileCallbackHandlerController(final SamlObjectSigner samlObjectSigner,
                                                    final ParserPool parserPool,
+                                                   final AuthenticationSystemSupport authenticationSystemSupport,
                                                    final ServicesManager servicesManager,
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                    final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                    final OpenSamlConfigBean configBean,
-                                                   final SamlProfileSamlResponseBuilder responseBuilder,
+                                                   final BaseSamlProfileSamlResponseBuilder responseBuilder,
                                                    final Map<String, String> authenticationContextClassMappings,
                                                    final String serverPrefix,
                                                    final String serverName,
@@ -74,6 +73,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final boolean singleLogoutCallbacksDisabled) {
         super(samlObjectSigner,
                 parserPool,
+                authenticationSystemSupport,
                 servicesManager,
                 webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
@@ -155,18 +155,6 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
         return assertion;
     }
 
-    private void buildSamlResponse(final HttpServletResponse response,
-                                   final HttpServletRequest request,
-                                   final Pair<AuthnRequest, MessageContext> authenticationContext,
-                                   final Assertion casAssertion) {
-        final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authenticationContext.getKey());
-        final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
-        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
-                getSamlMetadataFacadeFor(registeredService, authenticationContext.getKey());
 
-        logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
-        this.responseBuilder.build(authenticationContext.getKey(), request, response, casAssertion, registeredService, adaptor);
-        logger.info("Built the SAML response for [{}]", adaptor.getEntityId());
-    }
 
 }
