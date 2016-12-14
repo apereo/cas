@@ -49,10 +49,7 @@ public class X509AuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
     public CasWebflowConfigurer x509WebflowConfigurer() {
-        final X509WebflowConfigurer w = new X509WebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new X509WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Bean

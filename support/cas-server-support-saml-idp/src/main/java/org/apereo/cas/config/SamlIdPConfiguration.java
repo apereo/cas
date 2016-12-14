@@ -153,18 +153,12 @@ public class SamlIdPConfiguration {
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIWebConfigurer")
     @Bean
     public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        final SamlIdPMetadataUIWebflowConfigurer w = new SamlIdPMetadataUIWebflowConfigurer();
-        w.setSamlMetadataUIParserAction(samlIdPMetadataUIParserAction());
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlIdPMetadataUIParserAction());
     }
 
     @Bean
     public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(
-                servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver(),
+        return new SamlIdPMetadataUIAction(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver(),
                 samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
