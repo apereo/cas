@@ -18,12 +18,11 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class DefaultSamlRegisteredServiceCachingMetadataResolver
-        implements SamlRegisteredServiceCachingMetadataResolver {
+public class DefaultSamlRegisteredServiceCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSamlRegisteredServiceCachingMetadataResolver.class);
-    
+
     private long metadataCacheExpirationMinutes;
-    
+
     private ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
@@ -31,8 +30,9 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver
     /**
      * Instantiates a new Saml registered service caching metadata resolver.
      */
-    public DefaultSamlRegisteredServiceCachingMetadataResolver() {}
-    
+    public DefaultSamlRegisteredServiceCachingMetadataResolver() {
+    }
+
 
     @PostConstruct
     private void init() {
@@ -48,7 +48,7 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver
             resolver = this.cache.get(service);
             return resolver;
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata resolver could not be located from metadata " 
+            throw new IllegalArgumentException("Metadata resolver could not be located from metadata "
                     + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {

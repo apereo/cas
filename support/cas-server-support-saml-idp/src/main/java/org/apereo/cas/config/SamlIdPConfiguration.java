@@ -194,6 +194,7 @@ public class SamlIdPConfiguration {
         c.setBasicAuthnUsername(md.getBasicAuthnUsername());
         c.setBasicAuthnPassword(md.getBasicAuthnPassword());
         c.setSupportedContentTypes(md.getSupportedContentTypes());
+        c.setMetadataLocation(casProperties.getAuthn().getSamlIdp().getMetadata().getLocation());
         return c;
     }
 
