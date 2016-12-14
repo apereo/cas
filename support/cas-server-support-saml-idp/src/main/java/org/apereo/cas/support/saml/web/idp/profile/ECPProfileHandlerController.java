@@ -16,6 +16,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.DateTimeUtils;
@@ -28,6 +29,7 @@ import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.impl.SAMLSOAPDecoderBodyHandler;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.J2EContext;
@@ -74,7 +76,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                        final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                        final OpenSamlConfigBean configBean,
-                                       final BaseSamlProfileSamlResponseBuilder responseBuilder,
+                                       final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> responseBuilder,
                                        final Map<String, String> authenticationContextClassMappings,
                                        final String serverPrefix,
                                        final String serverName,

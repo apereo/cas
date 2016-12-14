@@ -29,6 +29,7 @@ import org.opensaml.saml.saml2.core.StatusMessage;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
+import org.opensaml.soap.soap11.ActorBearing;
 
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
@@ -59,6 +60,20 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
         return nameId;
+    }
+
+    /**
+     * Create a new SAML ECP response object.
+     *
+     * @param assertionConsumerUrl the assertion consumer url
+     * @return the response
+     */
+    public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
+        final org.opensaml.saml.saml2.ecp.Response samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
+        samlResponse.setSOAP11MustUnderstand(true);
+        samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
+        samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
+        return samlResponse;
     }
 
     /**

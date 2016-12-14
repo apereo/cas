@@ -58,13 +58,53 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
                    final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                    final SamlRegisteredService service,
                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        final Assertion assertion = this.samlProfileSamlAssertionBuilder.build(authnRequest,
-                request, response, casAssertion, service, adaptor);
+        final Assertion assertion = buildSamlAssertion(authnRequest, request, response, casAssertion, service, adaptor);
+
         final T finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
+
+        return encodeFinalResponse(request, response, service, adaptor, finalResponse);
+    }
+
+    /**
+     * Encode final response.
+     *
+     * @param request       the request
+     * @param response      the response
+     * @param service       the service
+     * @param adaptor       the adaptor
+     * @param finalResponse the final response
+     * @return the response
+     */
+    protected T encodeFinalResponse(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final SamlRegisteredService service,
+                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                    final T finalResponse) {
         final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
         logger.debug("RelayState is [{}]", relayState);
         return encode(service, finalResponse, response, adaptor, relayState);
     }
+
+    /**
+     * Build saml assertion assertion.
+     *
+     * @param authnRequest the authn request
+     * @param request      the request
+     * @param response     the response
+     * @param casAssertion the cas assertion
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @return the assertion
+     */
+    protected Assertion buildSamlAssertion(final AuthnRequest authnRequest,
+                                           final HttpServletRequest request,
+                                           final HttpServletResponse response,
+                                           final org.jasig.cas.client.validation.Assertion casAssertion,
+                                           final SamlRegisteredService service,
+                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+    }
+
 
     /**
      * Build response response.
@@ -97,37 +137,21 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
     }
 
     /**
-     * Encode response.
+     * Encode the final result into the http response.
      *
      * @param service      the service
      * @param samlResponse the saml response
      * @param httpResponse the http response
      * @param adaptor      the adaptor
      * @param relayState   the relay state
-     * @return the response
+     * @return the t
      * @throws SamlException the saml exception
      */
-    protected T encode(final SamlRegisteredService service,
-                       final T samlResponse,
-                       final HttpServletResponse httpResponse,
-                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                       final String relayState) throws SamlException {
-        try {
-            final HTTPPostEncoder encoder = new HTTPPostEncoder();
-            encoder.setHttpServletResponse(httpResponse);
-            encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
-            final MessageContext outboundMessageContext = new MessageContext<>();
-            SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
-            outboundMessageContext.setMessage(samlResponse);
-            SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
-            encoder.setMessageContext(outboundMessageContext);
-            encoder.initialize();
-            encoder.encode();
-            return samlResponse;
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
+    protected abstract T encode(SamlRegisteredService service,
+                       T samlResponse,
+                       HttpServletResponse httpResponse,
+                       SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                       String relayState) throws SamlException;
 
     /**
      * Encrypt assertion.

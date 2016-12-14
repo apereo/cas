@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.jasig.cas.client.util.CommonUtils;
@@ -28,6 +29,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
+import org.opensaml.saml.saml2.core.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +72,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                 final OpenSamlConfigBean configBean,
-                                                final BaseSamlProfileSamlResponseBuilder responseBuilder,
+                                                final SamlProfileObjectBuilder<Response> responseBuilder,
                                                 final Map<String, String> authenticationContextClassMappings,
                                                 final String serverPrefix,
                                                 final String serverName,
