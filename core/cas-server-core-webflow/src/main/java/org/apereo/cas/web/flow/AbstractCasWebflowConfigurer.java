@@ -86,7 +86,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * The Login flow definition registry.
      */
-    protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    protected final FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     /**
      * Application context.
@@ -103,7 +103,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Flow builder services.
      */
-    protected FlowBuilderServices flowBuilderServices;
+    protected final FlowBuilderServices flowBuilderServices;
+
+    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        this.flowBuilderServices = flowBuilderServices;
+        this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
+    }
 
     @PostConstruct
     @Override
@@ -432,16 +437,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow,
-                                           final Action entryAction) {
-
+    public SubflowState createSubflowState(final Flow flow, final String id, final String subflow, final Action entryAction) {
         if (containsFlowState(flow, id)) {
             logger.debug("Flow {} already contains a definition for state id {}", flow.getId(), id);
             return (SubflowState) flow.getTransitionableState(id);
         }
 
-        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow,
-                this.loginFlowDefinitionRegistry));
+        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
@@ -489,9 +491,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param type     the type
      * @return the default mapping
      */
-    protected DefaultMapping createMappingToSubflowState(final String name, final String value,
-                                                         final boolean required, final Class type) {
-
+    protected DefaultMapping createMappingToSubflowState(final String name, final String value, final boolean required, final Class type) {
         final ExpressionParser parser = this.flowBuilderServices.getExpressionParser();
 
         final Expression source = parser.parseExpression(value, new FluentParserContext());
@@ -550,14 +550,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     public void setLogoutFlowDefinitionRegistry(final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
         this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
-    }
-
-    public void setLoginFlowDefinitionRegistry(final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
-    }
-
-    public void setFlowBuilderServices(final FlowBuilderServices flowBuilderServices) {
-        this.flowBuilderServices = flowBuilderServices;
     }
 
     /**

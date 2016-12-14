@@ -14,7 +14,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @since 5.0.0
  */
 public class MongoDbPropertySourceLocator implements PropertySourceLocator {
-    private MongoOperations mongo;
+
+    private final MongoOperations mongo;
 
     public MongoDbPropertySourceLocator(final MongoOperations mongo) {
         this.mongo = mongo;
@@ -23,9 +24,9 @@ public class MongoDbPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(final Environment environment) {
         if (environment instanceof ConfigurableEnvironment) {
-            final CompositePropertySource composite = new CompositePropertySource(MongoDbPropertySource.class.getSimpleName());
-            final MongoDbPropertySource source = new MongoDbPropertySource(MongoDbPropertySource.class.getSimpleName(), mongo);
-            source.init();
+            final String sourceName = MongoDbPropertySource.class.getSimpleName();
+            final CompositePropertySource composite = new CompositePropertySource(sourceName);
+            final MongoDbPropertySource source = new MongoDbPropertySource(sourceName, mongo);
             composite.addFirstPropertySource(source);
             return composite;
         }

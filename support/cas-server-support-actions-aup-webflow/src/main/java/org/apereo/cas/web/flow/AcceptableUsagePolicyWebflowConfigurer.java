@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
  * The {@link AcceptableUsagePolicyWebflowConfigurer} is responsible for
@@ -15,6 +17,10 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
     private static final String ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
     private static final String AUP_ACCEPTED_ACTION = "aupAcceptedAction";
+
+    public AcceptableUsagePolicyWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

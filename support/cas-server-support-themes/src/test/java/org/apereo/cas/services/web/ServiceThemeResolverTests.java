@@ -26,19 +26,16 @@ import static org.junit.Assert.*;
 public class ServiceThemeResolverTests {
 
     private ServiceThemeResolver serviceThemeResolver;
-
     private DefaultServicesManager servicesManager;
+    private Map<String, String> mobileBrowsers;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
 
-        this.serviceThemeResolver = new ServiceThemeResolver();
-        this.serviceThemeResolver.setDefaultThemeName("test");
-        this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        final Map<String, String> mobileBrowsers = new HashMap<>();
+        mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
-        this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
+        this.serviceThemeResolver = new ServiceThemeResolver("test", servicesManager, mobileBrowsers);
     }
 
     @Test
@@ -71,7 +68,8 @@ public class ServiceThemeResolverTests {
 
     @Test
     public void verifyGetDefaultServiceWithNoServicesManager() {
-        this.serviceThemeResolver.setServicesManager(null);
+        this.serviceThemeResolver = new ServiceThemeResolver("test", null, mobileBrowsers);
+
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader(WebUtils.USER_AGENT_HEADER, "Mozilla");

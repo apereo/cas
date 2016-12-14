@@ -27,10 +27,7 @@ public abstract class AbstractManagementController {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Instance of ServicesManager. */
-    protected ServicesManager servicesManager;
-
-    public AbstractManagementController() {
-    }
+    protected final ServicesManager servicesManager;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -53,7 +50,6 @@ public abstract class AbstractManagementController {
     @ExceptionHandler
     public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
                                          final Exception ex) throws IOException {
-
         logger.error(ex.getMessage(), ex);
         final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
