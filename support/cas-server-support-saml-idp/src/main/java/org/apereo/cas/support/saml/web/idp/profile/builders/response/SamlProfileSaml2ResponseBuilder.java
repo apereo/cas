@@ -1,11 +1,16 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import com.google.common.base.Throwables;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
+import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
@@ -75,5 +80,28 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         }
 
         return samlResponse;
+    }
+
+    @Override
+    protected Response encode(final SamlRegisteredService service,
+                              final Response samlResponse,
+                              final HttpServletResponse httpResponse,
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                              final String relayState) throws SamlException {
+        try {
+            final HTTPPostEncoder encoder = new HTTPPostEncoder();
+            encoder.setHttpServletResponse(httpResponse);
+            encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
+            final MessageContext outboundMessageContext = new MessageContext<>();
+            SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
+            outboundMessageContext.setMessage(samlResponse);
+            SAMLBindingSupport.setRelayState(outboundMessageContext, relayState);
+            encoder.setMessageContext(outboundMessageContext);
+            encoder.initialize();
+            encoder.encode();
+            return samlResponse;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 }

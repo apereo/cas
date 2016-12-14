@@ -31,12 +31,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAttri
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlNameIdBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -217,8 +217,8 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public BaseSamlProfileSamlResponseBuilder samlProfileSamlResponseBuilder() {
-        final BaseSamlProfileSamlResponseBuilder b = new BaseSamlProfileSamlResponseBuilder();
+    public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
+        final SamlProfileSaml2ResponseBuilder b = new SamlProfileSaml2ResponseBuilder();
         b.setConfigBean(openSamlConfigBean);
         b.setSamlObjectEncrypter(samlObjectEncrypter());
         b.setSamlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder());
@@ -429,7 +429,7 @@ public class SamlIdPConfiguration {
                 webApplicationServiceFactory,
                 defaultSamlRegisteredServiceCachingMetadataResolver(),
                 openSamlConfigBean,
-                samlProfileSamlResponseBuilder(),
+                samlProfileSamlSoap11ResponseBuilder(),
                 authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
