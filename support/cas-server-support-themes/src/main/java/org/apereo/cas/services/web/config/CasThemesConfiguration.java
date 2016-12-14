@@ -109,11 +109,8 @@ public class CasThemesConfiguration {
 
     @Bean(name = {"serviceThemeResolver", "themeResolver"})
     public ThemeResolver serviceThemeResolver() {
-        final ServiceThemeResolver resolver = new ServiceThemeResolver();
-        resolver.setDefaultThemeName(casProperties.getTheme().getDefaultThemeName());
-        resolver.setServicesManager(this.servicesManager);
-        resolver.setMobileBrowsers(serviceThemeResolverSupportedBrowsers);
-        return resolver;
+        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
+        return new ServiceThemeResolver(defaultThemeName, servicesManager, serviceThemeResolverSupportedBrowsers);
     }
 
     /**
