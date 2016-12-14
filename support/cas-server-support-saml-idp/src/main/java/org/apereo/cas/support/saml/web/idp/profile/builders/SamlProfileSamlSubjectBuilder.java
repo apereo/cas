@@ -1,19 +1,18 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.client.validation.Assertion;
-import org.apereo.cas.support.saml.SamlException;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSamlSubjectBuilder}.
@@ -23,15 +22,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
     private static final long serialVersionUID = 4782621942035583007L;
-    
-    private SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder;
-    
+
+    private SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
+
     private int skewAllowance;
-    
+
     @Override
     public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                               final Assertion assertion, final SamlRegisteredService service,
-                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                         final Assertion assertion, final SamlRegisteredService service,
+                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildSubject(request, response, authnRequest, assertion, service, adaptor);
     }
@@ -50,8 +49,8 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
         subject.setNameID(nameID);
         return subject;
     }
-    
-    public void setSsoPostProfileSamlNameIdBuilder(final SamlProfileSamlNameIdBuilder ssoPostProfileSamlNameIdBuilder) {
+
+    public void setSsoPostProfileSamlNameIdBuilder(final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder) {
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
     }
 

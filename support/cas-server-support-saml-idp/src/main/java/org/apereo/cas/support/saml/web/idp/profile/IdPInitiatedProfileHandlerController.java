@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -13,7 +14,7 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.jasig.cas.client.util.CommonUtils;
 import org.joda.time.DateTime;
@@ -64,11 +65,12 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
      */
     public IdPInitiatedProfileHandlerController(final SamlObjectSigner samlObjectSigner,
                                                 final ParserPool parserPool,
+                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServicesManager servicesManager,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                 final OpenSamlConfigBean configBean,
-                                                final SamlProfileSamlResponseBuilder responseBuilder,
+                                                final BaseSamlProfileSamlResponseBuilder responseBuilder,
                                                 final Map<String, String> authenticationContextClassMappings,
                                                 final String serverPrefix,
                                                 final String serverName,
@@ -77,10 +79,13 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final String logoutUrl,
                                                 final boolean forceSignedLogoutRequests,
                                                 final boolean singleLogoutCallbacksDisabled) {
-        super(samlObjectSigner, parserPool, servicesManager, webApplicationServiceFactory,
+        super(samlObjectSigner, parserPool, authenticationSystemSupport,
+                servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, authenticationContextClassMappings, serverPrefix, serverName,
-                authenticationContextRequestParameter, loginUrl, logoutUrl, forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                configBean, responseBuilder, authenticationContextClassMappings,
+                serverPrefix, serverName,
+                authenticationContextRequestParameter, loginUrl, logoutUrl,
+                forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
     }
 
     /**
