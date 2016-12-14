@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -24,12 +25,14 @@ import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileCallbackHandler
 import org.apereo.cas.support.saml.web.idp.profile.SSOPostProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.DefaultAuthnContextClassRefBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAssertionBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAttributeStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlNameIdBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileSamlSubjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
@@ -37,6 +40,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.ecp.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -97,6 +106,10 @@ public class SamlIdPConfiguration {
     @Autowired(required = false)
     @Qualifier("authenticationContextClassMappings")
     private Map authenticationContextClassMappings;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired(required = false)
     @Qualifier("overrideDataEncryptionAlgorithms")
@@ -210,8 +223,8 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlResponseBuilder samlProfileSamlResponseBuilder() {
-        final SamlProfileSamlResponseBuilder b = new SamlProfileSamlResponseBuilder();
+    public BaseSamlProfileSamlResponseBuilder samlProfileSamlResponseBuilder() {
+        final BaseSamlProfileSamlResponseBuilder b = new BaseSamlProfileSamlResponseBuilder();
         b.setConfigBean(openSamlConfigBean);
         b.setSamlObjectEncrypter(samlObjectEncrypter());
         b.setSamlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder());
@@ -260,7 +273,15 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlNameIdBuilder samlProfileSamlNameIdBuilder() {
+    public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
+        final SamlProfileSamlSoap11ResponseBuilder b = new SamlProfileSamlSoap11ResponseBuilder();
+        b.setConfigBean(openSamlConfigBean);
+        return b;
+    }
+
+    @Bean
+    @RefreshScope
+    public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
         final SamlProfileSamlNameIdBuilder b = new SamlProfileSamlNameIdBuilder();
         b.setConfigBean(openSamlConfigBean);
         return b;
@@ -268,7 +289,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder() {
+    public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
         final SamlProfileSamlConditionsBuilder b = new SamlProfileSamlConditionsBuilder();
         b.setConfigBean(openSamlConfigBean);
         return b;
@@ -282,7 +303,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder() {
+    public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
         final SamlProfileSamlAssertionBuilder b = new SamlProfileSamlAssertionBuilder();
 
         b.setConfigBean(openSamlConfigBean);
@@ -296,7 +317,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlAuthNStatementBuilder samlProfileSamlAuthNStatementBuilder() {
+    public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
         final SamlProfileSamlAuthNStatementBuilder b = new SamlProfileSamlAuthNStatementBuilder();
         b.setConfigBean(openSamlConfigBean);
         b.setAuthnContextClassRefBuilder(defaultAuthnContextClassRefBuilder());
@@ -305,7 +326,7 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
-    public SamlProfileSamlAttributeStatementBuilder samlProfileSamlAttributeStatementBuilder() {
+    public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         final SamlProfileSamlAttributeStatementBuilder b = new SamlProfileSamlAttributeStatementBuilder();
         b.setSamlAttributeEncoder(new SamlAttributeEncoder());
         b.setConfigBean(openSamlConfigBean);
@@ -316,9 +337,15 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
         final SSOPostProfileHandlerController c = new SSOPostProfileHandlerController(
-                samlObjectSigner(), parserPool, servicesManager, webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(), openSamlConfigBean,
-                samlProfileSamlResponseBuilder(), authenticationContextClassMappings,
+                samlObjectSigner(),
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder(),
+                authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
                 casProperties.getAuthn().getMfa().getRequestParameter(),
@@ -333,9 +360,15 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SLOPostProfileHandlerController sloPostProfileHandlerController() {
         final SLOPostProfileHandlerController c = new SLOPostProfileHandlerController(
-                samlObjectSigner(), parserPool, servicesManager, webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(), openSamlConfigBean,
-                samlProfileSamlResponseBuilder(), authenticationContextClassMappings,
+                samlObjectSigner(),
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder(),
+                authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
                 casProperties.getAuthn().getMfa().getRequestParameter(),
@@ -350,9 +383,15 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
         final IdPInitiatedProfileHandlerController c = new IdPInitiatedProfileHandlerController(
-                samlObjectSigner(), parserPool, servicesManager, webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(), openSamlConfigBean,
-                samlProfileSamlResponseBuilder(), authenticationContextClassMappings,
+                samlObjectSigner(),
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder(),
+                authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
                 casProperties.getAuthn().getMfa().getRequestParameter(),
@@ -367,9 +406,15 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
         final SSOPostProfileCallbackHandlerController c = new SSOPostProfileCallbackHandlerController(
-                samlObjectSigner(), parserPool, servicesManager, webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(), openSamlConfigBean,
-                samlProfileSamlResponseBuilder(), authenticationContextClassMappings,
+                samlObjectSigner(),
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder(),
+                authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
                 casProperties.getAuthn().getMfa().getRequestParameter(),
@@ -383,9 +428,15 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public ECPProfileHandlerController ecpProfileHandlerController() {
-        return new ECPProfileHandlerController(samlObjectSigner(), parserPool, servicesManager, webApplicationServiceFactory,
-                defaultSamlRegisteredServiceCachingMetadataResolver(), openSamlConfigBean,
-                samlProfileSamlResponseBuilder(), authenticationContextClassMappings,
+        return new ECPProfileHandlerController(samlObjectSigner(),
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
+                openSamlConfigBean,
+                samlProfileSamlResponseBuilder(),
+                authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),
                 casProperties.getAuthn().getMfa().getRequestParameter(),
