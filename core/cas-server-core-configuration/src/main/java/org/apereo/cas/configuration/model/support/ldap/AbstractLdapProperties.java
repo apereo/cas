@@ -35,6 +35,8 @@ public abstract class AbstractLdapProperties {
     private String prunePeriod = "PT2H";
     private String blockWaitTime = "PT3S";
 
+    private String connectionStrategy;
+
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
     private boolean useStartTls;
@@ -58,6 +60,14 @@ public abstract class AbstractLdapProperties {
     private Validator validator = new Validator();
 
     private String name;
+
+    public String getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    public void setConnectionStrategy(final String connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
+    }
 
     public String getName() {
         return name;

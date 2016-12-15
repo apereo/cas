@@ -71,14 +71,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-    @RefreshScope
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
-        bean.setParamName(this.casProperties.getLocale().getParamName());
-        return bean;
-    }
-
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();

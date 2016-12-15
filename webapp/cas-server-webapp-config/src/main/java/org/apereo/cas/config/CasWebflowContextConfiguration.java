@@ -86,7 +86,6 @@ public class CasWebflowContextConfiguration {
     @Qualifier("webflowCipherExecutor")
     private CipherExecutor webflowCipherExecutor;
 
-
     @Bean
     public ExpressionParser expressionParser() {
         final WebFlowSpringELExpressionParser parser = new WebFlowSpringELExpressionParser(
@@ -201,9 +200,12 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
+    @RefreshScope
     @Bean
-    public AsyncHandlerInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
+        bean.setParamName(this.casProperties.getLocale().getParamName());
+        return bean;
     }
 
     @Bean
