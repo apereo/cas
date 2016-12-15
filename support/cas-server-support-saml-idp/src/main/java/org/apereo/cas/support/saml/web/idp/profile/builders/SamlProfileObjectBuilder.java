@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.validation.Assertion;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * @param <T> the type parameter
  * @since 5.0.0
  */
-public interface SamlProfileObjectBuilder<T extends SAMLObject> {
+public interface SamlProfileObjectBuilder<T extends XMLObject> {
 
     /**
      * Build response.

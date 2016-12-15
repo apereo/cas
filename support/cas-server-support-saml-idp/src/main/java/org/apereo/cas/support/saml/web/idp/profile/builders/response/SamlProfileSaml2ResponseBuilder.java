@@ -6,6 +6,9 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -18,6 +21,7 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,19 +38,17 @@ import java.time.ZonedDateTime;
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
     private static final long serialVersionUID = 1488837627964481272L;
 
-    /**
-     * Build response response.
-     *
-     * @param assertion    the assertion
-     * @param authnRequest the authn request
-     * @param service      the service
-     * @param adaptor      the adaptor
-     * @param request      the request
-     * @param response     the response
-     * @return the response
-     * @throws SamlException the saml exception
-     */
+
+    public SamlProfileSaml2ResponseBuilder(final SamlObjectSigner samlObjectSigner,
+                                           final VelocityEngineFactory velocityEngineFactory,
+                                           final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+                                           final SamlObjectEncrypter samlObjectEncrypter) {
+        super(samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+    }
+
+    @Override
     protected Response buildResponse(final Assertion assertion,
+                                     final org.jasig.cas.client.validation.Assertion casAssertion,
                                      final AuthnRequest authnRequest,
                                      final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,

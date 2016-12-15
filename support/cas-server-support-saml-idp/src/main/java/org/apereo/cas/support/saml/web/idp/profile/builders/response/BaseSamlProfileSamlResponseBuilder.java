@@ -1,9 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -11,10 +9,8 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.binding.SAMLBindingSupport;
-import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
@@ -32,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
+public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
         extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
@@ -53,15 +49,25 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
 
     private SamlObjectEncrypter samlObjectEncrypter;
 
+    public BaseSamlProfileSamlResponseBuilder(final SamlObjectSigner samlObjectSigner,
+                                              final VelocityEngineFactory velocityEngineFactory,
+                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+                                              final SamlObjectEncrypter samlObjectEncrypter) {
+        this.samlObjectSigner = samlObjectSigner;
+        this.velocityEngineFactory = velocityEngineFactory;
+        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
+        this.samlObjectEncrypter = samlObjectEncrypter;
+    }
+
     @Override
-    public T build(final AuthnRequest authnRequest, final HttpServletRequest request,
-                   final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
+    public T build(final AuthnRequest authnRequest,
+                   final HttpServletRequest request,
+                   final HttpServletResponse response,
+                   final org.jasig.cas.client.validation.Assertion casAssertion,
                    final SamlRegisteredService service,
                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final Assertion assertion = buildSamlAssertion(authnRequest, request, response, casAssertion, service, adaptor);
-
-        final T finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
-
+        final T finalResponse = buildResponse(assertion, casAssertion, authnRequest, service, adaptor, request, response);
         return encodeFinalResponse(request, response, service, adaptor, finalResponse);
     }
 
@@ -110,6 +116,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
      * Build response response.
      *
      * @param assertion    the assertion
+     * @param casAssertion the cas assertion
      * @param authnRequest the authn request
      * @param service      the service
      * @param adaptor      the adaptor
@@ -119,6 +126,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
      * @throws SamlException the saml exception
      */
     protected abstract T buildResponse(Assertion assertion,
+                                       org.jasig.cas.client.validation.Assertion casAssertion,
                                        AuthnRequest authnRequest,
                                        SamlRegisteredService service,
                                        SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
@@ -148,10 +156,10 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
      * @throws SamlException the saml exception
      */
     protected abstract T encode(SamlRegisteredService service,
-                       T samlResponse,
-                       HttpServletResponse httpResponse,
-                       SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                       String relayState) throws SamlException;
+                                T samlResponse,
+                                HttpServletResponse httpResponse,
+                                SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                String relayState) throws SamlException;
 
     /**
      * Encrypt assertion.
@@ -180,21 +188,5 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends SAMLObject>
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for encryption", e);
         }
-    }
-
-    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
-        this.samlObjectSigner = samlObjectSigner;
-    }
-
-    public void setVelocityEngineFactory(final VelocityEngineFactory velocityEngineFactory) {
-        this.velocityEngineFactory = velocityEngineFactory;
-    }
-
-    public void setSamlProfileSamlAssertionBuilder(final SamlProfileObjectBuilder samlProfileSamlAssertionBuilder) {
-        this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;
-    }
-
-    public void setSamlObjectEncrypter(final SamlObjectEncrypter samlObjectEncrypter) {
-        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 }

@@ -147,7 +147,7 @@ public class CasEmbeddedContainerConfiguration {
             if (port <= 0) {
                 port = SocketUtils.findAvailableTcpPort();
             }
-            LOGGER.debug("Set HTTP post to {}", port);
+            LOGGER.debug("Set embedded tomcat container HTTP port to {}", port);
             connector.setPort(port);
             connector.addUpgradeProtocol(new Http2Protocol());
             tomcat.addAdditionalTomcatConnectors(connector);
