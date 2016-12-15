@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Sets;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -11,7 +10,6 @@ import org.apereo.cas.persondir.support.ShibbolethPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -27,8 +25,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.springframework.beans.factory.BeanFactoryUtils.beansOfTypeIncludingAncestors;
 
 /**
  * The {@link ShibbolethAttributeResolverConfiguration}.
@@ -77,12 +78,11 @@ public class ShibbolethAttributeResolverConfiguration {
                     this.applicationContext
             );
 
-            final Collection<DataConnector> connectors =
-                    Sets.newHashSet(BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values());
+            final Collection<DataConnector> connectors = new HashSet<>(beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values());
             final AttributeResolverImpl impl = new AttributeResolverImpl();
             impl.setId(getClass().getSimpleName());
             impl.setApplicationContext(tempApplicationContext);
-            impl.setAttributeDefinitions(BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, AttributeDefinition.class).values());
+            impl.setAttributeDefinitions(beansOfTypeIncludingAncestors(tempApplicationContext, AttributeDefinition.class).values());
             impl.setDataConnectors(connectors);
             if (!impl.isInitialized()) {
                 impl.initialize();
