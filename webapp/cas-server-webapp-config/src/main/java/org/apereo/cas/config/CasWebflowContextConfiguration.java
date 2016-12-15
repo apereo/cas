@@ -200,10 +200,13 @@ public class CasWebflowContextConfiguration {
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
-    
+
+    @RefreshScope
     @Bean
-    public AsyncHandlerInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
+        bean.setParamName(this.casProperties.getLocale().getParamName());
+        return bean;
     }
     
     @Bean

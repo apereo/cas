@@ -264,9 +264,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
+    @RefreshScope
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
+        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
+        bean.setParamName(this.casProperties.getLocale().getParamName());
+        return bean;
     }
     
     @Bean
