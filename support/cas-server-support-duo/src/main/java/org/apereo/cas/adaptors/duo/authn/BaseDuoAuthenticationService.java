@@ -3,15 +3,10 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
-import com.squareup.okhttp.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.adaptors.duo.DuoIntegration;
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
+import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
@@ -22,8 +17,6 @@ import org.springframework.http.HttpMethod;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link BaseDuoAuthenticationService}.
@@ -33,7 +26,6 @@ import java.util.Set;
  */
 public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
     private static final int AUTH_API_VERSION = 2;
-    private static final int ADMIN_API_VERSION = 1;
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
@@ -122,53 +114,10 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     }
 
     @Override
-    public Optional<DuoIntegration> getDuoIntegrationPolicy() {
-        if (!isDuoAdminApiDefined()) {
-            return Optional.empty();
-        }
-
+    public DuoUserAccountAuthStatus getDuoUserAccountAuthStatus(final String username) {
         try {
-            final Http integrationRequest = buildHttpGetIntegrationsRequest(duoProperties.getDuoIntegrationKey());
-            signHttpIntegrationsRequest(integrationRequest);
-
-            logger.debug("Contacting Duo to inquire about the integration policy {}", duoProperties.getDuoIntegrationKey());
-            final String integrationResponse = integrationRequest.executeHttpRequest().body().string();
-
-            final String jsonResponse = URLDecoder.decode(integrationResponse, StandardCharsets.UTF_8.name());
-            logger.debug("Received Duo admin response {}", jsonResponse);
-
-            final JsonNode result = MAPPER.readTree(jsonResponse);
-            if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
-
-                final JsonNode response = result.get(RESULT_KEY_RESPONSE);
-
-                final DuoIntegration policy =
-                        DuoIntegration.newInstance(getJsonNodeFieldValue(response, "name"))
-                                .setType(getJsonNodeFieldValue(response, "type"))
-                                .setGreeting(getJsonNodeFieldValue(response, "greeting"))
-                                .setEnrollmentPolicyStatus(DuoIntegration.DuoEnrollmentPolicyStatus.valueOf(
-                                        getJsonNodeFieldValue(response, "enroll_policy",
-                                                DuoIntegration.DuoEnrollmentPolicyStatus.ENROLL.name()).toUpperCase()));
-
-                logger.debug("Found/Constructed Duo account integration {}", policy);
-                return Optional.of(policy);
-            }
-        } catch (final Exception e) {
-            logger.warn("Reaching Duo has failed with error: {}", e.getMessage(), e);
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<DuoUserAccount> getDuoUserAccount(final String username) {
-        if (!isDuoAdminApiDefined()) {
-            return Optional.empty();
-        }
-
-        try {
-            final Http userRequest = buildHttpGetUsersRequest(username);
-            signHttpUsersRequest(userRequest);
+            final Http userRequest = buildHttpGetUserPreAuthRequest(username);
+            signHttpUserPreAuthRequest(userRequest);
             logger.debug("Contacting Duo to inquire about username {}", username);
             final String userResponse = userRequest.executeHttpRequest().body().string();
             final String jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
@@ -178,31 +127,14 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                     && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
-                JsonNode response = result.get(RESULT_KEY_RESPONSE);
-                if (response.getNodeType() == JsonNodeType.ARRAY) {
-                    response = response.elements().next();
-                }
-                final DuoUserAccount account =
-                        DuoUserAccount.newInstance(getJsonNodeFieldValue(response, "user_id"))
-                                .setEmail(getJsonNodeFieldValue(response, "user_id"))
-                                .setRealName(getJsonNodeFieldValue(response, "realname"))
-                                .setUsername(getJsonNodeFieldValue(response, "username"))
-                                .setStatus(DuoUserAccount.DuoAccountStatus.valueOf(
-                                        getJsonNodeFieldValue(response, "status",
-                                                DuoUserAccount.DuoAccountStatus.DISABLED.name()).toUpperCase()));
-                if (response.has("groups")) {
-                    final Set<String> groups = Sets.newHashSet();
-                    response.get("groups").elements().forEachRemaining(n -> groups.add(n.get("name").asText()));
-                    account.setGroups(groups);
-                }
-
-                logger.debug("Found/Constructed Duo user account {}", account);
-                return Optional.of(account);
+                final JsonNode response = result.get(RESULT_KEY_RESPONSE);
+                final String authResult = response.get("result").asText().toUpperCase();
+                return DuoUserAccountAuthStatus.valueOf(authResult);
             }
         } catch (final Exception e) {
             logger.warn("Reaching Duo has failed with error: {}", e.getMessage(), e);
         }
-        return Optional.empty();
+        return DuoUserAccountAuthStatus.AUTH;
     }
 
     private String buildUrlHttpScheme(final String url) {
@@ -229,24 +161,12 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      * @param username the username
      * @return the http
      */
-    protected Http buildHttpGetUsersRequest(final String username) {
+    protected Http buildHttpGetUserPreAuthRequest(final String username) {
         final Http usersRequest = new Http(HttpMethod.GET.name(),
-                duoProperties.getDuoAdminApiHost(),
-                String.format("/admin/v%s/users", ADMIN_API_VERSION));
+                duoProperties.getDuoApiHost(),
+                String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         usersRequest.addParam("username", username);
         return usersRequest;
-    }
-
-    /**
-     * Build http get integrations request http.
-     *
-     * @param integrationKey the integration key
-     * @return the http
-     */
-    protected Http buildHttpGetIntegrationsRequest(final String integrationKey) {
-        return new Http(HttpMethod.GET.name(),
-                duoProperties.getDuoAdminApiHost(),
-                String.format("/admin/v%s/integrations/%s", ADMIN_API_VERSION, integrationKey));
     }
 
     /**
@@ -271,63 +191,19 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     }
 
     /**
-     * Sign http integrations request http.
-     *
-     * @param request the request
-     * @return the http
-     */
-    protected Http signHttpIntegrationsRequest(final Http request) {
-        try {
-            request.signRequest(
-                    duoProperties.getDuoAdminIntegrationKey(),
-                    duoProperties.getDuoAdminSecretKey());
-            return request;
-        } catch (final Exception e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
-    /**
      * Sign http users request http.
      *
      * @param request the request
      * @return the http
      */
-    protected Http signHttpUsersRequest(final Http request) {
+    protected Http signHttpUserPreAuthRequest(final Http request) {
         try {
             request.signRequest(
-                    duoProperties.getDuoAdminIntegrationKey(),
-                    duoProperties.getDuoAdminSecretKey());
+                    duoProperties.getDuoIntegrationKey(),
+                    duoProperties.getDuoSecretKey());
             return request;
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private boolean isDuoAdminApiDefined() {
-        return StringUtils.isNotBlank(duoProperties.getDuoAdminIntegrationKey())
-                && StringUtils.isNotBlank(duoProperties.getDuoAdminIntegrationKey());
-    }
-
-    private static String getJsonNodeFieldValue(final JsonNode node, final String fieldName) {
-        return getJsonNodeFieldValue(node, fieldName, null);
-    }
-
-    private static String getJsonNodeFieldValue(final JsonNode node, final String fieldName, final String defaultValue) {
-        if (node != null && node.has(fieldName)) {
-            return node.get(fieldName).asText(defaultValue);
-        }
-        return null;
-    }
-
-    public static void main(final String[] args) throws Exception {
-        final Http http = new Http(HttpMethod.POST.name(),
-                "api-d2e616a0.duosecurity.com",
-                String.format("/auth/v%s/preauth", AUTH_API_VERSION));
-
-        http.addParam("username", "casuser");
-        http.signRequest("DICLHRWL1KQK5EUAQP43", "u3IHBaREMB7Cb9S4QMISAgHycpj8lPBkDGfWt55I");
-        final Response response = http.executeHttpRequest();
-        System.out.println(response.code());
     }
 }

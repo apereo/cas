@@ -510,38 +510,10 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String duoApplicationKey;
         private String duoApiHost;
 
-        private String duoAdminIntegrationKey;
-        private String duoAdminSecretKey;
-        private String duoAdminApiHost;
-
         private boolean trustedDeviceEnabled;
 
         public Duo() {
             setId("mfa-duo");
-        }
-
-        public String getDuoAdminIntegrationKey() {
-            return duoAdminIntegrationKey;
-        }
-
-        public void setDuoAdminIntegrationKey(final String duoAdminIntegrationKey) {
-            this.duoAdminIntegrationKey = duoAdminIntegrationKey;
-        }
-
-        public String getDuoAdminSecretKey() {
-            return duoAdminSecretKey;
-        }
-
-        public void setDuoAdminSecretKey(final String duoAdminSecretKey) {
-            this.duoAdminSecretKey = duoAdminSecretKey;
-        }
-
-        public String getDuoAdminApiHost() {
-            return StringUtils.defaultIfBlank(duoAdminApiHost, duoApiHost);
-        }
-
-        public void setDuoAdminApiHost(final String duoAdminApiHost) {
-            this.duoAdminApiHost = duoAdminApiHost;
         }
 
         public boolean isTrustedDeviceEnabled() {
