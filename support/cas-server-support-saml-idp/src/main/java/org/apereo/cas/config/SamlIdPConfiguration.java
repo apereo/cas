@@ -158,7 +158,8 @@ public class SamlIdPConfiguration {
 
     @Bean
     public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver(),
+        return new SamlIdPMetadataUIAction(servicesManager,
+                defaultSamlRegisteredServiceCachingMetadataResolver(),
                 samlIdPEntityIdValidationServiceSelectionStrategy());
     }
 
@@ -218,13 +219,9 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
-        final SamlProfileSaml2ResponseBuilder b = new SamlProfileSaml2ResponseBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        b.setSamlObjectEncrypter(samlObjectEncrypter());
-        b.setSamlProfileSamlAssertionBuilder(samlProfileSamlAssertionBuilder());
-        b.setVelocityEngineFactory(velocityEngineFactory);
-        b.setSamlObjectSigner(samlObjectSigner());
-        return b;
+        return new SamlProfileSaml2ResponseBuilder(
+                samlObjectSigner(), velocityEngineFactory, samlProfileSamlAssertionBuilder(),
+                samlObjectEncrypter());
     }
 
 
@@ -268,9 +265,12 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
-        final SamlProfileSamlSoap11ResponseBuilder b = new SamlProfileSamlSoap11ResponseBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        return b;
+        return new SamlProfileSamlSoap11ResponseBuilder(
+                samlObjectSigner(),
+                velocityEngineFactory,
+                samlProfileSamlAssertionBuilder(),
+                samlProfileSamlResponseBuilder(),
+                samlObjectEncrypter());
     }
 
     @Bean
