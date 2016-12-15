@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -38,6 +37,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -85,12 +85,17 @@ public class MultifactorAuthenticationTests {
 
     @PostConstruct
     public void init() {
-        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(
-                ImmutableMap.of("alice", "alice", "bob", "bob", "mallory", "mallory")
-        ), null);
-        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(
-                ImmutableMap.of("alice", "31415", "bob", "62831", "mallory", "14142")
-        ), null);
+        final HashMap<String, String> users = new HashMap<>();
+        users.put("alice", "alice");
+        users.put("bob", "bob");
+        users.put("mallory", "mallory");
+        authenticationHandlersResolvers.put(new AcceptUsersAuthenticationHandler(users), null);
+
+        final HashMap<String, String> credentials = new HashMap<>();
+        credentials.put("alice", "31415");
+        credentials.put("bob", "62831");
+        credentials.put("mallory", "14142");
+        authenticationHandlersResolvers.put(new TestOneTimePasswordAuthenticationHandler(credentials), null);
     }
 
     @Test

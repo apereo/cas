@@ -16,6 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction {
+
     private final AuthyClientInstance instance;
 
     public AuthyAuthenticationRegistrationWebflowAction(final AuthyClientInstance instance) {
