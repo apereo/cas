@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
@@ -16,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -45,12 +46,10 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
             final String psw = entry.getAttribute("userPassword").getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeDao);
-            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw),
-                    CoreAuthenticationTestUtils.getPrincipal());
+            final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal());
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
         }
-
     }
 
     @Test
@@ -63,14 +62,14 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
 
             final ChainingPrincipalResolver chain = new ChainingPrincipalResolver();
             chain.setChain(Arrays.asList(resolver, new EchoingPrincipalResolver()));
-            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw),
-                    CoreAuthenticationTestUtils.getPrincipal(username,
-                            ImmutableMap.of("a1", "v1", "a2", "v2")));
+            final Map<String, Object> attributes = new HashMap<>(2);
+            attributes.put("a1", "v1");
+            attributes.put("a2", "v2");
+            final Principal p = chain.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal(username, attributes));
             assertNotNull(p);
             assertTrue(p.getAttributes().containsKey("displayName"));
             assertTrue(p.getAttributes().containsKey("a1"));
             assertTrue(p.getAttributes().containsKey("a2"));
         }
     }
-
 }
