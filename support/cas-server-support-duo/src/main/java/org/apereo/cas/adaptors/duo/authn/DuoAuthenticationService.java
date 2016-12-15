@@ -2,11 +2,9 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.adaptors.duo.DuoIntegration;
 import org.apereo.cas.authentication.Credential;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link DuoAuthenticationService}.

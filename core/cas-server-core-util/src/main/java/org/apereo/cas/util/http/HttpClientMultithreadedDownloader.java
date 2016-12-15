@@ -44,7 +44,7 @@ public class HttpClientMultithreadedDownloader {
             info.enableMultipart();
 
             // create downloader
-            WGet w = new WGet(info, this.targetDestination);
+            final WGet w = new WGet(info, this.targetDestination);
 
             // init speed info
             status.speedInfo.start(0);
@@ -97,7 +97,7 @@ public class HttpClientMultithreadedDownloader {
 
                         String parts = "";
                         if (info.getParts() != null) {
-                            for (DownloadInfo.Part p : info.getParts()) {
+                            for (final DownloadInfo.Part p : info.getParts()) {
                                 switch (p.getState()) {
                                     case DOWNLOADING:
                                         parts += String.format("Part#%d(%.2f) ", p.getNumber(),
@@ -114,7 +114,7 @@ public class HttpClientMultithreadedDownloader {
                             }
                         }
 
-                        float p = info.getCount() / (float) info.getLength();
+                        final float p = info.getCount() / (float) info.getLength();
                         LOGGER.debug(String.format("%.2f %s (%s / %s)", p, parts,
                                 FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                                 FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));
