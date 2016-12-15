@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This class tests the {@link ClientAction} class.
+ * This class tests the {@link DelegatedClientAuthenticationAction} class.
  *
  * @author Jerome Leleu
  * @since 3.5.2
@@ -84,7 +84,7 @@ public class ClientActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final ClientAction action = new ClientAction();
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
         action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
         action.setClients(clients);
 
@@ -94,8 +94,8 @@ public class ClientActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Set<ClientAction.ProviderLoginPageConfiguration> urls =
-                (Set<ClientAction.ProviderLoginPageConfiguration>) flowScope.get(ClientAction.PAC4J_URLS);
+        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
+                (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
         assertFalse(urls.isEmpty());
 
         assertTrue(urls.size() == 2);
@@ -128,7 +128,7 @@ public class ClientActionTests {
                 mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
-        final ClientAction action = new ClientAction();
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
 
         final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
 
