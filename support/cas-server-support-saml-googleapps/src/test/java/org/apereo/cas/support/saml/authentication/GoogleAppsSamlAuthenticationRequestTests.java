@@ -10,7 +10,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
-import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
@@ -70,7 +69,7 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
     @Test
     public void ensureInflation() throws Exception {
         final String deflator = CompressionUtils.deflate(SAML_REQUEST);
-        final AbstractSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder();
+        final GoogleSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder(configBean);
         final String msg = builder.decodeSamlAuthnRequest(deflator);
         assertEquals(msg, SAML_REQUEST);
     }

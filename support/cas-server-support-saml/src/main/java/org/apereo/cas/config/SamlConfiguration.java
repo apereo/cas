@@ -145,9 +145,7 @@ public class SamlConfiguration {
 
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
-        final Saml10ObjectBuilder w = new Saml10ObjectBuilder();
-        w.setConfigBean(this.configBean);
-        return w;
+        return new Saml10ObjectBuilder(this.configBean);
     }
 
     @Bean

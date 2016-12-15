@@ -220,7 +220,10 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
         return new SamlProfileSaml2ResponseBuilder(
-                samlObjectSigner(), velocityEngineFactory, samlProfileSamlAssertionBuilder(),
+                openSamlConfigBean,
+                samlObjectSigner(),
+                velocityEngineFactory,
+                samlProfileSamlAssertionBuilder(),
                 samlObjectEncrypter());
     }
 
@@ -228,11 +231,8 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileSamlSubjectBuilder samlProfileSamlSubjectBuilder() {
-        final SamlProfileSamlSubjectBuilder b = new SamlProfileSamlSubjectBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        b.setSkewAllowance(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
-        b.setSsoPostProfileSamlNameIdBuilder(samlProfileSamlNameIdBuilder());
-        return b;
+        return new SamlProfileSamlSubjectBuilder(openSamlConfigBean, samlProfileSamlNameIdBuilder(),
+                casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
     }
 
     @Bean
@@ -266,6 +266,7 @@ public class SamlIdPConfiguration {
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
         return new SamlProfileSamlSoap11ResponseBuilder(
+                openSamlConfigBean,
                 samlObjectSigner(),
                 velocityEngineFactory,
                 samlProfileSamlAssertionBuilder(),
@@ -276,17 +277,13 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
-        final SamlProfileSamlNameIdBuilder b = new SamlProfileSamlNameIdBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        return b;
+        return new SamlProfileSamlNameIdBuilder(openSamlConfigBean);
     }
 
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
-        final SamlProfileSamlConditionsBuilder b = new SamlProfileSamlConditionsBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        return b;
+        return new SamlProfileSamlConditionsBuilder(openSamlConfigBean);
     }
 
     @Bean
@@ -298,33 +295,24 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
-        final SamlProfileSamlAssertionBuilder b = new SamlProfileSamlAssertionBuilder();
-
-        b.setConfigBean(openSamlConfigBean);
-        b.setSamlObjectSigner(samlObjectSigner());
-        b.setSamlProfileSamlAttributeStatementBuilder(samlProfileSamlAttributeStatementBuilder());
-        b.setSamlProfileSamlAuthNStatementBuilder(samlProfileSamlAuthNStatementBuilder());
-        b.setSamlProfileSamlConditionsBuilder(samlProfileSamlConditionsBuilder());
-        b.setSamlProfileSamlSubjectBuilder(samlProfileSamlSubjectBuilder());
-        return b;
+        return new SamlProfileSamlAssertionBuilder(openSamlConfigBean,
+                samlProfileSamlAuthNStatementBuilder(),
+                samlProfileSamlAttributeStatementBuilder(),
+                samlProfileSamlSubjectBuilder(),
+                samlProfileSamlConditionsBuilder(),
+                samlObjectSigner());
     }
 
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
-        final SamlProfileSamlAuthNStatementBuilder b = new SamlProfileSamlAuthNStatementBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        b.setAuthnContextClassRefBuilder(defaultAuthnContextClassRefBuilder());
-        return b;
+        return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean, defaultAuthnContextClassRefBuilder());
     }
 
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
-        final SamlProfileSamlAttributeStatementBuilder b = new SamlProfileSamlAttributeStatementBuilder();
-        b.setSamlAttributeEncoder(new SamlAttributeEncoder());
-        b.setConfigBean(openSamlConfigBean);
-        return b;
+        return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean, new SamlAttributeEncoder());
     }
 
     @Bean

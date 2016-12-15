@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 
 import javax.servlet.http.HttpServletRequest;

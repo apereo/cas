@@ -26,8 +26,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         view = new Saml10FailureResponseView();
-        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
-        builder.setConfigBean(this.configBean);
+        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder(this.configBean);
         this.view.setSamlObjectBuilder(builder);
     }
     

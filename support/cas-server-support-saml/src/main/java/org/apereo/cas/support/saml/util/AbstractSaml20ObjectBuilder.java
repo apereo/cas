@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
@@ -47,6 +48,10 @@ import java.util.Map;
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
+
+    public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
 
     /**
      * Gets name id.

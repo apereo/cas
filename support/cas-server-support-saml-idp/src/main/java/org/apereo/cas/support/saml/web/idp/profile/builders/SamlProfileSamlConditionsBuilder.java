@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -27,7 +28,11 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
     @Autowired
     private CasConfigurationProperties casProperties;
-            
+
+    public SamlProfileSamlConditionsBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
+
     @Override
     public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                                   final Assertion assertion, final SamlRegisteredService service,

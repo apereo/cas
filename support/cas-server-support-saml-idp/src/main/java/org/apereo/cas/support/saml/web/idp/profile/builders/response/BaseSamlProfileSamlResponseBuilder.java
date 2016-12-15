@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -49,10 +50,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
 
     private SamlObjectEncrypter samlObjectEncrypter;
 
-    public BaseSamlProfileSamlResponseBuilder(final SamlObjectSigner samlObjectSigner,
+    public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
+                                              final SamlObjectSigner samlObjectSigner,
                                               final VelocityEngineFactory velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                               final SamlObjectEncrypter samlObjectEncrypter) {
+        super(openSamlConfigBean);
         this.samlObjectSigner = samlObjectSigner;
         this.velocityEngineFactory = velocityEngineFactory;
         this.samlProfileSamlAssertionBuilder = samlProfileSamlAssertionBuilder;

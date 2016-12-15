@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -29,7 +30,13 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private SamlAttributeEncoder samlAttributeEncoder;
+    private final SamlAttributeEncoder samlAttributeEncoder;
+
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
+                                                    final SamlAttributeEncoder samlAttributeEncoder) {
+        super(configBean);
+        this.samlAttributeEncoder = samlAttributeEncoder;
+    }
 
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
@@ -49,9 +56,5 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encode(authnRequest, attributes, service, adaptor);
         return newAttributeStatement(encodedAttrs, casProperties.getAuthn().getSamlIdp().getResponse().isUseAttributeFriendlyName());
-    }
-
-    public void setSamlAttributeEncoder(final SamlAttributeEncoder samlAttributeEncoder) {
-        this.samlAttributeEncoder = samlAttributeEncoder;
     }
 }

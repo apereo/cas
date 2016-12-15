@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
@@ -21,6 +22,10 @@ import java.lang.reflect.Field;
  */
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
+
+    public GoogleSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
 
     @Override
     public QName getSamlObjectQName(final Class objectType) throws RuntimeException {

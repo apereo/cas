@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
 import com.google.common.base.Throwables;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -34,12 +35,14 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
 
     private final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
 
-    public SamlProfileSamlSoap11ResponseBuilder(final SamlObjectSigner samlObjectSigner,
-                                                final VelocityEngineFactory velocityEngineFactory,
-                                                final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                                final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                final SamlObjectEncrypter samlObjectEncrypter) {
-        super(samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+    public SamlProfileSamlSoap11ResponseBuilder(
+            final OpenSamlConfigBean openSamlConfigBean,
+            final SamlObjectSigner samlObjectSigner,
+            final VelocityEngineFactory velocityEngineFactory,
+            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+            final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
+            final SamlObjectEncrypter samlObjectEncrypter) {
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.saml2ResponseBuilder = saml2ResponseBuilder;
     }
 

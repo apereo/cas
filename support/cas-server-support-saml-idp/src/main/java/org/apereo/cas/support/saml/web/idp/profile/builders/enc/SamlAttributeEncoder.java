@@ -30,7 +30,8 @@ public class SamlAttributeEncoder {
      * @param adaptor      the service provider facade
      * @return the map
      */
-    public Map<String, Object> encode(final AuthnRequest authnRequest, final Map<String, Object> attributes,
+    public Map<String, Object> encode(final AuthnRequest authnRequest,
+                                      final Map<String, Object> attributes,
                                       final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         final Map<String, Object> finalAttributes = Maps.newHashMap(attributes);

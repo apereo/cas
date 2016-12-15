@@ -5,6 +5,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -29,6 +30,10 @@ import java.util.List;
  */
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
+
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
 
     @Override
     public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
