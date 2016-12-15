@@ -12,9 +12,6 @@ public interface SamlIdPConstants {
     /** The IdP metadata endpoint. */
     String ENDPOINT_IDP_METADATA = "/idp/metadata";
 
-    /** The RP metadata generation endpoint. */
-    String ENDPOINT_GENERATE_RP_METADATA = "/idp/servicemetadatagen";
-
     /** The SAML2 SSO post profile endpoint. */
     String ENDPOINT_SAML2_SSO_PROFILE_POST = "/idp/profile/SAML2/POST/SSO";
 
@@ -44,5 +41,8 @@ public interface SamlIdPConstants {
 
     /** The time constant. */
     String TIME = "time";
+
+    /** The samlError constant. */
+    String REQUEST_ATTRIBUTE_ERROR = "samlError";
 }
 
