@@ -50,6 +50,7 @@ public class HttpClientMultithreadedDownloader {
             status.speedInfo.start(0);
 
             // will blocks until download finishes
+            LOGGER.info("Starting to download resource {} into {}", this.resourceToDownload, targetDestination);
             w.download(stop, status);
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -70,7 +71,6 @@ public class HttpClientMultithreadedDownloader {
             this.info = info;
         }
 
-
         public void run() {
 
             switch (info.getState()) {
@@ -81,7 +81,7 @@ public class HttpClientMultithreadedDownloader {
 
                 case DONE:
                     speedInfo.end(info.getCount());
-                    LOGGER.debug("{} average speed ({})", info.getState(),
+                    LOGGER.info("Download completed. {} average speed ({})", info.getState(),
                             FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed()));
                     break;
 

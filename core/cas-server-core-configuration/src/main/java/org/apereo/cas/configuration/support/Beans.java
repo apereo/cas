@@ -279,7 +279,7 @@ public final class Beans {
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
-            cc.setSslConfig(new SslConfig());
+            cc.setSslConfig(new SslConfig(cfg));
         } else if (l.getKeystore() != null) {
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());

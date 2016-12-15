@@ -15,6 +15,8 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpClientMultithreadedDownloader;
+import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
@@ -27,6 +29,7 @@ import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -186,44 +189,69 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
         if (metadataResource instanceof FileSystemResource) {
-            final ResourceBackedMetadataResolver metadataProvider = new ResourceBackedMetadataResolver(
-                    ResourceHelper.of(metadataResource));
-            buildSingleMetadataResolver(metadataProvider, service);
-            metadataResolvers.add(metadataProvider);
-            return;
+            resolveFileSystemBasedMetadataResource(service, metadataResolvers, metadataResource);
         }
 
         if (metadataResource instanceof UrlResource) {
-            final File backupDirectory = new File(this.metadataLocation.getFile(), "metadata-backups");
-            final File backupFile = new File(backupDirectory, metadataResource.getFilename());
-
-            logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
-            FileUtils.forceMkdir(backupDirectory);
-
-            logger.debug("Metadata backup file will be at {}", backupFile.getCanonicalPath());
-            FileUtils.forceMkdirParent(backupFile);
-
-            final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
-                    this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
-                    backupFile.getCanonicalPath());
-            buildSingleMetadataResolver(metadataProvider, service);
-            metadataResolvers.add(metadataProvider);
-            return;
+            resolveUrlBasedMetadataResource(service, metadataResolvers, metadataResource);
         }
 
         if (metadataResource instanceof ClassPathResource) {
-            try (InputStream in = metadataResource.getInputStream()) {
-                logger.debug("Parsing metadata from [{}]", metadataLocation);
-                final Document document = this.configBean.getParserPool().parse(in);
-
-                final Element metadataRoot = document.getDocumentElement();
-                final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
-                buildSingleMetadataResolver(metadataProvider, service);
-                metadataResolvers.add(metadataProvider);
-            } catch (final Exception e) {
-                throw Throwables.propagate(e);
-            }
+            resolveClasspathBasedMetadataResource(service, metadataResolvers, metadataLocation, metadataResource);
         }
+    }
+
+    private void resolveClasspathBasedMetadataResource(final SamlRegisteredService service,
+                                                       final List<MetadataResolver> metadataResolvers,
+                                                       final String metadataLocation,
+                                                       final AbstractResource metadataResource) {
+        try (InputStream in = metadataResource.getInputStream()) {
+            logger.debug("Parsing metadata from [{}]", metadataLocation);
+            final Document document = this.configBean.getParserPool().parse(in);
+
+            final Element metadataRoot = document.getDocumentElement();
+            final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+            buildSingleMetadataResolver(metadataProvider, service);
+            metadataResolvers.add(metadataProvider);
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    private void resolveUrlBasedMetadataResource(final SamlRegisteredService service,
+                                                 final List<MetadataResolver> metadataResolvers,
+                                                 final AbstractResource metadataResource) throws Exception {
+        final File backupDirectory = new File(this.metadataLocation.getFile(), "metadata-backups");
+        final File backupFile = new File(backupDirectory, metadataResource.getFilename());
+
+        logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
+        FileUtils.forceMkdir(backupDirectory);
+
+        logger.debug("Metadata backup file will be at {}", backupFile.getCanonicalPath());
+        FileUtils.forceMkdirParent(backupFile);
+
+        final HttpClientMultithreadedDownloader downloader =
+                new HttpClientMultithreadedDownloader(metadataResource, backupFile);
+
+        final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
+                this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
+                backupFile.getCanonicalPath());
+        buildSingleMetadataResolver(metadataProvider, service);
+        metadataResolvers.add(metadataProvider);
+    }
+
+    private void resolveFileSystemBasedMetadataResource(final SamlRegisteredService service,
+                                                        final List<MetadataResolver> metadataResolvers,
+                                                        final AbstractResource metadataResource) throws Exception {
+        final File metadataFile = metadataResource.getFile();
+        final AbstractMetadataResolver metadataResolver;
+        if (metadataFile.isDirectory()) {
+            metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
+        } else {
+            metadataResolver = new ResourceBackedMetadataResolver(ResourceHelper.of(metadataResource));
+        }
+        buildSingleMetadataResolver(metadataResolver, service);
+        metadataResolvers.add(metadataResolver);
     }
 
     /**
