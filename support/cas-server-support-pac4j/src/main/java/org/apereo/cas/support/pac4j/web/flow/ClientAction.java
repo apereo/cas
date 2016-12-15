@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -86,10 +87,15 @@ public class ClientAction extends AbstractAction {
 
     private CentralAuthenticationService centralAuthenticationService;
 
+    private final CasConfigurationProperties casProperties;
+
     /**
      * Build the ClientAction.
+     *
+     * @param casProperties the cas properties
      */
-    public ClientAction() {
+    public ClientAction(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
     }
 
     @Override
@@ -133,8 +139,8 @@ public class ClientAction extends AbstractAction {
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
-            restoreRequestAttribute(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
-            restoreRequestAttribute(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+            restoreRequestAttribute(request, session, casProperties.getTheme().getParamName());
+            restoreRequestAttribute(request, session, casProperties.getLocale().getParamName());
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
             // credentials not null -> try to authenticate
@@ -176,8 +182,8 @@ public class ClientAction extends AbstractAction {
         final WebApplicationService service = WebUtils.getService(context);
         LOGGER.debug("save service: {}", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        saveRequestParameter(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
-        saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+        saveRequestParameter(request, session, casProperties.getTheme().getParamName());
+        saveRequestParameter(request, session, casProperties.getLocale().getParamName());
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();

@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.TestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -83,7 +84,7 @@ public class ClientActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final ClientAction action = new ClientAction();
+        final ClientAction action = new ClientAction(new CasConfigurationProperties());
         action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
         action.setClients(clients);
 
@@ -127,7 +128,7 @@ public class ClientActionTests {
                 mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
-        final ClientAction action = new ClientAction();
+        final ClientAction action = new ClientAction(new CasConfigurationProperties());
 
         final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
 

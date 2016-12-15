@@ -102,7 +102,7 @@ public class Pac4jConfiguration {
 
     @Bean
     public Action clientAction() {
-        final ClientAction a = new ClientAction();
+        final ClientAction a = new ClientAction(casProperties);
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setAuthenticationSystemSupport(authenticationSystemSupport);
         a.setClients(builtClients());
