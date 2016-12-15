@@ -36,6 +36,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEnc
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11FaultResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
@@ -264,6 +265,18 @@ public class SamlIdPConfiguration {
 
     @Bean
     @RefreshScope
+    public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder() {
+        return new SamlProfileSamlSoap11FaultResponseBuilder(
+                openSamlConfigBean,
+                samlObjectSigner(),
+                velocityEngineFactory,
+                samlProfileSamlAssertionBuilder(),
+                samlProfileSamlResponseBuilder(),
+                samlObjectEncrypter());
+    }
+
+    @Bean
+    @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
         return new SamlProfileSamlSoap11ResponseBuilder(
                 openSamlConfigBean,
@@ -418,6 +431,7 @@ public class SamlIdPConfiguration {
                 defaultSamlRegisteredServiceCachingMetadataResolver(),
                 openSamlConfigBean,
                 samlProfileSamlSoap11ResponseBuilder(),
+                samlProfileSamlSoap11FaultResponseBuilder(),
                 authenticationContextClassMappings,
                 casProperties.getServer().getPrefix(),
                 casProperties.getServer().getName(),

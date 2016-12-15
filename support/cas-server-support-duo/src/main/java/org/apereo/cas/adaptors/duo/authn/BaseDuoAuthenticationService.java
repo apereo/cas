@@ -116,7 +116,7 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     @Override
     public DuoUserAccountAuthStatus getDuoUserAccountAuthStatus(final String username) {
         try {
-            final Http userRequest = buildHttpGetUserPreAuthRequest(username);
+            final Http userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
             logger.debug("Contacting Duo to inquire about username {}", username);
             final String userResponse = userRequest.executeHttpRequest().body().string();
@@ -156,13 +156,13 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     }
 
     /**
-     * Build http get users request http.
+     * Build http post get user auth request.
      *
      * @param username the username
      * @return the http
      */
-    protected Http buildHttpGetUserPreAuthRequest(final String username) {
-        final Http usersRequest = new Http(HttpMethod.GET.name(),
+    protected Http buildHttpPostUserPreAuthRequest(final String username) {
+        final Http usersRequest = new Http(HttpMethod.POST.name(),
                 duoProperties.getDuoApiHost(),
                 String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         usersRequest.addParam("username", username);
