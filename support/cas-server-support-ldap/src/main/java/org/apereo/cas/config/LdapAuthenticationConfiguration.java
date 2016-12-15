@@ -256,6 +256,9 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
         authn.setEntryResolver(Beans.newSearchEntryResolver(l));
