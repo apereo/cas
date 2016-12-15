@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties.Ldap.LdapType;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -170,10 +169,8 @@ public final class LdapUtils {
      * @return the response
      * @throws LdapException the ldap exception
      */
-    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory,
-                                                                final String baseDn,
-                                                                final SearchFilter filter)
-            throws LdapException {
+    public static Response<SearchResult> executeSearchOperation(final ConnectionFactory connectionFactory, final String baseDn,
+                                                                final SearchFilter filter) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final SearchOperation searchOperation = new SearchOperation(connection);
             final SearchRequest request = Beans.newSearchRequest(baseDn, filter);
@@ -181,7 +178,6 @@ public final class LdapUtils {
             return searchOperation.execute(request);
         }
     }
-
 
     /**
      * Checks to see if response has a result.
@@ -223,11 +219,8 @@ public final class LdapUtils {
      * @param type              the type
      * @return true /false
      */
-    public static boolean executePasswordModifyOperation(final String currentDn,
-                                                         final ConnectionFactory connectionFactory,
-                                                         final String oldPassword,
-                                                         final String newPassword,
-                                                         final LdapType type) {
+    public static boolean executePasswordModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final String oldPassword,
+                                                         final String newPassword, final LdapType type) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             if (!modifyConnection.getConnectionConfig().getUseSSL()
                     && !modifyConnection.getConnectionConfig().getUseStartTLS()) {
@@ -266,8 +259,7 @@ public final class LdapUtils {
      * @param attributes        the attributes
      * @return true/false
      */
-    public static boolean executeModifyOperation(final String currentDn,
-                                                 final ConnectionFactory connectionFactory,
+    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory,
                                                  final Map<String, Set<String>> attributes) {
         try (Connection modifyConnection = createConnection(connectionFactory)) {
             final ModifyOperation operation = new ModifyOperation(modifyConnection);
@@ -293,13 +285,10 @@ public final class LdapUtils {
      * @param entry             the entry
      * @return true/false
      */
-    public static boolean executeModifyOperation(final String currentDn,
-                                                 final ConnectionFactory connectionFactory,
-                                                 final LdapEntry entry) {
-        final Map<String, Set<String>> attributes = new HashMap<>(entry.getAttribute().size());
-        for (final LdapAttribute ldapAttribute : entry.getAttributes()) {
-            attributes.put(ldapAttribute.getName(), ImmutableSet.copyOf(ldapAttribute.getStringValues()));
-        }
+    public static boolean executeModifyOperation(final String currentDn, final ConnectionFactory connectionFactory, final LdapEntry entry) {
+        final Map<String, Set<String>> attributes = entry.getAttributes().stream()
+                .collect(Collectors.toMap(LdapAttribute::getName, (ldapAttribute) -> new HashSet<>(ldapAttribute.getStringValues())));
+
         return executeModifyOperation(currentDn, connectionFactory, attributes);
     }
 
@@ -311,9 +300,7 @@ public final class LdapUtils {
      * @return true/false
      * @throws LdapException the ldap exception
      */
-    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry)
-            throws LdapException {
-
+    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
@@ -324,7 +311,6 @@ public final class LdapUtils {
         return false;
     }
 
-
     /**
      * Execute delete operation boolean.
      *
@@ -333,9 +319,7 @@ public final class LdapUtils {
      * @return true/false
      * @throws LdapException the ldap exception
      */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory,
-                                                 final LdapEntry entry) throws LdapException {
-
+    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
         try (Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
@@ -377,5 +361,4 @@ public final class LdapUtils {
     public static boolean isLdapConnectionUrl(final URL r) {
         return r.getProtocol().equalsIgnoreCase(LDAP_PREFIX);
     }
-
 }
