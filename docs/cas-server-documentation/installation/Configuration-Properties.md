@@ -414,7 +414,7 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.attributeRepository.ldap[0].connectionStrategyClass=
 # cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
@@ -1072,7 +1072,7 @@ If Multiple URLs are provided as the ldapURL this describes how each URL will be
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
-# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.ldap[0].connectionStrategyClass=
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
@@ -1226,7 +1226,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
 
-# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.spnego.ldap.connectionStrategyClass=
 # cas.authn.spnego.ldap.baseDn=dc=example,dc=org
 # cas.authn.spnego.ldap.userFilter=cn={user}
@@ -1420,7 +1420,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
-# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.x509.ldap.connectionStrategyClass=
 # cas.authn.x509.ldap.useSsl=true
 # cas.authn.x509.ldap.useStartTls=false
@@ -2325,7 +2325,7 @@ used for authentication, etc.
 # cas.monitor.ldap.maxWait=5000
 
 # Define the LDAP connection pool settings for monitoring
-# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.monitor.ldap.connectionStrategyClass=
 # cas.monitor.ldap.baseDn=dc=example,dc=org
 # cas.monitor.ldap.userFilter=cn={user}
@@ -2391,7 +2391,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
 ```properties
-# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.acceptableUsagePolicy.ldap.connectionStrategyClass=
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 # cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
@@ -2564,7 +2564,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
 
-# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.serviceRegistry.ldap.connectionStrategyClass=
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 # cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2969,7 +2969,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
-# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.mgmt.ldapAuthz.connectionStrategyClass=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.userFilter=cn={user}
@@ -3156,7 +3156,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD
-# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.authn.pm.ldap.connectionStrategyClass=
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false
