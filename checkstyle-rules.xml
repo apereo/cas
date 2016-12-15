@@ -11,13 +11,6 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
-        <module name="ImportOrder">
-            <property name="groups" value="/^javax?\./,org"/>
-            <property name="ordered" value="true"/>
-            <property name="separated" value="true"/>
-            <property name="option" value="above"/>
-            <property name="sortStaticImportsAlphabetically" value="true"/>
-        </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>

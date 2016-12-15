@@ -143,7 +143,7 @@ The following fields are available for SAML services:
 
 | Field                                | Description
 |--------------------------------------|------------------------------------------------------------------
-| `metadataLocation`                   | Location of service metadata defined from system files, classpath or URL resources. 
+| `metadataLocation`                   | Location of service metadata defined from system files, classpath, directories or URL resources. 
 | `metadataSignatureLocation`          | Location of the metadata *public key* to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
