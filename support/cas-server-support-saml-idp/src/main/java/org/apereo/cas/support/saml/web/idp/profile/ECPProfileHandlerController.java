@@ -135,7 +135,6 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param request     the request
      * @param soapContext the soap context
      * @param credential  the credential
-     * @throws Exception the exception
      */
     protected void handleEcpRequest(final HttpServletResponse response, final HttpServletRequest request,
                                     final MessageContext soapContext, final Credential credential) {
@@ -211,7 +210,6 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      *
      * @param request the request
      * @return the soap 11 context
-     * @throws Exception the exception
      */
     protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
         try {
