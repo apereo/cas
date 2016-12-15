@@ -13,7 +13,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +24,13 @@ import java.util.Map;
  * @since 5.0
  */
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
     private Boolean forceVerification = Boolean.FALSE;
     private final AuthyClientInstance instance;
 
-    public AuthyAuthenticationHandler(final AuthyClientInstance instance) {
+    public AuthyAuthenticationHandler(final AuthyClientInstance instance, final boolean forceVerification) {
         this.instance = instance;
+        this.forceVerification = forceVerification;
     }
 
     @Override
@@ -41,22 +43,17 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         if (!user.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
-        final Integer authyId = user.getId();
 
-        final Map<String, String> options = new HashMap<>();
+        final Map<String, String> options = new HashMap<>(1);
         options.put("force", this.forceVerification.toString());
 
-        final Token verification = this.instance.getAuthyTokens().verify(authyId, tokenCredential.getToken(), options);
+        final Token verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
 
         if (!verification.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
-        return createHandlerResult(tokenCredential, principal, Arrays.asList());
-    }
-    
-    public void setForceVerification(final Boolean forceVerification) {
-        this.forceVerification = forceVerification;
+        return createHandlerResult(tokenCredential, principal, new ArrayList<>());
     }
     
     @Override
