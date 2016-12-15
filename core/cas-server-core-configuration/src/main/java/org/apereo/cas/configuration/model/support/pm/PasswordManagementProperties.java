@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.pm;
 
-import com.google.common.collect.Maps;
 import org.apereo.cas.configuration.model.core.ticket.SigningEncryptionProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -106,7 +106,7 @@ public class PasswordManagementProperties {
         private String subject = "Password Reset";
         private String from;
         private String emailAttribute = "mail";
-        private Map<String, String> securityQuestionsAttributes = Maps.newLinkedHashMap();
+        private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
         
         private float expirationMinutes = 1;
 

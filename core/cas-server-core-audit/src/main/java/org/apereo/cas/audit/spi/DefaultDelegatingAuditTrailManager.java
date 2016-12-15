@@ -3,7 +3,6 @@ package org.apereo.cas.audit.spi;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Sets;
 import org.apereo.cas.support.events.CasAuditActionContextRecordedEvent;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailManager {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDelegatingAuditTrailManager.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
@@ -68,7 +69,7 @@ public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailM
 
     @Override
     public Set<AuditActionContext> get() {
-        return Sets.newHashSet(this.storage.asMap().values());
+        return new HashSet<>(this.storage.asMap().values());
     }
 
     public void setExpirationDuration(final int expirationDuration) {

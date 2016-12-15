@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import com.google.common.collect.Sets;
 import org.springframework.core.io.Resource;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Set;
 public class AdminPagesSecurityProperties {
 
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private Set<String> adminRoles = Sets.newHashSet("ROLE_ADMIN");
+    private Set<String> adminRoles = new HashSet<>(Collections.singletonList("ROLE_ADMIN"));
     private String loginUrl;
     private String service;
     private Resource users;
