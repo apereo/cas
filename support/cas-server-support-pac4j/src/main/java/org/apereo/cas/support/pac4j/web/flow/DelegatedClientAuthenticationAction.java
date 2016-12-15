@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -22,6 +23,7 @@ import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -52,8 +54,7 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
-public class ClientAction extends AbstractAction {
+public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * Stop the webflow for pac4j and route to view.
      */
@@ -79,7 +80,7 @@ public class ClientAction extends AbstractAction {
      */
     public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
     private Clients clients;
 
@@ -87,12 +88,13 @@ public class ClientAction extends AbstractAction {
 
     private CentralAuthenticationService centralAuthenticationService;
 
-    private boolean autoRedirect;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
-     * Build the ClientAction.
+     * Build the DelegatedClientAuthenticationAction.
      */
-    public ClientAction() {
+    public DelegatedClientAuthenticationAction() {
     }
 
     @Override
@@ -136,8 +138,9 @@ public class ClientAction extends AbstractAction {
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
-            restoreRequestAttribute(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
-            restoreRequestAttribute(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+
+            restoreRequestAttribute(request, session, casProperties.getTheme().getParamName());
+            restoreRequestAttribute(request, session, casProperties.getLocale().getParamName());
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
             // credentials not null -> try to authenticate
@@ -159,7 +162,7 @@ public class ClientAction extends AbstractAction {
             return stopWebflow();
         }
 
-        if (this.autoRedirect) {
+        if (casProperties.getAuthn().getPac4j().isAutoRedirect()) {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
                 final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
@@ -272,10 +275,6 @@ public class ClientAction extends AbstractAction {
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
     }
 
     private Event stopWebflow() {
