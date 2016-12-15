@@ -19,6 +19,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
@@ -73,7 +74,6 @@ public class AuthyConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -123,10 +123,10 @@ public class AuthyConfiguration {
     @Bean
     public AuthenticationHandler authyAuthenticationHandler() {
         try {
-            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance());
+            final boolean forceVerification = casProperties.getAuthn().getMfa().getAuthy().isForceVerification();
+            final AuthyAuthenticationHandler h = new AuthyAuthenticationHandler(authyClientInstance(), forceVerification);
             h.setServicesManager(servicesManager);
             h.setPrincipalFactory(authyPrincipalFactory());
-            h.setForceVerification(casProperties.getAuthn().getMfa().getAuthy().isForceVerification());
             h.setName(casProperties.getAuthn().getMfa().getAuthy().getName());
             return h;
         } catch (final Exception e) {
@@ -164,10 +164,7 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass authyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getAuthy().getBypass(),
-                ticketRegistrySupport
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getAuthy().getBypass(), ticketRegistrySupport);
     }
 
     @RefreshScope
@@ -186,24 +183,17 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public Action authyAuthenticationWebflowAction() {
-        final AuthyAuthenticationWebflowAction a = new AuthyAuthenticationWebflowAction();
-        a.setCasWebflowEventResolver(authyAuthenticationWebflowEventResolver());
-        return a;
+        return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
 
     @RefreshScope
     @Bean
     public AuthyClientInstance authyClientInstance() {
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getAuthy().getApiKey())) {
+        final MultifactorAuthenticationProperties.Authy authy = casProperties.getAuthn().getMfa().getAuthy();
+        if (StringUtils.isBlank(authy.getApiKey())) {
             throw new IllegalArgumentException("Authy API key must be defined");
         }
-        final AuthyClientInstance i = new AuthyClientInstance(
-                casProperties.getAuthn().getMfa().getAuthy().getApiKey(),
-                casProperties.getAuthn().getMfa().getAuthy().getApiUrl()
-        );
-        i.setMailAttribute(casProperties.getAuthn().getMfa().getAuthy().getMailAttribute());
-        i.setPhoneAttribute(casProperties.getAuthn().getMfa().getAuthy().getPhoneAttribute());
-        return i;
+        return new AuthyClientInstance(authy.getApiKey(), authy.getApiUrl(), authy.getMailAttribute(), authy.getPhoneAttribute());
     }
 
     @RefreshScope
