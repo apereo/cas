@@ -25,9 +25,11 @@ public class AuthyClientInstance {
     private String mailAttribute = "mail";
     private String phoneAttribute = "phone";
     
-    public AuthyClientInstance(final String apiKey, final String apiUrl) {
+    public AuthyClientInstance(final String apiKey, final String apiUrl, final String mailAttribute, final String phoneAttribute) {
+        this.mailAttribute = mailAttribute;
+        this.phoneAttribute = phoneAttribute;
         try {
-            final String authyUrl = StringUtils.isBlank(apiUrl) ? AuthyApiClient.DEFAULT_API_URI : apiUrl;
+            final String authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
             final URL url = new URL(authyUrl);
             final boolean testFlag = url.getProtocol().equals("http");
             this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
@@ -36,14 +38,6 @@ public class AuthyClientInstance {
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    public void setMailAttribute(final String mailAttribute) {
-        this.mailAttribute = mailAttribute;
-    }
-
-    public void setPhoneAttribute(final String phoneAttribute) {
-        this.phoneAttribute = phoneAttribute;
     }
 
     public AuthyApiClient getAuthyClient() {
