@@ -10,10 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.http2.Http2Protocol;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,7 +26,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.Resource;
 import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
@@ -57,9 +56,6 @@ public class CasEmbeddedContainerConfiguration {
     @Autowired
     private ServerProperties serverProperties;
 
-    @Value("${server.tomcat.valve.rewrite.config:classpath:/container/tomcat/rewrite.config}")
-    private Resource rewriteValveConfig;
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -83,7 +79,7 @@ public class CasEmbeddedContainerConfiguration {
                 @Override
                 protected synchronized void startInternal() throws LifecycleException {
                     super.startInternal();
-                    try (InputStream is = rewriteValveConfig.getInputStream();
+                    try (InputStream is = casProperties.getServer().getRewriteValveConfigLocation().getInputStream();
                          InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                          BufferedReader buffer = new BufferedReader(isr)) {
                         parse(buffer);
@@ -101,7 +97,7 @@ public class CasEmbeddedContainerConfiguration {
     }
 
     private void configureExtendedAccessLog(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final org.apereo.cas.configuration.model.core.ServerProperties.ExtendedAccessLog ext =
+        final CasServerProperties.ExtendedAccessLog ext =
                 casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
@@ -155,7 +151,7 @@ public class CasEmbeddedContainerConfiguration {
     }
 
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final org.apereo.cas.configuration.model.core.ServerProperties.Ajp ajp = casProperties.getServer().getAjp();
+        final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled()) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());

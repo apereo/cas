@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.model.core.HostProperties;
-import org.apereo.cas.configuration.model.core.ServerProperties;
+import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
@@ -81,7 +81,7 @@ public class CasConfigurationProperties {
     private RestProperties rest = new RestProperties();
 
     @NestedConfigurationProperty
-    private ServerProperties server = new ServerProperties();
+    private CasServerProperties server = new CasServerProperties();
 
     @NestedConfigurationProperty
     private ServiceRegistryProperties serviceRegistry = new ServiceRegistryProperties();
@@ -233,11 +233,11 @@ public class CasConfigurationProperties {
         this.monitor = monitor;
     }
 
-    public ServerProperties getServer() {
+    public CasServerProperties getServer() {
         return server;
     }
 
-    public void setServer(final ServerProperties server) {
+    public void setServer(final CasServerProperties server) {
         this.server = server;
     }
 
