@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
  * the mdui extension block for a SAML SP from the provided metadata locations.
  * The result is put into the flow request context. The entity id parameter is
  * specified by default at {@link SamlProtocolConstants#PARAMETER_ENTITY_ID}.
- * <p>
  * <p>This action is best suited to be invoked when the CAS login page
  * is about to render so that the page, once the MDUI info is obtained,
  * has a chance to populate the UI with relevant info about the SP.</p>
