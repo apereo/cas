@@ -11,6 +11,13 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
+        <module name="ImportOrder">
+            <property name="groups" value="/^javax?\./,org"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="above"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+        </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
@@ -70,6 +77,7 @@
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreFieldDeclaration" value="true"/>
             <property name="severity" value="error"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000" />
         </module>
         <module name="LocalFinalVariableName">
             <property name="severity" value="error"/>
@@ -128,7 +136,10 @@
                       org.springframework.test.web.client.match.MockRestRequestMatchers,
                       org.springframework.test.web.client.response.MockRestResponseCreators,
                       java.nio.file.StandardWatchEventKinds"/>
-            <property name="allowStaticMemberImports" value="false"/>
+            <property name="allowStaticMemberImports" value="true"/>
+        </module>
+        <module name="AvoidStaticImport">
+            <property name="excludes" value="java.lang.System.*,java.lang.Math.*,org.junit.Assert.*,org.mockito.Mockito.*"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -473,6 +484,12 @@
         <property name="severity" value="error"/>
         <property name="format" value="\w+\s+$"/>
         <property name="message" value="Line has trailing spaces."/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Component"/>
+        <property name="message" value="Avoid using the indicated annotations."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Space instead of tabs"/>
