@@ -17,7 +17,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.apereo.cas.util.DateTimeUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -26,10 +25,8 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
-import org.opensaml.saml.common.binding.impl.SAMLSOAPDecoderBodyHandler;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.J2EContext;
@@ -101,7 +98,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param request  the request
      * @throws Exception the exception
      */
-    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO, consumes = MediaType.TEXT_XML_VALUE)
+    @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO,
+            consumes = {MediaType.TEXT_XML_VALUE, "application/vnd.paos.xml"})
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) throws Exception {
         final MessageContext soapContext = decodeSoapRequest(request);
@@ -166,7 +164,6 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             decoder.setParserPool(parserPool);
             decoder.setHttpServletRequest(request);
             decoder.setBindingDescriptor(new BindingDescriptor());
-            decoder.setBodyHandler(new SAMLSOAPDecoderBodyHandler());
             decoder.initialize();
             decoder.decode();
             return decoder.getMessageContext();
