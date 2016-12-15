@@ -74,9 +74,6 @@ dependencies {
     compile project(":support:cas-server-support-validation")
     compile project(":support:cas-server-support-pm")
 
-    compile project(":support:cas-server-support-saml-idp")
-    compile project(":support:cas-server-support-saml-sp-integrations")
-
     compile project(":webapp:cas-server-webapp-init")
     compile project(":webapp:cas-server-webapp-config")
 
