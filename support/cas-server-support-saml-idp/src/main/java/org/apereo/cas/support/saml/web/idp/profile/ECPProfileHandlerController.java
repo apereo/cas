@@ -10,11 +10,14 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
@@ -118,9 +121,10 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
 
         final AuthnRequest authnRequest = (AuthnRequest) soapContext.getMessage();
         final Pair<AuthnRequest, MessageContext> authenticationContext = Pair.of(authnRequest, soapContext);
-        verifySamlAuthenticationRequest(authenticationContext, request);
+        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> serviceRequest =
+                verifySamlAuthenticationRequest(authenticationContext, request);
         final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
-        buildSamlResponse(response, request, authenticationContext, buildEcpCasAssertion(authentication));
+        buildSamlResponse(response, request, authenticationContext, buildEcpCasAssertion(authentication, serviceRequest.getKey()));
     }
 
     /**
@@ -130,7 +134,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param authnRequest the authn request
      * @return the authentication
      */
-    protected Authentication authenticateEcpRequest(final Credential credential, final Pair<AuthnRequest, MessageContext> authnRequest) {
+    protected Authentication authenticateEcpRequest(final Credential credential,
+                                                    final Pair<AuthnRequest, MessageContext> authnRequest) {
         final Service service = webApplicationServiceFactory.createService(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey()));
         final AuthenticationResult authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
@@ -140,12 +145,14 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     /**
      * Build ecp cas assertion assertion.
      *
-     * @param authentication the authentication
+     * @param authentication    the authentication
+     * @param registeredService the registered service
      * @return the assertion
      */
-    protected Assertion buildEcpCasAssertion(final Authentication authentication) {
-        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(),
-                authentication.getPrincipal().getAttributes());
+    protected Assertion buildEcpCasAssertion(final Authentication authentication,
+                                             final RegisteredService registeredService) {
+        final Map attributes = registeredService.getAttributeReleasePolicy().getAttributes(authentication.getPrincipal());
+        final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
                 null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
                 authentication.getAttributes());

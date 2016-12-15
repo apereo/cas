@@ -237,6 +237,10 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.httpcomponents:httpcore:$httpCoreVersion") {
                     force = true
+                },
+                dependencies.create("com.github.axet:wget:$axetWgetVersion") {
+                    exclude(group: "com.thoughtworks.xstream", module: "xstream")
+                    force = true
                 }
         ],
         shibattributes          : [
