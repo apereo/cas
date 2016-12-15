@@ -280,9 +280,9 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(
                 this.serverPrefix.concat(callbackUrl.concat(".+")));
-        logger.debug("Initialized callback service [{}]", callbackService);
-
         if (!this.servicesManager.matchesExistingService(callbackService)) {
+            logger.debug("Initializing callback service [{}]", callbackService);
+
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
             service.setEvaluationOrder(0);
@@ -497,6 +497,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
 
+        logger.debug("Fetching saml metadata adaptor for {}", issuer);
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);
