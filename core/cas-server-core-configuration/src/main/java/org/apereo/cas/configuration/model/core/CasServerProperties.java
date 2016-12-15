@@ -1,24 +1,34 @@
 package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.time.Duration;
 
 /**
- * This is {@link ServerProperties}.
+ * This is {@link CasServerProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class ServerProperties {
+public class CasServerProperties {
     
     private String connectionTimeout = "PT20S";
-    
+    private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
     private String name = "https://cas.example.org:8443";
     private String prefix = name.concat("/cas");
     private Ajp ajp = new Ajp();
     private Http http = new Http();
     private ExtendedAccessLog extAccessLog = new ExtendedAccessLog();
+
+    public Resource getRewriteValveConfigLocation() {
+        return rewriteValveConfigLocation;
+    }
+
+    public void setRewriteValveConfigLocation(final Resource rewriteValveConfigLocation) {
+        this.rewriteValveConfigLocation = rewriteValveConfigLocation;
+    }
 
     public ExtendedAccessLog getExtAccessLog() {
         return extAccessLog;
