@@ -33,6 +33,8 @@ public class SamlMetadataController {
     /**
      * Instantiates a new Saml metadata controller.
      * Required for bean initialization.
+     *
+     * @param metadataAndCertificatesGenerationService the metadata and certificates generation service
      */
     public SamlMetadataController(final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService) {
         this.metadataAndCertificatesGenerationService = metadataAndCertificatesGenerationService;

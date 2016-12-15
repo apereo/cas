@@ -104,6 +104,7 @@ public class Pac4jConfiguration {
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setAuthenticationSystemSupport(authenticationSystemSupport);
         a.setClients(builtClients());
+        a.setCasProperties(casProperties);
         return a;
     }
 

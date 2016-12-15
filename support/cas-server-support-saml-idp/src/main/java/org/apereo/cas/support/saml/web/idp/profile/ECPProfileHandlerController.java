@@ -60,11 +60,13 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      *
      * @param samlObjectSigner                             the saml object signer
      * @param parserPool                                   the parser pool
+     * @param authenticationSystemSupport                  the authentication system support
      * @param servicesManager                              the services manager
      * @param webApplicationServiceFactory                 the web application service factory
      * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
      * @param configBean                                   the config bean
      * @param responseBuilder                              the response builder
+     * @param samlEcpFaultResponseBuilder                  the saml ecp fault response builder
      * @param authenticationContextClassMappings           the authentication context class mappings
      * @param serverPrefix                                 the server prefix
      * @param serverName                                   the server name

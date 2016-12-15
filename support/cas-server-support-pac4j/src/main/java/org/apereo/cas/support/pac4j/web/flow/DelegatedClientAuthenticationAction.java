@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
@@ -88,7 +86,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     /**
@@ -194,8 +191,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final WebApplicationService service = WebUtils.getService(context);
         LOGGER.debug("save service: {}", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        saveRequestParameter(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
-        saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+        saveRequestParameter(request, session, casProperties.getTheme().getParamName());
+        saveRequestParameter(request, session, casProperties.getLocale().getParamName());
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
@@ -275,6 +272,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
+    public void setCasProperties(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
     }
 
     private Event stopWebflow() {

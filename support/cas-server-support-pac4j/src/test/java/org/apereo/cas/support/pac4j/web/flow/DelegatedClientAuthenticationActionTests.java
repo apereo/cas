@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -41,8 +42,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@SuppressWarnings("rawtypes")
-public class ClientActionTests {
+public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_NAME = "ticketGrantingTicketId";
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
@@ -87,6 +87,7 @@ public class ClientActionTests {
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
         action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
         action.setClients(clients);
+        action.setCasProperties(new CasConfigurationProperties());
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -129,7 +130,7 @@ public class ClientActionTests {
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
-
+        action.setCasProperties(new CasConfigurationProperties());
         final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
 
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);

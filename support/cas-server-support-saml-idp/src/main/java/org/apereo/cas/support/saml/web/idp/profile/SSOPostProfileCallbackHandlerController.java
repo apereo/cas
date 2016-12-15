@@ -42,6 +42,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
      *
      * @param samlObjectSigner                             the saml object signer
      * @param parserPool                                   the parser pool
+     * @param authenticationSystemSupport                  the authentication system support
      * @param servicesManager                              the services manager
      * @param webApplicationServiceFactory                 the web application service factory
      * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
