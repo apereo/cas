@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import com.squareup.okhttp.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -317,5 +318,16 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             return node.get(fieldName).asText(defaultValue);
         }
         return null;
+    }
+
+    public static void main(final String[] args) throws Exception {
+        final Http http = new Http(HttpMethod.POST.name(),
+                "api-d2e616a0.duosecurity.com",
+                String.format("/auth/v%s/preauth", AUTH_API_VERSION));
+
+        http.addParam("username", "casuser");
+        http.signRequest("DICLHRWL1KQK5EUAQP43", "u3IHBaREMB7Cb9S4QMISAgHycpj8lPBkDGfWt55I");
+        final Response response = http.executeHttpRequest();
+        System.out.println(response.code());
     }
 }
