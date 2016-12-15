@@ -23,6 +23,7 @@ import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -275,6 +276,15 @@ public final class Beans {
         cc.setUseStartTLS(l.isUseStartTls());
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
         cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
+
+        if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
+            try {
+                final Class clazz = ClassUtils.getClass(l.getConnectionStrategy());
+                cc.setConnectionStrategy(ConnectionStrategy.class.cast(clazz.newInstance()));
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
 
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
