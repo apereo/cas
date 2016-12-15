@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
@@ -27,6 +28,7 @@ import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ECPProfileHandlerController}.
@@ -50,6 +53,8 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class ECPProfileHandlerController extends AbstractSamlProfileHandlerController {
+    private final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder;
+
     /**
      * Instantiates a new ecp saml profile handler controller.
      *
@@ -77,6 +82,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                        final OpenSamlConfigBean configBean,
                                        final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> responseBuilder,
+                                       final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder,
                                        final Map<String, String> authenticationContextClassMappings,
                                        final String serverPrefix,
                                        final String serverName,
@@ -92,6 +98,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                 serverPrefix, serverName,
                 authenticationContextRequestParameter, loginUrl, logoutUrl,
                 forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+        this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
     /**
@@ -116,15 +123,54 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             logger.error("SAML ECP request could not be determined from the authentication request");
             return;
         }
+        handleEcpRequest(response, request, soapContext, credential);
+    }
+
+    /**
+     * Handle ecp request.
+     *
+     * @param response    the response
+     * @param request     the request
+     * @param soapContext the soap context
+     * @param credential  the credential
+     * @throws Exception the exception
+     */
+    protected void handleEcpRequest(final HttpServletResponse response, final HttpServletRequest request,
+                                    final MessageContext soapContext, final Credential credential) {
         final Envelope envelope = soapContext.getSubcontext(SOAP11Context.class).getEnvelope();
         SamlUtils.logSamlObject(configBean, envelope);
 
         final AuthnRequest authnRequest = (AuthnRequest) soapContext.getMessage();
         final Pair<AuthnRequest, MessageContext> authenticationContext = Pair.of(authnRequest, soapContext);
-        final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> serviceRequest =
-                verifySamlAuthenticationRequest(authenticationContext, request);
-        final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
-        buildSamlResponse(response, request, authenticationContext, buildEcpCasAssertion(authentication, serviceRequest.getKey()));
+        try {
+            final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> serviceRequest =
+                    verifySamlAuthenticationRequest(authenticationContext, request);
+            final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
+            buildSamlResponse(response, request, authenticationContext, buildEcpCasAssertion(authentication, serviceRequest.getKey()));
+        } catch (final AuthenticationException e) {
+            logger.error(e.getMessage(), e);
+            final String error = e.getHandlerErrors().values().stream().map(x -> x.getSimpleName()).collect(Collectors.joining(","));
+            buildEcpFaultResponse(response, request, Pair.of(authnRequest, error));
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+            buildEcpFaultResponse(response, request, Pair.of(authnRequest, e.getMessage()));
+        }
+    }
+
+    /**
+     * Build ecp fault response.
+     *
+     * @param response              the response
+     * @param request               the request
+     * @param authenticationContext the authentication context
+     */
+    protected void buildEcpFaultResponse(final HttpServletResponse response,
+                                         final HttpServletRequest request,
+                                         final Pair<AuthnRequest, String> authenticationContext) {
+        request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, authenticationContext.getValue());
+        samlEcpFaultResponseBuilder.build(authenticationContext.getKey(), request, response,
+                null, null, null);
+
     }
 
     /**

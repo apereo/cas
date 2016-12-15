@@ -58,14 +58,15 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
-
         final org.opensaml.saml.saml2.core.Response saml2Response =
                 (org.opensaml.saml.saml2.core.Response)
-                        saml2ResponseBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+                        saml2ResponseBuilder.build(authnRequest, request, response,
+                                casAssertion, service, adaptor);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);
+
         return envelope;
     }
 
@@ -76,11 +77,9 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                               final String relayState) throws SamlException {
         try {
-
             final MessageContext result = new MessageContext();
             final SOAP11Context ctx = result.getSubcontext(SOAP11Context.class, true);
             ctx.setEnvelope(envelope);
-
             final HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
             encoder.setHttpServletResponse(httpResponse);
             encoder.setMessageContext(result);
