@@ -24,5 +24,4 @@ public class AuthyMultifactorTrustWebflowConfigurer extends AbstractMultifactorT
     protected void doInitialize() throws Exception {
         registerMultifactorTrustedAuthentication(this.flowDefinitionRegistry);
     }
-
 }
