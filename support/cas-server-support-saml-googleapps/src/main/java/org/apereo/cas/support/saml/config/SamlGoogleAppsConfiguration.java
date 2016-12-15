@@ -58,9 +58,7 @@ public class SamlGoogleAppsConfiguration {
 
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
-        final GoogleSaml20ObjectBuilder b = new GoogleSaml20ObjectBuilder();
-        b.setConfigBean(openSamlConfigBean);
-        return b;
+        return new GoogleSaml20ObjectBuilder(openSamlConfigBean);
     }
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceResponseBuilder")

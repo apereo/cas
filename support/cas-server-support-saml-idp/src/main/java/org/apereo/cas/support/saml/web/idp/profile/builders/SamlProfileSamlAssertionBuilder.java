@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -10,7 +11,6 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.Condition;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
@@ -46,6 +46,15 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private SamlObjectSigner samlObjectSigner;
 
+    public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder, final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder, final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder, final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
+                                           final SamlObjectSigner samlObjectSigner) {
+        super(configBean);
+        this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
+        this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
+        this.samlProfileSamlSubjectBuilder = samlProfileSamlSubjectBuilder;
+        this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
+        this.samlObjectSigner = samlObjectSigner;
+    }
 
     @Override
     public Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
@@ -92,25 +101,5 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         } catch (final Exception e) {
             throw new SamlException("Unable to marshall assertion for signing", e);
         }
-    }
-
-    public void setSamlProfileSamlAuthNStatementBuilder(final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder) {
-        this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
-    }
-
-    public void setSamlProfileSamlAttributeStatementBuilder(final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder) {
-        this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;
-    }
-
-    public void setSamlProfileSamlSubjectBuilder(final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder) {
-        this.samlProfileSamlSubjectBuilder = samlProfileSamlSubjectBuilder;
-    }
-
-    public void setSamlProfileSamlConditionsBuilder(final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder) {
-        this.samlProfileSamlConditionsBuilder = samlProfileSamlConditionsBuilder;
-    }
-
-    public void setSamlObjectSigner(final SamlObjectSigner samlObjectSigner) {
-        this.samlObjectSigner = samlObjectSigner;
     }
 }

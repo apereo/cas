@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -27,6 +28,13 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private int skewAllowance;
 
+    public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
+                                         final int skewAllowance) {
+        super(configBean);
+        this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
+        this.skewAllowance = skewAllowance;
+    }
+
     @Override
     public Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                          final Assertion assertion, final SamlRegisteredService service,
@@ -48,13 +56,5 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                 authnRequest.getID());
         subject.setNameID(nameID);
         return subject;
-    }
-
-    public void setSsoPostProfileSamlNameIdBuilder(final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder) {
-        this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
-    }
-
-    public void setSkewAllowance(final int skewAllowance) {
-        this.skewAllowance = skewAllowance;
     }
 }
