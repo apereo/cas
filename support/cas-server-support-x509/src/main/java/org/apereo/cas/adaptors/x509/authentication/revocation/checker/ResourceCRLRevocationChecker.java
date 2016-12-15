@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
@@ -22,6 +21,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * CRL-based revocation checker that uses one or more CRL resources to fetch
@@ -79,10 +80,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * @param crls the crls
      * @since 4.1
      */
-    public ResourceCRLRevocationChecker(final CRLFetcher fetcher,
-                                        final Resource[] crls) {
+    public ResourceCRLRevocationChecker(final CRLFetcher fetcher, final Resource[] crls) {
         this.fetcher = fetcher;
-        this.resources = ImmutableSet.copyOf(crls);
+        this.resources = Stream.of(crls).collect(Collectors.toSet());
     }
 
     /**
