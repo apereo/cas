@@ -46,7 +46,11 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private SamlObjectSigner samlObjectSigner;
 
-    public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean, final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder, final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder, final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder, final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
+    public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
+                                           final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
+                                           final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
+                                           final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
+                                           final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
                                            final SamlObjectSigner samlObjectSigner) {
         super(configBean);
         this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
