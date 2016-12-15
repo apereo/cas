@@ -131,17 +131,6 @@
                       java.nio.file.StandardWatchEventKinds"/>
             <property name="allowStaticMemberImports" value="true"/>
         </module>
-        <module name="AvoidStaticImport">
-            <property name="excludes" value="java.lang.System.*,
-            java.lang.Math.*,
-            org.junit.Assert.*,
-            org.mockito.Mockito.*,
-            org.springframework.test.web.client.ExpectedCount.*,
-            org.springframework.util.StringUtils.*,
-            org.springframework.test.web.client.match.MockRestRequestMatchers.*,
-            org.springframework.test.web.client.response.MockRestResponseCreators.*,
-            java.nio.file.StandardWatchEventKinds.*"/>
-        </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
         </module>

@@ -229,6 +229,16 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
+## Embedded Tomcat Rewrite Valve
+
+If and when you choose to deploy CAS at root and remove the default context path, 
+CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
+for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
+
+```properties
+# cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
+```
+
 ## Embedded Tomcat Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
