@@ -20,14 +20,18 @@ import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.DefaultConnectionStrategy;
+import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -278,11 +282,24 @@ public final class Beans {
         cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
 
         if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
-            try {
-                final Class clazz = ClassUtils.getClass(l.getConnectionStrategy());
-                cc.setConnectionStrategy(ConnectionStrategy.class.cast(clazz.newInstance()));
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
+            final AbstractLdapProperties.LdapConnectionStrategy strategy =
+                    AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+            switch (strategy) {
+                case DEFAULT:
+                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
+                    break;
+                case RANDOM:
+                    cc.setConnectionStrategy(new RandomConnectionStrategy());
+                    break;
+                case DNS_SRV:
+                    cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
+                    break;
+                case ACTIVE_PASSIVE:
+                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
+                    break;
+                case ROUND_ROBIN:
+                    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                    break;
             }
         }
 

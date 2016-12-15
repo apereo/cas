@@ -16,6 +16,32 @@ import java.util.List;
  * @since 5.0.0
  */
 public abstract class AbstractLdapProperties {
+    /**
+     * Describe ldap connection strategies.
+     */
+    public enum LdapConnectionStrategy {
+        /**
+         * Default JNDI.
+         */
+        DEFAULT,
+        /**
+         * First ldap used until it fails.
+         */
+        ACTIVE_PASSIVE,
+        /**
+         * Navigate the ldap url list for new connections and circle back.
+         */
+        ROUND_ROBIN,
+        /**
+         * Randomly pick a url.
+         */
+        RANDOM,
+        /**
+         * ldap urls based on DNS SRV records.
+         */
+        DNS_SRV
+    }
+
     private String trustCertificates;
 
     private String keystore;

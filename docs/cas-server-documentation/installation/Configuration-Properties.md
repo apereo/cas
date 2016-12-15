@@ -415,6 +415,7 @@ the following settings are then relevant:
 
 ```properties
 # cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].connectionStrategyClass=
 # cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
@@ -1056,10 +1057,23 @@ There are two requirements for this use case:
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
+### Connection Strategies
+
+If Multiple URLs are provided as the ldapURL this describes how each URL will be processed.
+
+| Provider              | Description              
+|-----------------------|-----------------
+| `DEFAULT`             | The default JNDI provider behavior will be used.    
+| `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
+| `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
+| `RANDOM`              | For each new connection a random LDAP url will be selected. 
+| `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.ldap[0].connectionStrategyClass=
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
@@ -1213,6 +1227,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.principal.returnNull=false
 
 # cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.spnego.ldap.connectionStrategyClass=
 # cas.authn.spnego.ldap.baseDn=dc=example,dc=org
 # cas.authn.spnego.ldap.userFilter=cn={user}
 # cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -1406,6 +1421,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.connectionStrategyClass=
 # cas.authn.x509.ldap.useSsl=true
 # cas.authn.x509.ldap.useStartTls=false
 # cas.authn.x509.ldap.connectTimeout=5000
@@ -2310,6 +2326,7 @@ used for authentication, etc.
 
 # Define the LDAP connection pool settings for monitoring
 # cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.monitor.ldap.connectionStrategyClass=
 # cas.monitor.ldap.baseDn=dc=example,dc=org
 # cas.monitor.ldap.userFilter=cn={user}
 # cas.monitor.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2375,6 +2392,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 
 ```properties
 # cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.acceptableUsagePolicy.ldap.connectionStrategyClass=
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 # cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
 # cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2547,6 +2565,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
 
 # cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.serviceRegistry.ldap.connectionStrategyClass=
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 # cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.serviceRegistry.ldap.bindCredential=Password
@@ -2951,6 +2970,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
 # cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.mgmt.ldapAuthz.connectionStrategyClass=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.userFilter=cn={user}
 # cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -3137,6 +3157,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.connectionStrategyClass=
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false
 # cas.authn.pm.ldap.connectTimeout=5000
