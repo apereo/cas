@@ -61,10 +61,10 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         
         int idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
         if (idleValue <= 0) {
-            idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+            idleValue = ticketToAdd.getExpirationPolicy().getTimeToLiveSeconds().intValue();
         }
         element.setTimeToIdle(idleValue);
-        final int aliveValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        final int aliveValue = ticketToAdd.getExpirationPolicy().getTimeToLiveSeconds().intValue();
         element.setTimeToLive(aliveValue);
 
         logger.debug("Adding ticket {} to the cache {} to live {} seconds and stay idle for {} seconds",
@@ -109,7 +109,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
 
         final CacheConfiguration config = new CacheConfiguration();
         config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
-        config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToIdle());
+        config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLiveSeconds());
         
         if (element.isExpired(config) || ticket.isExpired()) {
             logger.debug("Ticket {} has expired", ticket.getId());
