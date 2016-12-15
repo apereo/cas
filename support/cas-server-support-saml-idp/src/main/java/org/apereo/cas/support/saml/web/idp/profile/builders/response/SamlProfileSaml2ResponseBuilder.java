@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
 import com.google.common.base.Throwables;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -39,11 +40,12 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     private static final long serialVersionUID = 1488837627964481272L;
 
 
-    public SamlProfileSaml2ResponseBuilder(final SamlObjectSigner samlObjectSigner,
+    public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
+                                           final SamlObjectSigner samlObjectSigner,
                                            final VelocityEngineFactory velocityEngineFactory,
                                            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                            final SamlObjectEncrypter samlObjectEncrypter) {
-        super(samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
     }
 
     @Override

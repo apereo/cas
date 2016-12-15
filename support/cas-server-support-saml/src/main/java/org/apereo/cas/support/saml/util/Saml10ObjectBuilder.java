@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
@@ -45,6 +46,10 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
     private static final long serialVersionUID = -4711012620700270554L;
+
+    public Saml10ObjectBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
 
     /**
      * Create a new SAML response object.

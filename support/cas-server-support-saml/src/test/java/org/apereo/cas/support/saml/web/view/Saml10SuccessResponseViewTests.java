@@ -55,8 +55,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         this.response.setServicesManager(mgmr);
         this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
         
-        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
-        builder.setConfigBean(this.configBean);
+        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder(configBean);
         this.response.setSamlObjectBuilder(builder);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);

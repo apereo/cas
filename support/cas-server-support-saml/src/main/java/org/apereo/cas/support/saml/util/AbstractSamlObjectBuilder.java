@@ -66,7 +66,7 @@ import java.util.List;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -95,7 +95,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected OpenSamlConfigBean configBean;
 
-    public void setConfigBean(final OpenSamlConfigBean configBean) {
+    public AbstractSamlObjectBuilder(final OpenSamlConfigBean configBean) {
         this.configBean = configBean;
     }
 
