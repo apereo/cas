@@ -1,6 +1,5 @@
 package org.apereo.cas.audit.spi.config;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
@@ -58,7 +57,7 @@ public class CasCoreAuditConfiguration {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(principalIdProvider()),
-                ImmutableList.of(auditTrailManager), auditActionResolverMap(),
+                Collections.singletonList(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
