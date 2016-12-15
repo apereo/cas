@@ -95,27 +95,27 @@ public class HttpClientMultithreadedDownloader {
                     if (now - 1_000 > last) {
                         last = now;
 
-                        String parts = "";
+                        final StringBuilder partBuilder = new StringBuilder();
                         if (info.getParts() != null) {
-                            for (final DownloadInfo.Part p : info.getParts()) {
+                            info.getParts().forEach(p -> {
                                 switch (p.getState()) {
                                     case DOWNLOADING:
-                                        parts += String.format("Part#%d(%.2f) ", p.getNumber(),
-                                                p.getCount() / (float) p.getLength());
+                                        partBuilder.append(String.format("Part#%d(%.2f) ", p.getNumber(),
+                                                p.getCount() / (float) p.getLength()));
                                         break;
                                     case ERROR:
                                     case RETRYING:
-                                        parts += String.format("Part#%d(%s) ", p.getNumber(),
-                                                p.getException().getMessage() + " r:" + p.getRetry() + " d:" + p.getDelay());
+                                        partBuilder.append(String.format("Part#%d(%s) ", p.getNumber(),
+                                                p.getException().getMessage() + " r:" + p.getRetry() + " d:" + p.getDelay()));
                                         break;
                                     default:
                                         break;
                                 }
-                            }
+                            });
                         }
 
                         final float p = info.getCount() / (float) info.getLength();
-                        LOGGER.debug(String.format("%.2f %s (%s / %s)", p, parts,
+                        LOGGER.debug(String.format("%.2f %s (%s / %s)", p, partBuilder.toString(),
                                 FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                                 FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));
                     }
