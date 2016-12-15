@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
-import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN;
+import static org.apereo.cas.pm.web.flow.SendPasswordResetInstructionsAction.*;
 
 /**
  * This is {@link VerifyPasswordResetRequestAction}.

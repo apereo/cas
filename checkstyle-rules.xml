@@ -70,7 +70,7 @@
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreFieldDeclaration" value="true"/>
             <property name="severity" value="error"/>
-            <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000" />
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000"/>
         </module>
         <module name="LocalFinalVariableName">
             <property name="severity" value="error"/>
@@ -132,7 +132,15 @@
             <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="AvoidStaticImport">
-            <property name="excludes" value="java.lang.System.*,java.lang.Math.*,org.junit.Assert.*,org.mockito.Mockito.*"/>
+            <property name="excludes" value="java.lang.System.*,
+            java.lang.Math.*,
+            org.junit.Assert.*,
+            org.mockito.Mockito.*,
+            org.springframework.test.web.client.ExpectedCount.*,
+            org.springframework.util.StringUtils.*,
+            org.springframework.test.web.client.match.MockRestRequestMatchers.*,
+            org.springframework.test.web.client.response.MockRestResponseCreators.*,
+            java.nio.file.StandardWatchEventKinds.*"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -234,10 +242,6 @@
             <property name="severity" value="error"/>
         </module>
         <module name="StringLiteralEquality">
-            <property name="severity" value="error"/>
-        </module>
-
-        <module name="AnnotationLocation">
             <property name="severity" value="error"/>
         </module>
 
@@ -481,7 +485,7 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
         <property name="severity" value="error"/>
-        <property name="format" value="@Component"/>
+        <property name="format" value="@Component|@Value"/>
         <property name="message" value="Avoid using the indicated annotations."/>
     </module>
     <module name="RegexpSingleline">

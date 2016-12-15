@@ -170,7 +170,14 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
             final HTTPSOAP11Decoder decoder = new HTTPSOAP11Decoder();
             decoder.setParserPool(parserPool);
             decoder.setHttpServletRequest(request);
-            decoder.setBindingDescriptor(new BindingDescriptor());
+
+            final BindingDescriptor binding = new BindingDescriptor();
+            binding.setId(getClass().getName());
+            binding.setShortName(getClass().getName());
+            binding.setSignatureCapable(true);
+            binding.setSynchronous(true);
+
+            decoder.setBindingDescriptor(binding);
             decoder.initialize();
             decoder.decode();
             return decoder.getMessageContext();

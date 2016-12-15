@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.FLOW_ID_PASSWORD_RESET;
+import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.*;
 
 /**
  * This is {@link SendPasswordResetInstructionsAction}.
