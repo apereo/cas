@@ -74,7 +74,6 @@ public class AuthyConfiguration {
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
-
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
