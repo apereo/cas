@@ -73,7 +73,7 @@ public class ProxyController {
      */
     @GetMapping(path = "/proxy")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
+        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         final Service targetService = getTargetService(request);
 
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
