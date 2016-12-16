@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,7 +17,10 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +73,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String... requestMfaMethod) {
-        return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
+        return resolveProvider(providers, new HashSet<>(Arrays.asList(requestMfaMethod)));
     }
 
     /**
@@ -84,12 +86,12 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
-        return resolveProvider(providers, Sets.newHashSet(requestMfaMethod));
+        return resolveProvider(providers, Collections.singleton(requestMfaMethod));
     }
 
     @Override
     public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<? extends MultifactorAuthenticationProvider> providers) {
-        final Collection<MultifactorAuthenticationProvider> flattenedProviders = Sets.newHashSet();
+        final Collection<MultifactorAuthenticationProvider> flattenedProviders = new HashSet<>();
         providers.forEach(p -> {
             if (p instanceof VariegatedMultifactorAuthenticationProvider) {
                 flattenedProviders.addAll(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
