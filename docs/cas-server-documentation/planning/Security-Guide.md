@@ -227,6 +227,15 @@ the CAS protocol in the event that for instance, a parameter is repeated multipl
 It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent
 protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
+#### CORS
+
+CAS provides first-class support for enabling HTTP access control (CORS).
+One application of CORS is when a resource makes a cross-origin HTTP request when it requests a resource from a 
+different domain than the one which the first resource itself serves. This should help more with CAS-enabled
+applications are accessed via XHR/Ajax requests. 
+
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html).
+
 #### Security Response Headers
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
