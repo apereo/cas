@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -66,7 +67,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
-    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
+    private final List<Authentication> supplementalAuthentications = new CopyOnWriteArrayList<>();
 
     /**
      * Instantiates a new ticket granting ticket impl.
