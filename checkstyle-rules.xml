@@ -527,6 +527,12 @@
         <property name="format" value="@Test\(expect"/>
         <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
     </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="new.*Set\<\>\((Arrays\.asList\([^,]+\)|Collections.singletonList\(.*\))\)"/>
+        <property name="message" value="Use Collections.singleton instead"/>
+    </module>
 
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
