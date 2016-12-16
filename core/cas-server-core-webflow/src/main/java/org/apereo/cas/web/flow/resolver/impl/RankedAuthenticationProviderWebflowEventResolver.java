@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
@@ -23,6 +22,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
                 || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
                 || id.equals(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
             logger.debug("Returning webflow event as {}", id);
-            return ImmutableSet.of(event);
+            return Collections.singleton(event);
         }
 
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> result = this.authenticationContextValidator.validate(authentication, id, service);
@@ -99,11 +99,11 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         if (result.getValue().isPresent()) {
-            return ImmutableSet.of(validateEventIdForMatchingTransitionInContext(id, context,
+            return Collections.singleton(validateEventIdForMatchingTransitionInContext(id, context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, result.getValue().get())));
         }
         logger.warn("The authentication context cannot be satisfied and the requested event {} is unrecognized", id);
-        return ImmutableSet.of(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
+        return Collections.singleton(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
@@ -114,6 +114,6 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
     }
 
     private Set<Event> resumeFlow() {
-        return ImmutableSet.of(new EventFactorySupport().success(this));
+        return Collections.singleton(new EventFactorySupport().success(this));
     }
 }
