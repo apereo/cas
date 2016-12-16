@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -25,6 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -80,7 +80,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     putResolvedEventsAsAttribute(context, resolvedEvents);
                     final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                     if (finalResolvedEvent != null) {
-                        return ImmutableSet.of(finalResolvedEvent);
+                        return Collections.singleton(finalResolvedEvent);
                     }
                 }
             }
@@ -89,7 +89,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
-            return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
@@ -98,7 +98,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return ImmutableSet.of(event);
+            return Collections.singleton(event);
         }
     }
 

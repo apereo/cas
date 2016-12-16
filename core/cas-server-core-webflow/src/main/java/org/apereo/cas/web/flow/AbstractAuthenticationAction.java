@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -46,14 +45,13 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map map = ImmutableMap.of(
+            final Map<String, Class<? extends Exception>> map = Collections.singletonMap(
                     UnauthorizedAuthenticationException.class.getSimpleName(),
                     UnauthorizedAuthenticationException.class);
             final AuthenticationException error = new AuthenticationException(msg, map, Collections.emptyMap());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                     new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
         }
-
 
         final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
