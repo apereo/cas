@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -22,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -89,7 +89,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
                 .filter(v -> values.contains(v.getId())).findAny();
 
         if (provider.isPresent()) {
-            return Sets.newHashSet(new Event(this, provider.get().getId()));
+            return Collections.singleton(new Event(this, provider.get().getId()));
         }
         logger.warn("The requested authentication class {} cannot be satisfied by any of the MFA providers available", values);
         throw new AuthenticationException();
