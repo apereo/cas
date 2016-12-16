@@ -44,7 +44,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyNonExistentPGT() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, "TestService");
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, "TestService");
         request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
@@ -59,7 +59,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, ticket.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
@@ -74,7 +74,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET, ticket.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
         request.addParameter("targetService", "service");
 
         final Map<String, Object> map = this.proxyController.handleRequestInternal(request,
