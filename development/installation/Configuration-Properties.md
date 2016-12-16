@@ -229,6 +229,16 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
+## Embedded Tomcat Rewrite Valve
+
+If and when you choose to deploy CAS at root and remove the default context path, 
+CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
+for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
+
+```properties
+# cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
+```
+
 ## Embedded Tomcat Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
@@ -404,7 +414,8 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.attributeRepository.ldap[0].connectionStrategyClass=
 # cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
@@ -1046,10 +1057,23 @@ There are two requirements for this use case:
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
+### Connection Strategies
+
+If Multiple URLs are provided as the ldapURL this describes how each URL will be processed.
+
+| Provider              | Description              
+|-----------------------|-----------------
+| `DEFAULT`             | The default JNDI provider behavior will be used.    
+| `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
+| `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
+| `RANDOM`              | For each new connection a random LDAP url will be selected. 
+| `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
-# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.ldap[0].connectionStrategyClass=
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
@@ -1202,7 +1226,8 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
 
-# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.spnego.ldap.connectionStrategyClass=
 # cas.authn.spnego.ldap.baseDn=dc=example,dc=org
 # cas.authn.spnego.ldap.userFilter=cn={user}
 # cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -1395,7 +1420,8 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
-# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.x509.ldap.connectionStrategyClass=
 # cas.authn.x509.ldap.useSsl=true
 # cas.authn.x509.ldap.useStartTls=false
 # cas.authn.x509.ldap.connectTimeout=5000
@@ -1806,6 +1832,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.name=Dropbox
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
+# cas.samlSP.dropbox.signatureLocation=
 ```
 
 ### TestShib
@@ -1815,6 +1842,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.testShib.name=TestShib
 # cas.samlSP.testShib.description=TestShib Integration
 # cas.samlSP.testShib.attributes=eduPersonPrincipalName
+# cas.samlSP.testShib.signatureLocation=
 ```
 
 ### Office365
@@ -1825,6 +1853,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.office365.description=O365 Integration
 # cas.samlSP.office365.nameIdAttribute=scopedImmutableID
 # cas.samlSP.office365.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.signatureLocation=
 ```
 
 ### SAManage
@@ -1834,6 +1863,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.saManage.name=SAManage
 # cas.samlSP.saManage.description=SAManage Integration
 # cas.samlSP.saManage.nameIdAttribute=mail
+# cas.samlSP.saManage.signatureLocation=
 ```
 
 ### Workday
@@ -1842,6 +1872,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
 # cas.samlSP.workday.name=Workday
 # cas.samlSP.workday.description=Workday Integration
+# cas.samlSP.workday.signatureLocation=
 ```
 
 ### Salesforce
@@ -1851,6 +1882,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.name=Salesforce
 # cas.samlSP.salesforce.description=Salesforce Integration
 # cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
+# cas.samlSP.salesforce.signatureLocation=
 ```
 
 ### Box
@@ -1860,6 +1892,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.box.name=Box
 # cas.samlSP.box.description=Box Integration
 # cas.samlSP.box.attributes=email,firstName,lastName
+# cas.samlSP.box.signatureLocation=
 ```
 
 ### Service Now
@@ -1869,6 +1902,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.serviceNow.name=ServiceNow
 # cas.samlSP.serviceNow.description=serviceNow Integration
 # cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
+# cas.samlSP.serviceNow.signatureLocation=
 ```
 
 ### Net Partner
@@ -1878,6 +1912,8 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.netPartner.name=Net Partner
 # cas.samlSP.netPartner.description=Net Partner Integration
 # cas.samlSP.netPartner.nameIdAttribute=studentId
+# cas.samlSP.netPartner.attributes=
+# cas.samlSP.netPartner.signatureLocation=
 ```
 
 ### Webex
@@ -1887,7 +1923,22 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webex.name=Webex
 # cas.samlSP.webex.description=Webex Integration
 # cas.samlSP.webex.nameIdAttribute=email
-# cas.samlSP.webex.attributes=firstName,lastName,
+# cas.samlSP.webex.attributes=firstName,lastName
+```
+
+### InCommon
+
+Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
+EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry.
+The signature location MUST BE the public key used to sign the metadata.
+
+```properties
+# cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
+# cas.samlSP.inCommon.name=InCommon Aggregate
+# cas.samlSP.inCommon.description=InCommon Metadata Aggregate
+# cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
+# cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
+# cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
 ## OpenID Connect
@@ -2274,7 +2325,8 @@ used for authentication, etc.
 # cas.monitor.ldap.maxWait=5000
 
 # Define the LDAP connection pool settings for monitoring
-# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.monitor.ldap.connectionStrategyClass=
 # cas.monitor.ldap.baseDn=dc=example,dc=org
 # cas.monitor.ldap.userFilter=cn={user}
 # cas.monitor.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2339,7 +2391,8 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
 ```properties
-# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.acceptableUsagePolicy.ldap.connectionStrategyClass=
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 # cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
 # cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2511,7 +2564,8 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
 
-# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.serviceRegistry.ldap.connectionStrategyClass=
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 # cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.serviceRegistry.ldap.bindCredential=Password
@@ -2915,7 +2969,8 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
-# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.mgmt.ldapAuthz.connectionStrategyClass=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.userFilter=cn={user}
 # cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -3101,7 +3156,8 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD
-# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.pm.ldap.connectionStrategyClass=
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false
 # cas.authn.pm.ldap.connectTimeout=5000

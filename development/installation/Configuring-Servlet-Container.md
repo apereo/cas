@@ -31,7 +31,7 @@ would become `https://sso.example.org/cas`.
 If and when you choose to deploy CAS at root and remove the default context path, CAS by default attempts to deploy a special 
 `RewriteValve` for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
 The [configuration of this valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html), 
-should it need to be extended, can be controlled via the `server.tomcat.valve.rewrite.config` property.
+should it need to be extended, can be controlled via the configuration settings.
  
 ## External
  
