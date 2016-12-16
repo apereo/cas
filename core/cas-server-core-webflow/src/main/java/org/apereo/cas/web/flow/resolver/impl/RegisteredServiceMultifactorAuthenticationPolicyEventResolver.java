@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -22,6 +21,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -103,7 +103,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
 
                 final Event event = validateEventIdForMatchingTransitionInContext(identifier, context,
                         buildEventAttributeMap(principal, service, provider));
-                return ImmutableSet.of(event);
+                return Collections.singleton(event);
             }
 
             logger.debug("No multifactor authentication providers could be located for {}", service);

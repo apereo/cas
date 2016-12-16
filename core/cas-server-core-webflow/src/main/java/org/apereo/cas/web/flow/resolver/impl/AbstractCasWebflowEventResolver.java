@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -40,7 +39,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -315,7 +316,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                     final RequestContext context,
                                                                     final MultifactorAuthenticationProvider provider,
                                                                     final Predicate<String> predicate) {
-        final ImmutableSet.Builder<Event> builder = ImmutableSet.builder();
+        final Set<Event> events = new HashSet<>();
         if (attributeValue instanceof Collection) {
             logger.debug("Attribute value {} is a multi-valued attribute", attributeValue);
             final Collection<String> values = (Collection<String>) attributeValue;
@@ -332,7 +333,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                             final String id = provider.getId();
                             final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                     buildEventAttributeMap(principal, service, provider));
-                            builder.add(event);
+                            events.add(event);
                         }
                     } else {
                         logger.debug("Attribute value predicate {} could not match the [{}]", predicate, value);
@@ -341,7 +342,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     logger.debug("Ignoring {} since no matching transition could be found", value);
                 }
             }
-            return builder.build();
+            return events;
         }
         logger.debug("Attribute value {} of type {} is not a multi-valued attribute", 
                 attributeValue, attributeValue.getClass());
@@ -368,7 +369,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
-                        return ImmutableSet.of(event);
+                        return Collections.singleton(event);
                     } else {
                         logger.debug("Provider {} could not be verified", provider);
                     }
@@ -520,10 +521,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             final Service service = WebUtils.getService(context);
 
             logger.debug("Issuing ticket-granting tickets for service {}", service);
-            return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-            return ImmutableSet.of(new Event(this, "error"));
+            return Collections.singleton(new Event(this, "error"));
         }
     }
 }

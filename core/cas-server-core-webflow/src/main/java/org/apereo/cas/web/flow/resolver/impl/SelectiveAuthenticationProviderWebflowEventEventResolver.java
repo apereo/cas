@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -19,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +92,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
         if (providers == null || providers.isEmpty()) {
             logger.debug("No providers are available to honor this request. Moving on...");
-            return Pair.of(resolveEvents, Sets.newHashSet());
+            return Pair.of(resolveEvents, Collections.emptySet());
         }
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());
