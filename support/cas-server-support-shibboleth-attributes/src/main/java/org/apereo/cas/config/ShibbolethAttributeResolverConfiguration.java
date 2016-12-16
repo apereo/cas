@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Sets;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -27,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
@@ -77,8 +77,8 @@ public class ShibbolethAttributeResolverConfiguration {
                     this.applicationContext
             );
 
-            final Collection<DataConnector> connectors =
-                    Sets.newHashSet(BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values());
+            final Collection<DataConnector> values = BeanFactoryUtils.beansOfTypeIncludingAncestors(tempApplicationContext, DataConnector.class).values();
+            final Collection<DataConnector> connectors = new HashSet<>(values);
             final AttributeResolverImpl impl = new AttributeResolverImpl();
             impl.setId(getClass().getSimpleName());
             impl.setApplicationContext(tempApplicationContext);
