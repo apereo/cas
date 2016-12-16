@@ -415,7 +415,7 @@ the following settings are then relevant:
 
 ```properties
 # cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.authn.attributeRepository.ldap[0].connectionStrategyClass=
+# cas.authn.attributeRepository.ldap[0].connectionStrategy=
 # cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
@@ -1073,7 +1073,7 @@ If Multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
 # cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.authn.ldap[0].connectionStrategyClass=
+# cas.authn.ldap[0].connectionStrategy=
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
@@ -1227,7 +1227,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.principal.returnNull=false
 
 # cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.authn.spnego.ldap.connectionStrategyClass=
+# cas.authn.spnego.ldap.connectionStrategy=
 # cas.authn.spnego.ldap.baseDn=dc=example,dc=org
 # cas.authn.spnego.ldap.userFilter=cn={user}
 # cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -1421,7 +1421,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
 # cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.authn.x509.ldap.connectionStrategyClass=
+# cas.authn.x509.ldap.connectionStrategy=
 # cas.authn.x509.ldap.useSsl=true
 # cas.authn.x509.ldap.useStartTls=false
 # cas.authn.x509.ldap.connectTimeout=5000
@@ -2326,7 +2326,7 @@ used for authentication, etc.
 
 # Define the LDAP connection pool settings for monitoring
 # cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.monitor.ldap.connectionStrategyClass=
+# cas.monitor.ldap.connectionStrategy=
 # cas.monitor.ldap.baseDn=dc=example,dc=org
 # cas.monitor.ldap.userFilter=cn={user}
 # cas.monitor.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2392,7 +2392,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 
 ```properties
 # cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.acceptableUsagePolicy.ldap.connectionStrategyClass=
+# cas.acceptableUsagePolicy.ldap.connectionStrategy=
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 # cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
 # cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2565,7 +2565,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
 
 # cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.serviceRegistry.ldap.connectionStrategyClass=
+# cas.serviceRegistry.ldap.connectionStrategy=
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 # cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.serviceRegistry.ldap.bindCredential=Password
@@ -2970,7 +2970,7 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
 # cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.mgmt.ldapAuthz.connectionStrategyClass=
+# cas.mgmt.ldapAuthz.connectionStrategy=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.userFilter=cn={user}
 # cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -3157,7 +3157,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD
 # cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.authn.pm.ldap.connectionStrategyClass=
+# cas.authn.pm.ldap.connectionStrategy=
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false
 # cas.authn.pm.ldap.connectTimeout=5000
