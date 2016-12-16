@@ -28,7 +28,7 @@ function requestGeoPosition() {
 function logGeoLocationError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            console.log("User denied the request for Geolocation.");
+            console.log("User denied the request for GeoLocation.");
             break;
         case error.POSITION_UNAVAILABLE:
             console.log("Location information is unavailable.");
@@ -72,7 +72,6 @@ function resourceLoadedSuccessfully() {
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
         }
-
 
         if (areCookiesEnabled()) {
             $('#cookiesDisabled').hide();
