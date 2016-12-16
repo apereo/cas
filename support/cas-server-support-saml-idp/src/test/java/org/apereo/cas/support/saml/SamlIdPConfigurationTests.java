@@ -44,7 +44,6 @@ import org.springframework.test.context.junit4.SpringRunner;
         CoreSamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=~/cas/saml")
 public class SamlIdPConfigurationTests {
 
     @Test
