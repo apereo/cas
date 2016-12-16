@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -20,6 +19,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,7 +77,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                     logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
                     final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                             buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                    return ImmutableSet.of(event);
+                    return Collections.singleton(event);
                 }
                 logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
                 return null;
