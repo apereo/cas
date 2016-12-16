@@ -7,6 +7,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
+ * @author David Rodriguez
  * @since 5.1.0
  */
 public class OidcAuthorizationRequestSupportTests {
