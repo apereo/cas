@@ -530,7 +530,7 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
         <property name="severity" value="info"/>
-        <property name="format" value="new.*Set\<\>\((Arrays\.asList\([^,]+\)|Collections.singletonList\(.*\))\)"/>
+        <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
 
