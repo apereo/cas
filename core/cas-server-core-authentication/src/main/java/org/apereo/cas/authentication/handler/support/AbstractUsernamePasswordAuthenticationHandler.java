@@ -60,7 +60,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
 
         userPass.setUsername(transformedUsername);
-        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
+        userPass.setPassword(transformedPsw);
 
         return authenticateUsernamePasswordInternal(userPass,originalUserPass.getPassword());
     }
