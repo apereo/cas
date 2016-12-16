@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
 
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -21,7 +20,9 @@ import java.io.IOException;
 public class CurrentCredentialsAndAuthenticationClearingFilter implements Filter {
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
+    public void doFilter(final ServletRequest servletRequest,
+                         final ServletResponse servletResponse,
+                         final FilterChain filterChain)
             throws IOException, ServletException {
 
         try {

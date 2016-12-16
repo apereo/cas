@@ -2476,11 +2476,19 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
-# cas.httpWebRequest.header.xframe=false
-# cas.httpWebRequest.header.xss=false
-# cas.httpWebRequest.header.hsts=false
-# cas.httpWebRequest.header.xcontent=false
-# cas.httpWebRequest.header.cache=false
+# cas.httpWebRequest.header.xframe=true
+# cas.httpWebRequest.header.xss=true
+# cas.httpWebRequest.header.hsts=true
+# cas.httpWebRequest.header.xcontent=true
+# cas.httpWebRequest.header.cache=true
+
+# cas.httpWebRequest.cors.enabled=false
+# cas.httpWebRequest.cors.allowCredentials=false
+# cas.httpWebRequest.cors.allowOrigins[0]=
+# cas.httpWebRequest.cors.allowMethods[0]=*
+# cas.httpWebRequest.cors.allowHeaders[0]=*
+# cas.httpWebRequest.cors.maxAge=3600
+# cas.httpWebRequest.cors.exposedHeaders[0]=
 
 # cas.httpWebRequest.web.forceEncoding=true
 # cas.httpWebRequest.web.encoding=UTF-8
