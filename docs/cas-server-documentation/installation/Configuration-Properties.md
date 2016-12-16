@@ -36,9 +36,19 @@ Take note of the following suggestions before you start with the configuration.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
 and syntax. **BE CAREFUL** with the distinction.
 
-- Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
+- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+
+### Indexed Settings
+
+CAS settings able to accept multiple values are typically documented with an index, such as `cas.some.setting[0]=value`.
+The index `[0]` is meant to be incremented by the adopter to allow for distinct multiple configuration blocks:
+
+```properties
+cas.some.setting[0]=value1
+cas.some.setting[1]=value2
+```
 
 ### Trust But Verify
 
@@ -47,7 +57,8 @@ Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to c
 
 ### Time Unit of Measure
 
-All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
+All CAS settings that deal with time units, unless noted otherwise,
+should support the duration syntax for full clarity on unit of measure:
 
 ```bash
 "PT20S"     -- parses as "20 seconds"
@@ -145,7 +156,8 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### RabbitMQ
 
-Broadcast CAS configuration updates to other nodes in the cluster via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
+Broadcast CAS configuration updates to other nodes in the cluster 
+via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
 
 ```properties
 # spring.rabbitmq.host=
@@ -159,7 +171,8 @@ Broadcast CAS configuration updates to other nodes in the cluster via [RabbitMQ]
 
 ### Kafka
 
-Broadcast CAS configuration updates to other nodes in the cluster via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
+Broadcast CAS configuration updates to other nodes in the cluster 
+via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
 
 ```properties
 # spring.cloud.stream.bindings.output.content-type=application/json
@@ -206,7 +219,7 @@ server.tomcat.uriEncoding=UTF-8
 server.useForwardHeaders=true
 ```
 
-## Embedded Tomcat HTTP/AJP
+### HTTP/AJP
 
 Enable HTTP/AJP connections for the embedded Tomcat container.
 
@@ -229,7 +242,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
-## Embedded Tomcat Rewrite Valve
+### Rewrite Valve
 
 If and when you choose to deploy CAS at root and remove the default context path, 
 CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
@@ -239,7 +252,7 @@ for the embedded container that knows how to reroute urls and such for backward 
 # cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
 ```
 
-## Embedded Tomcat Extended Access Log
+### Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
@@ -300,7 +313,7 @@ The format of the file is as such:
 
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
-- `ROLE_ADMIN`: Role assigned to the authorized user, which is then cross checked against CAS configuration.
+- `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
 ## Web Application Session
 
