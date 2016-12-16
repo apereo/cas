@@ -44,7 +44,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         final Service service = WebUtils.getService(context);
         return StringUtils.isNotBlank(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW))
                 && StringUtils.isNotBlank(ticketGrantingTicketId)
-                && service != null;
+                && service != null
+                && ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId) != null;
     }
 
     /**
