@@ -46,8 +46,8 @@ CAS settings able to accept multiple values are typically documented with an ind
 The index `[0]` is meant to be incremented by the adopter to allow for distinct multiple configuration blocks:
 
 ```properties
-cas.some.setting[0]=value1
-cas.some.setting[1]=value2
+# cas.some.setting[0]=value1
+# cas.some.setting[1]=value2
 ```
 
 ### Trust But Verify
