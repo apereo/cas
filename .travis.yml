@@ -27,6 +27,7 @@ before_script:
  - export JAVA_OPTS="-Xmx2048m"
 before_install:
 - git gc --aggressive --prune=now
+- sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 - ls ./etc
 - sudo unzip -j -o ./etc/jce8.zip *.jar -d `jdk_switcher home oraclejdk8`/jre/lib/security
 - sudo ls `jdk_switcher home oraclejdk8`/jre/lib/security
