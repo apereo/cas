@@ -1,9 +1,7 @@
 package org.apereo.cas;
 
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -68,16 +66,16 @@ public interface OidcConstants {
     /**
      * The Scopes.
      */
-    List<String> SCOPES = ImmutableList.of("openid", "profile", "email", "address", "phone", "offline_access");
+    List<String> SCOPES = Arrays.asList("openid", "profile", "email", "address", "phone", "offline_access");
 
     /**
      * The Claims.
      */
-    Set<String> CLAIMS = ImmutableSet.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
+    Set<String> CLAIMS = new HashSet<>(Arrays.asList(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
-            "phone_number_verified", "address");
+            "phone_number_verified", "address"));
 
     /**
      * The id token.

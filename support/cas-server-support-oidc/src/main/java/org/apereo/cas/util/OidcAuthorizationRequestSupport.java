@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -19,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcAuthorizationRequestSupport}.
@@ -37,7 +37,6 @@ public class OidcAuthorizationRequestSupport {
     
     private TicketRegistrySupport ticketRegistrySupport;
 
-
     /**
      * Gets oidc prompt from authorization request.
      *
@@ -46,15 +45,11 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
         Assert.notNull(url, "URL cannot be null");
-        final URIBuilder builderContext = new URIBuilder(url);
-        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                .stream().filter(p -> OidcConstants.PROMPT.equals(p.getName()))
-                .findFirst();
-
-        if (parameter.isPresent()) {
-            return ImmutableSet.copyOf(parameter.get().getValue().split(" "));
-        }
-        return Collections.emptySet();
+        return new URIBuilder(url).getQueryParams().stream()
+                .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
+                .map(param -> param.getValue().split(" "))
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toSet());
     }
     
     /**

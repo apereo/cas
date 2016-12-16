@@ -1,6 +1,5 @@
 package org.apereo.cas.web.controllers;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcClientRegistrationRequest;
 import org.apereo.cas.OidcClientRegistrationResponse;
@@ -10,10 +9,10 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.support.oauth.OAuthGrantType;
 import org.apereo.cas.support.oauth.OAuthResponseType;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.BaseOAuthWrapperController;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.gen.RandomStringGenerator;
@@ -27,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -96,11 +97,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
                     .concat(" and response types ")
                     .concat(clientResponse.getResponseTypes().toString()));
             getServicesManager().save(registeredService);
-            return new ResponseEntity(clientResponse, HttpStatus.CREATED);
+            return new ResponseEntity<>(clientResponse, HttpStatus.CREATED);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-            final Map<String, String> map = ImmutableMap.of("error", "invalid_client_metadata",
-                    "error_message", e.getMessage());
+            final Map<String, String> map = new HashMap<>();
+            map.put("error", "invalid_client_metadata");
+            map.put("error_message", e.getMessage());
             return new ResponseEntity(map, HttpStatus.BAD_REQUEST);
         }
     }
@@ -123,8 +125,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuthWr
         clientResponse.setClientName(registeredService.getName());
         clientResponse.setGrantTypes(Arrays.asList(OAuthGrantType.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuthGrantType.REFRESH_TOKEN.name().toLowerCase()));
-        clientResponse.setRedirectUris(Arrays.asList(registeredService.getServiceId()));
-        clientResponse.setResponseTypes(Arrays.asList(OAuthResponseType.CODE.name().toLowerCase()));
+        clientResponse.setRedirectUris(Collections.singletonList(registeredService.getServiceId()));
+        clientResponse.setResponseTypes(Collections.singletonList(OAuthResponseType.CODE.name().toLowerCase()));
         return clientResponse;
     }
 }
