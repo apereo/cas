@@ -38,7 +38,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
-        final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
+        final UsernamePasswordCredential originalUserPass = (UsernamePasswordCredential) credential;
+        final UsernamePasswordCredential userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
 
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
@@ -59,9 +60,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
 
         userPass.setUsername(transformedUsername);
-        userPass.setPassword(this.passwordEncoder.encode(userPass.getPassword()));
+        userPass.setPassword(transformedPsw);
 
-        return authenticateUsernamePasswordInternal(userPass,((UsernamePasswordCredential) credential).getPassword());
+        return authenticateUsernamePasswordInternal(userPass,originalUserPass.getPassword());
     }
 
     /**
