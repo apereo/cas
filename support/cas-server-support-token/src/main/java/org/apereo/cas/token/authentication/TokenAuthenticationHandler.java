@@ -1,6 +1,5 @@
 package org.apereo.cas.token.authentication;
 
-import com.google.common.collect.Sets;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -20,6 +19,7 @@ import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -60,7 +60,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                         EncryptionMethod.A192CBC_HS384.getName());
 
         if (StringUtils.isNotBlank(signingSecret)) {
-            Set<Algorithm> sets = Sets.newHashSet();
+            Set<Algorithm> sets = new HashSet<>();
             sets.addAll(JWSAlgorithm.Family.EC);
             sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
             sets.addAll(JWSAlgorithm.Family.RSA);
@@ -72,7 +72,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             a.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, signingAlg));
 
             if (StringUtils.isNotBlank(encryptionSecret)) {
-                sets = Sets.newHashSet();
+                sets = new HashSet<>();
                 sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
                 sets.addAll(JWEAlgorithm.Family.AES_KW);
                 sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);
@@ -83,7 +83,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
 
                 final JWEAlgorithm encAlg = findAlgorithmFamily(sets, encryptionSecretAlg);
 
-                sets = Sets.newHashSet();
+                sets = new HashSet<>();
                 sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
