@@ -60,6 +60,9 @@ public interface CasProtocolConstants {
     /** Constant representing the method parameter in the request. */
     String PARAMETER_METHOD = "method";
 
+    /** Constant representing the pgtId parameter in the request. */
+    String PARAMETER_PROXY_GRANTINOG_TICKET_ID = "pgtId";
+
     /** Constant representing the pgt parameter in the request. */
     String PARAMETER_PROXY_GRANTINOG_TICKET = "pgt";
 
