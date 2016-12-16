@@ -36,7 +36,6 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
      */
     @PostConstruct
     public void initialize() {
-
         try {
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
             final Resource metadataLocation = idp.getMetadata().getLocation();
