@@ -24,7 +24,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -99,7 +98,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return new HashSet<>(Collections.singletonList(event));
+                return Collections.singleton(event);
             }
             logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
             return null;
