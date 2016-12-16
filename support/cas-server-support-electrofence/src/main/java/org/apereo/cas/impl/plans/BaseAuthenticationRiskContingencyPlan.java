@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.plans;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -37,7 +37,7 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
     @Autowired
     protected ApplicationContext applicationContext;
 
-    private Set<AuthenticationRiskNotifier> notifiers = Sets.newLinkedHashSet();
+    private Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>();
 
 
     @Override

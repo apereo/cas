@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
@@ -47,6 +46,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -201,7 +201,7 @@ public class ElectronicFenceConfiguration {
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
         final RiskBasedAuthenticationProperties risk = casProperties.getAuthn().getAdaptive().getRisk();
-        final Set<AuthenticationRequestRiskCalculator> calculators = Sets.newHashSet();
+        final Set<AuthenticationRequestRiskCalculator> calculators = new HashSet<>();
 
         if (risk.getIp().isEnabled()) {
             calculators.add(ipAddressAuthenticationRequestRiskCalculator());

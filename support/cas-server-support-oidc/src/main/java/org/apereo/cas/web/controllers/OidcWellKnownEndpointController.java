@@ -1,6 +1,5 @@
 package org.apereo.cas.web.controllers;
 
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.OidcConstants;
 import org.apereo.cas.OidcServerDiscoverySettings;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -17,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This is {@link OidcWellKnownEndpointController}.
@@ -50,20 +52,20 @@ public class OidcWellKnownEndpointController extends BaseOAuthWrapperController 
                 new OidcServerDiscoverySettings(casProperties.getServer().getPrefix(), casProperties.getAuthn().getOidc().getIssuer());
 
         discoveryProperties.setClaimsSupported(
-                ImmutableList.of(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
+                Arrays.asList(OidcConstants.CLAIM_SUB, "name", OidcConstants.CLAIM_PREFERRED_USERNAME,
                         "family_name", "given_name", "middle_name", "given_name", "profile",
                         "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
                         "birthdate", "email", "email_verified", "phone_number",
                         "phone_number_verified", "address"));
         discoveryProperties.setScopesSupported(OidcConstants.SCOPES);
 
-        discoveryProperties.setResponseTypesSupported(ImmutableList.of("code", "token"));
-        discoveryProperties.setSubjectTypesSupported(ImmutableList.of("public", "pairwise"));
-        discoveryProperties.setClaimTypesSupported(ImmutableList.of("normal"));
+        discoveryProperties.setResponseTypesSupported(Arrays.asList("code", "token"));
+        discoveryProperties.setSubjectTypesSupported(Arrays.asList("public", "pairwise"));
+        discoveryProperties.setClaimTypesSupported(Collections.singletonList("normal"));
 
-        discoveryProperties.setGrantTypesSupported(ImmutableList.of("authorization_code", "password", "implicit"));
+        discoveryProperties.setGrantTypesSupported(Arrays.asList("authorization_code", "password", "implicit"));
 
-        discoveryProperties.setIdTokenSigningAlgValuesSupported(ImmutableList.of("none", "RS256"));
+        discoveryProperties.setIdTokenSigningAlgValuesSupported(Arrays.asList("none", "RS256"));
 
         return new ResponseEntity(discoveryProperties, HttpStatus.OK);
     }

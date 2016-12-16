@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.Sets;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
@@ -25,6 +24,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -97,7 +97,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             final AuthenticationRiskContingencyResponse res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
             
-            return Sets.newHashSet(res.getResult());
+            return Collections.singleton(res.getResult());
         }
 
         logger.debug("Authentication request for {} is below the risk threshold", authentication.getPrincipal());
