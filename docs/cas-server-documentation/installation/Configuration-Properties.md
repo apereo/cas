@@ -1072,7 +1072,7 @@ There are two requirements for this use case:
 
 ### Connection Strategies
 
-If Multiple URLs are provided as the ldapURL this describes how each URL will be processed.
+If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
 
 | Provider              | Description              
 |-----------------------|-----------------
