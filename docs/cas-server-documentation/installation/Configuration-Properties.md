@@ -2473,7 +2473,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.pool.maxWait=2000
 ```
 
-### Mongodb
+### MongoDb
 
 Decide how CAS should store authentication events inside a MongoDb instance.
 
@@ -2554,7 +2554,7 @@ to locate service definitions, decide how those resources should be found.
 To learn more about this topic, [please review this guide](JSON-Service-Management.html)
 or [this guide](YAML-Service-Management.html).
 
-### Mongo Service Registry
+### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance.
 To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
