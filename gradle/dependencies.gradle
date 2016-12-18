@@ -692,6 +692,10 @@ ext.libraries = [
                 }
         ],
         tests                   : [
+                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
+                    exclude(module: "commons-io")
+                    force = true
+                },
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
@@ -1835,12 +1839,6 @@ ext.libraries = [
                 dependencies.create("com.authy:authy-java:$authyVersion") {
                     exclude(module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
-                    force = true
-                }
-        ],
-        embeddedRedis           : [
-                dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
-                    exclude(module: "commons-io")
                     force = true
                 }
         ]

@@ -40,6 +40,8 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {RedisTicketRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class RedisTicketRegistryTests {
 
+    private static RedisServer REDIS_SERVER;
+
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -48,7 +50,6 @@ public class RedisTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    private static RedisServer redisServer;
 
     @Before
     public void setUp() throws Exception {
@@ -57,13 +58,13 @@ public class RedisTicketRegistryTests {
 
     @BeforeClass
     public static void startRedis() throws Exception {
-        redisServer = new RedisServer(6379);
-        redisServer.start();
+        REDIS_SERVER = new RedisServer(6379);
+        REDIS_SERVER.start();
     }
 
     @AfterClass
     public static void stopRedis() {
-        redisServer.stop();
+        REDIS_SERVER.stop();
     }
 
     /**

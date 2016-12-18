@@ -24,7 +24,6 @@ import redis.clients.jedis.JedisPoolConfig;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RedisTicketRegistryConfiguration {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -35,10 +34,10 @@ public class RedisTicketRegistryConfiguration {
     @Bean
     @RefreshScope
     public RedisConnectionFactory redisConnectionFactory() {
-        JedisPoolConfig poolConfig = this.redisProperties().getPool() != null
+        final JedisPoolConfig poolConfig = this.redisProperties().getPool() != null
                 ? jedisPoolConfig() : new JedisPoolConfig();
 
-        JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
+        final JedisConnectionFactory factory = new JedisConnectionFactory(poolConfig);
         factory.setHostName(this.redisProperties().getHost());
         factory.setPort(this.redisProperties().getPort());
         if (this.redisProperties().getPassword() != null) {
@@ -51,10 +50,9 @@ public class RedisTicketRegistryConfiguration {
         return factory;
     }
 
-
     private JedisPoolConfig jedisPoolConfig() {
-        JedisPoolConfig config = new JedisPoolConfig();
-        RedisTicketRegistryProperties.Pool props = this.redisProperties().getPool();
+        final JedisPoolConfig config = new JedisPoolConfig();
+        final RedisTicketRegistryProperties.Pool props = this.redisProperties().getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
         config.setMinIdle(props.getMinIdle());
@@ -69,12 +67,9 @@ public class RedisTicketRegistryConfiguration {
         return new TicketRedisTemplate(redisConnectionFactory());
     }
 
-
     @Bean(name = {"redisTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry redisTicketRegistry() {
         return new RedisTicketRegistry(ticketRedisTemplate());
     }
-
-
 }
