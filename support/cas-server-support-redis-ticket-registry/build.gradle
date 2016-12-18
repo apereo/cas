@@ -2,6 +2,7 @@ description = "Apereo CAS Redis Ticket Registry"
 
 dependencies {
     compile libraries.spring
+    compile libraries.springcloud
     compile libraries.springbootredis
 
     compile project(":core:cas-server-core-logging")
@@ -12,7 +13,6 @@ dependencies {
     testCompile project(":core:cas-server-core-util")
     testCompile libraries.tests
     testCompile libraries.metrics
-    testCompile libraries.embeddedRedis
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
