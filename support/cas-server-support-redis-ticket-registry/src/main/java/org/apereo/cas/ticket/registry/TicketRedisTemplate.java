@@ -8,20 +8,23 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
+ * Provides a template for redis operations.
+ *
  * @author serv
+ * @since 5.1.0
  */
 public class TicketRedisTemplate extends RedisTemplate<String, Ticket> {
 
     public TicketRedisTemplate() {
-        RedisSerializer<String> string = new StringRedisSerializer();
-        JdkSerializationRedisSerializer jdk = new JdkSerializationRedisSerializer();
+        final RedisSerializer<String> string = new StringRedisSerializer();
+        final JdkSerializationRedisSerializer jdk = new JdkSerializationRedisSerializer();
         setKeySerializer(string);
         setValueSerializer(jdk);
         setHashKeySerializer(string);
         setHashValueSerializer(jdk);
     }
 
-    public TicketRedisTemplate(RedisConnectionFactory connectionFactory) {
+    public TicketRedisTemplate(final RedisConnectionFactory connectionFactory) {
         this();
         setConnectionFactory(connectionFactory);
         afterPropertiesSet();
