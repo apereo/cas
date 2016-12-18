@@ -26,5 +26,5 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ### Eviction Policy
 
 Redis manages the internal eviction policy of cached objects via the idle and alive settings.
-The timeout is the ticket`s `timeToLive`,you need to ensure the cache is alive long enough to support the 
+The timeout is the ticket's `timeToLive` value. So you need to ensure the cache is alive long enough to support the 
 individual expiration policy of tickets, and let CAS clean the tickets as part of its own cleaner. 
