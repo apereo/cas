@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -40,6 +41,9 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
+
+    @NestedConfigurationProperty
+    private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
 
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
@@ -114,6 +118,14 @@ public class TicketRegistryProperties {
 
     public void setInfinispan(final InfinispanProperties infinispan) {
         this.infinispan = infinispan;
+    }
+
+    public RedisTicketRegistryProperties getRedis() {
+        return redis;
+    }
+
+    public void setRedis(RedisTicketRegistryProperties redis) {
+        this.redis = redis;
     }
 
     public static class InMemory {
