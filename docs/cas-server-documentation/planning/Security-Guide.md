@@ -134,7 +134,7 @@ a Web user interface, or both. See the [Service Management](../installation/Serv
 information.
 
 <div class="alert alert-warning"><strong>Authorized Services</strong><p>
-As a security best practice, it is <strong>strongly</strong> recommended to limit the service management facility
+As a security best practice, it is <strong>STRONGLY</strong> recommended to limit the service management facility
 to only include the list of known applications that are authorized to use CAS. Leaving the management interface
 open for all applications may create an opportunity for security attacks.
 </p></div>
@@ -165,7 +165,8 @@ To see the relevant list of CAS properties, please [review this guide](../instal
 
 ### Ticket Registry Encryption
 
-Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment. 
+Secure ticket replication as it regards clustered CAS deployments may be required to ensure generated tickets by CAS are not tampered with in transit. CAS covers 
+this issue by allowing tickets to be natively encrypted and signed. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment. 
 Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info.
 
 ### Administrative Pages Security
