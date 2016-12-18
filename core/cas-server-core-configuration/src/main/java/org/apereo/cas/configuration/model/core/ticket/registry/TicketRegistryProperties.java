@@ -124,7 +124,7 @@ public class TicketRegistryProperties {
         return redis;
     }
 
-    public void setRedis(RedisTicketRegistryProperties redis) {
+    public void setRedis(final RedisTicketRegistryProperties redis) {
         this.redis = redis;
     }
 

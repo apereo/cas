@@ -2916,13 +2916,15 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 ## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
 #
-## Maximum amount of time (in milliseconds) a connection allocation should block before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
+## Maximum amount of time (in milliseconds) a connection allocation should block 
+#  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
 ```
 
 ## Protocol Ticket Security
 
-Controls whether tickets issued by the CAS server should be secured via signing and encryption.
+Controls whether tickets issued by the CAS server should be secured via signing and encryption
+when shared with client applications on outgoing calls.
 
 ```properties
 # cas.ticket.security.cipherEnabled=true
