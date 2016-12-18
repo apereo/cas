@@ -4,13 +4,14 @@ package org.apereo.cas.configuration.model.support.redis;
  * Configuration properties for Redis.
  *
  * @author serv
+ * @since 5.1.0
  */
 public class RedisTicketRegistryProperties {
 
     /**
      * Database index used by the connection factory.
      */
-    private int database = 0;
+    private int database;
 
     /**
      * Redis server host.
@@ -38,7 +39,7 @@ public class RedisTicketRegistryProperties {
         return this.database;
     }
 
-    public void setDatabase(int database) {
+    public void setDatabase(final int database) {
         this.database = database;
     }
 
@@ -46,7 +47,7 @@ public class RedisTicketRegistryProperties {
         return this.host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -54,7 +55,7 @@ public class RedisTicketRegistryProperties {
         return this.password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -62,11 +63,11 @@ public class RedisTicketRegistryProperties {
         return this.port;
     }
 
-    public void setPort(int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(final int timeout) {
         this.timeout = timeout;
     }
 
@@ -78,7 +79,7 @@ public class RedisTicketRegistryProperties {
         return this.pool;
     }
 
-    public void setPool(Pool pool) {
+    public void setPool(final Pool pool) {
         this.pool = pool;
     }
 
@@ -97,7 +98,7 @@ public class RedisTicketRegistryProperties {
          * Target for the minimum number of idle connections to maintain in the pool. This
          * setting only has an effect if it is positive.
          */
-        private int minIdle = 0;
+        private int minIdle;
 
         /**
          * Max number of connections that can be allocated by the pool at a given time.
