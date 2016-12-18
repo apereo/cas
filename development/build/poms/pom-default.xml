@@ -1023,6 +1023,34 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>com.github.kstyrc</groupId>
+      <artifactId>embedded-redis</artifactId>
+      <version>0.6</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib-full</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>1.10.19</version>
