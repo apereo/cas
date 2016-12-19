@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableMap;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.apache.commons.collections.map.HashedMap;
@@ -38,6 +37,7 @@ import org.springframework.core.io.Resource;
 import javax.naming.directory.SearchControls;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,7 +181,7 @@ public class CasPersonDirectoryConfiguration {
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
                 }
 
-                jdbcDao.setQueryAttributeMapping(ImmutableMap.of("username", jdbc.getUsername()));
+                jdbcDao.setQueryAttributeMapping(Collections.singletonMap("username", jdbc.getUsername()));
                 final Map<String, String> mapping = attrs.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for {} to be {}", jdbc.getUrl(), attrs.getAttributes());

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.authentication.Authentication;
@@ -235,7 +234,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @Override
     public synchronized Map<String, Service> getServices() {
-        return Maps.newHashMap(this.services);
+        return new HashMap<>(this.services);
     }
 
     @Override
