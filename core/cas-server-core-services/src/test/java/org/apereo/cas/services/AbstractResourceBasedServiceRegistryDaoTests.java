@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -16,6 +15,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -298,8 +298,8 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 new DefaultRegisteredServiceAccessStrategy(false, false);
 
         final Map<String, Set<String>> attrs = new HashMap<>();
-        attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
-        attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
+        attrs.put("cn", Collections.singleton("v1, v2, v3"));
+        attrs.put("memberOf", Collections.singleton("v4, v5, v6"));
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 

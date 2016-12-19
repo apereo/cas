@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -12,6 +11,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link BaseTicketSerializers}
@@ -21,7 +21,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 public abstract class BaseTicketSerializers {
-    private static final Map<String, Class> TICKET_TYPE_CACHE = Maps.newConcurrentMap();
+    private static final Map<String, Class> TICKET_TYPE_CACHE = new ConcurrentHashMap<>();
 
     private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
