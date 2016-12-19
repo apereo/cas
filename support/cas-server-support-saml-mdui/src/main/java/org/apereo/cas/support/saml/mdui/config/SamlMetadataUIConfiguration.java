@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui.config;
 
-import com.google.common.collect.ImmutableList;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -43,6 +42,7 @@ import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,17 +139,16 @@ public class SamlMetadataUIConfiguration {
                 final BasicResourceCredentialFactoryBean credential = new BasicResourceCredentialFactoryBean();
                 credential.setPublicKeyInfo(this.resourceLoader.getResource(signingKey));
                 credential.afterPropertiesSet();
-                final StaticCredentialResolver credentialResolver =
-                        new StaticCredentialResolver(credential.getObject());
+                final StaticCredentialResolver credentialResolver = new StaticCredentialResolver(credential.getObject());
 
                 final BasicProviderKeyInfoCredentialResolver keyInfoResolver =
                         new BasicProviderKeyInfoCredentialResolver(
-                                ImmutableList.of(
+                                Collections.unmodifiableList(Arrays.asList(
                                         new RSAKeyValueProvider(),
                                         new DSAKeyValueProvider(),
                                         new DEREncodedKeyValueProvider(),
                                         new InlineX509DataProvider()
-                                )
+                                ))
                         );
                 final ExplicitKeySignatureTrustEngine engine =
                         new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
@@ -161,14 +160,12 @@ public class SamlMetadataUIConfiguration {
             chain.setFilters(filters);
             resources.put(this.resourceLoader.getResource(metadataFile), chain);
         }));
-
     }
 
     private MetadataResolverAdapter getDynamicMetadataResolverAdapter() {
         final DynamicMetadataResolverAdapter adapter = new DynamicMetadataResolverAdapter();
         configureAdapter(adapter);
         return adapter;
-
     }
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {
