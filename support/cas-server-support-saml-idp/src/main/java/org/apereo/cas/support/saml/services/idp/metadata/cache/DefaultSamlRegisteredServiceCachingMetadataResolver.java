@@ -7,7 +7,6 @@ import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,15 +26,10 @@ public class DefaultSamlRegisteredServiceCachingMetadataResolver implements Saml
 
     private LoadingCache<SamlRegisteredService, ChainingMetadataResolver> cache;
 
-    /**
-     * Instantiates a new Saml registered service caching metadata resolver.
-     */
-    public DefaultSamlRegisteredServiceCachingMetadataResolver() {
-    }
-
-
-    @PostConstruct
-    private void init() {
+    public DefaultSamlRegisteredServiceCachingMetadataResolver(final long metadataCacheExpirationMinutes,
+                                                               final ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader) {
+        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
+        this.chainingMetadataResolverCacheLoader = chainingMetadataResolverCacheLoader;
         this.cache = CacheBuilder.newBuilder().maximumSize(1)
                 .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(this.chainingMetadataResolverCacheLoader);
     }

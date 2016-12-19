@@ -100,6 +100,14 @@ public class SamlObjectSigner {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    public SamlObjectSigner(final List overrideSignatureReferenceDigestMethods, final List overrideSignatureAlgorithms,
+                            final List overrideBlackListedSignatureAlgorithms, final List overrideWhiteListedAlgorithms) {
+        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
+        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
+        this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+    }
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -256,7 +264,7 @@ public class SamlObjectSigner {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !samlIdp.getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
             config.setWhitelistMerge(true);
         }
@@ -284,7 +292,7 @@ public class SamlObjectSigner {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !samlIdp.getResponse().getOverrideSignatureCanonicalizationAlgorithm().isEmpty()) {
+                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
         }
 
@@ -300,8 +308,8 @@ public class SamlObjectSigner {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(samlIdp.getResponse().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(samlIdp.getResponse().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm());
         }
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
@@ -435,21 +443,6 @@ public class SamlObjectSigner {
         }
     }
 
-    public void setOverrideSignatureReferenceDigestMethods(final List overrideSignatureReferenceDigestMethods) {
-        this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
-    }
-
-    public void setOverrideSignatureAlgorithms(final List overrideSignatureAlgorithms) {
-        this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
-    }
-
-    public void setOverrideBlackListedSignatureAlgorithms(final List overrideBlackListedSignatureAlgorithms) {
-        this.overrideBlackListedSignatureAlgorithms = overrideBlackListedSignatureAlgorithms;
-    }
-
-    public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
-        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-    }
 
     private Credential getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
         try {
