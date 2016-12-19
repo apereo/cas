@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -13,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Immutable authentication event whose attributes may not change after creation.
@@ -40,7 +40,7 @@ public class DefaultAuthentication implements Authentication {
     private Principal principal;
 
     /** Authentication metadata attributes. */
-    private Map<String, Object> attributes = Maps.newConcurrentMap();
+    private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     /** Map of handler name to handler authentication success event. */
     private Map<String, HandlerResult> successes;

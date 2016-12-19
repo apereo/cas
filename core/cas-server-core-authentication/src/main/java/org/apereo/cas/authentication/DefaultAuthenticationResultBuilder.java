@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
@@ -161,7 +160,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(authentications), principalAttributes);
+        return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
     }
     
     public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {

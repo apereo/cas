@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -23,13 +23,13 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     @Override
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> attributes) {
         LOGGER.debug("Ignoring all attributes given the service is designed to never receive any.");
-        return Maps.newHashMap();
+        return Collections.emptyMap();
     }
 
     @Override
     protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease) {
         LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. " 
                   + "If there are any default attributes set to be released to all services, those are also skipped for this service");
-        return Maps.newHashMap();
+        return Collections.emptyMap();
     }
 }
