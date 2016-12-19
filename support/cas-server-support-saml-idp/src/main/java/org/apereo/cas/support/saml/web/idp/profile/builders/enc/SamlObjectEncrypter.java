@@ -69,6 +69,14 @@ public class SamlObjectEncrypter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    public SamlObjectEncrypter(final List overrideDataEncryptionAlgorithms, final List overrideKeyEncryptionAlgorithms,
+                               final List overrideBlackListedEncryptionAlgorithms, final List overrideWhiteListedAlgorithms) {
+        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
+        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
+        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
+        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+    }
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *

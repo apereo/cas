@@ -113,38 +113,6 @@ public class SamlIdPConfiguration {
     private AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired(required = false)
-    @Qualifier("overrideDataEncryptionAlgorithms")
-    private List overrideDataEncryptionAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideKeyEncryptionAlgorithms")
-    private List overrideKeyEncryptionAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideBlackListedEncryptionAlgorithms")
-    private List overrideBlackListedEncryptionAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideWhiteListedEncryptionAlgorithms")
-    private List overrideWhiteListedAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideSignatureReferenceDigestMethods")
-    private List overrideSignatureReferenceDigestMethods;
-
-    @Autowired(required = false)
-    @Qualifier("overrideSignatureAlgorithms")
-    private List overrideSignatureAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideBlackListedSignatureAlgorithms")
-    private List overrideBlackListedSignatureSigningAlgorithms;
-
-    @Autowired(required = false)
-    @Qualifier("overrideWhiteListedSignatureSigningAlgorithms")
-    private List overrideWhiteListedSignatureSigningAlgorithms;
-
-    @Autowired(required = false)
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
@@ -176,45 +144,30 @@ public class SamlIdPConfiguration {
      */
     @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder", "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
-        final SamlIdPSingleLogoutServiceLogoutUrlBuilder b = new SamlIdPSingleLogoutServiceLogoutUrlBuilder();
-        b.setSamlRegisteredServiceCachingMetadataResolver(defaultSamlRegisteredServiceCachingMetadataResolver());
-        b.setServicesManager(servicesManager);
-        return b;
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
+                defaultSamlRegisteredServiceCachingMetadataResolver());
     }
 
     @Bean
     public AuthenticationRequestServiceSelectionStrategy samlIdPEntityIdValidationServiceSelectionStrategy() {
-        final SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy s = new SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy();
-        s.setWebApplicationServiceFactory(webApplicationServiceFactory);
-        return s;
+        return new SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy(webApplicationServiceFactory);
     }
 
     @Bean
     @RefreshScope
     public ChainingMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
-        final ChainingMetadataResolverCacheLoader c = new ChainingMetadataResolverCacheLoader();
-
-        final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
-        c.setFailFastInitialization(md.isFailFast());
-        c.setMetadataCacheExpirationMinutes(md.getCacheExpirationMinutes());
-        c.setRequireValidMetadata(md.isRequireValidMetadata());
-        c.setConfigBean(this.openSamlConfigBean);
-        c.setHttpClient(this.httpClient);
-        c.setBasicAuthnUsername(md.getBasicAuthnUsername());
-        c.setBasicAuthnPassword(md.getBasicAuthnPassword());
-        c.setSupportedContentTypes(md.getSupportedContentTypes());
-        c.setMetadataLocation(casProperties.getAuthn().getSamlIdp().getMetadata().getLocation());
-        return c;
+        return new ChainingMetadataResolverCacheLoader(
+                openSamlConfigBean, httpClient
+        );
     }
 
     @Bean
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
-        final DefaultSamlRegisteredServiceCachingMetadataResolver r = new DefaultSamlRegisteredServiceCachingMetadataResolver();
-        r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
-        r.setMetadataCacheExpirationMinutes(casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes());
-        r.setChainingMetadataResolverCacheLoader(chainingMetadataResolverCacheLoader());
-        return r;
+        return new DefaultSamlRegisteredServiceCachingMetadataResolver(
+                casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
+                chainingMetadataResolverCacheLoader()
+        );
     }
 
     @Bean
@@ -239,23 +192,22 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
-        final SamlObjectEncrypter e = new SamlObjectEncrypter();
-        e.setOverrideBlackListedEncryptionAlgorithms(overrideBlackListedEncryptionAlgorithms);
-        e.setOverrideDataEncryptionAlgorithms(overrideDataEncryptionAlgorithms);
-        e.setOverrideKeyEncryptionAlgorithms(overrideKeyEncryptionAlgorithms);
-        e.setOverrideWhiteListedAlgorithms(overrideWhiteListedAlgorithms);
-        return e;
+        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
+                algs.getOverrideKeyEncryptionAlgorithms(),
+                algs.getOverrideBlackListedEncryptionAlgorithms(),
+                algs.getOverrideWhiteListedAlgorithms());
     }
 
     @Bean
     @RefreshScope
     public SamlObjectSigner samlObjectSigner() {
-        final SamlObjectSigner s = new SamlObjectSigner();
-        s.setOverrideBlackListedSignatureAlgorithms(overrideBlackListedSignatureSigningAlgorithms);
-        s.setOverrideSignatureAlgorithms(overrideSignatureAlgorithms);
-        s.setOverrideSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
-        s.setOverrideWhiteListedAlgorithms(overrideWhiteListedSignatureSigningAlgorithms);
-        return s;
+        final SamlIdPProperties.Algorithms algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        return new SamlObjectSigner(
+                algs.getOverrideSignatureReferenceDigestMethods(),
+                algs.getOverrideSignatureAlgorithms(),
+                algs.getOverrideBlackListedSignatureSigningAlgorithms(),
+                algs.getOverrideWhiteListedSignatureSigningAlgorithms());
     }
 
     @Bean

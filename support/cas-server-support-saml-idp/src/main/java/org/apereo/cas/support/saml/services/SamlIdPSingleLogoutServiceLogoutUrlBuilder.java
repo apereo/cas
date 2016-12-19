@@ -29,6 +29,12 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
      */
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
+    public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
+                                                      final SamlRegisteredServiceCachingMetadataResolver resolver) {
+        this.servicesManager = servicesManager;
+        this.samlRegisteredServiceCachingMetadataResolver = resolver;
+    }
+
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService,
                                   final WebApplicationService singleLogoutService) {
@@ -54,14 +60,5 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
             logger.error(e.getMessage(), e);
         }
         return super.determineLogoutUrl(registeredService, singleLogoutService);
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setSamlRegisteredServiceCachingMetadataResolver(
-            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver) {
-        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
     }
 }

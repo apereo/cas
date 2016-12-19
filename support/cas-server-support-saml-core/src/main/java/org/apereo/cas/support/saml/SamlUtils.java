@@ -1,10 +1,25 @@
 package org.apereo.cas.support.saml;
 
+import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
+import org.apereo.cas.util.ResourceUtils;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
+import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
+import org.opensaml.security.credential.BasicCredential;
+import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
+import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
+import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
@@ -15,6 +30,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SamlUtils}.
@@ -24,8 +41,9 @@ import java.security.cert.X509Certificate;
  */
 public final class SamlUtils {
     private static Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
-    
-    private SamlUtils() {}
+
+    private SamlUtils() {
+    }
 
     /**
      * Read certificate x 509 certificate.
@@ -34,7 +52,7 @@ public final class SamlUtils {
      * @return the x 509 certificate
      */
     public static X509Certificate readCertificate(final Resource resource) {
-        try(InputStream in = resource.getInputStream()) {
+        try (InputStream in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
             throw new RuntimeException("Error reading certificate " + resource, e);
@@ -66,6 +84,63 @@ public final class SamlUtils {
             throw new SamlException(e.getMessage(), e);
         }
         return writer;
+    }
+
+    /**
+     * Build signature validation filter if needed.
+     *
+     * @param signatureResourceLocation the signature resource location
+     * @return the metadata filter
+     * @throws Exception the exception
+     */
+    public static SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
+        final AbstractResource resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
+        final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
+        keyInfoProviderList.add(new RSAKeyValueProvider());
+        keyInfoProviderList.add(new DSAKeyValueProvider());
+        keyInfoProviderList.add(new DEREncodedKeyValueProvider());
+        keyInfoProviderList.add(new InlineX509DataProvider());
+
+        LOGGER.debug("Attempting to resolve credentials from [{}]",
+                signatureResourceLocation);
+        final BasicCredential credential = SamlUtils.buildCredentialForMetadataSignatureValidation(resource);
+        LOGGER.info("Successfully resolved credentials from [{}]",
+                signatureResourceLocation);
+
+        LOGGER.debug("Configuring credential resolver for key signature trust engine @ {}", credential.getCredentialType().getSimpleName());
+        final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
+        final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
+        final ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
+
+        LOGGER.debug("Adding signature validation filter based on the configured trust engine");
+        final SignatureValidationFilter signatureValidationFilter = new SignatureValidationFilter(trustEngine);
+        signatureValidationFilter.setRequireSignedRoot(false);
+        LOGGER.debug("Added metadata SignatureValidationFilter with signature from [{}]", signatureResourceLocation);
+        return signatureValidationFilter;
+    }
+
+    /**
+     * Build credential for metadata signature validation basic credential.
+     *
+     * @param resource the resource
+     * @return the basic credential
+     * @throws Exception the exception
+     */
+    public static BasicCredential buildCredentialForMetadataSignatureValidation(final AbstractResource resource) throws Exception {
+        try {
+            final BasicX509CredentialFactoryBean x509FactoryBean = new BasicX509CredentialFactoryBean();
+            x509FactoryBean.setCertificateResource(resource);
+            x509FactoryBean.afterPropertiesSet();
+            return x509FactoryBean.getObject();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+
+            LOGGER.debug("Credential cannot be extracted from {} via X.509. Treating {} as a public key to locate credential...");
+            final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
+            credentialFactoryBean.setPublicKeyInfo(resource);
+            credentialFactoryBean.afterPropertiesSet();
+            return credentialFactoryBean.getObject();
+        }
     }
 
     /**

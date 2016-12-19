@@ -22,7 +22,11 @@ public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implem
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private ServiceFactory webApplicationServiceFactory;
-    
+
+    public SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
     @Override
     public Service resolveServiceFrom(final Service service) {
         final String entityId = getEntityIdAsParameter(service).get().getValue();
@@ -51,9 +55,5 @@ public class SamlIdPEntityIdAuthenticationRequestServiceSelectionStrategy implem
         final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
-    }
-
-    public void setWebApplicationServiceFactory(final ServiceFactory webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 }

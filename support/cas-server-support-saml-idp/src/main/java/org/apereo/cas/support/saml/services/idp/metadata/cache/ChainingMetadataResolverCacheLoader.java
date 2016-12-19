@@ -4,12 +4,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -33,21 +35,12 @@ import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.security.credential.BasicCredential;
-import org.opensaml.security.credential.impl.StaticCredentialResolver;
-import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
-import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
-import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -83,24 +76,15 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected HttpClient httpClient;
 
-    private long metadataCacheExpirationMinutes;
-
     private transient Object lock = new Object();
 
-    private boolean failFastInitialization = true;
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
-    private boolean requireValidMetadata = true;
-
-    private String basicAuthnUsername;
-    private String basicAuthnPassword;
-    private List<String> supportedContentTypes = new ArrayList<>();
-    private Resource metadataLocation;
-
-    /**
-     * Instantiates a new Chaining metadata resolver cache loader.
-     */
-    public ChainingMetadataResolverCacheLoader() {
-        super();
+    public ChainingMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
+                                               final HttpClient httpClient) {
+        this.configBean = configBean;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -142,16 +126,17 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
 
+        final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
                 new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
-        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES));
-        resolver.setRequireValidMetadata(requireValidMetadata);
+        resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(md.getCacheExpirationMinutes(), TimeUnit.MINUTES));
+        resolver.setRequireValidMetadata(md.isRequireValidMetadata());
 
-        if (StringUtils.isNotBlank(this.basicAuthnPassword) && StringUtils.isNotBlank(this.basicAuthnUsername)) {
-            resolver.setBasicCredentials(new UsernamePasswordCredentials(this.basicAuthnUsername, this.basicAuthnPassword));
+        if (StringUtils.isNotBlank(md.getBasicAuthnPassword()) && StringUtils.isNotBlank(md.getBasicAuthnUsername())) {
+            resolver.setBasicCredentials(new UsernamePasswordCredentials(md.getBasicAuthnUsername(), md.getBasicAuthnPassword()));
         }
-        if (!this.supportedContentTypes.isEmpty()) {
-            resolver.setSupportedContentTypes(supportedContentTypes);
+        if (!md.getSupportedContentTypes().isEmpty()) {
+            resolver.setSupportedContentTypes(md.getSupportedContentTypes());
         }
 
         resolver.setRequestURLBuilder(new Function<String, String>() {
@@ -221,7 +206,9 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     private void resolveUrlBasedMetadataResource(final SamlRegisteredService service,
                                                  final List<MetadataResolver> metadataResolvers,
                                                  final AbstractResource metadataResource) throws Exception {
-        final File backupDirectory = new File(this.metadataLocation.getFile(), "metadata-backups");
+
+        final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
+        final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         final File backupFile = new File(backupDirectory, metadataResource.getFilename());
 
         logger.debug("Metadata backup directory is designated to be {}", backupDirectory.getCanonicalPath());
@@ -273,9 +260,10 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      */
     protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                final SamlRegisteredService service) throws Exception {
+        final SamlIdPProperties.Metadata md = casProperties.getAuthn().getSamlIdp().getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
-        metadataProvider.setFailFastInitialization(this.failFastInitialization);
-        metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
+        metadataProvider.setFailFastInitialization(md.isFailFast());
+        metadataProvider.setRequireValidMetadata(md.isRequireValidMetadata());
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
 
         buildMetadataFilters(service, metadataProvider);
@@ -369,33 +357,13 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             return;
         }
 
-        final AbstractResource resource = ResourceUtils.getResourceFrom(service.getMetadataSignatureLocation());
-        final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
-        keyInfoProviderList.add(new RSAKeyValueProvider());
-        keyInfoProviderList.add(new DSAKeyValueProvider());
-        keyInfoProviderList.add(new DEREncodedKeyValueProvider());
-        keyInfoProviderList.add(new InlineX509DataProvider());
-
-        logger.debug("Attempting to resolve credentials from [{}] for [{}]",
-                service.getMetadataSignatureLocation(), service.getMetadataLocation());
-
-        final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
-        final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
-        credentialFactoryBean.setPublicKeyInfo(resource);
-        credentialFactoryBean.afterPropertiesSet();
-        final BasicCredential credential = credentialFactoryBean.getObject();
-
-        logger.info("Successfully resolved credentials from [{}] for [{}]",
-                service.getMetadataSignatureLocation(), service.getMetadataLocation());
-
-        final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
-        final ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
-
-        final SignatureValidationFilter signatureValidationFilter = new SignatureValidationFilter(trustEngine);
+        final SignatureValidationFilter signatureValidationFilter =
+                SamlUtils.buildSignatureValidationFilter(service.getMetadataSignatureLocation());
         signatureValidationFilter.setRequireSignedRoot(false);
         metadataFilterList.add(signatureValidationFilter);
         logger.debug("Added metadata SignatureValidationFilter with signature from [{}]", service.getMetadataSignatureLocation());
     }
+
 
     /**
      * Build required valid until filter if needed. See {@link RequiredValidUntilFilter}.
@@ -413,42 +381,6 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
             logger.debug("No metadata maximum validity criteria is defined for [{}], so RequiredValidUntilFilter will not be invoked",
                     service.getMetadataLocation());
         }
-    }
-
-    public void setMetadataLocation(final Resource metadataLocation) {
-        this.metadataLocation = metadataLocation;
-    }
-
-    public void setFailFastInitialization(final boolean failFastInitialization) {
-        this.failFastInitialization = failFastInitialization;
-    }
-
-    public void setRequireValidMetadata(final boolean requireValidMetadata) {
-        this.requireValidMetadata = requireValidMetadata;
-    }
-
-    public void setConfigBean(final OpenSamlConfigBean configBean) {
-        this.configBean = configBean;
-    }
-
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
-    public void setBasicAuthnUsername(final String basicAuthnUsername) {
-        this.basicAuthnUsername = basicAuthnUsername;
-    }
-
-    public void setBasicAuthnPassword(final String basicAuthnPassword) {
-        this.basicAuthnPassword = basicAuthnPassword;
-    }
-
-    public void setSupportedContentTypes(final List<String> supportedContentTypes) {
-        this.supportedContentTypes = supportedContentTypes;
-    }
-
-    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
     }
 }
 

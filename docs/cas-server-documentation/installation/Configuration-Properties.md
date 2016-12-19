@@ -1828,8 +1828,17 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
-# cas.authn.samlIdp.response.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
+
+# cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
+# cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideKeyEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideBlackListedEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideWhiteListedAlgorithms=
+# cas.authn.samlIdp.algs.overrideSignatureReferenceDigestMethods=
+# cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
+# cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
+# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms= 
 ```
 
 
