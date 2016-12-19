@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -8,6 +7,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class SamlAttributeEncoder {
                                       final Map<String, Object> attributes,
                                       final SamlRegisteredService service,
                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        final Map<String, Object> finalAttributes = Maps.newHashMap(attributes);
+        final Map<String, Object> finalAttributes = new HashMap<>(attributes);
 
         transformUniformResourceNames(finalAttributes);
 

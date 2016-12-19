@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.ldap;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -28,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -173,7 +173,7 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final Map<String, String> set = Maps.newLinkedHashMap();
+        final Map<String, String> set = new LinkedHashMap<>();
 
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
