@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -105,6 +106,6 @@ public class PersonDirectoryPrincipalResolverTests {
         this.thrown.expectMessage("Resolved principals by the chain are not unique");
 
         chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                CoreAuthenticationTestUtils.getPrincipal("somethingelse", ImmutableMap.of("attr1", "value")));
+                CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap("attr1", "value")));
     }
 }

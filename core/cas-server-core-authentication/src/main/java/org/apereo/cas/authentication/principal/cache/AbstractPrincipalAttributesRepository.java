@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,6 +20,7 @@ import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -142,7 +142,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return person attributes
      */
     private static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Principal p) {
-        final Map<String, List<Object>> convertedAttributes = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, List<Object>> convertedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         final Map<String, Object> principalAttributes = p.getAttributes();
 
         principalAttributes.entrySet().stream().forEach(entry -> {
