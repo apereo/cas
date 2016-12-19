@@ -23,6 +23,15 @@ public class SamlIdPProperties {
     private Response response = new Response();
     private Metadata metadata = new Metadata();
     private Logout logout = new Logout();
+    private Algorithms algs = new Algorithms();
+
+    public Algorithms getAlgs() {
+        return algs;
+    }
+
+    public void setAlgs(final Algorithms algs) {
+        this.algs = algs;
+    }
 
     public Logout getLogout() {
         return logout;
@@ -199,7 +208,6 @@ public class SamlIdPProperties {
 
     public static class Response {
         private int skewAllowance;
-        private String overrideSignatureCanonicalizationAlgorithm;
         private boolean signError;
         private boolean useAttributeFriendlyName = true;
 
@@ -217,14 +225,6 @@ public class SamlIdPProperties {
 
         public void setSkewAllowance(final int skewAllowance) {
             this.skewAllowance = skewAllowance;
-        }
-
-        public String getOverrideSignatureCanonicalizationAlgorithm() {
-            return overrideSignatureCanonicalizationAlgorithm;
-        }
-
-        public void setOverrideSignatureCanonicalizationAlgorithm(final String overrideSignatureCanonicalizationAlgorithm) {
-            this.overrideSignatureCanonicalizationAlgorithm = overrideSignatureCanonicalizationAlgorithm;
         }
 
         public boolean isSignError() {
@@ -254,6 +254,90 @@ public class SamlIdPProperties {
 
         public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
             this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
+        }
+    }
+
+    public static class Algorithms {
+        private List overrideDataEncryptionAlgorithms;
+        private List overrideKeyEncryptionAlgorithms;
+        private List overrideBlackListedEncryptionAlgorithms;
+        private List overrideWhiteListedAlgorithms;
+        private List overrideSignatureReferenceDigestMethods;
+        private List overrideSignatureAlgorithms;
+        private List overrideBlackListedSignatureSigningAlgorithms;
+        private List overrideWhiteListedSignatureSigningAlgorithms;
+        private String overrideSignatureCanonicalizationAlgorithm;
+
+        public String getOverrideSignatureCanonicalizationAlgorithm() {
+            return overrideSignatureCanonicalizationAlgorithm;
+        }
+
+        public void setOverrideSignatureCanonicalizationAlgorithm(final String overrideSignatureCanonicalizationAlgorithm) {
+            this.overrideSignatureCanonicalizationAlgorithm = overrideSignatureCanonicalizationAlgorithm;
+        }
+
+        public List getOverrideDataEncryptionAlgorithms() {
+            return overrideDataEncryptionAlgorithms;
+        }
+
+        public void setOverrideDataEncryptionAlgorithms(final List overrideDataEncryptionAlgorithms) {
+            this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
+        }
+
+        public List getOverrideKeyEncryptionAlgorithms() {
+            return overrideKeyEncryptionAlgorithms;
+        }
+
+        public void setOverrideKeyEncryptionAlgorithms(final List overrideKeyEncryptionAlgorithms) {
+            this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
+        }
+
+        public List getOverrideBlackListedEncryptionAlgorithms() {
+            return overrideBlackListedEncryptionAlgorithms;
+        }
+
+        public void setOverrideBlackListedEncryptionAlgorithms(final List overrideBlackListedEncryptionAlgorithms) {
+            this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
+        }
+
+        public List getOverrideWhiteListedAlgorithms() {
+            return overrideWhiteListedAlgorithms;
+        }
+
+        public void setOverrideWhiteListedAlgorithms(final List overrideWhiteListedAlgorithms) {
+            this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
+        }
+
+        public List getOverrideSignatureReferenceDigestMethods() {
+            return overrideSignatureReferenceDigestMethods;
+        }
+
+        public void setOverrideSignatureReferenceDigestMethods(final List overrideSignatureReferenceDigestMethods) {
+            this.overrideSignatureReferenceDigestMethods = overrideSignatureReferenceDigestMethods;
+        }
+
+        public List getOverrideSignatureAlgorithms() {
+            return overrideSignatureAlgorithms;
+        }
+
+        public void setOverrideSignatureAlgorithms(final List overrideSignatureAlgorithms) {
+            this.overrideSignatureAlgorithms = overrideSignatureAlgorithms;
+        }
+
+        public List getOverrideBlackListedSignatureSigningAlgorithms() {
+            return overrideBlackListedSignatureSigningAlgorithms;
+        }
+
+        public void setOverrideBlackListedSignatureSigningAlgorithms(final List overrideBlackListedSignatureSigningAlgorithms) {
+            this.overrideBlackListedSignatureSigningAlgorithms = overrideBlackListedSignatureSigningAlgorithms;
+        }
+
+        public List getOverrideWhiteListedSignatureSigningAlgorithms() {
+            return overrideWhiteListedSignatureSigningAlgorithms;
+        }
+
+        public void setOverrideWhiteListedSignatureSigningAlgorithms(final List overrideWhiteListedSignatureSigningAlgorithms) {
+            this.overrideWhiteListedSignatureSigningAlgorithms = overrideWhiteListedSignatureSigningAlgorithms;
         }
     }
 }
