@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,6 +10,7 @@ import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -87,10 +87,10 @@ public final class CoreAuthenticationTestUtils {
 
     public static IPersonAttributeDao getAttributeRepository() {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
-        attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
-        attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));
-        attributes.put("memberOf", (List) ImmutableList.of("system", "admin", "cas"));
+        attributes.put("uid", Collections.singletonList(CONST_USERNAME));
+        attributes.put("cn", Collections.singletonList(CONST_USERNAME.toUpperCase()));
+        attributes.put("givenName", Collections.singletonList(CONST_USERNAME));
+        attributes.put("memberOf", Arrays.asList("system", "admin", "cas"));
         return new StubPersonAttributeDao(attributes);
     }
 
