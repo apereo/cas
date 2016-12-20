@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -170,6 +169,6 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     
     private Principal mockPrincipal(final String attrName, final String... attrValues) {
         return principalFactory.createPrincipal("user",
-                ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
+                Collections.singletonMap(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
     }
 }
