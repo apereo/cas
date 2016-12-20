@@ -175,6 +175,12 @@ public final class Beans {
         properties.put("hibernate.dialect", jpaProperties.getDialect());
         properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
         properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
+            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+        }
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
+            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+        }
         bean.setJpaProperties(properties);
         return bean;
     }
@@ -290,9 +296,6 @@ public final class Beans {
             final AbstractLdapProperties.LdapConnectionStrategy strategy =
                     AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
             switch (strategy) {
-                case DEFAULT:
-                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
-                    break;
                 case RANDOM:
                     cc.setConnectionStrategy(new RandomConnectionStrategy());
                     break;
@@ -304,6 +307,10 @@ public final class Beans {
                     break;
                 case ROUND_ROBIN:
                     cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                    break;
+                case DEFAULT:
+                default:
+                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
                     break;
             }
         }
