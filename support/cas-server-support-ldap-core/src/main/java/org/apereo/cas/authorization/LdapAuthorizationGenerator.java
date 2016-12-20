@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
+import java.util.Arrays;
+
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
@@ -45,6 +47,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
 
     /**
      * Creates a new instance with the given required parameters.
+     *
      * @param factory              Source of LDAP connections for searches.
      * @param userSearchExecutor   Executes the LDAP search for user data.
      * @param allowMultipleResults allow multiple search results in which case the first result
@@ -73,7 +76,8 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
             LOGGER.debug("Attempting to get details for user {}.", username);
             final Response<SearchResult> response = this.userSearchExecutor.search(
                     this.connectionFactory,
-                    Beans.newSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(), username));
+                    Beans.newSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+                            Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Arrays.asList(username)));
 
             LOGGER.debug("LDAP user search response: {}", response);
             userResult = response.getResult();

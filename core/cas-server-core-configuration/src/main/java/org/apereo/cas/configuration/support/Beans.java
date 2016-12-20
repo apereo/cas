@@ -70,6 +70,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,10 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public final class Beans {
+    /**
+     * Default parameter name in search filters for ldap.
+     */
+    public static final String LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME = "user";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
@@ -515,18 +520,42 @@ public final class Beans {
      * the username as a parameter.
      *
      * @param filterQuery the query filter
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery) {
+        return newSearchFilter(filterQuery, Collections.emptyList());
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
+    public static SearchFilter newSearchFilter(final String filterQuery, final List<String> params) {
+        return newSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
+     * @param paramName   the param name
+     * @param params      the username
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
-            for (int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.size(); i++) {
                 if (filter.getFilter().contains("{" + i + '}')) {
-                    filter.setParameter(i, params[i]);
+                    filter.setParameter(i, params.get(i));
                 } else {
-                    filter.setParameter("user", params[i]);
+                    filter.setParameter(paramName, params.get(i));
                 }
             }
         }
@@ -542,12 +571,23 @@ public final class Beans {
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final String... params) {
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
         executor.setSearchFilter(newSearchFilter(filterQuery, params));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
+    }
+
+    /**
+     * New search executor search executor.
+     *
+     * @param baseDn      the base dn
+     * @param filterQuery the filter query
+     * @return the search executor
+     */
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery) {
+        return newSearchExecutor(baseDn, filterQuery, Collections.emptyList());
     }
 }
