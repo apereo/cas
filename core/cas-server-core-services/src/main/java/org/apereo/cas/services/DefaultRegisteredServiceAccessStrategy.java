@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -246,11 +244,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         
         return difference.stream().anyMatch(key -> {
             final Set<String> requiredValues = this.requiredAttributes.get(key);
-            final Set<String> availableValues = objectToSetOfStrings(principalAttributes.get(key));
+            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
 
             final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().anyMatch(pattern.asPredicate());
+                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             } else {
                 return availableValues.stream().anyMatch(requiredValues::contains);
             }
@@ -276,11 +274,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         
         return rejectedDifference.stream().anyMatch(key -> {
             final Set<String> rejectedValues = this.rejectedAttributes.get(key);
-            final Set<String> availableValues = objectToSetOfStrings(principalAttributes.get(key));
+            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
 
             final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().anyMatch(pattern.asPredicate());
+                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             } else {
                 return availableValues.stream().anyMatch(rejectedValues::contains);
             }
@@ -383,13 +381,5 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("caseInsensitive", this.caseInsensitive)
                 .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
-    }
-
-    private static Set<String> objectToSetOfStrings(final Object objVal) {
-        if (objVal instanceof Collection) {
-            final Collection collection = (Collection) objVal;
-            return new HashSet<>(collection);
-        }
-        return Collections.singleton(objVal.toString());
     }
 }
