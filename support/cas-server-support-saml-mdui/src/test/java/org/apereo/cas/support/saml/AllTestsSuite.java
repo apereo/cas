@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserActionTests;
+import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserDynamicActionTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,6 +12,6 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses(SamlMetadataUIParserActionTests.class)
+@Suite.SuiteClasses({SamlMetadataUIParserActionTests.class, SamlMetadataUIParserDynamicActionTests.class})
 public class AllTestsSuite {
 }
