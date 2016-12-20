@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link SLOPostProfileHandlerController}, responsible for
@@ -66,7 +67,7 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                            final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                            final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<Response> responseBuilder,
-                                           final Map<String, String> authenticationContextClassMappings,
+                                           final Set<String> authenticationContextClassMappings,
                                            final String serverPrefix,
                                            final String serverName,
                                            final String authenticationContextRequestParameter,
@@ -74,11 +75,22 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
                                            final String logoutUrl,
                                            final boolean forceSignedLogoutRequests,
                                            final boolean singleLogoutCallbacksDisabled) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport,
-                servicesManager, webApplicationServiceFactory,
+        super(samlObjectSigner,
+                parserPool,
+                authenticationSystemSupport,
+                servicesManager,
+                webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, authenticationContextClassMappings, serverPrefix, serverName,
-                authenticationContextRequestParameter, loginUrl, logoutUrl, forceSignedLogoutRequests, singleLogoutCallbacksDisabled);
+                configBean,
+                responseBuilder,
+                authenticationContextClassMappings,
+                serverPrefix,
+                serverName,
+                authenticationContextRequestParameter,
+                loginUrl,
+                logoutUrl,
+                forceSignedLogoutRequests,
+                singleLogoutCallbacksDisabled);
     }
 
     /**

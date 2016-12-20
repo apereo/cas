@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile;
 import com.google.common.base.Throwables;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
@@ -51,8 +50,10 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A parent controller to handle SAML requests.
@@ -115,7 +116,7 @@ public abstract class AbstractSamlProfileHandlerController {
     /**
      * Maps authentication contexts to what CAS can support.
      */
-    protected Map<String, String> authenticationContextClassMappings = new CaseInsensitiveMap<>();
+    protected Set<String> authenticationContextClassMappings = new TreeSet<>();
 
     /**
      * Server Prefix.
@@ -180,7 +181,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                 final OpenSamlConfigBean configBean,
                                                 final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
-                                                final Map<String, String> authenticationContextClassMappings,
+                                                final Set<String> authenticationContextClassMappings,
                                                 final String serverPrefix,
                                                 final String serverName,
                                                 final String authenticationContextRequestParameter,
@@ -406,20 +407,26 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
                                                              final HttpServletRequest request) {
-
         if (authnRequest.getRequestedAuthnContext() == null
                 || authenticationContextClassMappings == null
                 || this.authenticationContextClassMappings.isEmpty()) {
             return initialUrl;
         }
+
+        final TreeMap<String, String> mappings = new TreeMap();
+        this.authenticationContextClassMappings.stream().map(s -> {
+            final String[] bits = s.split("->");
+            return Pair.of(bits[0], bits[1]);
+        }).forEach(p -> mappings.put(p.getKey(), p.getValue()));
+
         final Optional<AuthnContextClassRef> p =
                 authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs().stream().filter(ref -> {
                     final String clazz = ref.getAuthnContextClassRef();
-                    return this.authenticationContextClassMappings.containsKey(clazz);
+                    return mappings.containsKey(clazz);
                 }).findFirst();
 
         if (p.isPresent()) {
-            final String mappedClazz = this.authenticationContextClassMappings.get(p.get().getAuthnContextClassRef());
+            final String mappedClazz = mappings.get(p.get().getAuthnContextClassRef());
             return initialUrl + '&' + this.authenticationContextRequestParameter + '=' + mappedClazz;
         }
 

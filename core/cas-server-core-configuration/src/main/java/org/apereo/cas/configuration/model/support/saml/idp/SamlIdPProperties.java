@@ -6,6 +6,8 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link SamlIdPProperties}.
@@ -19,11 +21,20 @@ public class SamlIdPProperties {
     private String entityId = "https://cas.example.org/idp";
     private String hostName = "cas.example.org";
     private String scope = "example.org";
+    private Set<String> authenticationContextClassMappings;
 
     private Response response = new Response();
     private Metadata metadata = new Metadata();
     private Logout logout = new Logout();
     private Algorithms algs = new Algorithms();
+
+    public Set<String> getAuthenticationContextClassMappings() {
+        return authenticationContextClassMappings;
+    }
+
+    public void setAuthenticationContextClassMappings(final Set<String> authenticationContextClassMappings) {
+        this.authenticationContextClassMappings = authenticationContextClassMappings;
+    }
 
     public Algorithms getAlgs() {
         return algs;

@@ -1812,6 +1812,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
 # cas.authn.samlIdp.hostName=cas.example.org
 # cas.authn.samlIdp.scope=example.org
+# cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
