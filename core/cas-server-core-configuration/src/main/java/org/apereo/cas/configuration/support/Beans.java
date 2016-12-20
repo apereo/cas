@@ -159,6 +159,13 @@ public class Beans {
         properties.put("hibernate.dialect", jpaProperties.getDialect());
         properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
         properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
+            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+        }
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
+            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+        }
         bean.setJpaProperties(properties);
         return bean;
     }

@@ -11,32 +11,40 @@ import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 public abstract class AbstractJpaProperties {
 
     private String dialect = "org.hibernate.dialect.HSQLDialect";
-
     private String ddlAuto = "create-drop";
-
     private String batchSize = "1";
-
     private String driverClass = "org.hsqldb.jdbcDriver";
-
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
-
+    private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
     private String user = "sa";
-
     private String password = "";
+    private String defaultCatalog;
+    private String defaultSchema;
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
     private int idleTimeout = 5000;
-
     private int leakThreshold = 10;
 
     private boolean failFast = true;
-
     private boolean isolateInternalQueries;
-
-    private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
-
     private boolean autocommit;
+
+    public String getDefaultCatalog() {
+        return defaultCatalog;
+    }
+
+    public void setDefaultCatalog(final String defaultCatalog) {
+        this.defaultCatalog = defaultCatalog;
+    }
+
+    public String getDefaultSchema() {
+        return defaultSchema;
+    }
+
+    public void setDefaultSchema(final String defaultSchema) {
+        this.defaultSchema = defaultSchema;
+    }
 
     public String getDialect() {
         return dialect;
