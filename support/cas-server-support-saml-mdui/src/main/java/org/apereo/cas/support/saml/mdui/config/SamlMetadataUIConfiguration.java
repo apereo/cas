@@ -116,7 +116,6 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-
             final String[] arr = entry.split(DEFAULT_SEPARATOR);
             final String metadataFile = arr[0];
             final String signingKey = arr.length > 1 ? arr[1] : null;
@@ -127,7 +126,7 @@ public class SamlMetadataUIConfiguration {
             }
 
             if (StringUtils.isNotEmpty(signingKey)) {
-                final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(signingKey);
+                final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
                 sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                 filters.add(sigFilter);
             }
