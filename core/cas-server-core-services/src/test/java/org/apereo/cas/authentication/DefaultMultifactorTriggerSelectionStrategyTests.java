@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -30,7 +32,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_1 = mock(MultifactorAuthenticationProvider.class);
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_2 = mock(MultifactorAuthenticationProvider.class);
     private static final ImmutableSet<MultifactorAuthenticationProvider> VALID_PROVIDERS = ImmutableSet.of(MFA_PROVIDER_1, MFA_PROVIDER_2);
-    private static final ImmutableSet<MultifactorAuthenticationProvider> NO_PROVIDERS = ImmutableSet.of();
+    private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = Collections.emptySet();
 
     private static final String REQUEST_PARAM = "authn_method";
 
