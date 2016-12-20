@@ -389,8 +389,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         if (objVal instanceof Collection) {
             final Collection collection = (Collection) objVal;
             return new HashSet<>(collection);
-        } else {
-            return Collections.singleton(objVal.toString());
         }
+        return Collections.singleton(objVal.toString());
     }
 }
