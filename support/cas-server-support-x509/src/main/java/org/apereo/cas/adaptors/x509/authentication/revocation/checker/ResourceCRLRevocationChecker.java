@@ -201,7 +201,13 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     @Override
     protected Collection<X509CRL> getCRLs(final X509Certificate cert) {
-        return Collections.singleton(this.crlIssuerMap.get(cert.getIssuerX500Principal()));
+        final X500Principal principal = cert.getIssuerX500Principal();
+
+        if (this.crlIssuerMap.containsKey(principal)) {
+            return Collections.singleton(this.crlIssuerMap.get(principal));
+        }
+        logger.warn("Could not locate CRL for issuer principal {}", principal);
+        return Collections.emptyList();
     }
 
     /**
