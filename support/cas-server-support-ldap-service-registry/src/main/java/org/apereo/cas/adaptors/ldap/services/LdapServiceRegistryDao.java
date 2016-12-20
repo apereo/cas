@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,14 +29,14 @@ import java.util.List;
 public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LdapServiceRegistryDao.class);
-    
+
     private ConnectionFactory connectionFactory;
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
-    
+
     private String baseDn;
 
     private String searchFilter;
-    
+
     private String loadFilter;
 
     /**
@@ -120,7 +121,8 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      * In order to count the number of available definitions in LDAP,
      * this call will attempt to execute a search query to load services
      * and the results will be counted. Do NOT attempt to call this
-     * operation in a loop. 
+     * operation in a loop.
+     *
      * @return number of entries in the service registry
      */
     @Override
@@ -135,7 +137,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
         }
         return 0;
     }
-    
+
     @Override
     public List<RegisteredService> load() {
         final List<RegisteredService> list = new LinkedList<>();
@@ -159,7 +161,7 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private Response<SearchResult> getSearchResultResponse() throws LdapException {
         return LdapUtils.executeSearchOperation(this.connectionFactory,
-                        this.baseDn, Beans.newSearchFilter(this.loadFilter));
+                this.baseDn, Beans.newSearchFilter(this.loadFilter));
     }
 
     @Override
@@ -191,7 +193,9 @@ public class LdapServiceRegistryDao implements ServiceRegistryDao {
      */
     private Response<SearchResult> searchForServiceById(final Long id)
             throws LdapException {
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter, id.toString());
+        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+                Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                Arrays.asList(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 
