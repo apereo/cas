@@ -26,6 +26,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [Authentication](installation/Configuring-Authentication-Components.html)
+* [Application Registration](installation/Service-Management.html)
 * [Attribute Release](integration/Attribute-Release.html)
 
 ## Demo
