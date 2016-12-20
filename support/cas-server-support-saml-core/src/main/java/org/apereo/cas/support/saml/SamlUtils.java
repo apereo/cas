@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.Transformer;
@@ -94,17 +95,41 @@ public final class SamlUtils {
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
         final AbstractResource resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
+        return buildSignatureValidationFilter(resource);
+    }
+
+    /**
+     * Build signature validation filter if needed.
+     *
+     * @param resourceLoader            the resource loader
+     * @param signatureResourceLocation the signature resource location
+     * @return the metadata filter
+     * @throws Exception the exception
+     */
+    public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
+                                                                           final String signatureResourceLocation) throws
+            Exception {
+        final Resource resource = resourceLoader.getResource(signatureResourceLocation);
+        return buildSignatureValidationFilter(resource);
+    }
+
+    /**
+     * Build signature validation filter if needed.
+     *
+     * @param signatureResourceLocation the signature resource location
+     * @return the metadata filter
+     * @throws Exception the exception
+     */
+    public static SignatureValidationFilter buildSignatureValidationFilter(final Resource signatureResourceLocation) throws Exception {
         final List<KeyInfoProvider> keyInfoProviderList = new ArrayList<>();
         keyInfoProviderList.add(new RSAKeyValueProvider());
         keyInfoProviderList.add(new DSAKeyValueProvider());
         keyInfoProviderList.add(new DEREncodedKeyValueProvider());
         keyInfoProviderList.add(new InlineX509DataProvider());
 
-        LOGGER.debug("Attempting to resolve credentials from [{}]",
-                signatureResourceLocation);
-        final BasicCredential credential = SamlUtils.buildCredentialForMetadataSignatureValidation(resource);
-        LOGGER.info("Successfully resolved credentials from [{}]",
-                signatureResourceLocation);
+        LOGGER.debug("Attempting to resolve credentials from [{}]", signatureResourceLocation);
+        final BasicCredential credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
+        LOGGER.info("Successfully resolved credentials from [{}]", signatureResourceLocation);
 
         LOGGER.debug("Configuring credential resolver for key signature trust engine @ {}", credential.getCredentialType().getSimpleName());
         final StaticCredentialResolver resolver = new StaticCredentialResolver(credential);
@@ -125,7 +150,7 @@ public final class SamlUtils {
      * @return the basic credential
      * @throws Exception the exception
      */
-    public static BasicCredential buildCredentialForMetadataSignatureValidation(final AbstractResource resource) throws Exception {
+    public static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
             final BasicX509CredentialFactoryBean x509FactoryBean = new BasicX509CredentialFactoryBean();
             x509FactoryBean.setCertificateResource(resource);
