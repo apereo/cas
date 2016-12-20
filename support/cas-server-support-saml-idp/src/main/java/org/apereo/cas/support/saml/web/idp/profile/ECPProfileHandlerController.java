@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -85,7 +86,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final OpenSamlConfigBean configBean,
                                        final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> responseBuilder,
                                        final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder,
-                                       final Map<String, String> authenticationContextClassMappings,
+                                       final Set<String> authenticationContextClassMappings,
                                        final String serverPrefix,
                                        final String serverName,
                                        final String authenticationContextRequestParameter,
@@ -96,7 +97,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, authenticationContextClassMappings,
+                configBean, responseBuilder,
+                authenticationContextClassMappings,
                 serverPrefix, serverName,
                 authenticationContextRequestParameter, loginUrl, logoutUrl,
                 forceSignedLogoutRequests, singleLogoutCallbacksDisabled);

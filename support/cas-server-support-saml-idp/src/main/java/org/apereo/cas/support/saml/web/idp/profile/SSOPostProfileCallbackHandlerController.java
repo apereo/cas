@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link SSOPostProfileCallbackHandlerController}, which handles
@@ -65,7 +66,7 @@ public class SSOPostProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
                                                    final OpenSamlConfigBean configBean,
                                                    final SamlProfileObjectBuilder<Response> responseBuilder,
-                                                   final Map<String, String> authenticationContextClassMappings,
+                                                   final Set<String> authenticationContextClassMappings,
                                                    final String serverPrefix,
                                                    final String serverName,
                                                    final String authenticationContextRequestParameter,
