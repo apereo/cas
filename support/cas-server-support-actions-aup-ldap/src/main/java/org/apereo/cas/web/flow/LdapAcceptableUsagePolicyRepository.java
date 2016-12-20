@@ -11,6 +11,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Collections;
  */
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
-    
+
     private ConnectionFactory connectionFactory;
     private String searchFilter;
     private String baseDn;
@@ -46,7 +47,7 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         if (StringUtils.isNotBlank(currentDn)) {
             logger.debug("Updating {}", currentDn);
             return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                    Collections.singletonMap(this.aupAttributeName, 
+                    Collections.singletonMap(this.aupAttributeName,
                             Collections.singleton(Boolean.TRUE.toString())));
         }
         return false;
@@ -55,14 +56,16 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     /**
      * Search for service by id.
      *
-     * @param id         the id
+     * @param id the id
      * @return the response
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForId(final String id)
             throws LdapException {
 
-        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter, id);
+        final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
+                Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                Arrays.asList(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 

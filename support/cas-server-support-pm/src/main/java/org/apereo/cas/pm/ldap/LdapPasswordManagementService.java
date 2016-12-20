@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,7 +54,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
     public String findEmail(final String username) {
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), username);
+            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+                    Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                    Arrays.asList(username));
             final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
@@ -106,7 +109,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), c.getId());
+            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+                    Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                    Arrays.asList(c.getId()));
             final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory,
                     ldap.getBaseDn(), filter);
@@ -177,7 +182,9 @@ public class LdapPasswordManagementService implements PasswordManagementService 
 
         try {
             final PasswordManagementProperties.Ldap ldap = casProperties.getAuthn().getPm().getLdap();
-            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(), username);
+            final SearchFilter filter = Beans.newSearchFilter(ldap.getUserFilter(),
+                    Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                    Arrays.asList(username));
             final ConnectionFactory factory = Beans.newPooledConnectionFactory(ldap);
             final Response<SearchResult> response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
             if (LdapUtils.containsResultEntry(response)) {
