@@ -1578,6 +1578,8 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.trusted.jpa.leakThreshold=10
 # cas.authn.mfa.trusted.jpa.batchSize=1
+# cas.authn.mfa.trusted.jpa.defaultCatalog=
+# cas.authn.mfa.trusted.jpa.defaultSchema=
 # cas.authn.mfa.trusted.jpa.user=sa
 # cas.authn.mfa.trusted.jpa.ddlAuto=create-drop
 # cas.authn.mfa.trusted.jpa.password=
@@ -2466,6 +2468,8 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.events.jpa.leakThreshold=10
 # cas.events.jpa.batchSize=1
+# cas.events.jpa.defaultCatalog=
+# cas.events.jpa.defaultSchema=
 # cas.events.jpa.user=sa
 # cas.events.jpa.ddlAuto=create-drop
 # cas.events.jpa.password=
@@ -2695,6 +2699,8 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.leakThreshold=10
 # cas.ticket.registry.jpa.jpaLockingTgtEnabled=true
 # cas.ticket.registry.jpa.batchSize=1
+# cas.ticket.registry.jpa.defaultCatalog=
+# cas.ticket.registry.jpa.defaultSchema=
 # cas.ticket.registry.jpa.user=sa
 # cas.ticket.registry.jpa.ddlAuto=create-drop
 # cas.ticket.registry.jpa.password=

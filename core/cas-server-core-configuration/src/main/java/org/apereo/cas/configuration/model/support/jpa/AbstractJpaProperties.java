@@ -13,32 +13,40 @@ import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 public abstract class AbstractJpaProperties {
 
     private String dialect = "org.hibernate.dialect.HSQLDialect";
-
     private String ddlAuto = "create-drop";
-
-    private String batchSize = "1";
-
     private String driverClass = "org.hsqldb.jdbcDriver";
-
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
-
     private String user = "sa";
-
     private String password = StringUtils.EMPTY;
+    private String defaultCatalog;
+    private String defaultSchema;
+    private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
+    private String idleTimeout = "PT5S";
 
     private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
 
-    private String idleTimeout = "PT5S";
-
     private int leakThreshold = 10;
+    private int batchSize = 1;
 
     private boolean failFast = true;
-
     private boolean isolateInternalQueries;
-
-    private String healthQuery = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
-
     private boolean autocommit;
+
+    public String getDefaultCatalog() {
+        return defaultCatalog;
+    }
+
+    public void setDefaultCatalog(final String defaultCatalog) {
+        this.defaultCatalog = defaultCatalog;
+    }
+
+    public String getDefaultSchema() {
+        return defaultSchema;
+    }
+
+    public void setDefaultSchema(final String defaultSchema) {
+        this.defaultSchema = defaultSchema;
+    }
 
     public String getDialect() {
         return dialect;
@@ -56,11 +64,11 @@ public abstract class AbstractJpaProperties {
         this.ddlAuto = ddlAuto;
     }
 
-    public String getBatchSize() {
+    public int getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(final String batchSize) {
+    public void setBatchSize(final int batchSize) {
         this.batchSize = batchSize;
     }
 
