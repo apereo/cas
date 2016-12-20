@@ -31,27 +31,37 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marvin S. Addison
  * @since 3.4.7
- *
  */
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
-    
-    /** Executor responsible for refreshing CRL data. */
+
+    /**
+     * Executor responsible for refreshing CRL data.
+     */
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    /** CRL refresh interval in seconds. */
+    /**
+     * CRL refresh interval in seconds.
+     */
     private int refreshInterval = 3600;
-    
+
     private CRLFetcher fetcher;
 
-    /** Map of CRL issuer to CRL. */
+    /**
+     * Map of CRL issuer to CRL.
+     */
     private Map<X500Principal, X509CRL> crlIssuerMap =
             Collections.synchronizedMap(new HashMap<>());
 
-    /** Resource CRLs. **/
+    /**
+     * Resource CRLs.
+     **/
     private Set<Resource> resources;
 
-    /** Used for serialization and auto wiring. */
-    public ResourceCRLRevocationChecker() {}
+    /**
+     * Used for serialization and auto wiring.
+     */
+    public ResourceCRLRevocationChecker() {
+    }
 
     /**
      * Creates a new instance using the specified resource for CRL data.
@@ -59,14 +69,14 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * @param crl Resource containing CRL data.  MUST NOT be null.
      */
     public ResourceCRLRevocationChecker(final Resource crl) {
-        this(new Resource[] {crl});
+        this(new Resource[]{crl});
     }
 
     /**
      * Creates a new instance using the specified resources for CRL data.
      *
      * @param crls Resources containing CRL data.  MUST NOT be null and MUST have
-     * at least one non-null element.
+     *             at least one non-null element.
      */
     public ResourceCRLRevocationChecker(final Resource[] crls) {
         this(new ResourceCRLFetcher(), crls);
@@ -76,7 +86,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * Instantiates a new Resource cRL revocation checker.
      *
      * @param fetcher the fetcher
-     * @param crls the crls
+     * @param crls    the crls
      * @since 4.1
      */
     public ResourceCRLRevocationChecker(final CRLFetcher fetcher,
@@ -106,7 +116,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     @Override
     public void init() {
         super.init();
-        
+
         if (!validateConfiguration()) {
             return;
         }
@@ -162,7 +172,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                     this.getClass().getSimpleName());
             return false;
         }
-        if (getUnavailableCRLPolicy()== null) {
+        if (getUnavailableCRLPolicy() == null) {
             logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...",
                     this.getClass().getSimpleName());
             return false;
@@ -201,7 +211,13 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     @Override
     protected Collection<X509CRL> getCRLs(final X509Certificate cert) {
-        return Collections.singleton(this.crlIssuerMap.get(cert.getIssuerX500Principal()));
+        final X500Principal principal = cert.getIssuerX500Principal();
+
+        if (this.crlIssuerMap.containsKey(principal)) {
+            return Collections.singleton(this.crlIssuerMap.get(principal));
+        }
+        logger.warn("Could not locate CRL for issuer principal {}", principal);
+        return Collections.emptyList();
     }
 
     /**
