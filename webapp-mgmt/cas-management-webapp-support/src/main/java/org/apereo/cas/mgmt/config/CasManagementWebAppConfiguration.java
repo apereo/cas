@@ -1,7 +1,6 @@
 package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -82,6 +81,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -208,7 +208,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }

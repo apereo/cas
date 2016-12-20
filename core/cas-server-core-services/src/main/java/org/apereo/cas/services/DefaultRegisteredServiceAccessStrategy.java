@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,10 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -230,91 +230,63 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
                 this.requiredAttributes, principalAttributes);
-        final Sets.SetView<String> difference = Sets.intersection(this.requiredAttributes.keySet(), principalAttributes.keySet());
-        final Set<String> copy = difference.immutableCopy();
+        final Set<String> difference = this.requiredAttributes.keySet().stream()
+                .filter(a -> principalAttributes.keySet().contains(a))
+                .collect(Collectors.toSet());
 
         if (this.requiredAttributes.isEmpty()) {
             LOGGER.debug("No required attributes are defined");
             return true;
         }
         
-        if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
+        if (this.requireAllAttributes && difference.size() < this.requiredAttributes.size()) {
             LOGGER.debug("Not all required attributes are available to the principal");
             return false;
         }
         
-        return copy.stream().anyMatch(key -> {
+        return difference.stream().anyMatch(key -> {
             final Set<String> requiredValues = this.requiredAttributes.get(key);
-            final Set<String> availableValues;
+            final Set<String> availableValues = objectToSetOfStrings(principalAttributes.get(key));
 
-            final Object objVal = principalAttributes.get(key);
-            if (objVal instanceof Collection) {
-                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
-            } else {
-                availableValues = Sets.newHashSet(objVal.toString());
-            }
-
-            final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                final Predicate<String> patternPredicate = pattern.asPredicate();
-                differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
+                return availableValues.stream().anyMatch(pattern.asPredicate());
             } else {
-                differenceInValues = Sets.intersection(availableValues, requiredValues);
+                return availableValues.stream().anyMatch(requiredValues::contains);
             }
-
-            if (!differenceInValues.isEmpty()) {
-                LOGGER.info("Principal is authorized to access the service");
-                return true;
-            }
-            return false;
         });
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
                 this.rejectedAttributes, principalAttributes);
-        final Sets.SetView<String> rejectedDifference = Sets.intersection(this.rejectedAttributes.keySet(), principalAttributes.keySet());
-        final Set<String> rejectedCopy = rejectedDifference.immutableCopy();
+        final Set<String> rejectedDifference = this.rejectedAttributes.keySet().stream()
+                .filter(a -> principalAttributes.keySet().contains(a))
+                .collect(Collectors.toSet());
 
         if (this.rejectedAttributes.isEmpty()) {
             LOGGER.debug("No rejected attributes are defined");
             return false;
         }
         
-        if (this.requireAllAttributes && rejectedCopy.size() < this.rejectedAttributes.size()) {
+        if (this.requireAllAttributes && rejectedDifference.size() < this.rejectedAttributes.size()) {
             LOGGER.debug("Not all rejected attributes are available to the process");
             return false;
         }
         
-        return rejectedCopy.stream().anyMatch(key -> {
+        return rejectedDifference.stream().anyMatch(key -> {
             final Set<String> rejectedValues = this.rejectedAttributes.get(key);
-            final Set<String> availableValues;
+            final Set<String> availableValues = objectToSetOfStrings(principalAttributes.get(key));
 
-            final Object objVal = principalAttributes.get(key);
-            if (objVal instanceof Collection) {
-                availableValues = Sets.newHashSet(((Collection) objVal).iterator());
-            } else {
-                availableValues = Sets.newHashSet(objVal.toString());
-            }
-
-            final Set<?> differenceInValues;
             final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                final Predicate<String> patternPredicate = pattern.asPredicate();
-                differenceInValues = availableValues.stream().filter(patternPredicate).collect(Collectors.toSet());
+                return availableValues.stream().anyMatch(pattern.asPredicate());
             } else {
-                differenceInValues = Sets.intersection(availableValues, rejectedValues);
+                return availableValues.stream().anyMatch(rejectedValues::contains);
             }
-
-            if (!differenceInValues.isEmpty()) {
-                LOGGER.info("Principal is denied access since there are rejected attributes [{}] defined as [{}}",
-                        key, differenceInValues);
-                return true;
-            }
-            return false;
         });
     }
+
     /**
      * Enough attributes available to process? Check collection sizes and determine
      * if we have enough data to move on. 
@@ -411,5 +383,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("caseInsensitive", this.caseInsensitive)
                 .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
+    }
+
+    private static Set<String> objectToSetOfStrings(final Object objVal) {
+        if (objVal instanceof Collection) {
+            final Collection collection = (Collection) objVal;
+            return new HashSet<>(collection);
+        } else {
+            return Collections.singleton(objVal.toString());
+        }
     }
 }

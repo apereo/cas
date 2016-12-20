@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -135,9 +134,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
        final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-       this.controller.saveService(new MockHttpServletRequest(),
-               new MockHttpServletResponse(),
-               data, mock(BindingResult.class));
+       this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -235,11 +232,10 @@ public class RegisteredServiceSimpleFormControllerTests {
         private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
-        public void mapRegisteredService(final RegisteredService svc,
-                                         final RegisteredServiceEditBean.ServiceData bean) {
+        public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceEditBean.ServiceData bean) {
             base.mapRegisteredService(svc, bean);
             if (svc instanceof MockRegisteredService) {
-                bean.setCustomComponent("mock", ImmutableMap.of("service_type", "MockRegisteredService"));
+                bean.setCustomComponent("mock", Collections.singletonMap("service_type", "MockRegisteredService"));
             }
         }
 

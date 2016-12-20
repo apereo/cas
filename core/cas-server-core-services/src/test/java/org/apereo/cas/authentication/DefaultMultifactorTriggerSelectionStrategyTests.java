@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 public class DefaultMultifactorTriggerSelectionStrategyTests {
+
     private static final String MFA_INVALID = "mfaInvalid";
     private static final String MFA_PROVIDER_ID_1 = "mfa-id1";
     private static final String MFA_PROVIDER_ID_2 = "mfa-id2";
