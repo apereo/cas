@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
@@ -29,6 +30,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This is {@link SpnegoWebflowConfiguration}.
@@ -71,20 +73,22 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action spnego() {
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
-                casProperties.getAuthn().getSpnego().isNtlm(),
-                casProperties.getAuthn().getSpnego().isSend401OnAuthenticationFailure());
+                spnegoProperties.isNtlm(),
+                spnegoProperties.isSend401OnAuthenticationFailure());
     }
 
     @Bean
     @RefreshScope
     public Action negociateSpnego() {
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final SpnegoNegociateCredentialsAction a = new SpnegoNegociateCredentialsAction();
-        a.setMixedModeAuthentication(casProperties.getAuthn().getSpnego().isMixedModeAuthentication());
-        a.setNtlm(casProperties.getAuthn().getSpnego().isNtlm());
-        final String[] browsers = StringUtils.commaDelimitedListToStringArray(casProperties.getAuthn().getSpnego().getSupportedBrowsers());
+        a.setMixedModeAuthentication(spnegoProperties.isMixedModeAuthentication());
+        a.setNtlm(spnegoProperties.isNtlm());
+        final String[] browsers = StringUtils.commaDelimitedListToStringArray(spnegoProperties.getSupportedBrowsers());
         a.setSupportedBrowsers(Arrays.asList(browsers));
         return a;
     }
@@ -92,23 +96,25 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action baseSpnegoClientAction() {
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final BaseSpnegoKnownClientSystemsFilterAction a =
                 new BaseSpnegoKnownClientSystemsFilterAction();
 
-        a.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
+        a.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
+        a.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
+        a.setTimeout(spnegoProperties.getDnsTimeout());
         return a;
     }
 
     @Bean
     @RefreshScope
     public Action hostnameSpnegoClientAction() {
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final HostNameSpnegoKnownClientSystemsFilterAction a =
-                new HostNameSpnegoKnownClientSystemsFilterAction(casProperties.getAuthn().getSpnego().getHostNamePatternString());
-        a.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        a.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
+                new HostNameSpnegoKnownClientSystemsFilterAction(spnegoProperties.getHostNamePatternString());
+        a.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
+        a.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
+        a.setTimeout(spnegoProperties.getDnsTimeout());
         return a;
     }
 
@@ -116,19 +122,21 @@ public class SpnegoWebflowConfiguration {
     @Bean
     @RefreshScope
     public Action ldapSpnegoClientAction() {
-        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(casProperties.getAuthn().getSpnego().getLdap());
-        final SearchFilter filter = Beans.newSearchFilter(casProperties.getAuthn().getSpnego().getLdap().getSearchFilter());
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
+        final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(spnegoProperties.getLdap());
+        final SearchFilter filter = Beans.newSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
+                "host", Collections.emptyList());
 
         final SearchRequest searchRequest = Beans.newSearchRequest(
-                casProperties.getAuthn().getSpnego().getLdap().getBaseDn(), filter);
+                spnegoProperties.getLdap().getBaseDn(), filter);
 
         final LdapSpnegoKnownClientSystemsFilterAction l =
                 new LdapSpnegoKnownClientSystemsFilterAction(connectionFactory,
-                        searchRequest, casProperties.getAuthn().getSpnego().getSpnegoAttributeName());
+                        searchRequest, spnegoProperties.getSpnegoAttributeName());
 
-        l.setIpsToCheckPattern(casProperties.getAuthn().getSpnego().getIpsToCheckPattern());
-        l.setAlternativeRemoteHostAttribute(casProperties.getAuthn().getSpnego().getAlternativeRemoteHostAttribute());
-        l.setTimeout(casProperties.getAuthn().getSpnego().getDnsTimeout());
+        l.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
+        l.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
+        l.setTimeout(spnegoProperties.getDnsTimeout());
         return l;
     }
 }
