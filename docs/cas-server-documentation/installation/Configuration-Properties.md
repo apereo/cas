@@ -434,7 +434,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
 # cas.authn.attributeRepository.ldap[0].connectTimeout=5000
 # cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org
-# cas.authn.attributeRepository.ldap[0].userFilter=cn={0}
+# cas.authn.attributeRepository.ldap[0].userFilter=cn={user}
 # cas.authn.attributeRepository.ldap[0].subtreeSearch=true
 # cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.attributeRepository.ldap[0].bindCredential=Password
