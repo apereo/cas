@@ -9,7 +9,7 @@ Ehcache integration is enabled by including the following dependency in the WAR 
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-support-ehcache</artifactId>
+     <artifactId>cas-server-support-ehcache-ticket-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
