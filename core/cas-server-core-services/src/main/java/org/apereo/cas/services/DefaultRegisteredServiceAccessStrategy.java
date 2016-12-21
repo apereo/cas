@@ -212,12 +212,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        if (doRejectedAttributesRefusePrincipalAccess(principalAttributes, rejectedAttributes)) {
+        if (doRejectedAttributesRefusePrincipalAccess(principalAttributes)) {
             LOGGER.debug("Access is denied. The principal carries attributes that would reject service access");
             return false;
         }
                 
-        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, requiredAttributes)) {
+        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
@@ -225,21 +225,21 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return true;
     }
 
-    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
-        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
-        if (attributes.isEmpty()) {
+    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
+        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
+        if (requiredAttributes.isEmpty()) {
             return true;
         }
 
-        return common(principalAttributes, attributes);
+        return common(principalAttributes, requiredAttributes);
     }
     
-    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
-        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
-        if (attributes.isEmpty()) {
+    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
+        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
+        if (rejectedAttributes.isEmpty()) {
             return false;
         }
-        return common(principalAttributes, attributes);
+        return common(principalAttributes, rejectedAttributes);
     }
 
     /**
