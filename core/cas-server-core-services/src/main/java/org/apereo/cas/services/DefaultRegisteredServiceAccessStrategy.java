@@ -227,61 +227,24 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
-        final Set<String> difference = attributes.keySet().stream()
-                .filter(a -> principalAttributes.keySet().contains(a))
-                .collect(Collectors.toSet());
-
         if (attributes.isEmpty()) {
             return true;
         }
-        
-        if (this.requireAllAttributes && difference.size() < attributes.size()) {
-            return false;
-        }
-        
-        return difference.stream().anyMatch(key -> {
-            final Set<String> values = attributes.get(key);
-            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
 
-            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
-            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
-            } else {
-                return availableValues.stream().anyMatch(values::contains);
-            }
-        });
+        return common(principalAttributes, attributes);
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
-        final Set<String> difference = attributes.keySet().stream()
-                .filter(a -> principalAttributes.keySet().contains(a))
-                .collect(Collectors.toSet());
-
         if (attributes.isEmpty()) {
             return false;
         }
-        
-        if (this.requireAllAttributes && difference.size() < attributes.size()) {
-            return false;
-        }
-        
-        return difference.stream().anyMatch(key -> {
-            final Set<String> values = attributes.get(key);
-            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-
-            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
-            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
-                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
-            } else {
-                return availableValues.stream().anyMatch(values::contains);
-            }
-        });
+        return common(principalAttributes, attributes);
     }
 
     /**
      * Enough attributes available to process? Check collection sizes and determine
-     * if we have enough data to move on. 
+     * if we have enough data to move on.
      *
      * @param principal           the principal
      * @param principalAttributes the principal attributes
@@ -375,5 +338,27 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("caseInsensitive", this.caseInsensitive)
                 .append("rejectedAttributes", this.rejectedAttributes)
                 .toString();
+    }
+
+    private boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
+        final Set<String> difference = attributes.keySet().stream()
+                .filter(a -> principalAttributes.keySet().contains(a))
+                .collect(Collectors.toSet());
+
+        if (this.requireAllAttributes && difference.size() < attributes.size()) {
+            return false;
+        }
+
+        return difference.stream().anyMatch(key -> {
+            final Set<String> values = attributes.get(key);
+            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
+
+            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+            if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
+                return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
+            } else {
+                return availableValues.stream().anyMatch(values::contains);
+            }
+        });
     }
 }
