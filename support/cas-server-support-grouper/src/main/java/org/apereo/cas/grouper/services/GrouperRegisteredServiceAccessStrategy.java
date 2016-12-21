@@ -27,7 +27,6 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
     private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategy.class);
 
-
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 
     @Override
@@ -42,26 +41,23 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             return false;
         }
 
-        final boolean denied = results.stream().filter(groupsResult -> {
+        final boolean denied = results.stream().anyMatch(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return true;
             }
 
             Arrays.stream(groupsResult.getWsGroups()).forEach(group -> {
-                final String groupName = GrouperFacade.getGrouperGroupAttribute(this.groupField, group);
-                LOGGER.debug("Found group name [{}] for [{}]", groupName, principal);
-                grouperGroups.add(groupName);
+                grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group));
             });
             return false;
-        }).findFirst().isPresent();
+        });
 
         if (denied) {
             return false;
         }
 
-        LOGGER.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
-                grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
+        LOGGER.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes", grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
 
         allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
@@ -74,5 +70,4 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public GrouperGroupField getGroupField() {
         return this.groupField;
     }
-
 }
