@@ -54,11 +54,11 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean(name = {"hazelcastTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry hazelcastTicketRegistry() {
+        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(),
-                casProperties.getTicket().getRegistry().getHazelcast().getMapName(),
-                casProperties.getTicket().getRegistry().getHazelcast().getPageSize());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getHazelcast().getCrypto()));
+                hz.getMapName(),
+                hz.getPageSize());
+        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto()));
         return r;
     }
 
@@ -74,33 +74,31 @@ public class HazelcastTicketRegistryConfiguration {
      * @throws IOException if parsing of hazelcast xml configuration fails
      */
     private Config getConfig() {
-        final HazelcastProperties.Cluster cluster = casProperties.getTicket().getRegistry().getHazelcast().getCluster();
+        final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        final HazelcastProperties.Cluster cluster = hz.getCluster();
 
         final Config config;
-        if (casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation() != null
-                && casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().exists()) {
-
+        if (hz.getConfigLocation() != null && hz.getConfigLocation().exists()) {
             try {
-                final URL configUrl = casProperties.getTicket().getRegistry().getHazelcast().getConfigLocation().getURL();
-                config = new XmlConfigBuilder(casProperties.getTicket()
-                        .getRegistry().getHazelcast().getConfigLocation().getInputStream()).build();
+                final URL configUrl = hz.getConfigLocation().getURL();
+                config = new XmlConfigBuilder(hz.getConfigLocation().getInputStream()).build();
                 config.setConfigurationUrl(configUrl);
             } catch (final Exception e) {
                 throw Throwables.propagate(e);
             }
 
         } else {
-            //No config location, so do a default config programmatically with handful of properties exposed by CAS
+            // No config location, so do a default config programmatically with handful of properties exposed by CAS
             config = new Config();
             config.setProperty("hazelcast.prefer.ipv4.stack", String.valueOf(cluster.isIpv4Enabled()));
 
-            //TCP config
+            // TCP config
             final TcpIpConfig tcpIpConfig = new TcpIpConfig()
                     .setEnabled(cluster.isTcpipEnabled())
                     .setMembers(cluster.getMembers())
                     .setConnectionTimeoutSeconds(cluster.getTimeout());
 
-            //Multicast config
+            // Multicast config
             final MulticastConfig multicastConfig = new MulticastConfig().setEnabled(cluster.isMulticastEnabled());
             if (cluster.isMulticastEnabled()) {
                 multicastConfig.setMulticastGroup(cluster.getMulticastGroup());
@@ -114,12 +112,12 @@ public class HazelcastTicketRegistryConfiguration {
                 multicastConfig.setMulticastTimeToLive(cluster.getMulticastTimeToLive());
             }
 
-            //Join config
+            // Join config
             final JoinConfig joinConfig = new JoinConfig()
                     .setMulticastConfig(multicastConfig)
                     .setTcpIpConfig(tcpIpConfig);
 
-            //Network config
+            // Network config
             final NetworkConfig networkConfig = new NetworkConfig()
                     .setPort(cluster.getPort())
                     .setPortAutoIncrement(cluster.isPortAutoIncrement())
@@ -138,12 +136,12 @@ public class HazelcastTicketRegistryConfiguration {
                             .setSize(cluster.getMaxHeapSizePercentage()));
 
             final Map<String, MapConfig> mapConfigs = new HashMap<>();
-            mapConfigs.put(casProperties.getTicket().getRegistry().getHazelcast().getMapName(), mapConfig);
+            mapConfigs.put(hz.getMapName(), mapConfig);
 
-            //Finally aggregate all those config into the main Config
+            // Finally aggregate all those config into the main Config
             config.setMapConfigs(mapConfigs).setNetworkConfig(networkConfig);
         }
-        //Add additional default config properties regardless of the configuration source
+        // Add additional default config properties regardless of the configuration source
         return config.setInstanceName(cluster.getInstanceName())
                 .setProperty(HazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
                 .setProperty(HazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
