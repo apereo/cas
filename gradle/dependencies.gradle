@@ -1507,6 +1507,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
                     exclude(group: "org.apache.httpcomponents", module: "httpcore")
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
@@ -1522,6 +1523,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.springframework.retry", module: "spring-retry")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-commons:$springCloudCommonsVersion") {
