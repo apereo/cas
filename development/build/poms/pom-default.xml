@@ -237,7 +237,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.22</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -265,7 +265,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.22</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
