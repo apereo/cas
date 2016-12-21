@@ -226,19 +226,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
-        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
-                this.requiredAttributes, principalAttributes);
+        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", this.requiredAttributes, principalAttributes);
         final Set<String> difference = this.requiredAttributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))
                 .collect(Collectors.toSet());
 
         if (this.requiredAttributes.isEmpty()) {
-            LOGGER.debug("No required attributes are defined");
             return true;
         }
         
         if (this.requireAllAttributes && difference.size() < this.requiredAttributes.size()) {
-            LOGGER.debug("Not all required attributes are available to the principal");
             return false;
         }
         
@@ -256,19 +253,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
     
     private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
-        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.",
-                this.rejectedAttributes, principalAttributes);
+        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", this.rejectedAttributes, principalAttributes);
         final Set<String> rejectedDifference = this.rejectedAttributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))
                 .collect(Collectors.toSet());
 
         if (this.rejectedAttributes.isEmpty()) {
-            LOGGER.debug("No rejected attributes are defined");
             return false;
         }
         
         if (this.requireAllAttributes && rejectedDifference.size() < this.rejectedAttributes.size()) {
-            LOGGER.debug("Not all rejected attributes are available to the process");
             return false;
         }
         
