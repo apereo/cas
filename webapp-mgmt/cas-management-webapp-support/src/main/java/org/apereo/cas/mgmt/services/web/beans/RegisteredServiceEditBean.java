@@ -1,6 +1,5 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,7 +129,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
         private Map<String, Map<String, ?>> customComponent = new HashMap<>();
-        private Set<PropertyBean> properties = Sets.newLinkedHashSet();
+        private Set<PropertyBean> properties = new LinkedHashSet<>();
 
         public void setProperties(final Set<PropertyBean> properties) {
             this.properties = properties;
