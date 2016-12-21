@@ -212,12 +212,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
-        if (doRejectedAttributesRefusePrincipalAccess(principalAttributes)) {
+        if (doRejectedAttributesRefusePrincipalAccess(principalAttributes, rejectedAttributes)) {
             LOGGER.debug("Access is denied. The principal carries attributes that would reject service access");
             return false;
         }
                 
-        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes)) {
+        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, requiredAttributes)) {
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
@@ -225,56 +225,56 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return true;
     }
 
-    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes) {
-        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", this.requiredAttributes, principalAttributes);
-        final Set<String> difference = this.requiredAttributes.keySet().stream()
+    private boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
+        LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
+        final Set<String> difference = attributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))
                 .collect(Collectors.toSet());
 
-        if (this.requiredAttributes.isEmpty()) {
+        if (attributes.isEmpty()) {
             return true;
         }
         
-        if (this.requireAllAttributes && difference.size() < this.requiredAttributes.size()) {
+        if (this.requireAllAttributes && difference.size() < attributes.size()) {
             return false;
         }
         
         return difference.stream().anyMatch(key -> {
-            final Set<String> requiredValues = this.requiredAttributes.get(key);
+            final Set<String> values = attributes.get(key);
             final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
 
-            final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
+            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             } else {
-                return availableValues.stream().anyMatch(requiredValues::contains);
+                return availableValues.stream().anyMatch(values::contains);
             }
         });
     }
     
-    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
-        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", this.rejectedAttributes, principalAttributes);
-        final Set<String> rejectedDifference = this.rejectedAttributes.keySet().stream()
+    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
+        LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", attributes, principalAttributes);
+        final Set<String> difference = attributes.keySet().stream()
                 .filter(a -> principalAttributes.keySet().contains(a))
                 .collect(Collectors.toSet());
 
-        if (this.rejectedAttributes.isEmpty()) {
+        if (attributes.isEmpty()) {
             return false;
         }
         
-        if (this.requireAllAttributes && rejectedDifference.size() < this.rejectedAttributes.size()) {
+        if (this.requireAllAttributes && difference.size() < attributes.size()) {
             return false;
         }
         
-        return rejectedDifference.stream().anyMatch(key -> {
-            final Set<String> rejectedValues = this.rejectedAttributes.get(key);
+        return difference.stream().anyMatch(key -> {
+            final Set<String> values = attributes.get(key);
             final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
 
-            final Pattern pattern = RegexUtils.concatenate(rejectedValues, this.caseInsensitive);
+            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             } else {
-                return availableValues.stream().anyMatch(rejectedValues::contains);
+                return availableValues.stream().anyMatch(values::contains);
             }
         });
     }
