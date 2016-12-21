@@ -1,12 +1,12 @@
 package org.apereo.cas.mgmt.services.web.factory;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DefaultMultifactorAuthenticationMapper}.
@@ -34,7 +34,8 @@ public class DefaultMultifactorAuthenticationMapper implements MultifactorAuthen
                     RegisteredServiceMultifactorPolicy.FailureModes.valueOf(data.getMultiAuth().getFailureMode().toUpperCase()));
             policy.setPrincipalAttributeNameTrigger(data.getMultiAuth().getPrincipalAttr().getNameTrigger());
             policy.setPrincipalAttributeValueToMatch(data.getMultiAuth().getPrincipalAttr().getValueMatch());
-            policy.setMultifactorAuthenticationProviders(Sets.newHashSet(data.getMultiAuth().getProviders().split(",")));
+            final String[] providers = data.getMultiAuth().getProviders().split(",");
+            policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toSet()));
             policy.setBypassEnabled(data.getMultiAuth().isBypassEnabled());
             return policy;
         }

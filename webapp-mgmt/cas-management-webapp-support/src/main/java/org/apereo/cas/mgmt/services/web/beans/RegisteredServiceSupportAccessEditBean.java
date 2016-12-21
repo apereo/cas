@@ -1,9 +1,8 @@
 package org.apereo.cas.mgmt.services.web.beans;
 
-import com.google.common.collect.Sets;
-
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     private String url;
     
     private Map<String, Set<String>> requiredAttr = new HashMap<>();
-    private Set<RegisteredServiceEditBean.ServiceData.PropertyBean> rejectedAttr = Sets.newLinkedHashSet();
+    private Set<RegisteredServiceEditBean.ServiceData.PropertyBean> rejectedAttr = new LinkedHashSet<>();
     private boolean caseSensitive;
 
     public boolean isCasEnabled() {

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,8 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -24,13 +26,14 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 public class DefaultMultifactorTriggerSelectionStrategyTests {
+
     private static final String MFA_INVALID = "mfaInvalid";
     private static final String MFA_PROVIDER_ID_1 = "mfa-id1";
     private static final String MFA_PROVIDER_ID_2 = "mfa-id2";
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_1 = mock(MultifactorAuthenticationProvider.class);
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_2 = mock(MultifactorAuthenticationProvider.class);
-    private static final ImmutableSet<MultifactorAuthenticationProvider> VALID_PROVIDERS = ImmutableSet.of(MFA_PROVIDER_1, MFA_PROVIDER_2);
-    private static final ImmutableSet<MultifactorAuthenticationProvider> NO_PROVIDERS = ImmutableSet.of();
+    private static final Set<MultifactorAuthenticationProvider> VALID_PROVIDERS = Stream.of(MFA_PROVIDER_1, MFA_PROVIDER_2).collect(Collectors.toSet());
+    private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = Collections.emptySet();
 
     private static final String REQUEST_PARAM = "authn_method";
 
@@ -155,11 +158,9 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         return service;
     }
 
-    private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName,
-                                                        final String attrValue) {
+    private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName, final String attrValue) {
         final RegexRegisteredService service = mockService(provider);
-        final DefaultRegisteredServiceMultifactorPolicy policy = (DefaultRegisteredServiceMultifactorPolicy) service
-                .getMultifactorPolicy();
+        final DefaultRegisteredServiceMultifactorPolicy policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
         policy.setPrincipalAttributeNameTrigger(attrName);
         policy.setPrincipalAttributeValueToMatch(attrValue);
 
@@ -168,6 +169,6 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     
     private Principal mockPrincipal(final String attrName, final String... attrValues) {
         return principalFactory.createPrincipal("user",
-                ImmutableMap.of(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
+                Collections.singletonMap(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
     }
 }

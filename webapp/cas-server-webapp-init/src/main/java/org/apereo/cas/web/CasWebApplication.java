@@ -1,6 +1,5 @@
 package org.apereo.cas.web;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasBanner;
@@ -21,6 +20,8 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.Collections;
 
 /**
  * This is {@link CasWebApplication}.
@@ -61,7 +62,7 @@ public class CasWebApplication {
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasWebApplication.class)
                 .banner(new CasBanner())
-                .properties(ImmutableMap.of(CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, Boolean.TRUE))
+                .properties(Collections.singletonMap(CasEmbeddedContainerConfiguration.EMBEDDED_CONTAINER_CONFIG_ACTIVE, Boolean.TRUE))
                 .logStartupInfo(true)
                 .run(args);
     }

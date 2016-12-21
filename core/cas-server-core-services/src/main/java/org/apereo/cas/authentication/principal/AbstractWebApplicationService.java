@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -11,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -22,8 +22,6 @@ import java.util.Map;
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
     private static final long serialVersionUID = 610105280927740076L;
-
-    private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /**
      * Logger instance.
@@ -58,8 +56,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
      * @param originalUrl the original url
      * @param artifactId  the artifact id
      */
-    protected AbstractWebApplicationService(final String id, final String originalUrl,
-                                            final String artifactId) {
+    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
@@ -78,7 +75,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     /**
