@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
-import org.apereo.cas.authentication.CasAttributeEncoder;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
+public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
     /**
      * The Services manager.
@@ -36,7 +36,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
     /**
      * Instantiates a new abstract cas attribute encoder.
      */
-    protected AbstractCasAttributeEncoder() {
+    protected AbstractProtocolAttributeEncoder() {
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      *
      * @param servicesManager the services manager
      */
-    public AbstractCasAttributeEncoder(final ServicesManager servicesManager) {
+    public AbstractProtocolAttributeEncoder(final ServicesManager servicesManager) {
         this(servicesManager, new DefaultRegisteredServiceCipherExecutor());
     }
 
@@ -55,8 +55,8 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param servicesManager the services manager
      * @param cipherExecutor  the cipher executor
      */
-    public AbstractCasAttributeEncoder(final ServicesManager servicesManager,
-                                       final RegisteredServiceCipherExecutor cipherExecutor) {
+    public AbstractProtocolAttributeEncoder(final ServicesManager servicesManager,
+                                            final RegisteredServiceCipherExecutor cipherExecutor) {
         this.servicesManager = servicesManager;
         this.cipherExecutor = cipherExecutor;
     }

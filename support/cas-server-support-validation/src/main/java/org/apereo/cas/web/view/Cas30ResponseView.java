@@ -113,7 +113,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
-        final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+        final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());

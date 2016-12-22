@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface CasAttributeEncoder {
+public interface ProtocolAttributeEncoder {
 
     /**
      * Encodes attributes that are ready to be released.

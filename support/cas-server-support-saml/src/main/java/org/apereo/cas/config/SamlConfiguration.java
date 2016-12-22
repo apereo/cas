@@ -5,9 +5,9 @@ import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -107,12 +107,12 @@ public class SamlConfiguration {
     public View casSamlServiceSuccessView() {
         final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
         view.setServicesManager(this.servicesManager);
-        view.setCasAttributeEncoder(this.casAttributeEncoder);
+        view.setProtocolAttributeEncoder(this.protocolAttributeEncoder);
         view.setIssuer(casProperties.getSamlCore().getIssuer());
         view.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
         view.setDefaultAttributeNamespace(casProperties.getSamlCore().getAttributeNamespace());
         view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setCasAttributeEncoder(casAttributeEncoder);
+        view.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return view;
     }
     
@@ -121,9 +121,9 @@ public class SamlConfiguration {
     public View casSamlServiceFailureView() {
         final Saml10FailureResponseView view = new Saml10FailureResponseView();
         view.setServicesManager(this.servicesManager);
-        view.setCasAttributeEncoder(this.casAttributeEncoder);
+        view.setProtocolAttributeEncoder(this.protocolAttributeEncoder);
         view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setCasAttributeEncoder(casAttributeEncoder);
+        view.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return view;
     }
     

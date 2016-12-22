@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.support.DefaultProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -11,7 +12,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
@@ -53,7 +53,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final DefaultServicesManager mgmr = new DefaultServicesManager(dao);
         mgmr.load();
         this.response.setServicesManager(mgmr);
-        this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
+        this.response.setProtocolAttributeEncoder(new DefaultProtocolAttributeEncoder(this.response.getServicesManager()));
         
         final Saml10ObjectBuilder builder = new Saml10ObjectBuilder(configBean);
         this.response.setSamlObjectBuilder(builder);

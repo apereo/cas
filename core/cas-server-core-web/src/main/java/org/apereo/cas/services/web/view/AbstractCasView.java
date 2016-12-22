@@ -4,10 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
@@ -46,7 +46,7 @@ public abstract class AbstractCasView extends AbstractView {
     /**
      * The attribute encoder instance.
      */
-    protected CasAttributeEncoder casAttributeEncoder;
+    protected ProtocolAttributeEncoder protocolAttributeEncoder;
 
     /**
      * The Services manager.
@@ -401,12 +401,12 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
 
-    public void setCasAttributeEncoder(final CasAttributeEncoder casAttributeEncoder) {
-        this.casAttributeEncoder = casAttributeEncoder;
+    public void setProtocolAttributeEncoder(final ProtocolAttributeEncoder protocolAttributeEncoder) {
+        this.protocolAttributeEncoder = protocolAttributeEncoder;
     }
 
-    public CasAttributeEncoder getCasAttributeEncoder() {
-        return this.casAttributeEncoder;
+    public ProtocolAttributeEncoder getProtocolAttributeEncoder() {
+        return this.protocolAttributeEncoder;
     }
 
     public ServicesManager getServicesManager() {

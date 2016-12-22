@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -114,7 +114,7 @@ public class CasValidationConfiguration {
     public View cas1ServiceSuccessView() {
         final Cas10ResponseView v = new Cas10ResponseView();
         v.setSuccessResponse(true);
-        v.setCasAttributeEncoder(casAttributeEncoder);
+        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return v;
     }
 
@@ -122,7 +122,7 @@ public class CasValidationConfiguration {
     public View cas1ServiceFailureView() {
         final Cas10ResponseView v = new Cas10ResponseView();
         v.setSuccessResponse(false);
-        v.setCasAttributeEncoder(casAttributeEncoder);
+        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return v;
     }
 
@@ -130,7 +130,7 @@ public class CasValidationConfiguration {
     public View cas2ServiceSuccessView() {
         final Cas20ResponseView v = new Cas20ResponseView();
         v.setView(this.cas2SuccessView);
-        v.setCasAttributeEncoder(casAttributeEncoder);
+        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return v;
     }
     
@@ -139,7 +139,7 @@ public class CasValidationConfiguration {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
         final Cas30JsonResponseView s = new Cas30JsonResponseView(authenticationContextAttribute, isReleaseProtocolAttributes);
-        s.setCasAttributeEncoder(casAttributeEncoder);
+        s.setProtocolAttributeEncoder(protocolAttributeEncoder);
         s.setView(cas3SuccessView);
         s.setServicesManager(servicesManager);
         return s;
@@ -150,7 +150,7 @@ public class CasValidationConfiguration {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
         final Cas30ResponseView s = new Cas30ResponseView(authenticationContextAttribute, isReleaseProtocolAttributes);
-        s.setCasAttributeEncoder(casAttributeEncoder);
+        s.setProtocolAttributeEncoder(protocolAttributeEncoder);
         s.setView(cas3SuccessView);
         s.setServicesManager(servicesManager);
         return s;
