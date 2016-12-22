@@ -173,7 +173,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the attribute statement
      */
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes, final boolean setFriendlyName) {
-
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
