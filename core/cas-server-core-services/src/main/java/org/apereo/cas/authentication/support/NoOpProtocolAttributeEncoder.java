@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.support;
 
+import org.apereo.cas.authentication.CasAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ public class NoOpCasAttributeEncoder implements CasAttributeEncoder {
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {
+    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
         logger.warn("Attributes are not encoded via {}. Total of {} attributes will be returned for service {}", 
                 this.getClass().getSimpleName(), attributes.size(), service);
         return new HashMap<>(attributes);
