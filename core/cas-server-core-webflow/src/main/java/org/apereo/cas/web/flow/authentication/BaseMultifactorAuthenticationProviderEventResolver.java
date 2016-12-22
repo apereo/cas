@@ -72,19 +72,6 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
      * @return the optional
      */
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final String... requestMfaMethod) {
-        return resolveProvider(providers, new HashSet<>(Arrays.asList(requestMfaMethod)));
-    }
-
-    /**
-     * Locate the provider in the collection, and have it match the requested mfa.
-     * If the provider is multi-instance, resolve based on inner-registered providers.
-     *
-     * @param providers        the providers
-     * @param requestMfaMethod the request mfa method
-     * @return the optional
-     */
-    public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
         return resolveProvider(providers, Collections.singleton(requestMfaMethod));
     }
