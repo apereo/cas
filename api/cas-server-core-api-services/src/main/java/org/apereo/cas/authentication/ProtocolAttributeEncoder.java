@@ -1,6 +1,7 @@
-package org.apereo.cas.authentication.support;
+package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public interface CasAttributeEncoder {
 
     /**
      * Encodes attributes that are ready to be released.
-     * Specifically, this method tries to ensure that the
+     * Typically, this method tries to ensure that the
      * PGT and the credential password are correctly encrypted
      * before they are released. Attributes should not be filtered
      * and removed and it is assumed that all will be returned
@@ -30,6 +31,6 @@ public interface CasAttributeEncoder {
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */
-    Map<String, Object> encodeAttributes(Map<String, Object> attributes, Service service);
+    Map<String, Object> encodeAttributes(Map<String, Object> attributes, RegisteredService service);
 
 }
