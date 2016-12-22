@@ -17,6 +17,7 @@ import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.soap.common.SOAPObject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -186,6 +188,22 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
     }
 
+    /**
+     * Add saml attribute values for attribute.
+     *
+     * @param attributeValue the attribute value
+     * @param attributeList  the attribute list
+     */
+    public void addAttributeValuesToSamlAttribute(final Object attributeValue, final List<XMLObject> attributeList) {
+        if (attributeValue instanceof Collection<?>) {
+            final Collection<?> c = (Collection<?>) attributeValue;
+            for (final Object value : c) {
+                attributeList.add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
+            }
+        } else {
+            attributeList.add(newAttributeValue(attributeValue, AttributeValue.DEFAULT_ELEMENT_NAME));
+        }
+    }
     /**
      * Marshal the saml xml object to raw xml.
      *
