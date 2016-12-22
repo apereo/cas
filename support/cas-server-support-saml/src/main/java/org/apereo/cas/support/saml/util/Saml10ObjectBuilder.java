@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -66,14 +65,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_11);
         samlResponse.setInResponseTo(recipient);
-        if (service instanceof SamlService) {
-            final SamlService samlService = (SamlService) service;
-
-            final String requestId = samlService.getRequestID();
-            if (StringUtils.isNotBlank(requestId)) {
-                samlResponse.setInResponseTo(requestId);
-            }
-        }
+        setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
     }
 
