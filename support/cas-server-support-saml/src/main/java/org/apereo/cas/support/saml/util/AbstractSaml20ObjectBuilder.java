@@ -4,7 +4,6 @@ package org.apereo.cas.support.saml.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -95,15 +94,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setInResponseTo(recipient);
-
-        if (service instanceof SamlService) {
-            final SamlService samlService = (SamlService) service;
-
-            final String requestId = samlService.getRequestID();
-            if (StringUtils.isNotBlank(requestId)) {
-                samlResponse.setInResponseTo(requestId);
-            }
-        }
+        setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
     }
 
