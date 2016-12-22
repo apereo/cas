@@ -40,11 +40,15 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     @Before
     public void setUp() {
         attributes = new HashMap<>();
-        attributes.put("a1", new ArrayList(Arrays.asList("v1", "v2", "v3")));
-        attributes.put(MAIL, new ArrayList(Arrays.asList("final@example.com")));
-        attributes.put("a6", new ArrayList(Arrays.asList("v16", "v26", "v63")));
-        attributes.put("a2", new ArrayList(Arrays.asList("v4")));
-        attributes.put("username", new ArrayList(Arrays.asList("uid")));
+        attributes.put("a1", Arrays.asList("v1", "v2", "v3"));
+
+        List email = new ArrayList<>();
+        email.add("final@example.com");
+        attributes.put(MAIL, email);
+
+        attributes.put("a6", Arrays.asList("v16", "v26", "v63"));
+        attributes.put("a2", Arrays.asList("v4"));
+        attributes.put("username", Arrays.asList("uid"));
 
         this.dao = mock(IPersonAttributeDao.class);
         final IPersonAttributes person = mock(IPersonAttributes.class);
@@ -52,8 +56,10 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         when(person.getAttributes()).thenReturn(attributes);
         when(dao.getPerson(any(String.class))).thenReturn(person);
 
+        email = new ArrayList<>();
+        email.add("final@school.com");
         this.principal = this.principalFactory.createPrincipal("uid",
-                Collections.singletonMap(MAIL, new ArrayList(Arrays.asList("final@school.com"))));
+                Collections.singletonMap(MAIL, email));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
@@ -95,7 +101,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
-
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
             assertEquals(repository.getAttributes(this.principal).get(MAIL).toString(), "final@example.com");
         }
@@ -106,9 +111,9 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
-            assertTrue(repository.getAttributes(this.principal).get(MAIL) instanceof List);
-
-            final List<?> values = (List) repository.getAttributes(this.principal).get(MAIL);
+            final Object mailAttr = repository.getAttributes(this.principal).get(MAIL);
+            assertTrue(mailAttr instanceof List);
+            final List<?> values = (List) mailAttr;
             assertTrue(values.contains("final@example.com"));
             assertTrue(values.contains("final@school.com"));
         }
