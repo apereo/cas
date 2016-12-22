@@ -89,8 +89,8 @@ public class CasThemesConfiguration {
 
             @Override
             public Set<IPostProcessor> getPostProcessors() {
-                return new HashSet<>(Collections.singletonList(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
-                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE)));
+                return Collections.singleton(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
             }
 
             @Override

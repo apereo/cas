@@ -15,7 +15,7 @@ import java.util.Set;
 public class AdminPagesSecurityProperties {
 
     private String ip = "127\\.0\\.0\\.1|0:0:0:0:0:0:0:1";
-    private Set<String> adminRoles = new HashSet<>(Collections.singletonList("ROLE_ADMIN"));
+    private Set<String> adminRoles = new HashSet<>(Collections.singleton("ROLE_ADMIN"));
     private String loginUrl;
     private String service;
     private Resource users;

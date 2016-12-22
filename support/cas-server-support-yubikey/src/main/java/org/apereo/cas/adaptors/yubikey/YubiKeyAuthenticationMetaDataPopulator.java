@@ -20,7 +20,16 @@ public class YubiKeyAuthenticationMetaDataPopulator implements AuthenticationMet
     private final AuthenticationHandler authenticationHandler;
     private final MultifactorAuthenticationProvider provider;
 
-    public YubiKeyAuthenticationMetaDataPopulator(final String authenticationContextAttribute, final AuthenticationHandler authenticationHandler, final MultifactorAuthenticationProvider provider) {
+    /**
+     * Instantiates a new Yubi key authentication meta data populator.
+     *
+     * @param authenticationContextAttribute the authentication context attribute
+     * @param authenticationHandler          the authentication handler
+     * @param provider                       the provider
+     */
+    public YubiKeyAuthenticationMetaDataPopulator(final String authenticationContextAttribute,
+                                                  final AuthenticationHandler authenticationHandler,
+                                                  final MultifactorAuthenticationProvider provider) {
         this.authenticationContextAttribute = authenticationContextAttribute;
         this.authenticationHandler = authenticationHandler;
         this.provider = provider;
