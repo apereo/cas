@@ -365,8 +365,22 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setPublicKey(publicKey);
 
         this.dao.save(r);
-        final List<RegisteredService> list = this.dao.load();
+        this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
+    }
+
+    @Test
+    public void checkNullabilityOfAccessStrategy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("checkNullabilityOfAccessStrategy");
+        r.setId(43210);
+        r.setAccessStrategy(null);
+        this.dao.save(r);
+        assertEquals(this.dao.load().size(), 1);
+        final RegisteredService s = this.dao.findServiceById(43210);
+        assertNotNull(s);
+        assertNotNull(s.getAccessStrategy());
     }
 
     @Test
@@ -383,7 +397,6 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         values.add("value2");
         property.setValues(values);
         properties.put("field1", property);
-
 
         final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
         final Set<String> values2 = new HashSet<>();

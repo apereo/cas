@@ -36,8 +36,10 @@ public class GenerateServiceTicketAction extends AbstractAction {
     private final TicketRegistrySupport ticketRegistrySupport;
     private final ServicesManager servicesManager;
 
-    public GenerateServiceTicketAction(final AuthenticationSystemSupport authenticationSystemSupport, final CentralAuthenticationService authenticationService,
-                                       final TicketRegistrySupport ticketRegistrySupport, final ServicesManager servicesManager) {
+    public GenerateServiceTicketAction(final AuthenticationSystemSupport authenticationSystemSupport,
+                                       final CentralAuthenticationService authenticationService,
+                                       final TicketRegistrySupport ticketRegistrySupport,
+                                       final ServicesManager servicesManager) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = authenticationService;
         this.ticketRegistrySupport = ticketRegistrySupport;
