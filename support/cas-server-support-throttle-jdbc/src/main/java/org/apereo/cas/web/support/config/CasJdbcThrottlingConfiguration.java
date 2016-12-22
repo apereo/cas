@@ -46,13 +46,12 @@ public class CasJdbcThrottlingConfiguration {
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
                                                                                    final AuditTrailManager auditTrailManager) {
+        final String appcode = casProperties.getAuthn().getThrottle().getAppcode();
+        final String sqlQueryAudit = casProperties.getAuthn().getThrottle().getJdbc().getAuditQuery();
+        final String failureCode = casProperties.getAuthn().getThrottle().getFailure().getCode();
         final InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter bean =
                 new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(auditTrailManager,
-                        inspektrAuditTrailDataSource());
-        bean.setApplicationCode(casProperties.getAuthn().getThrottle().getAppcode());
-        bean.setAuthenticationFailureCode(casProperties.getAuthn().getThrottle().getFailure().getCode());
-        bean.setSqlQueryAudit(casProperties.getAuthn().getThrottle().getJdbc().getAuditQuery());
+                        inspektrAuditTrailDataSource(), appcode, sqlQueryAudit, failureCode);
         return configureThrottleHandlerInterceptorAdaptor(bean);
     }
-
 }

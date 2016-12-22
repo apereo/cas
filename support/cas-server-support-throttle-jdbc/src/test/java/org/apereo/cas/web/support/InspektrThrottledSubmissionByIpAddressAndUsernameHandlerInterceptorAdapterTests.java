@@ -56,8 +56,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private AuthenticationManager authenticationManager;
 
     @Override
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
-            throws Exception {
+    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");
