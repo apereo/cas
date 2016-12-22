@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -20,6 +21,6 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Test
     public void verifyOtherConstructor() {
-        assertNotNull(new DefaultTicketRegistry(10, 10F, 5));
+        assertNotNull(new DefaultTicketRegistry(10, 10F, 5, NoOpCipherExecutor.getInstance()));
     }
 }
