@@ -41,12 +41,15 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private final String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;
-    
+
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
      *
-     * @param auditTrailManager the audit trail manager
-     * @param dataSource the data source
+     * @param auditTrailManager         the audit trail manager
+     * @param dataSource                the data source
+     * @param appCode                   the app code
+     * @param sqlQueryAudit             the sql query audit
+     * @param authenticationFailureCode the authentication failure code
      */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
                                                                                       final DataSource dataSource, final String appCode,
