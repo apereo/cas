@@ -5,13 +5,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="authenticationManager" class="org.apereo.cas.authentication.PolicyBasedAuthenticationManager">
-        <constructor-arg>
+        <constructor-arg name="map">
             <map>
                 <entry key-ref="acceptUsersAuthenticationHandler" value-ref="usernamePasswordCredentialsResolver" />
                 <entry key-ref="x509AuthenticationHandler" value-ref="x509CredentialsResolver" />
                 <entry key-ref="httpBasedAuthenticationHandler" value-ref="httpBasedCredentialsResolver" />
             </map>
         </constructor-arg>
+        <constructor-arg name="servicesManager" value="#{null}"></constructor-arg>
     </bean>
 
     <!--

@@ -8,8 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.internal.matchers.InstanceOf;
+import org.mockito.internal.matchers.Or;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -52,7 +55,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
         assertEquals(this.dao.load().size(), 2);
     }
-    
+
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -113,6 +116,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
+
     @Test
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -256,14 +260,13 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
 
-        this.thrown.expect(RuntimeException.class);
-        this.thrown.expectMessage("IO error opening file stream.");
-
+        this.thrown.expect(new Or(Arrays.asList(new InstanceOf(RuntimeException.class),
+                new InstanceOf(IOException.class))));
         this.dao.save(r);
     }
-    
+
     @Test
-    public void verifyServiceRemovals() throws Exception{
+    public void verifyServiceRemovals() throws Exception {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
@@ -390,7 +393,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setProperties(properties);
 
         this.dao.save(r);
-        final List<RegisteredService> list = this.dao.load();
+        this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
         assertEquals(r.getProperties().size(), 2);
         assertNotNull(r.getProperties().get("field1"));
