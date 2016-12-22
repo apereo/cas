@@ -25,8 +25,4 @@ public class DefaultDigestHashedCredentialRetriever implements DigestHashedCrede
     public Table<String, String, String> getStore() {
         return store;
     }
-
-    public void setStore(final Table<String, String, String> store) {
-        this.store = store;
-    }
 }
