@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
@@ -44,8 +45,10 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
      */
     public DefaultTicketRegistry(final int initialCapacity,
                                  final float loadFactor,
-                                 final int concurrencyLevel) {
+                                 final int concurrencyLevel,
+                                 final CipherExecutor cipherExecutor) {
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
+        setCipherExecutor(cipherExecutor);
     }
 
     @Override

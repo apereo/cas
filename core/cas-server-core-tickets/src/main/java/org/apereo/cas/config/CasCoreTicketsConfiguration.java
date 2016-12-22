@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -148,13 +149,12 @@ public class CasCoreTicketsConfiguration {
     @RefreshScope
     @Bean(name = {"defaultTicketRegistry", "ticketRegistry"})
     public TicketRegistry defaultTicketRegistry() {
-        final DefaultTicketRegistry r = new DefaultTicketRegistry(
-                casProperties.getTicket().getRegistry().getInMemory().getInitialCapacity(),
-                casProperties.getTicket().getRegistry().getInMemory().getLoadFactor(),
-                casProperties.getTicket().getRegistry().getInMemory().getConcurrency());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getInMemory().getCrypto()));
-        return r;
+        final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
+        return new DefaultTicketRegistry(
+                mem.getInitialCapacity(),
+                mem.getLoadFactor(),
+                mem.getConcurrency(),
+                Beans.newTicketRegistryCipherExecutor(mem.getCrypto()));
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
@@ -265,12 +265,14 @@ public class CasCoreTicketsConfiguration {
         }
 
         if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout");
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of {} seconds",
+                    tgt.getTimeout().getMaxTimeToLiveInSeconds());
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
         if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts");
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of {}/{} seconds",
+                    tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
             return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
 
@@ -279,12 +281,13 @@ public class CasCoreTicketsConfiguration {
             final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
             p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
             p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a throttled timeouts");
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on throttled timeouts");
             return p;
         }
 
         if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
-            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout");
+            LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of {} seconds",
+                    tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
 
