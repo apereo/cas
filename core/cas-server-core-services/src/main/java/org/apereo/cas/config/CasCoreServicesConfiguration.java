@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
-import org.apereo.cas.authentication.support.DefaultProtocolAttributeEncoder;
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
@@ -94,7 +94,7 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultProtocolAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
+        return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
     }
 
     @Bean
