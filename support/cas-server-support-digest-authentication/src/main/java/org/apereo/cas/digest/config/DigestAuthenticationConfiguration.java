@@ -102,9 +102,7 @@ public class DigestAuthenticationConfiguration {
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
-        final DefaultDigestHashedCredentialRetriever r = new DefaultDigestHashedCredentialRetriever();
-        digest.getUsers().forEach((k, v) -> r.getStore().put(k, digest.getRealm(), v));
-        return r;
+        return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 
     @Bean
