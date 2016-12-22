@@ -44,9 +44,10 @@ public class ManageRegisteredServicesMultiActionController extends AbstractManag
     /**
      * Instantiates a new manage registered services multi action controller.
      *
-     * @param servicesManager          the services manager
-     * @param registeredServiceFactory the registered service factory
-     * @param defaultServiceUrl        the default service url
+     * @param servicesManager              the services manager
+     * @param registeredServiceFactory     the registered service factory
+     * @param webApplicationServiceFactory the web application service factory
+     * @param defaultServiceUrl            the default service url
      */
     public ManageRegisteredServicesMultiActionController(
             final ServicesManager servicesManager,

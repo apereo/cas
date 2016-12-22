@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.web.security;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,10 +96,15 @@ public class HttpWebRequestProperties {
         private boolean enabled;
         private boolean allowCredentials = true;
         private List<String> allowOrigins = new ArrayList<>();
-        private List<String> allowMethods = new ArrayList<>(Arrays.asList("*"));
-        private List<String> allowHeaders = new ArrayList<>(Arrays.asList("*"));
+        private List<String> allowMethods = new ArrayList<>();
+        private List<String> allowHeaders = new ArrayList<>();
         private long maxAge = 3_600;
         private List<String> exposedHeaders = new ArrayList<>();
+
+        public Cors() {
+            this.allowMethods.add("*");
+            this.allowHeaders.add("*");
+        }
 
         public boolean isEnabled() {
             return enabled;
