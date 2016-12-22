@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
     }
 
     @Override
-    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {
+    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
         final Map<String, Object> finalAttributes = new HashMap<>(attributes);
         transformUniformResourceNames(finalAttributes);
         return finalAttributes;
