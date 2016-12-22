@@ -8,7 +8,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -36,23 +35,14 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
     
-    private AuditTrailManager auditTrailManager;
-
-    private DataSource dataSource;
-
-    private String applicationCode;
-
-    private String authenticationFailureCode;
-
-    private String sqlQueryAudit;
+    private final AuditTrailManager auditTrailManager;
+    private final DataSource dataSource;
+    private final String applicationCode;
+    private final String authenticationFailureCode;
+    private final String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;
     
-    /**
-     * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
-     */
-    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter() {}
-
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
      *
@@ -60,22 +50,18 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param dataSource the data source
      */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
-                                                                                      final DataSource dataSource) {
+                                                                                      final DataSource dataSource, final String appCode,
+                                                                                      final String sqlQueryAudit, final String authenticationFailureCode) {
         this.auditTrailManager = auditTrailManager;
         this.dataSource = dataSource;
-        init();
-    }
+        this.applicationCode = appCode;
+        this.sqlQueryAudit = sqlQueryAudit;
+        this.authenticationFailureCode = authenticationFailureCode;
 
-    /**
-     * Init the jdbc template.
-     */
-    @PostConstruct
-    public void init() {
         if (this.dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         } else {
-            logger.debug("No data source is defined for {}. Ignoring the construction of JDBC template",
-                    this.getName());
+            logger.debug("No data source is defined for {}. Ignoring the construction of JDBC template", this.getName());
         }
     }
 
@@ -100,8 +86,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             // Compute rate in submissions/sec between last two authn failures and compare with threshold
             return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
         }
-        logger.debug("No data source is defined for {}. Ignoring threshold checking",
-                this.getName());
+        logger.debug("No data source is defined for {}. Ignoring threshold checking", this.getName());
         return false;
     }
 
@@ -135,21 +120,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     auditPointRuntimeInfo);
             this.auditTrailManager.record(context);
         } else {
-            logger.debug("No data source is defined for {}. Ignoring audit record-keeping",
-                    this.getName());
+            logger.debug("No data source is defined for {}. Ignoring audit record-keeping", this.getName());
         }
-    }
-
-    public void setApplicationCode(final String applicationCode) {
-        this.applicationCode = applicationCode;
-    }
-
-    public void setAuthenticationFailureCode(final String authenticationFailureCode) {
-        this.authenticationFailureCode = authenticationFailureCode;
-    }
-
-    public void setSqlQueryAudit(final String sqlQueryAudit) {
-        this.sqlQueryAudit = sqlQueryAudit;
     }
 
     /**
