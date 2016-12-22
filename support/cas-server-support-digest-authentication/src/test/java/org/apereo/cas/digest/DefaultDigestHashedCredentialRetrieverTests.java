@@ -9,6 +9,10 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author David Rodriguez
+ * @since 5.1.0
+ */
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Rule
