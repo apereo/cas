@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
