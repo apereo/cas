@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("v3ServiceValidateController")
 public class V3ServiceValidateController extends AbstractServiceValidateController {
+
     /**
      * Handle model and view.
      *

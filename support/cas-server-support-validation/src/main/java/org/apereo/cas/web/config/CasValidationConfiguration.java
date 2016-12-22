@@ -230,10 +230,7 @@ public class CasValidationConfiguration {
 
     @Bean
     public ProxyController proxyController() {
-        final ProxyController c = new ProxyController();
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setWebApplicationServiceFactory(webApplicationServiceFactory);
-        return c;
+        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory);
     }
 
     @Bean
