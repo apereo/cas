@@ -31,11 +31,11 @@ public class GenericSuccessViewAction extends AbstractAction {
      */
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CentralAuthenticationService centralAuthenticationService;
-    private ServicesManager servicesManager;
-    private ServiceFactory serviceFactory;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final ServicesManager servicesManager;
+    private final ServiceFactory serviceFactory;
 
-    private String redirectUrl;
+    private final String redirectUrl;
 
     /**
      * Instantiates a new Generic success view action.
@@ -43,6 +43,7 @@ public class GenericSuccessViewAction extends AbstractAction {
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager              the services manager
      * @param serviceFactory               the service factory
+     * @param redirectUrl                  the redirect url
      */
     public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
                                     final ServiceFactory serviceFactory, final String redirectUrl) {

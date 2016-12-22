@@ -33,6 +33,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     /**
      * Instantiates a new Abstract cas response view.
+     *
+     * @param authenticationContextAttribute the authentication context attribute
+     * @param releaseProtocolAttributes      the release protocol attributes
      */
     public Cas30ResponseView(final String authenticationContextAttribute, final boolean releaseProtocolAttributes) {
         super();
