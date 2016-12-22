@@ -2,18 +2,16 @@ package org.apereo.cas.support.saml.util;
 
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-
+import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -196,16 +194,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             
             if (setFriendlyName) {
                 attribute.setFriendlyName(e.getKey());
-            } 
-            
-            if (e.getValue() instanceof Collection<?>) {
-                final Collection<?> c = (Collection<?>) e.getValue();
-                for (final Object value : c) {
-                    attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
-                }
-            } else {
-                attribute.getAttributeValues().add(newAttributeValue(e.getValue(), AttributeValue.DEFAULT_ELEMENT_NAME));
             }
+            addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
             attrStatement.getAttributes().add(attribute);
         }
 
