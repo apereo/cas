@@ -8,8 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.internal.matchers.InstanceOf;
+import org.mockito.internal.matchers.Or;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -21,7 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -52,7 +57,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
         assertEquals(this.dao.load().size(), 2);
     }
-    
+
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -113,6 +118,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }
+
     @Test
     public void verifySaveMethodWithDefaultAnonymousAttribute() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -221,7 +227,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
-        r.setRequiredHandlers(new HashSet<>(Arrays.asList("h1", "h2")));
+        r.setRequiredHandlers(Stream.of("h1", "h2").collect(Collectors.toSet()));
 
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
@@ -256,14 +262,13 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setName("hell/o@world:*");
         r.setEvaluationOrder(1000);
 
-        this.thrown.expect(RuntimeException.class);
-        this.thrown.expectMessage("IO error opening file stream.");
-
+        this.thrown.expect(new Or(Arrays.asList(new InstanceOf(RuntimeException.class),
+                new InstanceOf(IOException.class))));
         this.dao.save(r);
     }
-    
+
     @Test
-    public void verifyServiceRemovals() throws Exception{
+    public void verifyServiceRemovals() throws Exception {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
@@ -390,7 +395,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setProperties(properties);
 
         this.dao.save(r);
-        final List<RegisteredService> list = this.dao.load();
+        this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
         assertEquals(r.getProperties().size(), 2);
         assertNotNull(r.getProperties().get("field1"));

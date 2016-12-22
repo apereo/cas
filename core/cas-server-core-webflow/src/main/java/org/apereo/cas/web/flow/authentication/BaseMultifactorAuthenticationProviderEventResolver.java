@@ -17,7 +17,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -61,19 +60,6 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
         }
 
         return providerFound;
-    }
-
-    /**
-     * Locate the provider in the collection, and have it match the requested mfa.
-     * If the provider is multi-instance, resolve based on inner-registered providers.
-     *
-     * @param providers        the providers
-     * @param requestMfaMethod the request mfa method
-     * @return the optional
-     */
-    public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final String... requestMfaMethod) {
-        return resolveProvider(providers, new HashSet<>(Arrays.asList(requestMfaMethod)));
     }
 
     /**

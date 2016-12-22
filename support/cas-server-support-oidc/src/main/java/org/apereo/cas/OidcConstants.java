@@ -1,9 +1,10 @@
 package org.apereo.cas;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link OidcConstants}.
@@ -71,11 +72,11 @@ public interface OidcConstants {
     /**
      * The Claims.
      */
-    Set<String> CLAIMS = new HashSet<>(Arrays.asList(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
+    Set<String> CLAIMS = Stream.of(CLAIM_SUB, "name", CLAIM_PREFERRED_USERNAME,
             "family_name", "given_name", "middle_name", "given_name", "profile",
             "picture", "nickname", "website", "zoneinfo", "locale", "updated_at",
             "birthdate", "email", "email_verified", "phone_number",
-            "phone_number_verified", "address"));
+            "phone_number_verified", "address").collect(Collectors.toSet());
 
     /**
      * The id token.

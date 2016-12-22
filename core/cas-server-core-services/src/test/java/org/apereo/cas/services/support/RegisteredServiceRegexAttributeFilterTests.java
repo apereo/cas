@@ -16,9 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -50,7 +51,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("employeeId", "E1234");
         this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
         this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
-        this.givenAttributesMap.put("setAttribute", new HashSet<>(Arrays.asList("math", "science", "chemistry")));
+        this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
         final Map<String, String> mapAttributes = new HashMap<>();
         mapAttributes.put("uid", "loggedInTestUid");
