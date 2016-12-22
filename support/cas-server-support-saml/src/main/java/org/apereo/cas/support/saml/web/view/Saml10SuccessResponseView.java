@@ -106,7 +106,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
         decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributesToReturn, model, registeredService);
 
-        final Map<String, Object> finalAttributes = this.casAttributeEncoder.encodeAttributes(attributesToReturn, service);
+        final Map<String, Object> finalAttributes = this.protocolAttributeEncoder.encodeAttributes(attributesToReturn, registeredService);
         return finalAttributes;
     }
 

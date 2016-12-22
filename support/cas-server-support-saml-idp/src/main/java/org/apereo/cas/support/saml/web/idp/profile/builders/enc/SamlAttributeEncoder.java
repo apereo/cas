@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,28 +17,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlAttributeEncoder {
+public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlAttributeEncoder.class);
-
-    /**
-     * Encode and transform attributes.
-     *
-     * @param authnRequest the authn request
-     * @param attributes   the attributes
-     * @param service      the service
-     * @param adaptor      the service provider facade
-     * @return the map
-     */
-    public Map<String, Object> encode(final AuthnRequest authnRequest,
-                                      final Map<String, Object> attributes,
-                                      final SamlRegisteredService service,
-                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        final Map<String, Object> finalAttributes = new HashMap<>(attributes);
-
-        transformUniformResourceNames(finalAttributes);
-
-        return finalAttributes;
-    }
 
     private static void transformUniformResourceNames(final Map<String, Object> attributes) {
         final Set<Pair<String, Object>> attrs = attributes.keySet().stream()
@@ -54,5 +33,12 @@ public class SamlAttributeEncoder {
                 attributes.put(p.getKey(), p.getValue());
             });
         }
+    }
+
+    @Override
+    public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final Service service) {
+        final Map<String, Object> finalAttributes = new HashMap<>(attributes);
+        transformUniformResourceNames(finalAttributes);
+        return finalAttributes;
     }
 }
