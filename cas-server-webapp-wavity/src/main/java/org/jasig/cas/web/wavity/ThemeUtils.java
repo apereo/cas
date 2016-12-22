@@ -101,7 +101,7 @@ public final class ThemeUtils
     env.put(Context.INITIAL_CONTEXT_FACTORY,
         "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(Context.PROVIDER_URL, "ldap://wavitydevelopmentldap:389");
-    env.put("java.naming.ldap.attributes.binary", "jpegPhoto");
+    env.put("java.naming.ldap.attributes.binary", "jpegPhoto;portalBranding;binary");
     final LdapContext ctx;
     final String ldapSearchBase;
     if (type.equals(ENTRY_TYPE_TENANTS))
@@ -120,7 +120,7 @@ public final class ThemeUtils
       ldapSearchBase = String.format(
           "cn=%s,o=tenants,dc=wavity,dc=com", name.toLowerCase());
     }
-    final String searchFilter = "jpegPhoto=*";
+    final String searchFilter = "jpegPhoto;portalBranding;binary=*";
     final SearchControls searchControls = new SearchControls();
     searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
     try
@@ -138,7 +138,7 @@ public final class ThemeUtils
         return null;
       }
       final Attributes attrs = searchResult.getAttributes();
-      final Attribute attr = attrs.get("jpegPhoto");
+      final Attribute attr = attrs.get("jpegPhoto;portalBranding;binary");
       if (attr != null)
       {
         final byte[] jpegByte = (byte[]) attr.get();
