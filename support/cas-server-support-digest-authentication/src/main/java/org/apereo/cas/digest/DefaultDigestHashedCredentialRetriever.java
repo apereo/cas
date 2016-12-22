@@ -1,7 +1,6 @@
 package org.apereo.cas.digest;
 
 import javax.security.auth.login.AccountNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
