@@ -98,7 +98,7 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    public NoOpProtocolAttributeEncoder noOpCasAttributeEncoder() {
+    public ProtocolAttributeEncoder noOpCasAttributeEncoder() {
         return new NoOpProtocolAttributeEncoder();
     }
 

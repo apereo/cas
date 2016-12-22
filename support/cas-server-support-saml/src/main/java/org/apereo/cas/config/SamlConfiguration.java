@@ -52,7 +52,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("casAttributeEncoder")
-    private CasAttributeEncoder casAttributeEncoder;
+    private ProtocolAttributeEncoder protocolAttributeEncoder;
 
     @Autowired
     @Qualifier("cas3ServiceJsonView")

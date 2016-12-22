@@ -4,9 +4,9 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -38,18 +38,18 @@ import org.springframework.web.servlet.View;
 @Configuration("casValidationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasValidationConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("casAttributeEncoder")
-    private CasAttributeEncoder casAttributeEncoder;
+    private ProtocolAttributeEncoder protocolAttributeEncoder;
 
     @Autowired
     @Qualifier("cas3SuccessView")
     private View cas3SuccessView;
-            
+
     @Autowired
     @Qualifier("authenticationContextValidator")
     private AuthenticationContextValidator authenticationContextValidator;
@@ -81,7 +81,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("cas2SuccessView")
     private View cas2SuccessView;
-    
+
     @Autowired
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
@@ -101,7 +101,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
@@ -109,7 +109,7 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    
+
     @Bean
     public View cas1ServiceSuccessView() {
         final Cas10ResponseView v = new Cas10ResponseView();
@@ -133,7 +133,7 @@ public class CasValidationConfiguration {
         v.setProtocolAttributeEncoder(protocolAttributeEncoder);
         return v;
     }
-    
+
     @Bean
     public View cas3ServiceJsonView() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
