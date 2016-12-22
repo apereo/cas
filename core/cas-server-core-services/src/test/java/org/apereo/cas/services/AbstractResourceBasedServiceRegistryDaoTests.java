@@ -24,7 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -225,7 +227,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setEvaluationOrder(1000);
         r.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         r.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("https://.+"));
-        r.setRequiredHandlers(new HashSet<>(Arrays.asList("h1", "h2")));
+        r.setRequiredHandlers(Stream.of("h1", "h2").collect(Collectors.toSet()));
 
         final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
