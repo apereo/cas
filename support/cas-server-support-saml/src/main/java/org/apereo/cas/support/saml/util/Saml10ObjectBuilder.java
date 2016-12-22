@@ -14,7 +14,6 @@ import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
-import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.saml.saml1.core.Audience;
 import org.opensaml.saml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -217,15 +216,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
             if (StringUtils.isNotBlank(attributeNamespace)) {
                 attribute.setAttributeNamespace(attributeNamespace);
             }
-            
-            if (e.getValue() instanceof Collection<?>) {
-                final Collection<?> c = (Collection<?>) e.getValue();
-                for (final Object value : c) {
-                    attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
-                }
-            } else {
-                attribute.getAttributeValues().add(newAttributeValue(e.getValue(), AttributeValue.DEFAULT_ELEMENT_NAME));
-            }
+
+            addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
             attrStatement.getAttributes().add(attribute);
         }
 
