@@ -12,6 +12,7 @@ import org.junit.rules.ExpectedException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -69,7 +70,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnyFailure() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -85,7 +86,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllSuccess() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(true), null);
 
@@ -100,7 +101,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllFailure() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -118,7 +119,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
@@ -134,7 +135,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
@@ -152,7 +153,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
-        final Map map = new HashMap();
+        final Map map = new LinkedHashMap();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
