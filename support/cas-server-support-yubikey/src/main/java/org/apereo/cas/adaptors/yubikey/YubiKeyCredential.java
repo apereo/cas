@@ -67,7 +67,6 @@ public class YubiKeyCredential implements Credential, Serializable {
         return this.token;
     }
 
-
     public String getToken() {
         return this.token;
     }
