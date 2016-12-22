@@ -27,5 +27,4 @@ public class ServiceValidateController extends AbstractServiceValidateController
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
-
 }
