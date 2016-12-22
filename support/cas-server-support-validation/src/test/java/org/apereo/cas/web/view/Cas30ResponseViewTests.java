@@ -1,13 +1,13 @@
 package org.apereo.cas.web.view;
 
 import com.google.common.base.Throwables;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Before;
@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
 
 /**
  * Unit tests for {@link Cas30ResponseView}.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
@@ -65,8 +67,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         this.serviceValidateController.setSuccessView(cas3SuccessView);
         this.serviceValidateController.setJsonView(cas3ServiceJsonView);
     }
-    
-    private Map<?, ?> renderView() throws Exception{
+
+    private Map<?, ?> renderView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
@@ -77,7 +79,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         view.setView(new View() {
             @Override
             public String getContentType() {
-                return "text/html";
+                return MediaType.TEXT_HTML_VALUE;
             }
 
             @Override

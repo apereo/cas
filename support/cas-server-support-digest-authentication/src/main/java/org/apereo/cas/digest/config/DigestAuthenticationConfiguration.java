@@ -88,10 +88,13 @@ public class DigestAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
-                                                                     final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+                                                                 final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getDigest().getRealm(),
-                casProperties.getAuthn().getDigest().getAuthenticationMethod(), defaultDigestCredentialRetriever);
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                casProperties.getAuthn().getDigest().getRealm(),
+                casProperties.getAuthn().getDigest().getAuthenticationMethod(),
+                defaultDigestCredentialRetriever);
     }
 
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")
@@ -100,8 +103,7 @@ public class DigestAuthenticationConfiguration {
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
         final DigestProperties digest = casProperties.getAuthn().getDigest();
         final DefaultDigestHashedCredentialRetriever r = new DefaultDigestHashedCredentialRetriever();
-        digest.getUsers().forEach((k, v) ->
-                r.getStore().put(k, digest.getRealm(), v));
+        digest.getUsers().forEach((k, v) -> r.getStore().put(k, digest.getRealm(), v));
         return r;
     }
 
