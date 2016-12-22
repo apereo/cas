@@ -115,7 +115,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return null;
     }
 
-
     /**
      * Validate authentication context pair.
      *

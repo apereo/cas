@@ -27,6 +27,10 @@ import java.util.stream.Collectors;
  */
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
+    public Cas30JsonResponseView(final String authenticationContextAttribute, final boolean isReleaseProtocolAttributes) {
+        super(authenticationContextAttribute, isReleaseProtocolAttributes);
+    }
+
     private static MappingJackson2JsonView createDelegatedView() {
         final MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);

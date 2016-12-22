@@ -1,7 +1,5 @@
 package org.apereo.cas.web;
 
-import java.util.Map;
-
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -13,6 +11,9 @@ import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,9 +26,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Before
     public void onSetUp() throws Exception {
-        this.proxyController = new ProxyController();
-        this.proxyController.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.proxyController.setWebApplicationServiceFactory(getWebApplicationServiceFactory());
+        this.proxyController = new ProxyController(getCentralAuthenticationService(), getWebApplicationServiceFactory());
         final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.proxyController.setApplicationContext(context);

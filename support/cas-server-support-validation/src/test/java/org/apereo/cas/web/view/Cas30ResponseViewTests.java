@@ -71,7 +71,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas30ResponseView view = new Cas30ResponseView();
+        final Cas30ResponseView view = new Cas30ResponseView("attribute", true);
         view.setServicesManager(this.servicesManager);
         view.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.servicesManager));
         view.setView(new View() {

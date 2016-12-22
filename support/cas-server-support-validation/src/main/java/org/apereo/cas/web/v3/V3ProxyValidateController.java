@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("v3ProxyValidateController")
 public class V3ProxyValidateController extends V3ServiceValidateController {
+
     /**
      * Handle model and view.
      *

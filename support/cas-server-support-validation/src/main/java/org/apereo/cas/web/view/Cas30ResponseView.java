@@ -29,14 +29,15 @@ import java.util.Set;
 public class Cas30ResponseView extends Cas20ResponseView {
 
     private boolean releaseProtocolAttributes = true;
-
-    private String authenticationContextAttribute;
+    private final String authenticationContextAttribute;
 
     /**
      * Instantiates a new Abstract cas response view.
      */
-    public Cas30ResponseView() {
+    public Cas30ResponseView(final String authenticationContextAttribute, final boolean releaseProtocolAttributes) {
         super();
+        this.authenticationContextAttribute = authenticationContextAttribute;
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
     @Override
@@ -124,13 +125,5 @@ public class Cas30ResponseView extends Cas20ResponseView {
             });
         });
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
-    }
-
-    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
-        this.releaseProtocolAttributes = releaseProtocolAttributes;
-    }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 }
