@@ -60,8 +60,12 @@ public class ProxyController {
 
     /**
      * Instantiates a new proxy controller, with cache seconds set to 0.
+     *
+     * @param centralAuthenticationService the central authentication service
+     * @param webApplicationServiceFactory the web application service factory
      */
-    public ProxyController(final CentralAuthenticationService centralAuthenticationService, final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+    public ProxyController(final CentralAuthenticationService centralAuthenticationService,
+                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
