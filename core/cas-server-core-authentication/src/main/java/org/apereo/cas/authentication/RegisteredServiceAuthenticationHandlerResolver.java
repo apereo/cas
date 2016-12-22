@@ -26,7 +26,16 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
+
+    /**
+     * Instantiates a new Registered service authentication handler resolver.
+     *
+     * @param servicesManager the services manager
+     */
+    public RegisteredServiceAuthenticationHandlerResolver(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
@@ -61,9 +70,5 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
         logger.debug("Authentication handlers used for this transaction are {}", candidateHandlers);
         return candidateHandlers;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }

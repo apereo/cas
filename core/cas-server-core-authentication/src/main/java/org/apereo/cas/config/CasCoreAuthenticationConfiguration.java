@@ -32,11 +32,11 @@ import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolic
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
-import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -119,9 +119,7 @@ public class CasCoreAuthenticationConfiguration {
     public AuthenticationPolicy defaultAuthenticationPolicy() {
         final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
         if (police.getReq().isEnabled()) {
-            final RequiredHandlerAuthenticationPolicy bean = new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName());
-            bean.setTryAll(police.getReq().isTryAll());
-            return bean;
+            return new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll());
         }
 
         if (police.getAll().isEnabled()) {
@@ -211,20 +209,18 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
-        final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
-
-        p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
-        p.setHandlerResolverMap(authenticationHandlersResolvers(httpClient));
-        p.setAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
-        p.setAuthenticationPolicy(defaultAuthenticationPolicy());
-        return p;
+        return new PolicyBasedAuthenticationManager(
+                authenticationHandlersResolvers(httpClient),
+                registeredServiceAuthenticationHandlerResolver(),
+                authenticationMetadataPopulators(),
+                defaultAuthenticationPolicy(),
+                casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal()
+        );
     }
 
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        final RegisteredServiceAuthenticationHandlerResolver r = new RegisteredServiceAuthenticationHandlerResolver();
-        r.setServicesManager(servicesManager);
-        return r;
+        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
     }
 
     @Bean
