@@ -2,9 +2,11 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.services.ServicesManager;
 
 import java.security.GeneralSecurityException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +37,7 @@ import java.util.Set;
  * <li>
  * After all credentials have been attempted check security policy again.
  * Note there is an implicit security policy that requires at least one credential to be authenticated.
- * Then the security policy given by {@link #setAuthenticationPolicy(AuthenticationPolicy)} is applied.
+ * Then the security policy given by the {@link AuthenticationPolicy} is applied.
  * In all cases {@link AuthenticationException} is raised if security policy is not met.
  * </li>
  * </ul>
@@ -49,40 +51,43 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
     /**
      * Authentication security policy.
      */
-    
-    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy(false);
+    protected final AuthenticationPolicy authenticationPolicy;
 
     /**
      * Instantiates a new Policy based authentication manager.
+     *
+     * @param map                              the map
+     * @param authenticationHandlerResolver    the authentication handler resolver
+     * @param authenticationMetaDataPopulators the authentication meta data populators
+     * @param authenticationPolicy             the authentication policy
+     * @param principalResolutionFatal         the principal resolution fatal
      */
-    public PolicyBasedAuthenticationManager() {
+    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+                                            final AuthenticationHandlerResolver authenticationHandlerResolver,
+                                            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators,
+                                            final AuthenticationPolicy authenticationPolicy,
+                                            final boolean principalResolutionFatal) {
+        super(map, authenticationHandlerResolver, authenticationMetaDataPopulators, principalResolutionFatal);
+        this.authenticationPolicy = authenticationPolicy;
     }
 
     /**
      * Instantiates a new Policy based authentication manager.
      *
-     * @param handlers the handlers
+     * @param map             the map
+     * @param servicesManager the services manager
      */
-    public PolicyBasedAuthenticationManager(final AuthenticationHandler... handlers) {
-        super(handlers);
+    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+                                            final ServicesManager servicesManager) {
+        this(map, servicesManager, new AnyAuthenticationPolicy(false));
     }
 
-    /**
-     * Instantiates a new Policy based authentication manager.
-     *
-     * @param handlers the handlers
-     */
-    public PolicyBasedAuthenticationManager(final List<AuthenticationHandler> handlers) {
-        super(handlers);
-    }
-
-    /**
-     * Instantiates a new Policy based authentication manager.
-     *
-     * @param map the map
-     */
-    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        super(map);
+    public PolicyBasedAuthenticationManager(final Map<AuthenticationHandler, PrincipalResolver> map,
+                                            final ServicesManager servicesManager,
+                                            final AuthenticationPolicy authenticationPolicy) {
+        super(map, new RegisteredServiceAuthenticationHandlerResolver(servicesManager),
+                Collections.emptyList(), false);
+        this.authenticationPolicy = authenticationPolicy;
     }
 
     @Override
@@ -111,18 +116,18 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
                         }
                         return false;
                     });
-            
+
             if (isSatisfied) {
                 return true;
             }
 
             logger.warn("Authentication has failed. Credentials may be incorrect or CAS cannot find authentication handler that "
-                    + "supports [{}] of type [{}], which suggests a configuration problem.",
+                            + "supports [{}] of type [{}], which suggests a configuration problem.",
                     credential, credential.getClass().getSimpleName());
             return false;
         });
 
-        if(!success) {
+        if (!success) {
             evaluateProducedAuthenticationContext(builder);
         }
 
@@ -131,28 +136,19 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
 
     /**
      * Evaluate produced authentication context.
+     * We apply an implicit security policy of at least one successful authentication.
+     * Then, we apply the configured security policy.
      *
      * @param builder the builder
      * @throws AuthenticationException the authentication exception
      */
     protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
-        // We apply an implicit security policy of at least one successful authentication
         if (builder.getSuccesses().isEmpty()) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        // Apply the configured security policy
+        logger.debug("Executing authentication policy {}", this.authenticationPolicy);
         if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
     }
-
-    /**
-     * Sets the authentication policy used by this component.
-     *
-     * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
-     */
-    public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
-        this.authenticationPolicy = policy;
-    }
-
 }

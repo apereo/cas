@@ -578,6 +578,7 @@ how the final principal should be constructed by default.
 ```properties
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
+# cas.personDirectory.principalResolutionFailureFatal=false
 ```
 
 ## Authentication Policy

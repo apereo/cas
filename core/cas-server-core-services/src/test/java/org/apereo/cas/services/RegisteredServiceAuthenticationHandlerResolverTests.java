@@ -59,9 +59,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolutionDefault() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
-        resolver.setServicesManager(this.defaultServicesManager);
-
+        final RegisteredServiceAuthenticationHandlerResolver resolver =
+                new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid1"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
@@ -71,8 +70,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver = new RegisteredServiceAuthenticationHandlerResolver();
-        resolver.setServicesManager(this.defaultServicesManager);
+        final RegisteredServiceAuthenticationHandlerResolver resolver =
+                new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid2"),
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);

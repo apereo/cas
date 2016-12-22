@@ -11,6 +11,15 @@ public class PersonDirPrincipalResolverProperties {
     private String principalAttribute;
 
     private boolean returnNull;
+    private boolean principalResolutionFailureFatal;
+
+    public boolean isPrincipalResolutionFailureFatal() {
+        return principalResolutionFailureFatal;
+    }
+
+    public void setPrincipalResolutionFailureFatal(final boolean principalResolutionFailureFatal) {
+        this.principalResolutionFailureFatal = principalResolutionFailureFatal;
+    }
 
     public String getPrincipalAttribute() {
         return principalAttribute;
