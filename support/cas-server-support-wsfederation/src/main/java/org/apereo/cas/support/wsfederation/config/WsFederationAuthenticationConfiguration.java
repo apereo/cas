@@ -139,15 +139,7 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationAction() {
-        final WsFederationAction a = new WsFederationAction();
-
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setConfiguration(wsFedConfig());
-        a.setWsFederationHelper(wsFederationHelper());
-        a.setServicesManager(this.servicesManager);
-
-        return a;
+        return new WsFederationAction(authenticationSystemSupport, centralAuthenticationService, wsFedConfig(), wsFederationHelper(), servicesManager);
     }
 
     @PostConstruct
