@@ -28,7 +28,6 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
         this.httpClient = httpClient;
     }
 
-
     @Override
     protected boolean isAvailable() {
         try {

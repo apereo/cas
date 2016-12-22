@@ -33,7 +33,6 @@ import java.security.GeneralSecurityException;
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private YubiKeyAccountRegistry registry;
-
     private final YubicoClient client;
 
     /**
@@ -45,11 +44,9 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * @param clientId the client id
      * @param secretKey the secret key
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId,
-                                        final String secretKey) {
+    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
-
 
     /**
      * After properties set.
@@ -88,8 +85,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             final ResponseStatus status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 logger.debug("YubiKey response status {} at {}", status, response.getTimestamp());
-                return createHandlerResult(yubiKeyCredential,
-                        this.principalFactory.createPrincipal(uid), null);
+                return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid), null);
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {

@@ -40,8 +40,7 @@ public class YubiKeyAuthenticationHandlerTests {
     
     @Test
     public void checkDefaultAccountRegistry() {
-        final YubiKeyAuthenticationHandler handler =
-                new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
         assertNull(handler.getRegistry());
     }
 
