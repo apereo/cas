@@ -13,18 +13,16 @@ import org.slf4j.LoggerFactory;
  */
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequiredHandlerAuthenticationPolicy.class);
-    
-    /** Authentication handler name that is required to satisfy policy. */
-    private String requiredHandlerName;
-
-    /** Flag to try all credentials before policy is satisfied. */
-    private boolean tryAll;
 
     /**
-     * Instantiates a new Required handler authentication policy.
+     * Authentication handler name that is required to satisfy policy.
      */
-    public RequiredHandlerAuthenticationPolicy() {
-    }
+    private final String requiredHandlerName;
+
+    /**
+     * Flag to try all credentials before policy is satisfied.
+     */
+    private final boolean tryAll;
 
     /**
      * Instantiates a new required handler authentication policy.
@@ -32,17 +30,19 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      * @param requiredHandlerName the required handler name
      */
     public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
-        this.requiredHandlerName = requiredHandlerName;
+        this(requiredHandlerName, false);
     }
 
     /**
-     * Sets the flag to try all credentials before the policy is satisfied.
-     * This flag is disabled by default such that the policy is satisfied immediately upon the first
-     * credential that is successfully authenticated by the required handler.
+     * Instantiates a new Required handler authentication policy.
      *
-     * @param tryAll True to force all credentials to be authenticated, false otherwise.
+     * @param requiredHandlerName the required handler name
+     * @param tryAll              Sets the flag to try all credentials before the policy is satisfied.
+     *                            This flag is disabled by default such that the policy is satisfied immediately upon the first
+     *                            credential that is successfully authenticated by the required handler.
      */
-    public void setTryAll(final boolean tryAll) {
+    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName, final boolean tryAll) {
+        this.requiredHandlerName = requiredHandlerName;
         this.tryAll = tryAll;
     }
 
@@ -52,12 +52,12 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
         if (this.tryAll) {
             credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
         }
-        
+
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
             return false;
         }
-        
+
         LOGGER.debug("Examining authentication successes for authentication handler {}", this.requiredHandlerName);
         if (StringUtils.isNotBlank(this.requiredHandlerName)) {
             credsOk = authn.getSuccesses().keySet()
@@ -65,13 +65,14 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
                     .filter(s -> s.equalsIgnoreCase(this.requiredHandlerName))
                     .findAny()
                     .isPresent();
-            
+
             if (!credsOk) {
-                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications");
+                LOGGER.warn("Required authentication handler {} is not present in the list of recorded successful authentications",
+                        this.requiredHandlerName);
                 return false;
             }
-        } 
-        
+        }
+
         LOGGER.debug("Authentication policy is satisfied");
         return true;
     }
