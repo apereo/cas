@@ -152,7 +152,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     private static RegexRegisteredService mockService(final String... providers) {
         final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setMultifactorAuthenticationProviders(new LinkedHashSet<>(Arrays.asList(providers)));
+        policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setMultifactorPolicy(policy);
         return service;
