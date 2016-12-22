@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
+public class DefaultProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
 
     /**
      * Instantiates a new Default cas attribute encoder.
      */
-    protected DefaultCasAttributeEncoder() {
+    protected DefaultProtocolAttributeEncoder() {
         super();
     }
 
@@ -35,7 +35,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      *
      * @param servicesManager the services manager
      */
-    public DefaultCasAttributeEncoder(final ServicesManager servicesManager) {
+    public DefaultProtocolAttributeEncoder(final ServicesManager servicesManager) {
         super(servicesManager);
     }
 
@@ -45,7 +45,7 @@ public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
      * @param servicesManager the services manager
      * @param cipherExecutor  the cipher executor
      */
-    public DefaultCasAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
+    public DefaultProtocolAttributeEncoder(final ServicesManager servicesManager, final RegisteredServiceCipherExecutor cipherExecutor) {
         super(servicesManager, cipherExecutor);
     }
 

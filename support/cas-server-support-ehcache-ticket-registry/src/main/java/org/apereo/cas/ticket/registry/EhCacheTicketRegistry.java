@@ -188,6 +188,4 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
                 .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
-    
-    
 }
