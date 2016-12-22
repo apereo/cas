@@ -11,7 +11,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -85,7 +85,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
 
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).get(),
-                anyOf(is(MFA_PROVIDER_ID_2), is(MFA_PROVIDER_1)));
+                is(MFA_PROVIDER_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).isPresent(), is(false));
 
         // Principal attribute activated RegisteredService trigger - direct match
@@ -153,7 +153,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     private static RegexRegisteredService mockService(final String... providers) {
         final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setMultifactorAuthenticationProviders(new HashSet<>(Arrays.asList(providers)));
+        policy.setMultifactorAuthenticationProviders(new LinkedHashSet<>(Arrays.asList(providers)));
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setMultifactorPolicy(policy);
         return service;
