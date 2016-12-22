@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * This is test cases for {@link DefaultProtocolAttributeEncoder}.
+ * This is test cases for {@link DefaultCasProtocolAttributeEncoder}.
  *
  * @author Misagh Moayyed
  * @since 4.1
@@ -60,7 +60,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkNoPublicKeyDefined() {
         final Service service = RegisteredServiceTestUtils.getService("testDefault");
-        final ProtocolAttributeEncoder encoder = new DefaultProtocolAttributeEncoder(this.servicesManager);
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(encoded.size(), this.attributes.size() - 2);
     }
@@ -68,7 +68,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkAttributesEncodedCorrectly() {
         final Service service = RegisteredServiceTestUtils.getService("testencryption");
-        final ProtocolAttributeEncoder encoder = new DefaultProtocolAttributeEncoder(this.servicesManager);
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);
