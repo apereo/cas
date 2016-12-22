@@ -5,7 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.support.DefaultProtocolAttributeEncoder;
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -75,7 +75,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
         final Cas30ResponseView view = new Cas30ResponseView("attribute", true);
         view.setServicesManager(this.servicesManager);
-        view.setProtocolAttributeEncoder(new DefaultProtocolAttributeEncoder(this.servicesManager));
+        view.setProtocolAttributeEncoder(new DefaultCasProtocolAttributeEncoder(this.servicesManager));
         view.setView(new View() {
             @Override
             public String getContentType() {
