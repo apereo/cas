@@ -84,7 +84,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
 
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).get(),
-                is(MFA_PROVIDER_1));
+                is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).isPresent(), is(false));
 
         // Principal attribute activated RegisteredService trigger - direct match
