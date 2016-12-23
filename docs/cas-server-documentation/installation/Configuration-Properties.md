@@ -1830,6 +1830,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
+# cas.authn.samlIdp.response.attributeNameFormats=username->basic|uri|unspecified|custom-format-etc,...
 
 # cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=

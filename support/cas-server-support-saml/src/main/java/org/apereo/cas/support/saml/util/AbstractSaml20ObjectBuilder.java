@@ -39,6 +39,7 @@ import java.util.Map;
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
  * to build saml2 objects.
+ *
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
@@ -54,7 +55,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * Gets name id.
      *
      * @param nameIdFormat the name id format
-     * @param nameIdValue the name id value
+     * @param nameIdValue  the name id value
      * @return the name iD
      */
     protected NameID getNameID(final String nameIdFormat, final String nameIdValue) {
@@ -80,10 +81,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     /**
      * Create a new SAML response object.
-     * @param id the id
+     *
+     * @param id           the id
      * @param issueInstant the issue instant
-     * @param recipient the recipient
-     * @param service the service
+     * @param recipient    the recipient
+     * @param service      the service
      * @return the response
      */
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
@@ -101,7 +103,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     /**
      * Create a new SAML status object.
      *
-     * @param codeValue the code value
+     * @param codeValue     the code value
      * @param statusMessage the status message
      * @return the status
      */
@@ -122,9 +124,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * Create a new SAML1 response object.
      *
      * @param authnStatement the authn statement
-     * @param issuer the issuer
-     * @param issuedAt the issued at
-     * @param id the id
+     * @param issuer         the issuer
+     * @param issuedAt       the issued at
+     * @param id             the id
      * @return the assertion
      */
     public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
@@ -138,9 +140,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * Create a new SAML1 response object.
      *
      * @param authnStatement the authn statement
-     * @param issuer the issuer
-     * @param issuedAt the issued at
-     * @param id the id
+     * @param issuer         the issuer
+     * @param issuedAt       the issued at
+     * @param id             the id
      * @return the assertion
      */
     public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
@@ -168,24 +170,21 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     /**
      * New attribute statement.
      *
-     * @param attributes      the attributes
-     * @param setFriendlyName the set friendly name
+     * @param attributes            the attributes
+     * @param setFriendlyName       the set friendly name
+     * @param configuredNameFormats the configured name formats
      * @return the attribute statement
      */
-    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes, final boolean setFriendlyName) {
+    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
+                                                    final boolean setFriendlyName,
+                                                    final Map<String, String> configuredNameFormats) {
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }
-            final Attribute attribute = newSamlObject(Attribute.class);
-            attribute.setName(e.getKey());
-            
-            if (setFriendlyName) {
-                attribute.setFriendlyName(e.getKey());
-            }
-            addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
+            final Attribute attribute = newAttribute(setFriendlyName, e, configuredNameFormats);
             attrStatement.getAttributes().add(attribute);
         }
 
@@ -193,10 +192,56 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
+     * New attribute.
+     *
+     * @param setFriendlyName       the set friendly name
+     * @param e                     the entry to process and turn into a saml attribute
+     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format
+     *                              will be used.
+     * @return the attribute
+     */
+    protected Attribute newAttribute(final boolean setFriendlyName,
+                                     final Map.Entry<String, Object> e,
+                                     final Map<String, String> configuredNameFormats) {
+        final Attribute attribute = newSamlObject(Attribute.class);
+        attribute.setName(e.getKey());
+
+        if (setFriendlyName) {
+            attribute.setFriendlyName(e.getKey());
+        }
+        addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
+
+        if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
+            final String nameFormat = configuredNameFormats.get(attribute.getName());
+            logger.debug("Found name format {} for attribute {}", nameFormat, attribute.getName());
+            switch (nameFormat.trim().toLowerCase()) {
+                case "basic":
+                    attribute.setNameFormat(Attribute.BASIC);
+                    break;
+                case "uri":
+                    attribute.setNameFormat(Attribute.URI_REFERENCE);
+                    break;
+                case "unspecified":
+                    attribute.setNameFormat(Attribute.UNSPECIFIED);
+                    break;
+                default:
+                    attribute.setNameFormat(nameFormat);
+                    break;
+            }
+            logger.debug("Attribute {} is assigned the name format of {}", attribute.getName(), attribute.getNameFormat());
+        } else {
+            logger.debug("Skipped name format, as no name formats are defined or none is found for attribute {}", attribute.getName());
+        }
+
+        logger.debug("Attribute {} has {} value(s)", attribute.getName(), attribute.getAttributeValues().size());
+        return attribute;
+    }
+
+    /**
      * New authn statement.
      *
      * @param contextClassRef the context class ref such as {@link AuthnContext#PASSWORD_AUTHN_CTX}
-     * @param authnInstant the authn instant
+     * @param authnInstant    the authn instant
      * @return the authn statement
      */
     public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant) {
@@ -216,9 +261,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     /**
      * New conditions element.
      *
-     * @param notBefore the not before
+     * @param notBefore    the not before
      * @param notOnOrAfter the not on or after
-     * @param audienceUri the service id
+     * @param audienceUri  the service id
      * @return the conditions
      */
     public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String audienceUri) {
@@ -238,8 +283,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * New subject element.
      *
      * @param nameIdFormat the name id format
-     * @param nameIdValue the name id value
-     * @param recipient the recipient
+     * @param nameIdValue  the name id value
+     * @param recipient    the recipient
      * @param notOnOrAfter the not on or after
      * @param inResponseTo the in response to
      * @return the subject
