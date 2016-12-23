@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
-    /** Logger instance. **/
+
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
@@ -35,14 +35,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     /** Alternative remote host attribute. **/
     private String alternativeRemoteHostAttribute;
 
-    /** Timeout for DNS Requests. **/
+    /**
+     * Set timeout (ms) for DNS requests; valuable for heterogeneous environments employing
+     * fall-through authentication mechanisms.
+     */
     private long timeout;
     
-    /**
-     * Instantiates a new Base.
-     */
-    public BaseSpnegoKnownClientSystemsFilterAction() {}
-
     /**
      * Instantiates a new Base.
      *
@@ -57,23 +55,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      *
      * @param ipsToCheckPattern the ips to check pattern
      * @param alternativeRemoteHostAttribute the alternative remote host attribute
+     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
      */
-    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern,
-                                                    final String alternativeRemoteHostAttribute) {
+    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute, final long dnsTimeout) {
         setIpsToCheckPattern(ipsToCheckPattern);
         this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
-    }
-
-    /**
-     * Instantiates a new Base.
-     *
-     * @param ipsToCheckPattern the ips to check pattern
-     * @param alternativeRemoteHostAttribute the alternative remote host attribute
-     */
-    public BaseSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern,
-                                                    final String alternativeRemoteHostAttribute) {
-        this.ipsToCheckPattern = ipsToCheckPattern;
-        this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
+        this.timeout = dnsTimeout;
     }
 
     /**
@@ -176,7 +163,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -184,15 +170,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
                 .append("alternativeRemoteHostAttribute", this.alternativeRemoteHostAttribute)
                 .append("timeout", this.timeout)
                 .toString();
-    }
-
-    /**
-     * Set timeout (ms) for DNS requests; valuable for heterogeneous environments employing
-     * fall-through authentication mechanisms.
-     * @param timeout # of milliseconds to wait for a DNS request to return
-     */
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
     }
 
     /**
@@ -219,6 +196,4 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
         return StringUtils.isNotEmpty(remoteHostName) ? remoteHostName : remoteIp;
     }
-
-
 }

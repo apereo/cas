@@ -94,24 +94,16 @@ public class SpnegoWebflowConfiguration {
     @RefreshScope
     public Action baseSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final BaseSpnegoKnownClientSystemsFilterAction a = new BaseSpnegoKnownClientSystemsFilterAction();
-
-        a.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
-        a.setTimeout(spnegoProperties.getDnsTimeout());
-        return a;
+        return new BaseSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), spnegoProperties.getAlternativeRemoteHostAttribute(),
+                spnegoProperties.getDnsTimeout());
     }
 
     @Bean
     @RefreshScope
     public Action hostnameSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final HostNameSpnegoKnownClientSystemsFilterAction a =
-                new HostNameSpnegoKnownClientSystemsFilterAction(spnegoProperties.getHostNamePatternString());
-        a.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
-        a.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
-        a.setTimeout(spnegoProperties.getDnsTimeout());
-        return a;
+        return new HostNameSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), spnegoProperties.getAlternativeRemoteHostAttribute(),
+                spnegoProperties.getDnsTimeout(), spnegoProperties.getHostNamePatternString());
     }
 
     @Lazy
@@ -125,13 +117,7 @@ public class SpnegoWebflowConfiguration {
 
         final SearchRequest searchRequest = Beans.newSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
 
-        final LdapSpnegoKnownClientSystemsFilterAction l =
-                new LdapSpnegoKnownClientSystemsFilterAction(connectionFactory,
-                        searchRequest, spnegoProperties.getSpnegoAttributeName());
-
-        l.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
-        l.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
-        l.setTimeout(spnegoProperties.getDnsTimeout());
-        return l;
+        return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), spnegoProperties.getAlternativeRemoteHostAttribute(),
+                spnegoProperties.getDnsTimeout(), connectionFactory, searchRequest, spnegoProperties.getSpnegoAttributeName());
     }
 }
