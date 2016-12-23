@@ -50,20 +50,20 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     /**
      * The unique identifier for this service.
      */
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String name;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = true)
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
 
     /**
