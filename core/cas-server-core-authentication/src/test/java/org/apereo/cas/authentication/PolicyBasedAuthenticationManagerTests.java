@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -17,7 +18,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
 
 /**
  * Unit test for {@link PolicyBasedAuthenticationManager}.
@@ -35,7 +35,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
-        final Map map = new HashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
 
@@ -48,7 +48,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnyButTryAllSuccess() throws Exception {
-        final Map map = new HashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(map,
@@ -70,7 +70,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAnyFailure() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -86,7 +86,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllSuccess() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(true), null);
 
@@ -101,7 +101,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateAllFailure() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
@@ -119,7 +119,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerSuccess() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
@@ -135,7 +135,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerFailure() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
@@ -153,7 +153,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     @Test
     public void verifyAuthenticateRequiredHandlerTryAllSuccess() throws Exception {
-        final Map map = new LinkedHashMap();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new LinkedHashMap<>();
         map.put(newMockHandler("HandlerA", true), null);
         map.put(newMockHandler("HandlerB", false), null);
 
@@ -195,10 +195,7 @@ public class PolicyBasedAuthenticationManagerTests {
         if (success) {
             final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
-            final HandlerResult result = new DefaultHandlerResult(
-                    mock,
-                    mock(CredentialMetaData.class),
-                    p);
+            final HandlerResult result = new DefaultHandlerResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
