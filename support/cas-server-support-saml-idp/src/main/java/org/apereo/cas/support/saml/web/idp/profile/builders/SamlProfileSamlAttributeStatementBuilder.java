@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -55,6 +56,10 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
-        return newAttributeStatement(encodedAttrs, casProperties.getAuthn().getSamlIdp().getResponse().isUseAttributeFriendlyName());
+
+        final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
+        return newAttributeStatement(encodedAttrs,
+                resp.isUseAttributeFriendlyName(),
+                resp.configureAttributeNameFormat());
     }
 }
