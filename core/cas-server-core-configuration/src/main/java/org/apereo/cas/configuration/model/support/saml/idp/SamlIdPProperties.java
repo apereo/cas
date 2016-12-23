@@ -5,7 +5,11 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -220,6 +224,15 @@ public class SamlIdPProperties {
         private int skewAllowance;
         private boolean signError;
         private boolean useAttributeFriendlyName = true;
+        private List<String> attributeNameFormats = new ArrayList<>();
+
+        public List<String> getAttributeNameFormats() {
+            return attributeNameFormats;
+        }
+
+        public void setAttributeNameFormats(final List<String> attributeNameFormats) {
+            this.attributeNameFormats = attributeNameFormats;
+        }
 
         public boolean isUseAttributeFriendlyName() {
             return useAttributeFriendlyName;
@@ -243,6 +256,27 @@ public class SamlIdPProperties {
 
         public void setSignError(final boolean signError) {
             this.signError = signError;
+        }
+
+        /**
+         * Configure attribute name formats and build a map.
+         *
+         * @return the map
+         */
+        public Map<String, String> configureAttributeNameFormat() {
+            if (this.attributeNameFormats.isEmpty()) {
+                return Collections.emptyMap();
+            }
+            final Map<String, String> nameFormats = new HashMap<>();
+            this.attributeNameFormats.forEach(value -> {
+                Arrays.stream(value.split(",")).forEach(format -> {
+                    final String[] values = format.split("->");
+                    if (values.length == 2) {
+                        nameFormats.put(values[0], values[1]);
+                    }
+                });
+            });
+            return nameFormats;
         }
     }
 
