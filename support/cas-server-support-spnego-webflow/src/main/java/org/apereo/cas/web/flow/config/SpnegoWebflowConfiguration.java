@@ -24,13 +24,14 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link SpnegoWebflowConfiguration}.
@@ -85,20 +86,15 @@ public class SpnegoWebflowConfiguration {
     @RefreshScope
     public Action negociateSpnego() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final SpnegoNegociateCredentialsAction a = new SpnegoNegociateCredentialsAction();
-        a.setMixedModeAuthentication(spnegoProperties.isMixedModeAuthentication());
-        a.setNtlm(spnegoProperties.isNtlm());
-        final String[] browsers = StringUtils.commaDelimitedListToStringArray(spnegoProperties.getSupportedBrowsers());
-        a.setSupportedBrowsers(Arrays.asList(browsers));
-        return a;
+        final List<String> supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
+        return new SpnegoNegociateCredentialsAction(supportedBrowsers, spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
     }
 
     @Bean
     @RefreshScope
     public Action baseSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        final BaseSpnegoKnownClientSystemsFilterAction a =
-                new BaseSpnegoKnownClientSystemsFilterAction();
+        final BaseSpnegoKnownClientSystemsFilterAction a = new BaseSpnegoKnownClientSystemsFilterAction();
 
         a.setIpsToCheckPattern(spnegoProperties.getIpsToCheckPattern());
         a.setAlternativeRemoteHostAttribute(spnegoProperties.getAlternativeRemoteHostAttribute());
@@ -127,8 +123,7 @@ public class SpnegoWebflowConfiguration {
         final SearchFilter filter = Beans.newSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
                 "host", Collections.emptyList());
 
-        final SearchRequest searchRequest = Beans.newSearchRequest(
-                spnegoProperties.getLdap().getBaseDn(), filter);
+        final SearchRequest searchRequest = Beans.newSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
 
         final LdapSpnegoKnownClientSystemsFilterAction l =
                 new LdapSpnegoKnownClientSystemsFilterAction(connectionFactory,
