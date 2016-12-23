@@ -377,7 +377,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         r.setId(43210);
         r.setAccessStrategy(null);
         this.dao.save(r);
-        assertEquals(this.dao.load().size(), 1);
+        this.dao.load();
         final RegisteredService s = this.dao.findServiceById(43210);
         assertNotNull(s);
         assertNotNull(s.getAccessStrategy());
