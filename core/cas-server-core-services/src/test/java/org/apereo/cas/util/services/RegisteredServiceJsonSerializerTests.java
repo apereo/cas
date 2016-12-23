@@ -16,12 +16,12 @@ public class RegisteredServiceJsonSerializerTests {
     @Test
     public void checkNullability() {
         final RegisteredServiceJsonSerializer zer = new RegisteredServiceJsonSerializer();
-        final String json = "    {\n" +
-                "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n" +
-                "            \"serviceId\" : \"^https://xyz.*\",\n" +
-                "            \"name\" : \"XYZ\",\n" +
-                "            \"id\" : \"20161214\"\n" +
-                "    }";
+        final String json = "    {\n"
+                + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+                + "            \"serviceId\" : \"^https://xyz.*\",\n"
+                + "            \"name\" : \"XYZ\",\n"
+                + "            \"id\" : \"20161214\"\n"
+                + "    }";
 
         final RegisteredService s = zer.from(json);
         assertNotNull(s);
