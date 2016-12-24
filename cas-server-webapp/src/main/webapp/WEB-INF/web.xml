@@ -280,7 +280,7 @@
     </servlet-mapping>
     <session-config>
         <!-- Default to 5 minute session timeouts -->
-        <session-timeout>1</session-timeout>
+        <session-timeout>5</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 
