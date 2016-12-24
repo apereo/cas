@@ -22,8 +22,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     public void verifyGenerator() {
-        final ShibbolethCompatiblePersistentIdGenerator generator =
-                new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
+        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
         final Principal p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
@@ -34,8 +33,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     @Test
     public void verifySerializeAShibbolethCompatiblePersistentIdGeneratorToJson() throws IOException {
-        final ShibbolethCompatiblePersistentIdGenerator generatorWritten =
-                new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
+        final ShibbolethCompatiblePersistentIdGenerator generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
 
         MAPPER.writeValue(JSON_FILE, generatorWritten);
 

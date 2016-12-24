@@ -48,7 +48,6 @@ public class ResponseTests {
         attributes.put("ticket", "foobar");
         final Response response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.getUrl());
-
     }
 
     @Test

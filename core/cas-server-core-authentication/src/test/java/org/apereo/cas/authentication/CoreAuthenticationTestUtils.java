@@ -33,6 +33,8 @@ public final class CoreAuthenticationTestUtils {
 
     private static final String CONST_PASSWORD = "test1";
 
+    private static final DefaultPrincipalFactory PRINCIPAL_FACTORY = new DefaultPrincipalFactory();
+
     private CoreAuthenticationTestUtils() {
         // do not instantiate
     }
@@ -41,19 +43,15 @@ public final class CoreAuthenticationTestUtils {
         return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);
     }
 
-    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
-            final String username) {
-        return getCredentialsWithDifferentUsernameAndPassword(username,
-                username);
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {
+        return getCredentialsWithDifferentUsernameAndPassword(username, username);
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword() {
-        return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME,
-                CONST_PASSWORD);
+        return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME, CONST_PASSWORD);
     }
 
-    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
-            final String username, final String password) {
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
         final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
@@ -65,8 +63,7 @@ public final class CoreAuthenticationTestUtils {
         return getHttpBasedServiceCredentials(CONST_GOOD_URL);
     }
 
-    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
-            final String url) {
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
                     CoreAuthenticationTestUtils.getRegisteredService(url));
@@ -151,22 +148,23 @@ public final class CoreAuthenticationTestUtils {
         return getAuthenticationResult(support, service, getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support)
-            throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws AuthenticationException {
         return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
-                                                               final Credential... credentials)
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
             throws AuthenticationException {
         return getAuthenticationResult(support, getService(), credentials);
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
-                                                               final Service service,
-                                                               final Credential... credentials)
-            throws AuthenticationException {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service,
+                                                               final Credential... credentials) throws AuthenticationException {
 
         return support.handleAndFinalizeSingleAuthenticationTransaction(service, credentials);
+    }
+
+    public static Principal mockPrincipal(final String attrName, final String... attrValues) {
+        return PRINCIPAL_FACTORY.createPrincipal("user",
+                Collections.singletonMap(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
     }
 }
