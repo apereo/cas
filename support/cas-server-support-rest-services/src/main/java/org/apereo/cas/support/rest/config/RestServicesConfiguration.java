@@ -33,12 +33,8 @@ public class RestServicesConfiguration {
 
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
-        final RegisteredServiceResource r = new RegisteredServiceResource();
-        r.setCentralAuthenticationService(centralAuthenticationService);
-        r.setServicesManager(servicesManager);
-        r.setAttributeName(casProperties.getRest().getAttributeName());
-        r.setAttributeValue(casProperties.getRest().getAttributeValue());
-        return r;
+        return new RegisteredServiceResource(servicesManager, centralAuthenticationService, casProperties.getRest().getAttributeName(),
+                casProperties.getRest().getAttributeValue());
     }
 }
 
