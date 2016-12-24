@@ -47,23 +47,11 @@ that have a high likelihood of acceptance:
 Edit source files and commit in logical chunks. We encourage numerous small commits over one large commit. Small,
 focused commits facilitate review and will be more likely to be accepted. It is vital to summarize changes with
 succinct commit messages. You SHOULD follow the
-[Pro Git commit guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines) generally, but the following
-commit message provides a good model:
+[Pro Git commit guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines) generally.
 
-	CAS-1238 Refactor principal resolver components.
-
-	1. Rename CredentialToPrincipalResolver -> PrincipalResolver.
-	2. Leverage symmetry between Credential and Principal ID to create a
-	   generic principal resolution strategy, BasicPrincipalResolver.
-	3. Make Person Directory resolver a concrete class that uses generic
-	   principal ID resolution strategy by default and add capability to set
-	   principal ID with an attribute value from Person Directory query results.
-	4. Delete deprecated and superfluous resolver components.
-	5. Rename some X.509 resolver components for clarity/consistency.
-
-<p/>
-
-
+    git add --all .
+    git commit -am "Update X to handle Y such that ..."
+    
 #### 3. Push to Forked Repository
 You must push your local branch to your forked repository to facilitate a pull request.
 
@@ -71,6 +59,7 @@ You must push your local branch to your forked repository to facilitate a pull r
 
 
 #### 4. Submit Pull Request
+
 Submit a pull request from your topic branch onto the target branch of CAS, typically _master_. See the GitHub
 [Using Pull Requests](https://help.github.com/articles/using-pull-requests) page for help.
 
@@ -78,6 +67,7 @@ Be prepared to sync changes with the target branch of the CAS repository since t
 
 
 #### Creating Pull Requests
+
 A pull request should contain the following:
 
 * One or more commits that follow the [Pro Git commit guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines).
