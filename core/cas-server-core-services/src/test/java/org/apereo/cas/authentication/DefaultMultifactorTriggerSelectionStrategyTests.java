@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.collect.ImmutableSet;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -147,7 +149,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     private static RegexRegisteredService mockService(final String... providers) {
         final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setMultifactorAuthenticationProviders(ImmutableSet.copyOf(providers));
+        policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setMultifactorPolicy(policy);
         return service;
