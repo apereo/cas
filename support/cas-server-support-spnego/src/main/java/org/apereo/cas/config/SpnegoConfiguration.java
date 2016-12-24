@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
+import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
@@ -35,7 +37,7 @@ public class SpnegoConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -82,27 +84,27 @@ public class SpnegoConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler spnegoHandler() {
-        final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler();
+        final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
+        final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(),
+                spnegoProperties.isNtlmAllowed());
         h.setPrincipalFactory(spnegoPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setAuthentication(spnegoAuthentication());
-        h.setPrincipalWithDomainName(casProperties.getAuthn().getSpnego().isPrincipalWithDomainName());
-        h.setNTLMallowed(casProperties.getAuthn().getSpnego().isNtlmAllowed());
-        h.setName(casProperties.getAuthn().getSpnego().getName());
+        h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
+        h.setNTLMallowed(spnegoProperties.isNtlmAllowed());
+        h.setName(spnegoProperties.getName());
         return h;
     }
-
 
     @Bean
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
-        final NtlmAuthenticationHandler ntlm = new NtlmAuthenticationHandler();
-        ntlm.setDomainController(casProperties.getAuthn().getNtlm().getDomainController());
-        ntlm.setIncludePattern(casProperties.getAuthn().getNtlm().getIncludePattern());
-        ntlm.setLoadBalance(casProperties.getAuthn().getNtlm().isLoadBalance());
+        final NtlmProperties ntlmProperties = casProperties.getAuthn().getNtlm();
+        final NtlmAuthenticationHandler ntlm = new NtlmAuthenticationHandler(ntlmProperties.isLoadBalance(), ntlmProperties.getDomainController(),
+                ntlmProperties.getIncludePattern());
         ntlm.setPrincipalFactory(ntlmPrincipalFactory());
         ntlm.setServicesManager(servicesManager);
-        ntlm.setName(casProperties.getAuthn().getNtlm().getName());
+        ntlm.setName(ntlmProperties.getName());
         return ntlm;
     }
 
