@@ -13,12 +13,12 @@ import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
  * @since 4.2.0
  */
 public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
-    private String apiKey;
-    private String applicationId;
-    private String secretkey;
 
-    public StormpathAuthenticationHandler(final String apiKey, final String applicationId,
-                                          final String secretkey) {
+    private final String apiKey;
+    private final String applicationId;
+    private final String secretkey;
+
+    public StormpathAuthenticationHandler(final String apiKey, final String applicationId, final String secretkey) {
         this.apiKey = apiKey;
         this.applicationId = applicationId;
         this.secretkey = secretkey;

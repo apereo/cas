@@ -1,20 +1,17 @@
 package org.apereo.cas.web.flow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * First action of a SPNEGO flow : negotiation.
@@ -38,34 +35,60 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
 
     /** Whether this is using the NTLM protocol or not. */
-    private boolean ntlm;
-    
-    private boolean mixedModeAuthentication;
-    
-    private List<String> supportedBrowser;
+    private final boolean ntlm;
 
-    private String messageBeginPrefix = constructMessagePrefix();
+    /**
+     * Sets whether mixed mode authentication should be enabled. If it is
+     * enabled then control is allowed to pass back to the Spring Webflow
+     * instead of immediately terminating the page after issuing the
+     * unauthorized (401) header. This has the effect of displaying the login
+     * page on unsupported/configured browsers.
+     * <p>
+     * If this is set to false then the page is immediately closed after the
+     * unauthorized header is sent. This is ideal in environments that only
+     * want to use Windows Integrated Auth/SPNEGO and not forms auth.
+     */
+    private final boolean mixedModeAuthentication;
+
+    /**
+     * Sets supported browsers by their user agent. The user agent
+     * header defined will be compared against this list. The user agents configured
+     * here need not be an exact match. So longer is the user agent identifier
+     * configured in this list is "found" in the user agent header retrieved,
+     * the check will pass.
+     */
+    private final List<String> supportedBrowser;
+
+    private final String messageBeginPrefix;
 
     /**
      * Instantiates a new Spnego negociate credentials action.
-     * Also initializes the list of supported browser user agents with the following:
+     * Also add to the list of supported browser user agents the following:
      * <ul>
      *     <li>{@code MSIE}</li>
      *     <li>{@code Trident}</li>
      *     <li>{@code Firefox}</li>
      *     <li>{@code AppleWebKit}</li>
      * </ul>
+     *
+     * @param supportedBrowser the supported browsers list
+     * @param ntlm Sets the ntlm. Generates the message prefix as well.
+     * @param mixedModeAuthenticationEnabled should mixed mode authentication be allowed. Default is false.
+     *
      * @since 4.1
      */
-    public SpnegoNegociateCredentialsAction() {
+    public SpnegoNegociateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
         super();
 
-        this.supportedBrowser = new ArrayList<>();
+        this.ntlm = ntlm;
+        this.messageBeginPrefix = constructMessagePrefix();
+        this.mixedModeAuthentication = mixedModeAuthenticationEnabled;
+
+        this.supportedBrowser = supportedBrowser;
         this.supportedBrowser.add("MSIE");
         this.supportedBrowser.add("Trident");
         this.supportedBrowser.add("Firefox");
         this.supportedBrowser.add("AppleWebKit");
-
     }
 
     @Override
@@ -113,54 +136,13 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
     }
 
     /**
-     * Sets the ntlm. Generates the message prefix as well.
-     *
-     * @param ntlm the new ntlm
-     */
-    public void setNtlm(final boolean ntlm) {
-        this.ntlm = ntlm;
-        this.messageBeginPrefix = constructMessagePrefix();
-    }
-
-    /**
-     * Sets supported browsers by their user agent. The user agent
-     * header defined will be compared against this list. The user agents configured
-     * here need not be an exact match. So longer is the user agent identifier
-     * configured in this list is "found" in the user agent header retrieved,
-     * the check will pass.
-     *
-     * @param supportedBrowser the supported browsers list
-     */
-    public void setSupportedBrowsers(final List<String> supportedBrowser) {
-        this.supportedBrowser = supportedBrowser;
-    }
-
-    /**
-     * Sets whether mixed mode authentication should be enabled. If it is
-     * enabled then control is allowed to pass back to the Spring Webflow
-     * instead of immediately terminating the page after issuing the
-     * unauthorized (401) header. This has the effect of displaying the login
-     * page on unsupported/configured browsers.
-     * <p>
-     * If this is set to false then the page is immediately closed after the
-     * unauthorized header is sent. This is ideal in environments that only
-     * want to use Windows Integrated Auth/SPNEGO and not forms auth.
-     *
-     * @param enabled should mixed mode authentication be allowed. Default is false.
-     */
-    public void setMixedModeAuthentication(final boolean enabled) {
-        this.mixedModeAuthentication = enabled;
-    }
-
-    /**
      * Construct message prefix.
      *
      * @return if {@link #ntlm} is enabled, {@link SpnegoConstants#NTLM}, otherwise
      * {@link SpnegoConstants#NEGOTIATE}. An extra space is appended to the end.
      */
     protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + ' ';
+        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
     }
 
     /**
@@ -170,11 +152,6 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
      * @return true, if  supported browser
      */
     protected boolean isSupportedBrowser(final String userAgent) {
-        for (final String supportedBrowser : this.supportedBrowser) {
-            if (userAgent.contains(supportedBrowser)) {
-                return true;
-            }
-        }
-        return false;
+        return supportedBrowser.stream().anyMatch(userAgent::contains);
     }
 }

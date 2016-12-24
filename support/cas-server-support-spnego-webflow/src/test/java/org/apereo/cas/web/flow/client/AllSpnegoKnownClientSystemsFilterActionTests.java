@@ -23,7 +23,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureRemoteIpShouldBeChecked() {
         final BaseSpnegoKnownClientSystemsFilterAction action =
-                new BaseSpnegoKnownClientSystemsFilterAction("^192\\.158\\..+");
+                new BaseSpnegoKnownClientSystemsFilterAction("^192\\.158\\..+", "", 0);
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -40,7 +40,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureRemoteIpShouldNotBeChecked() {
         final BaseSpnegoKnownClientSystemsFilterAction action =
-                new BaseSpnegoKnownClientSystemsFilterAction("^192\\.158\\..+");
+                new BaseSpnegoKnownClientSystemsFilterAction("^192\\.158\\..+", "", 0);
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -57,7 +57,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureAltRemoteIpHeaderShouldBeChecked() {
         final BaseSpnegoKnownClientSystemsFilterAction action =
-                new BaseSpnegoKnownClientSystemsFilterAction("^74\\.125\\..+", "alternateRemoteIp");
+                new BaseSpnegoKnownClientSystemsFilterAction("^74\\.125\\..+", "alternateRemoteIp", 120);
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -75,7 +75,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureHostnameShouldDoSpnego() {
         final HostNameSpnegoKnownClientSystemsFilterAction action =
-                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
+                new HostNameSpnegoKnownClientSystemsFilterAction("", "", 0, "\\w+\\.\\w+\\.\\w+");
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -93,8 +93,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureHostnameAndIpShouldDoSpnego() {
         final HostNameSpnegoKnownClientSystemsFilterAction action =
-                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
-        action.setIpsToCheckPattern("74\\..+");
+                new HostNameSpnegoKnownClientSystemsFilterAction("74\\..+", "", 0, "\\w+\\.\\w+\\.\\w+");
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
@@ -112,8 +111,7 @@ public class AllSpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void verifyIpMismatchWhenCheckingHostnameForSpnego() {
         final HostNameSpnegoKnownClientSystemsFilterAction action =
-                new HostNameSpnegoKnownClientSystemsFilterAction("\\w+\\.\\w+\\.\\w+");
-        action.setIpsToCheckPattern("14\\..+");
+                new HostNameSpnegoKnownClientSystemsFilterAction("14\\..+", "", 0, "\\w+\\.\\w+\\.\\w+");
 
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
