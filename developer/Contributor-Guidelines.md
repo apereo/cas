@@ -17,7 +17,7 @@ Refer to the GitHub [Fork a Repo](http://help.github.com/fork-a-repo/) page for 
 The following shell commands may be used to grab the source from a forked repository:
 
 ```bash
-git clone --recursive git@github.com:$USER/cas.git
+git clone --recursive --depth=10 git@github.com:$USER/cas.git
 cd cas
 git remote add upstream git@github.com:apereo/cas.git
 git fetch --all
