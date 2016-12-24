@@ -5,6 +5,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
@@ -51,16 +52,22 @@ public class ProxyController {
      */
     private static final String MODEL_SERVICE_TICKET = "ticket";
 
-    private CentralAuthenticationService centralAuthenticationService;
-    private ServiceFactory webApplicationServiceFactory;
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final ServiceFactory webApplicationServiceFactory;
 
     @Autowired
     private ApplicationContext context;
 
     /**
      * Instantiates a new proxy controller, with cache seconds set to 0.
+     *
+     * @param centralAuthenticationService the central authentication service
+     * @param webApplicationServiceFactory the web application service factory
      */
-    public ProxyController() {
+    public ProxyController(final CentralAuthenticationService centralAuthenticationService,
+                           final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     /**
@@ -113,14 +120,6 @@ public class ProxyController {
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
         modelAndView.addObject("description", StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale())));
         return modelAndView;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setWebApplicationServiceFactory(final ServiceFactory webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
     public void setApplicationContext(final ApplicationContext context) {

@@ -24,7 +24,6 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,8 +88,8 @@ public class CasThemesConfiguration {
 
             @Override
             public Set<IPostProcessor> getPostProcessors() {
-                return new HashSet<>(Collections.singletonList(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
-                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE)));
+                return Collections.singleton(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
             }
 
             @Override

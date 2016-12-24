@@ -74,11 +74,6 @@ public class HttpClientMultithreadedDownloader {
         public void run() {
 
             switch (info.getState()) {
-                case EXTRACTING:
-                case EXTRACTING_DONE:
-                    LOGGER.debug(info.getState().toString());
-                    break;
-
                 case DONE:
                     speedInfo.end(info.getCount());
                     LOGGER.info("Download completed. {} average speed ({})", info.getState(),
@@ -119,6 +114,12 @@ public class HttpClientMultithreadedDownloader {
                                 FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                                 FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));
                     }
+                    break;
+
+                case EXTRACTING:
+                case EXTRACTING_DONE:
+                default:
+                    LOGGER.debug(info.getState().toString());
                     break;
             }
         }

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import com.google.common.base.Throwables;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -12,9 +13,8 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
-import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
-import org.apereo.cas.authentication.support.NoOpCasAttributeEncoder;
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -93,13 +93,13 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public CasAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        return new DefaultCasAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
+    public ProtocolAttributeEncoder casAttributeEncoder(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+        return new DefaultCasProtocolAttributeEncoder(servicesManager(serviceRegistryDao), registeredServiceCipherExecutor());
     }
 
     @Bean
-    public NoOpCasAttributeEncoder noOpCasAttributeEncoder() {
-        return new NoOpCasAttributeEncoder();
+    public ProtocolAttributeEncoder noOpCasAttributeEncoder() {
+        return new NoOpProtocolAttributeEncoder();
     }
 
     @Bean

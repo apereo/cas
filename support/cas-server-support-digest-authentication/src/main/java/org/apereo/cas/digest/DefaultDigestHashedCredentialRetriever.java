@@ -1,9 +1,7 @@
 package org.apereo.cas.digest;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
 import javax.security.auth.login.AccountNotFoundException;
+import java.util.Map;
 
 /**
  * This is {@link DefaultDigestHashedCredentialRetriever}.
@@ -12,21 +10,18 @@ import javax.security.auth.login.AccountNotFoundException;
  * @since 5.0.0
  */
 public class DefaultDigestHashedCredentialRetriever implements DigestHashedCredentialRetriever {
-    private Table<String, String, String> store = HashBasedTable.create();
+
+    private final Map<String, String> store;
+
+    public DefaultDigestHashedCredentialRetriever(final Map<String, String> users) {
+        this.store = users;
+    }
 
     @Override
     public String findCredential(final String uid, final String realm) throws AccountNotFoundException {
-        if (store.contains(uid, realm)) {
-            return store.get(uid, realm);
+        if (store.containsKey(uid)) {
+            return store.get(uid);
         }
         throw new AccountNotFoundException("Could not locate user account for " + uid);
-    }
-
-    public Table<String, String, String> getStore() {
-        return store;
-    }
-
-    public void setStore(final Table<String, String, String> store) {
-        this.store = store;
     }
 }

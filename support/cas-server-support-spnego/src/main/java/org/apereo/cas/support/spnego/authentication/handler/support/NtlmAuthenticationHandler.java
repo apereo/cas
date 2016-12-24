@@ -40,14 +40,25 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     private boolean loadBalance = true;
 
-    private String domainController = DEFAULT_DOMAIN_CONTROLLER;
+    /**
+     * Sets domain controller. Will default if none is defined or passed.
+     */
+    private final String domainController;
 
-    private String includePattern;
+    private final String includePattern;
+
+    public NtlmAuthenticationHandler(final boolean loadBalance, final String domainController, final String includePattern) {
+        this.loadBalance = loadBalance;
+        if (StringUtils.isBlank(domainController)) {
+            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
+        } else {
+            this.domainController = domainController;
+        }
+        this.includePattern = includePattern;
+    }
 
     @Override
-    protected HandlerResult doAuthentication(
-            final Credential credential) throws GeneralSecurityException, PreventedException {
-
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
         final byte[] src = ntlmCredential.getInitToken();
 
@@ -116,26 +127,4 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     public boolean supports(final Credential credential) {
         return credential instanceof SpnegoCredential;
     }
-    
-    public void setLoadBalance(final boolean loadBalance) {
-        this.loadBalance = loadBalance;
-    }
-
-    /**
-     * Sets domain controller. Will default if none is defined or passed.
-     *
-     * @param domainController the domain controller
-     */
-    public void setDomainController(final String domainController) {
-        if (StringUtils.isBlank(domainController)) {
-            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
-        } else {
-            this.domainController = domainController;
-        }
-    }
-    
-    public void setIncludePattern(final String includePattern) {
-        this.includePattern = includePattern;
-    }
-
 }

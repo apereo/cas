@@ -21,6 +21,7 @@ import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.UnauthorizedProxyingExceptionTests;
 import org.apereo.cas.services.UnauthorizedServiceExceptionTests;
 import org.apereo.cas.services.UnauthorizedSsoServiceExceptionTests;
+import org.apereo.cas.util.services.RegisteredServiceJsonSerializerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -51,6 +52,7 @@ import org.junit.runners.Suite;
         ShibbolethCompatiblePersistentIdGeneratorTests.class,
         SimpleWebApplicationServiceImplTests.class, 
         WebApplicationServiceFactoryTests.class,
+        RegisteredServiceJsonSerializerTests.class,
         DefaultCasAttributeEncoderTests.class})
 public class AllTestsSuite {
 }

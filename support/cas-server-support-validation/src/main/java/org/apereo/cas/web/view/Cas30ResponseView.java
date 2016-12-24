@@ -29,14 +29,18 @@ import java.util.Set;
 public class Cas30ResponseView extends Cas20ResponseView {
 
     private boolean releaseProtocolAttributes = true;
-
-    private String authenticationContextAttribute;
+    private final String authenticationContextAttribute;
 
     /**
      * Instantiates a new Abstract cas response view.
+     *
+     * @param authenticationContextAttribute the authentication context attribute
+     * @param releaseProtocolAttributes      the release protocol attributes
      */
-    public Cas30ResponseView() {
+    public Cas30ResponseView(final String authenticationContextAttribute, final boolean releaseProtocolAttributes) {
         super();
+        this.authenticationContextAttribute = authenticationContextAttribute;
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
-        final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+        final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
@@ -124,13 +128,5 @@ public class Cas30ResponseView extends Cas20ResponseView {
             });
         });
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
-    }
-
-    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
-        this.releaseProtocolAttributes = releaseProtocolAttributes;
-    }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 }
