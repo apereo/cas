@@ -6,6 +6,7 @@ title: CAS - Contributor Guidelines
 # Contributor Guidelines
 
 ## Getting Started
+
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
 a fork of the Apereo CAS repository:
 
@@ -26,12 +27,14 @@ We encourage reading [Pro Git](http://git-scm.com/book/) prior to beginning deve
 
 
 ## Development Process
+
 All CAS contributions SHOULD be submitted via GitHub pull requests. The following guidelines facilitate pull requests
 that have a high likelihood of acceptance:
 
 * Work on topic branches.
 * Follow the [Pro Git commit guidelines](http://git-scm.com/book/ch5-2.html#Commit-Guidelines).
-
+* Keep patches on topic, atomic and focused on the issue.
+* Try to avoid unnecessary formatting, clean-up, etc in the same patch where reasonable.
 
 ### Development Walk-Through
 
