@@ -119,20 +119,17 @@ public class JcifsConfig {
         }
     }
 
-
     /**
      * Sets the jcifs service password.
      *
      * @param jcifsServicePassword the new jcifs service password
      */
-    public void setJcifsServicePassword(
-                                        final String jcifsServicePassword) {
+    public void setJcifsServicePassword(final String jcifsServicePassword) {
         if (StringUtils.isNotBlank(jcifsServicePassword)) {
             logger.debug("jcifsServicePassword is set to *****");
             Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
         }
     }
-
 
     /**
      * Sets the jcifs service principal.
