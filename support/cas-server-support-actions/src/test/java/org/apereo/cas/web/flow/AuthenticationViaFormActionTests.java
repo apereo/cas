@@ -154,13 +154,12 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         request.addParameter("renew", "true");
         request.addParameter("service", TestUtils.getService(TestUtils.CONST_TEST_URL).getId());
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+        putCredentialInRequestScope(context, TestUtils.getCredentialsWithSameUsernameAndPassword("test"));
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put("service", TestUtils.getService());
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_WARN, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, this.action.execute(context).getId());
     }
 
     @Test
