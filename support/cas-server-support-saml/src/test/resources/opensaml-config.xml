@@ -15,7 +15,7 @@
     <bean id="servicesManager" class="org.apereo.cas.services.DefaultServicesManager"
           c:serviceRegistryDao-ref="serviceRegistryDao" />
 
-    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDaoImpl">
+    <bean id="serviceRegistryDao" class="org.apereo.cas.services.InMemoryServiceRegistryDao">
         <property name="registeredServices">
             <bean class="org.apereo.cas.services.RegexRegisteredService"
                   p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description"/>
