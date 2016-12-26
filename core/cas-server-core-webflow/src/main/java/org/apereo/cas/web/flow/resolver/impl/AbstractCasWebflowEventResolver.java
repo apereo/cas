@@ -229,7 +229,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         final TicketGrantingTicket tgt;
         if (issueTicketGrantingTicket) {
             tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-
         } else {
             tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
