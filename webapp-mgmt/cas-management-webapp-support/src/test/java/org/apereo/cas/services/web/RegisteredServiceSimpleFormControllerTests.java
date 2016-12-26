@@ -15,7 +15,7 @@ import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProvider
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.apereo.cas.services.InMemoryServiceRegistryDao;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -66,7 +66,7 @@ public class RegisteredServiceSimpleFormControllerTests {
                 new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
                 Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
-        this.manager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
+        this.manager = new DefaultServicesManager(new InMemoryServiceRegistryDao());
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
 

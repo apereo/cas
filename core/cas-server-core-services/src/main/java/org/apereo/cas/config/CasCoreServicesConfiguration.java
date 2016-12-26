@@ -18,7 +18,7 @@ import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.apereo.cas.services.InMemoryServiceRegistryDao;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
@@ -115,7 +115,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = BEAN_NAME_SERVICE_REGISTRY_DAO)
     @Bean(name = {BEAN_NAME_SERVICE_REGISTRY_DAO, "inMemoryServiceRegistryDao"})
     public ServiceRegistryDao inMemoryServiceRegistryDao() {
-        final InMemoryServiceRegistryDaoImpl impl = new InMemoryServiceRegistryDaoImpl();
+        final InMemoryServiceRegistryDao impl = new InMemoryServiceRegistryDao();
         if (context.containsBean("inMemoryRegisteredServices")) {
             final List list = context.getBean("inMemoryRegisteredServices", List.class);
             impl.setRegisteredServices(list);

@@ -29,7 +29,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Before
     public void setUp() throws Exception {
-        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        final InMemoryServiceRegistryDao dao = new InMemoryServiceRegistryDao();
         final List<RegisteredService> list = new ArrayList<>();
 
         AbstractRegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
