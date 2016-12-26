@@ -41,11 +41,30 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      */
     protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        logger.debug("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
+
         final Service service = WebUtils.getService(context);
-        return StringUtils.isNotBlank(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW))
-                && StringUtils.isNotBlank(ticketGrantingTicketId)
-                && service != null
-                && ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId) != null;
+        logger.debug("Located service [{}] from the request context", service);
+
+        final String renewParam = context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW);
+        logger.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
+
+        if (StringUtils.isNotBlank(renewParam) && StringUtils.isNotBlank(ticketGrantingTicketId) && service != null) {
+            logger.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
+            final boolean validAuthn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId) != null;
+            if (validAuthn) {
+                logger.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
+                        + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                return false;
+            }
+            logger.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
+                            + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
+                    ticketGrantingTicketId, service);
+            return false;
+        } else {
+            logger.debug("Request is not eligible to be issued service tickets just yet");
+            return false;
+        }
     }
 
     /**
