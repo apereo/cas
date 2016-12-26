@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
@@ -35,6 +36,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -113,7 +115,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("warn", "true");
-        request.addParameter("service", "test");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -153,15 +155,16 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
 
-        request.addParameter("renew", "true");
-        request.addParameter("service", RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL).getId());
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE,
+                RegisteredServiceTestUtils.getService(RegisteredServiceTestUtils.CONST_TEST_URL).getId());
+        putCredentialInRequestScope(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("service", RegisteredServiceTestUtils.getService());
+        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService());
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_WARN, this.action.execute(context).getId());
+        final Event ev = this.action.execute(context);
+        assertEquals(CasWebflowConstants.STATE_ID_SUCCESS, ev.getId());
     }
 
     @Test
@@ -176,8 +179,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-        request.addParameter("renew", "true");
-        request.addParameter("service", RegisteredServiceTestUtils.getService("test").getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService("test").getId());
 
         final Credential c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -198,8 +201,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         final MockRequestContext context = new MockRequestContext();
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
-        request.addParameter("renew", "true");
-        request.addParameter("service", service.getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
         final Credential c2 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
