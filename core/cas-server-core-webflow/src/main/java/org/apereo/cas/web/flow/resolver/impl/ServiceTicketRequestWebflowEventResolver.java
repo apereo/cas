@@ -73,9 +73,8 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             final boolean validAuthn = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicketId) != null;
             if (validAuthn) {
                 logger.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
-                                + "CAS should begin to issue service tickets for [{}]",
-                        ticketGrantingTicketId, service);
-                return true;
+                        + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                return false;
             }
             logger.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
                             + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
@@ -104,8 +103,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             final AuthenticationResult authenticationResult =
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                    ticketGrantingTicketId, service, authenticationResult);
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             return newEvent(CasWebflowConstants.TRANSITION_ID_WARN);
