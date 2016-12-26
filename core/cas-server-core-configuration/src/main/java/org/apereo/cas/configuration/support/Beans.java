@@ -432,6 +432,7 @@ public final class Beans {
             searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
             searchRequest.setSearchScope(l.getValidator().getScope());
             searchRequest.setSizeLimit(1L);
+            searchRequest.setReferralHandler(new SearchReferralHandler());
             cp.setValidator(new SearchValidator(searchRequest));
         }
 
