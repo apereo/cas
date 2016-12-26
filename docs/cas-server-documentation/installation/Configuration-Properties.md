@@ -278,6 +278,10 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
+## CAS Banner
+
+On startup, CAS will display a banner along with some diagnostics info. 
+In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
 ## Admin Status Endpoints
 
