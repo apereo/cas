@@ -84,7 +84,7 @@ dependencies {
     compile libraries.pac4j
     compile libraries.springcloud
     compile libraries.springboot
-    compile libraries.thmyeleaf
+    compile libraries.thymeleaf
     compile libraries.groovy
     compile libraries.spring
     compile libraries.cassecurityfilter
