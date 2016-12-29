@@ -19,37 +19,44 @@ import java.time.temporal.ChronoUnit;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = -7144233906843566234L;
 
-    /** The time to kill in milliseconds. */
-    private long timeToKillInMilliSeconds;
+    /**
+     * The time to kill in milliseconds.
+     */
+    private long timeToKillInSeconds;
 
-    /** No-arg constructor for serialization support. */
-    public OAuthRefreshTokenExpirationPolicy() {}
+    /**
+     * No-arg constructor for serialization support.
+     */
+    public OAuthRefreshTokenExpirationPolicy() {
+    }
 
     /**
      * Instantiates a new OAuth refresh token expiration policy.
      *
-     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public OAuthRefreshTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    public OAuthRefreshTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
         return ticketState == null || ticketState.getCreationTime()
-                .plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+                .plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
     public Long getTimeToLive() {
-        return this.timeToKillInMilliSeconds;
+        return this.timeToKillInSeconds;
     }
 
     @JsonIgnore
@@ -72,14 +79,14 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         }
         final OAuthRefreshTokenExpirationPolicy rhs = (OAuthRefreshTokenExpirationPolicy) obj;
         return new EqualsBuilder()
-                .append(this.timeToKillInMilliSeconds, rhs.timeToKillInMilliSeconds)
+                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(timeToKillInMilliSeconds)
+                .append(timeToKillInSeconds)
                 .toHashCode();
     }
 }
