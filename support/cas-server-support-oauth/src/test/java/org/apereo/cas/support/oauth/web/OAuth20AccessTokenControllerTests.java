@@ -312,8 +312,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
         final Authentication authentication = getAuthentication(principal);
-        final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
-        expiringOAuthCodeFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory(new AlwaysExpiresExpirationPolicy());
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
         final OAuthCode code = expiringOAuthCodeFactory.create(service, authentication);
@@ -641,8 +640,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory();
-        expiringRefreshTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        final DefaultRefreshTokenFactory expiringRefreshTokenFactory = new DefaultRefreshTokenFactory(new AlwaysExpiresExpirationPolicy());
         final RefreshToken refreshToken = expiringRefreshTokenFactory.create(service, authentication);
         oAuth20AccessTokenController.getTicketRegistry().addTicket(refreshToken);
 

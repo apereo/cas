@@ -18,9 +18,14 @@ import org.pac4j.core.exception.CredentialsException;
  */
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
-    private OAuth20Validator validator;
+    private final OAuth20Validator validator;
 
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
+
+    public OAuthClientAuthenticator(final OAuth20Validator validator, final ServicesManager servicesManager) {
+        this.validator = validator;
+        this.servicesManager = servicesManager;
+    }
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context)
@@ -40,21 +45,5 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
         final OAuthClientProfile profile = new OAuthClientProfile();
         profile.setId(id);
         credentials.setUserProfile(profile);
-    }
-
-    public OAuth20Validator getValidator() {
-        return this.validator;
-    }
-
-    public void setValidator(final OAuth20Validator validator) {
-        this.validator = validator;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }

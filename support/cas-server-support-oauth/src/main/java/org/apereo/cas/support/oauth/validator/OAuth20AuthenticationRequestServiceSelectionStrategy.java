@@ -21,9 +21,15 @@ import java.util.Optional;
 public class OAuth20AuthenticationRequestServiceSelectionStrategy implements AuthenticationRequestServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
     
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
     
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    public OAuth20AuthenticationRequestServiceSelectionStrategy(final ServicesManager servicesManager, 
+                                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
+        this.servicesManager = servicesManager;
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -50,13 +56,5 @@ public class OAuth20AuthenticationRequestServiceSelectionStrategy implements Aut
     @Override
     public int compareTo(final AuthenticationRequestServiceSelectionStrategy o) {
         return MAX_ORDER - 1;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setWebApplicationServiceFactory(final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 }

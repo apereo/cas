@@ -92,8 +92,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyExpiredAccessToken() throws Exception {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         final Authentication authentication = getAuthentication(principal);
-        final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
-        expiringAccessTokenFactory.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
+        final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory(new AlwaysExpiresExpirationPolicy());
         final AccessTokenImpl accessToken = (AccessTokenImpl) expiringAccessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
