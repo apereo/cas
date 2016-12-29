@@ -418,24 +418,32 @@ public final class Beans {
         strategy.setPrunePeriod(newDuration(l.getPrunePeriod()));
 
         cp.setPruneStrategy(strategy);
-        if (StringUtils.equalsIgnoreCase("compare", l.getValidator().getType())) {
-            final CompareRequest compareRequest = new CompareRequest();
-            compareRequest.setDn(l.getValidator().getDn());
-            compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValues().toArray(new String[]{})));
-            compareRequest.setReferralHandler(new SearchReferralHandler());
-            cp.setValidator(new CompareValidator(compareRequest));
-        } else {
-            final SearchRequest searchRequest = new SearchRequest();
-            searchRequest.setBaseDn(l.getValidator().getBaseDn());
-            searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
-            searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
-            searchRequest.setSearchScope(l.getValidator().getScope());
-            searchRequest.setSizeLimit(1L);
-            searchRequest.setReferralHandler(new SearchReferralHandler());
-            cp.setValidator(new SearchValidator(searchRequest));
-        }
 
+        switch (l.getValidator().getType().trim().toLowerCase()) {
+            case "compare":
+                final CompareRequest compareRequest = new CompareRequest();
+                compareRequest.setDn(l.getValidator().getDn());
+                compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
+                        l.getValidator().getAttributeValues().toArray(new String[]{})));
+                compareRequest.setReferralHandler(new SearchReferralHandler());
+                cp.setValidator(new CompareValidator(compareRequest));
+                break;
+            case "none":
+                LOGGER.debug("No validator is configured for the LDAP connection pool of {}", l.getLdapUrl());
+                break;
+            case "search":
+            default:
+                final SearchRequest searchRequest = new SearchRequest();
+                searchRequest.setBaseDn(l.getValidator().getBaseDn());
+                searchRequest.setSearchFilter(new SearchFilter(l.getValidator().getSearchFilter()));
+                searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
+                searchRequest.setSearchScope(l.getValidator().getScope());
+                searchRequest.setSizeLimit(1L);
+                searchRequest.setReferralHandler(new SearchReferralHandler());
+                cp.setValidator(new SearchValidator(searchRequest));
+                break;
+        }
+        
         cp.setFailFastInitialize(l.isFailFast());
 
         LOGGER.debug("Initializing ldap connection pool for {} and bindDn {}", l.getLdapUrl(), l.getBindDn());
