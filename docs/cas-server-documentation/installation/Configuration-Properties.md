@@ -457,7 +457,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
 # cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.attributeRepository.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.attributeRepository.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.attributeRepository.ldap[0].validator.baseDn=
 # cas.authn.attributeRepository.ldap[0].validator.searchFilter=(objectClass=*)
 # cas.authn.attributeRepository.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -1149,7 +1149,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
 
-# cas.authn.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.ldap[0].validator.baseDn=
 # cas.authn.ldap[0].validator.searchFilter=(objectClass=*)
 # cas.authn.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -1269,7 +1269,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.useStartTls=false
 # cas.authn.spnego.ldap.searchFilter=host={host}
 
-# cas.authn.spnego.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.spnego.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.spnego.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.spnego.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
 # cas.authn.spnego.ldap.validator.attributeName=objectClass
@@ -1460,7 +1460,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.x509.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.x509.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.x509.ldap.validator.baseDn=
 # cas.authn.x509.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.x509.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2378,7 +2378,7 @@ used for authentication, etc.
 # cas.monitor.ldap.useSsl=true
 # cas.monitor.ldap.useStartTls=false
 
-# cas.monitor.ldap.validator.type=SEARCH|COMPARE
+# cas.monitor.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.monitor.ldap.validator.baseDn=
 # cas.monitor.ldap.validator.searchFilter=(objectClass=*)
 # cas.monitor.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2443,7 +2443,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
 
-# cas.acceptableUsagePolicy.ldap.validator.type=SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.acceptableUsagePolicy.ldap.validator.baseDn=
 # cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
 # cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2625,7 +2625,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.useSsl=true
 # cas.serviceRegistry.ldap.useStartTls=false
 
-# cas.serviceRegistry.ldap.validator.type=SEARCH|COMPARE
+# cas.serviceRegistry.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.serviceRegistry.ldap.validator.baseDn=
 # cas.serviceRegistry.ldap.validator.searchFilter=(objectClass=*)
 # cas.serviceRegistry.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -3259,7 +3259,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.pm.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.pm.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.pm.ldap.validator.baseDn=
 # cas.authn.pm.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.pm.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
