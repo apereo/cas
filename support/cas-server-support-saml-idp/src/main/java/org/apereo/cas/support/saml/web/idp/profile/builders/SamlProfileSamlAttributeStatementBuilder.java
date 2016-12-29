@@ -24,8 +24,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements
-                                                                                          SamlProfileObjectBuilder<AttributeStatement> {
+public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder
+        implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Autowired
