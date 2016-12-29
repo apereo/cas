@@ -1,6 +1,6 @@
 package org.apereo.cas.audit.spi.config;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
@@ -86,8 +86,8 @@ public class CasCoreAuditConfiguration {
         bean.setAsyncSupported(true);
 
         final Map<String, String> initParams = new HashMap<>();
-        if (StringUtils.isNotBlank(audit.getAlternateLocalAddrHeaderName())) {
-            initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateLocalAddrHeaderName());
+        if (StringUtils.isNotBlank(audit.getAlternateClientAddrHeaderName())) {
+            initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateClientAddrHeaderName());
         }
 
         if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {

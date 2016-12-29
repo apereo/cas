@@ -15,7 +15,7 @@ public class AuditProperties {
     private String singlelineSeparator = "|";
     
     private String alternateServerAddrHeaderName;
-    private String alternateLocalAddrHeaderName;
+    private String alternateClientAddrHeaderName;
     private boolean useServerHostAddress;
     
     private boolean useSingleLine;
@@ -83,12 +83,12 @@ public class AuditProperties {
         this.alternateServerAddrHeaderName = alternateServerAddrHeaderName;
     }
 
-    public String getAlternateLocalAddrHeaderName() {
-        return alternateLocalAddrHeaderName;
+    public String getAlternateClientAddrHeaderName() {
+        return alternateClientAddrHeaderName;
     }
 
-    public void setAlternateLocalAddrHeaderName(final String alternateLocalAddrHeaderName) {
-        this.alternateLocalAddrHeaderName = alternateLocalAddrHeaderName;
+    public void setAlternateClientAddrHeaderName(final String alternateClientAddrHeaderName) {
+        this.alternateClientAddrHeaderName = alternateClientAddrHeaderName;
     }
 
     public boolean isUseServerHostAddress() {
