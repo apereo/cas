@@ -263,7 +263,7 @@ public class SamlIdPProperties {
          *
          * @return the map
          */
-        public Map<String, String> configureAttributeNameFormat() {
+        public Map<String, String> configureAttributeNameFormats() {
             if (this.attributeNameFormats.isEmpty()) {
                 return Collections.emptyMap();
             }
