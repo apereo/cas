@@ -64,7 +64,7 @@ should support the duration syntax for full clarity on unit of measure:
 "PT20S"     -- parses as "20 seconds"
 "PT15M"     -- parses as "15 minutes"
 "PT10H"     -- parses as "10 hours"
-"P2D"       -- parses as "2 days" 
+"P2D"       -- parses as "2 days"
 "P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
 ```
 
@@ -156,7 +156,7 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### RabbitMQ
 
-Broadcast CAS configuration updates to other nodes in the cluster 
+Broadcast CAS configuration updates to other nodes in the cluster
 via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
 
 ```properties
@@ -171,7 +171,7 @@ via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/
 
 ### Kafka
 
-Broadcast CAS configuration updates to other nodes in the cluster 
+Broadcast CAS configuration updates to other nodes in the cluster
 via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
 
 ```properties
@@ -244,7 +244,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 
 ### Rewrite Valve
 
-If and when you choose to deploy CAS at root and remove the default context path, 
+If and when you choose to deploy CAS at root and remove the default context path,
 CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
 for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
 
@@ -280,7 +280,7 @@ If none is specified, one is automatically detected and used by CAS.
 
 ## CAS Banner
 
-On startup, CAS will display a banner along with some diagnostics info. 
+On startup, CAS will display a banner along with some diagnostics info.
 In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
 ## Admin Status Endpoints
@@ -408,7 +408,7 @@ The story in plain english is:
 - Figure it out.
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
-This is important to take into account when attribute merging may take place. 
+This is important to take into account when attribute merging may take place.
 By default, the execution order is the following but can be adjusted per source:
 
 1. LDAP
@@ -1041,7 +1041,7 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
-**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
 retrieved from [other attribute repository sources](#authentication-attributes), if any.
 Attributes retrieved directly as part of LDAP authentication trump all other attributes.
 
@@ -1058,17 +1058,17 @@ Manager bind/search type of authentication.
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
-### Anonymous Search 
+### Anonymous Search
 
 Anonymous search.
 
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
-### Direct Bind 
+### Direct Bind
 
 Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. 
+no search is required to compute the DN needed for a bind operation.
 
 There are two requirements for this use case:
 
@@ -1084,7 +1084,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 | `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
-| `RANDOM`              | For each new connection a random LDAP url will be selected. 
+| `RANDOM`              | For each new connection a random LDAP url will be selected.
 | `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
 
 ```properties
@@ -1844,7 +1844,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.algs.overrideSignatureReferenceDigestMethods=
 # cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
 # cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
-# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms= 
+# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
 
 
@@ -2248,6 +2248,9 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.singlelineSeparator=|
 # cas.audit.useSingleLine=false
 # cas.audit.appCode=CAS
+# cas.audit.alternateServerAddrHeaderName=
+# cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
+# cas.audit.useServerHostAddress=false
 ```
 
 ### Database
@@ -2935,7 +2938,7 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 ## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
 #
-## Maximum amount of time (in milliseconds) a connection allocation should block 
+## Maximum amount of time (in milliseconds) a connection allocation should block
 #  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
 ```
