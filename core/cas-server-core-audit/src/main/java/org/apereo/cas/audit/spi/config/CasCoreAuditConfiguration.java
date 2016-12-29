@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
@@ -11,6 +12,7 @@ import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
 import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -75,10 +77,25 @@ public class CasCoreAuditConfiguration {
 
     @Bean
     public FilterRegistrationBean casClientInfoLoggingFilter() {
+        final AuditProperties audit = casProperties.getAudit();
+        
         final FilterRegistrationBean bean = new FilterRegistrationBean();
         bean.setFilter(new ClientInfoThreadLocalFilter());
         bean.setUrlPatterns(Collections.singleton("/*"));
         bean.setName("CAS Client Info Logging Filter");
+        bean.setAsyncSupported(true);
+
+        final Map<String, String> initParams = new HashMap<>();
+        if (StringUtils.isNotBlank(audit.getAlternateLocalAddrHeaderName())) {
+            initParams.put(ClientInfoThreadLocalFilter.CONST_IP_ADDRESS_HEADER, audit.getAlternateLocalAddrHeaderName());
+        }
+
+        if (StringUtils.isNotBlank(audit.getAlternateServerAddrHeaderName())) {
+            initParams.put(ClientInfoThreadLocalFilter.CONST_SERVER_IP_ADDRESS_HEADER, audit.getAlternateServerAddrHeaderName());
+        }
+        
+        initParams.put(ClientInfoThreadLocalFilter.CONST_USE_SERVER_HOST_ADDRESS, String.valueOf(audit.isUseServerHostAddress()));
+        bean.setInitParameters(initParams);
         return bean;
     }
 
