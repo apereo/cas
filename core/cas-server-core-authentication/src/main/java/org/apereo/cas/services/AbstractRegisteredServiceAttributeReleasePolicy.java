@@ -26,30 +26,13 @@ import java.util.TreeMap;
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5325460875620586503L;
-
-    /**
-     * The logger.
-     */
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
 
-    /**
-     * The attribute filter.
-     */
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
-
-    /**
-     * Attribute repository that refreshes attributes for a principal.
-     **/
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
-    /**
-     * Authorize the release of credential for this service. Default is false.
-     **/
     private boolean authorizedToReleaseCredentialPassword;
-
-    /**
-     * Authorize the release of PGT for this service. Default is false.
-     **/
     private boolean authorizedToReleaseProxyGrantingTicket;
 
     @Override
