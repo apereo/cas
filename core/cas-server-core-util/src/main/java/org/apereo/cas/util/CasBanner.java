@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.boot.Banner;
@@ -35,6 +36,7 @@ public class CasBanner implements Banner {
         final Properties properties = System.getProperties();
         try (Formatter formatter = new Formatter()) {
             formatter.format("CAS Version: %s%n", CasVersion.getVersion());
+            formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
             formatter.format("Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("System Temp Directory: %s%n", FileUtils.getTempDirectoryPath());
             formatter.format("Java Home: %s%n", properties.get("java.home"));
