@@ -1913,6 +1913,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.signatureLocation=
 ```
 
+### Zoom
+
+```properties
+# cas.samlSP.zoom.metadata=/etc/cas/saml/zoom.xml
+# cas.samlSP.zoom.name=Zoom
+# cas.samlSP.zoom.description=Zoom Integration
+# cas.samlSP.zoom.attributes=mail,sn,givenName
+# cas.samlSP.zoom.nameIdAttribute=mail
+```
+
 ### Box
 
 ```properties

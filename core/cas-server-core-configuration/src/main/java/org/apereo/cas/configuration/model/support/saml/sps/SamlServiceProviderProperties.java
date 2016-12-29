@@ -20,6 +20,15 @@ public class SamlServiceProviderProperties {
     private Office365 office365 = new Office365();
     private TestShib testShib = new TestShib();
     private InCommon inCommon = new InCommon();
+    private Zoom zoom = new Zoom();
+
+    public Zoom getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(final Zoom zoom) {
+        this.zoom = zoom;
+    }
 
     public InCommon getInCommon() {
         return inCommon;
@@ -167,9 +176,17 @@ public class SamlServiceProviderProperties {
         }
     }
 
+    public static class Zoom extends AbstractSamlSPProperties {
+        public Zoom() {
+            setNameIdAttribute("mail");
+            setAttributes(Arrays.asList("mail,sn,givenName"));
+        }
+    }
+    
     public static class InCommon extends AbstractSamlSPProperties {
         public InCommon() {
             //setMetadata("http://md.incommon.org/InCommon/InCommon-metadata.xml");
+            //setSignatureLocation("/etc/cas/config/certs/inc-md-cert.pem");
             setAttributes(Arrays.asList("eduPersonPrincipalName"));
         }
     }
