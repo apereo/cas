@@ -31,8 +31,26 @@ buildscript {
         classpath "org.akhikhl.gretty:gretty:1.2.4"
         classpath "nl.eveoh:gradle-aspectj:1.6"
 		classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.0.0')
-		classpath(group: 'wavity-gradle-plugins', name: 'plugins', version: pluginsVersion)
+		classpath(group: 'wavity-gradle-plugins', name: 'plugins', version: '1.0.0')
     }
+    configurations.all {
+		resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+			if (details.requested.group == 'wavity-gradle-plugins') {
+				def theVersion = details.requested.version
+				String build_qualifier = System.getenv("BUILD_QUALIFIER");
+				if(build_qualifier != null) {
+					if('release'.equalsIgnoreCase(build_qualifier)) {
+						theVersion = details.requested.version
+					} else {
+						theVersion = details.requested.version + "-" + build_qualifier
+					}
+				} else {
+					theVersion = details.requested.version + "-SNAPSHOT"
+				}
+				details.useVersion theVersion
+			}
+		}
+	}
 }
 
 allprojects {
