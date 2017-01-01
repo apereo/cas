@@ -31,40 +31,40 @@ public class SamlRegisteredService extends RegexRegisteredService {
      * A maximum validity interval of less than 1 means that
      * no restriction is placed on the metadata's validUntil attribute.
      */
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private long metadataMaxValidity;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredAuthenticationContextClass;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaDirection;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaPattern;
     
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredNameIdFormat;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataSignatureLocation;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean signAssertions;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean signResponses = true;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean encryptAssertions;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaRoles = "SPSSODescriptor";
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
         
     /**
