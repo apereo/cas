@@ -65,13 +65,12 @@ public class SamlGoogleAppsConfiguration {
     @Bean
     @Lazy
     public ResponseBuilder googleAccountsServiceResponseBuilder() {
-        final GoogleAccountsServiceResponseBuilder responseBuilder =
-                new GoogleAccountsServiceResponseBuilder(casProperties.getGoogleApps().getPrivateKeyLocation(),
-                        casProperties.getGoogleApps().getPublicKeyLocation(),
-                        casProperties.getGoogleApps().getKeyAlgorithm(),
-                        servicesManager,
-                        googleSaml20ObjectBuilder());
-        responseBuilder.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
-        return responseBuilder;
+        return new GoogleAccountsServiceResponseBuilder(
+                casProperties.getGoogleApps().getPrivateKeyLocation(),
+                casProperties.getGoogleApps().getPublicKeyLocation(),
+                casProperties.getGoogleApps().getKeyAlgorithm(),
+                servicesManager,
+                googleSaml20ObjectBuilder(),
+                casProperties.getSamlCore().getSkewAllowance());
     }
 }

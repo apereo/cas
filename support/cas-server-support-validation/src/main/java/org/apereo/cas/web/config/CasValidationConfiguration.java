@@ -112,48 +112,39 @@ public class CasValidationConfiguration {
 
     @Bean
     public View cas1ServiceSuccessView() {
-        final Cas10ResponseView v = new Cas10ResponseView();
-        v.setSuccessResponse(true);
-        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        return v;
+        return new Cas10ResponseView(true, protocolAttributeEncoder, servicesManager,
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 
     @Bean
     public View cas1ServiceFailureView() {
-        final Cas10ResponseView v = new Cas10ResponseView();
-        v.setSuccessResponse(false);
-        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        return v;
+        return new Cas10ResponseView(false, protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 
     @Bean
     public View cas2ServiceSuccessView() {
-        final Cas20ResponseView v = new Cas20ResponseView();
-        v.setView(this.cas2SuccessView);
-        v.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        return v;
+        return new Cas20ResponseView(true, protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                this.cas2SuccessView);
     }
 
     @Bean
     public View cas3ServiceJsonView() {
-        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
-        final Cas30JsonResponseView s = new Cas30JsonResponseView(authenticationContextAttribute, isReleaseProtocolAttributes);
-        s.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        s.setView(cas3SuccessView);
-        s.setServicesManager(servicesManager);
-        return s;
+        return new Cas30JsonResponseView(true, 
+                protocolAttributeEncoder,
+                servicesManager,
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
+                cas3SuccessView,
+                casProperties.getView().getCas3().isReleaseProtocolAttributes());
     }
 
     @Bean
     public View cas3ServiceSuccessView() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getView().getCas3().isReleaseProtocolAttributes();
-        final Cas30ResponseView s = new Cas30ResponseView(authenticationContextAttribute, isReleaseProtocolAttributes);
-        s.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        s.setView(cas3SuccessView);
-        s.setServicesManager(servicesManager);
-        return s;
+        return new Cas30ResponseView(true, protocolAttributeEncoder,
+                servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
     }
 
     @Bean

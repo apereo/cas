@@ -1,7 +1,10 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,11 +20,12 @@ import java.util.Map;
  */
 public class Cas20ResponseView extends AbstractDelegatingCasView {
 
-    /**
-     * Instantiates a new Abstract cas jstl view.
-     */
-    public Cas20ResponseView() {
-        super();
+    public Cas20ResponseView(final boolean successResponse, 
+                             final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                             final ServicesManager servicesManager, 
+                             final String authenticationContextAttribute, 
+                             final View view) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
     }
 
     @Override

@@ -3,10 +3,13 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,18 +31,15 @@ import java.util.Set;
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
-    private boolean releaseProtocolAttributes = true;
-    private final String authenticationContextAttribute;
+    private final boolean releaseProtocolAttributes;
 
-    /**
-     * Instantiates a new Abstract cas response view.
-     *
-     * @param authenticationContextAttribute the authentication context attribute
-     * @param releaseProtocolAttributes      the release protocol attributes
-     */
-    public Cas30ResponseView(final String authenticationContextAttribute, final boolean releaseProtocolAttributes) {
-        super();
-        this.authenticationContextAttribute = authenticationContextAttribute;
+    public Cas30ResponseView(final boolean successResponse, 
+                             final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                             final ServicesManager servicesManager, 
+                             final String authenticationContextAttribute, 
+                             final View view, 
+                             final boolean releaseProtocolAttributes) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
         this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 

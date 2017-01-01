@@ -22,10 +22,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(length = 255, updatable = true, insertable = true)
     private String jwks;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true)
+    @Column(updatable = true, insertable = true)
     private boolean signIdToken = true;
 
     public OidcRegisteredService() {
@@ -47,12 +47,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     public void setJwks(final String jwks) {
         this.jwks = jwks;
     }
-    
+
     @Override
     protected AbstractRegisteredService newInstance() {
         return new OidcRegisteredService();
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -72,7 +72,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
                 .append(this.signIdToken, rhs.signIdToken)
                 .isEquals();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder()

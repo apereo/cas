@@ -25,18 +25,18 @@ public class GoogleAuthenticatorRegistrationRecord {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String secretKey;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(updatable = true, insertable = true, nullable = false)
     private Integer validationCode;
 
     @ElementCollection
     @CollectionTable(name = "scratch_codes", joinColumns = @JoinColumn(name = "username"))
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(updatable = true, insertable = true, nullable = false)
     private List<Integer> scratchCodes = new ArrayList<>();
 
     public long getId() {

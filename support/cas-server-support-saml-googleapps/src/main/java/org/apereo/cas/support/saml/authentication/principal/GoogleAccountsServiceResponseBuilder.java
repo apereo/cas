@@ -82,16 +82,19 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param keyAlgorithm       the key algorithm
      * @param servicesManager    the services manager
      * @param samlObjectBuilder  the saml object builder
+     * @param skewAllowance      the skew allowance
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation,
                                                 final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
-                                                final GoogleSaml20ObjectBuilder samlObjectBuilder) {
+                                                final GoogleSaml20ObjectBuilder samlObjectBuilder,
+                                                final int skewAllowance) {
 
         this(privateKeyLocation, publicKeyLocation, keyAlgorithm, 0);
         this.samlObjectBuilder = samlObjectBuilder;
         this.servicesManager = servicesManager;
+        this.skewAllowance = skewAllowance;
     }
 
     /**
