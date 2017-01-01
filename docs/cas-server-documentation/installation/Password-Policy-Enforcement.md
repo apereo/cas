@@ -20,6 +20,7 @@ fully explaining the nature of the problem.
 
 - `ACCOUNT_LOCKED`
 - `ACCOUNT_DISABLED`
+- `ACCOUNT_EXPIRED`
 - `INVALID_LOGON_HOURS`
 - `INVALID_WORKSTATION`
 - `PASSWORD_MUST_CHANGE`
