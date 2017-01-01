@@ -41,25 +41,38 @@ public abstract class AbstractCasView extends AbstractView {
      * Indicate whether this view will be generating the success response or not.
      * By default, the view is treated as a failure.
      */
-    protected boolean successResponse;
+    protected final boolean successResponse;
 
     /**
      * The attribute encoder instance.
      */
-    protected ProtocolAttributeEncoder protocolAttributeEncoder;
+    protected final ProtocolAttributeEncoder protocolAttributeEncoder;
 
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * Logger instance.
      **/
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    private String authenticationContextAttribute;
-    
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * authentication context attribute name.
+     */
+    protected final String authenticationContextAttribute;
+
+    public AbstractCasView(final boolean successResponse,
+                           final ProtocolAttributeEncoder protocolAttributeEncoder,
+                           final ServicesManager servicesManager,
+                           final String authenticationContextAttribute) {
+        this.successResponse = successResponse;
+        this.protocolAttributeEncoder = protocolAttributeEncoder;
+        this.servicesManager = servicesManager;
+        this.authenticationContextAttribute = authenticationContextAttribute;
+    }
+
     /**
      * Gets the assertion from the model.
      *
@@ -395,15 +408,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values) {
         model.putAll(values);
     }
-    
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-
-    public void setProtocolAttributeEncoder(final ProtocolAttributeEncoder protocolAttributeEncoder) {
-        this.protocolAttributeEncoder = protocolAttributeEncoder;
-    }
 
     public ProtocolAttributeEncoder getProtocolAttributeEncoder() {
         return this.protocolAttributeEncoder;
@@ -412,16 +416,9 @@ public abstract class AbstractCasView extends AbstractView {
     public ServicesManager getServicesManager() {
         return this.servicesManager;
     }
-    
-    public void setSuccessResponse(final boolean successResponse) {
-        this.successResponse = successResponse;
-    }
 
     public String getAuthenticationContextAttribute() {
         return authenticationContextAttribute;
     }
 
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
 }

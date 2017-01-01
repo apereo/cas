@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
@@ -73,10 +74,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas30ResponseView view = new Cas30ResponseView("attribute", true);
-        view.setServicesManager(this.servicesManager);
-        view.setProtocolAttributeEncoder(new DefaultCasProtocolAttributeEncoder(this.servicesManager));
-        view.setView(new View() {
+        final ProtocolAttributeEncoder encoder = (new DefaultCasProtocolAttributeEncoder(this.servicesManager));
+        final View viewDelegated = new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
@@ -86,8 +85,10 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 map.forEach(request::setAttribute);
             }
-        });
+        };
 
+        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
+                "attribute", viewDelegated, true);
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
         return (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
