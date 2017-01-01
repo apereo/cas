@@ -1793,7 +1793,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.authn.exceptions.exceptions=value1,value2,...
 ```
 
-## Saml Core
+## SAML Core
 
 Control core SAML functionality within CAS.
 
@@ -1806,7 +1806,7 @@ Control core SAML functionality within CAS.
 ```
 
 
-## Saml IdP
+## SAML IdP
 
 Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
@@ -1848,7 +1848,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 ```
 
 
-## Saml SPs
+## SAML SPs
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
@@ -2062,7 +2062,8 @@ Delegate authentication to an external OpenID Connect server.
 
 ### SAML
 
-Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
+Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` 
+prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
 # cas.authn.pac4j.saml.keystorePassword=
@@ -3182,7 +3183,7 @@ To learn more about this topic, [please review this guide](Configuring-Groovy-Co
 # shell.ssh.idleTimeout=30000
 ```
 
-## Saml Metadata UI
+## SAML Metadata UI
 
 Control how SAML MDUI elements should be displayed on the main CAS login page
 in the event that CAS is handling authentication for an external SAML2 IdP.
