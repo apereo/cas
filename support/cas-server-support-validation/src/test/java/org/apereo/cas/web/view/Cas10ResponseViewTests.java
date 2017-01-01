@@ -23,9 +23,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 public class Cas10ResponseViewTests {
-
-    private final Cas10ResponseView view = new Cas10ResponseView();
-
+    
     private Map<String, Object> model;
 
     @Before
@@ -41,16 +39,18 @@ public class Cas10ResponseViewTests {
     @Test
     public void verifySuccessView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.view.setSuccessResponse(true);
-        this.view.render(this.model, new MockHttpServletRequest(), response);
+        final Cas10ResponseView view = new Cas10ResponseView(true, null, 
+                null, null);
+        view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
 
     @Test
     public void verifyFailureView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.view.setSuccessResponse(false);
-        this.view.render(this.model, new MockHttpServletRequest(), response);
+        final Cas10ResponseView view = new Cas10ResponseView(false, null,
+                null, null);
+        view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }
 }

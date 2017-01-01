@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -105,26 +107,20 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
-        final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
-        view.setServicesManager(this.servicesManager);
-        view.setProtocolAttributeEncoder(this.protocolAttributeEncoder);
-        view.setIssuer(casProperties.getSamlCore().getIssuer());
-        view.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
-        view.setDefaultAttributeNamespace(casProperties.getSamlCore().getAttributeNamespace());
-        view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        return view;
+        return new Saml10SuccessResponseView(protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
+                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
+                casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
     }
     
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
-        final Saml10FailureResponseView view = new Saml10FailureResponseView();
-        view.setServicesManager(this.servicesManager);
-        view.setProtocolAttributeEncoder(this.protocolAttributeEncoder);
-        view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setProtocolAttributeEncoder(protocolAttributeEncoder);
-        return view;
+        return new Saml10FailureResponseView(protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()), 
+                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance());
     }
     
     @Bean
