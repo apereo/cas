@@ -9,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class PolicyBasedAuthenticationManagerTests {
 
     @Rule
@@ -34,6 +36,7 @@ public class PolicyBasedAuthenticationManagerTests {
             mock(Credential.class), mock(Credential.class));
 
     @Test
+    @DirtiesContext
     public void verifyAuthenticateAnySuccess() throws Exception {
         final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
