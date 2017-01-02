@@ -36,7 +36,6 @@ public class PolicyBasedAuthenticationManagerTests {
             mock(Credential.class), mock(Credential.class));
 
     @Test
-    @DirtiesContext
     public void verifyAuthenticateAnySuccess() throws Exception {
         final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
@@ -45,7 +44,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(map, mockServicesManager());
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
-        assertEquals(1, auth.getFailures().size());
+        assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
     }
 
