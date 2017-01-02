@@ -3,6 +3,7 @@ package org.apereo.cas.authorization;
 import org.apereo.cas.configuration.support.Beans;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
@@ -18,12 +19,10 @@ import java.util.Arrays;
 
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
- * Two searches are performed by this component for every user details lookup:
+ * Searches are performed by this component for every user details lookup:
  * <ol>
  * <li>Search for an entry to resolve the username. In most cases the search should return exactly one result,
  * but the {@link #allowMultipleResults} property may be toggled to change that behavior.</li>
- * <li>Search for groups of which the user is a member. This search commonly occurs on a separate directory
- * branch than that of the user search.</li>
  * </ol>
  *
  * @author Jerome Leleu
@@ -31,11 +30,15 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
+public class LdapUserAttributesToRolesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthorizationGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUserAttributesToRolesAuthorizationGenerator.class);
 
-    private final ConnectionFactory connectionFactory;
+    /**
+     * LDAP connection factory.
+     */
+    protected final ConnectionFactory connectionFactory;
+    
     private final SearchExecutor userSearchExecutor;
     private final String roleAttribute;
     private final String rolePrefix;
@@ -56,8 +59,11 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
      * @param roleAttribute        the role attribute
      * @param rolePrefix           the role prefix
      */
-    public LdapAuthorizationGenerator(final ConnectionFactory factory, final SearchExecutor userSearchExecutor, final boolean allowMultipleResults,
-                                      final String roleAttribute, final String rolePrefix) {
+    public LdapUserAttributesToRolesAuthorizationGenerator(final ConnectionFactory factory, 
+                                                           final SearchExecutor userSearchExecutor, 
+                                                           final boolean allowMultipleResults,
+                                                           final String roleAttribute, 
+                                                           final String rolePrefix) {
         this.connectionFactory = factory;
         this.userSearchExecutor = userSearchExecutor;
         this.allowMultipleResults = allowMultipleResults;
@@ -90,16 +96,17 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
                         "Found multiple results for user which is not allowed (allowMultipleResults=false).");
             }
 
-            if (userResult.getEntry().getAttributes().isEmpty()) {
+            final LdapEntry userEntry = userResult.getEntry();
+            if (userEntry.getAttributes().isEmpty()) {
                 throw new IllegalStateException("No attributes are retrieved for this user.");
             }
 
-            final LdapAttribute attribute = userResult.getEntry().getAttribute(this.roleAttribute);
+            final LdapAttribute attribute = userEntry.getAttribute(this.roleAttribute);
             if (attribute == null) {
                 throw new IllegalStateException("Configured role attribute cannot be found for this user");
             }
 
-            addProfileRolesFromAttributes(profile, attribute);
+            addProfileRoles(userEntry, profile, attribute);
 
         } catch (final LdapException e) {
             throw new RuntimeException("LDAP error fetching details for user.", e);
@@ -107,14 +114,28 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     }
 
     /**
+     * Add profile roles.
+     *
+     * @param userEntry the user entry
+     * @param profile   the profile
+     * @param attribute the attribute
+     */
+    protected void addProfileRoles(final LdapEntry userEntry, final CommonProfile profile, final LdapAttribute attribute) {
+        addProfileRolesFromAttributes(profile, attribute, this.rolePrefix);
+    }
+
+    /**
      * Add profile roles from attributes.
      *
      * @param profile       the profile
      * @param ldapAttribute the ldap attribute
+     * @param prefix        the prefix
      */
-    protected void addProfileRolesFromAttributes(final CommonProfile profile, final LdapAttribute ldapAttribute) {
+    protected void addProfileRolesFromAttributes(final CommonProfile profile, 
+                                                 final LdapAttribute ldapAttribute,
+                                                 final String prefix) {
         ldapAttribute.getStringValues().forEach(value -> {
-            profile.addRole(this.rolePrefix.concat(value.toUpperCase()));
+            profile.addRole(prefix.concat(value.toUpperCase()));
             profile.addAttribute(ldapAttribute.getName(), value);
         });
     }

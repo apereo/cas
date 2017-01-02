@@ -1,6 +1,8 @@
 package org.apereo.cas.mgmt.config;
 
-import org.apereo.cas.authorization.LdapAuthorizationGenerator;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
+import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -22,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casManagementLdapAuthorizationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementLdapAuthorizationConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -31,14 +33,31 @@ public class CasManagementLdapAuthorizationConfiguration {
     public AuthorizationGenerator authorizationGenerator() {
         final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
         final ConnectionFactory connectionFactory = Beans.newPooledConnectionFactory(ldapAuthz);
-        return new LdapAuthorizationGenerator(connectionFactory, ldapAuthorizationGeneratorUserSearchExecutor(), ldapAuthz.isAllowMultipleResults(),
-                ldapAuthz.getRoleAttribute(), ldapAuthz.getRolePrefix());
+
+        if (StringUtils.isNotBlank(ldapAuthz.getGroupFilter()) && StringUtils.isNotBlank(ldapAuthz.getGroupAttribute())) {
+            return new LdapUserGroupsToRolesAuthorizationGenerator(connectionFactory,
+                    ldapAuthorizationGeneratorUserSearchExecutor(),
+                    ldapAuthz.isAllowMultipleResults(),
+                    ldapAuthz.getRoleAttribute(),
+                    ldapAuthz.getRolePrefix(),
+                    ldapAuthz.getGroupAttribute(),
+                    ldapAuthz.getGroupPrefix(),
+                    ldapAuthorizationGeneratorGroupSearchExecutor());
+        }
+        return new LdapUserAttributesToRolesAuthorizationGenerator(connectionFactory,
+                ldapAuthorizationGeneratorUserSearchExecutor(),
+                ldapAuthz.isAllowMultipleResults(),
+                ldapAuthz.getRoleAttribute(),
+                ldapAuthz.getRolePrefix());
     }
-    
-    @RefreshScope
-    @Bean
-    public SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
-        return Beans.newSearchExecutor(casProperties.getMgmt().getLdapAuthz().getBaseDn(),
-                casProperties.getMgmt().getLdapAuthz().getSearchFilter());
+
+    private SearchExecutor ldapAuthorizationGeneratorUserSearchExecutor() {
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
+        return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getSearchFilter());
+    }
+
+    private SearchExecutor ldapAuthorizationGeneratorGroupSearchExecutor() {
+        final LdapAuthorizationProperties ldapAuthz = casProperties.getMgmt().getLdapAuthz();
+        return Beans.newSearchExecutor(ldapAuthz.getBaseDn(), ldapAuthz.getGroupFilter());
     }
 }
