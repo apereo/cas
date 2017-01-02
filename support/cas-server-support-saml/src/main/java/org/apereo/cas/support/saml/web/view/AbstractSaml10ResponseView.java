@@ -2,20 +2,17 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;

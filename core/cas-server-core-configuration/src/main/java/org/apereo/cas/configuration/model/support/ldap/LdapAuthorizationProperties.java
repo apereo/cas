@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link LdapAuthorizationProperties}.
  *
@@ -15,8 +17,11 @@ public class LdapAuthorizationProperties extends AbstractLdapProperties {
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
     private boolean allowMultipleResults;
 
+    private String groupAttribute;
+    private String groupPrefix = StringUtils.EMPTY;
+    private String groupFilter;
+    
     private String baseDn;
-
     private String searchFilter;
 
     public String getRoleAttribute() {
@@ -57,5 +62,29 @@ public class LdapAuthorizationProperties extends AbstractLdapProperties {
 
     public void setSearchFilter(final String searchFilter) {
         this.searchFilter = searchFilter;
+    }
+
+    public String getGroupAttribute() {
+        return groupAttribute;
+    }
+
+    public void setGroupAttribute(final String groupAttribute) {
+        this.groupAttribute = groupAttribute;
+    }
+
+    public String getGroupPrefix() {
+        return groupPrefix;
+    }
+
+    public void setGroupPrefix(final String groupPrefix) {
+        this.groupPrefix = groupPrefix;
+    }
+
+    public String getGroupFilter() {
+        return groupFilter;
+    }
+
+    public void setGroupFilter(final String groupFilter) {
+        this.groupFilter = groupFilter;
     }
 }
