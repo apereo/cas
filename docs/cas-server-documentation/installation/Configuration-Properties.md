@@ -2062,7 +2062,7 @@ Delegate authentication to an external OpenID Connect server.
 
 ### SAML
 
-Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` 
+Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:`
 prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
@@ -3056,11 +3056,15 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
 
+# cas.mgmt.ldapAuthz.groupAttribute=
+# cas.mgmt.ldapAuthz.groupPrefix=
+# cas.mgmt.ldapAuthz.groupFilter=
 # cas.mgmt.ldapAuthz.rolePrefix=ROLE_
+# cas.mgmt.ldapAuthz.roleAttribute=uugid
+
 # cas.mgmt.ldapAuthz.allowMultipleResults=false
 # cas.mgmt.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
-# cas.mgmt.ldapAuthz.roleAttribute=uugid
 # cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.mgmt.ldapAuthz.connectionStrategy=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
