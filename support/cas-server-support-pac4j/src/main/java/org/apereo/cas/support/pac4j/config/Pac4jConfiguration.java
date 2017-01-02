@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -16,7 +17,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,21 +54,17 @@ public class Pac4jConfiguration {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired(required = false)
-    @Qualifier("clientPrincipalResolver")
-    private PrincipalResolver clientPrincipalResolver;
-
-    @Autowired(required = false)
-    @Qualifier("indirectClients")
-    private IndirectClient[] clients;
-
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+    
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("authenticationMetadataPopulators")
-    private List authenticationMetadataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -87,7 +82,7 @@ public class Pac4jConfiguration {
 
     @RefreshScope
     @Bean
-    public ClientAuthenticationHandler clientAuthenticationHandler() {
+    public AuthenticationHandler clientAuthenticationHandler() {
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
         h.setClients(builtClients());
         h.setPrincipalFactory(clientPrincipalFactory());
@@ -100,12 +95,10 @@ public class Pac4jConfiguration {
     @RefreshScope
     @Bean
     public Action clientAction() {
-        final DelegatedClientAuthenticationAction a = new DelegatedClientAuthenticationAction();
-        a.setCentralAuthenticationService(centralAuthenticationService);
-        a.setAuthenticationSystemSupport(authenticationSystemSupport);
-        a.setClients(builtClients());
-        a.setCasProperties(casProperties);
-        return a;
+        return new DelegatedClientAuthenticationAction(builtClients(), authenticationSystemSupport, centralAuthenticationService, 
+                casProperties.getTheme().getParamName(), 
+                casProperties.getLocale().getParamName(), 
+                casProperties.getAuthn().getPac4j().isAutoRedirect());
     }
 
     private void configureGithubClient(final Map<String, String> properties) {
@@ -232,13 +225,7 @@ public class Pac4jConfiguration {
         final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
         final Config propertiesConfig = configFactory.build();
         allClients.addAll(propertiesConfig.getClients().getClients());
-
-        // add all indirect clients from the Spring context
-        if (this.clients != null && this.clients.length > 0) {
-            allClients.addAll(Arrays.<Client>asList(this.clients));
-        }
-
-        // build a Clients configuration
+        
         if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one client must be defined");
         }
@@ -248,7 +235,7 @@ public class Pac4jConfiguration {
 
     @PostConstruct
     protected void initializeRootApplicationContext() {
-        authenticationHandlersResolvers.put(clientAuthenticationHandler(), this.clientPrincipalResolver);
+        authenticationHandlersResolvers.put(clientAuthenticationHandler(), this.personDirectoryPrincipalResolver);
         authenticationMetadataPopulators.add(0, clientAuthenticationMetaDataPopulator());
     }
 }
