@@ -109,7 +109,7 @@ public class DefaultAuthentication implements Authentication {
         Assert.notEmpty(credentials, "Credential cannot be empty");
 
         this.credentials = credentials;
-        this.failures = failures.isEmpty() ? null : failures;
+        this.failures = failures.isEmpty() ? Collections.emptyMap() : failures;
     }
 
     @Override
