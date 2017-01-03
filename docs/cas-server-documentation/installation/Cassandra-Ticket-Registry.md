@@ -115,3 +115,4 @@ Given the ServiceTicket short life nature, we suggest not to replicate this tabl
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## High Availability Considerations
+Read more about Cassandra performance and high availability [here](http://cassandra.apache.org/)
