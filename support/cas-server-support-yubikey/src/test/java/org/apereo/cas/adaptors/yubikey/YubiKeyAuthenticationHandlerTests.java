@@ -66,11 +66,8 @@ public class YubiKeyAuthenticationHandlerTests {
 
     @Test
     public void checkAccountNotFound() throws Exception {
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
-        handler.setRegistry((uid, yubikeyPublicId) -> false);
-
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY, (uid, yubikeyPublicId) -> false);
         this.thrown.expect(AccountNotFoundException.class);
-
         handler.authenticate(new YubiKeyCredential(OTP));
     }
 }

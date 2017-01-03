@@ -26,12 +26,10 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
-    /**
-     * Instantiates a new Google authenticator authentication handler.
-     */
-    public GoogleAuthenticatorAuthenticationHandler() {
+    public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance) {
+        this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
-    
+
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
@@ -63,13 +61,5 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     @Override
     public boolean supports(final Credential credential) {
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
-    }
-
-    public IGoogleAuthenticator getGoogleAuthenticatorInstance() {
-        return googleAuthenticatorInstance;
-    }
-
-    public void setGoogleAuthenticatorInstance(final IGoogleAuthenticator googleAuthenticatorInstance) {
-        this.googleAuthenticatorInstance = googleAuthenticatorInstance;
     }
 }

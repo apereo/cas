@@ -27,7 +27,8 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler() {
+    public DuoAuthenticationHandler(final VariegatedMultifactorAuthenticationProvider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -112,9 +113,5 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     public boolean supports(final Credential credential) {
         return DuoCredential.class.isAssignableFrom(credential.getClass())
                 || credential instanceof DuoDirectCredential;
-    }
-
-    public void setProvider(final VariegatedMultifactorAuthenticationProvider provider) {
-        this.provider = provider;
     }
 }
