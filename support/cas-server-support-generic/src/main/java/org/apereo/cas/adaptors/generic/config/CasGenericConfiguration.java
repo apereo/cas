@@ -93,7 +93,8 @@ public class CasGenericConfiguration {
 
     @Bean
     public Action remoteAddressCheck() {
-        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver, 
+                serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy);
     }
 

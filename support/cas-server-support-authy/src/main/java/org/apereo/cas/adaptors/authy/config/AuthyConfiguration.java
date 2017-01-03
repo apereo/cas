@@ -170,7 +170,8 @@ public class AuthyConfiguration {
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
-        return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+        return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, 
+                servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
@@ -220,7 +221,8 @@ public class AuthyConfiguration {
         @Bean
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, 
+                    loginFlowDefinitionRegistry, deviceRegistrationEnabled,
                     authyAuthenticatorFlowRegistry());
         }
     }
