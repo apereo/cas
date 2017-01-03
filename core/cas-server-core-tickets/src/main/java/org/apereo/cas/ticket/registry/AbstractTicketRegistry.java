@@ -98,7 +98,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public int deleteTicket(final String ticketId) {
         final AtomicInteger count = new AtomicInteger(0);
 
-        if (ticketId == null) {
+        if (StringUtils.isBlank(ticketId)) {
             return count.intValue();
         }
 
