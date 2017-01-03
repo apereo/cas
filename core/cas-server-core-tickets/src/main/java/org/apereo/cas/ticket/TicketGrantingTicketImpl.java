@@ -10,8 +10,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
@@ -54,12 +52,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -8608149809180911599L;
-
-    /**
-     * Logger instance.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
-
+    
     /**
      * The authenticated object for which this ticket was generated for.
      */
@@ -203,7 +196,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
                     .filter(existingService -> path.equals(normalizePath(existingService)))
                     .findFirst().ifPresent(existingService -> {
                 existingServices.remove(existingService);
-                LOGGER.trace("Removed previous tickets for service: {}", existingService);
             });
         }
         this.services.put(id, service);

@@ -9,4 +9,7 @@ import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstancePro
  * @since 5.1.0
  */
 public class MongoTicketRegistryProperties extends AbstractMongoInstanceProperties {
+    public MongoTicketRegistryProperties() {
+        setCollectionName("cas-ticket-registry");
+    }
 }

@@ -21,6 +21,7 @@ public abstract class AbstractMongoInstanceProperties {
     private String idleTimeout = "PT30S";
     private String writeConcern = "NORMAL";
     private String collectionName;
+    private String databaseName = StringUtils.EMPTY;
     
     private boolean socketKeepAlive;
     private boolean dropCollection;
@@ -111,6 +112,14 @@ public abstract class AbstractMongoInstanceProperties {
 
     public void setCollectionName(final String collectionName) {
         this.collectionName = collectionName;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(final String databaseName) {
+        this.databaseName = databaseName;
     }
 
     public static class Conns {

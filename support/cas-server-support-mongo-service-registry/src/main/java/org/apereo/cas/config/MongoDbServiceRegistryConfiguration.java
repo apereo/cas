@@ -1,29 +1,22 @@
 package org.apereo.cas.config;
 
 import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is {@link MongoDbServiceRegistryConfiguration}.
@@ -40,7 +33,8 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     
     @Override
     protected String getDatabaseName() {
-        return casProperties.getServiceRegistry().getMongo().getCollectionName();
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        return mongo.getDatabaseName();
     }
 
     @Override

@@ -79,7 +79,7 @@
           class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
-    <!-- Fake inmemory mongo instance -->
+    <!-- Fake in-memory mongo instance -->
     <bean name="fongo" class="com.github.fakemongo.Fongo"
           c:name="InMemoryMongo" />
 

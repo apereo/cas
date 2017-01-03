@@ -87,7 +87,7 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     @Test
-    public void verifyGetExistingTicketWithInproperClass() {
+    public void verifyGetExistingTicketWithImproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                     CoreAuthenticationTestUtils.getAuthentication(),
@@ -168,7 +168,7 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyGetTicketsIsZero() {
         try {
-            assertEquals("The size of the empty registry is not zero.", this.ticketRegistry.getTickets().size(), 0);
+            assertEquals("The size of the empty registry is not zero.", 0, this.ticketRegistry.getTickets().size());
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -192,8 +192,8 @@ public abstract class AbstractTicketRegistryTests {
 
         try {
             final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
-            assertEquals("The size of the registry is not the same as the collection.", ticketRegistryTickets.size(),
-                    tickets.size());
+            assertEquals("The size of the registry is not the same as the collection.", 
+                    tickets.size(), ticketRegistryTickets.size());
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
                     .forEach(ticket -> fail("Ticket was added to registry but was not found in retrieval of collection of all tickets."));

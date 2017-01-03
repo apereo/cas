@@ -23,7 +23,6 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
-import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -669,7 +668,7 @@ public final class Beans {
                 Collections.singletonList(
                         MongoCredential.createCredential(
                                 mongo.getUserId(),
-                                mongo.getCollectionName(),
+                                mongo.getDatabaseName(),
                                 mongo.getPassword().toCharArray())),
                 newMongoDbClientOptions(mongo));
     }
