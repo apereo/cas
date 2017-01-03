@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,13 +46,17 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         initDirectoryServer();
     }
 
+    @AfterClass
+    public static void shutdown() throws Exception {
+        DIRECTORY.close();
+    }
+
     @Test
     public void verifyAuthenticateSuccess() throws Exception {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
             final String psw = entry.getAttribute("userPassword").getStringValue();
-            final HandlerResult result = this.handler.authenticate(
-                    new UsernamePasswordCredential(username, psw));
+            final HandlerResult result = this.handler.authenticate(new UsernamePasswordCredential(username, psw));
             assertNotNull(result.getPrincipal());
             assertEquals(username, result.getPrincipal().getId());
             assertEquals(
