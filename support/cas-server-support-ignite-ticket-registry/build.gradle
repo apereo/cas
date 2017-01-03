@@ -7,6 +7,7 @@ dependencies {
     testCompile project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testCompile project(":core:cas-server-core-services")
     testCompile project(path: ":core:cas-server-core-services", configuration: "tests")
+    testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testCompile project(":core:cas-server-core-util")
     testCompile project(":core:cas-server-core-logout")
 }

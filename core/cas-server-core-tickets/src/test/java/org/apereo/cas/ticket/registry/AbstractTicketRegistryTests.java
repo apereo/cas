@@ -30,6 +30,9 @@ public abstract class AbstractTicketRegistryTests {
     @Before
     public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
+        for (final Ticket ticket : this.ticketRegistry.getTickets()) {
+            this.ticketRegistry.deleteTicket(ticket.getId());
+        }
     }
 
     /**
@@ -192,7 +195,7 @@ public abstract class AbstractTicketRegistryTests {
 
         try {
             final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
-            assertEquals("The size of the registry is not the same as the collection.", 
+            assertEquals("The size of the registry is not the same as the collection.",
                     tickets.size(), ticketRegistryTickets.size());
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
@@ -229,6 +232,7 @@ public abstract class AbstractTicketRegistryTests {
             assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
             assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
 
+            this.ticketRegistry.updateTicket(tgt);
             assertSame(4, this.ticketRegistry.deleteTicket(tgt.getId()));
 
             assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));

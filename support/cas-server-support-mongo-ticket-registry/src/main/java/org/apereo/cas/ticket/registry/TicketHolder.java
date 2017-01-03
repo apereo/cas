@@ -11,7 +11,17 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 public class TicketHolder implements Serializable {
+    /** Field name to hold ticket json data. */
+    public static final String FIELD_NAME_JSON = "json";
+
+    /** Field name to hold ticket expiration time. */
+    public static final String FIELD_NAME_EXPIRE_AT = "expireAt";
+
+    /** Field name to hold ticket id. */
+    public static final String FIELD_NAME_ID= "ticketId";
+    
     private static final long serialVersionUID = -4843440028617071224L;
+    
     private final String json;
 
     private String ticketId;

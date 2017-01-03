@@ -21,6 +21,9 @@
         <Logger name="org.apereo" level="info">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.apache.ignite" level="warn">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
