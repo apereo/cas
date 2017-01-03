@@ -768,6 +768,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.yaml", module: "snakeyaml")
                     exclude(group: "org.apache.thrift", module: "libthrift")
+                    exclude(group: "org.apache.ant", module: "ant")
                     exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
                     exclude(group: "org.codehaus.jackson", module: "jackson-core-asl")
                     exclude(group: "com.lmax", module: "disruptor")
