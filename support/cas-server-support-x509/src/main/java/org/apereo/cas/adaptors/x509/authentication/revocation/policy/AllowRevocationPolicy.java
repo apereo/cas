@@ -11,21 +11,10 @@ import java.security.GeneralSecurityException;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
     private final transient Logger logger = LoggerFactory.getLogger(getClass());
-
-
-    /**
-     * Policy application does nothing to implement unqualfied allow.
-     *
-     * @param data SHOULD be null; ignored in all cases.
-     *
-     * @throws GeneralSecurityException Never thrown.
-     *
-     * @see RevocationPolicy#apply(java.lang.Object)
-     */
+    
     @Override
     public void apply(final Void data) throws GeneralSecurityException {
         logger.info("Continuing since AllowRevocationPolicy is in effect.");

@@ -13,6 +13,7 @@ import java.net.URL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,14 +30,8 @@ public class ResourceCRLFetcher implements CRLFetcher {
      */
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Creates a new instance using the specified resources for CRL data.
-     */
-    public ResourceCRLFetcher() {
-    }
-
     @Override
-    public Set<X509CRL> fetch(final Set<Resource> crls) throws IOException, CRLException, CertificateException {
+    public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException, CertificateException {
         final Set<X509CRL> results = new HashSet<>();
         for (final Resource r : crls) {
             logger.debug("Fetching CRL data from {}", r);
@@ -77,7 +72,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
      */
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
-        final Set<X509CRL> results = fetch(Collections.singleton(crl));
+        final Collection<X509CRL> results = fetch(Collections.singleton(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
         }
