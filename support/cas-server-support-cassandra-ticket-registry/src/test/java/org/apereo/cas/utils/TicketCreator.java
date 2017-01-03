@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @since 5.1.0
  */
-public final class TicketCreator {
+public class TicketCreator {
 
     private TicketCreator() {
     }
