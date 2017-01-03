@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 
 import java.io.Serializable;
@@ -747,7 +747,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         public static class Jpa extends AbstractJpaProperties {
         }
 
-        public static class Mongodb extends AbstractMongoProperties {
+        public static class Mongodb extends AbstractMongoClientProperties {
             public Mongodb() {
                 setCollection("MongoDbCasTrustedAuthnMfaRepository");
             }
@@ -858,7 +858,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
             this.label = label;
         }
 
-        public static class Mongodb extends AbstractMongoProperties {
+        public static class Mongodb extends AbstractMongoClientProperties {
             public Mongodb() {
                 setCollection("MongoDbGoogleAuthenticatorRepository");
             }

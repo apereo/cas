@@ -3,12 +3,12 @@ package org.apereo.cas.configuration.model.support.mongo;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This is {@link AbstractMongoProperties}.
+ * This is {@link AbstractMongoClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractMongoProperties {
+public abstract class AbstractMongoClientProperties {
     private String clientUri = StringUtils.EMPTY;
     private String collection = StringUtils.EMPTY;
     private boolean dropCollection;
