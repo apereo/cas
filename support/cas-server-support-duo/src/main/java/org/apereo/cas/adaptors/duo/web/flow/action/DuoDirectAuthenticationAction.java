@@ -20,5 +20,4 @@ public class DuoDirectAuthenticationAction extends AbstractAction {
         WebUtils.putCredential(requestContext, c);
         return success();
     }
-
 }
