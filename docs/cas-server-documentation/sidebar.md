@@ -83,7 +83,7 @@ layout: null
         *   [Couchbase](/$version/installation/Couchbase-Ticket-Registry.html)
         *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
-        *   [Redis](/$version/installation/MongoDb-Ticket-Registry.html)
+        *   [MongoDb](/$version/installation/MongoDb-Ticket-Registry.html)
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
