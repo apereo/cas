@@ -14,6 +14,8 @@ import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,28 +34,29 @@ public class CasCookieConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
         return configureCookieGenerator(new WarningCookieRetrievingCookieGenerator(),
                 casProperties.getWarningCookie());
     }
-    
+
+    @Autowired
     @Bean(name = {"defaultCookieValueManager", "cookieValueManager"})
-    public CookieValueManager defaultCookieValueManager() {
+    public CookieValueManager defaultCookieValueManager(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         if (casProperties.getTgc().isCipherEnabled()) {
-            return new DefaultCasCookieValueManager(tgcCipherExecutor());
+            return new DefaultCasCookieValueManager(cipherExecutor);
         }
         return new NoOpCookieValueManager();
     }
 
+    @ConditionalOnMissingBean(name = "cookieCipherExecutor")
     @RefreshScope
-    @Bean(name = {"tgcCipherExecutor", "cookieCipherExecutor"})
-    public CipherExecutor tgcCipherExecutor() {
+    @Bean
+    public CipherExecutor cookieCipherExecutor() {
         if (casProperties.getTgc().isCipherEnabled()) {
-            return new TicketGrantingCookieCipherExecutor(
-                    casProperties.getTgc().getEncryptionKey(),
+            return new TicketGrantingCookieCipherExecutor(casProperties.getTgc().getEncryptionKey(),
                     casProperties.getTgc().getSigningKey());
         }
 
@@ -61,14 +64,16 @@ public class CasCookieConfiguration {
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket-granting cookies.");
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
-    
+
+    @Autowired
     @Bean
     @RefreshScope
-    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
+    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(
+            @Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         final CookieRetrievingCookieGenerator bean =
-                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager()),
+                configureCookieGenerator(new TGCCookieRetrievingCookieGenerator(defaultCookieValueManager(cipherExecutor)),
                         casProperties.getTgc());
         bean.setCookieDomain(casProperties.getTgc().getDomain());
         bean.setRememberMeMaxAge(Long.valueOf(casProperties.getTgc().getRememberMeMaxAge()).intValue());

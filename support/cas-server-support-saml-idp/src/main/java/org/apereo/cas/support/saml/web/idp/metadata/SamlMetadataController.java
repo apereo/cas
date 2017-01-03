@@ -5,11 +5,9 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -30,15 +28,16 @@ public class SamlMetadataController {
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-    @Resource(name = "shibbolethIdpMetadataAndCertificatesGenerationService")
     private SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**
      * Instantiates a new Saml metadata controller.
      * Required for bean initialization.
+     *
+     * @param metadataAndCertificatesGenerationService the metadata and certificates generation service
      */
-    public SamlMetadataController() {
+    public SamlMetadataController(final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService) {
+        this.metadataAndCertificatesGenerationService = metadataAndCertificatesGenerationService;
     }
 
     /**
@@ -58,7 +57,7 @@ public class SamlMetadataController {
      * @param response servlet response
      * @throws IOException the iO exception
      */
-    @RequestMapping(method = RequestMethod.GET, value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
+    @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
         final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);

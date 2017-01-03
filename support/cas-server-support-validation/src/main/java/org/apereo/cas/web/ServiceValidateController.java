@@ -1,8 +1,7 @@
 package org.apereo.cas.web;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +22,9 @@ public class ServiceValidateController extends AbstractServiceValidateController
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/serviceValidate", method = RequestMethod.GET)
+    @GetMapping(path="/serviceValidate")
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
 

@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -35,19 +34,24 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Component("simpleTestUsernamePasswordAuthenticationHandler")
 public class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
-    
-    /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
+
+    /**
+     * Default mapping of special usernames to exceptions raised when that user attempts authentication.
+     */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
-    
+
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /** Instance of logging for subclasses. */
+    /**
+     * Instance of logging for subclasses.
+     */
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Map of special usernames to exceptions that are raised when a user with that name attempts authentication. */
+    /**
+     * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
+     */
     private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
 
@@ -59,7 +63,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler implements Authenti
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
 
-    public SimpleTestUsernamePasswordAuthenticationHandler() {}
+    public SimpleTestUsernamePasswordAuthenticationHandler() {
+    }
 
     @PostConstruct
     private void init() {

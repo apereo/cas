@@ -1,25 +1,22 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.google.common.collect.Sets;
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.http.client.utils.URIBuilder;
-import org.apereo.cas.adaptors.duo.DuoIntegration;
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
+import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link BaseDuoAuthenticationService}.
@@ -28,7 +25,8 @@ import java.util.Set;
  * @since 5.1.0
  */
 public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
-
+    private static final int AUTH_API_VERSION = 2;
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
     private static final long serialVersionUID = -8044100706027708789L;
@@ -44,6 +42,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
 
     /**
      * Creates the duo authentication service.
+     *
+     * @param duoProperties the duo properties
      */
     public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
         this.duoProperties = duoProperties;
@@ -59,9 +59,8 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
             if (msg != null) {
                 final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 logger.debug("Received Duo ping response {}", response);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(response);
+
+                final JsonNode result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                         && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
                         && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
@@ -115,91 +114,27 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     }
 
     @Override
-    public Optional<DuoIntegration> getDuoIntegrationPolicy() {
+    public DuoUserAccountAuthStatus getDuoUserAccountAuthStatus(final String username) {
         try {
-            final URL url = new URIBuilder(buildUrlHttpScheme(
-                    getApiHost().concat("/admin/v1/integrations/")
-                            .concat(duoProperties.getDuoIntegrationKey()))).build().toURL();
+            final Http userRequest = buildHttpPostUserPreAuthRequest(username);
+            signHttpUserPreAuthRequest(userRequest);
+            logger.debug("Contacting Duo to inquire about username {}", username);
+            final String userResponse = userRequest.executeHttpRequest().body().string();
+            final String jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
+            logger.debug("Received Duo admin response {}", jsonResponse);
 
-            logger.debug("Contacting Duo @ {}", url);
-            final HttpMessage msg = this.httpClient.sendMessageToEndPoint(url);
-            if (msg != null) {
-                final String jsonResponse = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
-                logger.debug("Received Duo admin response {}", jsonResponse);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(jsonResponse);
-                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                        && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            final JsonNode result = MAPPER.readTree(jsonResponse);
+            if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
+                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
-                    final JsonNode response = result.get(RESULT_KEY_RESPONSE);
-
-                    final DuoIntegration policy =
-                            DuoIntegration.newInstance(getJsonNodeFieldValue(response, "name"))
-                                    .setType(getJsonNodeFieldValue(response, "type"))
-                                    .setGreeting(getJsonNodeFieldValue(response, "greeting"))
-                                    .setEnrollmentPolicyStatus(DuoIntegration.DuoEnrollmentPolicyStatus.valueOf(
-                                            getJsonNodeFieldValue(response, "enroll_policy",
-                                                    DuoIntegration.DuoEnrollmentPolicyStatus.ENROLL.name()).toUpperCase()));
-
-
-                    logger.debug("Found/Constructed Duo account integration {}", policy);
-                    return Optional.of(policy);
-                }
-
-                logger.warn("Could not reach/ping Duo. Response returned is {}", result);
+                final JsonNode response = result.get(RESULT_KEY_RESPONSE);
+                final String authResult = response.get("result").asText().toUpperCase();
+                return DuoUserAccountAuthStatus.valueOf(authResult);
             }
         } catch (final Exception e) {
             logger.warn("Reaching Duo has failed with error: {}", e.getMessage(), e);
         }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<DuoUserAccount> getDuoUserAccount(final String uid) {
-        try {
-            final URL url = new URIBuilder(buildUrlHttpScheme(getApiHost().concat("/admin/v1/users/").concat(uid))).build().toURL();
-            logger.debug("Contacting Duo @ {}", url);
-
-            final HttpMessage msg = this.httpClient.sendMessageToEndPoint(url);
-            if (msg != null) {
-                final String jsonResponse = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
-                logger.debug("Received Duo admin response {}", jsonResponse);
-                final ObjectMapper mapper = new ObjectMapper();
-                mapper.findAndRegisterModules();
-                final JsonNode result = mapper.readTree(jsonResponse);
-                if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                        && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
-
-
-                    JsonNode response = result.get(RESULT_KEY_RESPONSE);
-                    if (response.getNodeType() == JsonNodeType.ARRAY) {
-                        response = response.elements().next();
-                    }
-                    final DuoUserAccount account =
-                            DuoUserAccount.newInstance(getJsonNodeFieldValue(response, "user_id"))
-                                    .setEmail(getJsonNodeFieldValue(response, "user_id"))
-                                    .setRealName(getJsonNodeFieldValue(response, "realname"))
-                                    .setUsername(getJsonNodeFieldValue(response, "username"))
-                                    .setStatus(DuoUserAccount.DuoAccountStatus.valueOf(
-                                            getJsonNodeFieldValue(response, "status",
-                                                    DuoUserAccount.DuoAccountStatus.DISABLED.name()).toUpperCase()));
-                    if (response.has("groups")) {
-                        final Set<String> groups = Sets.newHashSet();
-                        response.get("groups").elements().forEachRemaining(n -> groups.add(n.get("name").asText()));
-                        account.setGroups(groups);
-                    }
-
-                    logger.debug("Found/Constructed Duo user account {}", account);
-                    return Optional.of(account);
-                }
-
-                logger.warn("Could not reach/ping Duo. Response returned is {}", result);
-            }
-        } catch (final Exception e) {
-            logger.warn("Reaching Duo has failed with error: {}", e.getMessage(), e);
-        }
-        return Optional.empty();
+        return DuoUserAccountAuthStatus.AUTH;
     }
 
     private String buildUrlHttpScheme(final String url) {
@@ -209,15 +144,66 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
         return url;
     }
 
-
-    private static String getJsonNodeFieldValue(final JsonNode node, final String fieldName) {
-        return getJsonNodeFieldValue(node, fieldName, null);
+    /**
+     * Build http post auth request http.
+     *
+     * @return the http
+     */
+    protected Http buildHttpPostAuthRequest() {
+        return new Http(HttpMethod.POST.name(),
+                duoProperties.getDuoApiHost(),
+                String.format("/auth/v%s/auth", AUTH_API_VERSION));
     }
 
-    private static String getJsonNodeFieldValue(final JsonNode node, final String fieldName, final String defaultValue) {
-        if (node != null && node.has(fieldName)) {
-            return node.get(fieldName).asText(defaultValue);
+    /**
+     * Build http post get user auth request.
+     *
+     * @param username the username
+     * @return the http
+     */
+    protected Http buildHttpPostUserPreAuthRequest(final String username) {
+        final Http usersRequest = new Http(HttpMethod.POST.name(),
+                duoProperties.getDuoApiHost(),
+                String.format("/auth/v%s/preauth", AUTH_API_VERSION));
+        usersRequest.addParam("username", username);
+        return usersRequest;
+    }
+
+    /**
+     * Sign http request.
+     *
+     * @param request the request
+     * @param id      the id
+     * @return the http
+     */
+    protected Http signHttpAuthRequest(final Http request, final String id) {
+        try {
+            request.addParam("username", id);
+            request.addParam("factor", "auto");
+            request.addParam("device", "auto");
+            request.signRequest(
+                    duoProperties.getDuoIntegrationKey(),
+                    duoProperties.getDuoSecretKey());
+            return request;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
         }
-        return null;
+    }
+
+    /**
+     * Sign http users request http.
+     *
+     * @param request the request
+     * @return the http
+     */
+    protected Http signHttpUserPreAuthRequest(final Http request) {
+        try {
+            request.signRequest(
+                    duoProperties.getDuoIntegrationKey(),
+                    duoProperties.getDuoSecretKey());
+            return request;
+        } catch (final Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 }

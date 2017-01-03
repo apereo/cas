@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.SearchScope;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,6 +16,32 @@ import java.util.List;
  * @since 5.0.0
  */
 public abstract class AbstractLdapProperties {
+    /**
+     * Describe ldap connection strategies.
+     */
+    public enum LdapConnectionStrategy {
+        /**
+         * Default JNDI.
+         */
+        DEFAULT,
+        /**
+         * First ldap used until it fails.
+         */
+        ACTIVE_PASSIVE,
+        /**
+         * Navigate the ldap url list for new connections and circle back.
+         */
+        ROUND_ROBIN,
+        /**
+         * Randomly pick a url.
+         */
+        RANDOM,
+        /**
+         * ldap urls based on DNS SRV records.
+         */
+        DNS_SRV
+    }
+
     private String trustCertificates;
 
     private String keystore;
@@ -34,6 +60,8 @@ public abstract class AbstractLdapProperties {
     private String idleTime = "PT10M";
     private String prunePeriod = "PT2H";
     private String blockWaitTime = "PT3S";
+
+    private String connectionStrategy;
 
     private String ldapUrl = "ldap://localhost:389";
     private boolean useSsl = true;
@@ -58,6 +86,14 @@ public abstract class AbstractLdapProperties {
     private Validator validator = new Validator();
 
     private String name;
+
+    public String getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    public void setConnectionStrategy(final String connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
+    }
 
     public String getName() {
         return name;
@@ -305,7 +341,7 @@ public abstract class AbstractLdapProperties {
         private String searchFilter = "(objectClass=*)";
         private SearchScope scope = SearchScope.OBJECT;
         private String attributeName = "objectClass";
-        private List<String> attributeValues = Lists.newArrayList("top");
+        private List<String> attributeValues = Arrays.asList("top");
         private String dn = StringUtils.EMPTY;
 
         public String getDn() {

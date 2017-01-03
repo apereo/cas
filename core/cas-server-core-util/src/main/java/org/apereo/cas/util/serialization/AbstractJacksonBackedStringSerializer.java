@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -131,7 +132,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             final String hjsonString = isJsonFormat()
                     ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
                     : writer.toString();
-
             IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -144,13 +144,19 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
-                JsonValue.readHjson(writer.toString()).writeTo(out, Stringify.FORMATTED);
+                final Stringify opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.FORMATTED : Stringify.FORMATTED;
+                JsonValue.readHjson(writer.toString()).writeTo(out, opt);
             } else {
                 IOUtils.write(writer.toString(), out);
             }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public T from(final Writer writer) {
+        return from(writer.toString());
     }
 
     @Override
@@ -192,10 +198,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+
+        if (isDefaultTypingEnabled()) {
+            mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        }
         mapper.findAndRegisterModules();
     }
 
+    protected boolean isDefaultTypingEnabled() {
+        return true;
+    }
 
     protected JsonFactory getJsonFactory() {
         return null;

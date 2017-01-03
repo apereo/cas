@@ -1,8 +1,5 @@
 package org.apereo.cas.services.web;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceEditBean;
 import org.apereo.cas.mgmt.services.web.beans.RegisteredServiceViewBean;
@@ -17,7 +14,7 @@ import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -30,7 +27,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link RegisteredServiceSimpleFormController}.
+ *
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
@@ -48,34 +48,25 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
-
-    private DefaultServicesManagerImpl manager;
-
+    private DefaultServicesManager manager;
     private StubPersonAttributeDao repository;
-
     private DefaultRegisteredServiceFactory registeredServiceFactory;
+    private final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
+            new DefaultPrincipalAttributesRepositoryMapper());
 
     @Before
     public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("test", Lists.newArrayList(new Object[] {"test"}));
+        attributes.put("test", Arrays.asList(new Object[]{"test"}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
 
-        this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
-        this.registeredServiceFactory.setAccessStrategyMapper(new DefaultAccessStrategyMapper());
-        this.registeredServiceFactory.setAttributeReleasePolicyMapper(
-                new DefaultAttributeReleasePolicyMapper(new DefaultAttributeFilterMapper(),
-                        new DefaultPrincipalAttributesRepositoryMapper()));
-        this.registeredServiceFactory.setProxyPolicyMapper(new DefaultProxyPolicyMapper());
-        this.registeredServiceFactory.setRegisteredServiceMapper(new DefaultRegisteredServiceMapper());
-        this.registeredServiceFactory.setUsernameAttributeProviderMapper(new DefaultUsernameAttributeProviderMapper());
-        this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this
-                .repository)));
-        this.registeredServiceFactory.initializeDefaults();
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
 
-        this.manager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.manager = new DefaultServicesManager(new InMemoryServiceRegistryDaoImpl());
         this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
 
@@ -94,16 +85,14 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setServiceId("serviceId");
         svc.setName("name");
         svc.setEvaluationOrder(123);
-        
+
         assertTrue(this.manager.getAllServices().isEmpty());
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
+        for (final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegexRegisteredService);
         }
     }
@@ -126,9 +115,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -136,7 +123,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         assertEquals("serviceId1", r2.getServiceId());
     }
 
-   @Test
+    @Test
     public void verifyAddRegexRegisteredService() throws Exception {
         final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
@@ -145,14 +132,12 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
 
-       final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-       this.controller.saveService(new MockHttpServletRequest(),
-               new MockHttpServletResponse(),
-               data, mock(BindingResult.class));
+        final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(final RegisteredService rs : this.manager.getAllServices()) {
+        for (final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegexRegisteredService);
         }
     }
@@ -167,9 +152,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         svc = new RegexRegisteredService();
         svc.setDescription("description");
@@ -179,9 +162,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(100);
 
         final RegisteredServiceEditBean.ServiceData data2 = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data2, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data2, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
@@ -189,7 +170,11 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
+
+        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
         final MockRegisteredService svc = new MockRegisteredService();
         svc.setDescription("description");
@@ -199,18 +184,20 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(1000);
 
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(svc);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        this.manager.getAllServices().stream().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
+        this.manager.getAllServices().forEach(rs -> assertTrue(rs instanceof MockRegisteredService));
     }
 
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
+                new MockRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(),
+                Collections.singletonList(new AttributeFormDataPopulator(this.repository)));
+
+        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
 
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
@@ -219,12 +206,10 @@ public class RegisteredServiceSimpleFormControllerTests {
         r.setDescription("description");
 
         this.manager.save(r);
-        
+
         r.setServiceId("serviceId1");
         final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(r);
-        this.controller.saveService(new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                data, mock(BindingResult.class));
+        this.controller.saveService(new MockHttpServletRequest(), new MockHttpServletResponse(), data, mock(BindingResult.class));
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -246,11 +231,10 @@ public class RegisteredServiceSimpleFormControllerTests {
         private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
 
         @Override
-        public void mapRegisteredService(final RegisteredService svc,
-                                         final RegisteredServiceEditBean.ServiceData bean) {
+        public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceEditBean.ServiceData bean) {
             base.mapRegisteredService(svc, bean);
             if (svc instanceof MockRegisteredService) {
-                bean.setCustomComponent("mock", ImmutableMap.of("service_type", "MockRegisteredService"));
+                bean.setCustomComponent("mock", Collections.singletonMap("service_type", "MockRegisteredService"));
             }
         }
 

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.util;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
@@ -29,6 +30,7 @@ import org.opensaml.saml.saml2.core.StatusMessage;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
+import org.opensaml.soap.soap11.ActorBearing;
 
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
@@ -47,6 +49,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
 
+    public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
+        super(configBean);
+    }
+
     /**
      * Gets name id.
      *
@@ -59,6 +65,20 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
         return nameId;
+    }
+
+    /**
+     * Create a new SAML ECP response object.
+     *
+     * @param assertionConsumerUrl the assertion consumer url
+     * @return the response
+     */
+    public org.opensaml.saml.saml2.ecp.Response newEcpResponse(final String assertionConsumerUrl) {
+        final org.opensaml.saml.saml2.ecp.Response samlResponse = newSamlObject(org.opensaml.saml.saml2.ecp.Response.class);
+        samlResponse.setSOAP11MustUnderstand(true);
+        samlResponse.setSOAP11Actor(ActorBearing.SOAP11_ACTOR_NEXT);
+        samlResponse.setAssertionConsumerServiceURL(assertionConsumerUrl);
+        return samlResponse;
     }
 
     /**

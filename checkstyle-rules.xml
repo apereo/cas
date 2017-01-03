@@ -70,6 +70,7 @@
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreFieldDeclaration" value="true"/>
             <property name="severity" value="error"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000"/>
         </module>
         <module name="LocalFinalVariableName">
             <property name="severity" value="error"/>
@@ -128,7 +129,7 @@
                       org.springframework.test.web.client.match.MockRestRequestMatchers,
                       org.springframework.test.web.client.response.MockRestResponseCreators,
                       java.nio.file.StandardWatchEventKinds"/>
-            <property name="allowStaticMemberImports" value="false"/>
+            <property name="allowStaticMemberImports" value="true"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -230,10 +231,6 @@
             <property name="severity" value="error"/>
         </module>
         <module name="StringLiteralEquality">
-            <property name="severity" value="error"/>
-        </module>
-
-        <module name="AnnotationLocation">
             <property name="severity" value="error"/>
         </module>
 
@@ -475,6 +472,12 @@
         <property name="message" value="Line has trailing spaces."/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
+        <property name="severity" value="info"/>
+        <property name="format" value="@Component|@Value"/>
+        <property name="message" value="Avoid using the indicated annotations."/>
+    </module>
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Space instead of tabs"/>
         <property name="severity" value="error"/>
         <property name="format" value="^\t+"/>
@@ -502,8 +505,8 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
-        <property name="format" value="Arrays\.asList\(.+"/>
-        <property name="message" value="Use Lists.newArrayList() instead."/>
+        <property name="format" value="Lists\.newArrayList\(.+"/>
+        <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
 
     <module name="RegexpSingleline">
@@ -518,7 +521,26 @@
         <property name="format" value="public\s+(abstract\s+)*class\s+.+Test\s*\{"/>
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Test\(expect"/>
+        <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
+        <property name="severity" value="info"/>
+        <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
+        <property name="message" value="Consider using Collections.singleton instead"/>
+    </module>
 
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="method = RequestMethod\."/>
+        <property name="fileExtensions" value="java"/>
+        <property name="message" value="Use specific request annotation from org.springframework.web.bind.annotation package"/>
+    </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
         <property name="severity" value="error"/>

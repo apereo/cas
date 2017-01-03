@@ -7,7 +7,7 @@ title: CAS - Attribute Resolution
 
 Attribute resolution strategies are controlled by
 the [Person Directory project](https://github.com/apereo/person-directory).
-The Person Directory dependency is automatically bundled with the CAS server. Therefor,
+The Person Directory dependency is automatically bundled with the CAS server. Therefore,
 declaring an additional dependency will not be required.
 This Person Directory project supports both LDAP and JDBC attribute resolution,
 caching, attribute aggregation from multiple attribute sources, etc.
@@ -132,6 +132,9 @@ CAS overlay to be able to resolve dependencies:
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
 
+<div class="alert alert-warning"><strong>Connector Compatibility</strong><p>Note that at this time given LDAP library compatibilities between CAS and Shibboleth,
+the LDAP data connector is not quite supported by CAS.</p></div>
+
 An example `attribue-resolver.xml` file could be:
 
 ```xml
@@ -164,5 +167,4 @@ An example `attribue-resolver.xml` file could be:
         </dc:Attribute>
     </resolver:DataConnector>
 </resolver:AttributeResolver>
-
 ```

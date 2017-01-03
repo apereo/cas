@@ -27,6 +27,7 @@ before_script:
  - export JAVA_OPTS="-Xmx2048m"
 before_install:
 - git gc --aggressive --prune=now
+- sudo mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services
 - ls ./etc
 - sudo unzip -j -o ./etc/jce8.zip *.jar -d `jdk_switcher home oraclejdk8`/jre/lib/security
 - sudo ls `jdk_switcher home oraclejdk8`/jre/lib/security
@@ -37,7 +38,7 @@ before_install:
 install:
 - ./gradlew clean bootRepackage install --parallel -x test --stacktrace
 script:
-- travis_wait ./gradlew checkstyleTest test --stacktrace --parallel
+- travis_wait sudo ./gradlew checkstyleTest test --stacktrace --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh

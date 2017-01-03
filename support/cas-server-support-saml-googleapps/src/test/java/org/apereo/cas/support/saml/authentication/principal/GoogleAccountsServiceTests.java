@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.Response;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -77,14 +78,17 @@ import static org.mockito.Mockito.*;
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
     private ServiceFactory factory;
 
-    private GoogleAccountsService googleAccountsService;
+    @Autowired
+    @Qualifier("googleAccountsServiceResponseBuilder")
+    private ResponseBuilder<GoogleAccountsService> googleAccountsServiceResponseBuilder;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private GoogleAccountsService googleAccountsService;
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -114,7 +118,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
-        final Response resp = this.googleAccountsService.getResponse("ticketId");
+        final Response resp = googleAccountsServiceResponseBuilder.build(googleAccountsService, "SAMPLE_TICKET");
         assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
         final String response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
         assertNotNull(response);
@@ -140,8 +144,8 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Test
     public void serializeGoogleAccountService() throws Exception {
         final GoogleAccountsService service = getGoogleAccountsService();
-        mapper.writeValue(FILE, service);
-        final GoogleAccountsService service2 = mapper.readValue(FILE, GoogleAccountsService.class);
+        MAPPER.writeValue(FILE, service);
+        final GoogleAccountsService service2 = MAPPER.readValue(FILE, GoogleAccountsService.class);
         Assert.equals(service, service2);
     }
 }

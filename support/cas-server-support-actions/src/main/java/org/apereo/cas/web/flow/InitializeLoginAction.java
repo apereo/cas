@@ -14,18 +14,19 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class InitializeLoginAction extends AbstractAction {
-    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitializeLoginAction.class);
 
     /** The services manager with access to the registry. **/
     protected ServicesManager servicesManager;
 
-    @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        logger.debug("Initialized login sequence");
-        return success();
+    public InitializeLoginAction(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
+    @Override
+    protected Event doExecute(final RequestContext requestContext) throws Exception {
+        LOGGER.debug("Initialized login sequence");
+        return success();
     }
 }

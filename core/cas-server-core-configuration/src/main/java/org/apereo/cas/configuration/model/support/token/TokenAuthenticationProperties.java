@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.token;
 
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -11,10 +12,20 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 public class TokenAuthenticationProperties {
     @NestedConfigurationProperty
-    private PrincipalTransformationProperties principalTransformation =
-            new PrincipalTransformationProperties();
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    @NestedConfigurationProperty
+    private CryptographyProperties crypto = new CryptographyProperties();
 
     private String name;
+
+    public CryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final CryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
 
     public String getName() {
         return name;

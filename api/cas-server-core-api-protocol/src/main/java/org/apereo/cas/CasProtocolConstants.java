@@ -60,17 +60,23 @@ public interface CasProtocolConstants {
     /** Constant representing the method parameter in the request. */
     String PARAMETER_METHOD = "method";
 
+    /** Constant representing the pgtId parameter in the request. */
+    String PARAMETER_PROXY_GRANTINOG_TICKET_ID = "pgtId";
+
     /** Constant representing the pgt parameter in the request. */
-    String PARAMETER_PROXY_GRANTINOG_TICKET = "pgt";
+    String PARAMETER_PROXY_GRANTING_TICKET = "pgt";
+
+    /** Constant representing the pgtIou parameter in the request. */
+    String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
     /** CAS Protocol Error Codes. **/
 
     /** Constant representing an invalid request for validation. */
     String ERROR_CODE_INVALID_REQUEST = "INVALID_REQUEST";
-    
+
     /** Constant representing an invalid proxy callback for validation. */
     String ERROR_CODE_INVALID_PROXY_CALLBACK = "INVALID_PROXY_CALLBACK";
-    
+
     /** Constant representing an invalid ticket for validation. */
     String ERROR_CODE_INVALID_TICKET = "INVALID_TICKET";
 

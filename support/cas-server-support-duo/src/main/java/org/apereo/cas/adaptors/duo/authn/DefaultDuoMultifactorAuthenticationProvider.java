@@ -2,8 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.adaptors.duo.DuoIntegration;
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
+import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.AbstractMultifactorAuthenticationProvider;
@@ -11,8 +10,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
-
-import java.util.Optional;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -71,32 +68,20 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication,
                                        final RegisteredService registeredService) {
-        if (super.supportsInternal(e, authentication, registeredService)) {
-            final Principal principal = authentication.getPrincipal();
-            final Optional<DuoUserAccount> acct = this.duoAuthenticationService.getDuoUserAccount(principal.getId());
-            if (acct.isPresent()) {
+        if (!super.supportsInternal(e, authentication, registeredService)) {
+            return false;
+        }
 
-                if (acct.get().isAccountStatusBypass()) {
-                    LOGGER.debug("Found duo user account for {}; Account status is set for bypass", principal);
-                    return false;
-                }
+        final Principal principal = authentication.getPrincipal();
+        final DuoUserAccountAuthStatus acct = this.duoAuthenticationService.getDuoUserAccountAuthStatus(principal.getId());
+        LOGGER.debug("Found duo user account status {} for {}", acct, principal);
 
-                LOGGER.debug("Found duo user account for {}; Account status is eligible for multifactor authentication", principal);
-                return true;
-            }
-
-            LOGGER.debug("Could not locate duo user account for {}. Checking enrollment policy...", principal);
-            final Optional<DuoIntegration> policy = this.duoAuthenticationService.getDuoIntegrationPolicy();
-            if (policy.isPresent()) {
-                if (policy.get().isEnrollmentStatusBypass()) {
-                    LOGGER.debug("Duo integration is set to bypass new-user enrollment for {}", principal);
-                    return false;
-                } else {
-                    LOGGER.debug("Duo integration requires user account registration for {}", principal);
-                }
-            } else {
-                LOGGER.debug("Duo integration policy could not be retrieved", principal);
-            }
+        if (acct == DuoUserAccountAuthStatus.ALLOW) {
+            LOGGER.debug("Account status is set for allow/bypass", principal);
+            return false;
+        }
+        if (acct == DuoUserAccountAuthStatus.DENY) {
+            LOGGER.warn("Account status is set to deny access to {}", principal);
         }
 
         return true;

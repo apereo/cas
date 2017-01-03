@@ -1,14 +1,14 @@
 package org.apereo.cas.grouper;
 
-import com.google.common.collect.Lists;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 
 /**
  * This is {@link GrouperFacade} that acts as a wrapper
@@ -18,6 +18,7 @@ import java.util.List;
  * @since 5.1.0
  */
 public class GrouperFacade {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GrouperFacade.class);
 
     protected GrouperFacade() {}
@@ -52,23 +53,21 @@ public class GrouperFacade {
      * @return the groups for subject id
      */
     public static List<WsGetGroupsResult> getGroupsForSubjectId(final String subjectId) {
-        final WsGetGroupsResult[] results;
-
         try {
             final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(subjectId);
-            results = groupsClient.execute().getResults();
+            final WsGetGroupsResult[] results = groupsClient.execute().getResults();
 
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
-                return Lists.newArrayList();
+                return Collections.emptyList();
             }
             LOGGER.debug("Found {} groups for {}", results.length, subjectId);
-            return Lists.newArrayList(results);
+            return Arrays.asList(results);
         } catch (final Exception e) {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                     + ", the url endpoint for Grouper WS is correctly configured and the subject {}"
                     + "  exists in Grouper.", subjectId, e);
         }
-        return Lists.newArrayList();
+        return Collections.emptyList();
     }
 }

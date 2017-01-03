@@ -1,23 +1,30 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -32,11 +39,22 @@ import java.util.Set;
  */
 public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    private GeoLocationService geoLocationService;
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
+    private final GeoLocationService geoLocationService;
+    private final Map multifactorMap;
+
+    public AdaptiveMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                final CentralAuthenticationService centralAuthenticationService,
+                                                                final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                                final CookieGenerator warnCookieGenerator,
+                                                                final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                                final MultifactorAuthenticationProviderSelector selector,
+                                                                final CasConfigurationProperties casProperties, final GeoLocationService geoLocationService) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+        multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
+        this.geoLocationService = geoLocationService;
+    }
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
@@ -47,7 +65,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return null;
         }
         
-        final Map multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
+
         if (multifactorMap == null || multifactorMap.isEmpty()) {
             logger.debug("Adaptive authentication is not configured to require multifactor authentication");
             return null;
@@ -70,16 +88,13 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         return null;
     }
 
-    private Set<Event> checkRequireMultifactorProvidersForRequest(final RequestContext context, 
-                                                                  final RegisteredService service, 
+    private Set<Event> checkRequireMultifactorProvidersForRequest(final RequestContext context, final RegisteredService service,
                                                                   final Authentication authentication) {
-
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final String clientIp = clientInfo.getClientIpAddress();
         logger.debug("Located client IP address as [{}]", clientIp);
 
         final String agent = WebUtils.getHttpServletRequestUserAgent();
-        final Map multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry> entries = multifactorMap.entrySet();
@@ -142,21 +157,16 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                     provider, service.getName());
             final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
                     buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-            return ImmutableSet.of(event);
+            return Collections.singleton(event);
         }
         logger.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
-    }
-
-    public void setGeoLocationService(final GeoLocationService geoLocationService) {
-        this.geoLocationService = geoLocationService;
     }
 }

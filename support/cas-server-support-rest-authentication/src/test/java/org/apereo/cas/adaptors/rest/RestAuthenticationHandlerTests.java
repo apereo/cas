@@ -12,7 +12,10 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationConfiguration;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.ResponseActions;
 import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -53,6 +57,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableScheduling
 public class RestAuthenticationHandlerTests {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Autowired
     @Qualifier("restAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
@@ -60,6 +67,15 @@ public class RestAuthenticationHandlerTests {
     @Autowired
     @Qualifier("restAuthenticationTemplate")
     private RestTemplate restAuthenticationTemplate;
+
+    private ResponseActions server;
+
+    @Before
+    public void setUp() throws Exception {
+        server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
+                .expect(manyTimes(), requestTo("http://localhost:8081/authn"))
+                .andExpect(method(HttpMethod.POST));
+    }
 
     @Test
     public void verifySuccess() throws Exception {
@@ -69,35 +85,39 @@ public class RestAuthenticationHandlerTests {
         final StringWriter writer = new StringWriter();
         mapper.writeValue(writer, principalWritten);
         
-        final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
-        server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
-        final HandlerResult res =
-                authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
+
+        final HandlerResult res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals(res.getPrincipal().getId(), "casuser");
     }
 
-    @Test(expected= AccountDisabledException.class)
+    @Test
     public void verifyDisabledAccount() throws Exception {
-        final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
-        server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
-                .andRespond(withStatus(HttpStatus.FORBIDDEN));
+        server.andRespond(withStatus(HttpStatus.FORBIDDEN));
+
+        this.thrown.expect(AccountDisabledException.class);
+        this.thrown.expectMessage("Could not authenticate forbidden account for test");
+
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
-    @Test(expected= FailedLoginException.class)
+    @Test
     public void verifyUnauthorized() throws Exception {
-        final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
-        server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
-                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+        server.andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Could not authenticate account for test");
+
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
-    @Test(expected= AccountNotFoundException.class)
+    @Test
     public void verifyNotFound() throws Exception {
-        final MockRestServiceServer server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build();
-        server.expect(manyTimes(), requestTo("http://localhost:8081/authn")).andExpect(method(HttpMethod.POST))
-                .andRespond(withStatus(HttpStatus.NOT_FOUND));
+        server.andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+        this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Could not locate account for test");
+
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 }

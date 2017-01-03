@@ -1,8 +1,7 @@
 package org.apereo.cas.web.v3;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +21,9 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/p3/proxyValidate", method = RequestMethod.GET)
+    @GetMapping(path="/p3/proxyValidate")
     @Override
-    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }
-
 }

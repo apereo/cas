@@ -1,6 +1,5 @@
 package org.apereo.cas.audit.spi.config;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
@@ -54,14 +53,11 @@ public class CasCoreAuditConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(
-            @Qualifier("auditTrailManager")
-            final AuditTrailManager auditTrailManager) {
-
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
                 casProperties.getAudit().getAppCode(),
                 auditablePrincipalResolver(principalIdProvider()),
-                ImmutableList.of(auditTrailManager), auditActionResolverMap(),
+                Collections.singletonList(auditTrailManager), auditActionResolverMap(),
                 auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
@@ -137,7 +133,7 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public Map auditActionResolverMap() {
+    public Map<String, AuditActionResolver> auditActionResolverMap() {
         final Map<String, AuditActionResolver> map = new HashMap<>();
 
         final AuditActionResolver resolver = authenticationActionResolver();
@@ -157,8 +153,7 @@ public class CasCoreAuditConfiguration {
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
         map.put("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", cResolver);
 
-        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER",
-                new DefaultAuditActionResolver("_TRIGGERED", "_NOT_TRIGGERED"));
+        map.put("AUTHENTICATION_EVENT_ACTION_RESOLVER", new DefaultAuditActionResolver("_TRIGGERED", ""));
         final AuditActionResolver adResolver = new DefaultAuditActionResolver();
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", adResolver);
 
@@ -168,7 +163,7 @@ public class CasCoreAuditConfiguration {
     }
 
     @Bean
-    public Map auditResourceResolverMap() {
+    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
         final Map<String, AuditResourceResolver> map = new HashMap<>();
         map.put("AUTHENTICATION_RESOURCE_RESOLVER", new CredentialsAsFirstParameterResourceResolver());
         map.put("CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", this.messageBundleAwareResourceResolver());

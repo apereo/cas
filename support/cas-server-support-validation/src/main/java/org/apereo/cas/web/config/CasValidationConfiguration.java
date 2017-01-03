@@ -125,7 +125,6 @@ public class CasValidationConfiguration {
         v.setCasAttributeEncoder(casAttributeEncoder);
         return v;
     }
-    
 
     @Bean
     public View cas2ServiceSuccessView() {
@@ -142,6 +141,7 @@ public class CasValidationConfiguration {
         s.setReleaseProtocolAttributes(casProperties.getView().getCas3().isReleaseProtocolAttributes());
         s.setCasAttributeEncoder(casAttributeEncoder);
         s.setView(cas3SuccessView);
+        s.setServicesManager(servicesManager);
         return s;
     }
 

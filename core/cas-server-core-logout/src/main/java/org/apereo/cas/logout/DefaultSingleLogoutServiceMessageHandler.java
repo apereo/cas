@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.LogoutType;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -17,31 +18,31 @@ import java.net.URL;
  * @since 5.0.0
  */
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceMessageHandler.class);
     
-    private ServicesManager servicesManager;
-    
-    private HttpClient httpClient;
-    
+    private final ServicesManager servicesManager;
+    private final HttpClient httpClient;
     private boolean asynchronous = true;
-    
-    private LogoutMessageCreator logoutMessageBuilder = new SamlCompliantLogoutMessageCreator();
-    
-    private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder = 
-            new DefaultSingleLogoutServiceLogoutUrlBuilder();
+    private final LogoutMessageCreator logoutMessageBuilder;
+    private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
     /**
      * Instantiates a new Single logout service message handler.
+     * @param httpClient to send the requests
+     * @param logoutMessageCreator creates the message
+     * @param servicesManager finds services to logout from
+     * @param singleLogoutServiceLogoutUrlBuilder creates the URL
+     * @param asyncCallbacks if messages are sent in an asynchronous fashion.
      */
-    public DefaultSingleLogoutServiceMessageHandler() {}
-
-    /**
-     * Set if messages are sent in an asynchronous fashion.
-     *
-     * @param asyncCallbacks if message is synchronously sent
-     * @since 4.1.0
-     */
-    public void setAsynchronous(final boolean asyncCallbacks) {
+    public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient, final LogoutMessageCreator logoutMessageCreator,
+                                                    final ServicesManager servicesManager,
+                                                    final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
+                                                    final boolean asyncCallbacks) {
+        this.httpClient = httpClient;
+        this.logoutMessageBuilder = logoutMessageCreator;
+        this.servicesManager = servicesManager;
+        this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
         this.asynchronous = asyncCallbacks;
     }
 
@@ -53,15 +54,14 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      * @return the logout request
      */
     @Override
-    public LogoutRequest handle(final SingleLogoutService singleLogoutService, final String ticketId) {
+    public LogoutRequest handle(final WebApplicationService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(singleLogoutService);
             if (serviceSupportsSingleLogout(registeredService)) {
                 final URL logoutUrl = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, singleLogoutService);
                 final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, singleLogoutService, logoutUrl);
-                final LogoutType type = registeredService.getLogoutType() == null
-                        ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+                final LogoutType type = registeredService.getLogoutType() == null ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 
                 switch (type) {
                     case BACK_CHANNEL:
@@ -91,7 +91,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     public boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             final String logoutRequest = this.logoutMessageBuilder.create(request);
-            final SingleLogoutService logoutService = request.getService();
+            final WebApplicationService logoutService = request.getService();
             logoutService.setLoggedOutAlready(true);
 
             LOGGER.debug("Sending logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
@@ -116,39 +116,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
                 && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
-    public void setLogoutMessageBuilder(final LogoutMessageCreator logoutMessageBuilder) {
-        this.logoutMessageBuilder = logoutMessageBuilder;
-    }
-
-    public void setSingleLogoutServiceLogoutUrlBuilder(final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
-        this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
-    }
-
     public ServicesManager getServicesManager() {
         return this.servicesManager;
-    }
-
-    public HttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
-    public boolean isAsynchronous() {
-        return this.asynchronous;
-    }
-
-    public SingleLogoutServiceLogoutUrlBuilder getSingleLogoutServiceLogoutUrlBuilder() {
-        return this.singleLogoutServiceLogoutUrlBuilder;
-    }
-
-    public LogoutMessageCreator getLogoutMessageBuilder() {
-        return this.logoutMessageBuilder;
     }
 }

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -21,11 +22,11 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private InfinispanProperties infinispan = new InfinispanProperties();
-    
+
     @NestedConfigurationProperty
     private CouchbaseTicketRegistryProperties couchbase =
             new CouchbaseTicketRegistryProperties();
-    
+
     @NestedConfigurationProperty
     private EhcacheProperties ehcache = new EhcacheProperties();
 
@@ -40,7 +41,10 @@ public class TicketRegistryProperties {
 
     @NestedConfigurationProperty
     private MemcachedTicketRegistryProperties memcached = new MemcachedTicketRegistryProperties();
-    
+
+    @NestedConfigurationProperty
+    private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
+
     private InMemory inMemory = new InMemory();
     private Cleaner cleaner = new Cleaner();
 
@@ -116,6 +120,14 @@ public class TicketRegistryProperties {
         this.infinispan = infinispan;
     }
 
+    public RedisTicketRegistryProperties getRedis() {
+        return redis;
+    }
+
+    public void setRedis(final RedisTicketRegistryProperties redis) {
+        this.redis = redis;
+    }
+
     public static class InMemory {
         private int initialCapacity = 1000;
         private int loadFactor = 1;
@@ -131,7 +143,7 @@ public class TicketRegistryProperties {
         public void setCrypto(final CryptographyProperties crypto) {
             this.crypto = crypto;
         }
-        
+
         public int getInitialCapacity() {
             return initialCapacity;
         }
@@ -156,7 +168,7 @@ public class TicketRegistryProperties {
             this.concurrency = concurrency;
         }
     }
-    
+
     public static class Cleaner {
         private boolean enabled = true;
         private String startDelay = "PT10S";

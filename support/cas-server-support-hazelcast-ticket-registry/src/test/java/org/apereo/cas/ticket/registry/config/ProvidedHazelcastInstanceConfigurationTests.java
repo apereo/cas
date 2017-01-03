@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry.config;
 
-import com.google.common.collect.Lists;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
 import com.hazelcast.config.MapConfig;
@@ -10,7 +9,7 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.HazelcastInstanceConfiguration;
+import org.apereo.cas.config.HazelcastTicketRegistryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -25,6 +24,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 /**
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        HazelcastInstanceConfiguration.class,
+        HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
@@ -56,7 +57,7 @@ public class ProvidedHazelcastInstanceConfigurationTests {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
         assertTrue(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-        assertEquals(Lists.newArrayList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
+        assertEquals(Arrays.asList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertFalse(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5801, config.getNetworkConfig().getPort());
 

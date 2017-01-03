@@ -12,11 +12,12 @@ import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.support.oauth.services.OAuthWebApplicationService;
-import org.apereo.cas.support.oauth.validator.OAuthValidator;
+import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -41,24 +42,31 @@ import java.util.Map;
 public abstract class BaseOAuthWrapperController {
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * The services manager.
-     */
-    protected ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
-    /**
-     * The ticket registry.
-     */
-    protected TicketRegistry ticketRegistry;
+    private TicketRegistry ticketRegistry;
 
-    /**
-     * The OAuth validator.
-     */
-    protected OAuthValidator validator;
+    private OAuth20Validator validator;
 
     private AccessTokenFactory accessTokenFactory;
 
     private PrincipalFactory principalFactory;
+
+    private ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
+    public BaseOAuthWrapperController(final ServicesManager servicesManager,
+                                      final TicketRegistry ticketRegistry,
+                                      final OAuth20Validator validator,
+                                      final AccessTokenFactory accessTokenFactory,
+                                      final PrincipalFactory principalFactory,
+                                      final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        this.servicesManager = servicesManager;
+        this.ticketRegistry = ticketRegistry;
+        this.validator = validator;
+        this.accessTokenFactory = accessTokenFactory;
+        this.principalFactory = principalFactory;
+        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+    }
 
     /**
      * Generate an access token from a service and authentication.
@@ -82,8 +90,8 @@ public abstract class BaseOAuthWrapperController {
      * @param registeredService the registered service
      * @return the OAuth service
      */
-    protected OAuthWebApplicationService createService(final RegisteredService registeredService) {
-        return new OAuthWebApplicationService(registeredService);
+    protected WebApplicationService createService(final RegisteredService registeredService) {
+        return webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
     }
 
     /**
@@ -103,8 +111,7 @@ public abstract class BaseOAuthWrapperController {
         final Principal newPrincipal = principalFactory.createPrincipal(profile.getId(), newAttributes);
 
         final String authenticator = profile.getClass().getCanonicalName();
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-                new BasicIdentifiableCredential(profile.getId()));
+        final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
         final HandlerResult handlerResult = new DefaultHandlerResult(authenticator, metadata, newPrincipal, new ArrayList<>());
 
         final String state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuthConstants.STATE), StringUtils.EMPTY);
@@ -128,42 +135,14 @@ public abstract class BaseOAuthWrapperController {
     }
 
     public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        return servicesManager;
     }
 
     public TicketRegistry getTicketRegistry() {
-        return this.ticketRegistry;
+        return ticketRegistry;
     }
 
-    public AccessTokenFactory getAccessTokenFactory() {
-        return this.accessTokenFactory;
-    }
-
-    public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
-        this.accessTokenFactory = accessTokenFactory;
-    }
-
-    public OAuthValidator getValidator() {
-        return this.validator;
-    }
-
-    public void setValidator(final OAuthValidator validator) {
-        this.validator = validator;
-    }
-
-    public PrincipalFactory getPrincipalFactory() {
-        return this.principalFactory;
-    }
-
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
+    public OAuth20Validator getValidator() {
+        return validator;
     }
 }

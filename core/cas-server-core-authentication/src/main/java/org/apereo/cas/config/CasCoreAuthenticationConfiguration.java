@@ -47,8 +47,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.flow.AuthenticationExceptionHandler;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -60,11 +58,13 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link CasCoreAuthenticationConfiguration}.
@@ -77,7 +77,6 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class CasCoreAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationConfiguration.class);
 
     private static final String BEAN_NAME_HTTP_CLIENT = "supportsTrustStoreSslSocketFactoryHttpClient";
 
@@ -139,20 +138,8 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final Pattern pattern = Pattern.compile("::");
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler();
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
-                && casProperties.getAuthn().getAccept().getUsers().contains(pattern.pattern())) {
-            final Set<String> usersPasswords =
-                    org.springframework.util.StringUtils.commaDelimitedListToSet(
-                            casProperties.getAuthn().getAccept().getUsers());
-            final Map<String, String> parsedUsers = new HashMap<>();
-            usersPasswords.stream().forEach(usersPassword -> {
-                final String[] splitArray = pattern.split(usersPassword);
-                parsedUsers.put(splitArray[0], splitArray[1]);
-            });
-            h.setUsers(parsedUsers);
-        }
+        h.setUsers(getParsedUsers());
         h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getAccept().getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
@@ -172,20 +159,15 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationContextValidator authenticationContextValidator() {
-        final DefaultAuthenticationContextValidator val = new DefaultAuthenticationContextValidator();
-        val.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        val.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        val.setMfaTrustedAuthnAttributeName(casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute());
-        return val;
+        final String contextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        final String failureMode = casProperties.getAuthn().getMfa().getGlobalFailureMode();
+        final String authnAttributeName = casProperties.getAuthn().getMfa().getTrusted().getAuthenticationContextAttribute();
+        return new DefaultAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName);
     }
 
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                                          final HttpClient httpClient) {
-        final DefaultAuthenticationSystemSupport r = new DefaultAuthenticationSystemSupport();
-        r.setAuthenticationTransactionManager(defaultAuthenticationTransactionManager(httpClient));
-        r.setPrincipalElectionStrategy(defaultPrincipalElectionStrategy());
-        return r;
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
+        return new DefaultAuthenticationSystemSupport(defaultAuthenticationTransactionManager(httpClient), defaultPrincipalElectionStrategy());
     }
 
     @Bean(name = {"defaultAuthenticationTransactionManager", "authenticationTransactionManager"})
@@ -216,8 +198,8 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public List authenticationMetadataPopulators() {
-        final List list = new ArrayList<>();
+    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
+        final List<AuthenticationMetaDataPopulator> list = new ArrayList<>();
         list.add(successfulHandlerMetaDataPopulator());
         list.add(rememberMeAuthenticationMetaDataPopulator());
 
@@ -228,9 +210,7 @@ public class CasCoreAuthenticationConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            @Qualifier(BEAN_NAME_HTTP_CLIENT)
-            final HttpClient httpClient) {
+    public AuthenticationManager authenticationManager(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
         final PolicyBasedAuthenticationManager p = new PolicyBasedAuthenticationManager();
 
         p.setAuthenticationMetaDataPopulators(authenticationMetadataPopulators());
@@ -242,8 +222,7 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        final RegisteredServiceAuthenticationHandlerResolver r =
-                new RegisteredServiceAuthenticationHandlerResolver();
+        final RegisteredServiceAuthenticationHandlerResolver r = new RegisteredServiceAuthenticationHandlerResolver();
         r.setServicesManager(servicesManager);
         return r;
     }
@@ -315,10 +294,8 @@ public class CasCoreAuthenticationConfiguration {
 
     @Bean
     @Autowired
-    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                                            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
-        final HttpBasedServiceCredentialsAuthenticationHandler h =
-                new HttpBasedServiceCredentialsAuthenticationHandler();
+    public AuthenticationHandler proxyAuthenticationHandler(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) {
+        final HttpBasedServiceCredentialsAuthenticationHandler h = new HttpBasedServiceCredentialsAuthenticationHandler();
         h.setHttpClient(supportsTrustStoreSslSocketFactoryHttpClient);
         h.setPrincipalFactory(proxyPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -327,14 +304,12 @@ public class CasCoreAuthenticationConfiguration {
 
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
-    public Map authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT)
-                                               final HttpClient httpClient) {
-        final Map map = new HashMap<>();
+    public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
+        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
 
         if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
-            map.put(jaasAuthenticationHandler(),
-                    personDirectoryPrincipalResolver());
+            map.put(jaasAuthenticationHandler(), personDirectoryPrincipalResolver());
         }
 
         return map;
@@ -368,12 +343,24 @@ public class CasCoreAuthenticationConfiguration {
         return c.getObject();
     }
 
-
     @Bean
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
         final DefaultAdaptiveAuthenticationPolicy p = new DefaultAdaptiveAuthenticationPolicy();
         p.setGeoLocationService(this.geoLocationService);
         p.setAdaptiveAuthenticationProperties(casProperties.getAuthn().getAdaptive());
         return p;
+    }
+
+    private Map<String, String> getParsedUsers() {
+        final Pattern pattern = Pattern.compile("::");
+
+        final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
+
+        if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
+            return Stream.of(usersProperty.split(","))
+                    .map(pattern::split)
+                    .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
+        }
+        return Collections.emptyMap();
     }
 }

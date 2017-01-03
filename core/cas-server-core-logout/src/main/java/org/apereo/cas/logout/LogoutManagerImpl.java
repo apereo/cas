@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,29 +21,24 @@ import java.util.List;
  */
 public class LogoutManagerImpl implements LogoutManager {
 
-    /** The logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
     
-    /** Whether single sign out is disabled or not. */
-    private boolean singleLogoutCallbacksDisabled;
-    
-    private LogoutMessageCreator logoutMessageBuilder;
-    
-    private SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
-
-    /**
-     * Instantiates a new Logout manager.
-     */
-    public LogoutManagerImpl() {}
+    private final boolean singleLogoutCallbacksDisabled;
+    private final LogoutMessageCreator logoutMessageBuilder;
+    private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     /**
      * Build the logout manager.
      * @param logoutMessageBuilder the builder to construct logout messages.
+     * @param singleLogoutServiceMessageHandler who actually perform the logout request
+     * @param singleLogoutCallbacksDisabled Set if the logout is disabled.
      */
-    public LogoutManagerImpl(final LogoutMessageCreator logoutMessageBuilder) {
+    public LogoutManagerImpl(final LogoutMessageCreator logoutMessageBuilder, final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler,
+                             final boolean singleLogoutCallbacksDisabled) {
         this.logoutMessageBuilder = logoutMessageBuilder;
+        this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
+        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
     }
-
 
     /**
      * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
@@ -52,22 +49,21 @@ public class LogoutManagerImpl implements LogoutManager {
     @Override
     public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
-        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
-            return logoutRequests;
+            return Collections.emptyList();
         }
+        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         performLogoutForTicket(ticket, logoutRequests);
         LOGGER.info("{} logout requests were processed", logoutRequests.size());
         return logoutRequests;
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof SingleLogoutService).forEach(entry -> {
+        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof WebApplicationService).forEach(entry -> {
             final Service service = entry.getValue();
             LOGGER.debug("Handling single logout callback for {}", service);
-            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((SingleLogoutService) service,
-                    entry.getKey());
+            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((WebApplicationService) service, entry.getKey());
             if (logoutRequest != null) {
                 LOGGER.debug("Captured logout request [{}]", logoutRequest);
                 logoutRequests.add(logoutRequest);
@@ -78,7 +74,7 @@ public class LogoutManagerImpl implements LogoutManager {
         if (proxyGrantingTickets.isEmpty()) {
             LOGGER.debug("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
         } else {
-            proxyGrantingTickets.stream().forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
+            proxyGrantingTickets.forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
         }
     }
 
@@ -93,26 +89,5 @@ public class LogoutManagerImpl implements LogoutManager {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
         return CompressionUtils.deflate(logoutMessage);
-    }
-
-    /**
-     * Set if the logout is disabled.
-     *
-     * @param singleLogoutCallbacksDisabled if the logout is disabled.
-     */
-    public void setSingleLogoutCallbacksDisabled(final boolean singleLogoutCallbacksDisabled) {
-        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
-    }
-
-    public void setLogoutMessageBuilder(final LogoutMessageCreator logoutMessageBuilder) {
-        this.logoutMessageBuilder = logoutMessageBuilder;
-    }
-
-    public void setSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler) {
-        this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
-    }
-    
-    public SingleLogoutServiceMessageHandler getSingleLogoutServiceMessageHandler() {
-        return this.singleLogoutServiceMessageHandler;
     }
 }

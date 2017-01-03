@@ -509,6 +509,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String duoSecretKey;
         private String duoApplicationKey;
         private String duoApiHost;
+
         private boolean trustedDeviceEnabled;
 
         public Duo() {
@@ -564,7 +565,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
         private String mailAttribute = "mail";
         private boolean forceVerification = true;
         private boolean trustedDeviceEnabled;
-
 
 
         public Authy() {

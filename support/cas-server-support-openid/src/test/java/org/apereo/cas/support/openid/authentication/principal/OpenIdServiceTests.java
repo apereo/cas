@@ -10,6 +10,7 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.openid4java.association.Association;
+import org.openid4java.message.ParameterList;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
@@ -24,7 +25,7 @@ import static org.junit.Assert.*;
 public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private OpenIdService openIdService;
 
@@ -46,8 +47,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
         openIdService = openIdServiceFactory.createService(request);
-        mapper.writeValue(JSON_FILE, openIdService);
-        final OpenIdService serviceRead = mapper.readValue(JSON_FILE, OpenIdService.class);
+        MAPPER.writeValue(JSON_FILE, openIdService);
+        final OpenIdService serviceRead = MAPPER.readValue(JSON_FILE, OpenIdService.class);
         assertEquals(openIdService, serviceRead);
     }
 
@@ -64,14 +65,17 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
-            final Response response = this.openIdService.getResponse(st);
+            final Response response = new OpenIdServiceResponseBuilder("http://openid.ja-sig.org/battags",
+                    serverManager, centralAuthenticationService)
+                    .build(openIdService, "something");
             assertNotNull(response);
 
             assertEquals(association.getHandle(), response.getAttributes().get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE));
             assertEquals("http://www.ja-sig.org/?service=fa", response.getAttributes().get(OpenIdProtocolConstants.OPENID_RETURNTO));
             assertEquals("http://openid.ja-sig.org/battags", response.getAttributes().get(OpenIdProtocolConstants.OPENID_IDENTITY));
 
-            final Response response2 = this.openIdService.getResponse(null);
+            final Response response2 = new OpenIdServiceResponseBuilder("http://openid.ja-sig.org/battags",
+                    serverManager, centralAuthenticationService).build(openIdService, null);
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
             logger.debug("Exception during verification of service ticket", e);
@@ -80,7 +84,6 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyExpiredAssociationGetResponse() {
-
         try {
             request.removeParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
@@ -98,12 +101,14 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                     fail("Could not wait long enough to check association expiry date");
                 }
             }
-
-            final Response response = this.openIdService.getResponse(st);
+            final ParameterList paramList = new ParameterList(request.getParameterMap());
+            final Response response = new OpenIdServiceResponseBuilder(
+                    "http://openid.ja-sig.org/battags", serverManager, centralAuthenticationService
+            ).build(openIdService, st);
             assertNotNull(response);
 
             assertEquals(2, response.getAttributes().size());
-            assertEquals("cancel", response.getAttributes().get("openid.mode"));
+            assertEquals("cancel", response.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
             logger.debug("Exception during verification of service ticket", e);
         }

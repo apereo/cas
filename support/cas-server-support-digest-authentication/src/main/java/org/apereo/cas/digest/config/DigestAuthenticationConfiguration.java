@@ -81,28 +81,17 @@ public class DigestAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer digestAuthenticationWebflowConfigurer() {
-        final DigestAuthenticationWebflowConfigurer w = new DigestAuthenticationWebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new DigestAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Autowired
     @RefreshScope
     @Bean
-    public DigestAuthenticationAction digestAuthenticationAction(
-            @Qualifier("defaultDigestCredentialRetriever")
-            final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
-        final DigestAuthenticationAction w = new DigestAuthenticationAction();
-        w.setRealm(casProperties.getAuthn().getDigest().getRealm());
-        w.setAuthenticationMethod(casProperties.getAuthn().getDigest().getAuthenticationMethod());
-        w.setCredentialRetriever(defaultDigestCredentialRetriever);
-
-        w.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        w.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        w.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-
-        return w;
+    public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
+                                                                     final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+        return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getDigest().getRealm(),
+                casProperties.getAuthn().getDigest().getAuthenticationMethod(), defaultDigestCredentialRetriever);
     }
 
     @ConditionalOnMissingBean(name = "defaultDigestCredentialRetriever")

@@ -1,26 +1,34 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
@@ -37,6 +45,15 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+    public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                            final CentralAuthenticationService centralAuthenticationService,
+                                                            final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                            final CookieGenerator warnCookieGenerator,
+                                                            final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                            final MultifactorAuthenticationProviderSelector selector) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -63,7 +80,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     putResolvedEventsAsAttribute(context, resolvedEvents);
                     final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                     if (finalResolvedEvent != null) {
-                        return ImmutableSet.of(finalResolvedEvent);
+                        return Collections.singleton(finalResolvedEvent);
                     }
                 }
             }
@@ -72,7 +89,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
-            return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
+            return Collections.singleton(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
@@ -81,7 +98,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             }
             final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return ImmutableSet.of(event);
+            return Collections.singleton(event);
         }
     }
 
@@ -93,27 +110,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
-                                                              final RegisteredService registeredService) {
-
-        final Set<Event> eventBuilder = Sets.newLinkedHashSet();
-        this.orderedResolvers
-                .stream()
-                .filter(r -> r != null)
-                .forEach(r -> {
-                    logger.debug("Evaluating authentication policy via {} for registered service {} and service {}",
-                            r.getName(), registeredService.getServiceId(), service);
-                    final Event result = r.resolveSingle(context);
-
-                    if (result != null) {
-                        logger.debug("Recorded the resulting event {} for {}", result, r.getName());
-                        eventBuilder.add(result);
-                    } else {
-                        logger.debug("Resulting event for {} is blank/ignored", r.getName());
-                    }
-                });
-
-        return eventBuilder;
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
+        return this.orderedResolvers.stream()
+                .filter(Objects::nonNull)
+                .map(resolver -> resolver.resolveSingle(context))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -131,7 +133,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-
         final Exception ex;
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
             ex = e;
@@ -144,5 +145,4 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         logger.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
-
 }

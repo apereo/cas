@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +20,18 @@ import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
+import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.DefaultConnectionStrategy;
+import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -65,6 +69,8 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +84,10 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public final class Beans {
+    /**
+     * Default parameter name in search filters for ldap.
+     */
+    public static final String LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME = "user";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
 
@@ -165,6 +175,12 @@ public final class Beans {
         properties.put("hibernate.dialect", jpaProperties.getDialect());
         properties.put("hibernate.hbm2ddl.auto", jpaProperties.getDdlAuto());
         properties.put("hibernate.jdbc.batch_size", jpaProperties.getBatchSize());
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
+            properties.put("hibernate.default_catalog", jpaProperties.getDefaultCatalog());
+        }
+        if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
+            properties.put("hibernate.default_schema", jpaProperties.getDefaultSchema());
+        }
         bean.setJpaProperties(properties);
         return bean;
     }
@@ -181,7 +197,7 @@ public final class Beans {
             final Map<String, List<Object>> pdirMap = new HashMap<>();
             p.getAttributes().entrySet().forEach(entry -> {
                 final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue());
-                pdirMap.put(entry.getKey(), Lists.newArrayList((Object[]) vals));
+                pdirMap.put(entry.getKey(), Arrays.asList((Object[]) vals));
             });
             dao.setBackingMap(pdirMap);
             return dao;
@@ -196,7 +212,6 @@ public final class Beans {
      * @param properties the properties
      * @return the password encoder
      */
-
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
         switch (properties.getType()) {
             case DEFAULT:
@@ -277,10 +292,33 @@ public final class Beans {
         cc.setConnectTimeout(newDuration(l.getConnectTimeout()));
         cc.setResponseTimeout(newDuration(l.getResponseTimeout()));
 
+        if (StringUtils.isNotBlank(l.getConnectionStrategy())) {
+            final AbstractLdapProperties.LdapConnectionStrategy strategy =
+                    AbstractLdapProperties.LdapConnectionStrategy.valueOf(l.getConnectionStrategy());
+            switch (strategy) {
+                case RANDOM:
+                    cc.setConnectionStrategy(new RandomConnectionStrategy());
+                    break;
+                case DNS_SRV:
+                    cc.setConnectionStrategy(new DnsSrvConnectionStrategy());
+                    break;
+                case ACTIVE_PASSIVE:
+                    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
+                    break;
+                case ROUND_ROBIN:
+                    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
+                    break;
+                case DEFAULT:
+                default:
+                    cc.setConnectionStrategy(new DefaultConnectionStrategy());
+                    break;
+            }
+        }
+
         if (l.getTrustCertificates() != null) {
             final X509CredentialConfig cfg = new X509CredentialConfig();
             cfg.setTrustCertificates(l.getTrustCertificates());
-            cc.setSslConfig(new SslConfig());
+            cc.setSslConfig(new SslConfig(cfg));
         } else if (l.getKeystore() != null) {
             final KeyStoreCredentialConfig cfg = new KeyStoreCredentialConfig();
             cfg.setKeyStore(l.getKeystore());
@@ -425,7 +463,7 @@ public final class Beans {
      */
     public static Duration newDuration(final String length) {
         try {
-            if (NumberUtils.isNumber(length)) {
+            if (NumberUtils.isCreatable(length)) {
                 return Duration.ofSeconds(Long.valueOf(length));
             }
             return Duration.parse(length);
@@ -441,8 +479,20 @@ public final class Beans {
      * @return the cipher executor
      */
     public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry) {
-        if (StringUtils.isNotBlank(registry.getEncryption().getKey())
-                && StringUtils.isNotBlank(registry.getEncryption().getKey())) {
+        return newTicketRegistryCipherExecutor(registry, false);
+    }
+
+    /**
+     * New ticket registry cipher executor cipher executor.
+     *
+     * @param registry         the registry
+     * @param forceIfBlankKeys the force if blank keys
+     * @return the cipher executor
+     */
+    public static CipherExecutor newTicketRegistryCipherExecutor(final CryptographyProperties registry, final boolean forceIfBlankKeys) {
+        if ((StringUtils.isNotBlank(registry.getEncryption().getKey())
+                && StringUtils.isNotBlank(registry.getEncryption().getKey()))
+                || forceIfBlankKeys) {
             return new DefaultTicketCipherExecutor(
                     registry.getEncryption().getKey(),
                     registry.getSigning().getKey(),
@@ -450,11 +500,11 @@ public final class Beans {
                     registry.getSigning().getKeySize(),
                     registry.getEncryption().getKeySize());
         }
-        LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
+        LOGGER.debug("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a "
                 + "clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
-        return new NoOpCipherExecutor();
+        return NoOpCipherExecutor.getInstance();
     }
 
     /**
@@ -477,18 +527,42 @@ public final class Beans {
      * the username as a parameter.
      *
      * @param filterQuery the query filter
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery) {
+        return newSearchFilter(filterQuery, Collections.emptyList());
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
      * @param params      the username
      * @return Search filter with parameters applied.
      */
-    public static SearchFilter newSearchFilter(final String filterQuery, final String... params) {
+    public static SearchFilter newSearchFilter(final String filterQuery, final List<String> params) {
+        return newSearchFilter(filterQuery, LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, params);
+    }
+
+    /**
+     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * the username as a parameter.
+     *
+     * @param filterQuery the query filter
+     * @param paramName   the param name
+     * @param params      the username
+     * @return Search filter with parameters applied.
+     */
+    public static SearchFilter newSearchFilter(final String filterQuery, final String paramName, final List<String> params) {
         final SearchFilter filter = new SearchFilter();
         filter.setFilter(filterQuery);
         if (params != null) {
-            for (int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.size(); i++) {
                 if (filter.getFilter().contains("{" + i + '}')) {
-                    filter.setParameter(i, params[i]);
+                    filter.setParameter(i, params.get(i));
                 } else {
-                    filter.setParameter("user", params[i]);
+                    filter.setParameter(paramName, params.get(i));
                 }
             }
         }
@@ -504,12 +578,23 @@ public final class Beans {
      * @param params      the params
      * @return the search executor
      */
-    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final String... params) {
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery, final List<String> params) {
         final SearchExecutor executor = new SearchExecutor();
         executor.setBaseDn(baseDn);
         executor.setSearchFilter(newSearchFilter(filterQuery, params));
         executor.setReturnAttributes(ReturnAttributes.ALL.value());
         executor.setSearchScope(SearchScope.SUBTREE);
         return executor;
+    }
+
+    /**
+     * New search executor search executor.
+     *
+     * @param baseDn      the base dn
+     * @param filterQuery the filter query
+     * @return the search executor
+     */
+    public static SearchExecutor newSearchExecutor(final String baseDn, final String filterQuery) {
+        return newSearchExecutor(baseDn, filterQuery, Collections.emptyList());
     }
 }

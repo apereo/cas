@@ -1,19 +1,26 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -26,8 +33,19 @@ import java.util.Set;
  */
 public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final String globalProviderId;
+
+    public GlobalMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                              final CentralAuthenticationService centralAuthenticationService,
+                                                              final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
+                                                              final CookieGenerator warnCookieGenerator,
+                                                              final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                              final MultifactorAuthenticationProviderSelector selector,
+                                                              final CasConfigurationProperties casProperties) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+        globalProviderId = casProperties.getAuthn().getMfa().getGlobalProviderId();
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -38,7 +56,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
             logger.debug("No authentication is available to determine event for principal");
             return null;
         }
-        final String mfaId = casProperties.getAuthn().getMfa().getGlobalProviderId();
+        final String mfaId = globalProviderId;
         if (StringUtils.isBlank(mfaId)) {
             logger.debug("No value could be found for request parameter {}", mfaId);
             return null;
@@ -48,7 +66,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         final Map<String, MultifactorAuthenticationProvider> providerMap =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
-            logger.error("No multifactor authentication providers are available in the application context");
+            logger.error("No multifactor authentication providers are available in the application context to handle " + mfaId);
             throw new AuthenticationException();
         }
 
@@ -61,7 +79,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
                         providerFound.get(), service.getName());
                 final Event event = validateEventIdForMatchingTransitionInContext(providerFound.get().getId(), context,
                         buildEventAttributeMap(authentication.getPrincipal(), service, providerFound.get()));
-                return ImmutableSet.of(event);
+                return Collections.singleton(event);
             }
             logger.warn("Located multifactor provider {}, yet the provider cannot be reached or verified", providerFound.get());
             return null;

@@ -1,21 +1,30 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.springframework.util.StringUtils.*;
 
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationPolicyEventResolver}
@@ -25,11 +34,24 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver
-        extends BaseMultifactorAuthenticationProviderEventResolver {
+public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final String globalPrincipalAttributeValueRegex;
+    private final Set<String> attributeNames;
+
+    public PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                          final CentralAuthenticationService centralAuthenticationService,
+                                                                          final ServicesManager servicesManager,
+                                                                          final TicketRegistrySupport ticketRegistrySupport,
+                                                                          final CookieGenerator warnCookieGenerator,
+                                                                          final List<AuthenticationRequestServiceSelectionStrategy> authSelectionStrategies,
+                                                                          final MultifactorAuthenticationProviderSelector selector,
+                                                                          final CasConfigurationProperties casProperties) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies,
+                selector);
+        globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex();
+        attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -42,7 +64,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers())) {
+        if (attributeNames.isEmpty()) {
             logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
             return null;
         }
@@ -55,23 +77,18 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver
         }
 
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
-        if (providers.size() == 1 && StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex())) {
+        if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             final MultifactorAuthenticationProvider provider = providers.iterator().next();
             logger.debug("Found a single multifactor provider {} in the application context", provider);
-            return resolveEventViaPrincipalAttribute(principal,
-                    org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
-                    service, context, providers,
-                    input -> input != null && input.toString().matches(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex()));
+            return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
+                    input -> input != null && input.matches(globalPrincipalAttributeValueRegex));
         }
 
-        return resolveEventViaPrincipalAttribute(principal,
-                org.springframework.util.StringUtils.commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers()),
-                service, context, providers,
+        return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
                 input -> providers.stream()
-                        .filter(provider -> input != null && provider.matches(input.toString()))
+                        .filter(provider -> input != null && provider.matches(input))
                         .count() > 0);
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
             resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")

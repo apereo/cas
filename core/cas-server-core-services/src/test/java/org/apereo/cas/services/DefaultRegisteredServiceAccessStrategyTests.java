@@ -1,14 +1,15 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -257,23 +258,23 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
-        map.put("cn", Sets.newHashSet("cas", "SSO"));
-        map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
-        map.put("phone", Sets.newHashSet("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        map.put("cn", new HashSet<>(Arrays.asList("cas", "SSO")));
+        map.put("givenName", new HashSet<>(Arrays.asList("CAS", "KAZ")));
+        map.put("phone", Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
         return map;
     }
 
     private static Map<String, Set<String>> getRejectedAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
-        map.put("address", Sets.newHashSet(".+"));
-        map.put("role", Sets.newHashSet("staff"));
+        map.put("address", Collections.singleton(".+"));
+        map.put("role", Collections.singleton("staff"));
         return map;
     }
     
     private static Map<String, Object> getPrincipalAttributes() {
         final Map<String, Object> map = new HashMap<>();
         map.put("cn", "cas");
-        map.put("givenName", Lists.newArrayList("cas", "KAZ"));
+        map.put("givenName", Arrays.asList("cas", "KAZ"));
         map.put("sn", "surname");
         map.put("phone", "123-456-7890");
 

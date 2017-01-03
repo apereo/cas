@@ -43,10 +43,6 @@ user account is not registered yet the new-user enrollment policy allows folks t
 Duo Security altogether, shall not challenge the user
 and will also **NOT** report back a multifactor-enabled authentication context back to the application.
 
-<div class="alert alert-info"><strong>Subscription Qualification</strong><p>This behavior
-requires that the Duo Security integration provides sufficient access so CAS can query
-the account status via <a href="https://duo.com/docs/adminapi">Duo Security Admin APIs</a>.</p></div>
-
 ## Non-Browser MFA
 
 The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.

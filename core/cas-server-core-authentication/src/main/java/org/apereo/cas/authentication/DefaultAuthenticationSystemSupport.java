@@ -11,12 +11,8 @@ import org.apereo.cas.authentication.principal.Service;
  */
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
-    private AuthenticationTransactionManager authenticationTransactionManager;
-
-    private PrincipalElectionStrategy principalElectionStrategy;
-
-    public DefaultAuthenticationSystemSupport() {
-    }
+    private final AuthenticationTransactionManager authenticationTransactionManager;
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     public DefaultAuthenticationSystemSupport(final AuthenticationTransactionManager authenticationTransactionManager,
                                               final PrincipalElectionStrategy principalElectionStrategy) {
@@ -35,11 +31,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Credential... credential) throws
-            AuthenticationException {
-
-        final DefaultAuthenticationResultBuilder builder = 
-                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Credential... credential) throws AuthenticationException {
+        final DefaultAuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
         if (credential != null && credential.length > 0) {
             builder.collect(credential[0]);
         }
@@ -49,9 +42,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication) {
-        final AuthenticationResultBuilder builder =
-                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
-        return builder;
+        return new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
     }
 
     @Override
@@ -74,13 +65,5 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
             throws AuthenticationException {
 
         return this.finalizeAllAuthenticationTransactions(this.handleInitialAuthenticationTransaction(credential), service);
-    }
-
-    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
-        this.authenticationTransactionManager = authenticationTransactionManager;
-    }
-
-    public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
-        this.principalElectionStrategy = principalElectionStrategy;
     }
 }

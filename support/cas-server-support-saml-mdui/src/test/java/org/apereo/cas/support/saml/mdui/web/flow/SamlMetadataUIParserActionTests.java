@@ -79,9 +79,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
-
         final MockHttpServletResponse response = new MockHttpServletResponse();
-
         final MockServletContext sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.execute(ctx);

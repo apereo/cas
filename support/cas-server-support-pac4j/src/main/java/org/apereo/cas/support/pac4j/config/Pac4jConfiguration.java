@@ -11,7 +11,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
-import org.apereo.cas.support.pac4j.web.flow.ClientAction;
+import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
@@ -100,11 +100,11 @@ public class Pac4jConfiguration {
     @RefreshScope
     @Bean
     public Action clientAction() {
-        final ClientAction a = new ClientAction();
+        final DelegatedClientAuthenticationAction a = new DelegatedClientAuthenticationAction();
         a.setCentralAuthenticationService(centralAuthenticationService);
         a.setAuthenticationSystemSupport(authenticationSystemSupport);
         a.setClients(builtClients());
-        a.setAutoRedirect(casProperties.getAuthn().getPac4j().isAutoRedirect());
+        a.setCasProperties(casProperties);
         return a;
     }
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -8,7 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -24,24 +22,30 @@ import java.util.stream.Collectors;
  */
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    private LogoutManager logoutManager;
+    private final LogoutManager logoutManager;
+    private final TicketRegistry ticketRegistry;
+    private final LockingStrategy lockingStrategy;
+    private final boolean isCleanerEnabled;
 
-    private TicketRegistry ticketRegistry;
-    
-    private LockingStrategy lockingStrategy;
-    
+    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+                                        final boolean isCleanerEnabled) {
+
+        this.lockingStrategy = lockingStrategy;
+        this.logoutManager = logoutManager;
+        this.ticketRegistry = ticketRegistry;
+        this.isCleanerEnabled = isCleanerEnabled;
+    }
+
     @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.startDelay:20000}",
                fixedDelayString = "${cas.ticket.registry.cleaner.repeatInterval:60000}")
     @Override
     public void clean() {
         try {
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-            if (!casProperties.getTicket().getRegistry().getCleaner().isEnabled()) {
+            if (!isCleanerEnabled) {
                 LOGGER.trace("Ticket registry cleaner is disabled for {}. No cleaner processes will run.",
                         this.ticketRegistry.getClass().getSimpleName());
                 return;
@@ -100,17 +104,5 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
      */
     protected boolean isCleanerSupported() {
         return true;
-    }
-
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setLockingStrategy(final LockingStrategy lockingStrategy) {
-        this.lockingStrategy = lockingStrategy;
     }
 }

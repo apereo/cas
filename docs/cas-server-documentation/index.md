@@ -6,9 +6,10 @@ title: CAS - Home
 # Enterprise Single Sign-On
 
 * [Java (Spring Webflow/Spring Boot) server component](planning/Architecture.html)
-* [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), etc)
+* [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), [OAuth](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html))
 * Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of providers ([Duo Security](installation/DuoSecurity-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [YubiKey](installation/YubiKey-Authentication.html), etc)
+* Manage and register [client applications and services](installation/Service-Management.html) with specific authentication policies
 * [Cross-platform client support](integration/CAS-Clients.html) (Java, .Net, PHP, Perl, Apache, etc)
 * Integrations with [InCommon, Box, Office365, ServiceNow, Salesforce, Workday](integration/Configuring-SAML-SP-Integrations.html), uPortal, Drupal, Blackboard, Moodle, [Google Apps](integration/Google-Apps-Integration.html), etc
 
@@ -25,6 +26,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Installation Requirements](planning/Installation-Requirements.html)
 * [Overlay Installation](installation/Maven-Overlay-Installation.html)
 * [Authentication](installation/Configuring-Authentication-Components.html)
+* [Application Registration](installation/Service-Management.html)
 * [Attribute Release](integration/Attribute-Release.html)
 
 ## Demo

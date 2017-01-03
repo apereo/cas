@@ -23,10 +23,10 @@ The current implementation provides support for:
 
 - [Authorization Code workflow](http://openid.net/specs/openid-connect-basic-1_0.html)
 - [Dynamic Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
-- Administration and registration of [OIDC relying parties](Service-Management.html).
+- Administration and registration of [OIDC clients](Service-Management.html).
+- Administration and registration of OIDC clients via [Dynamic Client Registration protocol](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01).
 - Ability to [resolve and release claims](../integration/Attribute-Release-Policies.html).
 - Ability to configure an expiration policy for various tokens.
-
 
 ## Endpoints
 
@@ -38,6 +38,7 @@ The current implementation provides support for:
 | `/cas/oidc/authorize`                         | Authorization requests are handled here.
 | `/cas/oidc/profile`                           | User profile requests are handled here.
 | `/cas/oidc/accessToken`                       | Produces authorized access tokens.
+| `/cas/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
 
 ## Register Clients
 
@@ -84,6 +85,12 @@ be [resolved and released](../integration/Attribute-Release-Policies.html).
 Support for authentication context class references is implemented in form of `acr_values` as part of the original authorization request,
 which is mostly taken into account by the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS.
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
+
+## Dynamic Registration
+
+Clients applications may dynamically be registered with CAS for authentication. By default, CAS operates in a `PROTECTED` mode
+where the registration endpoint requires user authentication. This behavior may be relaxed via CAS settings to allow CAS to operate
+in an `OPEN` mode.
 
 ## Keystores
 

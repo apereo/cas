@@ -36,9 +36,19 @@ Take note of the following suggestions before you start with the configuration.
 All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas
 and syntax. **BE CAREFUL** with the distinction.
 
-- Unrecognized properties are ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
+- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow
 misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely
 ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+
+### Indexed Settings
+
+CAS settings able to accept multiple values are typically documented with an index, such as `cas.some.setting[0]=value`.
+The index `[0]` is meant to be incremented by the adopter to allow for distinct multiple configuration blocks:
+
+```properties
+# cas.some.setting[0]=value1
+# cas.some.setting[1]=value2
+```
 
 ### Trust But Verify
 
@@ -47,7 +57,8 @@ Review the codebase or better yet, [ask questions](/cas/Mailing-Lists.html) to c
 
 ### Time Unit of Measure
 
-All CAS settings that deal with time units should support the duration syntax for full clarity on unit of measure:
+All CAS settings that deal with time units, unless noted otherwise,
+should support the duration syntax for full clarity on unit of measure:
 
 ```bash
 "PT20S"     -- parses as "20 seconds"
@@ -145,7 +156,8 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### RabbitMQ
 
-Broadcast CAS configuration updates to other nodes in the cluster via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
+Broadcast CAS configuration updates to other nodes in the cluster 
+via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
 
 ```properties
 # spring.rabbitmq.host=
@@ -159,7 +171,8 @@ Broadcast CAS configuration updates to other nodes in the cluster via [RabbitMQ]
 
 ### Kafka
 
-Broadcast CAS configuration updates to other nodes in the cluster via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
+Broadcast CAS configuration updates to other nodes in the cluster 
+via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
 
 ```properties
 # spring.cloud.stream.bindings.output.content-type=application/json
@@ -206,7 +219,7 @@ server.tomcat.uriEncoding=UTF-8
 server.useForwardHeaders=true
 ```
 
-## Embedded Tomcat HTTP/AJP
+### HTTP/AJP
 
 Enable HTTP/AJP connections for the embedded Tomcat container.
 
@@ -229,7 +242,17 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 # cas.server.ajp.allowTrace=false
 ```
 
-## Embedded Tomcat Extended Access Log
+### Rewrite Valve
+
+If and when you choose to deploy CAS at root and remove the default context path, 
+CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
+for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
+
+```properties
+# cas.server.rewriteValveConfigLocation=classpath:/container/tomcat/rewrite.config
+```
+
+### Extended Access Log
 
 Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
 for the embedded Tomcat container.
@@ -275,7 +298,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
-# cas.adminPagesSecurity.adminRoles=ROLE_ADMIN
+# cas.adminPagesSecurity.adminRoles[0]=ROLE_ADMIN
 
 # cas.adminPagesSecurity.actuatorEndpointsEnabled=true
 ```
@@ -290,7 +313,7 @@ The format of the file is as such:
 
 - `casuser`: This is the authenticated user id received from CAS
 - `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
-- `ROLE_ADMIN`: Role assigned to the authorized user, which is then cross checked against CAS configuration.
+- `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
 
 ## Web Application Session
 
@@ -404,13 +427,14 @@ If you wish to directly and separately retrieve attributes from an LDAP source,
 the following settings are then relevant:
 
 ```properties
-# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.attributeRepository.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.attributeRepository.ldap[0].connectionStrategy=
 # cas.authn.attributeRepository.ldap[0].order=0
 # cas.authn.attributeRepository.ldap[0].useSsl=true
 # cas.authn.attributeRepository.ldap[0].useStartTls=false
 # cas.authn.attributeRepository.ldap[0].connectTimeout=5000
 # cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org
-# cas.authn.attributeRepository.ldap[0].userFilter=cn={0}
+# cas.authn.attributeRepository.ldap[0].userFilter=cn={user}
 # cas.authn.attributeRepository.ldap[0].subtreeSearch=true
 # cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.attributeRepository.ldap[0].bindCredential=Password
@@ -429,13 +453,13 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
 # cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.attributeRepository.ldap[0].type=SEARCH|COMPARE
-# cas.authn.attributeRepository.ldap[0].baseDn=
-# cas.authn.attributeRepository.ldap[0].searchFilter=(objectClass=*)
-# cas.authn.attributeRepository.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
-# cas.authn.attributeRepository.ldap[0].attributeName=objectClass
-# cas.authn.attributeRepository.ldap[0].attributeValues=top
-# cas.authn.attributeRepository.ldap[0].dn=
+# cas.authn.attributeRepository.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.attributeRepository.ldap[0].validator.baseDn=
+# cas.authn.attributeRepository.ldap[0].validator.searchFilter=(objectClass=*)
+# cas.authn.attributeRepository.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.attributeRepository.ldap[0].validator.attributeName=objectClass
+# cas.authn.attributeRepository.ldap[0].validator.attributeValues=top
+# cas.authn.attributeRepository.ldap[0].validator.dn=
 ```
 
 ### Groovy
@@ -1046,10 +1070,23 @@ There are two requirements for this use case:
 1. All users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`.
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
+### Connection Strategies
+
+If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
+
+| Provider              | Description              
+|-----------------------|-----------------
+| `DEFAULT`             | The default JNDI provider behavior will be used.    
+| `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
+| `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
+| `RANDOM`              | For each new connection a random LDAP url will be selected. 
+| `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS|SASL
 
-# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.ldap[0].ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.ldap[0].connectionStrategy=
 # cas.authn.ldap[0].useSsl=true
 # cas.authn.ldap[0].useStartTls=false
 # cas.authn.ldap[0].connectTimeout=5000
@@ -1060,6 +1097,7 @@ There are two requirements for this use case:
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
+# cas.authn.ldap[0].enhanceWithEntryResolver=true
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=userPassword
@@ -1106,13 +1144,13 @@ There are two requirements for this use case:
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
 
-# cas.authn.ldap[0].type=SEARCH|COMPARE
-# cas.authn.ldap[0].baseDn=
-# cas.authn.ldap[0].searchFilter=(objectClass=*)
-# cas.authn.ldap[0].scope=OBJECT|ONELEVEL|SUBTREE
-# cas.authn.ldap[0].attributeName=objectClass
-# cas.authn.ldap[0].attributeValues=top
-# cas.authn.ldap[0].dn=
+# cas.authn.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.ldap[0].validator.baseDn=
+# cas.authn.ldap[0].validator.searchFilter=(objectClass=*)
+# cas.authn.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.ldap[0].validator.attributeName=objectClass
+# cas.authn.ldap[0].validator.attributeValues=top
+# cas.authn.ldap[0].validator.dn=
 
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
@@ -1201,9 +1239,9 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.principal.principalAttribute=
 # cas.authn.spnego.principal.returnNull=false
 
-# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.spnego.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.spnego.ldap.connectionStrategy=
 # cas.authn.spnego.ldap.baseDn=dc=example,dc=org
-# cas.authn.spnego.ldap.userFilter=cn={user}
 # cas.authn.spnego.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.spnego.ldap.bindCredential=Password
 # cas.authn.spnego.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
@@ -1224,16 +1262,14 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.subtreeSearch=true
 # cas.authn.spnego.ldap.useSsl=true
 # cas.authn.spnego.ldap.useStartTls=false
-# cas.authn.spnego.ldap.baseDn=false
-# cas.authn.spnego.ldap.searchFilter=host={0}
+# cas.authn.spnego.ldap.searchFilter=host={host}
 
-# cas.authn.spnego.ldap.type=SEARCH|COMPARE
-# cas.authn.spnego.ldap.baseDn=
-# cas.authn.spnego.ldap.searchFilter=(objectClass=*)
-# cas.authn.spnego.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.authn.spnego.ldap.attributeName=objectClass
-# cas.authn.spnego.ldap.attributeValues=top
-# cas.authn.spnego.ldap.dn=
+# cas.authn.spnego.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.spnego.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.spnego.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.spnego.ldap.validator.attributeName=objectClass
+# cas.authn.spnego.ldap.validator.attributeValues=top
+# cas.authn.spnego.ldap.validator.dn=
 ```
 
 ## JAAS Authentication
@@ -1267,6 +1303,16 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 # cas.authn.token.principalTransformation.suffix=
 # cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.token.principalTransformation.prefix=
+```
+
+### JWT Service Tickets
+
+```properties
+# cas.authn.token.crypto.signing.key=
+# cas.authn.token.crypto.signing.keySize=512
+# cas.authn.token.crypto.encryption.key=
+# cas.authn.token.crypto.encryption.keySize=16
+# cas.authn.token.crypto.alg=AES
 ```
 
 ## Stormpath Authentication
@@ -1384,12 +1430,13 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
-# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.x509.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.x509.ldap.connectionStrategy=
 # cas.authn.x509.ldap.useSsl=true
 # cas.authn.x509.ldap.useStartTls=false
 # cas.authn.x509.ldap.connectTimeout=5000
 # cas.authn.x509.ldap.baseDn=dc=example,dc=org
-# cas.authn.x509.ldap.searchFilter=cn=X509
+# cas.authn.x509.ldap.searchFilter=cn={user}
 # cas.authn.x509.ldap.subtreeSearch=true
 # cas.authn.x509.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.x509.ldap.bindCredential=Password
@@ -1408,13 +1455,13 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.x509.ldap.type=SEARCH|COMPARE
-# cas.authn.x509.ldap.baseDn=
-# cas.authn.x509.ldap.searchFilter=(objectClass=*)
-# cas.authn.x509.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.authn.x509.ldap.attributeName=objectClass
-# cas.authn.x509.ldap.attributeValues=top
-# cas.authn.x509.ldap.dn=
+# cas.authn.x509.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.x509.ldap.validator.baseDn=
+# cas.authn.x509.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.x509.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.x509.ldap.validator.attributeName=objectClass
+# cas.authn.x509.ldap.validator.attributeValues=top
+# cas.authn.x509.ldap.validator.dn=
 
 # cas.authn.x509.principal.principalAttribute=
 # cas.authn.x509.principal.returnNull=false
@@ -1531,6 +1578,8 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.authn.mfa.trusted.jpa.leakThreshold=10
 # cas.authn.mfa.trusted.jpa.batchSize=1
+# cas.authn.mfa.trusted.jpa.defaultCatalog=
+# cas.authn.mfa.trusted.jpa.defaultSchema=
 # cas.authn.mfa.trusted.jpa.user=sa
 # cas.authn.mfa.trusted.jpa.ddlAuto=create-drop
 # cas.authn.mfa.trusted.jpa.password=
@@ -1605,25 +1654,25 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator JPA
 
 ```properties
-# cas.authn.mfa.gauth.jpa.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
-# cas.authn.mfa.gauth.jpa.isolateInternalQueries=false
-# cas.authn.mfa.gauth.jpa.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.failFast=true
-# cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.gauth.jpa.leakThreshold=10
-# cas.authn.mfa.gauth.jpa.batchSize=1
-# cas.authn.mfa.gauth.jpa.user=sa
-# cas.authn.mfa.gauth.jpa.ddlAuto=create-drop
-# cas.authn.mfa.gauth.jpa.password=
-# cas.authn.mfa.gauth.jpa.autocommit=false
-# cas.authn.mfa.gauth.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.gauth.jpa.idleTimeout=5000
+# cas.authn.mfa.gauth.jpa.database.healthQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+# cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
+# cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
+# cas.authn.mfa.gauth.jpa.database.failFast=true
+# cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.mfa.gauth.jpa.database.leakThreshold=10
+# cas.authn.mfa.gauth.jpa.database.batchSize=1
+# cas.authn.mfa.gauth.jpa.database.user=sa
+# cas.authn.mfa.gauth.jpa.database.ddlAuto=create-drop
+# cas.authn.mfa.gauth.jpa.database.password=
+# cas.authn.mfa.gauth.jpa.database.autocommit=false
+# cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
 
-# cas.authn.mfa.gauth.jpa.pool.suspension=false
-# cas.authn.mfa.gauth.jpa.pool.minSize=6
-# cas.authn.mfa.gauth.jpa.pool.maxSize=18
-# cas.authn.mfa.gauth.jpa.pool.maxIdleTime=1000
-# cas.authn.mfa.gauth.jpa.pool.maxWait=2000
+# cas.authn.mfa.gauth.jpa.database.pool.suspension=false
+# cas.authn.mfa.gauth.jpa.database.pool.minSize=6
+# cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
+# cas.authn.mfa.gauth.jpa.database.pool.maxIdleTime=1000
+# cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
 ```
 
 ### YubiKey
@@ -1762,6 +1811,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
 # cas.authn.samlIdp.hostName=cas.example.org
 # cas.authn.samlIdp.scope=example.org
+# cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
 
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
@@ -1778,8 +1828,17 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
-# cas.authn.samlIdp.response.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
+
+# cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
+# cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideKeyEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideBlackListedEncryptionAlgorithms=
+# cas.authn.samlIdp.algs.overrideWhiteListedAlgorithms=
+# cas.authn.samlIdp.algs.overrideSignatureReferenceDigestMethods=
+# cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
+# cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
+# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms= 
 ```
 
 
@@ -1795,6 +1854,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.dropbox.name=Dropbox
 # cas.samlSP.dropbox.description=Dropbox Integration
 # cas.samlSP.dropbox.nameIdAttribute=mail
+# cas.samlSP.dropbox.signatureLocation=
 ```
 
 ### TestShib
@@ -1804,16 +1864,18 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.testShib.name=TestShib
 # cas.samlSP.testShib.description=TestShib Integration
 # cas.samlSP.testShib.attributes=eduPersonPrincipalName
+# cas.samlSP.testShib.signatureLocation=
 ```
 
 ### Office365
 
 ```properties
-# cas.samlSP.dropbox.metadata=/etc/cas/saml/azure.xml
-# cas.samlSP.dropbox.name=O365
-# cas.samlSP.dropbox.description=O365 Integration
-# cas.samlSP.dropbox.nameIdAttribute=scopedImmutableID
-# cas.samlSP.salesforce.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.metadata=/etc/cas/saml/azure.xml
+# cas.samlSP.office365.name=O365
+# cas.samlSP.office365.description=O365 Integration
+# cas.samlSP.office365.nameIdAttribute=scopedImmutableID
+# cas.samlSP.office365.attributes=IDPEmail,ImmutableID
+# cas.samlSP.office365.signatureLocation=
 ```
 
 ### SAManage
@@ -1823,6 +1885,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.saManage.name=SAManage
 # cas.samlSP.saManage.description=SAManage Integration
 # cas.samlSP.saManage.nameIdAttribute=mail
+# cas.samlSP.saManage.signatureLocation=
 ```
 
 ### Workday
@@ -1831,6 +1894,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.workday.metadata=/etc/cas/saml/workday.xml
 # cas.samlSP.workday.name=Workday
 # cas.samlSP.workday.description=Workday Integration
+# cas.samlSP.workday.signatureLocation=
 ```
 
 ### Salesforce
@@ -1840,6 +1904,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.name=Salesforce
 # cas.samlSP.salesforce.description=Salesforce Integration
 # cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
+# cas.samlSP.salesforce.signatureLocation=
 ```
 
 ### Box
@@ -1849,6 +1914,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.box.name=Box
 # cas.samlSP.box.description=Box Integration
 # cas.samlSP.box.attributes=email,firstName,lastName
+# cas.samlSP.box.signatureLocation=
 ```
 
 ### Service Now
@@ -1858,6 +1924,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.serviceNow.name=ServiceNow
 # cas.samlSP.serviceNow.description=serviceNow Integration
 # cas.samlSP.serviceNow.attributes=eduPersonPrincipalName
+# cas.samlSP.serviceNow.signatureLocation=
 ```
 
 ### Net Partner
@@ -1867,6 +1934,8 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.netPartner.name=Net Partner
 # cas.samlSP.netPartner.description=Net Partner Integration
 # cas.samlSP.netPartner.nameIdAttribute=studentId
+# cas.samlSP.netPartner.attributes=
+# cas.samlSP.netPartner.signatureLocation=
 ```
 
 ### Webex
@@ -1876,7 +1945,22 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.webex.name=Webex
 # cas.samlSP.webex.description=Webex Integration
 # cas.samlSP.webex.nameIdAttribute=email
-# cas.samlSP.webex.attributes=firstName,lastName,
+# cas.samlSP.webex.attributes=firstName,lastName
+```
+
+### InCommon
+
+Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
+EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry.
+The signature location MUST BE the public key used to sign the metadata.
+
+```properties
+# cas.samlSP.inCommon.metadata=http://md.incommon.org/InCommon/InCommon-metadata.xml
+# cas.samlSP.inCommon.name=InCommon Aggregate
+# cas.samlSP.inCommon.description=InCommon Metadata Aggregate
+# cas.samlSP.inCommon.attributes=eduPersonPrincipalName,givenName,cn,sn
+# cas.samlSP.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
+# cas.samlSP.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
 ## OpenID Connect
@@ -1888,6 +1972,7 @@ To learn more about this topic, [please review this guide](OIDC-Authentication.h
 # cas.authn.oidc.issuer=http://localhost:8080/cas/oidc
 # cas.authn.oidc.skew=5
 # cas.authn.oidc.jwksFile=file:/keystore.jwks
+# cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 ```
 
 ## Pac4j
@@ -2262,7 +2347,8 @@ used for authentication, etc.
 # cas.monitor.ldap.maxWait=5000
 
 # Define the LDAP connection pool settings for monitoring
-# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.monitor.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.monitor.ldap.connectionStrategy=
 # cas.monitor.ldap.baseDn=dc=example,dc=org
 # cas.monitor.ldap.userFilter=cn={user}
 # cas.monitor.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2286,13 +2372,13 @@ used for authentication, etc.
 # cas.monitor.ldap.useSsl=true
 # cas.monitor.ldap.useStartTls=false
 
-# cas.monitor.ldap.type=SEARCH|COMPARE
-# cas.monitor.ldap.baseDn=
-# cas.monitor.ldap.searchFilter=(objectClass=*)
-# cas.monitor.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.monitor.ldap.attributeName=objectClass
-# cas.monitor.ldap.attributeValues=top
-# cas.monitor.ldap.dn=
+# cas.monitor.ldap.validator.type=SEARCH|COMPARE
+# cas.monitor.ldap.validator.baseDn=
+# cas.monitor.ldap.validator.searchFilter=(objectClass=*)
+# cas.monitor.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.monitor.ldap.validator.attributeName=objectClass
+# cas.monitor.ldap.validator.attributeValues=top
+# cas.monitor.ldap.validator.dn=
 ```
 
 ### Memory
@@ -2327,7 +2413,8 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
 ```properties
-# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.acceptableUsagePolicy.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.acceptableUsagePolicy.ldap.connectionStrategy=
 # cas.acceptableUsagePolicy.ldap.baseDn=dc=example,dc=org
 # cas.acceptableUsagePolicy.ldap.userFilter=cn={user}
 # cas.acceptableUsagePolicy.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -2350,13 +2437,13 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
 
-# cas.acceptableUsagePolicy.ldap.type=SEARCH|COMPARE
-# cas.acceptableUsagePolicy.ldap.baseDn=
-# cas.acceptableUsagePolicy.ldap.searchFilter=(objectClass=*)
-# cas.acceptableUsagePolicy.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.acceptableUsagePolicy.ldap.attributeName=objectClass
-# cas.acceptableUsagePolicy.ldap.attributeValues=top
-# cas.acceptableUsagePolicy.ldap.dn=
+# cas.acceptableUsagePolicy.ldap.validator.type=SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.validator.baseDn=
+# cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
+# cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.acceptableUsagePolicy.ldap.validator.attributeName=objectClass
+# cas.acceptableUsagePolicy.ldap.validator.attributeValues=top
+# cas.acceptableUsagePolicy.ldap.validator.dn=
 ```
 
 ## Events
@@ -2381,6 +2468,8 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
 # cas.events.jpa.leakThreshold=10
 # cas.events.jpa.batchSize=1
+# cas.events.jpa.defaultCatalog=
+# cas.events.jpa.defaultSchema=
 # cas.events.jpa.user=sa
 # cas.events.jpa.ddlAuto=create-drop
 # cas.events.jpa.password=
@@ -2395,7 +2484,7 @@ Decide how CAS should store authentication events inside a database instance.
 # cas.events.jpa.pool.maxWait=2000
 ```
 
-### Mongodb
+### MongoDb
 
 Decide how CAS should store authentication events inside a MongoDb instance.
 
@@ -2411,11 +2500,19 @@ Decide how CAS should store authentication events inside a MongoDb instance.
 Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
-# cas.httpWebRequest.header.xframe=false
-# cas.httpWebRequest.header.xss=false
-# cas.httpWebRequest.header.hsts=false
-# cas.httpWebRequest.header.xcontent=false
-# cas.httpWebRequest.header.cache=false
+# cas.httpWebRequest.header.xframe=true
+# cas.httpWebRequest.header.xss=true
+# cas.httpWebRequest.header.hsts=true
+# cas.httpWebRequest.header.xcontent=true
+# cas.httpWebRequest.header.cache=true
+
+# cas.httpWebRequest.cors.enabled=false
+# cas.httpWebRequest.cors.allowCredentials=false
+# cas.httpWebRequest.cors.allowOrigins[0]=
+# cas.httpWebRequest.cors.allowMethods[0]=*
+# cas.httpWebRequest.cors.allowHeaders[0]=*
+# cas.httpWebRequest.cors.maxAge=3600
+# cas.httpWebRequest.cors.exposedHeaders[0]=
 
 # cas.httpWebRequest.web.forceEncoding=true
 # cas.httpWebRequest.web.encoding=UTF-8
@@ -2453,7 +2550,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.serviceRegistry.watcherEnabled=true
 # cas.serviceRegistry.repeatInterval=120000
 # cas.serviceRegistry.startDelay=15000
-# cas.serviceRegistry.initFromJson=true
+# cas.serviceRegistry.initFromJson=false
 ```
 
 ### Resource-based Service Registry
@@ -2468,7 +2565,7 @@ to locate service definitions, decide how those resources should be found.
 To learn more about this topic, [please review this guide](JSON-Service-Management.html)
 or [this guide](YAML-Service-Management.html).
 
-### Mongo Service Registry
+### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance.
 To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
@@ -2499,7 +2596,8 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
 
-# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.serviceRegistry.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.serviceRegistry.ldap.connectionStrategy=
 # cas.serviceRegistry.ldap.baseDn=dc=example,dc=org
 # cas.serviceRegistry.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.serviceRegistry.ldap.bindCredential=Password
@@ -2521,13 +2619,13 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.useSsl=true
 # cas.serviceRegistry.ldap.useStartTls=false
 
-# cas.serviceRegistry.ldap.type=SEARCH|COMPARE
-# cas.serviceRegistry.ldap.baseDn=
-# cas.serviceRegistry.ldap.searchFilter=(objectClass=*)
-# cas.serviceRegistry.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.serviceRegistry.ldap.attributeName=objectClass
-# cas.serviceRegistry.ldap.attributeValues=top
-# cas.serviceRegistry.ldap.dn=
+# cas.serviceRegistry.ldap.validator.type=SEARCH|COMPARE
+# cas.serviceRegistry.ldap.validator.baseDn=
+# cas.serviceRegistry.ldap.validator.searchFilter=(objectClass=*)
+# cas.serviceRegistry.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.serviceRegistry.ldap.validator.attributeName=objectClass
+# cas.serviceRegistry.ldap.validator.attributeValues=top
+# cas.serviceRegistry.ldap.validator.dn=
 ```
 
 ### Couchbase Service Registry
@@ -2601,6 +2699,8 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.leakThreshold=10
 # cas.ticket.registry.jpa.jpaLockingTgtEnabled=true
 # cas.ticket.registry.jpa.batchSize=1
+# cas.ticket.registry.jpa.defaultCatalog=
+# cas.ticket.registry.jpa.defaultSchema=
 # cas.ticket.registry.jpa.user=sa
 # cas.ticket.registry.jpa.ddlAuto=create-drop
 # cas.ticket.registry.jpa.password=
@@ -2797,9 +2897,47 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.alg=AES
 ```
 
+### Redis Ticket Registry
+
+To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
+
+```properties
+## Redis server host.
+# cas.ticket.registry.redis.host=localhost
+#
+## Database index used by the connection factory.
+# cas.ticket.registry.redis.database=0
+#
+## Redis server port.
+# cas.ticket.registry.redis.port=6379
+#
+## Login password of the redis server.
+# cas.ticket.registry.redis.password=
+#
+## Connection timeout in milliseconds
+# cas.ticket.registry.redis.timeout=
+#
+##
+# cas.ticket.registry.redis.pool.max-active=20
+#
+## Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
+# cas.ticket.registry.redis.pool.maxIdle=8
+#
+## Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
+# cas.ticket.registry.redis.pool.minIdle=0
+#
+## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
+# cas.ticket.registry.redis.pool.maxActive=8
+#
+## Maximum amount of time (in milliseconds) a connection allocation should block 
+#  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
+# cas.ticket.registry.redis.pool.maxWait=-1
+```
+
 ## Protocol Ticket Security
 
-Controls whether tickets issued by the CAS server should be secured via signing and encryption.
+Controls whether tickets issued by the CAS server should be secured via signing and encryption
+when shared with client applications on outgoing calls.
 
 ```properties
 # cas.ticket.security.cipherEnabled=true
@@ -2888,19 +3026,23 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
 ```properties
-# cas.mgmt.adminRoles=ROLE_ADMIN
+# cas.mgmt.adminRoles[0]=ROLE_ADMIN
+# cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
+
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
 # cas.mgmt.serverName=https://localhost:8443
 # cas.mgmt.defaultLocale=en
 
-# cas.mgmt.authzAttributes=memberOf,groupMembership
+# cas.mgmt.authzAttributes[0]=memberOf
+# cas.mgmt.authzAttributes[1]=groupMembership
 
 # cas.mgmt.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldapAuthz.allowMultipleResults=false
 # cas.mgmt.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
-# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.mgmt.ldapAuthz.connectionStrategy=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.userFilter=cn={user}
 # cas.mgmt.ldapAuthz.bindDn=cn=Directory Manager,dc=example,dc=org
@@ -3086,7 +3228,8 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 
 ```properties
 # cas.authn.pm.ldap.type=GENERIC|AD
-# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu,ldaps://ldap2.example.edu,...
+# cas.authn.pm.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.authn.pm.ldap.connectionStrategy=
 # cas.authn.pm.ldap.useSsl=true
 # cas.authn.pm.ldap.useStartTls=false
 # cas.authn.pm.ldap.connectTimeout=5000
@@ -3110,11 +3253,11 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.pm.ldap.type=SEARCH|COMPARE
-# cas.authn.pm.ldap.baseDn=
-# cas.authn.pm.ldap.searchFilter=(objectClass=*)
-# cas.authn.pm.ldap.scope=OBJECT|ONELEVEL|SUBTREE
-# cas.authn.pm.ldap.attributeName=objectClass
-# cas.authn.pm.ldap.attributeValues=top
-# cas.authn.pm.ldap.dn=
+# cas.authn.pm.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.pm.ldap.validator.baseDn=
+# cas.authn.pm.ldap.validator.searchFilter=(objectClass=*)
+# cas.authn.pm.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.authn.pm.ldap.validator.attributeName=objectClass
+# cas.authn.pm.ldap.validator.attributeValues=top
+# cas.authn.pm.ldap.validator.dn=
 ```

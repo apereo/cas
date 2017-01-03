@@ -1,17 +1,25 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +33,17 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class SelectiveAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+
+    public SelectiveAuthenticationProviderWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                                    final ServicesManager servicesManager,
+                                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                                    final CookieGenerator warnCookieGenerator,
+                                                                    final List<AuthenticationRequestServiceSelectionStrategy> authenticationSelectionStrategies,
+                                                                    final MultifactorAuthenticationProviderSelector selector) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
+                authenticationSelectionStrategies, selector);
+    }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
@@ -47,11 +66,8 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      * @param context           the request context
      * @return the set of resolved events
      */
-    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents,
-                                               final Authentication authentication,
-                                               final RegisteredService registeredService,
-                                               final HttpServletRequest request,
-                                               final RequestContext context) {
+    protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
+                                               final HttpServletRequest request, final RequestContext context) {
         logger.debug("Collection of resolved events for this authentication sequence are:");
         resolveEvents.forEach(e -> logger.debug("Event id [{}] resolved from {}", e.getId(), e.getSource().getClass().getName()));
         final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
@@ -69,15 +85,14 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      * @return the set of events
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-            final Set<Event> resolveEvents, final Authentication authentication,
-            final RegisteredService registeredService) {
+            final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService) {
         logger.debug("Locating multifactor providers to determine support for this authentication sequence");
         final Map<String, MultifactorAuthenticationProvider> providers =
                 WebUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
         if (providers == null || providers.isEmpty()) {
             logger.debug("No providers are available to honor this request. Moving on...");
-            return Pair.of(resolveEvents, Sets.newHashSet());
+            return Pair.of(resolveEvents, Collections.emptySet());
         }
 
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providers.values());

@@ -6,7 +6,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
@@ -36,7 +36,7 @@ public class GoogleAuthenticatorQRGeneratorController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path= { "/gauth/qrgen" })
+    @GetMapping(path= { "/gauth/qrgen" })
     public void generate(final HttpServletResponse response, final HttpServletRequest request) throws Exception {
         response.setContentType("image/png");
         final String key = request.getParameter("key");

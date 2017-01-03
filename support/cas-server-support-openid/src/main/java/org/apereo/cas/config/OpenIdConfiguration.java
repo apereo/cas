@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -9,12 +8,15 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
+import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceResponseBuilder;
 import org.apereo.cas.support.openid.web.OpenIdProviderController;
 import org.apereo.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.apereo.cas.support.openid.web.mvc.OpenIdValidateController;
@@ -39,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +50,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -72,7 +76,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Autowired
     @Qualifier("cas3ServiceJsonView")
     private View cas3ServiceJsonView;
@@ -138,21 +142,20 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("uniqueIdGeneratorsMap")
-    private Map uniqueIdGeneratorsMap;
-
+    private Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-    
+
     @Bean
     public DelegatingController openidDelegatingController() {
         final DelegatingController controller = new DelegatingController();
-        controller.setDelegates(Lists.newArrayList(smartOpenIdAssociationController(), openIdValidateController()));
+        controller.setDelegates(Arrays.asList(smartOpenIdAssociationController(), openIdValidateController()));
         return controller;
     }
 
@@ -195,7 +198,6 @@ public class OpenIdConfiguration {
         return manager;
     }
 
-
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
@@ -221,6 +223,12 @@ public class OpenIdConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
+    @Bean
+    public ResponseBuilder openIdServiceResponseBuilder() {
+        return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
+    }
+
     @Bean
     @RefreshScope
     public OpenIdServiceFactory openIdServiceFactory() {
@@ -235,16 +243,10 @@ public class OpenIdConfiguration {
         return new OpenIdProviderController();
     }
 
-
     @Bean
     public Action openIdSingleSignOnAction() {
-        final OpenIdSingleSignOnAction a = new OpenIdSingleSignOnAction();
-        a.setExtractor(defaultOpenIdUserNameExtractor());
-        a.setTicketRegistrySupport(ticketRegistrySupport);
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
     }
 
     @Bean
@@ -261,7 +263,6 @@ public class OpenIdConfiguration {
         m.setMappings(mappings);
         return m;
     }
-
 
     @PostConstruct
     protected void initializeRootApplicationContext() {

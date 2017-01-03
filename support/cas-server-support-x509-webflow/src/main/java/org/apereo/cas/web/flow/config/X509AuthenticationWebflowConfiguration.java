@@ -49,18 +49,12 @@ public class X509AuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @Bean
     public CasWebflowConfigurer x509WebflowConfigurer() {
-        final X509WebflowConfigurer w = new X509WebflowConfigurer();
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new X509WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
     @Bean
     public Action x509Check() {
-        final X509CertificateCredentialsNonInteractiveAction a = new X509CertificateCredentialsNonInteractiveAction();
-        a.setAdaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy);
-        a.setInitialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver);
-        a.setServiceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver);
-        return a;
+        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy);
     }
 }

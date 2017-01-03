@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -23,35 +24,37 @@ import java.util.Map;
  * @since 5.0.0
  */
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements
-        SamlProfileObjectBuilder<AttributeStatement> {
+                                                                                          SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
-    private SamlAttributeEncoder samlAttributeEncoder;
-    
+
+    private final SamlAttributeEncoder samlAttributeEncoder;
+
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
+                                                    final SamlAttributeEncoder samlAttributeEncoder) {
+        super(configBean);
+        this.samlAttributeEncoder = samlAttributeEncoder;
+    }
+
     @Override
     public AttributeStatement build(final AuthnRequest authnRequest,
-                                    final HttpServletRequest request, final HttpServletResponse response,
-                                    final Assertion assertion, final SamlRegisteredService service,
-                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+                                    final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final Assertion assertion,
+                                    final SamlRegisteredService service,
+                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         return buildAttributeStatement(assertion, authnRequest, service, adaptor);
     }
 
-    private AttributeStatement buildAttributeStatement(final Assertion assertion, 
+    private AttributeStatement buildAttributeStatement(final Assertion assertion,
                                                        final AuthnRequest authnRequest,
                                                        final SamlRegisteredService service,
-                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encode(authnRequest, attributes, service, adaptor);
         return newAttributeStatement(encodedAttrs, casProperties.getAuthn().getSamlIdp().getResponse().isUseAttributeFriendlyName());
-    }
-
-    public void setSamlAttributeEncoder(final SamlAttributeEncoder samlAttributeEncoder) {
-        this.samlAttributeEncoder = samlAttributeEncoder;
     }
 }

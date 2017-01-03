@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableMap;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import org.apache.commons.collections.map.HashedMap;
@@ -38,6 +37,7 @@ import org.springframework.core.io.Resource;
 import javax.naming.directory.SearchControls;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +150,8 @@ public class CasPersonDirectoryConfiguration {
             if (foundAttrs) {
                 LOGGER.debug("Found attributes which are resolved from authentication sources. Static attributes are ignored");
             } else {
-                LOGGER.warn("Found and added static attributes to the attribute repository");
+                LOGGER.warn("Found and added static attributes {} to the attribute repository",
+                        casProperties.getAuthn().getAttributeRepository().getAttributes().keySet());
                 list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
             }
         } else {
@@ -180,7 +181,7 @@ public class CasPersonDirectoryConfiguration {
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
                 }
 
-                jdbcDao.setQueryAttributeMapping(ImmutableMap.of("username", jdbc.getUsername()));
+                jdbcDao.setQueryAttributeMapping(Collections.singletonMap("username", jdbc.getUsername()));
                 final Map<String, String> mapping = attrs.getAttributes();
                 if (mapping != null && !mapping.isEmpty()) {
                     LOGGER.debug("Configured result attribute mapping for {} to be {}", jdbc.getUrl(), attrs.getAttributes());
@@ -254,7 +255,7 @@ public class CasPersonDirectoryConfiguration {
                     final Map<String, Object> attrs = getAttributesForUser(a.get(0).toString());
                     LOGGER.debug("Groovy-based attributes found are {}", attrs);
                     attrs.forEach((k, v) -> {
-                        final List<Object> values = new ArrayList<>(CollectionUtils.convertValueToCollection(v));
+                        final List<Object> values = new ArrayList<>(CollectionUtils.toCollection(v));
                         LOGGER.debug("Adding Groovy-based attribute {} with value(s) {}", k, values);
                         results.put(k, values);
                     });

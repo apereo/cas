@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -10,6 +9,8 @@ import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Parent class for test cases around {@link PrincipalAttributesRepository}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -38,11 +40,11 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     @Before
     public void setUp() {
         attributes = new HashMap<>();
-        attributes.put("a1", Lists.newArrayList("v1", "v2", "v3"));
-        attributes.put(MAIL, Lists.newArrayList("final@example.com"));
-        attributes.put("a6", Lists.newArrayList("v16", "v26", "v63"));
-        attributes.put("a2", Lists.newArrayList("v4"));
-        attributes.put("username", Lists.newArrayList("uid"));
+        attributes.put("a1", new ArrayList(Arrays.asList("v1", "v2", "v3")));
+        attributes.put(MAIL, new ArrayList(Arrays.asList("final@example.com")));
+        attributes.put("a6", new ArrayList(Arrays.asList("v16", "v26", "v63")));
+        attributes.put("a2", new ArrayList(Arrays.asList("v4")));
+        attributes.put("username", new ArrayList(Arrays.asList("uid")));
 
         this.dao = mock(IPersonAttributeDao.class);
         final IPersonAttributes person = mock(IPersonAttributes.class);
@@ -51,7 +53,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         when(dao.getPerson(any(String.class))).thenReturn(person);
 
         this.principal = this.principalFactory.createPrincipal("uid",
-                Collections.singletonMap(MAIL, Lists.newArrayList("final@school.com")));
+                Collections.singletonMap(MAIL, new ArrayList(Arrays.asList("final@school.com"))));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
@@ -84,7 +86,6 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
-
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
             assertEquals(repository.getAttributes(this.principal).get(MAIL).toString(), "final@school.com");
         }

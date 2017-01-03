@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import com.google.common.collect.ImmutableMap;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -28,11 +27,16 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
-
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    public AbstractAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
+                                        final CasWebflowEventResolver webflowEventResolver, final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
+        this.initialAuthenticationAttemptWebflowEventResolver = delegatingWebflowEventResolver;
+        this.serviceTicketRequestWebflowEventResolver = webflowEventResolver;
+        this.adaptiveAuthenticationPolicy = adaptiveAuthenticationPolicy;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -41,15 +45,13 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
 
         if (!adaptiveAuthenticationPolicy.apply(agent, geoLocation)) {
             final String msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
-            final Map map = ImmutableMap.of(
+            final Map<String, Class<? extends Exception>> map = Collections.singletonMap(
                     UnauthorizedAuthenticationException.class.getSimpleName(),
                     UnauthorizedAuthenticationException.class);
             final AuthenticationException error = new AuthenticationException(msg, map, Collections.emptyMap());
             return new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                     new LocalAttributeMap(CasWebflowConstants.TRANSITION_ID_ERROR, error));
-
         }
-
 
         final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
@@ -60,18 +62,6 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         final Event finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
-    }
-
-    public void setServiceTicketRequestWebflowEventResolver(final CasWebflowEventResolver r) {
-        this.serviceTicketRequestWebflowEventResolver = r;
-    }
-
-    public void setInitialAuthenticationAttemptWebflowEventResolver(final CasDelegatingWebflowEventResolver r) {
-        this.initialAuthenticationAttemptWebflowEventResolver = r;
-    }
-
-    public void setAdaptiveAuthenticationPolicy(final AdaptiveAuthenticationPolicy a) {
-        this.adaptiveAuthenticationPolicy = a;
     }
 
     private void fireEventHooks(final Event e, final RequestContext ctx) {

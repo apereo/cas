@@ -17,6 +17,8 @@ import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.soap.common.SOAPObject;
+import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -64,7 +66,7 @@ import java.util.List;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -93,7 +95,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected OpenSamlConfigBean configBean;
 
-    public void setConfigBean(final OpenSamlConfigBean configBean) {
+    public AbstractSamlObjectBuilder(final OpenSamlConfigBean configBean) {
         this.configBean = configBean;
     }
 
@@ -107,6 +109,24 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
+
+
+    /**
+     * New soap object t.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the object type
+     * @return the t
+     */
+    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
+        final QName qName = getSamlObjectQName(objectType);
+        final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());

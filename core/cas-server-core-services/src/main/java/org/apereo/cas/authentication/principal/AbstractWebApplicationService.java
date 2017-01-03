@@ -2,16 +2,15 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.logout.SingleLogoutService;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -20,20 +19,24 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
-public abstract class AbstractWebApplicationService implements SingleLogoutService {
+public abstract class AbstractWebApplicationService implements WebApplicationService {
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    private static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
-
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** The id of the service. */
+    /**
+     * The id of the service.
+     */
     @JsonProperty
     private String id;
 
-    /** The original url provided, used to reconstruct the redirect url. */
+    /**
+     * The original url provided, used to reconstruct the redirect url.
+     */
     @JsonProperty
     private String originalUrl;
 
@@ -44,25 +47,19 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private boolean loggedOutAlready;
 
-    @JsonProperty
-    private ResponseBuilder<WebApplicationService> responseBuilder;
-
     private ValidationResponseType format = ValidationResponseType.XML;
 
     /**
      * Instantiates a new abstract web application service.
      *
-     * @param id the id
+     * @param id          the id
      * @param originalUrl the original url
-     * @param artifactId the artifact id
-     * @param responseBuilder the response builder
+     * @param artifactId  the artifact id
      */
-    protected AbstractWebApplicationService(final String id, final String originalUrl,
-            final String artifactId, final ResponseBuilder<WebApplicationService> responseBuilder) {
+    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
-        this.responseBuilder = responseBuilder;
     }
 
     @Override
@@ -78,7 +75,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     /**
@@ -136,11 +133,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.loggedOutAlready = loggedOutAlready;
     }
 
-    @JsonProperty("responseBuilder")
-    public ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
-        return this.responseBuilder;
-    }
-
     @JsonIgnore
     @Override
     public ValidationResponseType getFormat() {
@@ -150,12 +142,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     public void setFormat(final ValidationResponseType format) {
         this.format = format;
     }
-
-    @Override
-    public Response getResponse(final String ticketId) {
-        return this.responseBuilder.build(this, ticketId);
-    }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -176,7 +162,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
                 .append(this.artifactId, rhs.artifactId)
                 .append(this.principal, rhs.principal)
                 .append(this.loggedOutAlready, rhs.loggedOutAlready)
-                .append(this.responseBuilder, rhs.responseBuilder)
                 .append(this.format, rhs.format);
         return builder.isEquals();
     }
@@ -189,7 +174,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
                 .append(artifactId)
                 .append(principal)
                 .append(loggedOutAlready)
-                .append(responseBuilder)
                 .append(format)
                 .toHashCode();
     }

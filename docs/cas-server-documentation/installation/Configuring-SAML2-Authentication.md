@@ -15,6 +15,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/cas/idp/profile/SAML2/POST/SSO`
 - `/cas/idp/profile/SAML2/POST/SLO`
 - `/cas/idp/profile/SAML2/Unsolicited/SSO`
+- `/cas/idp/profile/SAML2/SOAP/ECP`
 
 SAML2 IdP `Unsolicited/Initiated` SSO profile supports the following parameters:
 
@@ -36,7 +37,8 @@ it will be displayed. If metadata is absent, one will be generated automatically
 CAS configuration below dictates where metadata files/keys will be generated and stored.
 
 <div class="alert alert-info"><strong>Review Metadata</strong><p>Due to the way CAS handles the generation of metadata via external 
-libraries, the generated metadata MUST be reviewed and massaged slightly to match the CAS configuration. All other elements MUST be 
+libraries, the generated metadata MUST be reviewed and massaged slightly to match the CAS configuration and to account for
+endpoints and bindings that may be of interest to the deployment, such as ECP. All other elements MUST be 
 removed.</p></div>
 
 Here is a generated metadata file as an example:
@@ -141,8 +143,8 @@ The following fields are available for SAML services:
 
 | Field                                | Description
 |--------------------------------------|------------------------------------------------------------------
-| `metadataLocation`                   | Location of service metadata defined from system files, classpath or URL resources. 
-| `metadataSignatureLocation`          | Location of the metadata *public key* to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
+| `metadataLocation`                   | Location of service metadata defined from system files, classpath, directories or URL resources. 
+| `metadataSignatureLocation`          | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
 | `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.

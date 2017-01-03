@@ -2,8 +2,11 @@ package org.apereo.cas.digest.web.flow;
 
 import org.apereo.cas.web.flow.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+
 /**
  * This is {@link DigestAuthenticationWebflowConfigurer}.
  *
@@ -11,6 +14,10 @@ import org.springframework.webflow.engine.Flow;
  * @since 5.0.0
  */
 public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    public DigestAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    }
 
     @Override
     protected void doInitialize() throws Exception {

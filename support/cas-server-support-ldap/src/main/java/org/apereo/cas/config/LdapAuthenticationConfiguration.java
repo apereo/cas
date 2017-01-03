@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
@@ -34,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.time.Period;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,7 +95,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setServicesManager(servicesManager);
                     handler.setName(l.getName());
 
-                    final List<String> additionalAttrs = Lists.newArrayList(l.getAdditionalAttributes());
+                    final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttrs.add(l.getPrincipalAttributeId());
                     }
@@ -160,7 +160,7 @@ public class LdapAuthenticationConfiguration {
 
                     LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
                     final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-                    resolver.setChain(Lists.newArrayList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
+                    resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
                     this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
                 });
     }
@@ -245,20 +245,33 @@ public class LdapAuthenticationConfiguration {
         } else {
             auth = new Authenticator(resolver, getPooledCompareAuthenticationHandler(l));
         }
-        auth.setEntryResolver(Beans.newSearchEntryResolver(l));
 
+        if (l.isEnhanceWithEntryResolver()) {
+            auth.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
         return auth;
     }
 
     private static Authenticator getDirectBindAuthenticator(final LdapAuthenticationProperties l) {
         final FormatDnResolver resolver = new FormatDnResolver(l.getBaseDn());
-        return new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+        final Authenticator authenticator = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authenticator.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
+        return authenticator;
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final LdapAuthenticationProperties l) {
+        if (StringUtils.isBlank(l.getDnFormat())) {
+            throw new IllegalArgumentException("Dn format cannot be empty/blank for active directory authentication");
+        }
         final FormatDnResolver resolver = new FormatDnResolver(l.getDnFormat());
         final Authenticator authn = new Authenticator(resolver, getPooledBindAuthenticationHandler(l));
-        authn.setEntryResolver(Beans.newSearchEntryResolver(l));
+
+        if (l.isEnhanceWithEntryResolver()) {
+            authn.setEntryResolver(Beans.newSearchEntryResolver(l));
+        }
         return authn;
     }
 

@@ -1,8 +1,10 @@
 package org.apereo.cas.mgmt.config;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
@@ -27,6 +29,7 @@ import org.apereo.cas.mgmt.services.web.factory.ProxyPolicyMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -78,6 +81,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -107,15 +111,18 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @Bean
     public Filter characterEncodingFilter() {
         return new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true);
     }
 
-
     @Bean
     public Authorizer requireAnyRoleAuthorizer() {
-        return new RequireAnyRoleAuthorizer(StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles()));
+        return new RequireAnyRoleAuthorizer(casProperties.getMgmt().getAdminRoles());
     }
 
     @RefreshScope
@@ -174,7 +181,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ParametersAsStringResourceResolver saveServiceResourceResolver() {
+    public AuditResourceResolver saveServiceResourceResolver() {
         return new ParametersAsStringResourceResolver();
     }
 
@@ -201,7 +208,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect() {
         return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), ImmutableList.of(slf4jAuditTrailManager()),
+                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
                 auditActionResolverMap(),
                 auditResourceResolverMap());
     }
@@ -228,24 +235,19 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public AuthorizationGenerator authorizationGenerator() {
-        if (StringUtils.hasText(casProperties.getMgmt().getAuthzAttributes())) {
-
-            if ("*".equals(casProperties.getMgmt().getAuthzAttributes())) {
-                return commonProfile -> commonProfile.addRoles(
-                        StringUtils.commaDelimitedListToSet(casProperties.getMgmt().getAdminRoles())
-                );
+        final List<String> authzAttributes = casProperties.getMgmt().getAuthzAttributes();
+        if (!authzAttributes.isEmpty()) {
+            if ("*".equals(authzAttributes)) {
+                return commonProfile -> commonProfile.addRoles(casProperties.getMgmt().getAdminRoles());
             }
-            return new FromAttributesAuthorizationGenerator(
-                    StringUtils.commaDelimitedListToStringArray(casProperties.getMgmt().getAuthzAttributes()),
-                    new String[]{}
-            );
+            return new FromAttributesAuthorizationGenerator(authzAttributes.toArray(new String[]{}), new String[]{});
         }
         return new SpringSecurityPropertiesAuthorizationGenerator(userProperties());
     }
 
     @Bean
     public CookieLocaleResolver localeResolver() {
-        final CookieLocaleResolver bean = new CookieLocaleResolver() {
+        return new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 final Locale locale = request.getLocale();
@@ -256,25 +258,27 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
                 return new Locale(casProperties.getMgmt().getDefaultLocale());
             }
         };
+    }
+
+    @RefreshScope
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        final LocaleChangeInterceptor bean = new LocaleChangeInterceptor();
+        bean.setParamName(this.casProperties.getLocale().getParamName());
         return bean;
     }
 
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        return new LocaleChangeInterceptor();
-    }
-
-    @Bean
-    public Map auditResourceResolverMap() {
-        final Map<String, AuditResourceResolver> map = new HashMap<>();
+    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
+        final Map<String, AuditResourceResolver> map = new HashMap<>(2);
         map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", saveServiceResourceResolver());
         return map;
     }
 
     @Bean
-    public Map auditActionResolverMap() {
-        final Map<String, AuditActionResolver> map = new HashMap<>();
+    public Map<String, AuditActionResolver> auditActionResolverMap() {
+        final Map<String, AuditActionResolver> map = new HashMap<>(2);
         map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
         map.put("SAVE_SERVICE_ACTION_RESOLVER", saveServiceActionResolver());
         return map;
@@ -299,24 +303,14 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public RegisteredServiceFactory registeredServiceFactory() {
-        final DefaultRegisteredServiceFactory f = new DefaultRegisteredServiceFactory();
-        f.setAccessStrategyMapper(defaultAccessStrategyMapper());
-        f.setAttributeReleasePolicyMapper(defaultAttributeReleasePolicyMapper());
-        f.setProxyPolicyMapper(defaultProxyPolicyMapper());
-        f.setRegisteredServiceMapper(defaultRegisteredServiceMapper());
-        f.setUsernameAttributeProviderMapper(usernameAttributeProviderMapper());
-
         this.formDataPopulators.add(attributeFormDataPopulator());
-        f.setFormDataPopulators(this.formDataPopulators);
-        return f;
+        return new DefaultRegisteredServiceFactory(defaultAccessStrategyMapper(), defaultAttributeReleasePolicyMapper(), defaultProxyPolicyMapper(),
+                defaultRegisteredServiceMapper(), usernameAttributeProviderMapper(), formDataPopulators);
     }
 
     @Bean
     public AttributeReleasePolicyMapper defaultAttributeReleasePolicyMapper() {
-        final DefaultAttributeReleasePolicyMapper m = new DefaultAttributeReleasePolicyMapper();
-        m.setAttributeFilterMapper(defaultAttributeFilterMapper());
-        m.setPrincipalAttributesRepositoryMapper(defaultPrincipalAttributesRepositoryMapper());
-        return m;
+        return new DefaultAttributeReleasePolicyMapper(defaultAttributeFilterMapper(), defaultPrincipalAttributesRepositoryMapper());
     }
 
     @Bean
@@ -351,31 +345,19 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public ManageRegisteredServicesMultiActionController manageRegisteredServicesMultiActionController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
+            @Qualifier("servicesManager") final ServicesManager servicesManager) {
 
-        final ManageRegisteredServicesMultiActionController c =
-                new ManageRegisteredServicesMultiActionController(
-                        servicesManager,
-                        registeredServiceFactory(),
-                        getDefaultServiceUrl());
-        return c;
+        return new ManageRegisteredServicesMultiActionController(servicesManager, registeredServiceFactory(), webApplicationServiceFactory,
+                getDefaultServiceUrl());
     }
 
     @Bean
-    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(
-            @Qualifier("servicesManager")
-            final ServicesManager servicesManager) {
-        final RegisteredServiceSimpleFormController c = new RegisteredServiceSimpleFormController(
-                servicesManager,
-                registeredServiceFactory()
-        );
-        return c;
+    public RegisteredServiceSimpleFormController registeredServiceSimpleFormController(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+        return new RegisteredServiceSimpleFormController(servicesManager, registeredServiceFactory());
     }
 
     private String getDefaultServiceUrl() {
-        return casProperties.getMgmt().getServerName()
-                .concat(serverProperties.getContextPath()).concat("/callback");
+        return casProperties.getMgmt().getServerName().concat(serverProperties.getContextPath()).concat("/callback");
     }
 
     @Bean
@@ -384,12 +366,12 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Map uniqueIdGeneratorsMap() {
+    public Map<String, UniqueTicketIdGenerator> uniqueIdGeneratorsMap() {
         return new HashMap<>();
     }
 
     @Bean
-    public List authenticationMetadataPopulators() {
+    public List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators() {
         return new ArrayList<>();
     }
 

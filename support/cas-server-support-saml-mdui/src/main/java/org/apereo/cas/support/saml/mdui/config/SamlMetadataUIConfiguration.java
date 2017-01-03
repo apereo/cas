@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml.mdui.config;
 
-import com.google.common.collect.ImmutableList;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -9,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.ChainingMetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.DynamicMetadataResolverAdapter;
@@ -22,13 +21,6 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
-import org.opensaml.security.credential.impl.StaticCredentialResolver;
-import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
-import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
-import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
-import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -86,11 +78,7 @@ public class SamlMetadataUIConfiguration {
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
     @Bean
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        final SamlMetadataUIWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer();
-        w.setSamlMetadataUIParserAction(samlMetadataUIParserAction());
-        w.setLoginFlowDefinitionRegistry(loginFlowDefinitionRegistry);
-        w.setFlowBuilderServices(flowBuilderServices);
-        return w;
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, samlMetadataUIParserAction());
     }
 
     @Bean
@@ -128,9 +116,7 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-
             final String[] arr = entry.split(DEFAULT_SEPARATOR);
-
             final String metadataFile = arr[0];
             final String signingKey = arr.length > 1 ? arr[1] : null;
 
@@ -140,39 +126,19 @@ public class SamlMetadataUIConfiguration {
             }
 
             if (StringUtils.isNotEmpty(signingKey)) {
-                final BasicResourceCredentialFactoryBean credential = new BasicResourceCredentialFactoryBean();
-                credential.setPublicKeyInfo(this.resourceLoader.getResource(signingKey));
-                credential.afterPropertiesSet();
-                final StaticCredentialResolver credentialResolver =
-                        new StaticCredentialResolver(credential.getObject());
-
-                final BasicProviderKeyInfoCredentialResolver keyInfoResolver =
-                        new BasicProviderKeyInfoCredentialResolver(
-                                ImmutableList.of(
-                                        new RSAKeyValueProvider(),
-                                        new DSAKeyValueProvider(),
-                                        new DEREncodedKeyValueProvider(),
-                                        new InlineX509DataProvider()
-                                )
-                        );
-                final ExplicitKeySignatureTrustEngine engine =
-                        new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoResolver);
-
-                final SignatureValidationFilter sigFilter = new SignatureValidationFilter(engine);
+                final SignatureValidationFilter sigFilter = SamlUtils.buildSignatureValidationFilter(this.resourceLoader, signingKey);
                 sigFilter.setRequireSignedRoot(casProperties.getSamlMetadataUi().isRequireSignedRoot());
                 filters.add(sigFilter);
             }
             chain.setFilters(filters);
             resources.put(this.resourceLoader.getResource(metadataFile), chain);
         }));
-
     }
 
     private MetadataResolverAdapter getDynamicMetadataResolverAdapter() {
         final DynamicMetadataResolverAdapter adapter = new DynamicMetadataResolverAdapter();
         configureAdapter(adapter);
         return adapter;
-
     }
 
     private MetadataResolverAdapter getStaticMetadataResolverAdapter() {

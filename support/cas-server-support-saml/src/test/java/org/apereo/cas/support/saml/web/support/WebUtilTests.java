@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.support;
 
-import com.google.common.collect.Lists;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -21,11 +22,12 @@ public class WebUtilTests {
 
     @Test
     public void verifyFindService() {
-        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+        final DefaultArgumentExtractor casArgumentExtractor =
+                new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        final Service service = WebUtils.getService(Lists.newArrayList(casArgumentExtractor), request);
+        final Service service = WebUtils.getService(Arrays.asList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());
@@ -34,12 +36,9 @@ public class WebUtilTests {
     @Test
     public void verifyFoundNoService() {
         final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
-
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
-
+        request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         final Service service = WebUtils.getService(Collections.singletonList(casArgumentExtractor), request);
-
         assertNull(service);
     }
 }

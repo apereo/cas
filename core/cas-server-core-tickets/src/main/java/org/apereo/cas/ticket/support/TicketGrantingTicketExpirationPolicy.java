@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
@@ -21,9 +22,12 @@ import java.time.temporal.ChronoUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = 7670537200691354820L;
 
     /**
@@ -32,19 +36,24 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
-    /** Maximum time this ticket is valid.  */
+    /**
+     * Maximum time this ticket is valid.
+     */
     private long maxTimeToLiveInSeconds;
 
-    /** Time to kill in seconds. */
+    /**
+     * Time to kill in seconds.
+     */
     private long timeToKillInSeconds;
 
-    public TicketGrantingTicketExpirationPolicy() {}
+    public TicketGrantingTicketExpirationPolicy() {
+    }
 
     /**
      * Instantiates a new Ticket granting ticket expiration policy.
      *
      * @param maxTimeToLive the max time to live
-     * @param timeToKill the time to kill
+     * @param timeToKill    the time to kill
      */
     @JsonCreator
     public TicketGrantingTicketExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
@@ -67,7 +76,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime creationTime = ticketState.getCreationTime();
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
-        
+
         // Ticket has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {

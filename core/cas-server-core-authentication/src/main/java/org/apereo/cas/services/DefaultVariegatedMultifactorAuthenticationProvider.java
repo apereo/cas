@@ -1,7 +1,5 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
@@ -12,6 +10,7 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +32,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    private Collection<MultifactorAuthenticationProvider> providers = Sets.newHashSet();
+    private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
     public DefaultVariegatedMultifactorAuthenticationProvider() {
     }
@@ -60,7 +59,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public String getId() {
-        return StringUtils.join(providers.stream().map(p -> p.getId()).collect(Collectors.toList()), '|');
+        return providers.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.joining("|"));
     }
 
     @Override

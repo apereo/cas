@@ -36,9 +36,7 @@ public class CasCoreEventsConfiguration {
     @Autowired
     @Bean
     public DefaultCasEventListener defaultCasEventListener(@Qualifier("casEventRepository") final CasEventRepository casEventRepository) {
-        final DefaultCasEventListener l = new DefaultCasEventListener();
-        l.setCasEventRepository(casEventRepository);
-        return l;
+        return new DefaultCasEventListener(casEventRepository);
     }
 
     @ConditionalOnMissingBean(name = "casEventRepository")

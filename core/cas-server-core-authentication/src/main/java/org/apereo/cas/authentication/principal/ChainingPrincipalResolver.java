@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential, final Principal principal) {
-        final List<Principal> principals = Lists.newArrayList();
+        final List<Principal> principals = new ArrayList<>();
         for (final PrincipalResolver resolver : chain) {
             if (resolver.supports(credential)) {
                 LOGGER.debug("Invoking principal resolver {}", resolver.getClass().getSimpleName());
@@ -72,7 +73,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             return NullPrincipal.getInstance();
         }
 
-        final Map<String, Object> attributes = Maps.newHashMap();
+        final Map<String, Object> attributes = new HashMap<>();
         principals.forEach(p -> {
             if (p != null && p.getAttributes() != null && !p.getAttributes().isEmpty()) {
                 LOGGER.debug("Adding attributes {} for the final principal", p.getAttributes());
@@ -83,8 +84,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         final long count = principals.stream().map(p -> p.getId()).distinct().collect(Collectors.toSet()).size();
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique",
-                    Maps.newHashMap(),
-                    Maps.newHashMap());
+                    Collections.emptyMap(),
+                    Collections.emptyMap());
         }
         final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);

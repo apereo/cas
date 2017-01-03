@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.view;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
-import org.apereo.cas.services.DefaultServicesManagerImpl;
 import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
@@ -23,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,13 +50,12 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(list);
         this.response = new Saml10SuccessResponseView();
-        final DefaultServicesManagerImpl mgmr = new DefaultServicesManagerImpl(dao);
+        final DefaultServicesManager mgmr = new DefaultServicesManager(dao);
         mgmr.load();
         this.response.setServicesManager(mgmr);
         this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
         
-        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder();
-        builder.setConfigBean(this.configBean);
+        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder(configBean);
         this.response.setSamlObjectBuilder(builder);
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
@@ -69,7 +68,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("testAttribute", "testValue");
         attributes.put("testEmptyCollection", Collections.emptyList());
-        attributes.put("testAttributeCollection", Lists.newArrayList("tac1", "tac2"));
+        attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("testPrincipal", attributes);
 
         final Map<String, Object> authAttributes = new HashMap<>();

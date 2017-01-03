@@ -2,19 +2,18 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultHandlerResult;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.oauth.OAuthConstants;
-import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
+import org.apereo.cas.ticket.accesstoken.AccessTokenImpl;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.junit.Test;
@@ -26,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +40,8 @@ import static org.junit.Assert.*;
  */
 
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -110,7 +112,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyOK() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
@@ -127,12 +129,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final ObjectMapper mapper = new ObjectMapper();
-
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(entity.getBody());
+        final JsonNode expectedObj = MAPPER.readTree(expected);
+        final JsonNode receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
@@ -146,7 +146,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        final List<String> list = Lists.newArrayList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
@@ -163,12 +163,10 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
-        final ObjectMapper mapper = new ObjectMapper();
-
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
-        final JsonNode expectedObj = mapper.readTree(expected);
-        final JsonNode receivedObj = mapper.readTree(entity.getBody());
+        final JsonNode expectedObj = MAPPER.readTree(expected);
+        final JsonNode receivedObj = MAPPER.readTree(entity.getBody());
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");

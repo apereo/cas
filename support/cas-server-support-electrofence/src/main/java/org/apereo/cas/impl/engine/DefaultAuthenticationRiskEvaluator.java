@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.engine;
 
-import com.google.common.collect.Lists;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
@@ -10,6 +9,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +41,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
             return new AuthenticationRiskScore(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE);
         }
 
-        final List<AuthenticationRiskScore> scores = Lists.newArrayList();
+        final List<AuthenticationRiskScore> scores = new ArrayList<>();
         this.calculators.stream().forEach(r -> scores.add(r.calculate(authentication, service, request)));
         final BigDecimal sum = scores.stream().map(r -> r.getScore()).reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
         final BigDecimal score = sum.divide(BigDecimal.valueOf(this.calculators.size()), 2, BigDecimal.ROUND_UP);

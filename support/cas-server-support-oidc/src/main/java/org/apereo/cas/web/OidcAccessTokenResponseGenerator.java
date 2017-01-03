@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.OidcConstants;
@@ -107,12 +106,12 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setSubject(principal.getId());
 
         if (authentication.getAttributes().containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
-            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+            final Collection<Object> val = CollectionUtils.toCollection(
                     authentication.getAttributes().get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
         if (authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            final Collection<Object> val = CollectionUtils.convertValueToCollection(
+            final Collection<Object> val = CollectionUtils.toCollection(
                     authentication.getAttributes().get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[] {}));
         }
@@ -120,8 +119,9 @@ public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponse
         claims.setClaim(OAuthConstants.STATE, authentication.getAttributes().get(OAuthConstants.STATE));
         claims.setClaim(OAuthConstants.NONCE, authentication.getAttributes().get(OAuthConstants.NONCE));
 
-        final Sets.SetView<String> setView = Sets.intersection(OidcConstants.CLAIMS, principal.getAttributes().keySet());
-        setView.immutableCopy().stream().forEach(k -> claims.setClaim(k, principal.getAttributes().get(k)));
+        principal.getAttributes().entrySet().stream()
+                .filter(entry -> OidcConstants.CLAIMS.contains(entry.getKey()))
+                .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
             claims.setClaim(OidcConstants.CLAIM_PREFERRED_USERNAME, profile.getId());
