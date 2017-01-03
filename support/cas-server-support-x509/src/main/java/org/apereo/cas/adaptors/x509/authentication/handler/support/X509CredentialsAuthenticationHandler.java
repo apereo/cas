@@ -123,7 +123,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                 hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
             }
 
-            // getBasicConstraints returns pathLenContraint which is generally
+            // getBasicConstraints returns pathLenConstraints which is generally
             // >=0 when this is a CA cert and -1 when it's not
             final int pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
