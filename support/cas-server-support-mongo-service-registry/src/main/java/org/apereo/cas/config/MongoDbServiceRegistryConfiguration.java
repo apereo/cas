@@ -36,16 +36,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    /**
-     * Persistence exception translation post processor persistence exception translation post processor.
-     *
-     * @return the persistence exception translation post processor
-     */
-    public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
-        return new PersistenceExceptionTranslationPostProcessor();
-    }
-
+    
     @Override
     protected String getDatabaseName() {
         return casProperties.getServiceRegistry().getMongo().getServiceRegistryCollection();
@@ -63,12 +54,7 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
                                 casProperties.getServiceRegistry().getMongo().getUserPassword().toCharArray())),
                 mongoClientOptions());
     }
-
-    /**
-     * Mongo mongo client options factory bean.
-     *
-     * @return the mongo client options factory bean
-     */
+    
     @RefreshScope
     @Bean
     public MongoClientOptions mongoClientOptions() {
