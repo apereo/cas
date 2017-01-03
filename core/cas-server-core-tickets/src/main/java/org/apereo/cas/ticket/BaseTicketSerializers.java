@@ -32,6 +32,8 @@ public abstract class BaseTicketSerializers {
      */
     public static StringSerializer<ProxyGrantingTicket> getProxyGrantingTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<ProxyGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
+            private static final long serialVersionUID = 7089208351327601379L;
+
             @Override
             protected Class<ProxyGrantingTicket> getTypeToSerialize() {
                 return ProxyGrantingTicket.class;
@@ -46,6 +48,8 @@ public abstract class BaseTicketSerializers {
      */
     public static StringSerializer<ProxyTicket> getProxyTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<ProxyTicket>(MINIMAL_PRETTY_PRINTER) {
+            private static final long serialVersionUID = -6343596853082798477L;
+
             @Override
             protected Class<ProxyTicket> getTypeToSerialize() {
                 return ProxyTicket.class;
@@ -60,6 +64,8 @@ public abstract class BaseTicketSerializers {
      */
     public static StringSerializer<TicketGrantingTicket> getTicketGrantingTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
+            private static final long serialVersionUID = 1527874389457723545L;
+
             @Override
             protected Class<TicketGrantingTicket> getTypeToSerialize() {
                 return TicketGrantingTicket.class;
@@ -74,6 +80,8 @@ public abstract class BaseTicketSerializers {
      */
     public static StringSerializer<ServiceTicket> getServiceTicketSerializer() {
         return new AbstractJacksonBackedStringSerializer<ServiceTicket>(MINIMAL_PRETTY_PRINTER) {
+            private static final long serialVersionUID = 8959617299162115085L;
+
             @Override
             protected Class<ServiceTicket> getTypeToSerialize() {
                 return ServiceTicket.class;
@@ -102,11 +110,11 @@ public abstract class BaseTicketSerializers {
      * Deserialize ticket.
      *
      * @param <T>      the type parameter
-     * @param ticketId the ticket id
+     * @param ticketContent the ticket id
      * @param type     the type
      * @return the ticket instance.
      */
-    public static <T extends Ticket> T deserializeTicket(final String ticketId, final String type) {
+    public static <T extends Ticket> T deserializeTicket(final String ticketContent, final String type) {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
         }
@@ -118,7 +126,7 @@ public abstract class BaseTicketSerializers {
                 clazz = (Class<T>) Class.forName(type);
                 TICKET_TYPE_CACHE.put(type, clazz);
             }
-            return deserializeTicket(ticketId, clazz);
+            return deserializeTicket(ticketContent, clazz);
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -127,20 +135,20 @@ public abstract class BaseTicketSerializers {
     /**
      * Deserialize ticket.
      *
-     * @param <T>      the type parameter
-     * @param ticketId the ticket id
-     * @param clazz    the clazz
+     * @param <T>           the type parameter
+     * @param ticketContent the ticket id
+     * @param clazz         the clazz
      * @return the ticket instance
      */
-    public static <T extends Ticket> T deserializeTicket(final String ticketId, final Class<T> clazz) {
+    public static <T extends Ticket> T deserializeTicket(final String ticketContent, final Class<T> clazz) {
         Ticket ticket = null;
         if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
-            ticket = getTicketGrantingTicketSerializer().from(ticketId);
+            ticket = getTicketGrantingTicketSerializer().from(ticketContent);
         } else if (ServiceTicket.class.isAssignableFrom(clazz)) {
-            ticket = getServiceTicketSerializer().from(ticketId);
+            ticket = getServiceTicketSerializer().from(ticketContent);
         }
         if (ticket == null) {
-            throw new InvalidTicketException(ticketId);
+            throw new InvalidTicketException(clazz.getName());
         }
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId()

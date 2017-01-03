@@ -49,7 +49,8 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
 
     @Override
     protected String getDatabaseName() {
-        return casProperties.getTicket().getRegistry().getMongo().getCollectionName();
+        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        return mongo.getDatabaseName();
     }
 
     @Override
