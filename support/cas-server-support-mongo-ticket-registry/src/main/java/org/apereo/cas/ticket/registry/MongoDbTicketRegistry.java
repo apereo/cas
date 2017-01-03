@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -56,7 +57,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
         logger.debug("Creating indices on collection {} to auto-expire documents...", this.collectionName);
         final DBCollection collection = mongoTemplate.getCollection(this.collectionName);
-        collection.createIndex(new BasicDBObject("expireAt", 1), new BasicDBObject("expireAfterSeconds", 0));
+        collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1), 
+                new BasicDBObject("expireAfterSeconds", 0));
 
         logger.info("Configured MongoDb Ticket Registry instance {}", this.collectionName);
     }
@@ -65,7 +67,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public Ticket updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
-            this.mongoTemplate.save(buildTicketAsDocument(ticket), this.collectionName);
+            final TicketHolder holder = buildTicketAsDocument(ticket);
+            this.mongoTemplate.updateFirst(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId())),
+                    Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson()), this.collectionName);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
         }
@@ -91,7 +95,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 logger.debug("Ticket ticketId {} could not be found", ticketId);
                 return null;
             }
-            final TicketHolder d = this.mongoTemplate.findOne(new Query(Criteria.where("ticketId").is(encTicketId)),
+            final TicketHolder d = this.mongoTemplate.findOne(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId)),
                     TicketHolder.class, this.collectionName);
             if (d != null) {
                 return deserializeTicketFromMongoDocument(d);
@@ -122,7 +126,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
-            this.mongoTemplate.remove(new Query(Criteria.where("ticketId").is(ticketId)), this.collectionName);
+            this.mongoTemplate.remove(new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId)), this.collectionName);
             return true;
         } catch (final Exception e) {
             logger.error("Failed deleting {}: {}", ticketId, e);
@@ -141,7 +145,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
         return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
     }
-    
+
     private TicketHolder buildTicketAsDocument(final Ticket ticket) {
         final String json = serializeTicketForMongoDocument(ticket);
         return new TicketHolder(json, ticket.getId(), ticket.getClass().getName(), getTimeToLive(ticket));
