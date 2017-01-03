@@ -101,7 +101,6 @@ public class DuoIntegration {
         return this;
     }
 
-
     /**
      * Is enrollment status bypass boolean.
      *

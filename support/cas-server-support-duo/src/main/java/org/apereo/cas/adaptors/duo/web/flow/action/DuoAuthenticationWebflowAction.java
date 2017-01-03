@@ -12,14 +12,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class DuoAuthenticationWebflowAction extends AbstractAction {
-    private CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
+
+    private final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
+
+    public DuoAuthenticationWebflowAction(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver) {
+        this.duoAuthenticationWebflowEventResolver = duoAuthenticationWebflowEventResolver;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.duoAuthenticationWebflowEventResolver.resolveSingle(requestContext);
-    }
-
-    public void setDuoAuthenticationWebflowEventResolver(final CasWebflowEventResolver duoAuthenticationWebflowEventResolver) {
-        this.duoAuthenticationWebflowEventResolver = duoAuthenticationWebflowEventResolver;
     }
 }
