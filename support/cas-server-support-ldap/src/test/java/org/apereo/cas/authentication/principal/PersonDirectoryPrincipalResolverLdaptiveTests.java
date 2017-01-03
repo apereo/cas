@@ -31,6 +31,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"/ldap-context.xml", "/resolver-context.xml"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
 
+    private static final String ATTR_NAME_PASSWORD = "password";
+    
     @Autowired
     private LdaptivePersonAttributeDao attributeDao;
 
@@ -43,7 +45,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
     public void verifyResolver() {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
-            final String psw = entry.getAttribute("userPassword").getStringValue();
+            final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeDao);
             final Principal p = resolver.resolve(new UsernamePasswordCredential(username, psw), CoreAuthenticationTestUtils.getPrincipal());
@@ -56,7 +58,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapT
     public void verifyChainedResolver() {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
-            final String psw = entry.getAttribute("userPassword").getStringValue();
+            final String psw = entry.getAttribute(ATTR_NAME_PASSWORD).getStringValue();
             final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
             resolver.setAttributeRepository(this.attributeDao);
 
