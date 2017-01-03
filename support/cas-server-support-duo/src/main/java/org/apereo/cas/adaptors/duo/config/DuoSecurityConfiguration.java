@@ -115,8 +115,7 @@ public class DuoSecurityConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final DuoAuthenticationHandler h = new DuoAuthenticationHandler();
-        h.setProvider(duoMultifactorAuthenticationProvider());
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(duoMultifactorAuthenticationProvider());
         h.setPrincipalFactory(duoPrincipalFactory());
         h.setServicesManager(servicesManager);
         final String name = casProperties.getAuthn().getMfa().getDuo().stream().findFirst().get().getName();

@@ -131,8 +131,7 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler();
-        h.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
+        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(googleAuthenticatorInstance());
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
