@@ -9,7 +9,6 @@ import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
@@ -23,10 +22,11 @@ import java.util.List;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
-    /** Logger instance. **/
+    /**
+     * Logger instance.
+     **/
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
@@ -34,26 +34,35 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * crls should be checked for the cert resource.
      * Defaults to {@code false}.
      **/
-    protected boolean checkAll;
-
-    /** Policy to apply when CRL data is unavailable. */
-    private RevocationPolicy<Void> unavailableCRLPolicy;
-
-    /** Policy to apply when CRL data has expired. */
-    private RevocationPolicy<X509CRL> expiredCRLPolicy;
-
+    protected final boolean checkAll;
 
     /**
-     * Init.
+     * Policy to apply when CRL data is unavailable.
      */
-    @PostConstruct
-    public void init() {
-        if (this.unavailableCRLPolicy == null){
-           this.unavailableCRLPolicy = new DenyRevocationPolicy();
-        }
-        if (this.expiredCRLPolicy == null) {
-            this.expiredCRLPolicy = new ThresholdExpiredCRLRevocationPolicy();
-        }
+    private final RevocationPolicy<Void> unavailableCRLPolicy;
+
+    /**
+     * Policy to apply when CRL data has expired.
+     */
+    private final RevocationPolicy<X509CRL> expiredCRLPolicy;
+
+    /**
+     * Instantiates a new Abstract crl revocation checker.
+     *
+     * @param checkAll             Indicates whether all resources should be checked,
+     *                             or revocation should stop at the first resource
+     *                             that produces the cert.
+     * @param unavailableCRLPolicy the unavailable crl policy
+     * @param expiredCRLPolicy     the expired crl policy
+     */
+    public AbstractCRLRevocationChecker(final boolean checkAll,
+                                        final RevocationPolicy<Void> unavailableCRLPolicy,
+                                        final RevocationPolicy<X509CRL> expiredCRLPolicy) {
+        this.checkAll = checkAll;
+        this.unavailableCRLPolicy = unavailableCRLPolicy == null
+                ? new DenyRevocationPolicy() : unavailableCRLPolicy;
+        this.expiredCRLPolicy = expiredCRLPolicy == null
+                ? new ThresholdExpiredCRLRevocationPolicy() : expiredCRLPolicy;
     }
 
     @Override
@@ -102,25 +111,6 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         }
     }
 
-    /**
-     * Sets the policy to apply when CRL data is unavailable.
-     *
-     * @param policy Revocation policy.
-     */
-    public void setUnavailableCRLPolicy(final RevocationPolicy<Void> policy) {
-        this.unavailableCRLPolicy = policy;
-    }
-
-    /**
-     * Sets the policy to apply when CRL data is expired.
-     *
-     * @param policy Revocation policy.
-     */
-    public void setExpiredCRLPolicy(final RevocationPolicy<X509CRL> policy) {
-        this.expiredCRLPolicy = policy;
-    }
-
-
     public RevocationPolicy<Void> getUnavailableCRLPolicy() {
         return this.unavailableCRLPolicy;
     }
@@ -130,35 +120,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     }
 
     /**
-     * Indicates whether all resources should be checked,
-     * or revocation should stop at the first resource
-     * that produces the cert.
-     *
-     * @param checkAll the check all
-     */
-    public void setCheckAll(final boolean checkAll) {
-        this.checkAll = checkAll;
-    }
-
-    /**
-     * Gets the first fetched CRL for the given certificate.
-     *
-     * @param cert Certificate for which the CRL of the issuing CA should be retrieved.
-     *
-     * @return CRL for given cert, or null
-     */
-    public X509CRL getCRL(final X509Certificate cert) {
-        final Collection<X509CRL> list = getCRLs(cert);
-        if (list != null && !list.isEmpty()) {
-            return list.iterator().next();
-        }
-        logger.debug("No CRL could be found for {}", CertUtils.toString(cert));
-        return null;
-    }
-
-    /**
      * Records the addition of a new CRL entry.
-     * @param id the id of the entry to keep track of
+     *
+     * @param id  the id of the entry to keep track of
      * @param crl new CRL entry
      * @return true if the entry was added successfully.
      * @since 4.1
