@@ -32,7 +32,6 @@ public class CouchbaseServiceRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
-
         final CouchbaseClientFactory factory = new CouchbaseClientFactory();
         factory.setNodes(StringUtils.commaDelimitedListToSet(
                 casProperties.getServiceRegistry().getCouchbase().getNodeSet()));
