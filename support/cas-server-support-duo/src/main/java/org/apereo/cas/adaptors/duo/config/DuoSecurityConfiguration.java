@@ -97,8 +97,7 @@ public class DuoSecurityConfiguration {
 
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new FirstMultifactorAuthenticationProviderSelector();
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector = new FirstMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -135,11 +134,8 @@ public class DuoSecurityConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
-        final DuoAuthenticationMetaDataPopulator pop = new DuoAuthenticationMetaDataPopulator();
-        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        pop.setAuthenticationHandler(duoAuthenticationHandler());
-        pop.setProvider(duoMultifactorAuthenticationProvider());
-        return pop;
+        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        return new DuoAuthenticationMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(), duoMultifactorAuthenticationProvider());
     }
 
     @Bean
@@ -154,11 +150,9 @@ public class DuoSecurityConfiguration {
                         && StringUtils.isNotBlank(duo.getDuoSecretKey())
                         && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
                 .forEach(duo -> {
-                    final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider();
-                    final BasicDuoAuthenticationService s = new BasicDuoAuthenticationService(duo);
-                    s.setHttpClient(this.httpClient);
+                    final BasicDuoAuthenticationService s = new BasicDuoAuthenticationService(duo, httpClient);
+                    final DefaultDuoMultifactorAuthenticationProvider pWeb = new DefaultDuoMultifactorAuthenticationProvider(s);
                     pWeb.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-                    pWeb.setDuoAuthenticationService(s);
                     pWeb.setBypassEvaluator(new DefaultMultifactorAuthenticationProviderBypass(duo.getBypass(), ticketRegistrySupport));
                     pWeb.setOrder(duo.getRank());
                     pWeb.setId(duo.getId());
@@ -172,7 +166,6 @@ public class DuoSecurityConfiguration {
         return provider;
     }
 
-
     @Bean
     public Action duoNonWebAuthenticationAction() {
         return new DuoDirectAuthenticationAction();
@@ -180,9 +173,7 @@ public class DuoSecurityConfiguration {
 
     @Bean
     public Action duoAuthenticationWebflowAction() {
-        final DuoAuthenticationWebflowAction a = new DuoAuthenticationWebflowAction();
-        a.setDuoAuthenticationWebflowEventResolver(duoAuthenticationWebflowEventResolver());
-        return a;
+        return new DuoAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
     }
 
     @Bean
