@@ -13,28 +13,88 @@ Cassandra integration is enabled by including the following dependency in the WA
     <version>${cas.version}</version>
 </dependency>
 ```
-`NoSqlTicketRegistry` stores tickets in a one or more [memcached](http://memcached.org/) instances. The
-[spymemcached](https://code.google.com/p/spymemcached/) library used by this component presents memcached as a
-key/value store that accepts `String` keys and Java `Object` values.
-Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
-or otherwise share data between nodes. A deterministic function is used to locate the node, _N'_, on which to store
-key _K_:
-
-    N' = f(h(K), N1, N2, N3, ... Nm)
-
-where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and _N'_ ∈ _N ... Nm_.
-
-The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
-Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
 ## Configuration Considerations
 
 There are three core configuration concerns with memcached:
 
-1. Hash Algorithm
-2. Node locator strategy
+1. Keyspace
+2. Ticket cleaning
 3. Object serialization mechanism
 
+### Keyspace
+We suggest the following Keysapace definition:
+
+- String serialized ticket:
+```cql
+CREATE KEYSPACE cas WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
+
+CREATE TABLE cas.ticket_cleaner (
+    expiry_type text,
+    date_bucket bigint,
+    id text,
+    PRIMARY KEY ((expiry_type, date_bucket), id)
+);
+
+CREATE TABLE cas.ticketgrantingticket (
+    id text PRIMARY KEY,
+    ticket text
+) WITH default_time_to_live = 5184000;
+
+CREATE TABLE cas.serviceticket (
+    id text PRIMARY KEY,
+    ticket text
+) WITH default_time_to_live = 60;
+
+CREATE TABLE cas.ticket_cleaner_lastrun (
+    id text PRIMARY KEY,
+    last_run bigint
+);
+```
+
+- Binary serialized ticket:
+```cql
+CREATE KEYSPACE cas WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
+
+CREATE TABLE cas.ticket_cleaner (
+    expiry_type text,
+    date_bucket bigint,
+    id text,
+    PRIMARY KEY ((expiry_type, date_bucket), id)
+);
+
+CREATE TABLE cas.ticketgrantingticket (
+    id text PRIMARY KEY,
+    ticket blob
+) WITH default_time_to_live = 5184000;
+
+CREATE TABLE cas.serviceticket (
+    id text PRIMARY KEY,
+    ticket blob
+) WITH default_time_to_live = 60;
+
+CREATE TABLE cas.ticket_cleaner_lastrun (
+    id text PRIMARY KEY,
+    last_run bigint
+);
+```
+
+### Ticket cleaning
+Cassandra supports [TTL](https://en.wikipedia.org/wiki/Time_to_live). We use this feature to clean up Service Tickets as we know the maximum duration.
+This TTL has to be defined in the schema definition:
+```cql
+CREATE TABLE cas.serviceticket (
+    id text PRIMARY KEY,
+    ticket text
+) WITH default_time_to_live = 60;
+```
+
+For TicketGrantingTickets we follow a different approach. When a new TGT is stored, its id is stored in the ticket_cleaner table, within a bucket based on the ticket expiration time.
+This time bucket is 10 seconds by default.
+The cleaner will check the last bucket period, and retrieve all the ticket's id for the next bucket in the ticket_cleaner table, then it'll run queries agains the TGT table in order to retrieve the whole ticket, and run the cleaning process itself:
+- check if expired, and if so
+- logout user from services
+- remove ticket
 
 ### Object Serialization
 Our Cassandra ticket registry implementation can store tickets as String or bytes of data, so CAS tickets must be serialized to a byte array prior to storage. 

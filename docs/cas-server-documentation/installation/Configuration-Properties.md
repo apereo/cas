@@ -2954,6 +2954,20 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 # cas.ticket.registry.redis.pool.maxWait=-1
 ```
 
+### Cassandra ticket registry
+To learn more about this topic, [please review this guide](Cassandra-Ticket-Registry.html).
+
+```properties
+## Nodes IPs
+# cas.ticket.registry.cassandra.contactPoints=127.0.0.1
+#
+## Username
+# cas.ticket.registry.cassandra.username=
+#
+## Password
+# cas.ticket.registry.cassandra.password=
+```
+
 ## Protocol Ticket Security
 
 Controls whether tickets issued by the CAS server should be secured via signing and encryption
