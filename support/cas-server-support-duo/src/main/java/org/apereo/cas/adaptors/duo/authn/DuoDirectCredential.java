@@ -57,7 +57,6 @@ public class DuoDirectCredential implements Credential, Serializable {
                 .toHashCode();
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
