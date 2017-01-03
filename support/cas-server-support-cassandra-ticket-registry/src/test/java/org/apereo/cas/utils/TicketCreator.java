@@ -20,13 +20,13 @@ import java.util.Map;
  *
  * @since 5.1.0
  */
-public class TicketCreator {
+public final class TicketCreator {
 
     private TicketCreator() {
     }
 
     /**
-     * Creates a new expired ticketGrantingTicket with this id
+     * Creates a new expired ticketGrantingTicket with this id.
      * @param id id that the ticket will have
      * @return ticketGrantingTicket created
      */
@@ -37,7 +37,7 @@ public class TicketCreator {
     }
 
     /**
-     * Creates a new ticketGrantingTicket with this id
+     * Creates a new ticketGrantingTicket with this id.
      * @param id id that the ticket will have
      * @return ticketGrantingTicket created
      */
@@ -49,6 +49,7 @@ public class TicketCreator {
         credentials.add(meta);
         final Authentication defaultAuthentication = new DefaultAuthentication(ZonedDateTime.now(), credentials, NullPrincipal.getInstance(), new HashMap<>(),
                 successes, new HashMap<>());
-        return new TicketGrantingTicketImpl(id, defaultAuthentication, new TimeoutExpirationPolicy(3000));
+        final int timeToKillInSeconds = 3000;
+        return new TicketGrantingTicketImpl(id, defaultAuthentication, new TimeoutExpirationPolicy(timeToKillInSeconds));
     }
 }
