@@ -7,6 +7,8 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.convert.BaseConverters;
@@ -16,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoClientOptionsFactoryBean;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -39,41 +40,20 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
     
     @Override
     protected String getDatabaseName() {
-        return casProperties.getServiceRegistry().getMongo().getServiceRegistryCollection();
+        return casProperties.getServiceRegistry().getMongo().getCollectionName();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient(new ServerAddress(
-                casProperties.getServiceRegistry().getMongo().getHost(),
-                casProperties.getServiceRegistry().getMongo().getPort()),
-                Collections.singletonList(
-                        MongoCredential.createCredential(
-                                casProperties.getServiceRegistry().getMongo().getUserId(),
-                                getDatabaseName(),
-                                casProperties.getServiceRegistry().getMongo().getUserPassword().toCharArray())),
-                mongoClientOptions());
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        return Beans.newMongoDbClient(mongo);
     }
     
     @RefreshScope
     @Bean
-    public MongoClientOptions mongoClientOptions() {
-        try {
-            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(WriteConcern.valueOf(casProperties.getServiceRegistry().getMongo().getWriteConcern()));
-            bean.setHeartbeatConnectTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
-            bean.setHeartbeatSocketTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
-            bean.setMaxConnectionLifeTime(casProperties.getServiceRegistry().getMongo().getConns().getLifetime());
-            bean.setSocketKeepAlive(casProperties.getServiceRegistry().getMongo().isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime(Long.valueOf(casProperties.getServiceRegistry().getMongo().getIdleTimeout()).intValue());
-            bean.setConnectionsPerHost(casProperties.getServiceRegistry().getMongo().getConns().getPerHost());
-            bean.setSocketTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
-            bean.setConnectTimeout(Long.valueOf(casProperties.getServiceRegistry().getMongo().getTimeout()).intValue());
-            bean.afterPropertiesSet();
-            return bean.getObject();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+    public MongoClientOptions mongoClientOptions() throws Exception {
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        return Beans.newMongoDbClientOptions(mongo);
     }
 
     @Override
@@ -94,9 +74,10 @@ public class MongoDbServiceRegistryConfiguration extends AbstractMongoConfigurat
 
     @Bean(name = {"mongoServiceRegistryDao", "serviceRegistryDao"})
     public ServiceRegistryDao mongoServiceRegistryDao() throws Exception {
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
                 mongoTemplate(),
-                casProperties.getServiceRegistry().getMongo().getServiceRegistryCollection(),
-                casProperties.getServiceRegistry().getMongo().isDropCollection());
+                mongo.getCollectionName(),
+                mongo.isDropCollection());
     }
 }

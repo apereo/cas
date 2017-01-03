@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.core.events;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoProperties;
+import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
 
 /**
  * Configuration properties class for events.
@@ -45,7 +45,7 @@ public class EventsProperties {
     public static class Jpa extends AbstractJpaProperties {
     }
 
-    public static class Mongodb extends AbstractMongoProperties {
+    public static class Mongodb extends AbstractMongoClientProperties {
         public Mongodb() {
             setCollection("MongoDbCasEventRepository");
         }

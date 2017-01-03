@@ -1,10 +1,9 @@
 package org.apereo.cas.config;
 
 import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.MongoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
@@ -18,8 +17,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-
-import java.util.Collections;
 
 /**
  * This is {@link MongoDbTicketRegistryConfiguration}.
@@ -37,33 +34,27 @@ public class MongoDbTicketRegistryConfiguration extends AbstractMongoConfigurati
     @Autowired
     @Qualifier("logoutManager")
     private LogoutManager logoutManager;
-    
+
     @RefreshScope
     @Bean(name = {"mongoTicketRegistry", "ticketRegistry"})
-    public TicketRegistry mongoTicketRegistry() {
-        return new MongoDbTicketRegistry();
+    public TicketRegistry mongoTicketRegistry() throws Exception {
+        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        return new MongoDbTicketRegistry(mongo.getCollectionName(), mongo.isDropCollection(), mongoTemplate());
     }
 
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner() {
+    public TicketRegistryCleaner ticketRegistryCleaner() throws Exception {
         return new NoOpTicketRegistryCleaner(new NoOpLockingStrategy(), logoutManager, mongoTicketRegistry(), false);
     }
 
     @Override
     protected String getDatabaseName() {
-        return casProperties.getServiceRegistry().getMongo().getServiceRegistryCollection();
+        return casProperties.getTicket().getRegistry().getMongo().getCollectionName();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient(new ServerAddress(
-                casProperties.getServiceRegistry().getMongo().getHost(),
-                casProperties.getServiceRegistry().getMongo().getPort()),
-                Collections.singletonList(
-                        MongoCredential.createCredential(
-                                casProperties.getServiceRegistry().getMongo().getUserId(),
-                                getDatabaseName(),
-                                casProperties.getServiceRegistry().getMongo().getUserPassword().toCharArray())),
-                mongoClientOptions());
+        final MongoTicketRegistryProperties mongo = casProperties.getTicket().getRegistry().getMongo();
+        return Beans.newMongoDbClient(mongo);
     }
 }

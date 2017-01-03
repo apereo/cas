@@ -4,6 +4,8 @@ import com.google.common.base.Throwables;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -19,8 +21,21 @@ import java.util.Collection;
  */
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final String collectionName;
+
+    private final boolean dropCollection;
+
+    private final MongoOperations mongoTemplate;
+
+    public MongoDbTicketRegistry(final String collectionName, final MongoOperations mongoTemplate) {
+        this(collectionName, false, mongoTemplate);
+    }
+
+    public MongoDbTicketRegistry(final String collectionName, final boolean dropCollection, final MongoOperations mongoTemplate) {
+        this.collectionName = collectionName;
+        this.dropCollection = dropCollection;
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
@@ -66,7 +81,17 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     /** Init registry. **/
     @PostConstruct
     public void initialize() {
+        Assert.notNull(this.mongoTemplate);
 
+        if (this.dropCollection) {
+            logger.debug("Dropping database collection: {}", this.collectionName);
+            this.mongoTemplate.dropCollection(this.collectionName);
+        }
+
+        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
+            logger.debug("Creating database collection: {}", this.collectionName);
+            this.mongoTemplate.createCollection(this.collectionName);
+        }
     }
 
 
