@@ -1105,7 +1105,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].enhanceWithEntryResolver=true
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
-# cas.authn.ldap[0].principalAttributePassword=userPassword
+# cas.authn.ldap[0].principalAttributePassword=password
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].additionalAttributes=
@@ -2595,8 +2595,8 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.port=27017
 # cas.serviceRegistry.mongo.dropCollection=false
 # cas.serviceRegistry.mongo.socketKeepAlive=false
-# cas.serviceRegistry.mongo.userPassword=
-# cas.serviceRegistry.mongo.serviceRegistryCollection=cas-service-registry
+# cas.serviceRegistry.mongo.password=
+# cas.serviceRegistry.mongo.collectionName=cas-service-registry
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL

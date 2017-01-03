@@ -13,7 +13,7 @@ mail: mmoayyed@example.org
 userPrincipalName: mmoayyed@example.org
 userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
-userPassword: misagh
+password: misagh
 unicodePwd: ignoredForTests
 
 
@@ -32,7 +32,7 @@ displayName: CAS Test
 sAMAccountName: casTest
 distinguishedName: CN=casTest,ou=people,dc=example,dc=org
 mail: casTest@example.org
-userPassword: thePassw0rd
+password: thePassw0rd
 unicodePwd: ignoredForTests
 userPrincipalName: castest@example.org
 userAccountControl: 66048
@@ -59,6 +59,6 @@ member: cn=Administrators,ou=people,dc=example,dc=org
 mail: Administrators@example.org
 userAccountControl: 66048
 distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
-userPassword: thePassw0rd
+password: thePassw0rd
 displayName: Administrators
 host: 127.0.0.1
