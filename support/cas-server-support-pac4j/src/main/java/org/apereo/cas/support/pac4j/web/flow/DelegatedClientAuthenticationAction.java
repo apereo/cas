@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -79,18 +78,28 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
-    private Clients clients;
+    private final Clients clients;
 
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
 
-    private CasConfigurationProperties casProperties;
+    private final String themeParamName;
+    private final String localParamName;
+    private final boolean autoRedirect;
 
-    /**
-     * Build the DelegatedClientAuthenticationAction.
-     */
-    public DelegatedClientAuthenticationAction() {
+    public DelegatedClientAuthenticationAction(final Clients clients,
+                                               final AuthenticationSystemSupport authenticationSystemSupport,
+                                               final CentralAuthenticationService centralAuthenticationService, 
+                                               final String themeParamName, 
+                                               final String localParamName, 
+                                               final boolean autoRedirect) {
+        this.clients = clients;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.themeParamName = themeParamName;
+        this.localParamName = localParamName;
+        this.autoRedirect = autoRedirect;
     }
 
     @Override
@@ -135,8 +144,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
 
-            restoreRequestAttribute(request, session, casProperties.getTheme().getParamName());
-            restoreRequestAttribute(request, session, casProperties.getLocale().getParamName());
+            restoreRequestAttribute(request, session, this.themeParamName);
+            restoreRequestAttribute(request, session, this.localParamName);
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
             // credentials not null -> try to authenticate
@@ -158,7 +167,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             return stopWebflow();
         }
 
-        if (casProperties.getAuthn().getPac4j().isAutoRedirect()) {
+        if (this.autoRedirect) {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
                 final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
@@ -190,16 +199,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final WebApplicationService service = WebUtils.getService(context);
         LOGGER.debug("save service: {}", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        saveRequestParameter(request, session, casProperties.getTheme().getParamName());
-        saveRequestParameter(request, session, casProperties.getLocale().getParamName());
+        saveRequestParameter(request, session, this.themeParamName);
+        saveRequestParameter(request, session, this.localParamName);
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-        // for all clients, generate redirection urls
+        
         for (final Client client : this.clients.findAllClients()) {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
-                // clean Client suffix for default names
+                
                 final String name = StringUtils.remove(client.getName(), "Client");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("{} -> {}", name, redirectionUrl);
@@ -228,7 +237,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session,
+    private static void restoreRequestAttribute(final HttpServletRequest request, 
+                                                final HttpSession session,
                                                 final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
@@ -241,40 +251,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session,
+    private static void saveRequestParameter(final HttpServletRequest request, 
+                                             final HttpSession session,
                                              final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
         }
-    }
-
-    public Clients getClients() {
-        return this.clients;
-    }
-
-    public void setClients(final Clients clients) {
-        this.clients = clients;
-    }
-
-    public CentralAuthenticationService getCentralAuthenticationService() {
-        return this.centralAuthenticationService;
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return this.authenticationSystemSupport;
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-    }
-
-    public void setCasProperties(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
     }
 
     private Event stopWebflow() {
@@ -307,7 +290,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             } else if (params.containsKey("error_message")) {
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
             }
-            model.put("service", request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
 
             LOGGER.debug("Delegation request has failed. Details are {}", model);

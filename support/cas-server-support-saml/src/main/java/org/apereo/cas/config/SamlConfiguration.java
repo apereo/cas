@@ -5,9 +5,9 @@ import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.support.CasAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -24,6 +24,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.ValidationSpecification;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +54,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("casAttributeEncoder")
-    private CasAttributeEncoder casAttributeEncoder;
+    private ProtocolAttributeEncoder protocolAttributeEncoder;
 
     @Autowired
     @Qualifier("cas3ServiceJsonView")
@@ -105,26 +107,20 @@ public class SamlConfiguration {
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
-        final Saml10SuccessResponseView view = new Saml10SuccessResponseView();
-        view.setServicesManager(this.servicesManager);
-        view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setIssuer(casProperties.getSamlCore().getIssuer());
-        view.setSkewAllowance(casProperties.getSamlCore().getSkewAllowance());
-        view.setDefaultAttributeNamespace(casProperties.getSamlCore().getAttributeNamespace());
-        view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setCasAttributeEncoder(casAttributeEncoder);
-        return view;
+        return new Saml10SuccessResponseView(protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()),
+                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance(),
+                casProperties.getSamlCore().getIssuer(), casProperties.getSamlCore().getAttributeNamespace());
     }
     
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
-        final Saml10FailureResponseView view = new Saml10FailureResponseView();
-        view.setServicesManager(this.servicesManager);
-        view.setCasAttributeEncoder(this.casAttributeEncoder);
-        view.setSamlObjectBuilder(saml10ObjectBuilder());
-        view.setCasAttributeEncoder(casAttributeEncoder);
-        return view;
+        return new Saml10FailureResponseView(protocolAttributeEncoder,
+                servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                saml10ObjectBuilder(), new DefaultArgumentExtractor(new SamlServiceFactory()), 
+                StandardCharsets.UTF_8.name(), casProperties.getSamlCore().getSkewAllowance());
     }
     
     @Bean

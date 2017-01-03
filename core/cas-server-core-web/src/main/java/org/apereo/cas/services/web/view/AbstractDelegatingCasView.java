@@ -1,5 +1,7 @@
 package org.apereo.cas.services.web.view;
 
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +17,15 @@ import java.util.Map;
  */
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /** View to delegate. */
-    private View view;
+    protected View view;
 
-    /**
-     * Instantiates a new Abstract cas view.
-     */
-    protected AbstractDelegatingCasView() {
-        
+    public AbstractDelegatingCasView(final boolean successResponse, 
+                                     final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                                     final ServicesManager servicesManager, 
+                                     final String authenticationContextAttribute, 
+                                     final View view) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute);
+        this.view = view;
     }
 
     @Override
@@ -50,12 +54,11 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
      */
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
                                                      HttpServletResponse response) throws Exception;
+    public View getView() {
+        return this.view;
+    }
 
     public void setView(final View view) {
         this.view = view;
-    }
-
-    public View getView() {
-        return this.view;
     }
 }

@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.test.MockFacebookClient;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -84,10 +83,9 @@ public class DelegatedClientAuthenticationActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
-        action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
-        action.setClients(clients);
-        action.setCasProperties(new CasConfigurationProperties());
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
+                null, mock(CentralAuthenticationService.class),
+                "theme", "locale", false);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -125,34 +123,26 @@ public class DelegatedClientAuthenticationActionTests {
         final FacebookClient facebookClient = new MockFacebookClient();
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
 
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), 
+        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class),
                 mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
-        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction();
-        action.setCasProperties(new CasConfigurationProperties());
-        final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
 
+        final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
         when(authNManager.authenticate(any(AuthenticationTransaction.class)))
                 .thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        
+
         transManager.setAuthenticationManager(authNManager);
-        
-        when(transManager.handle(any(AuthenticationTransaction.class), 
-                                 any(AuthenticationResultBuilder.class)))
-                                .thenReturn(transManager);
-        
+        when(transManager.handle(any(AuthenticationTransaction.class),
+                any(AuthenticationResultBuilder.class)))
+                .thenReturn(transManager);
+
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
-        action.setAuthenticationSystemSupport(support);
+        final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
+                "theme", "locale", false);
 
-        action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
-                .setAuthenticationManager(authNManager);
-        action.setCentralAuthenticationService(casImpl);
-
-
-        action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));

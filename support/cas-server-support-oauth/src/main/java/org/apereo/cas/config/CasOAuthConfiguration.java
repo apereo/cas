@@ -227,18 +227,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        final OAuthClientAuthenticator c = new OAuthClientAuthenticator();
-        c.setValidator(oAuthValidator());
-        c.setServicesManager(this.servicesManager);
-        return c;
+        return new OAuthClientAuthenticator(oAuthValidator(), this.servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        final OAuthUserAuthenticator w = new OAuthUserAuthenticator();
-        w.setAuthenticationSystemSupport(authenticationSystemSupport);
-        return w;
+        return new OAuthUserAuthenticator(authenticationSystemSupport);
     }
 
     @ConditionalOnMissingBean(name = "oAuthValidator")
@@ -257,10 +252,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultAccessTokenFactory")
     public AccessTokenFactory defaultAccessTokenFactory() {
-        final DefaultAccessTokenFactory f = new DefaultAccessTokenFactory();
-        f.setAccessTokenIdGenerator(accessTokenIdGenerator());
-        f.setExpirationPolicy(accessTokenExpirationPolicy());
-        return f;
+        return new DefaultAccessTokenFactory(accessTokenIdGenerator(), accessTokenExpirationPolicy());
     }
 
     private ExpirationPolicy accessTokenExpirationPolicy() {
@@ -289,10 +281,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultOAuthCodeFactory")
     public OAuthCodeFactory defaultOAuthCodeFactory() {
-        final DefaultOAuthCodeFactory f = new DefaultOAuthCodeFactory();
-        f.setExpirationPolicy(oAuthCodeExpirationPolicy());
-        f.setoAuthCodeIdGenerator(oAuthCodeIdGenerator());
-        return f;
+        return new DefaultOAuthCodeFactory(oAuthCodeIdGenerator(), oAuthCodeExpirationPolicy());
     }
 
     @Bean
@@ -343,10 +332,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @ConditionalOnMissingBean(name = "defaultRefreshTokenFactory")
     public RefreshTokenFactory defaultRefreshTokenFactory() {
-        final DefaultRefreshTokenFactory f = new DefaultRefreshTokenFactory();
-        f.setExpirationPolicy(refreshTokenExpirationPolicy());
-        f.setRefreshTokenIdGenerator(refreshTokenIdGenerator());
-        return f;
+        return new DefaultRefreshTokenFactory(refreshTokenIdGenerator(), refreshTokenExpirationPolicy());
     }
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
@@ -356,10 +342,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     public AuthenticationRequestServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
-        final OAuth20AuthenticationRequestServiceSelectionStrategy s = new OAuth20AuthenticationRequestServiceSelectionStrategy();
-        s.setServicesManager(servicesManager);
-        s.setWebApplicationServiceFactory(webApplicationServiceFactory);
-        return s;
+        return new OAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager, webApplicationServiceFactory);
     }
 
     @Bean

@@ -17,10 +17,19 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     /** Default instance for the ticket id generator. */
-    protected UniqueTicketIdGenerator refreshTokenIdGenerator = new DefaultUniqueTicketIdGenerator();
+    protected final UniqueTicketIdGenerator refreshTokenIdGenerator;
 
     /** ExpirationPolicy for refresh tokens. */
-    protected ExpirationPolicy expirationPolicy;
+    protected final ExpirationPolicy expirationPolicy;
+
+    public DefaultRefreshTokenFactory(final ExpirationPolicy expirationPolicy) {
+        this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
+    }
+
+    public DefaultRefreshTokenFactory(final UniqueTicketIdGenerator refreshTokenIdGenerator, final ExpirationPolicy expirationPolicy) {
+        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
+        this.expirationPolicy = expirationPolicy;
+    }
 
     @Override
     public RefreshToken create(final Service service, final Authentication authentication) {
@@ -31,21 +40,5 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
-    }
-
-    public UniqueTicketIdGenerator getRefreshTokenIdGenerator() {
-        return this.refreshTokenIdGenerator;
-    }
-
-    public void setRefreshTokenIdGenerator(final UniqueTicketIdGenerator refreshTokenIdGenerator) {
-        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
-    }
-
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expirationPolicy;
-    }
-
-    public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {
-        this.expirationPolicy = expirationPolicy;
     }
 }

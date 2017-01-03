@@ -13,7 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -23,7 +22,7 @@ import java.security.GeneralSecurityException;
  * platform to authenticate one-time password tokens that are
  * issued by a YubiKey device. To use YubiCloud you need a
  * client id and an API key which must be obtained from Yubico.
- *
+ * <p>
  * <p>For more info, please visit
  * <a href="http://yubico.github.io/yubico-java-client/">this link</a></p>
  *
@@ -32,8 +31,7 @@ import java.security.GeneralSecurityException;
  */
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private YubiKeyAccountRegistry registry;
-
+    private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
     /**
@@ -42,31 +40,29 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
      * group of users, you may verify an compliant implementation of {@link YubiKeyAccountRegistry}.
      * By default, all accounts are allowed.
      *
-     * @param clientId the client id
+     * @param clientId  the client id
      * @param secretKey the secret key
+     * @param registry  the account registry which holds registrations.
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId,
-                                        final String secretKey) {
+    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey, final YubiKeyAccountRegistry registry) {
+        this.registry = registry;
         this.client = YubicoClient.getClient(clientId, secretKey);
-    }
 
-
-    /**
-     * After properties set.
-     */
-    @PostConstruct
-    public void afterPropertiesSet() {
         if (this.registry == null) {
             logger.warn("No YubiKey account registry is defined. All credentials are considered "
-                    + "eligible for YubiKey authentication. Consider providing an account registry implementation via [{}]",
+                            + "eligible for YubiKey authentication. Consider providing an account registry implementation via [{}]",
                     YubiKeyAccountRegistry.class.getName());
         }
     }
 
+    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
+        this(clientId, secretKey, null);
+    }   
+    
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final YubiKeyCredential yubiKeyCredential = (YubiKeyCredential) credential;
-        
+
         final String otp = yubiKeyCredential.getToken();
 
         if (!YubicoClient.isValidOTPFormat(otp)) {
@@ -78,7 +74,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
         final String publicId = YubicoClient.getPublicId(otp);
         if (this.registry != null
-                &&!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
+                && !this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             logger.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
@@ -88,18 +84,13 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             final ResponseStatus status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 logger.debug("YubiKey response status {} at {}", status, response.getTimestamp());
-                return createHandlerResult(yubiKeyCredential,
-                        this.principalFactory.createPrincipal(uid), null);
+                return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid), null);
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {
             logger.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
-    }
-    
-    public void setRegistry(final YubiKeyAccountRegistry registry) {
-        this.registry = registry;
     }
 
     public YubiKeyAccountRegistry getRegistry() {

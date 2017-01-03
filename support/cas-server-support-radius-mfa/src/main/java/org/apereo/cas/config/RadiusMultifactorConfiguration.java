@@ -185,14 +185,11 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
-        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler();
         final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
-
+        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radiusTokenServers(),
+                radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
         a.setPrincipalFactory(radiusTokenPrincipalFactory());
         a.setServicesManager(servicesManager);
-        a.setServers(radiusTokenServers());
-        a.setFailoverOnAuthenticationFailure(radius.isFailoverOnAuthenticationFailure());
-        a.setFailoverOnException(radius.isFailoverOnException());
         a.setName(radius.getName());
         return a;
     }

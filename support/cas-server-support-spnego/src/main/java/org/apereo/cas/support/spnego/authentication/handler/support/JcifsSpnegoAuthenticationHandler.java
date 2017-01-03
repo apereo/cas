@@ -30,6 +30,12 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     private boolean principalWithDomainName;
     private boolean isNTLMallowed;
 
+    public JcifsSpnegoAuthenticationHandler(final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
+        this.authentication = authentication;
+        this.principalWithDomainName = principalWithDomainName;
+        this.isNTLMallowed = isNTLMallowed;
+    }
+
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;

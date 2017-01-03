@@ -56,10 +56,10 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
-        final Cas20ResponseView view = new Cas20ResponseView();
+
         final MockHttpServletResponse resp = new MockHttpServletResponse();
 
-        view.setView(new View() {
+        final View delegatedView = new View() {
             @Override
             public String getContentType() {
                 return "text/html";
@@ -69,7 +69,9 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
                 map.forEach(request::setAttribute);
             }
-        });
+        };
+        final Cas20ResponseView view = new Cas20ResponseView(true, null,
+                null, "attribute", delegatedView);
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));

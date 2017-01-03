@@ -12,9 +12,12 @@ import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 public class AuditProperties {
 
     private String appCode = "CAS";
-
     private String singlelineSeparator = "|";
-
+    
+    private String alternateServerAddrHeaderName;
+    private String alternateClientAddrHeaderName;
+    private boolean useServerHostAddress;
+    
     private boolean useSingleLine;
 
     private Jdbc jdbc = new Jdbc();
@@ -70,6 +73,30 @@ public class AuditProperties {
 
     public void setIgnoreAuditFailures(final boolean ignoreAuditFailures) {
         this.ignoreAuditFailures = ignoreAuditFailures;
+    }
+
+    public String getAlternateServerAddrHeaderName() {
+        return alternateServerAddrHeaderName;
+    }
+
+    public void setAlternateServerAddrHeaderName(final String alternateServerAddrHeaderName) {
+        this.alternateServerAddrHeaderName = alternateServerAddrHeaderName;
+    }
+
+    public String getAlternateClientAddrHeaderName() {
+        return alternateClientAddrHeaderName;
+    }
+
+    public void setAlternateClientAddrHeaderName(final String alternateClientAddrHeaderName) {
+        this.alternateClientAddrHeaderName = alternateClientAddrHeaderName;
+    }
+
+    public boolean isUseServerHostAddress() {
+        return useServerHostAddress;
+    }
+
+    public void setUseServerHostAddress(final boolean useServerHostAddress) {
+        this.useServerHostAddress = useServerHostAddress;
     }
 
     public static class Jdbc extends AbstractJpaProperties {

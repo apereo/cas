@@ -29,20 +29,20 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = Integer.MAX_VALUE;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String geography;
 
-    @Column(length = Integer.MAX_VALUE, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String key;
 
-    @Column(length = Integer.MAX_VALUE, updatable = true, insertable = true, nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String name;
     
     public String getKey() {

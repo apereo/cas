@@ -31,14 +31,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.apereo.cas.adaptors.ldap.AbstractLdapTests.initDirectoryServer;
 import static org.junit.Assert.*;
 
 /**
@@ -205,7 +205,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(new HashSet<>(Arrays.asList("handler1", "handler2")));
+        rs.setRequiredHandlers(Stream.of("handler1", "handler2").collect(Collectors.toSet()));
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

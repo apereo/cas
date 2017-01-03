@@ -22,7 +22,11 @@ import java.util.Map;
  */
 public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCredentials> {
 
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    public OAuthUserAuthenticator(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
@@ -45,13 +49,5 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
         } catch (final AuthenticationException e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }
-    }
-
-    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return this.authenticationSystemSupport;
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

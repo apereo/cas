@@ -64,7 +64,7 @@ should support the duration syntax for full clarity on unit of measure:
 "PT20S"     -- parses as "20 seconds"
 "PT15M"     -- parses as "15 minutes"
 "PT10H"     -- parses as "10 hours"
-"P2D"       -- parses as "2 days" 
+"P2D"       -- parses as "2 days"
 "P2DT3H4M"  -- parses as "2 days, 3 hours and 4 minutes"
 ```
 
@@ -156,7 +156,7 @@ To learn more about this topic, [please review this guide](Configuration-Managem
 
 ### RabbitMQ
 
-Broadcast CAS configuration updates to other nodes in the cluster 
+Broadcast CAS configuration updates to other nodes in the cluster
 via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_rabbitmq_binder).
 
 ```properties
@@ -171,7 +171,7 @@ via [RabbitMQ](http://docs.spring.io/spring-cloud-stream/docs/current/reference/
 
 ### Kafka
 
-Broadcast CAS configuration updates to other nodes in the cluster 
+Broadcast CAS configuration updates to other nodes in the cluster
 via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/#_apache_kafka_binder).
 
 ```properties
@@ -244,7 +244,7 @@ Enable HTTP/AJP connections for the embedded Tomcat container.
 
 ### Rewrite Valve
 
-If and when you choose to deploy CAS at root and remove the default context path, 
+If and when you choose to deploy CAS at root and remove the default context path,
 CAS by default attempts to deploy a special [`RewriteValve`](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.htm)
 for the embedded container that knows how to reroute urls and such for backward compatibility reasons.
 
@@ -278,6 +278,10 @@ If none is specified, one is automatically detected and used by CAS.
 # cas.host.name=
 ```
 
+## CAS Banner
+
+On startup, CAS will display a banner along with some diagnostics info.
+In order to skip this step and summarize, set the system property `-DCAS_BANNER_SKIP=true`.
 
 ## Admin Status Endpoints
 
@@ -404,7 +408,7 @@ The story in plain english is:
 - Figure it out.
 
 Note that attribute repository sources, if/when defined, execute in a specific order.
-This is important to take into account when attribute merging may take place. 
+This is important to take into account when attribute merging may take place.
 By default, the execution order is the following but can be adjusted per source:
 
 1. LDAP
@@ -453,7 +457,7 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.ldap[0].blockWaitTime=5000
 # cas.authn.attributeRepository.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.attributeRepository.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.attributeRepository.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.attributeRepository.ldap[0].validator.baseDn=
 # cas.authn.attributeRepository.ldap[0].validator.searchFilter=(objectClass=*)
 # cas.authn.attributeRepository.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -578,6 +582,7 @@ how the final principal should be constructed by default.
 ```properties
 # cas.personDirectory.principalAttribute=
 # cas.personDirectory.returnNull=false
+# cas.personDirectory.principalResolutionFailureFatal=false
 ```
 
 ## Authentication Policy
@@ -1036,7 +1041,7 @@ server, simply increment the index and specify the settings for the next LDAP se
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, `baseDn`, etc
 will simply deactivate LDAP authentication altogether silently.
 
-**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes 
+**Note:** Attributes retrieved as part of LDAP authentication are merged with all attributes
 retrieved from [other attribute repository sources](#authentication-attributes), if any.
 Attributes retrieved directly as part of LDAP authentication trump all other attributes.
 
@@ -1053,17 +1058,17 @@ Manager bind/search type of authentication.
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
-### Anonymous Search 
+### Anonymous Search
 
 Anonymous search.
 
 - If `principalAttributePassword` is empty then a user simple bind is done to validate credentials
 - Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it
 
-### Direct Bind 
+### Direct Bind
 
 Compute user DN from format string and perform simple bind. This is relevant when
-no search is required to compute the DN needed for a bind operation. 
+no search is required to compute the DN needed for a bind operation.
 
 There are two requirements for this use case:
 
@@ -1079,7 +1084,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 | `DEFAULT`             | The default JNDI provider behavior will be used.    
 | `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
-| `RANDOM`              | For each new connection a random LDAP url will be selected. 
+| `RANDOM`              | For each new connection a random LDAP url will be selected.
 | `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
 
 ```properties
@@ -1144,7 +1149,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
 
-# cas.authn.ldap[0].validator.type=SEARCH|COMPARE
+# cas.authn.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.ldap[0].validator.baseDn=
 # cas.authn.ldap[0].validator.searchFilter=(objectClass=*)
 # cas.authn.ldap[0].validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -1264,7 +1269,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.ldap.useStartTls=false
 # cas.authn.spnego.ldap.searchFilter=host={host}
 
-# cas.authn.spnego.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.spnego.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.spnego.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.spnego.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
 # cas.authn.spnego.ldap.validator.attributeName=objectClass
@@ -1455,7 +1460,7 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.ldap.blockWaitTime=5000
 # cas.authn.x509.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.x509.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.x509.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.x509.ldap.validator.baseDn=
 # cas.authn.x509.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.x509.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -1788,7 +1793,7 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.authn.exceptions.exceptions=value1,value2,...
 ```
 
-## Saml Core
+## SAML Core
 
 Control core SAML functionality within CAS.
 
@@ -1801,7 +1806,7 @@ Control core SAML functionality within CAS.
 ```
 
 
-## Saml IdP
+## SAML IdP
 
 Allow CAS to become a SAML2 identity provider.
 To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
@@ -1829,6 +1834,7 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.response.skewAllowance=0
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
+# cas.authn.samlIdp.response.attributeNameFormats=username->basic|uri|unspecified|custom-format-etc,...
 
 # cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
@@ -1838,11 +1844,11 @@ To learn more about this topic, [please review this guide](Configuring-SAML2-Aut
 # cas.authn.samlIdp.algs.overrideSignatureReferenceDigestMethods=
 # cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
 # cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
-# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms= 
+# cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
 ```
 
 
-## Saml SPs
+## SAML SPs
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
@@ -1905,6 +1911,16 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.salesforce.description=Salesforce Integration
 # cas.samlSP.salesforce.attributes=mail,eduPersonPrincipalName
 # cas.samlSP.salesforce.signatureLocation=
+```
+
+### Zoom
+
+```properties
+# cas.samlSP.zoom.metadata=/etc/cas/saml/zoom.xml
+# cas.samlSP.zoom.name=Zoom
+# cas.samlSP.zoom.description=Zoom Integration
+# cas.samlSP.zoom.attributes=mail,sn,givenName
+# cas.samlSP.zoom.nameIdAttribute=mail
 ```
 
 ### Box
@@ -2046,7 +2062,8 @@ Delegate authentication to an external OpenID Connect server.
 
 ### SAML
 
-Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:` prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
+Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:`
+prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
 # cas.authn.pac4j.saml.keystorePassword=
@@ -2242,6 +2259,9 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.singlelineSeparator=|
 # cas.audit.useSingleLine=false
 # cas.audit.appCode=CAS
+# cas.audit.alternateServerAddrHeaderName=
+# cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
+# cas.audit.useServerHostAddress=false
 ```
 
 ### Database
@@ -2372,7 +2392,7 @@ used for authentication, etc.
 # cas.monitor.ldap.useSsl=true
 # cas.monitor.ldap.useStartTls=false
 
-# cas.monitor.ldap.validator.type=SEARCH|COMPARE
+# cas.monitor.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.monitor.ldap.validator.baseDn=
 # cas.monitor.ldap.validator.searchFilter=(objectClass=*)
 # cas.monitor.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2437,7 +2457,7 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.useSsl=true
 # cas.acceptableUsagePolicy.ldap.useStartTls=false
 
-# cas.acceptableUsagePolicy.ldap.validator.type=SEARCH|COMPARE
+# cas.acceptableUsagePolicy.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.acceptableUsagePolicy.ldap.validator.baseDn=
 # cas.acceptableUsagePolicy.ldap.validator.searchFilter=(objectClass=*)
 # cas.acceptableUsagePolicy.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2619,7 +2639,7 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.useSsl=true
 # cas.serviceRegistry.ldap.useStartTls=false
 
-# cas.serviceRegistry.ldap.validator.type=SEARCH|COMPARE
+# cas.serviceRegistry.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.serviceRegistry.ldap.validator.baseDn=
 # cas.serviceRegistry.ldap.validator.searchFilter=(objectClass=*)
 # cas.serviceRegistry.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
@@ -2929,7 +2949,7 @@ To learn more about this topic, [please review this guide](Redis-Ticket-Registry
 ## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
 #
-## Maximum amount of time (in milliseconds) a connection allocation should block 
+## Maximum amount of time (in milliseconds) a connection allocation should block
 #  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
 ```
@@ -3036,11 +3056,15 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
 
+# cas.mgmt.ldapAuthz.groupAttribute=
+# cas.mgmt.ldapAuthz.groupPrefix=
+# cas.mgmt.ldapAuthz.groupFilter=
 # cas.mgmt.ldapAuthz.rolePrefix=ROLE_
-# cas.mgmt.ldapAuthz.allowMultipleResults=false
-# cas.mgmt.ldapAuthz.searchFilter=cn={user}
-# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
+# cas.mgmt.ldapAuthz.searchFilter=cn={user}
+
+# cas.mgmt.ldapAuthz.allowMultipleResults=false
+# cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.mgmt.ldapAuthz.connectionStrategy=
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
@@ -3163,7 +3187,7 @@ To learn more about this topic, [please review this guide](Configuring-Groovy-Co
 # shell.ssh.idleTimeout=30000
 ```
 
-## Saml Metadata UI
+## SAML Metadata UI
 
 Control how SAML MDUI elements should be displayed on the main CAS login page
 in the event that CAS is handling authentication for an external SAML2 IdP.
@@ -3253,7 +3277,7 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.ldap.blockWaitTime=5000
 # cas.authn.pm.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 
-# cas.authn.pm.ldap.validator.type=SEARCH|COMPARE
+# cas.authn.pm.ldap.validator.type=NONE|SEARCH|COMPARE
 # cas.authn.pm.ldap.validator.baseDn=
 # cas.authn.pm.ldap.validator.searchFilter=(objectClass=*)
 # cas.authn.pm.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE

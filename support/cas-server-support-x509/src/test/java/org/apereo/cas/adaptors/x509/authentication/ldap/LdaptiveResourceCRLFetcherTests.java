@@ -48,10 +48,9 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
         CacheManager.getInstance().addCache(cache);
 
         for (int i = 0; i < 10; i++) {
-            final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-            checker.setThrowOnFetchFailure(true);
-            checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
-            checker.init();
+            final CRLDistributionPointRevocationChecker checker = 
+                    new CRLDistributionPointRevocationChecker(false, new AllowRevocationPolicy(), null,
+                            cache, fetcher, true);
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
@@ -63,10 +62,9 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
             CacheManager.getInstance().removeAllCaches();
             final Cache cache = new Cache("crlCache-1", 100, false, false, 20, 10);
             CacheManager.getInstance().addCache(cache);
-            final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
-            checker.setThrowOnFetchFailure(true);
-            checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
-            checker.init();
+            final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(
+                    false, new AllowRevocationPolicy(), null,
+                    cache, fetcher, true);
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }

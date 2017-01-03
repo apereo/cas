@@ -2,7 +2,9 @@ package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.EncodingUtils;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
@@ -16,7 +18,9 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.soap.common.SOAPObject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.slf4j.Logger;
@@ -56,6 +60,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -183,6 +188,46 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             return "_".concat(EncodingUtils.hexEncode(buf));
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
+        }
+    }
+
+    /**
+     * Add saml attribute values for attribute.
+     *
+     * @param attributeValue the attribute value
+     * @param attributeList  the attribute list
+     */
+    public void addAttributeValuesToSamlAttribute(final Object attributeValue, final List<XMLObject> attributeList) {
+        if (attributeValue instanceof Collection<?>) {
+            final Collection<?> c = (Collection<?>) attributeValue;
+            for (final Object value : c) {
+                attributeList.add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
+            }
+        } else {
+            attributeList.add(newAttributeValue(attributeValue, AttributeValue.DEFAULT_ELEMENT_NAME));
+        }
+    }
+
+    /**
+     * Sets in response to for saml response.
+     *
+     * @param service      the service
+     * @param samlResponse the saml response
+     */
+    public static void setInResponseToForSamlResponseIfNeeded(final Service service, final SignableSAMLObject samlResponse) {
+        if (service instanceof SamlService) {
+            final SamlService samlService = (SamlService) service;
+
+            final String requestId = samlService.getRequestID();
+            if (StringUtils.isNotBlank(requestId)) {
+
+                if (samlResponse instanceof org.opensaml.saml.saml1.core.Response) {
+                    ((org.opensaml.saml.saml1.core.Response) samlResponse).setInResponseTo(requestId);
+                }
+                if (samlResponse instanceof org.opensaml.saml.saml2.core.Response) {
+                    ((org.opensaml.saml.saml2.core.Response) samlResponse).setInResponseTo(requestId);
+                }
+            }
         }
     }
 

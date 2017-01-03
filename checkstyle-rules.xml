@@ -478,6 +478,12 @@
         <property name="message" value="Avoid using the indicated annotations."/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use Java streams"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="new .+(Set|List).+\(Arrays\.asList"/>
+        <property name="message" value="Avoid chaining collections. Shoot for immutability. Try Stream.of() and collect."/>
+    </module>
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Space instead of tabs"/>
         <property name="severity" value="error"/>
         <property name="format" value="^\t+"/>

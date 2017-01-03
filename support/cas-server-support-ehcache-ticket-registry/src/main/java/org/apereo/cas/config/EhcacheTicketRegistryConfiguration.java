@@ -6,6 +6,7 @@ import net.sf.ehcache.config.PersistenceConfiguration;
 import net.sf.ehcache.distribution.RMIBootstrapCacheLoader;
 import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
@@ -95,10 +96,7 @@ public class EhcacheTicketRegistryConfiguration {
     @RefreshScope
     @Bean(name = {"ehcacheTicketRegistry", "ticketRegistry"})
     public TicketRegistry ehcacheTicketRegistry(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
-        final EhCacheTicketRegistry r = new EhCacheTicketRegistry(ehcacheTicketsCache);
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getEhcache().getCrypto()
-        ));
-        return r;
+        final CryptographyProperties crypto = casProperties.getTicket().getRegistry().getEhcache().getCrypto();
+        return new EhCacheTicketRegistry(ehcacheTicketsCache, Beans.newTicketRegistryCipherExecutor(crypto));
     }
 }

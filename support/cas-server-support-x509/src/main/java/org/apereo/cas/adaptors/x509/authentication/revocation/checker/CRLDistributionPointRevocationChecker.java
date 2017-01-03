@@ -6,6 +6,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.util.CertUtils;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -39,18 +40,12 @@ import java.util.List;
  * @since 3.4.6
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
-    
-    private Cache crlCache;
-    
-    private CRLFetcher fetcher;
 
-    private boolean throwOnFetchFailure;
+    private final Cache crlCache;
 
-    /**
-     * Used for serialization and auto wiring.
-     */
-    public CRLDistributionPointRevocationChecker() {
-    }
+    private final CRLFetcher fetcher;
+
+    private final boolean throwOnFetchFailure;
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
@@ -58,8 +53,9 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param crlCache Cache for CRL data.
      */
     public CRLDistributionPointRevocationChecker(final Cache crlCache) {
-        this(crlCache, new ResourceCRLFetcher());
+        this(crlCache, new ResourceCRLFetcher(), false);
     }
+
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
@@ -69,38 +65,49 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     public CRLDistributionPointRevocationChecker(final Cache crlCache,
                                                  final boolean throwOnFetchFailure) {
-        this(crlCache, new ResourceCRLFetcher());
-        setThrowOnFetchFailure(throwOnFetchFailure);
+        this(crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
+
     }
 
     /**
      * Instantiates a new CRL distribution point revocation checker.
      *
-     * @param crlCache the crl cache
-     * @param fetcher  the fetcher
-     */
-    public CRLDistributionPointRevocationChecker(
-            final Cache crlCache,
-            final CRLFetcher fetcher) {
-        this.crlCache = crlCache;
-        this.fetcher = fetcher;
-    }
-
-
-    /**
-     * Throws exceptions if fetching crl fails. Defaults to false.
-     *
+     * @param crlCache            the crl cache
+     * @param fetcher             the fetcher
      * @param throwOnFetchFailure the throw on fetch failure
      */
-    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
+    public CRLDistributionPointRevocationChecker(
+            final Cache crlCache, final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
+        this(false, null, null, crlCache, fetcher, throwOnFetchFailure);
+    }
+
+    public CRLDistributionPointRevocationChecker(final Cache crlCache,
+                                                 final RevocationPolicy<Void> unavailableCRLPolicy) {
+        this(crlCache, null, unavailableCRLPolicy);
+    }
+
+    public CRLDistributionPointRevocationChecker(final Cache crlCache,
+                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
+                                                 final RevocationPolicy<Void> unavailableCRLPolicy) {
+        this(crlCache, expiredCRLPolicy, unavailableCRLPolicy, false);
+    }
+
+    public CRLDistributionPointRevocationChecker(final Cache crlCache,
+                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
+                                                 final RevocationPolicy<Void> unavailableCRLPolicy,
+                                                 final boolean throwOnFetchFailure) {
+        this(false, unavailableCRLPolicy, expiredCRLPolicy, crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
+    }
+    
+    public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
+                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy, final Cache crlCache,
+                                                 final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
+        super(checkAll, unavailableCRLPolicy, expiredCRLPolicy);
+        this.crlCache = crlCache;
+        this.fetcher = fetcher;
         this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
-     */
     @Override
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
 

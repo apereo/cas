@@ -9,9 +9,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -258,8 +259,8 @@ public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
-        map.put("cn", new HashSet<>(Arrays.asList("cas", "SSO")));
-        map.put("givenName", new HashSet<>(Arrays.asList("CAS", "KAZ")));
+        map.put("cn", Stream.of("cas", "SSO").collect(Collectors.toSet()));
+        map.put("givenName", Stream.of("CAS", "KAZ").collect(Collectors.toSet()));
         map.put("phone", Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
         return map;
     }

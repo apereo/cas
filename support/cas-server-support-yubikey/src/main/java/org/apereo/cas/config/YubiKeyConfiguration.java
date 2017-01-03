@@ -119,8 +119,7 @@ public class YubiKeyConfiguration {
 
     @Bean
     public FlowDefinitionRegistry yubikeyFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
@@ -142,11 +141,8 @@ public class YubiKeyConfiguration {
         if (yubi.getClientId() <= 0) {
             throw new IllegalArgumentException("Yubikey client id is undefined");
         }
-        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(), yubi.getSecretKey());
-
-        if (registry != null) {
-            handler.setRegistry(this.registry);
-        }
+        final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(yubi.getClientId(), 
+                yubi.getSecretKey(), this.registry);
 
         handler.setPrincipalFactory(yubikeyPrincipalFactory());
         handler.setServicesManager(servicesManager);
@@ -162,21 +158,14 @@ public class YubiKeyConfiguration {
     @Bean
     @RefreshScope
     public YubiKeyAuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
-        final YubiKeyAuthenticationMetaDataPopulator pop = new YubiKeyAuthenticationMetaDataPopulator();
-
-        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        pop.setAuthenticationHandler(yubikeyAuthenticationHandler());
-        pop.setProvider(yubikeyAuthenticationProvider());
-        return pop;
+        final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        return new YubiKeyAuthenticationMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), yubikeyAuthenticationProvider());
     }
 
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass yubikeyBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getYubikey().getBypass(),
-                ticketRegistrySupport
-        );
+        return new DefaultMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getYubikey().getBypass(), ticketRegistrySupport);
     }
 
     @Bean

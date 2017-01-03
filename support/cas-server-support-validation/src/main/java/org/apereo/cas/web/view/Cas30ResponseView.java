@@ -3,10 +3,13 @@ package org.apereo.cas.web.view;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,15 +31,16 @@ import java.util.Set;
  */
 public class Cas30ResponseView extends Cas20ResponseView {
 
-    private boolean releaseProtocolAttributes = true;
+    private final boolean releaseProtocolAttributes;
 
-    private String authenticationContextAttribute;
-
-    /**
-     * Instantiates a new Abstract cas response view.
-     */
-    public Cas30ResponseView() {
-        super();
+    public Cas30ResponseView(final boolean successResponse, 
+                             final ProtocolAttributeEncoder protocolAttributeEncoder, 
+                             final ServicesManager servicesManager, 
+                             final String authenticationContextAttribute, 
+                             final View view, 
+                             final boolean releaseProtocolAttributes) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
+        this.releaseProtocolAttributes = releaseProtocolAttributes;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
                                                      final Map<String, Object> attributes,
                                                      final RegisteredService registeredService) {
-        final Map<String, Object> encodedAttributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+        final Map<String, Object> encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
         final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
@@ -124,13 +128,5 @@ public class Cas30ResponseView extends Cas20ResponseView {
             });
         });
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
-    }
-
-    public void setReleaseProtocolAttributes(final boolean releaseProtocolAttributes) {
-        this.releaseProtocolAttributes = releaseProtocolAttributes;
-    }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
     }
 }

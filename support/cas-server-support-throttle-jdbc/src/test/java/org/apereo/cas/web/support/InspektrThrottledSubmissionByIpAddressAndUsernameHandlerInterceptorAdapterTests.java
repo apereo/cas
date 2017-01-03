@@ -41,12 +41,17 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class, CasCoreAuditConfiguration.class,
-        CasCoreConfiguration.class, CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class, CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class, RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class, 
+        CasCoreAuditConfiguration.class,
+        CasCoreConfiguration.class, 
+        CasCoreServicesConfiguration.class,
+        CasCoreUtilConfiguration.class, 
+        CasCoreTicketsConfiguration.class,
+        CasCoreLogoutConfiguration.class, 
+        RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasSupportJdbcAuditConfiguration.class})
+        CasCoreAuthenticationConfiguration.class, 
+        CasSupportJdbcAuditConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
@@ -56,8 +61,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private AuthenticationManager authenticationManager;
 
     @Override
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
-            throws Exception {
+    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");

@@ -12,7 +12,7 @@ import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvid
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoImplTests;
+import org.apereo.cas.services.InMemoryServiceRegistryDaoTests;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RegexRegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServiceAuthenticationHandlerResolverTests;
@@ -21,6 +21,7 @@ import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.UnauthorizedProxyingExceptionTests;
 import org.apereo.cas.services.UnauthorizedServiceExceptionTests;
 import org.apereo.cas.services.UnauthorizedSsoServiceExceptionTests;
+import org.apereo.cas.util.services.RegisteredServiceJsonSerializerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -38,7 +39,7 @@ import org.junit.runners.Suite;
         DefaultRegisteredServiceAccessStrategyTests.class,
         DefaultRegisteredServiceUsernameProviderTests.class,
         DefaultServicesManagerTests.class,
-        InMemoryServiceRegistryDaoImplTests.class,
+        InMemoryServiceRegistryDaoTests.class,
         PrincipalAttributeRegisteredServiceUsernameProviderTests.class,
         RegexRegisteredServiceTests.class,
         RegisteredServiceAuthenticationHandlerResolverTests.class,
@@ -51,6 +52,7 @@ import org.junit.runners.Suite;
         ShibbolethCompatiblePersistentIdGeneratorTests.class,
         SimpleWebApplicationServiceImplTests.class, 
         WebApplicationServiceFactoryTests.class,
+        RegisteredServiceJsonSerializerTests.class,
         DefaultCasAttributeEncoderTests.class})
 public class AllTestsSuite {
 }

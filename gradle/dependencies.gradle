@@ -607,7 +607,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        thmyeleaf               : [
+        thymeleaf               : [
                 dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.javassist", module: "javassist")
@@ -615,7 +615,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        thmyeleafboot           : [
+        thymeleafboot           : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-thymeleaf:$springBootVersion") {
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")

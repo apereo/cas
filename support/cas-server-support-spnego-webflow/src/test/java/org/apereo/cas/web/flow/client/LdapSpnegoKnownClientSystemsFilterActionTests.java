@@ -47,7 +47,7 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
 
     @Test
     public void ensureLdapAttributeShouldDoSpnego() {
-        final LdapSpnegoKnownClientSystemsFilterAction action = new LdapSpnegoKnownClientSystemsFilterAction(this.connectionFactory,
+        final LdapSpnegoKnownClientSystemsFilterAction action = new LdapSpnegoKnownClientSystemsFilterAction("", "", 0, this.connectionFactory,
                 this.searchRequest, "mail") {
             @Override
             protected String getRemoteHostName(final String remoteIp) {

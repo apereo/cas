@@ -2,25 +2,28 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.support.DefaultCasAttributeEncoder;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.apereo.cas.services.InMemoryServiceRegistryDao;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,18 +50,16 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        final InMemoryServiceRegistryDao dao = new InMemoryServiceRegistryDao();
         dao.setRegisteredServices(list);
-        this.response = new Saml10SuccessResponseView();
+
         final DefaultServicesManager mgmr = new DefaultServicesManager(dao);
         mgmr.load();
-        this.response.setServicesManager(mgmr);
-        this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
         
-        final Saml10ObjectBuilder builder = new Saml10ObjectBuilder(configBean);
-        this.response.setSamlObjectBuilder(builder);
-        this.response.setIssuer("testIssuer");
-        this.response.setIssueLength(1000);
+        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr),
+                mgmr, "attribute", new Saml10ObjectBuilder(configBean),
+                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
+                1000, "testIssuer", "whatever");         
     }
 
     @Test

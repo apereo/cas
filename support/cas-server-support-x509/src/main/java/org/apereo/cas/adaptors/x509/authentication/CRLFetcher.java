@@ -4,13 +4,12 @@ import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.Size;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Defines operations needed to a fetch a CRL.
@@ -27,19 +26,18 @@ public interface CRLFetcher {
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    Set<X509CRL> fetch(@Size(min=1) Set<Resource> crls) throws IOException, CRLException, CertificateException;
+    Collection<X509CRL> fetch(@Size(min=1) Collection<Resource> crls) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
      * and returns it.
      * @param crl resources to retrieve
      * @return the CRL entry
-     * @throws MalformedURLException the exception thrown if resources cant be fetched
      * @throws IOException the exception thrown if resources cant be fetched
      * @throws CRLException the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
-    X509CRL fetch(String crl) throws MalformedURLException, IOException, CRLException, CertificateException;
+    X509CRL fetch(String crl) throws IOException, CRLException, CertificateException;
 
     /**
      * Fetches a single of crl from the specified resource
