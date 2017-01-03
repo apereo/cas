@@ -75,7 +75,7 @@ public interface NoSqlTicketRegistryDao {
     /**
      * Save ticket to the expire collection within the expirationTime bucket.
      * @param ticket ticket to be saved
-     * @param expirationTime bucket in which {@param ticket} will be saved
+     * @param expirationTime bucket in which the ticket will be saved
      */
     void addTicketToExpiryBucket(Ticket ticket, long expirationTime);
 
