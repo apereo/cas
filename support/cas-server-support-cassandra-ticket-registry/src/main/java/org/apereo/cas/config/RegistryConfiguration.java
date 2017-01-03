@@ -32,7 +32,8 @@ public class RegistryConfiguration {
     @Bean(name = "cassandraDao")
     public NoSqlTicketRegistryDao cassandraJsonDao() {
         return new CassandraDao<>(cassandraProperties.getContactPoints(), cassandraProperties.getUsername(), cassandraProperties.getPassword(),
-                new JacksonJsonSerializer(), String.class);
+                new JacksonJsonSerializer(), String.class, cassandraProperties.getTgtTable(), cassandraProperties.getStTable(),
+                cassandraProperties.getExpiryTable(), cassandraProperties.getLastRunTable());
     }
 
     @Bean(name = {"noSqlTicketRegistry", "ticketRegistry"})

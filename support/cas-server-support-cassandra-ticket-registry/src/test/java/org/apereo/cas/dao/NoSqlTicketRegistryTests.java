@@ -24,7 +24,8 @@ public class NoSqlTicketRegistryTests {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", "", "", new JacksonJsonSerializer(), String.class);
+        dao = new CassandraDao<>("localhost", "", "", new JacksonJsonSerializer(), String.class, "cas.ticketgrantingticket",
+                "cas.serviceticket", "cas.ticket_cleaner", "cas.ticket_cleaner_lastrun");
     }
 
     @Test

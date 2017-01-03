@@ -2966,6 +2966,18 @@ To learn more about this topic, [please review this guide](Cassandra-Ticket-Regi
 #
 ## Password
 # cas.ticket.registry.cassandra.password=
+#
+## TicketGrantingTicket fully qualified table
+# cas.ticket.registry.cassandra.tgtTable=cas.ticketgrantingticket
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.stTable=cas.servicetable
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.expiryTable=cas.ticket_cleaner
+#
+## ServiceTicket fully qualified table
+# cas.ticket.registry.cassandra.lastRunTable=cas.ticket_cleaner_lastrun
 ```
 
 ## Protocol Ticket Security

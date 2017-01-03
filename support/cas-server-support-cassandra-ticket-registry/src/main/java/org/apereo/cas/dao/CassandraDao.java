@@ -33,84 +33,74 @@ import java.util.stream.Stream;
 public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDao.class);
-
-    private static final String KEYSPACE = "cas";
-
-    private static final String TICKET_GRANTING_TICKET_TABLE = KEYSPACE + ".ticketgrantingticket";
-    private static final String SERVICE_TICKET_TABLE = KEYSPACE + ".serviceticket";
-    private static final String TICKET_EXPIRY_TABLE = KEYSPACE + ".ticket_cleaner";
-    private static final String TICKET_CLEANER_LAST_RUN_TABLE = KEYSPACE + ".ticket_cleaner_lastrun";
     private static final int FIRST_COLUMN_INDEX = 0;
-
-    private static final String INSERT_TGT = "insert into " + TICKET_GRANTING_TICKET_TABLE + " (id, ticket) values (?, ?) ";
-    private static final String UPDATE_TGT = "update " + TICKET_GRANTING_TICKET_TABLE + " set ticket = ? where id = ? ";
-    private static final String DELETE_TGT = "delete from " + TICKET_GRANTING_TICKET_TABLE + " where id = ?";
-    private static final String SELECT_TGT = "select ticket from " + TICKET_GRANTING_TICKET_TABLE + " where id = ?";
-
-    private static final String INSERT_ST = "insert into " + SERVICE_TICKET_TABLE + " (id, ticket) values (?, ?) ";
-    private static final String UPDATE_ST = "update " + SERVICE_TICKET_TABLE + " set ticket = ? where id = ? ";
-    private static final String DELETE_ST = "delete from " + SERVICE_TICKET_TABLE + " where id = ?";
-    private static final String SELECT_ST = "select ticket from " + SERVICE_TICKET_TABLE + " where id = ?";
-
-    private static final String INSERT_EX = "insert into " + TICKET_EXPIRY_TABLE + " (expiry_type, date_bucket, id) values ('EX', ?, ?) ";
-    private static final String DELETE_EX = "delete from " + TICKET_EXPIRY_TABLE + " where  expiry_type = 'EX' and date_bucket = ? ";
-    private static final String SELECT_EX = "select id from " + TICKET_EXPIRY_TABLE + " where expiry_type = 'EX' and date_bucket = ? ";
-    private static final String SELECT_DATE_EX = "select date_bucket from " + TICKET_EXPIRY_TABLE;
-
-    private static final String UPDATE_LR = "update " + TICKET_CLEANER_LAST_RUN_TABLE + " set last_run = ? where id = 'LASTRUN' ";
-    private static final String SELECT_LR = "select last_run from " + TICKET_CLEANER_LAST_RUN_TABLE + " where id = 'LASTRUN' ";
     private static final long TEN_SECONDS = 10000L;
     private static final int TEN = 10;
 
     private final TicketSerializer<T> serializer;
     private final Class<T> typeToWriteToCassandra;
 
-    private PreparedStatement insertTgtStmt;
-    private PreparedStatement updateTgtStmt;
-    private PreparedStatement selectTgtStmt;
-    private PreparedStatement deleteTgtStmt;
+    private final PreparedStatement insertTgtStmt;
+    private final PreparedStatement updateTgtStmt;
+    private final PreparedStatement selectTgtStmt;
+    private final PreparedStatement deleteTgtStmt;
 
-    private PreparedStatement insertStStmt;
-    private PreparedStatement updateStStmt;
-    private PreparedStatement selectStStmt;
-    private PreparedStatement deleteStStmt;
+    private final PreparedStatement insertStStmt;
+    private final PreparedStatement updateStStmt;
+    private final PreparedStatement selectStStmt;
+    private final PreparedStatement deleteStStmt;
 
-    private PreparedStatement insertExStmt;
-    private PreparedStatement deleteExStmt;
-    private PreparedStatement selectExStmt;
-    private PreparedStatement selectDateExStmt;
+    private final PreparedStatement insertExStmt;
+    private final PreparedStatement deleteExStmt;
+    private final PreparedStatement selectExStmt;
+    private final PreparedStatement selectDateExStmt;
 
-    private PreparedStatement selectLrStmt;
-    private PreparedStatement updateLrStmt;
+    private final PreparedStatement selectLrStmt;
+    private final PreparedStatement updateLrStmt;
 
-    private Session session;
+    private final Session session;
 
-    public CassandraDao(final String contactPoints, final String username, final String password,
-                        final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
+    public CassandraDao(final String contactPoints, final String username, final String password, final TicketSerializer<T> serializer,
+                        final Class<T> typeToWriteToCassandra, final String tgtTable, final String stTable, final String expiryTable,
+                        final String lastRunTable) {
         this.serializer = serializer;
         this.typeToWriteToCassandra = typeToWriteToCassandra;
         final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
                 .withProtocolVersion(ProtocolVersion.V3).build();
 
-        this.session = cluster.connect(KEYSPACE);
+        this.session = cluster.connect();
 
-        this.selectTgtStmt = session.prepare(SELECT_TGT).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare(INSERT_TGT).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteTgtStmt = session.prepare(DELETE_TGT).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare(UPDATE_TGT).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket) values (?, ?) ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ? where id = ? ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectStStmt = session.prepare(SELECT_ST).setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.insertStStmt = session.prepare(INSERT_ST).setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.deleteStStmt = session.prepare(DELETE_ST).setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
-        this.updateStStmt = session.prepare(UPDATE_ST).setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
+        this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
-        this.insertExStmt = session.prepare(INSERT_EX).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteExStmt = session.prepare(DELETE_EX).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectExStmt = session.prepare(SELECT_EX).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectDateExStmt = session.prepare(SELECT_DATE_EX).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.insertExStmt = session.prepare("insert into " + expiryTable + " (expiry_type, date_bucket, id) values ('EX', ?, ?) ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.deleteExStmt = session.prepare("delete from " + expiryTable + " where  expiry_type = 'EX' and date_bucket = ? ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectExStmt = session.prepare("select id from " + expiryTable + " where expiry_type = 'EX' and date_bucket = ? ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectDateExStmt = session.prepare("select date_bucket from " + expiryTable)
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
-        this.selectLrStmt = session.prepare(SELECT_LR).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateLrStmt = session.prepare(UPDATE_LR).setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectLrStmt = session.prepare("select last_run from " + lastRunTable + " where id = 'LASTRUN' ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.updateLrStmt = session.prepare("update " + lastRunTable + " set last_run = ? where id = 'LASTRUN' ")
+                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
 
         final long lastRun = getLastRunTimestamp();
         final long currentTime = currentTimeBucket();
