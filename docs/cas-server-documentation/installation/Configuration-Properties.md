@@ -1029,7 +1029,7 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.passwordEncoder.strength=16
 ```
 
-## Ldap Authentication
+## LDAP Authentication
 
 CAS authenticates a username/password against an LDAP directory such as Active Directory or OpenLDAP.
 There are numerous directory architectures and we provide configuration for four common cases.
@@ -1082,7 +1082,7 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 | Provider              | Description              
 |-----------------------|-----------------
 | `DEFAULT`             | The default JNDI provider behavior will be used.    
-| `ACTIVE_PASSIVE`      | First ldap will be used for every request unless it fails and then the next shall be used.    
+| `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
 | `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
 | `RANDOM`              | For each new connection a random LDAP url will be selected.
 | `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
@@ -2428,7 +2428,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
 ```
 
-### Ldap
+### LDAP
 
 If AUP is controlled via LDAP, decide how choices should be remembered back inside the LDAP instance.
 
@@ -2597,6 +2597,7 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.socketKeepAlive=false
 # cas.serviceRegistry.mongo.password=
 # cas.serviceRegistry.mongo.collectionName=cas-service-registry
+# cas.serviceRegistry.mongo.databaseName=cas-mongo-database
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
@@ -2606,7 +2607,7 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
 
-### Ldap Service Registry
+### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
 To learn more about this topic, [please review this guide](LDAP-Service-Management.html)
@@ -2915,6 +2916,28 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.crypto.encryption.key=
 # cas.ticket.registry.memcached.crypto.encryption.keySize=16
 # cas.ticket.registry.memcached.crypto.alg=AES
+```
+
+### MongoDb Ticket Registry
+
+To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html).
+
+```properties
+# cas.ticket.registry.mongo.idleTimeout=30000
+# cas.ticket.registry.mongo.port=27017
+# cas.ticket.registry.mongo.dropCollection=false
+# cas.ticket.registry.mongo.socketKeepAlive=false
+# cas.ticket.registry.mongo.password=
+# cas.ticket.registry.mongo.collectionName=cas-ticket-registry
+# cas.ticket.registry.mongo.databaseName=cas-database
+# cas.ticket.registry.mongo.timeout=5000
+# cas.ticket.registry.mongo.userId=
+# cas.ticket.registry.mongo.writeConcern=NORMAL
+# cas.ticket.registry.mongo.host=localhost
+
+# cas.ticket.mongo.conns.lifetime=60000
+# cas.ticket.mongo.conns.perHost=10
+```
 ```
 
 ### Redis Ticket Registry
