@@ -11,9 +11,9 @@ coarse-grained execution paths e.g. Spring-managed beans method executions by us
 and Spring-managed `@Aspect`-style aspects.
 
 
-CAS server auto-configures all the relevant Inspektr components. 
+CAS server auto-configures all the relevant Inspektr components.
 All the available configuration
-options that are injected to Inspektr classes are available to 
+options that are injected to Inspektr classes are available to
 deployers via relevant CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).
@@ -65,15 +65,13 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 The following events are tracked and recorded in the audit log:
 
 | Event                                 | Action          
-|---------------------------------------|-----------------
-| `TICKET_GRANTING_TICKET`              | `CREATED`, `NOT_CREATED` 
-| `PROXY_GRANTING_TICKET`               | `CREATED`, `NOT_CREATED` 
-| `SERVICE_TICKET`                      | `CREATED`, `NOT_CREATED` 
-| `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED` 
+|---------------------------------------|--------------------------------------
+| `TICKET_GRANTING_TICKET`              | `CREATED`, `NOT_CREATED`, `DESTROYED`
+| `PROXY_GRANTING_TICKET`               | `CREATED`, `NOT_CREATED`, `DESTROYED`
+| `SERVICE_TICKET`                      | `CREATED`, `NOT_CREATED`
+| `PROXY_TICKET`                        | `CREATED`, `NOT_CREATED`
 | `AUTHENTICATION`                      | `SUCCESS`, `FAILED`
 | `AUTHENTICATION_EVENT`                | `TRIGGERED`
-| `TICKET_GRANTING_TICKET_DESTROYED`    | N/A
-| `PROXY_GRANTING_TICKET_DESTROYED`     | N/A
 | `EVALUATE_RISKY_AUTHENTICATION`       | N/A
 | `MITIGATE_RISKY_AUTHENTICATION`       | N/A
 | `SAVE_SERVICE`                        | `SUCCESS`, `FAILURE`
