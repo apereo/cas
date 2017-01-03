@@ -30,7 +30,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockingStrategy lockingStrategy;
     private final boolean isCleanerEnabled;
 
-    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, final LogoutManager logoutManager, final TicketRegistry ticketRegistry,
+    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy, 
+                                        final LogoutManager logoutManager, 
+                                        final TicketRegistry ticketRegistry,
                                         final boolean isCleanerEnabled) {
 
         this.lockingStrategy = lockingStrategy;
@@ -44,7 +46,6 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public void clean() {
         try {
-            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             if (!isCleanerEnabled) {
                 LOGGER.trace("Ticket registry cleaner is disabled for {}. No cleaner processes will run.",
                         this.ticketRegistry.getClass().getSimpleName());
