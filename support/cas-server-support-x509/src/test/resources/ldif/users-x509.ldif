@@ -15,5 +15,6 @@ userPrincipalName: mmoayyed@example.org
 userAccountControl: 66048
 distinguishedName: CN=mmoayyed,ou=people,dc=example,dc=org
 password: misagh
+userPassword: misagh
 unicodePwd: ignoredForTests
 
