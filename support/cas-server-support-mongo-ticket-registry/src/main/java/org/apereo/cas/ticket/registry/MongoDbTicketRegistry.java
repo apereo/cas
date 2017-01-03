@@ -1,17 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
-import com.google.common.base.Throwables;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.stream.Collectors;
 
 /**
  * A Ticket Registry storage backend based on MongoDB.
@@ -37,52 +37,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         this.mongoTemplate = mongoTemplate;
     }
 
-    @Override
-    public Ticket updateTicket(final Ticket ticket) {
-        logger.debug("Updating ticket {}", ticket);
-        try {
-
-        } catch (final Exception e) {
-            logger.error("Failed updating {}: {}", ticket, e);
-        }
-        return ticket;
-    }
-
-    @Override
-    public void addTicket(final Ticket ticketToAdd) {
-        logger.debug("Adding ticket {}", ticketToAdd);
-        try {
-
-        } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticketToAdd, e);
-        }
-    }
-
-    @Override
-    public Ticket getTicket(final String ticketId) {
-        try {
-            logger.debug("Locating ticket id {}", ticketId);
-            final String encTicketId = encodeTicketId(ticketId);
-            if (encTicketId == null) {
-                logger.debug("Ticket id {} could not be found", ticketId);
-                return null;
-            }
-
-
-            logger.debug("Ticket {} not found in the registry.", encTicketId);
-            return null;
-        } catch (final Exception e) {
-            logger.error("Failed fetching {}: {}", ticketId, e);
-            return null;
-        }
-    }
-
-
-    /** Init registry. **/
+    /**
+     * Init registry.
+     **/
     @PostConstruct
     public void initialize() {
         Assert.notNull(this.mongoTemplate);
 
+        logger.debug("Setting up MongoDb Ticket Registry instance {}", this.collectionName);
         if (this.dropCollection) {
             logger.debug("Dropping database collection: {}", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
@@ -92,25 +54,58 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             logger.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
+        logger.debug("Creating indices on collection {} to auto-expire documents...", this.collectionName);
+        final DBCollection collection = mongoTemplate.getCollection(this.collectionName);
+        collection.createIndex(new BasicDBObject("expireAt", 1), new BasicDBObject("expireAfterSeconds", 0));
+
+        logger.info("Configured MongoDb Ticket Registry instance {}", this.collectionName);
     }
 
-
-    /**
-     * Stops the client.
-     */
-    @PreDestroy
-    public void destroy() {
+    @Override
+    public Ticket updateTicket(final Ticket ticket) {
+        logger.debug("Updating ticket {}", ticket);
         try {
-
+            this.mongoTemplate.save(buildTicketAsDocument(ticket), this.collectionName);
         } catch (final Exception e) {
-            throw Throwables.propagate(e);
+            logger.error("Failed updating {}: {}", ticket, e);
+        }
+        return ticket;
+    }
+
+    @Override
+    public void addTicket(final Ticket ticket) {
+        logger.debug("Adding ticket {}", ticket);
+        try {
+            this.mongoTemplate.insert(buildTicketAsDocument(ticket), this.collectionName);
+        } catch (final Exception e) {
+            logger.error("Failed adding {}: {}", ticket, e);
         }
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Ticket getTicket(final String ticketId) {
+        try {
+            logger.debug("Locating ticket ticketId {}", ticketId);
+            final String encTicketId = encodeTicketId(ticketId);
+            if (encTicketId == null) {
+                logger.debug("Ticket ticketId {} could not be found", ticketId);
+                return null;
+            }
+            final TicketHolder d = this.mongoTemplate.findOne(new Query(Criteria.where("ticketId").is(encTicketId)),
+                    TicketHolder.class, this.collectionName);
+            if (d != null) {
+                return deserializeTicketFromMongoDocument(d);
+            }
+        } catch (final Exception e) {
+            logger.error("Failed fetching {}: {}", ticketId, e);
+        }
+        return null;
+    }
 
-        return new ArrayList<>();
+    @Override
+    public Collection<Ticket> getTickets() {
+        final Collection<TicketHolder> c = this.mongoTemplate.findAll(TicketHolder.class, this.collectionName);
+        return c.stream().map(t -> deserializeTicketFromMongoDocument(t)).collect(Collectors.toSet());
     }
 
     @Override
@@ -127,24 +122,29 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     public boolean deleteSingleTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
+            this.mongoTemplate.remove(new Query(Criteria.where("ticketId").is(ticketId)), this.collectionName);
             return true;
         } catch (final Exception e) {
             logger.error("Failed deleting {}: {}", ticketId, e);
-            return false;
         }
+        return false;
+    }
+
+    private int getTimeToLive(final Ticket ticket) {
+        return ticket.getExpirationPolicy().getTimeToLive().intValue();
+    }
+
+    private String serializeTicketForMongoDocument(final Ticket ticket) {
+        return BaseTicketSerializers.serializeTicket(ticket);
+    }
+
+    private Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+        return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
     }
     
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
-     */
-    private int getTimeToLive(final Ticket ticket) {
-        final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        
-        return expTime;
+    private TicketHolder buildTicketAsDocument(final Ticket ticket) {
+        final String json = serializeTicketForMongoDocument(ticket);
+        return new TicketHolder(json, ticket.getId(), ticket.getClass().getName(), getTimeToLive(ticket));
     }
 }
 
