@@ -3061,9 +3061,9 @@ To learn more about this topic, [please review this guide](Installing-ServicesMg
 # cas.mgmt.ldapAuthz.groupFilter=
 # cas.mgmt.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldapAuthz.roleAttribute=uugid
+# cas.mgmt.ldapAuthz.searchFilter=cn={user}
 
 # cas.mgmt.ldapAuthz.allowMultipleResults=false
-# cas.mgmt.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldapAuthz.baseDn=dc=example,dc=org
 # cas.mgmt.ldapAuthz.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
 # cas.mgmt.ldapAuthz.connectionStrategy=
