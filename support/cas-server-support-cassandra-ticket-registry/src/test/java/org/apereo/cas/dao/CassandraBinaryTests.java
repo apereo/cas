@@ -10,18 +10,23 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class CassandraBinaryTest {
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
+public class CassandraBinaryTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema-binary.cql"), "cassandra.yaml", 120_000L);
 
     @Test
     public void shouldWorkWithABinarySerializer() throws Exception {
-        CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class);
+        final CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class);
 
-        TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
 
         dao.addTicketGrantingTicket(tgt);
 

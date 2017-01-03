@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
 public class NoSqlTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoSqlTicketRegistry.class);
@@ -68,7 +73,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    public Ticket updateTicket(final Ticket ticket) {
         final String ticketId = ticket.getId();
         LOGGER.debug("Updating ticket {}", ticketId);
         if (isTgt(ticketId)) {
@@ -78,6 +83,7 @@ public class NoSqlTicketRegistry extends AbstractTicketRegistry {
         } else {
             LOGGER.error("Updating unknown ticket type {}", ticket.getClass().getName());
         }
+        return ticket;
     }
 
     @Override

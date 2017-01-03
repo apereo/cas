@@ -16,12 +16,17 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 
-public class JacksonJSONSerializer implements TicketSerializer<String> {
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
+public class JacksonJsonSerializer implements TicketSerializer<String> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonJSONSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonJsonSerializer.class);
     private ObjectMapper mapper;
 
-    public JacksonJSONSerializer() {
+    public JacksonJsonSerializer() {
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

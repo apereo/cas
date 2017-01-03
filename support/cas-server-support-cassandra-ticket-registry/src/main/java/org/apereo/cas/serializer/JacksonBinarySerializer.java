@@ -17,6 +17,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
 public class JacksonBinarySerializer implements TicketSerializer<ByteBuffer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JacksonBinarySerializer.class);

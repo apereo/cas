@@ -1,6 +1,6 @@
 package org.apereo.cas.dao;
 
-import org.apereo.cas.serializer.JacksonJSONSerializer;
+import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreator;
@@ -14,10 +14,14 @@ import org.junit.Test;
 import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
-public class CassandraJSONTest {
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
+public class CassandraJsonTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
@@ -25,12 +29,12 @@ public class CassandraJSONTest {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", "", "", new JacksonJSONSerializer(), String.class);
+        dao = new CassandraDao<>("localhost", "", "", new JacksonJsonSerializer(), String.class);
     }
 
     @Test
     public void shouldWorkWithAStringSerializer() throws Exception {
-        TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
 
         dao.addTicketGrantingTicket(tgt);
 
@@ -41,19 +45,19 @@ public class CassandraJSONTest {
     @Test
     public void shouldReturnExpiredTGTs() throws Exception {
         //given
-        TicketGrantingTicketImpl firstExpired = TicketCreator.expiredTGT("expired1");
-        TicketGrantingTicketImpl secondExpired = TicketCreator.expiredTGT("expired2");
-        TicketGrantingTicketImpl notExpired = TicketCreator.defaultTGT("notExpired");
+        final TicketGrantingTicketImpl firstExpired = TicketCreator.expiredTGT("expired1");
+        final TicketGrantingTicketImpl secondExpired = TicketCreator.expiredTGT("expired2");
+        final TicketGrantingTicketImpl notExpired = TicketCreator.defaultTGT("notExpired");
 
         dao.addTicketGrantingTicket(firstExpired);
         dao.addTicketGrantingTicket(secondExpired);
         dao.addTicketGrantingTicket(notExpired);
 
         //when
-        Stream<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();
+        final Stream<TicketGrantingTicket> expiredTgts = dao.getExpiredTgts();
 
         //then
-        long expiredTgtsInserted = 2;
+        final long expiredTgtsInserted = 2;
         assertThat(expiredTgts.count(), is(expiredTgtsInserted));
     }
 }

@@ -20,6 +20,16 @@ import java.util.function.Function;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+/**
+ * Class responsible of running the queries against Cassandra.
+ *
+ * @author David Rodriguez
+ *
+ * @param <T> type that will be written to Cassandra. Should
+ * be compatible with Cassandra, like String
+ *
+ * @since 5.1.0
+ */
 public class CassandraDao<T> implements NoSqlTicketRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDao.class);
@@ -205,7 +215,7 @@ public class CassandraDao<T> implements NoSqlTicketRegistryDao {
     public long getLastRunTimestamp() {
         final Row row = session.execute(this.selectLrStmt.bind()).one();
         if (row == null) {
-            List<Row> all = session.execute(this.selectDateExStmt.bind()).all();
+            final List<Row> all = session.execute(this.selectDateExStmt.bind()).all();
             return all.stream()
                     .mapToLong(r -> r.getLong(FIRST_COLUMN_INDEX))
                     .min()

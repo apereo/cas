@@ -1,6 +1,6 @@
 package org.apereo.cas.dao;
 
-import org.apereo.cas.serializer.JacksonJSONSerializer;
+import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.utils.TicketCreator;
 import org.cassandraunit.CassandraCQLUnit;
@@ -9,9 +9,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class NoSqlTicketRegistryTest {
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
+public class NoSqlTicketRegistryTests {
 
     @Rule
     public CassandraCQLUnit cassandraUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("schema.cql"), "cassandra.yaml", 120_000L);
@@ -19,14 +24,14 @@ public class NoSqlTicketRegistryTest {
 
     @Before
     public void setUp() throws Exception {
-        dao = new CassandraDao<>("localhost", "", "", new JacksonJSONSerializer(), String.class);
+        dao = new CassandraDao<>("localhost", "", "", new JacksonJsonSerializer(), String.class);
     }
 
     @Test
     public void shouldRetrieveATicket() throws Exception {
-        NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao);
-        String ticketId = "TGT-1234";
-        TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
+        final NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao);
+        final String ticketId = "TGT-1234";
+        final TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
         ticketRegistry.addTicket(ticket);
 
         assertEquals(ticket, ticketRegistry.getTicket(ticketId));

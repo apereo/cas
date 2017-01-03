@@ -5,6 +5,11 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
 public class CassandraTicketRegistryCleaner implements TicketRegistryCleaner {
 
     private final NoSqlTicketRegistryDao ticketRegistryDao;

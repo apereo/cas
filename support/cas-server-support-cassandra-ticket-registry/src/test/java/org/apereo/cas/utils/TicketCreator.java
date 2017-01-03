@@ -15,21 +15,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author David Rodriguez
+ *
+ * @since 5.1.0
+ */
 public class TicketCreator {
 
+    private TicketCreator() {
+    }
+
+    /**
+     * Creates a new expired ticketGrantingTicket with this id
+     * @param id id that the ticket will have
+     * @return ticketGrantingTicket created
+     */
     public static TicketGrantingTicketImpl expiredTGT(final String id) {
-        TicketGrantingTicketImpl tgt = defaultTGT(id);
+        final TicketGrantingTicketImpl tgt = defaultTGT(id);
         tgt.markTicketExpired();
         return tgt;
     }
 
+    /**
+     * Creates a new ticketGrantingTicket with this id
+     * @param id id that the ticket will have
+     * @return ticketGrantingTicket created
+     */
     public static TicketGrantingTicketImpl defaultTGT(final String id) {
-        Map<String, HandlerResult> successes = new HashMap<>();
+        final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("something", null);
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        ArrayList<CredentialMetaData> credentials = new ArrayList<>();
+        final ArrayList<CredentialMetaData> credentials = new ArrayList<>();
         credentials.add(meta);
-        Authentication defaultAuthentication = new DefaultAuthentication(ZonedDateTime.now(), credentials, NullPrincipal.getInstance(), new HashMap<>(), successes, new HashMap<>());
+        final Authentication defaultAuthentication = new DefaultAuthentication(ZonedDateTime.now(), credentials, NullPrincipal.getInstance(), new HashMap<>(),
+                successes, new HashMap<>());
         return new TicketGrantingTicketImpl(id, defaultAuthentication, new TimeoutExpirationPolicy(3000));
     }
 }
