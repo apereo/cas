@@ -64,7 +64,6 @@ public class DuoCredential implements Credential, Serializable {
         return this.username;
     }
 
-
     public void setUsername(final String username) {
         this.username = username;
     }

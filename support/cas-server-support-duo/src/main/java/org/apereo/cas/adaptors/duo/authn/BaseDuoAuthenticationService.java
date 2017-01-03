@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 public abstract class BaseDuoAuthenticationService implements DuoAuthenticationService {
+
     private static final int AUTH_API_VERSION = 2;
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String RESULT_KEY_RESPONSE = "response";
@@ -45,8 +46,9 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
      *
      * @param duoProperties the duo properties
      */
-    public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties) {
+    public BaseDuoAuthenticationService(final MultifactorAuthenticationProperties.Duo duoProperties, final HttpClient httpClient) {
         this.duoProperties = duoProperties;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -77,10 +79,6 @@ public abstract class BaseDuoAuthenticationService implements DuoAuthenticationS
     @Override
     public String getApiHost() {
         return duoProperties.getDuoApiHost();
-    }
-
-    public void setHttpClient(final HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
     @Override

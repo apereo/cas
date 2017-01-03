@@ -19,12 +19,13 @@ import org.springframework.webflow.execution.Event;
  */
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
         implements DuoMultifactorAuthenticationProvider {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDuoMultifactorAuthenticationProvider.class);
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private DuoAuthenticationService duoAuthenticationService;
+    private final DuoAuthenticationService duoAuthenticationService;
 
-    public void setDuoAuthenticationService(final DuoAuthenticationService duoAuthenticationService) {
+    public DefaultDuoMultifactorAuthenticationProvider(final DuoAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
     }
 
@@ -32,7 +33,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     public DuoAuthenticationService getDuoAuthenticationService() {
         return this.duoAuthenticationService;
     }
-
 
     @Override
     protected boolean isAvailable() {
@@ -66,8 +66,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     }
 
     @Override
-    protected boolean supportsInternal(final Event e, final Authentication authentication,
-                                       final RegisteredService registeredService) {
+    protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }
