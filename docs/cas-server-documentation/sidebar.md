@@ -16,14 +16,14 @@ layout: null
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
     *   [Troubleshooting Guide](/$version/installation/Troubleshooting-Guide.html)
-   
+
 * [Configuration](#configmgmt)
-    *   [Overview](/$version/installation/Configuration-Management.html) 
+    *   [Overview](/$version/installation/Configuration-Management.html)
     *   [Properties & Settings](/$version/installation/Configuration-Properties.html)
     *   [Securing Configuration](/$version/installation/Configuration-Properties-Security.html)
     *   [Reloading Changes](/$version/installation/Configuration-Management-Reload.html)
     *   [Clustered Deployments](/$version/installation/Configuration-Management-Clustered.html)
-        
+
 * [Authentication](#authentication)
     *   [Overview](/$version/installation/Configuring-Authentication-Components.html)
     *   [Database](/$version/installation/Database-Authentication.html)
@@ -50,7 +50,7 @@ layout: null
     *   [Blacklist](/$version/installation/Blacklist-Authentication.html)
     *   [Proxy Authentication](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [MFA](/$version/installation/Configuring-Multifactor-Authentication.html)
-        *   [Duo Security](/$version/installation/DuoSecurity-Authentication.html) 
+        *   [Duo Security](/$version/installation/DuoSecurity-Authentication.html)
         *   [YubiKey](/$version/installation/YubiKey-Authentication.html)
         *   [RSA/Radius](/$version/installation/RADIUS-Authentication.html)
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
@@ -83,6 +83,7 @@ layout: null
         *   [Couchbase](/$version/installation/Couchbase-Ticket-Registry.html)
         *   [Infinispan](/$version/installation/Infinispan-Ticket-Registry.html)
         *   [Redis](/$version/installation/Redis-Ticket-Registry.html)
+        *   [Redis](/$version/installation/MongoDb-Ticket-Registry.html)
 
 * [Services](#service_management)
     *   [Overview](/$version/installation/Service-Management.html)
@@ -140,7 +141,7 @@ layout: null
     *   [Javadocs](http://www.javadoc.io/doc/org.apereo.cas/cas-server)
     *   [Issue Tracker](https://github.com/apereo/cas/issues)
     *   [Security Vulnerability Response](/cas/developer/Sec-Vuln-Response.html)
-    *   [PMC](/cas/developer/Project-Commitee.html) 
+    *   [PMC](/cas/developer/Project-Commitee.html)
     *   [Contributor Guidelines](/cas/developer/Contributor-Guidelines.html)
     *   [Code Conventions](/cas/developer/Code-Conventions.html)
     *   [Release Process](/cas/developer/Release-Process.html)
