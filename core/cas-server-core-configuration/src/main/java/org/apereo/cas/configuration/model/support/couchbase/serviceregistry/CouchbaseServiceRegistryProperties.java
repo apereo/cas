@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.couchbase.ticketregistry;
+package org.apereo.cas.configuration.model.support.couchbase.serviceregistry;
 
 import org.apereo.cas.configuration.support.Beans;
 

@@ -152,8 +152,8 @@ subprojects {
             if (!Boolean.getBoolean("skipVersionConflict")) {
                 failOnVersionConflict()
             }
-            cacheDynamicVersionsFor 72, 'hours'
-            cacheChangingModulesFor 72, 'hours'
+            cacheDynamicVersionsFor 5, 'days'
+            cacheChangingModulesFor 5, 'days'
         }
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
