@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
@@ -51,58 +50,102 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /**
      * The compiled pattern supplied by the deployer.
      */
-    private Pattern regExTrustedIssuerDnPattern;
+    private final Pattern regExTrustedIssuerDnPattern;
 
     /**
      * Deployer supplied setting for maximum pathLength in a SUPPLIED
      * certificate.
      */
-    private int maxPathLength;
+    private final int maxPathLength;
 
     /**
      * Deployer supplied setting to allow unlimited pathLength in a SUPPLIED
      * certificate.
      */
-    private boolean maxPathLengthAllowUnspecified;
+    private final boolean maxPathLengthAllowUnspecified;
 
     /**
      * Deployer supplied setting to check the KeyUsage extension.
      */
-    private boolean checkKeyUsage;
+    private final boolean checkKeyUsage;
 
     /**
      * Deployer supplied setting to force require the correct KeyUsage
      * extension.
      */
-    private boolean requireKeyUsage;
+    private final boolean requireKeyUsage;
 
     /**
      * The compiled pattern for trusted DN's supplied by the deployer.
      */
-    private Pattern regExSubjectDnPattern;
+    private final Pattern regExSubjectDnPattern;
 
     /**
      * Certificate revocation checker component.
      */
+    private final RevocationChecker revocationChecker;
 
-    private RevocationChecker revocationChecker = new NoOpRevocationChecker();
+    /**
+     * Instantiates a new X 509 credentials authentication handler.
+     *
+     * @param regExTrustedIssuerDnPattern   the regex trusted issuer dn pattern
+     * @param maxPathLength                 the max path length
+     * @param maxPathLengthAllowUnspecified the max path length allow unspecified
+     * @param checkKeyUsage                 the check key usage
+     * @param requireKeyUsage               the require key usage
+     * @param regExSubjectDnPattern         the regex subject dn pattern
+     * @param revocationChecker             the revocation checker. Sets the component responsible for evaluating
+     *                                      certificate revocation status for client
+     *                                      certificates presented to handler. The default checker is a NO-OP implementation
+     *                                      for backward compatibility with previous versions that do not perform revocation
+     *                                      checking.
+     */
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
+                                                final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage,
+                                                final boolean requireKeyUsage, final Pattern regExSubjectDnPattern,
+                                                final RevocationChecker revocationChecker) {
+        this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
+        this.maxPathLength = maxPathLength;
+        this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
+        this.checkKeyUsage = checkKeyUsage;
+        this.requireKeyUsage = requireKeyUsage;
+        this.regExSubjectDnPattern = regExSubjectDnPattern;
+        if (revocationChecker == null) {
+            throw new IllegalArgumentException("Revocation checker is not configured");
+        }
+        this.revocationChecker = revocationChecker;
+    }
 
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern) {
+        this(regExTrustedIssuerDnPattern, new NoOpRevocationChecker());
+    }
+
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
+                                                final boolean maxPathLengthAllowUnspecified,
+                                                final Pattern regExSubjectDnPattern) {
+        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
+                false, regExSubjectDnPattern,
+                new NoOpRevocationChecker());
+    }
+
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
+                                                final boolean maxPathLengthAllowUnspecified,
+                                                final boolean checkKeyUsage,
+                                                final boolean requireKeyUsage) {
+        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
+                checkKeyUsage, requireKeyUsage, null,
+                new NoOpRevocationChecker());
+    }
+
+    public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
+        this(regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
+                false, false, null,
+                revocationChecker);
+    }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && X509CertificateCredential.class.isAssignableFrom(credential
-                .getClass());
-    }
-
-    /**
-     * Init and ensure configuration is correct.
-     */
-    @PostConstruct
-    public void init() {
-        if (this.revocationChecker == null) {
-            throw new IllegalArgumentException("Revocation checker is not configured");
-        }
+        return credential != null && X509CertificateCredential.class.isAssignableFrom(credential.getClass());
     }
 
     @Override
@@ -139,42 +182,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         logger.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
-    }
-
-    public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
-        this.regExTrustedIssuerDnPattern = Pattern.compile(trustedIssuerDnPattern);
-    }
-
-    public void setMaxPathLength(final int maxPathLength) {
-        this.maxPathLength = maxPathLength;
-    }
-
-    public void setMaxPathLengthAllowUnspecified(final boolean allowed) {
-        this.maxPathLengthAllowUnspecified = allowed;
-    }
-
-    public void setCheckKeyUsage(final boolean checkKeyUsage) {
-        this.checkKeyUsage = checkKeyUsage;
-    }
-
-    public void setRequireKeyUsage(final boolean requireKeyUsage) {
-        this.requireKeyUsage = requireKeyUsage;
-    }
-
-    public void setSubjectDnPattern(final String subjectDnPattern) {
-        this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
-    }
-
-    /**
-     * Sets the component responsible for evaluating certificate revocation status for client
-     * certificates presented to handler. The default checker is a NO-OP implementation
-     * for backward compatibility with previous versions that do not perform revocation
-     * checking.
-     *
-     * @param checker Revocation checker component.
-     */
-    public void setRevocationChecker(final RevocationChecker checker) {
-        this.revocationChecker = checker;
     }
 
     /**

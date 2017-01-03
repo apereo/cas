@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +72,7 @@ public class X509AuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -97,15 +98,19 @@ public class X509AuthenticationConfiguration {
     public RevocationChecker crlDistributionPointRevocationChecker() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
         final Cache cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
-                x509.getCacheMaxElementsInMemory(), x509.isCacheDiskOverflow(),
-                x509.isCacheEternal(), x509.getCacheTimeToLiveSeconds(), x509.getCacheTimeToIdleSeconds());
+                x509.getCacheMaxElementsInMemory(),
+                x509.isCacheDiskOverflow(),
+                x509.isCacheEternal(),
+                x509.getCacheTimeToLiveSeconds(),
+                x509.getCacheTimeToIdleSeconds());
 
-        final CRLDistributionPointRevocationChecker c = new CRLDistributionPointRevocationChecker(cache, getCrlFetcher());
-        c.setCheckAll(casProperties.getAuthn().getX509().isCheckAll());
-        c.setThrowOnFetchFailure(casProperties.getAuthn().getX509().isThrowOnFetchFailure());
-        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlExpiredPolicy()));
-        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlUnavailablePolicy()));
-        return c;
+        return new CRLDistributionPointRevocationChecker(
+                x509.isCheckAll(),
+                getRevocationPolicy(x509.getCrlUnavailablePolicy()),
+                getRevocationPolicy(x509.getCrlExpiredPolicy()),
+                cache,
+                getCrlFetcher(),
+                x509.isThrowOnFetchFailure());
     }
 
     @Bean
@@ -121,22 +126,18 @@ public class X509AuthenticationConfiguration {
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final ResourceCRLRevocationChecker c = new ResourceCRLRevocationChecker();
-
-        c.setRefreshInterval(x509.getRefreshIntervalSeconds());
-        c.setCheckAll(x509.isCheckAll());
-        c.setExpiredCRLPolicy(getRevocationPolicy(x509.getCrlResourceExpiredPolicy()));
-        c.setUnavailableCRLPolicy(getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()));
-
         final Set<Resource> x509CrlResources = x509.getCrlResources()
                 .stream()
                 .map(s -> this.resourceLoader.getResource(s))
                 .collect(Collectors.toSet());
-        c.setResources(x509CrlResources);
 
-        c.setFetcher(getCrlFetcher());
-
-        return c;
+        return new ResourceCRLRevocationChecker(
+                x509.isCheckAll(),
+                getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()),
+                getRevocationPolicy(x509.getCrlResourceExpiredPolicy()),
+                x509.getRefreshIntervalSeconds(),
+                getCrlFetcher(),
+                x509CrlResources);
     }
 
     private static RevocationPolicy getRevocationPolicy(final String policy) {
@@ -166,32 +167,31 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
         final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler();
-
-        h.setCheckKeyUsage(x509.isCheckKeyUsage());
-        h.setMaxPathLength(x509.getMaxPathLength());
-        h.setMaxPathLengthAllowUnspecified(x509.isMaxPathLengthAllowUnspecified());
-        h.setRequireKeyUsage(x509.isRequireKeyUsage());
-
-        switch (x509.getRevocationChecker().toLowerCase()) {
+        final RevocationChecker revChecker;
+        switch (x509.getRevocationChecker().trim().toLowerCase()) {
             case "resource":
-                h.setRevocationChecker(resourceCrlRevocationChecker());
+                revChecker = resourceCrlRevocationChecker();
                 break;
             case "crl":
-                h.setRevocationChecker(crlDistributionPointRevocationChecker());
+                revChecker = crlDistributionPointRevocationChecker();
                 break;
             case "none":
             default:
-                h.setRevocationChecker(noOpRevocationChecker());
+                revChecker = noOpRevocationChecker();
                 break;
         }
 
-        if (StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())) {
-            h.setTrustedIssuerDnPattern(x509.getRegExTrustedIssuerDnPattern());
-        }
-        if (StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())) {
-            h.setTrustedIssuerDnPattern(x509.getRegExSubjectDnPattern());
-        }
+        final X509CredentialsAuthenticationHandler h = new X509CredentialsAuthenticationHandler(
+                StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
+                        ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern()) : null,
+                x509.getMaxPathLength(),
+                x509.isMaxPathLengthAllowUnspecified(),
+                x509.isCheckKeyUsage(),
+                x509.isRequireKeyUsage(),
+                StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())
+                        ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern()) : null,
+                revChecker);
+
         h.setPrincipalFactory(x509PrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(x509.getName());
@@ -206,7 +206,7 @@ public class X509AuthenticationConfiguration {
         r.setSearchExecutor(Beans.newSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()));
         return r;
     }
-    
+
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
