@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
-import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -25,31 +23,29 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 @RunWith(Parameterized.class)
 public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
-    /** Instance under test. */
+    /**
+     * Instance under test.
+     */
     private final ResourceCRLRevocationChecker checker;
 
     /**
      * Creates a new test instance with given parameters.
      *
-     * @param checker Revocation checker instance.
-     * @param expiredCRLPolicy Policy instance for handling expired CRL data.
-     * @param certFiles File names of certificates to check.
-     * @param expected Expected result of check; null to indicate expected success.
+     * @param checker          Revocation checker instance.
+     * @param certFiles        File names of certificates to check.
+     * @param expected         Expected result of check; null to indicate expected success.
      */
     public ResourceCRLRevocationCheckerTests(
             final ResourceCRLRevocationChecker checker,
-            final RevocationPolicy<X509CRL> expiredCRLPolicy,
             final String[] certFiles,
             final GeneralSecurityException expected) {
 
         super(certFiles, expected);
 
         this.checker = checker;
-        this.checker.setExpiredCRLPolicy(expiredCRLPolicy);
         try {
             this.checker.init();
         } catch (final Exception e) {
@@ -60,7 +56,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
     /**
      * Gets the unit test parameters.
      *
-     * @return  Test parameter data.
+     * @return Test parameter data.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
@@ -71,63 +67,58 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
 
         // Test case #1
         // Valid certificate on valid CRL data
-        params.add(new Object[] {
-                new ResourceCRLRevocationChecker(new ClassPathResource[] {
+        params.add(new Object[]{
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-valid.crl"),
-                }),
-                zeroThresholdPolicy,
-                new String[] {"user-valid.crt"},
+                }, zeroThresholdPolicy),
+                new String[]{"user-valid.crt"},
                 null,
         });
 
         // Test case #2
         // Revoked certificate on valid CRL data
-        params.add(new Object[] {
-                new ResourceCRLRevocationChecker(new ClassPathResource[] {
+        params.add(new Object[]{
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-valid.crl"),
                         new ClassPathResource("intermediateCA-valid.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
-                }),
-                zeroThresholdPolicy,
-                new String[] {"user-revoked.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
+                }, zeroThresholdPolicy),
+                new String[]{"user-revoked.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
                 new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         // Test case #3
         // Valid certificate on expired CRL data for head cert
-        params.add(new Object[] {
-                new ResourceCRLRevocationChecker(new ClassPathResource[] {
+        params.add(new Object[]{
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-expired.crl"),
                         new ClassPathResource("intermediateCA-valid.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
-                }),
-                zeroThresholdPolicy,
-                new String[] {"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
+                }, zeroThresholdPolicy),
+                new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
                 new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #4
         // Valid certificate on expired CRL data for intermediate cert
-        params.add(new Object[] {
-                new ResourceCRLRevocationChecker(new ClassPathResource[] {
+        params.add(new Object[]{
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-valid.crl"),
                         new ClassPathResource("intermediateCA-expired.crl"),
                         new ClassPathResource("rootCA-valid.crl"),
-                }),
-                zeroThresholdPolicy,
-                new String[] {"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
+                }, zeroThresholdPolicy),
+                new String[]{"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt"},
                 new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #5
         // Valid certificate on expired CRL data with custom expiration
         // policy to always allow expired CRL data
-        params.add(new Object[] {
-                new ResourceCRLRevocationChecker(new ClassPathResource[] {
+        params.add(new Object[]{
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
                         new ClassPathResource("userCA-expired.crl"),
-                }),
-                (RevocationPolicy<X509CRL>) crl -> {/* Do nothing to allow unconditionally */},
-                new String[] {"user-valid.crt"},
+                }, crl -> {}),
+                new String[]{"user-valid.crt"},
                 null,
         });
 
