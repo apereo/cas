@@ -13,6 +13,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
+import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
+import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
@@ -47,6 +49,10 @@ public class Pac4jConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
+    
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -80,6 +86,11 @@ public class Pac4jConfiguration {
         return new ClientAuthenticationMetaDataPopulator();
     }
 
+    @Bean
+    public Action saml2ClientLogoutAction() {
+        return new SAML2ClientLogoutAction(builtClients(), httpClient);
+    }
+    
     @RefreshScope
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
@@ -95,7 +106,9 @@ public class Pac4jConfiguration {
     @RefreshScope
     @Bean
     public Action clientAction() {
-        return new DelegatedClientAuthenticationAction(builtClients(), authenticationSystemSupport, centralAuthenticationService, 
+        return new DelegatedClientAuthenticationAction(builtClients(), 
+                authenticationSystemSupport, 
+                centralAuthenticationService, 
                 casProperties.getTheme().getParamName(), 
                 casProperties.getLocale().getParamName(), 
                 casProperties.getAuthn().getPac4j().isAutoRedirect());

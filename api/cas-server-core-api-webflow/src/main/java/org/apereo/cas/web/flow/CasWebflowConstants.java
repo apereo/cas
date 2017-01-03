@@ -222,4 +222,9 @@ public interface CasWebflowConstants {
      * State id 'doLogout'.
      */
     String STATE_ID_DO_LOGOUT = "doLogout";
+
+    /**
+     * State id 'finishLogout'.
+     */
+    String STATE_UD_FINISH_LOGOUT = "finishLogout";
 }

@@ -90,9 +90,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     public DelegatedClientAuthenticationAction(final Clients clients,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, 
-                                               final String themeParamName, 
-                                               final String localParamName, 
+                                               final CentralAuthenticationService centralAuthenticationService,
+                                               final String themeParamName,
+                                               final String localParamName,
                                                final boolean autoRedirect) {
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
@@ -121,9 +121,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(clientName)) {
             // get client
-            final BaseClient<Credentials, CommonProfile> client =
-                    (BaseClient<Credentials, CommonProfile>) this.clients
-                            .findClient(clientName);
+            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             LOGGER.debug("Client: {}", client);
 
             // get credentials
@@ -204,11 +202,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-        
+
         for (final Client client : this.clients.findAllClients()) {
             try {
                 final IndirectClient indirectClient = (IndirectClient) client;
-                
+
                 final String name = StringUtils.remove(client.getName(), "Client");
                 final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
                 LOGGER.debug("{} -> {}", name, redirectionUrl);
@@ -237,7 +235,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request, 
+    private static void restoreRequestAttribute(final HttpServletRequest request,
                                                 final HttpSession session,
                                                 final String name) {
         final String value = (String) session.getAttribute(name);
@@ -251,7 +249,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request, 
+    private static void saveRequestParameter(final HttpServletRequest request,
                                              final HttpSession session,
                                              final String name) {
         final String value = request.getParameter(name);

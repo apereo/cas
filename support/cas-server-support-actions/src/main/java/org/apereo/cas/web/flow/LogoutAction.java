@@ -75,10 +75,8 @@ public class LogoutAction extends AbstractLogoutAction {
         // there are some front services to logout, perform front SLO
         if (needFrontSlo) {
             return new Event(this, FRONT_EVENT);
-        } else {
-            // otherwise, finish the logout process
-            return new Event(this, FINISH_EVENT);
         }
+        return new Event(this, FINISH_EVENT);
     }
 
     public void setFollowServiceRedirects(final boolean followServiceRedirects) {
