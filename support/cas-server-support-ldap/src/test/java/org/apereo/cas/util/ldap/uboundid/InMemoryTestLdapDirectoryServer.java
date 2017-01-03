@@ -87,7 +87,6 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
             final Schema s = Schema.mergeSchemas(Schema.getSchema(file));
             config.setSchema(s);
 
-
             this.directoryServer = new InMemoryDirectoryServer(config);
             LOGGER.debug("Populating directory...");
 
