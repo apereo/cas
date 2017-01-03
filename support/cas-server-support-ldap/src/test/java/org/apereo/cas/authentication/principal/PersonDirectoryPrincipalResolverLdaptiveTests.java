@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"/ldap-context.xml", "/resolver-context.xml"})
 public class PersonDirectoryPrincipalResolverLdaptiveTests extends AbstractLdapTests {
 
-    private static final String ATTR_NAME_PASSWORD = "password";
+    private static final String ATTR_NAME_PASSWORD = "userPassword";
     
     @Autowired
     private LdaptivePersonAttributeDao attributeDao;
