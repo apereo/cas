@@ -4,6 +4,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
@@ -24,34 +25,16 @@ import java.util.stream.Collectors;
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     
     private Cache ehcacheTicketsCache;
-
-    private boolean supportRegistryState = true;
-
-    /**
-     * Instantiates a new EhCache ticket registry.
-     */
-    public EhCacheTicketRegistry() {
-    }
-
-    /**
-     * Instantiates a new EhCache ticket registry.
-     *
-     * @param ticketCache the ticket cache
-     */
-    public EhCacheTicketRegistry(final Cache ticketCache) {
-        setEhcacheTicketsCache(ticketCache);
-    }
-
+    
     /**
      * Instantiates a new EhCache ticket registry.
      *
      * @param ticketCache          the ticket cache
-     * @param supportRegistryState the support registry state
+     * @param cipher               the cipher
      */
-    public EhCacheTicketRegistry(final Cache ticketCache,
-            final boolean supportRegistryState) {
-        this(ticketCache);
-        setSupportRegistryState(supportRegistryState);
+    public EhCacheTicketRegistry(final Cache ticketCache, final CipherExecutor cipher) {
+        this.ehcacheTicketsCache = ticketCache;
+        setCipherExecutor(cipher);
     }
 
     @Override
@@ -137,25 +120,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
     
     /**
-     * Flag to indicate whether this registry instance should participate in reporting its state with
-     * default value set to {@code true}.
-     * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>,
-     * determining the number of service tickets and the total session count from the cache can be considered
-     * an expensive operation with the time taken as O(n), where n is the number of elements in the cache.
-     *
-     * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment
-     * settings, reporting statistics
-     * can be set to false and disabled.</p>
-     *
-     * @param supportRegistryState true, if the registry is to support registry state
-     * @see #sessionCount()
-     * @see #serviceTicketCount()
-     */
-    public void setSupportRegistryState(final boolean supportRegistryState) {
-        this.supportRegistryState = supportRegistryState;
-    }
-    
-    /**
      * Init.
      */
     @PostConstruct
@@ -175,17 +139,12 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
             logger.debug("TicketCache.cacheManager={}", this.ehcacheTicketsCache.getCacheManager().getName());
         }
     }
-
-    public void setEhcacheTicketsCache(final Cache ehcacheTicketsCache) {
-        this.ehcacheTicketsCache = ehcacheTicketsCache;
-    }
     
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("ehcacheTicketsCache", this.ehcacheTicketsCache)
-                .append("supportRegistryState", this.supportRegistryState)
                 .toString();
     }
 }
