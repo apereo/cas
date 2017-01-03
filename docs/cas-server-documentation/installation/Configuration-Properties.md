@@ -1991,7 +1991,7 @@ To learn more about this topic, [please review this guide](OIDC-Authentication.h
 # cas.authn.oidc.dynamicClientRegistrationMode=OPEN|PROTECTED
 ```
 
-## Pac4j
+## Pac4j Delegated AuthN
 
 Act as a proxy, and delegate authentication to external identity providers.
 To learn more about this topic, [please review this guide](../integration/Delegate-Authentication.html).
