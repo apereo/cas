@@ -2938,7 +2938,6 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.mongo.conns.lifetime=60000
 # cas.ticket.mongo.conns.perHost=10
 ```
-```
 
 ### Redis Ticket Registry
 
