@@ -35,7 +35,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String geography;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
