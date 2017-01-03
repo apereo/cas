@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 4.1.0
  */
 public abstract class AbstractLdapTests implements ApplicationContextAware {
-    private static InMemoryTestLdapDirectoryServer DIRECTORY;
+    protected static InMemoryTestLdapDirectoryServer DIRECTORY;
 
     protected transient Logger logger = LoggerFactory.getLogger(getClass());
 
