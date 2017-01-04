@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AccountDisabledException;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultHandlerResult;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
+public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
@@ -71,11 +71,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler implements Authenti
         logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
                 this.getClass().getName());
     }
-
-    public void setUsernameErrorMap(final Map<String, Exception> map) {
-        this.usernameErrorMap = map;
-    }
-
+    
     @Override
     public HandlerResult authenticate(final Credential credential)
             throws GeneralSecurityException, PreventedException {
@@ -109,10 +105,5 @@ public class SimpleTestUsernamePasswordAuthenticationHandler implements Authenti
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
     }
 }
