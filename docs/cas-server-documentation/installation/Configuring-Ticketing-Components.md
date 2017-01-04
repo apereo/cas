@@ -47,6 +47,8 @@ Cassandra, for ticket storage and persistence:
 
 * [Infinispan](Infinispan-Ticket-Registry.html)
 * [Couchbase](Couchbase-Ticket-Registry.html)
+* [Redis](Redis-Ticket-Registry.html)
+* [MongoDb](MongoDb-Ticket-Registry.html)
 
 ### Secure Cache Replication
 

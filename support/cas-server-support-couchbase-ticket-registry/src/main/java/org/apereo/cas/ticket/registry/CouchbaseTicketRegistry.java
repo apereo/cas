@@ -12,6 +12,11 @@ import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.code.OAuthCode;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +26,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 /**
@@ -45,9 +54,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             VIEW_NAME_ALL_TICKETS,
             "function(d,m) {emit(m.id);}",
             "_count");
-    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{
-            ALL_TICKETS_VIEW
-    });
+    private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
     private static final String UTIL_DOCUMENT = "statistics";
 
     @Autowired
@@ -149,7 +156,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        logger.debug("getTickets() isn't supported by Couchbase. Returning empty list");
+        logger.debug("getTickets() isn't supported. Returning empty list");
         return new ArrayList<>();
     }
 
@@ -174,7 +181,65 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         }
     }
 
+    @Override
+    public long deleteAll() {
+        final Iterator<ViewRow> grantingTicketsIt = getViewResultIteratorForPrefixedTickets(TicketGrantingTicket.PREFIX + '-').iterator();
+        final Iterator<ViewRow> serviceTicketsIt = getViewResultIteratorForPrefixedTickets(ServiceTicket.PREFIX + '-').iterator();
+        final Iterator<ViewRow> proxyTicketsIt = getViewResultIteratorForPrefixedTickets(ProxyTicket.PREFIX + '-').iterator();
+        final Iterator<ViewRow> proxyGrantingTicketsIt = getViewResultIteratorForPrefixedTickets(ProxyGrantingTicket.PREFIX + '-').iterator();
+        final Iterator<ViewRow> accessTokenIt = getViewResultIteratorForPrefixedTickets(AccessToken.PREFIX + '-').iterator();
+        final Iterator<ViewRow> oauthcodeIt = getViewResultIteratorForPrefixedTickets(OAuthCode.PREFIX + '-').iterator();
+        final Iterator<ViewRow> refreshTokenIt = getViewResultIteratorForPrefixedTickets(RefreshToken.PREFIX + '-').iterator();
+
+        final int count = getViewRowCountFromViewResultIterator(grantingTicketsIt)
+                + getViewRowCountFromViewResultIterator(serviceTicketsIt)
+                + getViewRowCountFromViewResultIterator(proxyTicketsIt)
+                + getViewRowCountFromViewResultIterator(proxyGrantingTicketsIt)
+                + getViewRowCountFromViewResultIterator(accessTokenIt)
+                + getViewRowCountFromViewResultIterator(oauthcodeIt)
+                + getViewRowCountFromViewResultIterator(refreshTokenIt);
+
+        Stream<ViewRow> tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(grantingTicketsIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(serviceTicketsIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyTicketsIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(proxyGrantingTicketsIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(accessTokenIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(oauthcodeIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+
+        tickets = StreamSupport.stream(Spliterators.spliteratorUnknownSize(refreshTokenIt, Spliterator.ORDERED), true);
+        tickets.forEach(t -> this.couchbase.bucket().remove(t.document()));
+        
+        return count;
+    }
+
     private int runQuery(final String prefix) {
+        final Iterator<ViewRow> iterator = getViewResultIteratorForPrefixedTickets(prefix).iterator();
+        return getViewRowCountFromViewResultIterator(iterator);
+    }
+
+    private int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
+        if (iterator.hasNext()) {
+            final ViewRow res = iterator.next();
+            final Integer count = (Integer) res.value();
+            logger.debug("Found {} rows", count);
+            return count;
+        }
+        logger.debug("No rows could be found by the query iterator.");
+        return 0;
+    }
+
+    private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         logger.debug("Running query on document {} and view {} with prefix {}",
                 UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         final ViewResult allKeys = this.couchbase.bucket().query(
@@ -182,16 +247,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)
                         .reduce());
-        final Iterator<ViewRow> iterator = allKeys.iterator();
-        if (iterator.hasNext()) {
-            final ViewRow res = iterator.next();
-
-            final Integer count = (Integer) res.value();
-            logger.debug("Found {} rows", count);
-            return count;
-        }
-        logger.debug("No rows could be found by the query");
-        return 0;
+        return allKeys;
     }
 
     /**

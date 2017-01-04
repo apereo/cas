@@ -10,4 +10,5 @@ dependencies {
     testCompile project(":core:cas-server-core-tickets")
     testCompile project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testCompile project(path: ":core:cas-server-core-util", configuration: "tests")
+    compile project(":support:cas-server-support-oauth-core")
 }
