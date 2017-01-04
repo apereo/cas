@@ -17,6 +17,8 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -47,7 +49,8 @@ import java.util.Set;
 @Configuration("hazelcastTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class HazelcastTicketRegistryConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistryConfiguration.class);
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 

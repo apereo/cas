@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket.registry.config;
+package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
@@ -37,35 +37,37 @@ import static org.junit.Assert.*;
         HazelcastTicketRegistryConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreUtilConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
         CasCoreLogoutConfiguration.class})
-@ContextConfiguration("classpath:HazelcastInstanceConfigurationTests-config.xml")
-@TestPropertySource(locations = {"classpath:/hazelcast.properties"})
+@ContextConfiguration(locations="classpath:HazelcastInstanceConfigurationTests-config.xml")
+@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
-public class ProvidedHazelcastInstanceConfigurationTests {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProvidedHazelcastInstanceConfigurationTests.class);
+public class DefaultHazelcastInstanceConfigurationTests {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHazelcastInstanceConfigurationTests.class);
 
     @Autowired
     @Qualifier("hazelcast")
     private HazelcastInstance hzInstance;
 
+    public HazelcastInstance getHzInstance() {
+        return hzInstance;
+    }
+
     @Test
-    public void hazelcastInstanceIsCreatedNormally() throws Exception {
+    public void correctHazelcastInstanceIsCreated() throws Exception {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
-        assertTrue(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
-        assertEquals(Arrays.asList("127.0.0.1"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
-        assertFalse(config.getNetworkConfig().isPortAutoIncrement());
-        assertEquals(5801, config.getNetworkConfig().getPort());
+        assertFalse(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());
+        assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
+        assertTrue(config.getNetworkConfig().isPortAutoIncrement());
+        assertEquals(5701, config.getNetworkConfig().getPort());
 
-        final MapConfig mapConfig = config.getMapConfig("tickets-from-external-config");
+        final MapConfig mapConfig = config.getMapConfig("tickets");
         assertNotNull(mapConfig);
-        assertEquals(20000, mapConfig.getMaxIdleSeconds());
-        assertEquals(EvictionPolicy.LFU, mapConfig.getEvictionPolicy());
-        assertEquals(99, mapConfig.getEvictionPercentage());
+        assertEquals(28800, mapConfig.getMaxIdleSeconds());
+        assertEquals(EvictionPolicy.LRU, mapConfig.getEvictionPolicy());
     }
 
     @After
