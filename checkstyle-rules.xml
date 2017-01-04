@@ -473,7 +473,7 @@
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
-        <property name="severity" value="info"/>
+        <property name="severity" value="error"/>
         <property name="format" value="@Component|@Value"/>
         <property name="message" value="Avoid using the indicated annotations."/>
     </module>
