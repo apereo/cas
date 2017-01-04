@@ -100,9 +100,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Autowired
     public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager")
                                                            final DelegatingAuditTrailManager auditTrailManager) {
-        final LoggingConfigController c = new LoggingConfigController();
-        c.setAuditTrailManager(auditTrailManager);
-        return c;
+        return new LoggingConfigController(auditTrailManager);
     }
 
     @Bean

@@ -23,8 +23,10 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -61,24 +63,34 @@ public class LoggingConfigController {
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
-
-    @Value("${logging.config:classpath:log4j2.xml}")
-    private Resource logConfigurationFile;
-
+    
     private LoggerContext loggerContext;
 
-    private DelegatingAuditTrailManager auditTrailManager;
+    private final DelegatingAuditTrailManager auditTrailManager;
 
-    public void setAuditTrailManager(final DelegatingAuditTrailManager auditTrailManager) {
+    @Autowired
+    private Environment environment;
+    
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
+    private Resource logConfigurationFile;
+    
+    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager) {
         this.auditTrailManager = auditTrailManager;
     }
 
     /**
-     * Init.
+     * Init. Attempts to locate the logging configuration to insert listeners.
+     * The log configuration location is pulled directly from the environment
+     * given there is not an explicit property mapping for it provided by Boot, etc.
      */
     @PostConstruct
     public void initialize() {
         try {
+            final String logFile = environment.resolvePlaceholders("${logging.config:}");
+            this.logConfigurationFile = this.resourceLoader.getResource(logFile);
+            
             this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
             this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             registerLogFileTailThreads();
