@@ -59,9 +59,9 @@ import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -301,13 +301,12 @@ public class CasCoreAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "authenticationHandlersResolvers")
     @Bean
     public Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers(@Qualifier(BEAN_NAME_HTTP_CLIENT) final HttpClient httpClient) {
-        final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
+        final Map<AuthenticationHandler, PrincipalResolver> map = new TreeMap<>();
+        
         map.put(proxyAuthenticationHandler(httpClient), proxyPrincipalResolver());
-
         if (StringUtils.isNotBlank(casProperties.getAuthn().getJaas().getRealm())) {
             map.put(jaasAuthenticationHandler(), personDirectoryPrincipalResolver());
         }
-
         return map;
     }
 
