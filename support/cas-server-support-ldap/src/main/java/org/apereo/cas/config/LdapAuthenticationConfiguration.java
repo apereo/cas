@@ -94,7 +94,8 @@ public class LdapAuthenticationConfiguration {
                     final LdapAuthenticationHandler handler = new LdapAuthenticationHandler();
                     handler.setServicesManager(servicesManager);
                     handler.setName(l.getName());
-
+                    handler.setOrder(l.getOrder());
+                    
                     final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttrs.add(l.getPrincipalAttributeId());

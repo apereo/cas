@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.adaptors.jdbc.config.CasJdbcConfiguration;
+import org.apereo.cas.adaptors.jdbc.config.CasJdbcAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class,
         CasCoreUtilConfiguration.class, CasPersonDirectoryConfiguration.class,
-        CasJdbcConfiguration.class, CasCoreServicesConfiguration.class})
+        CasJdbcAuthenticationConfiguration.class, CasCoreServicesConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
 @EnableScheduling
 public class JdbcConfigurationTests {
