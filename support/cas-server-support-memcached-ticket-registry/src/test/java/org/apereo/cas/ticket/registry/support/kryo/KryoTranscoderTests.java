@@ -4,10 +4,8 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -27,7 +25,6 @@ import org.junit.Test;
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,27 +204,5 @@ public class KryoTranscoderTests {
     public void verifyEncodeDecodeRegisteredService() throws Exception {
         final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("helloworld");
         assertEquals(service, transcoder.decode(transcoder.encode(service)));
-    }
-
-    private static class MockAuthenticationHandler implements AuthenticationHandler {
-
-        @Override
-        public DefaultHandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
-            if (credential instanceof HttpBasedServiceCredential) {
-                return new DefaultHandlerResult(this, (HttpBasedServiceCredential) credential);
-            } else {
-                return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential));
-            }
-        }
-
-        @Override
-        public boolean supports(final Credential credential) {
-            return true;
-        }
-
-        @Override
-        public String getName() {
-            return this.getClass().getSimpleName();
-        }
     }
 }
