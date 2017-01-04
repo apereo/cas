@@ -13,6 +13,6 @@
     <suppress id="sysOutConsoleLogs" files="\.xml" />
     <suppress id="namedAnnotations" files="(Base.*|Abstract.*|Root.*)\.java" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
-    <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans))\.java" />
+    <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
 </suppressions>

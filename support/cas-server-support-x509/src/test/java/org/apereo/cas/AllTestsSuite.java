@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509;
+package org.apereo.cas;
 
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationCheckerTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationCheckerTests;
