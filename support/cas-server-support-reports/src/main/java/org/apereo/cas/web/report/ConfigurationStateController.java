@@ -42,14 +42,7 @@ public class ConfigurationStateController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
-        if (busProperties != null && busProperties.isEnabled()) {
-            model.put("refreshEndpoint", path + configServerProperties.getPrefix() + "/cas/bus/refresh");
-            model.put("refreshMethod", "GET");
-        } else {
-            model.put("refreshEndpoint", path + "/status/refresh");
-            model.put("refreshMethod", "POST");
-        }
-
+        ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
         return new ModelAndView(VIEW_CONFIG, model);
     }
 }

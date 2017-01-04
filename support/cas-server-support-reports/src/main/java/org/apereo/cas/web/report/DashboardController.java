@@ -65,13 +65,7 @@ public class DashboardController {
             throws Exception {
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
-        if (busProperties != null && busProperties.isEnabled()) {
-            model.put("refreshEndpoint", path + configServerProperties.getPrefix() + "/cas/bus/refresh");
-            model.put("refreshMethod", "GET");
-        } else {
-            model.put("refreshEndpoint", path + "/status/refresh");
-            model.put("refreshMethod", "POST");
-        }
+        ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
         model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
         model.put("serverFunctionsEnabled",
