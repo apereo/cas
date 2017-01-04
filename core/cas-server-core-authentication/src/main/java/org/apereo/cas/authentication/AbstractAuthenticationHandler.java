@@ -78,6 +78,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         return this.order.compareTo(o.getOrder());
     }
 
+    public void setOrder(final Integer order) {
+        this.order = order;
+    }
+
     @Override
     public int getOrder() {
         return this.order;
