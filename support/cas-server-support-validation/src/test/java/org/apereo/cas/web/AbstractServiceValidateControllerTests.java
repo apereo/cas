@@ -146,10 +146,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final AuthenticationResult ctx = CoreAuthenticationTestUtils
                 .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
-        final TicketGrantingTicket tId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(ctx);
-        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(),
-                SERVICE, ctx);
+        final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId.getId());
 
