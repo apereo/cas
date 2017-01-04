@@ -222,16 +222,41 @@ public final class Beans {
      * @return the password encoder
      */
     public static PasswordEncoder newPasswordEncoder(final PasswordEncoderProperties properties) {
-        switch (properties.getType()) {
+        final String type = properties.getType();
+        if (StringUtils.isBlank(type)) {
+            LOGGER.debug("No password encoder type is defined, and so none shall be created");
+            return NoOpPasswordEncoder.getInstance();
+        }
+
+        if (type.contains(".")) {
+            try {
+                LOGGER.debug("Configuration indicates use of a custom password encoder {}", type);
+                final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
+                return clazz.newInstance();
+            } catch (final Exception e) {
+                LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
+                        + "an instance of the custom password encoder class " + type, e);
+                return NoOpPasswordEncoder.getInstance();
+            }
+        }
+
+        final PasswordEncoderProperties.PasswordEncoderTypes encoderType = PasswordEncoderProperties.PasswordEncoderTypes.valueOf(type);
+        switch (encoderType) {
             case DEFAULT:
+                LOGGER.debug("Creating default password encoder with encoding alg {} and character encoding {}",
+                        properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
                 return new DefaultPasswordEncoder(properties.getEncodingAlgorithm(), properties.getCharacterEncoding());
             case STANDARD:
+                LOGGER.debug("Creating standard password encoder with the secret defined in the configuration");
                 return new StandardPasswordEncoder(properties.getSecret());
             case BCRYPT:
+                LOGGER.debug("Creating BCRYPT password encoder given the strength {} and secret in the configuration",
+                        properties.getStrength());
                 return new BCryptPasswordEncoder(properties.getStrength(),
                         new SecureRandom(properties.getSecret().getBytes(StandardCharsets.UTF_8)));
             case NONE:
             default:
+                LOGGER.debug("No password encoder shall be created");
                 return NoOpPasswordEncoder.getInstance();
         }
     }
