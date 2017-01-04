@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas;
 
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserActionTests;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserDynamicActionTests;

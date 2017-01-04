@@ -1,6 +1,6 @@
-package org.apereo.cas.web;
+package org.apereo.cas;
 
-
+import org.apereo.cas.web.ProxyControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
 import org.apereo.cas.web.view.Cas30ResponseViewTests;

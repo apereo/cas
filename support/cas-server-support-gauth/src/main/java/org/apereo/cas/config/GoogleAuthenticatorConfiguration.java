@@ -17,6 +17,7 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationW
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
+import org.apereo.cas.adaptors.gauth.web.flow.rest.GoogleAuthenticatorQRGeneratorController;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -243,6 +244,11 @@ public class GoogleAuthenticatorConfiguration {
         }
     }
 
+    @Bean
+    public GoogleAuthenticatorQRGeneratorController googleAuthenticatorQRGeneratorController() {
+        return new GoogleAuthenticatorQRGeneratorController();
+    }
+    
     /**
      * The google authenticator multifactor trust configuration.
      */

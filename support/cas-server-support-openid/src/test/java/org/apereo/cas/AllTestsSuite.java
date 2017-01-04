@@ -1,4 +1,4 @@
-package org.apereo.cas.support.openid;
+package org.apereo.cas;
 
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandlerTests;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactoryTests;
