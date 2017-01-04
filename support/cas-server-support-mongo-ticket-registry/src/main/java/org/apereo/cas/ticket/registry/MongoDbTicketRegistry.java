@@ -57,7 +57,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         }
         logger.debug("Creating indices on collection {} to auto-expire documents...", this.collectionName);
         final DBCollection collection = mongoTemplate.getCollection(this.collectionName);
-        collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1), 
+        collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
                 new BasicDBObject("expireAfterSeconds", 0));
 
         logger.info("Configured MongoDb Ticket Registry instance {}", this.collectionName);
@@ -132,6 +132,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             logger.error("Failed deleting {}: {}", ticketId, e);
         }
         return false;
+    }
+
+    @Override
+    public long deleteAll() {
+        final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
+        final long count = this.mongoTemplate.count(query, this.collectionName);
+        mongoTemplate.remove(query, this.collectionName);
+        return count;
     }
 
     private int getTimeToLive(final Ticket ticket) {

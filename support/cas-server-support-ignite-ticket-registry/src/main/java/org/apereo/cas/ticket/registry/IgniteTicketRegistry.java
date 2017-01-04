@@ -50,10 +50,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     private IgniteCache<String, Ticket> ticketIgniteCache;
 
     private Ignite ignite;
-
-    /**
-     * @see #setSupportRegistryState(boolean)
-     **/
+    
     private boolean supportRegistryState = true;
 
     /**
@@ -87,7 +84,13 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         }).put(ticket.getId(), ticket);
     }
 
-
+    @Override
+    public long deleteAll() {
+        final int size = this.ticketIgniteCache.size();
+        this.ticketIgniteCache.removeAll();
+        return size;
+    }
+    
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);

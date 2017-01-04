@@ -74,7 +74,7 @@ layout: null
 * [Ticketing](#ticketing)
     *   [Overview](/$version/installation/Configuring-Ticketing-Components.html)
     *   [Expiration Policies](/$version/installation/Configuring-Ticket-Expiration-Policy.html)
-    *   [Persistence](#persistence)
+    *   [Storage](#ticketingstorage)
         *   [Hazelcast](/$version/installation/Hazelcast-Ticket-Registry.html)
         *   [Ehcache](/$version/installation/Ehcache-Ticket-Registry.html)
         *   [Memcached](/$version/installation/Memcached-Ticket-Registry.html)

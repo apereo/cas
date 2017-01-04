@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -19,14 +20,8 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     /**
      * Memcached client.
      */
-    private MemcachedClientIF client;
-
-    /**
-     * Instantiates a new Mem cache ticket registry.
-     */
-    public MemCacheTicketRegistry() {
-    }
-
+    private final MemcachedClientIF client;
+    
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
@@ -39,10 +34,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
-        if (this.client == null) {
-            logger.debug("No memcached client is available in the configuration.");
-            return null;
-        }
+        Assert.notNull(this.client, "No memcached client is defined.");
 
         final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
@@ -62,10 +54,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        if (this.client == null) {
-            logger.debug("No memcached client is found in the configuration.");
-            return;
-        }
+        Assert.notNull(this.client, "No memcached client is defined.");
 
         final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {}", ticket);
@@ -82,9 +71,15 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        logger.debug("deleteAll() isn't supported. Returning empty list");
+        return 0;
+    }
+    
+    @Override
     public boolean deleteSingleTicket(final String ticketId) {
+        Assert.notNull(this.client, "No memcached client is defined.");
         try {
-            Assert.notNull(this.client, "No memcached client is defined.");
             if (this.client.delete(ticketId).get()) {
                 logger.debug("Removed ticket {} from the cache", ticketId);
             } else {
@@ -98,10 +93,7 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
-        if (this.client == null) {
-            logger.debug("No memcached client is configured.");
-            return null;
-        }
+        Assert.notNull(this.client, "No memcached client is defined.");
 
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
@@ -114,16 +106,11 @@ public class MemCacheTicketRegistry extends AbstractTicketRegistry {
         }
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     * This operation is not supported.
-     *
-     * @throws UnsupportedOperationException if you try and call this operation.
-     */
+    
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("getTickets() not supported.");
+        logger.debug("getTickets() isn't supported. Returning empty list");
+        return new ArrayList<>();
     }
 
     /**

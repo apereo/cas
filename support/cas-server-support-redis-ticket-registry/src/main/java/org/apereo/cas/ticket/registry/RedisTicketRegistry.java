@@ -27,10 +27,18 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteAll() {
+        final Set<String> redisKeys = this.client.keys(getPatternTicketRedisKey());
+        final int size = redisKeys.size();
+        this.client.delete(redisKeys);
+        return size;
+    }
+    
+    @Override
     public boolean deleteSingleTicket(final String ticketId) {
+        Assert.notNull(this.client, "No redis client is defined.");
         try {
-            Assert.notNull(this.client, "No redis client is defined.");
-            final String redisKey = this.getTicketRedisKey(ticketId);
+            final String redisKey = getTicketRedisKey(ticketId);
             this.client.delete(redisKey);
             return true;
         } catch (final Exception e) {
@@ -42,11 +50,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public void addTicket(final Ticket ticket) {
+        Assert.notNull(this.client, "No redis client is defined.");
         try {
-            if (this.client == null) {
-                logger.error("No redis client is configured.");
-                return;
-            }
             logger.debug("Adding ticket {}", ticket);
             final String redisKey = this.getTicketRedisKey(ticket.getId());
             // Encode first, then add
@@ -60,11 +65,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
+        Assert.notNull(this.client, "No redis client is defined.");
         try {
-            if (this.client == null) {
-                logger.error("No redis client is configured.");
-                return null;
-            }
             final String redisKey = this.getTicketRedisKey(ticketId);
             final Ticket t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
@@ -79,13 +81,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        if (this.client == null) {
-            logger.error("No redis client is configured.");
-            return null;
-        }
+        Assert.notNull(this.client, "No redis client is defined.");
 
         final Set<Ticket> tickets = new HashSet<>();
-        // ticket keys in the redis
         final Set<String> redisKeys = this.client.keys(this.getPatternTicketRedisKey());
         redisKeys.forEach(redisKey -> {
             final Ticket ticket = this.client.boundValueOps(redisKey).get();
@@ -101,11 +99,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
+        Assert.notNull(this.client, "No redis client is defined.");
         try {
-            if (this.client == null) {
-                logger.error("No redis client is configured.");
-                return null;
-            }
             logger.debug("Updating ticket {}", ticket);
             final Ticket encodeTicket = this.encodeTicket(ticket);
             final String redisKey = this.getTicketRedisKey(ticket.getId());

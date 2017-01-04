@@ -64,7 +64,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
      */
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
             logger.debug("Ticket {} cannot be retrieved from the cache", ticketId);
@@ -75,6 +74,13 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
             logger.debug("Ticket {} is removed", ticket.getId());
         }
         return true;
+    }
+
+    @Override
+    public long deleteAll() {
+        final int size = this.ehcacheTicketsCache.getSize();
+        this.ehcacheTicketsCache.removeAll();
+        return size;
     }
 
     @Override

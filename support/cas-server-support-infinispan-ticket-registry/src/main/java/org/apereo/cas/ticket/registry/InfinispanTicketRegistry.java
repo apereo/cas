@@ -72,6 +72,13 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
         return getTicket(ticketId) == null;
     }
 
+    @Override
+    public long deleteAll() {
+        final int size = this.cache.size();
+        this.cache.clear();
+        return size;
+    }
+    
     /**
      * Retrieve all tickets from the registry.
      * <p>

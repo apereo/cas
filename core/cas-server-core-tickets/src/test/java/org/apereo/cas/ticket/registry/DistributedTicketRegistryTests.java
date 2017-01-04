@@ -1,16 +1,16 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -170,6 +170,13 @@ public class DistributedTicketRegistryTests {
         @Override
         public boolean deleteSingleTicket(final String ticketId) {
             return this.tickets.remove(ticketId) != null;
+        }
+
+        @Override
+        public long deleteAll() {
+            final int size = this.tickets.size();
+            this.tickets.clear();
+            return size;
         }
     }
 }

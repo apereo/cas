@@ -22,7 +22,6 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        // ticket must exist
         if (this.ticket == null) {
             throw new IllegalArgumentException("No ticket to update");
         }
@@ -30,7 +29,6 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         return (T) this.ticket;
@@ -45,6 +43,11 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
     public int deleteTicket(final String ticketId) {
         this.ticket = null;
         return 1;
+    }
+
+    @Override
+    public long deleteAll() {
+        return deleteTicket(null);
     }
 
     @Override

@@ -82,6 +82,12 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
         return this.cache.remove(ticketId) != null;
     }
 
+    @Override
+    public long deleteAll() {
+        final int size = this.cache.size();
+        this.cache.clear();
+        return size;
+    }
 
     @Override
     public Collection<Ticket> getTickets() {

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.PagingPredicate;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 
 import javax.annotation.PostConstruct;
@@ -52,8 +53,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      */
     @PostConstruct
     public void init() {
-        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}",
-                this.hazelcastInstance, this.registry.getName());
+        logger.info("Setting up Hazelcast Ticket Registry instance {} with name {}", this.hazelcastInstance, registry.getName());
     }
 
     @Override
@@ -73,7 +73,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        return decodeTicket(this.registry.get(encTicketId));
+        if (StringUtils.isNotBlank(encTicketId)) {
+            final Ticket ticket = this.registry.get(encTicketId);
+            return decodeTicket(ticket);
+        }
+        return null;
     }
 
     @Override
@@ -81,6 +85,14 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         return this.registry.remove(ticketId) != null;
     }
 
+    @Override
+    public long deleteAll() {
+        final int size = this.registry.size();
+        this.registry.evictAll();
+        this.registry.clear();
+        return size;
+    }
+    
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> collection = new HashSet<>();
