@@ -133,6 +133,20 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     @Test
+    public void verifyDeleteAllExistingTickets() {
+        try {
+            for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+                this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST" + i,
+                        CoreAuthenticationTestUtils.getAuthentication(),
+                        new NeverExpiresExpirationPolicy()));
+            }
+            assertSame(TICKETS_IN_REGISTRY, this.ticketRegistry.deleteAll());
+        } catch (final Exception e) {
+            fail("Caught an exception. But no exception should have been thrown: " + e.getMessage());
+        }
+    }
+    
+    @Test
     public void verifyDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",

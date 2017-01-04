@@ -72,8 +72,24 @@ public class JpaTicketRegistryTests {
     private PlatformTransactionManager txManager;
 
     @Autowired
-    @Qualifier("jpaTicketRegistry")
-    private TicketRegistry jpaTicketRegistry;
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
+    @Test
+    public void verifyTicketDeletionInBulk() {
+        final TicketGrantingTicket newTgt = newTGT();
+        addTicketInTransaction(newTgt);
+        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        final ServiceTicket newSt = grantServiceTicketInTransaction(tgtFromDb);
+        final ServiceTicket stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
+        final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
+        final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
+        final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
+        final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
+        
+        deleteTicketsInTransaction();
+    }
+    
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {
@@ -147,7 +163,7 @@ public class JpaTicketRegistryTests {
         try {
             final List<ServiceTicketGenerator> generators = new ArrayList<>(CONCURRENT_SIZE);
             for (int i = 0; i < CONCURRENT_SIZE; i++) {
-                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.jpaTicketRegistry, this.txManager));
+                generators.add(new ServiceTicketGenerator(newTgt.getId(), this.ticketRegistry, this.txManager));
             }
             final List<Future<String>> results = executor.invokeAll(generators);
             for (final Future<String> result : results) {
@@ -204,26 +220,33 @@ public class JpaTicketRegistryTests {
 
     private void addTicketInTransaction(final Ticket ticket) {
         new TransactionTemplate(txManager).execute(status -> {
-            jpaTicketRegistry.addTicket(ticket);
+            ticketRegistry.addTicket(ticket);
             return null;
         });
     }
 
+    private void deleteTicketsInTransaction() {
+        new TransactionTemplate(txManager).execute((TransactionCallback<Void>) status -> {
+            ticketRegistry.deleteAll();
+            return null;
+        });
+    }
+    
     private void deleteTicketInTransaction(final String ticketId) {
         new TransactionTemplate(txManager).execute((TransactionCallback<Void>) status -> {
-            jpaTicketRegistry.deleteTicket(ticketId);
+            ticketRegistry.deleteTicket(ticketId);
             return null;
         });
     }
 
     private Ticket getTicketInTransaction(final String ticketId) {
-        return new TransactionTemplate(txManager).execute(status -> jpaTicketRegistry.getTicket(ticketId));
+        return new TransactionTemplate(txManager).execute(status -> ticketRegistry.getTicket(ticketId));
     }
 
     private ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
             final ServiceTicket st = newST(parent);
-            jpaTicketRegistry.addTicket(st);
+            ticketRegistry.addTicket(st);
             return st;
         });
     }
@@ -231,7 +254,7 @@ public class JpaTicketRegistryTests {
     private ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
             final ProxyGrantingTicket pgt = newPGT(parent);
-            jpaTicketRegistry.addTicket(pgt);
+            ticketRegistry.addTicket(pgt);
             return pgt;
         });
     }
@@ -239,7 +262,7 @@ public class JpaTicketRegistryTests {
     private ProxyTicket grantProxyTicketInTransaction(final ProxyGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(status -> {
             final ProxyTicket st = newPT(parent);
-            jpaTicketRegistry.addTicket(st);
+            ticketRegistry.addTicket(st);
             return st;
         });
     }
