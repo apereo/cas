@@ -1,4 +1,4 @@
-package org.apereo.cas.support.spnego;
+package org.apereo.cas;
 
 
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandlerTests;

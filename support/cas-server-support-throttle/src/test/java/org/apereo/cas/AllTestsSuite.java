@@ -1,5 +1,6 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas;
 
+import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

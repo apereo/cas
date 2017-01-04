@@ -1,4 +1,4 @@
-package org.apereo.cas.impl;
+package org.apereo.cas;
 
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculatorTests;

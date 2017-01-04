@@ -1,5 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas;
 
+import org.apereo.cas.services.MongoServiceRegistryDaoCloudTests;
+import org.apereo.cas.services.MongoServiceRegistryDaoTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
