@@ -776,6 +776,8 @@ ext.libraries = [
                     exclude(group: "io.netty", module: "netty-handler")
                     exclude(group: "commons-cli", module: "commons-cli")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "org.xerial.snappy", module: "snappy-java")
+                    exclude(group: "org.eclipse.jdt.core.compiler", module: "ecj")
                     force = true
                 }
         ],
