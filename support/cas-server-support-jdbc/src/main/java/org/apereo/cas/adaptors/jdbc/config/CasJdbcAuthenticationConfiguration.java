@@ -26,14 +26,14 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
- * This is {@link CasJdbcConfiguration}.
+ * This is {@link CasJdbcAuthenticationConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Configuration("casJdbcConfiguration")
+@Configuration("CasJdbcAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasJdbcConfiguration {
+public class CasJdbcAuthenticationConfiguration {
 
     @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
@@ -90,9 +90,8 @@ public class CasJdbcConfiguration {
     }
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
-        final BindModeSearchDatabaseAuthenticationHandler h =
-                new BindModeSearchDatabaseAuthenticationHandler();
-
+        final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler();
+        h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
@@ -117,6 +116,7 @@ public class CasJdbcConfiguration {
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
         final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler();
 
+        h.setOrder(b.getOrder());
         h.setAlgorithmName(b.getAlgorithmName());
         h.setNumberOfIterationsFieldName(b.getNumberOfIterationsFieldName());
         h.setNumberOfIterations(b.getNumberOfIterations());
@@ -148,6 +148,7 @@ public class CasJdbcConfiguration {
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler();
+        h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setSql(b.getSql());
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -172,6 +173,7 @@ public class CasJdbcConfiguration {
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
 
+        h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
         h.setFieldPassword(b.getFieldPassword());
         h.setFieldUser(b.getFieldUser());

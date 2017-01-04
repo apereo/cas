@@ -65,6 +65,16 @@ public class JdbcAuthenticationProperties {
 
         private String name;
 
+        private int order = Integer.MAX_VALUE;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+        
         public String getName() {
             return name;
         }
@@ -118,6 +128,16 @@ public class JdbcAuthenticationProperties {
 
         private String name;
 
+        private int order = Integer.MAX_VALUE;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+        
         public String getName() {
             return name;
         }
@@ -166,6 +186,16 @@ public class JdbcAuthenticationProperties {
 
         private String name;
 
+        private int order = Integer.MAX_VALUE;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+        
         public String getName() {
             return name;
         }
@@ -241,6 +271,16 @@ public class JdbcAuthenticationProperties {
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+        private int order = Integer.MAX_VALUE;
+
+        public int getOrder() {
+            return order;
+        }
+
+        public void setOrder(final int order) {
+            this.order = order;
+        }
+        
         public String getName() {
             return name;
         }
