@@ -3,7 +3,7 @@ package org.apereo.cas.dao;
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.utils.TicketCreator;
+import org.apereo.cas.utils.TicketCreatorUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class CassandraJsonTests {
 
     @Test
     public void shouldWorkWithAStringSerializer() throws Exception {
-        final TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
 
         dao.addTicketGrantingTicket(tgt);
 
@@ -46,9 +46,9 @@ public class CassandraJsonTests {
     @Test
     public void shouldReturnExpiredTGTs() throws Exception {
         //given
-        final TicketGrantingTicketImpl firstExpired = TicketCreator.expiredTGT("expired1");
-        final TicketGrantingTicketImpl secondExpired = TicketCreator.expiredTGT("expired2");
-        final TicketGrantingTicketImpl notExpired = TicketCreator.defaultTGT("notExpired");
+        final TicketGrantingTicketImpl firstExpired = TicketCreatorUtils.expiredTGT("expired1");
+        final TicketGrantingTicketImpl secondExpired = TicketCreatorUtils.expiredTGT("expired2");
+        final TicketGrantingTicketImpl notExpired = TicketCreatorUtils.defaultTGT("notExpired");
 
         dao.addTicketGrantingTicket(firstExpired);
         dao.addTicketGrantingTicket(secondExpired);

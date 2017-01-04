@@ -2,7 +2,7 @@ package org.apereo.cas.dao;
 
 import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.utils.TicketCreator;
+import org.apereo.cas.utils.TicketCreatorUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Before;
@@ -32,7 +32,7 @@ public class NoSqlTicketRegistryTests {
     public void shouldRetrieveATicket() throws Exception {
         final NoSqlTicketRegistry ticketRegistry = new NoSqlTicketRegistry(dao);
         final String ticketId = "TGT-1234";
-        final TicketGrantingTicketImpl ticket = TicketCreator.defaultTGT(ticketId);
+        final TicketGrantingTicketImpl ticket = TicketCreatorUtils.defaultTGT(ticketId);
         ticketRegistry.addTicket(ticket);
 
         assertEquals(ticket, ticketRegistry.getTicket(ticketId));

@@ -2,7 +2,7 @@ package org.apereo.cas.dao;
 
 import org.apereo.cas.serializer.JacksonBinarySerializer;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
-import org.apereo.cas.utils.TicketCreator;
+import org.apereo.cas.utils.TicketCreatorUtils;
 import org.cassandraunit.CassandraCQLUnit;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
 import org.junit.Rule;
@@ -27,7 +27,7 @@ public class CassandraBinaryTests {
         final CassandraDao<ByteBuffer> dao = new CassandraDao<>("localhost", "", "", new JacksonBinarySerializer(), ByteBuffer.class,
                 "cas.ticketgrantingticket", "cas.serviceticket", "cas.ticket_cleaner", "cas.ticket_cleaner_lastrun");
 
-        final TicketGrantingTicketImpl tgt = TicketCreator.defaultTGT("id");
+        final TicketGrantingTicketImpl tgt = TicketCreatorUtils.defaultTGT("id");
 
         dao.addTicketGrantingTicket(tgt);
 
