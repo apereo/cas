@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.junit.Test;
 import org.pac4j.core.credentials.password.PasswordEncoder;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import static org.junit.Assert.*;
 
@@ -17,9 +18,18 @@ import static org.junit.Assert.*;
 public class DefaultPasswordEncoderTests {
 
     @Test
+    public void verifyPasswordEncoderByCustomClassName() {
+        final PasswordEncoderProperties p = new PasswordEncoderProperties();
+        p.setType(StandardPasswordEncoder.class.getName());
+        p.setSecret("SECRET");
+        final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));
+        assertNotNull(e);
+    }
+    
+    @Test
     public void verifyPasswordEncoderByMD5() {
         final PasswordEncoderProperties p = new PasswordEncoderProperties();
-        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT);
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
         p.setCharacterEncoding("UTF-8");
         final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));
@@ -29,7 +39,7 @@ public class DefaultPasswordEncoderTests {
     @Test
     public void verifyPasswordEncoderBySHA1() {
         final PasswordEncoderProperties p = new PasswordEncoderProperties();
-        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT);
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("SHA-1");
         p.setCharacterEncoding("UTF-8");
         final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));
@@ -39,7 +49,7 @@ public class DefaultPasswordEncoderTests {
     @Test
     public void verifyPasswordEncoderBySHA256() {
         final PasswordEncoderProperties p = new PasswordEncoderProperties();
-        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT);
+        p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("SHA-256");
         p.setCharacterEncoding("UTF-8");
         final PasswordEncoder e = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(p));

@@ -35,6 +35,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private String name;
 
+    private Integer order = Integer.MAX_VALUE;
+
     /**
      * Instantiates a new Abstract authentication handler.
      */
@@ -69,5 +71,15 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
+    }
+
+    @Override
+    public int compareTo(final AuthenticationHandler o) {
+        return this.order.compareTo(o.getOrder());
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 }
