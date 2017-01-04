@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public final class ControllerUtils {
+final class ControllerUtils {
     private ControllerUtils() {
     }
 
