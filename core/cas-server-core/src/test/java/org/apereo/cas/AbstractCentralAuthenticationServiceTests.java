@@ -93,7 +93,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 

@@ -62,10 +62,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractAut
         DEFAULT_USERNAME_ERROR_MAP.put("badWorkstation", new InvalidLoginLocationException("Invalid workstation"));
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
-
-    public SimpleTestUsernamePasswordAuthenticationHandler() {
-    }
-
+    
     @PostConstruct
     private void init() {
         logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",

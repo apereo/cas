@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -72,11 +75,24 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
-
+    
     @Override
     public int compareTo(final AuthenticationHandler o) {
-        return this.order.compareTo(o.getOrder());
+        return new CompareToBuilder()
+                .append(this.order, Integer.valueOf(o.getOrder()))
+                .append(getName(), o.getName())
+                .build();
     }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 137)
+                .append(this.order)
+                .append(this.getName())
+                .build();
+    }
+
+
 
     public void setOrder(final Integer order) {
         this.order = order;
@@ -85,5 +101,23 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     @Override
     public int getOrder() {
         return this.order;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AbstractAuthenticationHandler rhs = (AbstractAuthenticationHandler) obj;
+        return new EqualsBuilder()
+                .append(getName(), rhs.getName())
+                .append(this.getOrder(), rhs.getOrder())
+                .isEquals();
     }
 }
