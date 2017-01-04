@@ -15,6 +15,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
                 CasPersonDirectoryConfiguration.class,
                 RefreshAutoConfiguration.class})
 @EnableScheduling
+@TestPropertySource(locations={"classpath:/mongo.properties"})
 public class MongoAuthenticationHandlerTests {
 
     @Autowired
