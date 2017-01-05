@@ -949,6 +949,7 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].bindDn=cn=Directory Manager,dc=example,dc=org
 # cas.authn.ldap[0].bindCredential=Password
 
+# cas.authn.ldap[0].enhanceWithEntryResolver=true
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=userPassword
