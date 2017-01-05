@@ -51,9 +51,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param sqlQueryAudit             the sql query audit
      * @param authenticationFailureCode the authentication failure code
      */
-    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
+    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+                                                                                      final String usernameParameter,
+                                                                                      final AuditTrailManager auditTrailManager,
                                                                                       final DataSource dataSource, final String appCode,
                                                                                       final String sqlQueryAudit, final String authenticationFailureCode) {
+        super(failureThreshold, failureRangeInSeconds, usernameParameter);
         this.auditTrailManager = auditTrailManager;
         this.dataSource = dataSource;
         this.applicationCode = appCode;
