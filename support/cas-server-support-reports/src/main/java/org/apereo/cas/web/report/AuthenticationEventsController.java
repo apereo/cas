@@ -1,9 +1,7 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.CasEventRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +24,7 @@ import java.util.Collection;
 @ConditionalOnClass(value = CasEventRepository.class)
 public class AuthenticationEventsController {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private CasEventRepository eventRepository;
-
-    public AuthenticationEventsController() {
-    }
 
     public AuthenticationEventsController(final CasEventRepository eventRepository) {
         this.eventRepository = eventRepository;

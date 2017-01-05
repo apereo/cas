@@ -45,6 +45,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     private ServerProperties serverProperties;
 
     @Autowired
@@ -73,7 +76,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new DashboardController();
     }
 
-
     @RefreshScope
     @Bean
     public ConfigurationStateController internalConfigController() {
@@ -82,34 +84,24 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public HealthCheckController healthCheckController() {
-        final HealthCheckController c = new HealthCheckController();
-        c.setHealthCheckMonitor(healthCheckMonitor);
-        return c;
+        return new HealthCheckController(healthCheckMonitor, casProperties.getHttpClient().getAsyncTimeout());
     }
 
     @Bean
     public SingleSignOnSessionsReportController singleSignOnSessionsReportController() {
-        final SingleSignOnSessionsReportController c = new SingleSignOnSessionsReportController();
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setAuthenticationSystemSupport(authenticationSystemSupport);
-        return c;
+        return new SingleSignOnSessionsReportController(centralAuthenticationService, authenticationSystemSupport);
     }
 
     @RefreshScope
     @Bean
     @Autowired
-    public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager")
-                                                           final DelegatingAuditTrailManager auditTrailManager) {
+    public LoggingConfigController loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
         return new LoggingConfigController(auditTrailManager);
     }
 
     @Bean
     public StatisticsController statisticsController() {
-        final StatisticsController c = new StatisticsController();
-        c.setCentralAuthenticationService(centralAuthenticationService);
-        c.setHealthCheckRegistry(healthCheckRegistry);
-        c.setMetricsRegistry(metricsRegistry);
-        return c;
+        return new StatisticsController(centralAuthenticationService, metricsRegistry, healthCheckRegistry, casProperties.getHost().getName());
     }
 
     @Override
@@ -136,8 +128,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public TrustedDevicesController trustedDevicesController(@Qualifier("mfaTrustEngine")
-                                                                 final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        public TrustedDevicesController trustedDevicesController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
             return new TrustedDevicesController(mfaTrustEngine);
         }
     }
@@ -151,8 +142,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public AuthenticationEventsController authenticationEventsController(@Qualifier("casEventRepository")
-                                                                            final CasEventRepository eventRepository) {
+        public AuthenticationEventsController authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
             return new AuthenticationEventsController(eventRepository);
         }
     }

@@ -107,15 +107,12 @@ public class SingleSignOnSessionsReportController {
         }
     }
 
+    private final CentralAuthenticationService centralAuthenticationService;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    private CentralAuthenticationService centralAuthenticationService;
-
-    private AuthenticationSystemSupport authenticationSystemSupport;
-
-    /**
-     * Instantiates a new Single sign on sessions report resource.
-     */
-    public SingleSignOnSessionsReportController() {
+    public SingleSignOnSessionsReportController(CentralAuthenticationService centralAuthenticationService, AuthenticationSystemSupport authenticationSystemSupport) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     /**
@@ -292,13 +289,5 @@ public class SingleSignOnSessionsReportController {
     @GetMapping
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
-    }
-
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }

@@ -148,8 +148,7 @@ public class LoggingConfigController {
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
-    public Map<String, Object> getActiveLoggers(final HttpServletRequest request,
-                                                final HttpServletResponse response) throws Exception {
+    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -217,7 +216,7 @@ public class LoggingConfigController {
 
             configuredLoggers.add(loggerMap);
         }
-        final Map<String, Object> responseMap = new HashMap();
+        final Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("loggers", configuredLoggers);
         return responseMap;
     }
@@ -233,7 +232,6 @@ public class LoggingConfigController {
     private static ILoggerFactory getCasLoggerFactoryInstance() {
         return LoggerFactory.getILoggerFactory();
     }
-
 
     /**
      * Gets logger configurations.

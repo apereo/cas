@@ -49,8 +49,7 @@ public class TrustedDevicesController {
      * @throws Exception the exception
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return new ModelAndView("monitoring/viewTrustedDevices");
     }
 
@@ -79,8 +78,7 @@ public class TrustedDevicesController {
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
-    public Integer revokeRecord(@RequestParam final String key,
-                                final HttpServletRequest request) throws Exception {
+    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request) throws Exception {
         this.mfaTrustEngine.expire(key);
         return HttpStatus.OK.value();
     }
