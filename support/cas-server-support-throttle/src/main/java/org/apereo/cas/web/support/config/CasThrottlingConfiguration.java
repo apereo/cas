@@ -3,8 +3,7 @@ package org.apereo.cas.web.support.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
-import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
+import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
@@ -31,6 +30,7 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class CasThrottlingConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasThrottlingConfiguration.class);
 
     @Autowired
@@ -40,51 +40,26 @@ public class CasThrottlingConfiguration {
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean(name = {"defaultAuthenticationThrottle", "authenticationThrottle"})
     public ThrottledSubmissionHandlerInterceptor defaultAuthenticationThrottle() {
-
-        if (casProperties.getAuthn().getThrottle().getFailure().getThreshold() > 0
-                && casProperties.getAuthn().getThrottle().getFailure().getRangeSeconds() > 0) {
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getThrottle().getUsernameParameter())) {
-                return inMemoryIpAddressUsernameThrottle();
+        final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
+        if (throttle.getFailure().getThreshold() > 0
+                && throttle.getFailure().getRangeSeconds() > 0) {
+            if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
+                return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
+                        throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
             }
-            return inMemoryIpAddressThrottle();
+            return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
+                    throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
         }
         return neverThrottle();
     }
 
     @Lazy
     @Bean
-    public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle")
-                                              final ThrottledSubmissionHandlerInterceptor adapter) {
+    public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle") final ThrottledSubmissionHandlerInterceptor adapter) {
         return new InMemoryThrottledSubmissionCleaner(adapter);
     }
-
-    private ThrottledSubmissionHandlerInterceptor inMemoryIpAddressUsernameThrottle() {
-        return configureInMemoryInterceptorAdaptor(
-                new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter());
-    }
-
-
-    private ThrottledSubmissionHandlerInterceptor inMemoryIpAddressThrottle() {
-        return configureInMemoryInterceptorAdaptor(
-                new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter());
-    }
-
 
     private static ThrottledSubmissionHandlerInterceptor neverThrottle() {
         return () -> LOGGER.debug("Throttling is turned off. No cleanup will take place");
     }
-
-    private AbstractThrottledSubmissionHandlerInterceptorAdapter
-    configureThrottleHandlerInterceptorAdaptor(final AbstractThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
-        interceptorAdapter.setUsernameParameter(casProperties.getAuthn().getThrottle().getUsernameParameter());
-        interceptorAdapter.setFailureThreshold(casProperties.getAuthn().getThrottle().getFailure().getThreshold());
-        interceptorAdapter.setFailureRangeInSeconds(casProperties.getAuthn().getThrottle().getFailure().getRangeSeconds());
-        return interceptorAdapter;
-    }
-
-    private ThrottledSubmissionHandlerInterceptor
-    configureInMemoryInterceptorAdaptor(final AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
-        return configureThrottleHandlerInterceptorAdaptor(interceptorAdapter);
-    }
-
 }

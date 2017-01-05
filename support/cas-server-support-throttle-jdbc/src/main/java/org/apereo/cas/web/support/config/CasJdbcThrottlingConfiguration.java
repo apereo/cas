@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.web.support.AbstractThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -33,25 +33,15 @@ public class CasJdbcThrottlingConfiguration {
         return Beans.newHickariDataSource(casProperties.getAuthn().getThrottle().getJdbc());
     }
 
-    private AbstractThrottledSubmissionHandlerInterceptorAdapter
-    configureThrottleHandlerInterceptorAdaptor(final AbstractThrottledSubmissionHandlerInterceptorAdapter interceptorAdapter) {
-        interceptorAdapter.setUsernameParameter(casProperties.getAuthn().getThrottle().getUsernameParameter());
-        interceptorAdapter.setFailureThreshold(casProperties.getAuthn().getThrottle().getFailure().getThreshold());
-        interceptorAdapter.setFailureRangeInSeconds(casProperties.getAuthn().getThrottle().getFailure().getRangeSeconds());
-        return interceptorAdapter;
-    }
-
     @Autowired
     @Bean(name = {"inspektrIpAddressUsernameThrottle", "authenticationThrottle"})
     @RefreshScope
-    public ThrottledSubmissionHandlerInterceptor inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager")
-                                                                                   final AuditTrailManager auditTrailManager) {
-        final String appcode = casProperties.getAuthn().getThrottle().getAppcode();
-        final String sqlQueryAudit = casProperties.getAuthn().getThrottle().getJdbc().getAuditQuery();
-        final String failureCode = casProperties.getAuthn().getThrottle().getFailure().getCode();
-        final InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter bean =
-                new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(auditTrailManager,
-                        inspektrAuditTrailDataSource(), appcode, sqlQueryAudit, failureCode);
-        return configureThrottleHandlerInterceptorAdaptor(bean);
+    public ThrottledSubmissionHandlerInterceptor inspektrIpAddressUsernameThrottle(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
+        final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
+        final String appcode = throttle.getAppcode();
+        final String sqlQueryAudit = throttle.getJdbc().getAuditQuery();
+        final ThrottleProperties.Failure failure = throttle.getFailure();
+        return new InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(failure.getThreshold(), failure.getRangeSeconds(),
+                throttle.getUsernameParameter(), auditTrailManager, inspektrAuditTrailDataSource(), appcode, sqlQueryAudit, failure.getCode());
     }
 }
