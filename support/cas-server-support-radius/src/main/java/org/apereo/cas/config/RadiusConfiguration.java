@@ -3,12 +3,15 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
+import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,7 @@ public class RadiusConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -61,27 +64,16 @@ public class RadiusConfiguration {
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
+        final RadiusProperties.Client client = casProperties.getAuthn().getRadius().getClient();
+        final RadiusProperties.Server server = casProperties.getAuthn().getRadius().getServer();
 
-        final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(casProperties.getAuthn().getRadius().getClient().getAccountingPort());
-        factory.setAuthenticationPort(casProperties.getAuthn().getRadius().getClient().getAuthenticationPort());
-        factory.setInetAddress(casProperties.getAuthn().getRadius().getClient().getInetAddress());
-        factory.setSharedSecret(casProperties.getAuthn().getRadius().getClient().getSharedSecret());
-        factory.setSocketTimeout(casProperties.getAuthn().getRadius().getClient().getSocketTimeout());
+        final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
+                client.getInetAddress(), client.getSharedSecret());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(
-                casProperties.getAuthn().getRadius().getServer().getProtocol());
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
-        impl.setRetries(casProperties.getAuthn().getRadius().getServer().getRetries());
-        impl.setNasIdentifier(casProperties.getAuthn().getRadius().getServer().getNasIdentifier());
-        impl.setNasPort(casProperties.getAuthn().getRadius().getServer().getNasPort());
-        impl.setNasPortId(casProperties.getAuthn().getRadius().getServer().getNasPortId());
-        impl.setNasRealPort(casProperties.getAuthn().getRadius().getServer().getNasRealPort());
-        impl.setNasIpAddress(casProperties.getAuthn().getRadius().getServer().getNasIpAddress());
-        impl.setNasIpv6Address(casProperties.getAuthn().getRadius().getServer().getNasIpv6Address());
-
-        return impl;
+        return new JRadiusServerImpl(protocol, factory, server.getRetries(), server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
+                server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
     }
 
     /**
@@ -91,22 +83,19 @@ public class RadiusConfiguration {
      */
     @RefreshScope
     @Bean
-    public List radiusServers() {
-        final List<JRadiusServerImpl> list = new ArrayList<>();
+    public List<RadiusServer> radiusServers() {
+        final List<RadiusServer> list = new ArrayList<>();
         list.add(radiusServer());
         return list;
     }
 
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
-        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler();
+        final RadiusProperties radius = casProperties.getAuthn().getRadius();
+        final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler(radiusServers(), radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
-        h.setFailoverOnAuthenticationFailure(casProperties.getAuthn().getRadius().isFailoverOnAuthenticationFailure());
-        h.setFailoverOnException(casProperties.getAuthn().getRadius().isFailoverOnException());
-        h.setServers(radiusServers());
-
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getRadius().getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getRadius().getPrincipalTransformation()));
+        h.setPasswordEncoder(Beans.newPasswordEncoder(radius.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
 
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
@@ -114,7 +103,7 @@ public class RadiusConfiguration {
 
         h.setPrincipalFactory(radiusPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setName(casProperties.getAuthn().getRadius().getName());
+        h.setName(radius.getName());
         return h;
     }
 
@@ -123,5 +112,3 @@ public class RadiusConfiguration {
         authenticationHandlersResolvers.put(radiusAuthenticationHandler(), null);
     }
 }
-
-

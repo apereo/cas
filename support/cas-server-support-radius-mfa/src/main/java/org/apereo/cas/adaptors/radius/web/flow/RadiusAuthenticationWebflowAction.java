@@ -16,13 +16,13 @@ public class RadiusAuthenticationWebflowAction extends AbstractAction {
    
     private CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
+    public RadiusAuthenticationWebflowAction(final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
+        this.radiusAuthenticationWebflowEventResolver = radiusAuthenticationWebflowEventResolver;
+    }
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         return this.radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext);
-    }
-
-    public void setRadiusAuthenticationWebflowEventResolver(final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
-        this.radiusAuthenticationWebflowEventResolver = radiusAuthenticationWebflowEventResolver;
     }
 }
 
