@@ -78,10 +78,25 @@ public class JRadiusServerImpl implements RadiusServer {
      *
      * @param protocol the protocol
      * @param clientFactory the client factory
+     * @param retries the new retries
+     * @param nasIpAddress the new nas ip address
+     * @param nasIpv6Address the new nas ipv6 address
+     * @param nasPort the new nas port
+     * @param nasPortId the new nas port id
+     * @param nasIdentifier the new nas identifier
+     * @param nasRealPort the new nas real port
      */
-    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory) {
+    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries, final String nasIpAddress,
+                             final String nasIpv6Address, final long nasPort, final long nasPortId, final String nasIdentifier, final long nasRealPort) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
+        this.retries = retries;
+        this.nasIpAddress = nasIpAddress;
+        this.nasIpv6Address = nasIpv6Address;
+        this.nasPort = nasPort;
+        this.nasPortId = nasPortId;
+        this.nasIdentifier = nasIdentifier;
+        this.nasRealPort = nasRealPort;
     }
 
     @Override
@@ -143,67 +158,6 @@ public class JRadiusServerImpl implements RadiusServer {
         return null;
     }
 
-    
-    /**
-     * Sets the nas ip address.
-     *
-     * @param nasIpAddress the new nas ip address
-     * @since 4.1.0
-     */
-    public void setNasIpAddress(final String nasIpAddress) {
-        this.nasIpAddress = nasIpAddress;
-    }
-
-    /**
-     * Sets the nas ipv6 address.
-     *
-     * @param nasIpv6Address the new nas ipv6 address
-     * @since 4.1.0
-     */
-    public void setNasIpv6Address(final String nasIpv6Address) {
-        this.nasIpv6Address = nasIpv6Address;
-    }
-
-    /**
-     * Sets the nas port.
-     *
-     * @param nasPort the new nas port
-     * @since 4.1.0
-     */
-    public void setNasPort(final long nasPort) {
-        this.nasPort = nasPort;
-    }
-
-    /**
-     * Sets the nas port id.
-     *
-     * @param nasPortId the new nas port id
-     * @since 4.1.0
-     */
-    public void setNasPortId(final long nasPortId) {
-        this.nasPortId = nasPortId;
-    }
-
-    /**
-     * Sets the nas identifier.
-     *
-     * @param nasIdentifier the new nas identifier
-     * @since 4.1.0
-     */
-    public void setNasIdentifier(final String nasIdentifier) {
-        this.nasIdentifier = nasIdentifier;
-    }
-
-    /**
-     * Sets the nas real port.
-     *
-     * @param nasRealPort the new nas real port
-     * @since 4.1.0
-     */
-    public void setNasRealPort(final long nasRealPort) {
-        this.nasRealPort = nasRealPort;
-    }
-
     /**
      * Sets the nas port type.
      *
@@ -213,17 +167,6 @@ public class JRadiusServerImpl implements RadiusServer {
     public void setNasPortType(final long nasPortType) {
         this.nasPortType = nasPortType;
     }
-
-    /**
-     * Sets the retries.
-     *
-     * @param retries the new retries
-     * @since 4.1.0
-     */
-    public void setRetries(final int retries) {
-        this.retries = retries;
-    }
-
 
     @Override
     public String toString() {

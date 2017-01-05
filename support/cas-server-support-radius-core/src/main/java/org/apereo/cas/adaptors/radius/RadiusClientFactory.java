@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import com.google.common.base.Throwables;
 import net.jradius.client.RadiusClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -33,52 +34,24 @@ public class RadiusClientFactory {
     private String sharedSecret;
 
     /**
-     * Sets the RADIUS server accounting port.
      *
-     * @param port Accounting port number.
+     * @param accountingPort Sets the RADIUS server accounting port.
+     * @param authenticationPort Sets the RADIUS server authentication port.
+     * @param socketTimeout Sets the RADIUS server UDP socket timeout.
+     * @param inetAddress RADIUS server network address.
+     * @param sharedSecret RADIUS server authentication shared secret.
      */
-    public void setAccountingPort(final int port) {
-        this.accountingPort = port;
-    }
-
-    /**
-     * Sets the RADIUS server authentication port.
-     *
-     * @param port Authentication port number.
-     */
-    public void setAuthenticationPort(final int port) {
-        this.authenticationPort = port;
-    }
-
-    /**
-     * Sets the RADIUS server UDP socket timeout.
-     *
-     * @param timeout Timeout in seconds; 0 for no timeout.
-     */
-    public void setSocketTimeout(final int timeout) {
-        this.socketTimeout = timeout;
-    }
-
-    /**
-     * RADIUS server network address.
-     *
-     * @param address Network address as a string.
-     */
-    public void setInetAddress(final String address) {
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout, final String inetAddress,
+                               final String sharedSecret) {
+        this.accountingPort = accountingPort;
+        this.authenticationPort = authenticationPort;
+        this.socketTimeout = socketTimeout;
         try {
-            this.inetAddress = InetAddress.getByName(address);
+            this.inetAddress = InetAddress.getByName(inetAddress);
         } catch (final UnknownHostException e) {
-            throw new RuntimeException("Invalid address " + address);
+            Throwables.propagate(e);
         }
-    }
-
-    /**
-     * RADIUS server authentication shared secret.
-     *
-     * @param secret Shared secret.
-     */
-    public void setSharedSecret(final String secret) {
-        this.sharedSecret = secret;
+        this.sharedSecret = sharedSecret;
     }
 
     /**
@@ -91,7 +64,6 @@ public class RadiusClientFactory {
         return new RadiusClient(
                 this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
-
 
     @Override
     public String toString() {
