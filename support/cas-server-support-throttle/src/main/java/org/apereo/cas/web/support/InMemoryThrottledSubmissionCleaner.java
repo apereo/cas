@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @since 5.0.0
  */
 public class InMemoryThrottledSubmissionCleaner implements Runnable {
+
     private final ThrottledSubmissionHandlerInterceptor throttlingAdapter;
 
     public InMemoryThrottledSubmissionCleaner(final ThrottledSubmissionHandlerInterceptor throttlingAdapter) {

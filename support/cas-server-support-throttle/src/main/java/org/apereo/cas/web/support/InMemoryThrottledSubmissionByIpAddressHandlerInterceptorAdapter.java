@@ -11,9 +11,13 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter
-             extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
-    
+public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
+
+    public InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+                                                                           final String usernameParameter) {
+        super(failureThreshold, failureRangeInSeconds, usernameParameter);
+    }
+
     @Override
     public String constructKey(final HttpServletRequest request) {
         return ClientInfoHolder.getClientInfo().getClientIpAddress();
