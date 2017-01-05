@@ -58,24 +58,24 @@ import java.util.Set;
 @RequestMapping("/status/logging")
 public class LoggingConfigController {
     private static StringBuilder LOG_OUTPUT = new StringBuilder();
-    
+
     private static final Object LOCK = new Object();
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
-    
+
     private LoggerContext loggerContext;
 
     private final DelegatingAuditTrailManager auditTrailManager;
 
     @Autowired
     private Environment environment;
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
-    
+
     private Resource logConfigurationFile;
-    
+
     public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager) {
         this.auditTrailManager = auditTrailManager;
     }
@@ -90,7 +90,7 @@ public class LoggingConfigController {
         try {
             final String logFile = environment.resolvePlaceholders("${logging.config:}");
             this.logConfigurationFile = this.resourceLoader.getResource(logFile);
-            
+
             this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
             this.loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             registerLogFileTailThreads();
@@ -149,8 +149,7 @@ public class LoggingConfigController {
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request,
-                                                final HttpServletResponse response)
-            throws Exception {
+                                                final HttpServletResponse response) throws Exception {
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());

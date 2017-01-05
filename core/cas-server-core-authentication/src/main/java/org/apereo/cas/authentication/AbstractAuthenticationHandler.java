@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -78,10 +77,11 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     
     @Override
     public int compareTo(final AuthenticationHandler o) {
-        return new CompareToBuilder()
-                .append(this.order, Integer.valueOf(o.getOrder()))
-                .append(getName(), o.getName())
-                .build();
+        final int res = this.order.compareTo(o.getOrder());
+        if (res == 0) {
+            return 1;
+        }
+        return res;
     }
 
     @Override
@@ -91,8 +91,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
                 .append(this.getName())
                 .build();
     }
-
-
 
     public void setOrder(final Integer order) {
         this.order = order;
