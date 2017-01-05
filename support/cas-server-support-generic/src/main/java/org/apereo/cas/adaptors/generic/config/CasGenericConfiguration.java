@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is {@link CasGenericConfiguration}.
@@ -192,5 +193,12 @@ public class CasGenericConfiguration {
             LOGGER.debug("Added file-based authentication handler");
             this.authenticationHandlersResolvers.put(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
         }
+    }
+
+    public static void main(final String[] args) {
+        final TreeMap m = new TreeMap();
+        m.put(new FileAuthenticationHandler(), null);
+        m.put(new FileAuthenticationHandler(), null);
+        System.out.println(m.size());
     }
 }
