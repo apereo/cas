@@ -65,6 +65,16 @@ public class LdapAuthenticationProperties extends AbstractLdapProperties {
     private String baseDn;
     private String userFilter;
 
+    private boolean enhanceWithEntryResolver = true;
+
+    public boolean isEnhanceWithEntryResolver() {
+        return enhanceWithEntryResolver;
+    }
+
+    public void setEnhanceWithEntryResolver(final boolean enhanceWithEntryResolver) {
+        this.enhanceWithEntryResolver = enhanceWithEntryResolver;
+    }
+    
     public String getBaseDn() {
         return baseDn;
     }
