@@ -795,7 +795,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
 
-# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.radius.passwordEncoder.characterEncoding=
 # cas.authn.radius.passwordEncoder.encodingAlgorithm=
 # cas.authn.radius.passwordEncoder.secret=
@@ -815,7 +815,7 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.filename=file:///path/to/users/file
 # cas.authn.file.name=
 
-# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.file.passwordEncoder.characterEncoding=
 # cas.authn.file.passwordEncoder.encodingAlgorithm=
 # cas.authn.file.passwordEncoder.secret=
@@ -834,7 +834,7 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.users=user1,user2
 # cas.authn.reject.name=
 
-# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.reject.passwordEncoder.characterEncoding=
 # cas.authn.reject.passwordEncoder.encodingAlgorithm=
 # cas.authn.reject.passwordEncoder.secret=
@@ -851,7 +851,8 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 
 ### Query
 
-Authenticates a user by comparing the user password (which can be encoded with a password encoder) against the password on record determined by a configurable database query.
+Authenticates a user by comparing the user password (which can be encoded with a password encoder)
+against the password on record determined by a configurable database query.
 
 ```properties
 # cas.authn.jdbc.query[0].sql=SELECT password FROM table WHERE name=?
@@ -873,8 +874,9 @@ Authenticates a user by comparing the user password (which can be encoded with a
 # cas.authn.jdbc.query[0].idleTimeout=5000
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
+# cas.authn.jdbc.query[0].order=0
 
-# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
@@ -911,8 +913,9 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].idleTimeout=5000
 # cas.authn.jdbc.search[0].credentialCriteria=
 # cas.authn.jdbc.search[0].name=
+# cas.authn.jdbc.search[0].order=0
 
-# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
@@ -946,8 +949,9 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].idleTimeout=5000
 # cas.authn.jdbc.bind[0].credentialCriteria=
 # cas.authn.jdbc.bind[0].name=
+# cas.authn.jdbc.bind[0].order=0
 
-# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
@@ -994,8 +998,9 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].idleTimeout=5000
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
+# cas.authn.jdbc.encode[0].order=0
 
-# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
@@ -1022,7 +1027,7 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.mongo.principalTransformation.prefix=
 
-# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.mongo.passwordEncoder.characterEncoding=
 # cas.authn.mongo.passwordEncoder.encodingAlgorithm=
 # cas.authn.mongo.passwordEncoder.secret=
@@ -1138,8 +1143,9 @@ If multiple URLs are provided as the ldapURL this describes how each URL will be
 # cas.authn.ldap[0].allowMultipleDns=false
 
 # cas.authn.ldap[0].name=
+# cas.authn.ldap[0].order=0
 
-# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
@@ -1177,7 +1183,7 @@ To learn more about this topic, [please review this guide](Rest-Authentication.h
 # cas.authn.rest.uri=https://...
 # cas.authn.rest.name=
 
-# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.rest.passwordEncoder.characterEncoding=
 # cas.authn.rest.passwordEncoder.encodingAlgorithm=
 # cas.authn.rest.passwordEncoder.secret=
@@ -1287,7 +1293,7 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas.kerberosRealmSystemProperty=
 # cas.authn.jaas.name=
 
-# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.jaas.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.jaas.passwordEncoder.characterEncoding=
 # cas.authn.jaas.passwordEncoder.encodingAlgorithm=
 # cas.authn.jaas.passwordEncoder.secret=
@@ -1483,7 +1489,7 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.config.location=classpath:shiro.ini
 # cas.authn.shiro.name=
 
-# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT
+# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|com.example.CustomPasswordEncoder
 # cas.authn.shiro.passwordEncoder.characterEncoding=
 # cas.authn.shiro.passwordEncoder.encodingAlgorithm=
 # cas.authn.shiro.passwordEncoder.secret=
