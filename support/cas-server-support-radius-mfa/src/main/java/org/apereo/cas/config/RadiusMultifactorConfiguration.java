@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
+import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction;
@@ -115,8 +116,7 @@ public class RadiusMultifactorConfiguration {
 
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
-        final FlowDefinitionRegistryBuilder builder =
-                new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
@@ -124,27 +124,18 @@ public class RadiusMultifactorConfiguration {
 
     @RefreshScope
     @Bean
-    public List radiusTokenServers() {
-        final List<JRadiusServerImpl> list = new ArrayList<>();
-        final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
+    public List<RadiusServer> radiusTokenServers() {
+        final List<RadiusServer> list = new ArrayList<>();
+        final MultifactorAuthenticationProperties.Radius.Client client = casProperties.getAuthn().getMfa().getRadius().getClient();
+        final MultifactorAuthenticationProperties.Radius.Server server = casProperties.getAuthn().getMfa().getRadius().getServer();
 
-        final RadiusClientFactory factory = new RadiusClientFactory();
-        factory.setAccountingPort(radius.getClient().getAccountingPort());
-        factory.setAuthenticationPort(radius.getClient().getAuthenticationPort());
-        factory.setInetAddress(radius.getClient().getInetAddress());
-        factory.setSharedSecret(radius.getClient().getSharedSecret());
-        factory.setSocketTimeout(radius.getClient().getSocketTimeout());
+        final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
+                client.getInetAddress(), client.getSharedSecret());
 
-        final RadiusProtocol protocol = RadiusProtocol.valueOf(radius.getServer().getProtocol());
+        final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory);
-        impl.setRetries(radius.getServer().getRetries());
-        impl.setNasIdentifier(radius.getServer().getNasIdentifier());
-        impl.setNasPort(radius.getServer().getNasPort());
-        impl.setNasPortId(radius.getServer().getNasPortId());
-        impl.setNasRealPort(radius.getServer().getNasRealPort());
-        impl.setNasIpAddress(radius.getServer().getNasIpAddress());
-        impl.setNasIpv6Address(radius.getServer().getNasIpv6Address());
+        final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory, server.getRetries(), server.getNasIpAddress(), server.getNasIpv6Address(),
+                server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
 
         list.add(impl);
         return list;
@@ -153,8 +144,7 @@ public class RadiusMultifactorConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider();
-        p.setRadiusAuthenticationHandler(radiusTokenAuthenticationHandler());
+        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenAuthenticationHandler());
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
@@ -174,20 +164,16 @@ public class RadiusMultifactorConfiguration {
     @Bean
     @RefreshScope
     public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
-        final RadiusAuthenticationMetaDataPopulator pop = new RadiusAuthenticationMetaDataPopulator();
-
-        pop.setAuthenticationContextAttribute(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
-        pop.setAuthenticationHandler(radiusTokenAuthenticationHandler());
-        pop.setProvider(radiusAuthenticationProvider());
-        return pop;
+        final String attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
+        return new RadiusAuthenticationMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 
     @RefreshScope
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         final MultifactorAuthenticationProperties.Radius radius = casProperties.getAuthn().getMfa().getRadius();
-        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radiusTokenServers(),
-                radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
+        final RadiusTokenAuthenticationHandler a = new RadiusTokenAuthenticationHandler(radiusTokenServers(), radius.isFailoverOnException(),
+                radius.isFailoverOnAuthenticationFailure());
         a.setPrincipalFactory(radiusTokenPrincipalFactory());
         a.setServicesManager(servicesManager);
         a.setName(radius.getName());
@@ -199,12 +185,9 @@ public class RadiusMultifactorConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-
     @Bean
     public Action radiusAuthenticationWebflowAction() {
-        final RadiusAuthenticationWebflowAction w = new RadiusAuthenticationWebflowAction();
-        w.setRadiusAuthenticationWebflowEventResolver(radiusAuthenticationWebflowEventResolver());
-        return w;
+        return new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver());
     }
 
     @RefreshScope
