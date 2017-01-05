@@ -18,6 +18,8 @@ cache:
     - '$HOME/.gradle/caches'
 git:
   depth: 3
+notifications:
+  slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
