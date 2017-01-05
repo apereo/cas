@@ -17,11 +17,16 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
  */
 public class RadiusAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    private String authenticationContextAttribute;
+    private final String authenticationContextAttribute;
+    private final AuthenticationHandler authenticationHandler;
+    private final MultifactorAuthenticationProvider provider;
 
-    private AuthenticationHandler authenticationHandler;
-
-    private MultifactorAuthenticationProvider provider;
+    public RadiusAuthenticationMetaDataPopulator(final String authenticationContextAttribute, final AuthenticationHandler authenticationHandler,
+                                                 final MultifactorAuthenticationProvider provider) {
+        this.authenticationContextAttribute = authenticationContextAttribute;
+        this.authenticationHandler = authenticationHandler;
+        this.provider = provider;
+    }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
@@ -34,17 +39,5 @@ public class RadiusAuthenticationMetaDataPopulator implements AuthenticationMeta
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
-    }
-
-    public void setAuthenticationContextAttribute(final String authenticationContextAttribute) {
-        this.authenticationContextAttribute = authenticationContextAttribute;
-    }
-
-    public void setAuthenticationHandler(final AuthenticationHandler authenticationHandler) {
-        this.authenticationHandler = authenticationHandler;
-    }
-
-    public void setProvider(final MultifactorAuthenticationProvider provider) {
-        this.provider = provider;
     }
 }
