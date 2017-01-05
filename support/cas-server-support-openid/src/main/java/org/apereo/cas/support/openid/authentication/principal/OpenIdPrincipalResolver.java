@@ -21,5 +21,4 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     public boolean supports(final Credential credential) {
         return credential instanceof OpenIdCredential;
     }
-
 }

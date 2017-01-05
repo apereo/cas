@@ -2,7 +2,6 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
@@ -108,11 +107,9 @@ public class SingleSignOnSessionsReportController {
     }
 
     private final CentralAuthenticationService centralAuthenticationService;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    public SingleSignOnSessionsReportController(CentralAuthenticationService centralAuthenticationService, AuthenticationSystemSupport authenticationSystemSupport) {
+    public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     /**

@@ -89,7 +89,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     public SingleSignOnSessionsReportController singleSignOnSessionsReportController() {
-        return new SingleSignOnSessionsReportController(centralAuthenticationService, authenticationSystemSupport);
+        return new SingleSignOnSessionsReportController(centralAuthenticationService);
     }
 
     @RefreshScope
