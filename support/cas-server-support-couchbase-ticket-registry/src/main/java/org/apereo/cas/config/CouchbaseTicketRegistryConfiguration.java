@@ -48,11 +48,9 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean(name = {"couchbaseTicketRegistry", "ticketRegistry"})
     public TicketRegistry couchbaseTicketRegistry() {
-        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry();
-        c.setCouchbaseClientFactory(ticketRegistryCouchbaseClientFactory());
-        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getCouchbase().getCrypto()
-        ));
+        final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
+        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory(), couchbase.isQueryEnabled());
+        c.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(couchbase.getCrypto()));
         return c;
     }
 
