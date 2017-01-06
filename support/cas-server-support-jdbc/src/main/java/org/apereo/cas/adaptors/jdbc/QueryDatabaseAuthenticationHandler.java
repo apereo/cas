@@ -23,8 +23,7 @@ import java.security.GeneralSecurityException;
  * @since 3.0.0
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-
+    
     private String sql;
 
     @Override

@@ -88,7 +88,7 @@ public class LoggingConfigController {
     @PostConstruct
     public void initialize() {
         try {
-            final String logFile = environment.resolvePlaceholders("${logging.config:}");
+            final String logFile = environment.getProperty("logging.config");
             this.logConfigurationFile = this.resourceLoader.getResource(logFile);
 
             this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
