@@ -38,13 +38,13 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static final String TABLE_SERVICE_TICKETS = ServiceTicketImpl.class.getSimpleName();
     private static final String TABLE_TICKET_GRANTING_TICKETS = TicketGrantingTicketImpl.class.getSimpleName();
 
-    private boolean lockTgt = true;
+    private final boolean lockTgt;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public void setLockTgt(final boolean lockTgt) {
-        this.lockTgt = lockTgt;
+    public JpaTicketRegistry(final boolean lockingTgtEnabled) {
+        this.lockTgt = lockingTgtEnabled;
     }
 
     @Override
@@ -144,8 +144,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long serviceTicketCount() {
-        return countToLong(this.entityManager.createQuery("select count(t) from "
-                + TABLE_SERVICE_TICKETS + " t").getSingleResult());
+        return countToLong(this.entityManager.createQuery("select count(t) from " + TABLE_SERVICE_TICKETS + " t").getSingleResult());
     }
 
     @Override
@@ -178,8 +177,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @param clazz    the clazz
      * @return the ticket query result list
      */
-    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query,
-                                                               final Class<T> clazz) {
+    public <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<T> clazz) {
         return this.entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
@@ -262,5 +260,4 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }
-
 }

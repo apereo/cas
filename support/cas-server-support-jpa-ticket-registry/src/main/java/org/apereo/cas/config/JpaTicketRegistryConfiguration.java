@@ -2,7 +2,9 @@ package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -76,10 +78,7 @@ public class JpaTicketRegistryConfiguration {
      * @return the jpa transaction manager
      */
     @Bean
-    public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory")
-                                                          final EntityManagerFactory emf) {
-
-        
+    public PlatformTransactionManager ticketTransactionManager(@Qualifier("ticketEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
@@ -96,24 +95,19 @@ public class JpaTicketRegistryConfiguration {
         return Beans.newHickariDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
-    
     @Bean(name = {"jpaTicketRegistry", "ticketRegistry"})
     @RefreshScope
     public TicketRegistry jpaTicketRegistry() {
-        final JpaTicketRegistry bean = new JpaTicketRegistry();
-        bean.setLockTgt(casProperties.getTicket().getRegistry().getJpa().isJpaLockingTgtEnabled());
-        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
-                casProperties.getTicket().getRegistry().getJpa().getCrypto()));
+        final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
+        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.isJpaLockingTgtEnabled());
+        bean.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(jpa.getCrypto()));
         return bean;
     }
 
     @Bean
     public LockingStrategy lockingStrategy() {
-        final JpaLockingStrategy bean = new JpaLockingStrategy();
-        bean.setApplicationId(casProperties.getTicket().getRegistry().getCleaner().getAppId());
-        bean.setUniqueId(StringUtils.defaultIfEmpty(casProperties.getHost().getName(), 
-                InetAddressUtils.getCasServerHostName()));
-        bean.setLockTimeout(casProperties.getTicket().getRegistry().getJpa().getJpaLockingTimeout());
-        return bean;
+        final TicketRegistryProperties registry = casProperties.getTicket().getRegistry();
+        final String uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
+        return new JpaLockingStrategy(registry.getCleaner().getAppId(), uniqueId, registry.getJpa().getJpaLockingTimeout());
     }
 }

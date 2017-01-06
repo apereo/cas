@@ -24,8 +24,11 @@ import java.security.GeneralSecurityException;
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    private final String sql;
 
-    private String sql;
+    public QueryDatabaseAuthenticationHandler(final String sql) {
+        this.sql = sql;
+    }
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
@@ -61,9 +64,5 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
         return authenticateUsernamePasswordInternal(credential, null);
-    }
-
-    public void setSql(final String sql) {
-        this.sql = sql;
     }
 }
