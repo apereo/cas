@@ -15,19 +15,14 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
-    private OidcAuthorizationRequestSupport oidcAuthzRequestSupport;
 
     @Override
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
         final String url = context.getFullRequestURL();
-        final Set<String> prompts = oidcAuthzRequestSupport.getOidcPromptFromAuthorizationRequest(url);
+        final Set<String> prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
             return false;
         }
         return super.isConsentApprovalBypassed(context, service);
-    }
-
-    public void setOidcAuthzRequestSupport(final OidcAuthorizationRequestSupport oidcAuthzRequestSupport) {
-        this.oidcAuthzRequestSupport = oidcAuthzRequestSupport;
     }
 }

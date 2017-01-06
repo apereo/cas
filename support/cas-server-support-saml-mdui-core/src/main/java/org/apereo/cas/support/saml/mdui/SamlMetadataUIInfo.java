@@ -78,7 +78,6 @@ public class SamlMetadataUIInfo extends BaseRegisteredServiceUserInterfaceInfo {
         return super.getPrivacyStatementURLs();
     }
 
-
     /**
      * Gets logo urls.
      *

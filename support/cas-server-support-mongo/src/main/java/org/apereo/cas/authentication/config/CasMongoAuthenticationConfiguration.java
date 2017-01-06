@@ -44,7 +44,7 @@ public class CasMongoAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
@@ -55,16 +55,11 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler mongoAuthenticationHandler() {
-        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler();
         final MongoAuthenticationProperties mongo = casProperties.getAuthn().getMongo();
-
-        handler.setAttributes(mongo.getAttributes());
-        handler.setCollectionName(mongo.getCollectionName());
-        handler.setMongoHostUri(mongo.getMongoHostUri());
-        handler.setPasswordAttribute(mongo.getPasswordAttribute());
-        handler.setUsernameAttribute(mongo.getUsernameAttribute());
+        final SpringSecurityPasswordEncoder mongoPasswordEncoder = new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder()));
+        final MongoAuthenticationHandler handler = new MongoAuthenticationHandler(mongo.getCollectionName(), mongo.getMongoHostUri(), mongo.getAttributes(),
+                mongo.getUsernameAttribute(), mongo.getPasswordAttribute(), mongoPasswordEncoder);
         handler.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
-        handler.setMongoPasswordEncoder(new SpringSecurityPasswordEncoder(Beans.newPasswordEncoder(mongo.getPasswordEncoder())));
         handler.setPrincipalFactory(mongoPrincipalFactory());
         handler.setServicesManager(servicesManager);
         handler.setName(mongo.getName());
