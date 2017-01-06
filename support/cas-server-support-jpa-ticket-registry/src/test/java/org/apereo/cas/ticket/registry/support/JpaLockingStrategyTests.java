@@ -180,11 +180,8 @@ public class JpaLockingStrategyTests {
     }
 
     private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final String ttl) {
-        final JpaLockingStrategy lock = new JpaLockingStrategy();
+        final JpaLockingStrategy lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
-        lock.setApplicationId(appId);
-        lock.setUniqueId(uniqueId);
-        lock.setLockTimeout(Beans.newDuration(ttl).getSeconds());
         return (LockingStrategy) Proxy.newProxyInstance(
                 JpaLockingStrategy.class.getClassLoader(),
                 new Class[]{LockingStrategy.class},
