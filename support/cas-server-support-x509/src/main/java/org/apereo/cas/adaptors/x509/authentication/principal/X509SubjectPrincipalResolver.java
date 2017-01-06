@@ -1,5 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.cryptacular.x509.dn.Attribute;
+import org.cryptacular.x509.dn.AttributeType;
+import org.cryptacular.x509.dn.NameReader;
+import org.cryptacular.x509.dn.RDN;
+import org.cryptacular.x509.dn.RDNSequence;
+import org.cryptacular.x509.dn.StandardAttributeType;
+
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,13 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.cryptacular.x509.dn.Attribute;
-import org.cryptacular.x509.dn.AttributeType;
-import org.cryptacular.x509.dn.NameReader;
-import org.cryptacular.x509.dn.RDN;
-import org.cryptacular.x509.dn.RDNSequence;
-import org.cryptacular.x509.dn.StandardAttributeType;
 
 
 /**
@@ -33,8 +33,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     /**
      * Descriptor representing an abstract format of the principal to be resolved.
      */
-    
-    private String descriptor;
+    private final String descriptor;
 
     /**
      * Sets the descriptor that describes for format of the principal ID to
@@ -57,7 +56,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * <p>
      * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
-     * @param s Descriptor string where attribute names are prefixed with "$"
+     * @param descriptor Descriptor string where attribute names are prefixed with "$"
      *          to identify replacement by real attribute values from the subject DN.
      *          Valid attributes include common X.509 DN attributes such as the following:
      *          <ul>
@@ -76,8 +75,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *          For a complete list of supported attributes, see
      *          {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    public void setDescriptor(final String s) {
-        this.descriptor = s;
+
+    public X509SubjectPrincipalResolver(final String descriptor) {
+        this.descriptor = descriptor;
     }
 
     /**
@@ -126,8 +126,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * appear would appear in the string representation of the DN or an empty
      * array if the given attribute does not exist.
      */
-    private static String[] getAttributeValues(final RDNSequence rdnSequence,
-                                               final AttributeType attribute) {
+    private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
         // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
         final List<String> values = new ArrayList<>();
         for (final RDN rdn : rdnSequence.backward()) {

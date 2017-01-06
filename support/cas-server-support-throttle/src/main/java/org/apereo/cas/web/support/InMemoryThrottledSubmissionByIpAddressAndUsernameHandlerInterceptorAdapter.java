@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
         extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds, final String usernameParameter) {
+    public InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+                                                                                      final String usernameParameter) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter);
     }
 

@@ -31,7 +31,6 @@ import java.security.cert.X509CRL;
  */
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
-
     /**
      * Search exec that looks for the attribute.
      */
