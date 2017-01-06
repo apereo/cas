@@ -103,6 +103,7 @@ public class CasCoreAuthenticationConfiguration {
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
+    @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -149,6 +150,7 @@ public class CasCoreAuthenticationConfiguration {
         return h;
     }
 
+    @ConditionalOnMissingBean(name = "acceptUsersPrincipalFactory")
     @Bean
     public PrincipalFactory acceptUsersPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -255,6 +257,7 @@ public class CasCoreAuthenticationConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
     @Bean
     public PrincipalFactory proxyPrincipalFactory() {
         return new DefaultPrincipalFactory();

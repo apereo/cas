@@ -134,7 +134,7 @@ public class AuthyConfiguration {
         }
     }
 
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "authyPrincipalFactory")
     @Bean
     public PrincipalFactory authyPrincipalFactory() {
         return new DefaultPrincipalFactory();
