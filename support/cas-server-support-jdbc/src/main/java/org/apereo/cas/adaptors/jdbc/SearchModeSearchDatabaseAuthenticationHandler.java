@@ -22,11 +22,15 @@ import java.security.GeneralSecurityException;
  */
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
     
-    private String fieldUser;
+    private final String fieldUser;
+    private final String fieldPassword;
+    private final String tableUsers;
 
-    private String fieldPassword;
-
-    private String tableUsers;
+    public SearchModeSearchDatabaseAuthenticationHandler(final String fieldUser, final String fieldPassword, final String tableUsers) {
+        this.fieldUser = fieldUser;
+        this.fieldPassword = fieldPassword;
+        this.tableUsers = tableUsers;
+    }
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
@@ -55,17 +59,5 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-    }
-
-    public void setFieldPassword(final String fieldPassword) {
-        this.fieldPassword = fieldPassword;
-    }
-    
-    public void setFieldUser(final String fieldUser) {
-        this.fieldUser = fieldUser;
-    }
-    
-    public void setTableUsers(final String tableUsers) {
-        this.tableUsers = tableUsers;
     }
 }
