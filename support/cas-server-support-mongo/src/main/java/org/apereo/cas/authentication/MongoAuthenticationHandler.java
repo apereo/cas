@@ -28,6 +28,16 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
     
     private PasswordEncoder mongoPasswordEncoder = new NoOpPasswordEncoder();
 
+    public MongoAuthenticationHandler(final String collectionName, final String mongoHostUri, final String attributes, final String usernameAttribute,
+                                      final String passwordAttribute, final PasswordEncoder mongoPasswordEncoder) {
+        this.collectionName = collectionName;
+        this.mongoHostUri = mongoHostUri;
+        this.attributes = attributes;
+        this.usernameAttribute = usernameAttribute;
+        this.passwordAttribute = passwordAttribute;
+        this.mongoPasswordEncoder = mongoPasswordEncoder;
+    }
+
     @Override
     protected Authenticator<UsernamePasswordCredentials> getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
@@ -44,30 +54,6 @@ public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthentic
         return mongoAuthenticator;
     }
     
-    public void setMongoHostUri(final String mongoHostUri) {
-        this.mongoHostUri = mongoHostUri;
-    }
-
-    public void setCollectionName(final String collectionName) {
-        this.collectionName = collectionName;
-    }
-    
-    public void setAttributes(final String attributes) {
-        this.attributes = attributes;
-    }
-
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
-    }
-
-    public void setPasswordAttribute(final String passwordAttribute) {
-        this.passwordAttribute = passwordAttribute;
-    }
-
-    public void setMongoPasswordEncoder(final PasswordEncoder mongoPasswordEncoder) {
-        this.mongoPasswordEncoder = mongoPasswordEncoder;
-    }
-
     private static class NoOpPasswordEncoder implements PasswordEncoder {
         @Override
         public String encode(final String s) {

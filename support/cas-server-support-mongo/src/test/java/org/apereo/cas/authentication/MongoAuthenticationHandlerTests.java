@@ -57,5 +57,4 @@ public class MongoAuthenticationHandlerTests {
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));
         assertTrue(result.getPrincipal().getAttributes().containsKey("state"));
     }
-
 }
