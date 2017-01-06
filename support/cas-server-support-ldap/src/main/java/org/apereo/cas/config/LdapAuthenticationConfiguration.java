@@ -69,6 +69,7 @@ public class LdapAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
         casProperties.getAuthn().getLdap()
@@ -95,7 +96,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setServicesManager(servicesManager);
                     handler.setName(l.getName());
                     handler.setOrder(l.getOrder());
-                    
+
                     final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
                         additionalAttrs.add(l.getPrincipalAttributeId());
