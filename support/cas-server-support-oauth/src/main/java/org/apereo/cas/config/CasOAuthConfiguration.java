@@ -323,6 +323,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         );
     }
 
+    @ConditionalOnMissingBean(name = "oauthPrincipalFactory")
     @Bean
     public PrincipalFactory oauthPrincipalFactory() {
         return new DefaultPrincipalFactory();
