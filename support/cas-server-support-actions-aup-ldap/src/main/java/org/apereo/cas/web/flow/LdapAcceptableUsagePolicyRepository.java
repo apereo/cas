@@ -25,11 +25,18 @@ import java.util.Collections;
  * @since 4.2
  */
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
+
     private static final long serialVersionUID = 1600024683199961892L;
 
     private ConnectionFactory connectionFactory;
     private String searchFilter;
     private String baseDn;
+
+    public LdapAcceptableUsagePolicyRepository(final ConnectionFactory connectionFactory, final String searchFilter, final String baseDn) {
+        this.connectionFactory = connectionFactory;
+        this.searchFilter = searchFilter;
+        this.baseDn = baseDn;
+    }
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
@@ -60,36 +67,11 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * @return the response
      * @throws LdapException the ldap exception
      */
-    private Response<SearchResult> searchForId(final String id)
-            throws LdapException {
+    private Response<SearchResult> searchForId(final String id) throws LdapException {
 
         final SearchFilter filter = Beans.newSearchFilter(this.searchFilter,
                 Beans.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 Arrays.asList(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
-    }
-
-    public ConnectionFactory getConnectionFactory() {
-        return connectionFactory;
-    }
-
-    public void setConnectionFactory(final ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
-
-    public String getSearchFilter() {
-        return searchFilter;
-    }
-
-    public void setSearchFilter(final String searchFilter) {
-        this.searchFilter = searchFilter;
-    }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
     }
 }
