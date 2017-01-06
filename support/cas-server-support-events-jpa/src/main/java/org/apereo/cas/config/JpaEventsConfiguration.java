@@ -70,8 +70,7 @@ public class JpaEventsConfiguration {
     
     @Autowired
     @Bean
-    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory")
-                                                          final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory") final EntityManagerFactory emf) {
         final JpaTransactionManager mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
