@@ -125,6 +125,7 @@ public class YubiKeyConfiguration {
         return builder.build();
     }
 
+    @ConditionalOnMissingBean(name = "yubikeyPrincipalFactory")
     @Bean
     public PrincipalFactory yubikeyPrincipalFactory() {
         return new DefaultPrincipalFactory();
