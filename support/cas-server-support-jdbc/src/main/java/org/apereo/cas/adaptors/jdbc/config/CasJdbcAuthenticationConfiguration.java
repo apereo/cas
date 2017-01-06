@@ -64,7 +64,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @PostConstruct
     public void initializeJdbcAuthenticationHandlers() {
@@ -114,16 +114,10 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Encode b) {
-        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getAlgorithmName(), b.getSql(),
+                b.getPasswordFieldName(), b.getSaltFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(), b.getStaticSalt());
 
         h.setOrder(b.getOrder());
-        h.setAlgorithmName(b.getAlgorithmName());
-        h.setNumberOfIterationsFieldName(b.getNumberOfIterationsFieldName());
-        h.setNumberOfIterations(b.getNumberOfIterations());
-        h.setPasswordFieldName(b.getPasswordFieldName());
-        h.setSaltFieldName(b.getSaltFieldName());
-        h.setSql(b.getSql());
-        h.setStaticSalt(b.getStaticSalt());
         h.setDataSource(Beans.newHickariDataSource(b));
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
@@ -147,10 +141,9 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Query b) {
-        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler();
+        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getSql());
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
-        h.setSql(b.getSql());
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
@@ -171,13 +164,11 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
-        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler();
+        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getFieldUser(), b.getFieldPassword(),
+                b.getTableUsers());
 
         h.setOrder(b.getOrder());
         h.setDataSource(Beans.newHickariDataSource(b));
-        h.setFieldPassword(b.getFieldPassword());
-        h.setFieldUser(b.getFieldUser());
-        h.setTableUsers(b.getTableUsers());
 
         h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));

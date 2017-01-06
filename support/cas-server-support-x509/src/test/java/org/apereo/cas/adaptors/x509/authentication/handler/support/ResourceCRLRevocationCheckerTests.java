@@ -62,8 +62,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
     public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
-        final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();
-        zeroThresholdPolicy.setThreshold(0);
+        final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy(0);
 
         // Test case #1
         // Valid certificate on valid CRL data

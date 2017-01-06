@@ -56,17 +56,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         this(crlCache, new ResourceCRLFetcher(), false);
     }
 
-
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
      *
      * @param crlCache            Cache for CRL data.
      * @param throwOnFetchFailure the throw on fetch failure
      */
-    public CRLDistributionPointRevocationChecker(final Cache crlCache,
-                                                 final boolean throwOnFetchFailure) {
+    public CRLDistributionPointRevocationChecker(final Cache crlCache, final boolean throwOnFetchFailure) {
         this(crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
-
     }
 
     /**
