@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CurrentCredentialsAndAuthentication;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -22,14 +21,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationSetTrustAction.class);
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
-    private MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
 
-    private TicketRegistrySupport ticketRegistrySupport;
-
-    private MultifactorAuthenticationProperties.Trusted trustedProperties;
+    public MultifactorAuthenticationSetTrustAction(final MultifactorAuthenticationTrustStorage storage,
+                                                   final MultifactorAuthenticationProperties.Trusted trustedProperties) {
+        this.storage = storage;
+        this.trustedProperties = trustedProperties;
+    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
@@ -61,17 +64,5 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
                 c,
                 trustedProperties.getAuthenticationContextAttribute());
         return success();
-    }
-
-    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
-        this.trustedProperties = trustedProperties;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    public void setStorage(final MultifactorAuthenticationTrustStorage storage) {
-        this.storage = storage;
     }
 }
