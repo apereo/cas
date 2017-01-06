@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
+import java.util.Set;
+
 /**
  * This is {@link CouchbaseTicketRegistryConfiguration}.
  *
@@ -39,13 +41,8 @@ public class CouchbaseTicketRegistryConfiguration {
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
         final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
-        final CouchbaseClientFactory factory = new CouchbaseClientFactory();
-        factory.setNodes(StringUtils.commaDelimitedListToSet(cb.getNodeSet()));
-        factory.setTimeout(cb.getTimeout());
-        factory.setBucketName(cb.getBucket());
-        factory.setPassword(cb.getPassword());
-
-        return factory;
+        final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
+        return new CouchbaseClientFactory(nodes, cb.getBucket(), cb.getPassword(), cb.getTimeout());
     }
 
     @RefreshScope
