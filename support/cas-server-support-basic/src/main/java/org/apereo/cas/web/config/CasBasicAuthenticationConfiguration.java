@@ -50,7 +50,8 @@ public class CasBasicAuthenticationConfiguration {
 
     @Bean
     public Action basicAuthenticationAction() {
-        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
+        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver, 
+                serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy);
     }
 
@@ -60,6 +61,7 @@ public class CasBasicAuthenticationConfiguration {
         return new BasicAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry);
     }
 
+    @ConditionalOnMissingBean(name = "basicPrincipalFactory")
     @Bean
     public PrincipalFactory basicPrincipalFactory() {
         return new DefaultPrincipalFactory();
