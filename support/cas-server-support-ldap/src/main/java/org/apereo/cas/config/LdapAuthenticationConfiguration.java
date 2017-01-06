@@ -1,9 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.LdapAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ChainingPrincipalResolver;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -28,17 +31,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.time.Period;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -69,9 +76,23 @@ public class LdapAuthenticationConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    
+
     @PostConstruct
     public void initLdapAuthenticationHandlers() {
+        ldapAuthenticationHandlers().forEach(handler ->
+                this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver));
+    }
+
+    @ConditionalOnMissingBean(name = "ldapPrincipalFactory")
+    @Bean
+    public PrincipalFactory ldapPrincipalFactory() {
+        return new DefaultPrincipalFactory();
+    }
+
+    @Bean
+    public Collection<AuthenticationHandler> ldapAuthenticationHandlers() {
+        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
+
         casProperties.getAuthn().getLdap()
                 .stream()
                 .filter(l -> {
@@ -96,6 +117,7 @@ public class LdapAuthenticationConfiguration {
                     handler.setServicesManager(servicesManager);
                     handler.setName(l.getName());
                     handler.setOrder(l.getOrder());
+                    handler.setPrincipalFactory(ldapPrincipalFactory());
 
                     final List<String> additionalAttrs = l.getAdditionalAttributes();
                     if (StringUtils.isNotBlank(l.getPrincipalAttributeId())) {
@@ -111,7 +133,6 @@ public class LdapAuthenticationConfiguration {
                         final Predicate<String> predicate = Pattern.compile(l.getCredentialCriteria()).asPredicate();
                         handler.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
                     }
-
                     final Map<String, String> attributes = new HashMap<>();
 
                     if (l.getPrincipalAttributeList().isEmpty()) {
@@ -157,14 +178,17 @@ public class LdapAuthenticationConfiguration {
                     }
 
                     handler.setAuthenticator(authenticator);
-                    LOGGER.debug("Initializing ldap authentication handler...");
+                    LOGGER.debug("Initializing ldap authentication handler for {}", l.getLdapUrl());
                     handler.initialize();
 
                     LOGGER.debug("Ldap authentication for {} is to chain principal resolvers for attributes", l.getLdapUrl());
                     final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+
+                    // Let the chain process the principal attributes as well as what may be gathered by attribute repositories
                     resolver.setChain(Arrays.asList(personDirectoryPrincipalResolver, new EchoingPrincipalResolver()));
-                    this.authenticationHandlersResolvers.put(handler, this.personDirectoryPrincipalResolver);
+                    handlers.add(handler);
                 });
+        return handlers;
     }
 
     private static LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(

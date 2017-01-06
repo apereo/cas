@@ -16,12 +16,15 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -68,25 +71,21 @@ public class CasJdbcAuthenticationConfiguration {
 
     @PostConstruct
     public void initializeJdbcAuthenticationHandlers() {
-        casProperties.getAuthn().getJdbc()
-                .getBind().forEach(b -> authenticationHandlersResolvers.put(
-                bindModeSearchDatabaseAuthenticationHandler(b),
-                personDirectoryPrincipalResolver));
+        jdbcAuthenticationHandlers().forEach(h -> authenticationHandlersResolvers.put(h, personDirectoryPrincipalResolver));
+    }
 
+    @Bean
+    public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
+        final Collection<AuthenticationHandler> handlers = new TreeSet<>();
         casProperties.getAuthn().getJdbc()
-                .getEncode().forEach(b -> authenticationHandlersResolvers.put(
-                queryAndEncodeDatabaseAuthenticationHandler(b),
-                personDirectoryPrincipalResolver));
-
+                .getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         casProperties.getAuthn().getJdbc()
-                .getQuery().forEach(b -> authenticationHandlersResolvers.put(
-                queryDatabaseAuthenticationHandler(b),
-                personDirectoryPrincipalResolver));
-
+                .getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));
         casProperties.getAuthn().getJdbc()
-                .getSearch().forEach(b -> authenticationHandlersResolvers.put(
-                searchModeSearchDatabaseAuthenticationHandler(b),
-                personDirectoryPrincipalResolver));
+                .getQuery().forEach(b -> handlers.add(queryDatabaseAuthenticationHandler(b)));
+        casProperties.getAuthn().getJdbc()
+                .getSearch().forEach(b -> handlers.add(searchModeSearchDatabaseAuthenticationHandler(b)));
+        return handlers;
     }
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Bind b) {
@@ -189,6 +188,7 @@ public class CasJdbcAuthenticationConfiguration {
         return h;
     }
 
+    @ConditionalOnMissingBean(name = "jdbcPrincipalFactory")
     @Bean
     public PrincipalFactory jdbcPrincipalFactory() {
         return new DefaultPrincipalFactory();

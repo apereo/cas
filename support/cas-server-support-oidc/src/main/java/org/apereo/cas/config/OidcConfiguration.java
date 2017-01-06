@@ -229,6 +229,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         return s;
     }
 
+    @ConditionalOnMissingBean(name = "oidcPrincipalFactory")
     @Bean
     public PrincipalFactory oidcPrincipalFactory() {
         return new DefaultPrincipalFactory();
