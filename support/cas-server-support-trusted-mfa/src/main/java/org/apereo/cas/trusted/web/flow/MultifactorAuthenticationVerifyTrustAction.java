@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
@@ -25,14 +24,16 @@ import java.util.Set;
  */
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
 
-    private MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
 
-    private MultifactorAuthenticationProperties.Trusted trustedProperties;
-
-    private TicketRegistrySupport ticketRegistrySupport;
+    public MultifactorAuthenticationVerifyTrustAction(final MultifactorAuthenticationTrustStorage storage,
+                                                      final MultifactorAuthenticationProperties.Trusted trustedProperties) {
+        this.storage = storage;
+        this.trustedProperties = trustedProperties;
+    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
@@ -52,10 +53,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
         }
         final String geography = MultifactorAuthenticationTrustUtils.generateGeography();
         LOGGER.debug("Retrieving authentication records for {} that match {}", principal, geography);
-        if (!results.stream()
-                .filter(entry -> entry.getGeography().equals(geography))
-                .findAny()
-                .isPresent()) {
+        if (results.stream()
+                .noneMatch(entry -> entry.getGeography().equals(geography))) {
             LOGGER.debug("No trusted authentication records could be found for {} to match the current geography", principal);
             return no();
         }
@@ -67,17 +66,5 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
                 c,
                 trustedProperties.getAuthenticationContextAttribute());
         return yes();
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
-
-    public void setStorage(final MultifactorAuthenticationTrustStorage storage) {
-        this.storage = storage;
-    }
-
-    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
-        this.trustedProperties = trustedProperties;
     }
 }

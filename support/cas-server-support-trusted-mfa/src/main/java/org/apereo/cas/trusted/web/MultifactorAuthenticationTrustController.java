@@ -24,12 +24,13 @@ import java.util.Set;
 @RequestMapping(value="/status/trustedDevices")
 public class MultifactorAuthenticationTrustController {
 
-    private MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationTrustStorage storage;
+    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
 
-    private MultifactorAuthenticationProperties.Trusted trustedProperties;
-
-    public MultifactorAuthenticationTrustController(final MultifactorAuthenticationTrustStorage storage) {
+    public MultifactorAuthenticationTrustController(final MultifactorAuthenticationTrustStorage storage,
+                                                    final MultifactorAuthenticationProperties.Trusted trustedProperties) {
         this.storage = storage;
+        this.trustedProperties = trustedProperties;
     }
 
     /**
@@ -48,9 +49,5 @@ public class MultifactorAuthenticationTrustController {
         final LocalDate onOrAfter = LocalDate.now().minus(trustedProperties.getExpiration(),
                 DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
         return storage.get(onOrAfter);
-    }
-
-    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
-        this.trustedProperties = trustedProperties;
     }
 }
