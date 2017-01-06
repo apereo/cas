@@ -73,6 +73,7 @@ public class DigestAuthenticationConfiguration {
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
+    @ConditionalOnMissingBean(name = "digestAuthenticationPrincipalFactory")
     @Bean
     public PrincipalFactory digestAuthenticationPrincipalFactory() {
         return new DefaultPrincipalFactory();

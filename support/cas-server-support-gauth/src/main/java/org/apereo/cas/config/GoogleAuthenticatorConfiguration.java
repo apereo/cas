@@ -147,7 +147,8 @@ public class GoogleAuthenticatorConfiguration {
                 ticketRegistrySupport
         );
     }
-    
+
+    @ConditionalOnMissingBean(name = "googlePrincipalFactory")
     @Bean
     public PrincipalFactory googlePrincipalFactory() {
         return new DefaultPrincipalFactory();
