@@ -51,8 +51,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     /**
      * Map of CRL issuer to CRL.
      */
-    private Map<X500Principal, X509CRL> crlIssuerMap =
-            Collections.synchronizedMap(new HashMap<>());
+    private Map<X500Principal, X509CRL> crlIssuerMap = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Resource CRLs.
@@ -159,7 +158,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
-
     }
 
     private boolean validateConfiguration() {
