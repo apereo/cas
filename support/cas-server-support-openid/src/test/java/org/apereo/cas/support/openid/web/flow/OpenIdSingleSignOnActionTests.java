@@ -67,7 +67,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "fablah");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdServiceFactory factory = new OpenIdServiceFactory();
+        final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final OpenIdService service = factory.createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
@@ -91,7 +91,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
         request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = new OpenIdServiceFactory().createService(request);
+        final OpenIdService service = new OpenIdServiceFactory("").createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
