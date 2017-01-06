@@ -6,7 +6,6 @@ import com.google.common.cache.LoadingCache;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -43,14 +42,11 @@ import java.io.Serializable;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 public class MultifactorAuthnTrustConfiguration {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1000;
-
-    @Autowired
-    @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -58,29 +54,18 @@ public class MultifactorAuthnTrustConfiguration {
     @Bean
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationSetTrustAction a = new MultifactorAuthenticationSetTrustAction();
-        a.setStorage(storage);
-        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        a.setTicketRegistrySupport(this.ticketRegistrySupport);
-        return a;
+        return new MultifactorAuthenticationSetTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
-    public MultifactorAuthenticationTrustController mfaTrustController(
-            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationTrustController a = new MultifactorAuthenticationTrustController(storage);
-        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        return a;
+    public MultifactorAuthenticationTrustController mfaTrustController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
+        return new MultifactorAuthenticationTrustController(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationVerifyTrustAction a = new MultifactorAuthenticationVerifyTrustAction();
-        a.setStorage(storage);
-        a.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        a.setTicketRegistrySupport(this.ticketRegistrySupport);
-        return a;
+        return new MultifactorAuthenticationVerifyTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
@@ -132,9 +117,6 @@ public class MultifactorAuthnTrustConfiguration {
     @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        final MultifactorAuthenticationTrustStorageCleaner c = new MultifactorAuthenticationTrustStorageCleaner();
-        c.setTrustedProperties(casProperties.getAuthn().getMfa().getTrusted());
-        c.setStorage(storage);
-        return c;
+        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
     }
 }
