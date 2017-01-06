@@ -24,6 +24,7 @@ import java.net.URL;
  * @since 5.1.0
  */
 public class SAML2ClientLogoutAction extends AbstractAction {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SAML2ClientLogoutAction.class);
 
     private final Clients clients;
