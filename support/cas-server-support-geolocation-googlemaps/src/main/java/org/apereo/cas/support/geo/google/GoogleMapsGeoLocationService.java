@@ -9,11 +9,10 @@ import io.userinfo.client.UserInfo;
 import io.userinfo.client.model.Info;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -27,31 +26,32 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleMapsGeoLocationService.class);
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private GeoApiContext context;
+
+    public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
+        if (properties.isGoogleAppsEngine()) {
+            context = new GeoApiContext(new GaeRequestHandler());
+        } else {
+            context = new GeoApiContext();
+        }
+        if (StringUtils.isNotBlank(properties.getClientId())
+                && StringUtils.isNotBlank(properties.getClientSecret())) {
+
+            context.setEnterpriseCredentials(properties.getClientId(), properties.getClientSecret());
+        }
+        context.setApiKey(properties.getApiKey());
+        context.setConnectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
+    }
 
     /**
      * Init the google authn context.
      */
     @PostConstruct
     public void init() {
-        if (casProperties.getGoogleMaps().isGoogleAppsEngine()) {
-            context = new GeoApiContext(new GaeRequestHandler());
-        } else {
-            context = new GeoApiContext();
-        }
-        if (StringUtils.isNotBlank(casProperties.getGoogleMaps().getClientId())
-                && StringUtils.isNotBlank(casProperties.getGoogleMaps().getClientSecret())) {
 
-            context.setEnterpriseCredentials(casProperties.getGoogleMaps().getClientId(),
-                    casProperties.getGoogleMaps().getClientSecret());
-        }
-        context.setApiKey(casProperties.getGoogleMaps().getApiKey());
-        context.setConnectTimeout(casProperties.getGoogleMaps().getConnectTimeout(), TimeUnit.MILLISECONDS);
     }
 
     @Override
