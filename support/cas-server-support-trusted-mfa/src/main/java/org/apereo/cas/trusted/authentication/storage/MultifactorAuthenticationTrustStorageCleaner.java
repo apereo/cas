@@ -22,11 +22,17 @@ import java.time.LocalDate;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(readOnly = false, transactionManager = "transactionManagerMfaAuthnTrust")
 public class MultifactorAuthenticationTrustStorageCleaner {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
-    private MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final MultifactorAuthenticationProperties.Trusted trustedProperties;
+    private final MultifactorAuthenticationTrustStorage storage;
 
-    private MultifactorAuthenticationTrustStorage storage;
+    public MultifactorAuthenticationTrustStorageCleaner(final MultifactorAuthenticationProperties.Trusted trustedProperties,
+                                                        final MultifactorAuthenticationTrustStorage storage) {
+        this.trustedProperties = trustedProperties;
+        this.storage = storage;
+    }
 
     /**
      * Clean up expired records.
@@ -52,13 +58,4 @@ public class MultifactorAuthenticationTrustStorageCleaner {
             LOGGER.error(e.getMessage(), e);
         }
     }
-    
-    public void setTrustedProperties(final MultifactorAuthenticationProperties.Trusted trustedProperties) {
-        this.trustedProperties = trustedProperties;
-    }
-
-    public void setStorage(final MultifactorAuthenticationTrustStorage storage) {
-        this.storage = storage;
-    }
-
 }

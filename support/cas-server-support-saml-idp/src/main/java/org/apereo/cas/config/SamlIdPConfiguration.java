@@ -135,8 +135,7 @@ public class SamlIdPConfiguration {
      */
     @Bean(name = {"defaultSingleLogoutServiceLogoutUrlBuilder", "samlIdPSingleLogoutServiceLogoutUrlBuilder"})
     public SingleLogoutServiceLogoutUrlBuilder samlIdPSingleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver());
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager, defaultSamlRegisteredServiceCachingMetadataResolver());
     }
 
     @Bean
@@ -274,7 +273,7 @@ public class SamlIdPConfiguration {
     @Bean
     @RefreshScope
     public SSOPostProfileHandlerController ssoPostProfileHandlerController() {
-        final SSOPostProfileHandlerController c = new SSOPostProfileHandlerController(
+        return new SSOPostProfileHandlerController(
                 samlObjectSigner(),
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -291,13 +290,12 @@ public class SamlIdPConfiguration {
                 casProperties.getServer().getLogoutUrl(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-        return c;
     }
 
     @Bean
     @RefreshScope
     public SLOPostProfileHandlerController sloPostProfileHandlerController() {
-        final SLOPostProfileHandlerController c = new SLOPostProfileHandlerController(
+        return new SLOPostProfileHandlerController(
                 samlObjectSigner(),
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -314,13 +312,12 @@ public class SamlIdPConfiguration {
                 casProperties.getServer().getLogoutUrl(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-        return c;
     }
 
     @Bean
     @RefreshScope
     public IdPInitiatedProfileHandlerController idPInitiatedSamlProfileHandlerController() {
-        final IdPInitiatedProfileHandlerController c = new IdPInitiatedProfileHandlerController(
+        return new IdPInitiatedProfileHandlerController(
                 samlObjectSigner(),
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -337,13 +334,12 @@ public class SamlIdPConfiguration {
                 casProperties.getServer().getLogoutUrl(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-        return c;
     }
 
     @Bean
     @RefreshScope
     public SSOPostProfileCallbackHandlerController ssoPostProfileCallbackHandlerController() {
-        final SSOPostProfileCallbackHandlerController c = new SSOPostProfileCallbackHandlerController(
+        return new SSOPostProfileCallbackHandlerController(
                 samlObjectSigner(),
                 openSamlConfigBean.getParserPool(),
                 authenticationSystemSupport,
@@ -360,7 +356,6 @@ public class SamlIdPConfiguration {
                 casProperties.getServer().getLogoutUrl(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests(),
                 casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled());
-        return c;
     }
 
     @Bean

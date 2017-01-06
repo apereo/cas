@@ -28,8 +28,11 @@ import java.security.GeneralSecurityException;
 @SuppressWarnings("unchecked")
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
+    private final Clients clients;
 
-    private Clients clients;
+    public ClientAuthenticationHandler(final Clients clients) {
+        this.clients = clients;
+    }
 
     @Override
     public boolean supports(final Credential credential) {
@@ -62,13 +65,5 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
         } catch (final HttpAction e) {
             throw new PreventedException(e);
         }
-    }
-
-    public Clients getClients() {
-        return this.clients;
-    }
-
-    public void setClients(final Clients clients) {
-        this.clients = clients;
     }
 }
