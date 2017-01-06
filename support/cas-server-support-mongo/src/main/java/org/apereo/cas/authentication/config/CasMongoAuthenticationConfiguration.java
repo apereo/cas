@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,7 @@ public class CasMongoAuthenticationConfiguration {
     @Qualifier("authenticationHandlersResolvers")
     private Map authenticationHandlersResolvers;
 
+    @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
         return new DefaultPrincipalFactory();
