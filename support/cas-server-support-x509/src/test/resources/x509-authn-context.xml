@@ -62,7 +62,7 @@
         </constructor-arg>
         <constructor-arg name="expiredCRLPolicy">
             <bean class="org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy">
-                <property name="threshold" value="172800" />
+                <constructor-arg name="threshold" value="172800" />
             </bean>
         </constructor-arg>
     </bean>
@@ -83,6 +83,6 @@
        -->
     <bean id="x509CredentialsResolver"
           class="org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
-          p:descriptor="$UID@$DC.$DC" />
+          c:descriptor="$UID@$DC.$DC" />
 
 </beans>

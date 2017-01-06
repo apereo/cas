@@ -48,6 +48,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
     private static final String STATIC_SALT = "STATIC_SALT";
+    private static final String PASSWORD_FIELD_NAME = "password";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -92,10 +93,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
+                "salt", "ops", 0, "");
         q.setDataSource(dataSource);
-        q.setAlgorithmName(ALG_NAME);
-        q.setSql(buildSql());
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("test not found with SQL query");
@@ -105,10 +105,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql("makesNoSenseInSql"),
+                PASSWORD_FIELD_NAME, "salt", "ops", 0, "");
         q.setDataSource(dataSource);
-        q.setAlgorithmName(ALG_NAME);
-        q.setSql(buildSql("makesNoSenseInSql"));
 
         this.thrown.expect(PreventedException.class);
         this.thrown.expectMessage("SQL exception while executing query for test");
@@ -118,10 +117,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
+                "salt", "ops", 0, "");
         q.setDataSource(dataSource);
-        q.setAlgorithmName(ALG_NAME);
-        q.setSql(buildSql());
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Multiple records found for user0");
@@ -131,13 +129,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
+                "salt", "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
-        q.setAlgorithmName(ALG_NAME);
-        q.setSql(buildSql());
-        q.setNumberOfIterationsFieldName("numIterations");
-        q.setStaticSalt(STATIC_SALT);
-        q.setSaltFieldName("salt");
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final HandlerResult r = q.authenticate(c);
@@ -148,14 +142,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler();
+        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler(ALG_NAME, buildSql(), PASSWORD_FIELD_NAME,
+                "salt", "numIterations", 0, STATIC_SALT);
         q.setDataSource(dataSource);
-        q.setAlgorithmName(ALG_NAME);
-        q.setSql(buildSql());
-        q.setNumberOfIterationsFieldName("numIterations");
-        q.setStaticSalt(STATIC_SALT);
-        q.setSaltFieldName("salt");
-        q.setPasswordFieldName("password");
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final CharSequence password) {

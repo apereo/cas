@@ -29,7 +29,6 @@ public class DelegatingController extends AbstractController {
     /**
      * The view to redirect if no delegate can handle the request.
      */
-
     private String failureView = DEFAULT_ERROR_VIEW_NAME;
 
     /**
@@ -44,8 +43,7 @@ public class DelegatingController extends AbstractController {
      * @throws Exception if an error occurs during request handling
      */
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         for (final AbstractDelegateController delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequestInternal(request, response);

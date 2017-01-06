@@ -279,7 +279,6 @@ public class JpaTicketRegistryTests {
             this.txManager = txManager;
         }
 
-
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(status -> {
@@ -288,6 +287,5 @@ public class JpaTicketRegistryTests {
                 return st.getId();
             });
         }
-
     }
 }
