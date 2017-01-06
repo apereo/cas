@@ -1,7 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistryDao;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,7 +31,7 @@ public class ServiceThemeResolverTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDao());
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
 
         mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
