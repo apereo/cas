@@ -39,9 +39,7 @@ public class CasSupportActionsAcceptableUsagePolicyConfiguration {
     @Autowired
     @Bean
     public Action acceptableUsagePolicyFormAction(@Qualifier("acceptableUsagePolicyRepository") final AcceptableUsagePolicyRepository repository) {
-        final AcceptableUsagePolicyFormAction a = new AcceptableUsagePolicyFormAction();
-        a.setRepository(repository);
-        return a;
+        return new AcceptableUsagePolicyFormAction(repository);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyWebflowConfigurer")
