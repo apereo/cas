@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistryDao;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -57,7 +57,7 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("^http://.+");
         service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
-        final InMemoryServiceRegistryDao dao = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
         final DefaultServicesManager impl = new DefaultServicesManager(dao);
         impl.load();

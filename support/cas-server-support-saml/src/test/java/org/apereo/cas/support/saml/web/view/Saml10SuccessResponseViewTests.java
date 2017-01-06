@@ -13,7 +13,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.services.InMemoryServiceRegistryDao;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
@@ -50,7 +50,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        final InMemoryServiceRegistryDao dao = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
         final DefaultServicesManager mgmr = new DefaultServicesManager(dao);

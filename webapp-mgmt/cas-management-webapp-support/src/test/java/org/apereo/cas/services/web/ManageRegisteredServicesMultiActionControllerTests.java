@@ -14,7 +14,7 @@ import org.apereo.cas.mgmt.services.web.factory.DefaultRegisteredServiceMapper;
 import org.apereo.cas.mgmt.services.web.factory.DefaultUsernameAttributeProviderMapper;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.InMemoryServiceRegistryDao;
+import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     @Before
     public void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistryDao());
+        this.servicesManager = new DefaultServicesManager(new InMemoryServiceRegistry());
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory(new DefaultAccessStrategyMapper(), policyMapper, new DefaultProxyPolicyMapper(),
                 new DefaultRegisteredServiceMapper(), new DefaultUsernameAttributeProviderMapper(), Collections.emptyList());

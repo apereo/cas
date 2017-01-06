@@ -33,7 +33,7 @@ public class DefaultServicesManagerTests {
         r.setEvaluationOrder(1000);
 
         list.add(r);
-        dao = new InMemoryServiceRegistryDao(list);
+        dao = new InMemoryServiceRegistry(list);
         this.defaultServicesManager = new DefaultServicesManager(dao);
         this.defaultServicesManager.load();
     }

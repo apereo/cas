@@ -5,28 +5,28 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * This is test cases for {@link InMemoryServiceRegistryDao}.
+ * This is test cases for {@link InMemoryServiceRegistry}.
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1.0
  */
-public class InMemoryServiceRegistryDaoTests {
+public class InMemoryServiceRegistryTests {
 
     @Test
     public void verifySave() {
-        final InMemoryServiceRegistryDao reg = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
     }
 
     @Test
     public void verifyLoadEmpty() {
-        final InMemoryServiceRegistryDao reg = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         assertEquals(reg.load().size(), 0);
     }
 
     @Test
      public void verifySaveAndLoad() {
-        final InMemoryServiceRegistryDao reg = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.load().size(), 1);
@@ -34,7 +34,7 @@ public class InMemoryServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAndFind() {
-        final InMemoryServiceRegistryDao reg = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.findServiceById(svc.getId()), svc);
@@ -42,7 +42,7 @@ public class InMemoryServiceRegistryDaoTests {
 
     @Test
     public void verifySaveAndDelete() {
-        final InMemoryServiceRegistryDao reg = new InMemoryServiceRegistryDao();
+        final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertTrue(reg.delete(svc));

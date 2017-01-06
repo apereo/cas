@@ -12,7 +12,7 @@ import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvid
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
-import org.apereo.cas.services.InMemoryServiceRegistryDaoTests;
+import org.apereo.cas.services.InMemoryServiceRegistryTests;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProviderTests;
 import org.apereo.cas.services.RegexRegisteredServiceTests;
 import org.apereo.cas.services.RegisteredServiceAuthenticationHandlerResolverTests;
@@ -39,7 +39,7 @@ import org.junit.runners.Suite;
         DefaultRegisteredServiceAccessStrategyTests.class,
         DefaultRegisteredServiceUsernameProviderTests.class,
         DefaultServicesManagerTests.class,
-        InMemoryServiceRegistryDaoTests.class,
+        InMemoryServiceRegistryTests.class,
         PrincipalAttributeRegisteredServiceUsernameProviderTests.class,
         RegexRegisteredServiceTests.class,
         RegisteredServiceAuthenticationHandlerResolverTests.class,

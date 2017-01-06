@@ -15,16 +15,16 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class InMemoryServiceRegistryDao implements ServiceRegistryDao {
+public class InMemoryServiceRegistry implements ServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistry.class);
     
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
     /**
      * Instantiates a new In memory service registry.
      */
-    public InMemoryServiceRegistryDao() {
+    public InMemoryServiceRegistry() {
     }
 
     /**
@@ -32,7 +32,7 @@ public class InMemoryServiceRegistryDao implements ServiceRegistryDao {
      *
      * @param registeredServices the registered services
      */
-    public InMemoryServiceRegistryDao(final List<RegisteredService> registeredServices) {
+    public InMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
         this.registeredServices = registeredServices;
     }
 
