@@ -180,6 +180,8 @@ public class RadiusMultifactorConfiguration {
         return a;
     }
 
+    
+    @ConditionalOnMissingBean(name = "radiusPrincipalFactory")
     @Bean
     public PrincipalFactory radiusTokenPrincipalFactory() {
         return new DefaultPrincipalFactory();

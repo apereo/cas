@@ -213,6 +213,7 @@ public class OpenIdConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "openidPrincipalFactory")
     @Bean
     public PrincipalFactory openidPrincipalFactory() {
         return new DefaultPrincipalFactory();
