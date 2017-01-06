@@ -45,39 +45,28 @@ public class JpaLockingStrategy implements LockingStrategy {
     private long lockTimeout;
 
     /**
-     * @param  id  Application identifier that identifies a row in the lock
+     *
+     * @param applicationId Application identifier that identifies a row in the lock
      *             table for which multiple clients vie to hold the lock.
      *             This must be the same for all clients contending for a
      *             particular lock.
-     */
-    public void setApplicationId(final String id) {
-        this.applicationId = id;
-    }
-
-
-    /**
-     * @param  id  Identifier used to identify this instance in a row of the
+     * @param uniqueId Identifier used to identify this instance in a row of the
      *             lock table.  Must be unique across all clients vying for
      *             locks for a given application ID.
-     */
-    public void setUniqueId(final String id) {
-        this.uniqueId = id;
-    }
-
-
-    /**
-     * @param  seconds  Maximum amount of time in seconds lock may be held.
+     * @param lockTimeout Maximum amount of time in seconds lock may be held.
      *                  A value of zero indicates that locks are held indefinitely.
      *                  Use of a reasonable timeout facilitates recovery from node failures,
      *                  so setting to zero is discouraged.
      */
-    public void setLockTimeout(final long seconds) {
-        if (seconds < 0) {
+    public JpaLockingStrategy(final String applicationId, final String uniqueId, final long lockTimeout) {
+        this.applicationId = applicationId;
+        this.uniqueId = uniqueId;
+        if (lockTimeout < 0) {
             throw new IllegalArgumentException("Lock timeout must be non-negative.");
         }
-        this.lockTimeout = seconds;
+        this.lockTimeout = lockTimeout;
     }
-    
+
     @Override
     public boolean acquire() {
         final Lock lock;
