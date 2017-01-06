@@ -83,21 +83,13 @@ public class SamlMetadataUIConfiguration {
 
     @Bean
     public Action samlMetadataUIParserAction() {
-        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(),
-                SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        final SamlMetadataUIParserAction a = new SamlMetadataUIParserAction(parameter, metadataAdapter());
-
-        a.setServiceFactory(this.serviceFactory);
-        a.setServicesManager(this.servicesManager);
-        return a;
+        final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        return new SamlMetadataUIParserAction(parameter, metadataAdapter(), serviceFactory, servicesManager);
     }
 
     @Bean
     public MetadataResolverAdapter metadataAdapter() {
-        final ChainingMetadataResolverAdapter adapter = new ChainingMetadataResolverAdapter();
-        adapter.getAdapters().add(getStaticMetadataResolverAdapter());
-        adapter.getAdapters().add(getDynamicMetadataResolverAdapter());
-        return adapter;
+        return new ChainingMetadataResolverAdapter(Arrays.asList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
