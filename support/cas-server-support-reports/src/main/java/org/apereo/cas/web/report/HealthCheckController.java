@@ -1,12 +1,10 @@
 package org.apereo.cas.web.report;
 
 import org.apache.commons.codec.binary.StringUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.util.serialization.JsonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +27,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Controller("healthCheckController")
 @RequestMapping("/status")
 public class HealthCheckController {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
     
-    private Monitor<HealthStatus> healthCheckMonitor;
+    private final Monitor<HealthStatus> healthCheckMonitor;
+    private final long timeout;
+
+    public HealthCheckController(final Monitor<HealthStatus> healthCheckMonitor, final long timeout) {
+        this.healthCheckMonitor = healthCheckMonitor;
+        this.timeout = timeout;
+    }
 
     /**
      * Handle request.
@@ -45,9 +46,7 @@ public class HealthCheckController {
      */
     @GetMapping
     @ResponseBody
-    protected WebAsyncTask<HealthStatus> handleRequestInternal(
-            final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected WebAsyncTask<HealthStatus> handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         final Callable<HealthStatus> asyncTask = () -> {
             final HealthStatus healthStatus = healthCheckMonitor.observe();
@@ -75,10 +74,6 @@ public class HealthCheckController {
             return null;
         };
 
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
-    }
-
-    public void setHealthCheckMonitor(final Monitor<HealthStatus> healthCheckMonitor) {
-        this.healthCheckMonitor = healthCheckMonitor;
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
 }

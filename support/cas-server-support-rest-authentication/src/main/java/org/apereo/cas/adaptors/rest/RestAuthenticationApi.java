@@ -20,23 +20,11 @@ import java.nio.charset.Charset;
  */
 public class RestAuthenticationApi {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final String authenticationUri;
 
-    private String authenticationUri;
-
-    public void setRestTemplate(final RestTemplate restTemplate) {
+    public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri) {
         this.restTemplate = restTemplate;
-    }
-
-    public RestTemplate getRestTemplate() {
-        return restTemplate;
-    }
-
-    public String getAuthenticationUri() {
-        return authenticationUri;
-    }
-
-    public void setAuthenticationUri(final String authenticationUri) {
         this.authenticationUri = authenticationUri;
     }
 
@@ -70,6 +58,4 @@ public class RestAuthenticationApi {
         acceptHeaders.set("Authorization", "Basic " + basic);
         return acceptHeaders;
     }
-
-
 }
