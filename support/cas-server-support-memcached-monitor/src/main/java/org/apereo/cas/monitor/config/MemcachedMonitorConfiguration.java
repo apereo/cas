@@ -22,10 +22,7 @@ public class MemcachedMonitorConfiguration {
     
     @Autowired
     @Bean
-    public Monitor memcachedMonitor(@Qualifier("memcachedClient")
-                                    final MemcachedClientIF memcachedClient) {
-        final MemcachedMonitor m = new MemcachedMonitor();
-        m.setMemcachedClient(memcachedClient);
-        return m;
+    public Monitor memcachedMonitor(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClient) {
+        return new MemcachedMonitor(memcachedClient);
     }
 }

@@ -33,9 +33,13 @@ public class OidcAuthorizationRequestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
     
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
-    private TicketRegistrySupport ticketRegistrySupport;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final TicketRegistrySupport ticketRegistrySupport;
+
+    public OidcAuthorizationRequestSupport(final CookieRetrievingCookieGenerator tgtCookieGenerator, final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
 
     /**
      * Gets oidc prompt from authorization request.
@@ -208,13 +212,5 @@ public class OidcAuthorizationRequestSupport {
             casClient.getConfiguration().setRenew(false);
             casClient.getConfiguration().setGateway(true);
         }
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 }

@@ -79,21 +79,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
 
     private final Clients clients;
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
     private final CentralAuthenticationService centralAuthenticationService;
-
     private final String themeParamName;
     private final String localParamName;
     private final boolean autoRedirect;
 
-    public DelegatedClientAuthenticationAction(final Clients clients,
-                                               final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService,
-                                               final String themeParamName,
-                                               final String localParamName,
-                                               final boolean autoRedirect) {
+    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
+                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
+                                               final String localParamName, final boolean autoRedirect) {
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -149,14 +143,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             // credentials not null -> try to authenticate
             if (credentials != null) {
                 final AuthenticationResult authenticationResult =
-                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service,
-                                new ClientCredential(credentials));
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, new ClientCredential(credentials));
 
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
-
         }
 
         // no or aborted authentication : go to login page
@@ -235,9 +227,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void restoreRequestAttribute(final HttpServletRequest request,
-                                                final HttpSession session,
-                                                final String name) {
+    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = (String) session.getAttribute(name);
         request.setAttribute(name, value);
     }
@@ -249,9 +239,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param session The HTTP session
      * @param name    The name of the parameter
      */
-    private static void saveRequestParameter(final HttpServletRequest request,
-                                             final HttpSession session,
-                                             final String name) {
+    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
         final String value = request.getParameter(name);
         if (value != null) {
             session.setAttribute(name, value);
@@ -269,8 +257,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * @param status  the status
      * @return the optional model and view, if request is an error.
      */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request,
-                                                                    final int status) {
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         final Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
                 || params.containsKey("error_message")) {
