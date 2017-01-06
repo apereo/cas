@@ -36,7 +36,6 @@ public class MockFacebookClient extends FacebookClient {
         return facebookProfile;
     }
 
-
     public FacebookProfile getFacebookProfile() {
         return facebookProfile;
     }

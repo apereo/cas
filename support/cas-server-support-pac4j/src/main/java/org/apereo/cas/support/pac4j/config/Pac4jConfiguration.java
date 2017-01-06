@@ -94,8 +94,7 @@ public class Pac4jConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler clientAuthenticationHandler() {
-        final ClientAuthenticationHandler h = new ClientAuthenticationHandler();
-        h.setClients(builtClients());
+        final ClientAuthenticationHandler h = new ClientAuthenticationHandler(builtClients());
         h.setPrincipalFactory(clientPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setTypedIdUsed(casProperties.getAuthn().getPac4j().isTypedIdUsed());
