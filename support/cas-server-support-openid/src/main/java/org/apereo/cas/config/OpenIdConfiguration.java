@@ -161,16 +161,12 @@ public class OpenIdConfiguration {
 
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
-        final SmartOpenIdController b = new SmartOpenIdController();
-        b.setServerManager(serverManager());
-        b.setSuccessView(this.casOpenIdAssociationSuccessView);
-        return b;
+        return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
     }
 
     @Bean
     public AbstractDelegateController openIdValidateController() {
-        final OpenIdValidateController c = new OpenIdValidateController();
-        c.setServerManager(serverManager());
+        final OpenIdValidateController c = new OpenIdValidateController(serverManager());
         c.setValidationSpecification(this.cas20WithoutProxyProtocolValidationSpecification);
         c.setSuccessView(casOpenIdServiceSuccessView);
         c.setFailureView(casOpenIdServiceFailureView);
@@ -200,8 +196,7 @@ public class OpenIdConfiguration {
 
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
-        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler();
-        h.setTicketRegistry(this.ticketRegistry);
+        final OpenIdCredentialsAuthenticationHandler h = new OpenIdCredentialsAuthenticationHandler(ticketRegistry);
         h.setPrincipalFactory(openidPrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getOpenid().getName());
@@ -232,9 +227,7 @@ public class OpenIdConfiguration {
     @Bean
     @RefreshScope
     public OpenIdServiceFactory openIdServiceFactory() {
-        final OpenIdServiceFactory f = new OpenIdServiceFactory();
-        f.setOpenIdPrefixUrl(casProperties.getServer().getPrefix().concat("/openid"));
-        return f;
+        return new OpenIdServiceFactory(casProperties.getServer().getPrefix().concat("/openid"));
     }
 
     @Bean

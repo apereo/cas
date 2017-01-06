@@ -61,8 +61,7 @@ public class DashboardController {
      * @throws Exception the exception
      */
     @GetMapping("/status/dashboard")
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(busProperties, configServerProperties, path, model);
@@ -74,14 +73,10 @@ public class DashboardController {
         model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
 
         final boolean isNativeProfile = Arrays.stream(environment.getActiveProfiles())
-                .filter(s -> s.equalsIgnoreCase("native"))
-                .findAny()
-                .isPresent();
+                .anyMatch(s -> s.equalsIgnoreCase("native"));
 
         final boolean isDefaultProfile = Arrays.stream(environment.getActiveProfiles())
-                .filter(s -> s.equalsIgnoreCase("default"))
-                .findAny()
-                .isPresent();
+                .anyMatch(s -> s.equalsIgnoreCase("default"));
 
         model.put("isNativeProfile", isNativeProfile);
         model.put("isDefaultProfile", isDefaultProfile);
