@@ -23,6 +23,7 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -76,6 +77,7 @@ public class Pac4jConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @ConditionalOnMissingBean(name = "clientPrincipalFactory")
     @Bean
     public PrincipalFactory clientPrincipalFactory() {
         return new DefaultPrincipalFactory();

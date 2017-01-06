@@ -17,6 +17,7 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalRes
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -108,6 +109,7 @@ public class SpnegoConfiguration {
         return ntlm;
     }
 
+    @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
     @Bean
     public PrincipalFactory ntlmPrincipalFactory() {
         return new DefaultPrincipalFactory();
@@ -125,6 +127,7 @@ public class SpnegoConfiguration {
         return r;
     }
 
+    @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")
     @Bean
     public PrincipalFactory spnegoPrincipalFactory() {
         return new DefaultPrincipalFactory();
