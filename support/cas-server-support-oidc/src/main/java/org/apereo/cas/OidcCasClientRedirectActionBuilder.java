@@ -21,24 +21,22 @@ public class OidcCasClientRedirectActionBuilder extends DefaultOAuthCasClientRed
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OidcCasClientRedirectActionBuilder.class);
     
-    private OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
+    private final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
+
+    public OidcCasClientRedirectActionBuilder(final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport) {
+        this.oidcAuthorizationRequestSupport = oidcAuthorizationRequestSupport;
+    }
 
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {
         final Optional<Authentication> auth = oidcAuthorizationRequestSupport.isCasAuthenticationAvailable(context);
-        if (auth.isPresent()) {
-            oidcAuthorizationRequestSupport.configureClientForMaxAgeAuthorizationRequest(casClient, context, auth.get());
-        }
+        auth.ifPresent(authentication -> oidcAuthorizationRequestSupport.configureClientForMaxAgeAuthorizationRequest(casClient, context, authentication));
 
-        oidcAuthorizationRequestSupport.configureClientForPromptLoginAuthorizationRequest(casClient, context);
-        oidcAuthorizationRequestSupport.configureClientForPromptNoneAuthorizationRequest(casClient, context);
+        OidcAuthorizationRequestSupport.configureClientForPromptLoginAuthorizationRequest(casClient, context);
+        OidcAuthorizationRequestSupport.configureClientForPromptNoneAuthorizationRequest(casClient, context);
         
         final RedirectAction action = super.build(casClient, context);
         LOGGER.debug("Final redirect action is [{}]", action);
         return action;
-    }
-
-    public void setOidcAuthorizationRequestSupport(final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport) {
-        this.oidcAuthorizationRequestSupport = oidcAuthorizationRequestSupport;
     }
 }
