@@ -126,6 +126,7 @@ public class DuoSecurityConfiguration {
         return h;
     }
 
+    @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean
     public PrincipalFactory duoPrincipalFactory() {
         return new DefaultPrincipalFactory();
