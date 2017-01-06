@@ -26,5 +26,4 @@ public class DenyRevocationPolicy implements RevocationPolicy<Void> {
     public void apply(final Void nothing) throws GeneralSecurityException {
         throw new GeneralSecurityException("Aborting since DenyRevocationPolicy is in effect.");
     }
-
 }
