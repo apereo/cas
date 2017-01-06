@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.mdui;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,14 +13,11 @@ import java.util.Set;
  * @since 5.0.0
  */
 public class ChainingMetadataResolverAdapter implements MetadataResolverAdapter {
-    private Set<MetadataResolverAdapter> adapters = new HashSet<>();
 
-    public Set<MetadataResolverAdapter> getAdapters() {
-        return adapters;
-    }
+    private final Set<MetadataResolverAdapter> adapters;
 
-    public void setAdapters(final Set<MetadataResolverAdapter> adapters) {
-        this.adapters = adapters;
+    public ChainingMetadataResolverAdapter(final List<MetadataResolverAdapter> adapters) {
+        this.adapters = new HashSet<>(adapters);
     }
 
     @Override
