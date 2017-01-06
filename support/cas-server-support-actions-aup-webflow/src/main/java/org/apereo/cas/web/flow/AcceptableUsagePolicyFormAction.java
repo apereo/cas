@@ -27,6 +27,10 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
     
     private AcceptableUsagePolicyRepository repository;
 
+    public AcceptableUsagePolicyFormAction(final AcceptableUsagePolicyRepository repository) {
+        this.repository = repository;
+    }
+
     /**
      * Verify whether the policy is accepted.
      *
@@ -51,17 +55,12 @@ public class AcceptableUsagePolicyFormAction extends AbstractAction {
      * @param messageContext the message context
      * @return success if policy acceptance is recorded successfully.
      */
-    public Event submit(final RequestContext context, final Credential credential,
-                          final MessageContext messageContext) {
+    public Event submit(final RequestContext context, final Credential credential, final MessageContext messageContext) {
         if (repository.submit(context, credential)) {
             return success();
         }
 
         return error();
-    }
-
-    public void setRepository(final AcceptableUsagePolicyRepository repository) {
-        this.repository = repository;
     }
 
     @Override

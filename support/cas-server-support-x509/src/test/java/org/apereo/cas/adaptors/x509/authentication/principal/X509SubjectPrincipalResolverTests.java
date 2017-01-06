@@ -38,8 +38,7 @@ public class X509SubjectPrincipalResolverTests {
             final String descriptor,
             final String expectedResult) {
 
-        this.resolver = new X509SubjectPrincipalResolver();
-        this.resolver.setDescriptor(descriptor);
+        this.resolver = new X509SubjectPrincipalResolver(descriptor);
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                     new FileInputStream(certPath));

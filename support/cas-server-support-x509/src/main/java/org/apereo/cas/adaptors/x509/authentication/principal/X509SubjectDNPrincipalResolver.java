@@ -11,8 +11,7 @@ import java.security.cert.X509Certificate;
 public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     @Override
-    protected String resolvePrincipalInternal(
-            final X509Certificate certificate) {
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
         return certificate.getSubjectDN().getName();
     }
 }

@@ -23,42 +23,35 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     /**
      * Prefix for Certificate Serial Number.
      */
-
     private String serialNumberPrefix = "SERIALNUMBER=";
 
     /**
      * Prefix for Value Delimiter.
      */
-
     private String valueDelimiter = ", ";
 
     /**
-     * Sets a prefix for the certificate serialnumber (default: "SERIALNUMBER=").
+     * Creates a new instance.
      *
-     * @param serialNumberPrefix The serialNumberPrefix to set.
-     */
-    public void setSerialNumberPrefix(
-            final String serialNumberPrefix) {
-        this.serialNumberPrefix = serialNumberPrefix;
-    }
-
-    /**
-     * Sets a delimiter to separate the two certificate properties in the string.
+     * @param serialNumberPrefix prefix for the certificate serialnumber (default: "SERIALNUMBER=").
+     * @param valueDelimiter delimiter to separate the two certificate properties in the string.
      * (default: ", ")
-     *
-     * @param valueDelimiter The valueDelimiter to set.
      */
-    public void setValueDelimiter(
-            final String valueDelimiter) {
-        this.valueDelimiter = valueDelimiter;
+    public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
+        if (serialNumberPrefix != null) {
+            this.serialNumberPrefix = serialNumberPrefix;
+        }
+        if (valueDelimiter != null) {
+            this.valueDelimiter = valueDelimiter;
+        }
     }
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        final StringBuilder builder = new StringBuilder(this.serialNumberPrefix);
-        builder.append(certificate.getSerialNumber());
-        builder.append(this.valueDelimiter);
-        builder.append(certificate.getIssuerDN().getName());
-        return builder.toString();
+        return new StringBuilder(this.serialNumberPrefix)
+                .append(certificate.getSerialNumber())
+                .append(this.valueDelimiter)
+                .append(certificate.getIssuerDN().getName())
+                .toString();
     }
 }

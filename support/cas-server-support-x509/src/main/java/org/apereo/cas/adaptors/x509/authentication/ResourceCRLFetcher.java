@@ -107,6 +107,6 @@ public class ResourceCRLFetcher implements CRLFetcher {
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     public X509CRL fetch(final URL crl) throws IOException, CRLException, CertificateException {
-        return fetch(new UrlResource((URL) crl));
+        return fetch(new UrlResource(crl));
     }
 }

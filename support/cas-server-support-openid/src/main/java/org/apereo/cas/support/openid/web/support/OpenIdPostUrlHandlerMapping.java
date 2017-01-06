@@ -26,5 +26,4 @@ public class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
         return null;
     }
-
 }

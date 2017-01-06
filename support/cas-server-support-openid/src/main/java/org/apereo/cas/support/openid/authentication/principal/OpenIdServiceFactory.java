@@ -14,13 +14,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
-    private String openIdPrefixUrl;
+    private final String openIdPrefixUrl;
 
-    public String getOpenIdPrefixUrl() {
-        return this.openIdPrefixUrl;
-    }
-
-    public void setOpenIdPrefixUrl(final String openIdPrefixUrl) {
+    public OpenIdServiceFactory(final String openIdPrefixUrl) {
         this.openIdPrefixUrl = openIdPrefixUrl;
     }
 

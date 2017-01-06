@@ -50,7 +50,7 @@ public class CasRestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Bean
     @RefreshScope
@@ -68,10 +68,7 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public RestAuthenticationApi restAuthenticationApi() {
-        final RestAuthenticationApi api = new RestAuthenticationApi();
-        api.setAuthenticationUri(casProperties.getAuthn().getRest().getUri());
-        api.setRestTemplate(restAuthenticationTemplate());
-        return api;
+        return new RestAuthenticationApi(restAuthenticationTemplate(), casProperties.getAuthn().getRest().getUri());
     }
 
     @Bean

@@ -9,7 +9,6 @@ import java.security.cert.X509CRL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-
 /**
  * Implements a policy to handle expired CRL data whereby expired data is permitted
  * up to a threshold period of time but not afterward.
@@ -23,9 +22,17 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
     /** Logger instance. */
     private final transient Logger logger = LoggerFactory.getLogger(getClass());
     
-    /** Expired threshold period in seconds. */
-    private int threshold;
+    /** Expired threshold period in seconds after which expired CRL data is rejected. */
+    private final int threshold;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param threshold Number of seconds; MUST be non-negative integer.
+     */
+    public ThresholdExpiredCRLRevocationPolicy(final int threshold) {
+        this.threshold = threshold;
+    }
 
     /**
      * {@inheritDoc}
@@ -48,14 +55,5 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
             logger.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
                         crl.getNextUpdate(), this.threshold));
         }
-    }
-
-    /**
-     * Sets the threshold period of time after which expired CRL data is rejected.
-     *
-     * @param threshold Number of seconds; MUST be non-negative integer.
-     */
-    public void setThreshold(final int threshold) {
-        this.threshold = threshold;
     }
 }
