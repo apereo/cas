@@ -98,6 +98,4 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
                 .setParameter("principalId", principal)
                 .getResultList();
     }
-    
-    
 }

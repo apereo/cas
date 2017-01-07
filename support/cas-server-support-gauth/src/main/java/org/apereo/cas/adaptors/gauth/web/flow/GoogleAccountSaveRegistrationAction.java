@@ -14,8 +14,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 public class GoogleAccountSaveRegistrationAction extends AbstractAction {
-    private IGoogleAuthenticator googleAuthenticator;
-    
+
+    private final IGoogleAuthenticator googleAuthenticator;
+
+    public GoogleAccountSaveRegistrationAction(final IGoogleAuthenticator googleAuthenticator) {
+        this.googleAuthenticator = googleAuthenticator;
+    }
+
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final GoogleAuthenticatorAccount account = requestContext.getFlowScope().get("key", GoogleAuthenticatorAccount.class);
@@ -25,13 +30,5 @@ public class GoogleAccountSaveRegistrationAction extends AbstractAction {
                 account.getValidationCode(), account.getScratchCodes());
         
         return success();
-    }
-
-    public IGoogleAuthenticator getGoogleAuthenticator() {
-        return googleAuthenticator;
-    }
-
-    public void setGoogleAuthenticator(final IGoogleAuthenticator googleAuthenticator) {
-        this.googleAuthenticator = googleAuthenticator;
     }
 }
