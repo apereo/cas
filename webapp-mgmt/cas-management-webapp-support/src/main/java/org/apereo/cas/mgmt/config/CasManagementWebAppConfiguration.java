@@ -7,8 +7,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.mgmt.services.audit.Pac4jAuditablePrincipalResolver;
-import org.apereo.cas.mgmt.services.audit.ServiceManagementResourceResolver;
 import org.apereo.cas.mgmt.services.web.ManageRegisteredServicesMultiActionController;
 import org.apereo.cas.mgmt.services.web.RegisteredServiceSimpleFormController;
 import org.apereo.cas.mgmt.services.web.factory.AccessStrategyMapper;
@@ -30,15 +28,6 @@ import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceFactory;
 import org.apereo.cas.mgmt.services.web.factory.RegisteredServiceMapper;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.inspektr.audit.AuditTrailManagementAspect;
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.audit.spi.AuditActionResolver;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
-import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
-import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
-import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.cas.client.direct.DirectCasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -81,7 +70,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -97,10 +85,7 @@ import java.util.Properties;
 @Configuration("casManagementWebAppConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
-
-    private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
-    private static final String AUDIT_ACTION_SUFFIX_SUCCESS = "_SUCCESS";
-
+    
     @Autowired(required = false)
     @Qualifier("formDataPopulators")
     private List formDataPopulators = new ArrayList<>();
@@ -179,46 +164,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
     public HandlerInterceptorAdapter casManagementSecurityInterceptor() {
         return new CasManagementSecurityInterceptor();
     }
-
-    @Bean
-    public AuditResourceResolver saveServiceResourceResolver() {
-        return new ParametersAsStringResourceResolver();
-    }
-
-    @Bean
-    public AuditResourceResolver deleteServiceResourceResolver() {
-        return new ServiceManagementResourceResolver();
-    }
-
-    @Bean
-    public AuditActionResolver saveServiceActionResolver() {
-        return new DefaultAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
-    }
-
-    @Bean
-    public AuditActionResolver deleteServiceActionResolver() {
-        return new ObjectCreationAuditActionResolver(AUDIT_ACTION_SUFFIX_SUCCESS, AUDIT_ACTION_SUFFIX_FAILED);
-    }
-
-    @Bean
-    public PrincipalResolver auditablePrincipalResolver() {
-        return new Pac4jAuditablePrincipalResolver();
-    }
-
-    @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect() {
-        return new AuditTrailManagementAspect("CAS_Management",
-                auditablePrincipalResolver(), Collections.singletonList(slf4jAuditTrailManager()),
-                auditActionResolverMap(),
-                auditResourceResolverMap());
-    }
-
-    @Bean(name = {"slf4jAuditTrailManager", "auditTrailManager"})
-    @RefreshScope
-    public AuditTrailManager slf4jAuditTrailManager() {
-        return new Slf4jLoggingAuditTrailManager();
-    }
-
+    
     @RefreshScope
     @Bean
     public Properties userProperties() {
@@ -268,21 +214,7 @@ public class CasManagementWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
-    @Bean
-    public Map<String, AuditResourceResolver> auditResourceResolverMap() {
-        final Map<String, AuditResourceResolver> map = new HashMap<>(2);
-        map.put("DELETE_SERVICE_RESOURCE_RESOLVER", deleteServiceResourceResolver());
-        map.put("SAVE_SERVICE_RESOURCE_RESOLVER", saveServiceResourceResolver());
-        return map;
-    }
-
-    @Bean
-    public Map<String, AuditActionResolver> auditActionResolverMap() {
-        final Map<String, AuditActionResolver> map = new HashMap<>(2);
-        map.put("DELETE_SERVICE_ACTION_RESOLVER", deleteServiceActionResolver());
-        map.put("SAVE_SERVICE_ACTION_RESOLVER", saveServiceActionResolver());
-        return map;
-    }
+   
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
