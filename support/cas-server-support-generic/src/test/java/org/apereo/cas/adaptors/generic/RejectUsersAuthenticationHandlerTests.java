@@ -33,8 +33,7 @@ public class RejectUsersAuthenticationHandlerTests {
         users.add("dima");
         users.add("bill");
 
-        this.authenticationHandler = new RejectUsersAuthenticationHandler();
-        this.authenticationHandler.setUsers(users);
+        this.authenticationHandler = new RejectUsersAuthenticationHandler(users);
     }
 
     @Test
