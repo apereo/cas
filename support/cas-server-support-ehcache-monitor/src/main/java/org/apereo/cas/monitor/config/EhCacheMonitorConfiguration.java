@@ -22,8 +22,7 @@ public class EhCacheMonitorConfiguration {
     
     @Autowired
     @Bean
-    public Monitor ehcacheMonitor(@Qualifier("ehcacheTicketsCache")
-                                  final Cache ehcacheTicketsCache) {
+    public Monitor ehcacheMonitor(@Qualifier("ehcacheTicketsCache") final Cache ehcacheTicketsCache) {
         return new EhCacheMonitor(ehcacheTicketsCache);
     }
 }

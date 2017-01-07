@@ -26,7 +26,7 @@ public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
                 .map(s -> Pair.of(s.replace('_', ':'), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            LOGGER.debug("Found {} URN attribute(s) that will be transformed.");
+            LOGGER.debug("Found {} URN attribute(s) that will be transformed.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().startsWith("urn_"));
             attrs.forEach(p -> {
                 LOGGER.debug("Transformed attribute name to be {}", p.getKey());

@@ -76,7 +76,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         LOGGER.debug("Found duo user account status {} for {}", acct, principal);
 
         if (acct == DuoUserAccountAuthStatus.ALLOW) {
-            LOGGER.debug("Account status is set for allow/bypass", principal);
+            LOGGER.debug("Account status is set for allow/bypass for {}", principal);
             return false;
         }
         if (acct == DuoUserAccountAuthStatus.DENY) {

@@ -39,7 +39,6 @@ public class EhcacheTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public RMISynchronousCacheReplicator ticketRMISynchronousCacheReplicator() {
-
         return new RMISynchronousCacheReplicator(
                 casProperties.getTicket().getRegistry().getEhcache().isReplicatePuts(),
                 casProperties.getTicket().getRegistry().getEhcache().isReplicatePutsViaCopy(),

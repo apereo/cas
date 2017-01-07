@@ -188,7 +188,7 @@ public class WsFederationHelper {
                     LOGGER.debug("Security token is encrypted. Attempting to decrypt to extract the assertion");
                     final EncryptedData encryptedData = EncryptedData.class.cast(securityToken);
                     final Decrypter decrypter = buildAssertionDecrypter(config);
-                    LOGGER.debug("Built an instance of {} to decrypt. Attempting to decrypt data next");
+                    LOGGER.debug("Built an instance of {} to decrypt. Attempting to decrypt data next", decrypter.getClass().getName());
                     securityToken = decrypter.decryptData(encryptedData);
                 } catch (final Exception e) {
                     throw new IllegalArgumentException("Unable to decrypt security token", e);

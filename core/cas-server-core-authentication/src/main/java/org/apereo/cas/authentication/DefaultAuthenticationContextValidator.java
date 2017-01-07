@@ -89,7 +89,7 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
 
         if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName)
                 && attrs.containsKey(this.mfaTrustedAuthnAttributeName)) {
-            LOGGER.debug("Requested authentication context {} is satisfied since device is already trusted");
+            LOGGER.debug("Requested authentication context {} is satisfied since device is already trusted", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }
 
@@ -102,11 +102,11 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             LOGGER.debug("Found multifactor authentication bypass attributes for provider {}", bypassedId);
 
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
-                LOGGER.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt");
+                LOGGER.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt", requestedContext);
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
 
-            LOGGER.debug("Either multifactor authentication was not bypassed or the requested context {} does not match the bypassed provider",
+            LOGGER.debug("Either multifactor authentication was not bypassed or the requested context {} does not match the bypassed provider {}",
                     requestedProvider, bypassedId);
         }
 
