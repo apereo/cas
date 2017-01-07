@@ -159,7 +159,8 @@ public final class SamlUtils {
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
 
-            LOGGER.debug("Credential cannot be extracted from {} via X.509. Treating {} as a public key to locate credential...");
+            LOGGER.debug("Credential cannot be extracted from {} via X.509. Treating it as a public key to locate credential...", 
+                    resource);
             final BasicResourceCredentialFactoryBean credentialFactoryBean = new BasicResourceCredentialFactoryBean();
             credentialFactoryBean.setPublicKeyInfo(resource);
             credentialFactoryBean.afterPropertiesSet();

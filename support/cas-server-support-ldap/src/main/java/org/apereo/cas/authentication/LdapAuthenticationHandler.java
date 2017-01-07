@@ -45,19 +45,17 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
-
     protected Map<String, String> principalAttributeMap = Collections.emptyMap();
 
     /**
      * List of additional attributes to be fetched but are not principal attributes.
      */
-
     protected List<String> additionalAttributes = Collections.emptyList();
 
     /**
      * Performs LDAP authentication given username/password.
      **/
-    private Authenticator authenticator;
+    private final Authenticator authenticator;
     
     /**
      * Name of attribute to be used for resolved principal.
@@ -73,12 +71,6 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Set of LDAP attributes fetch from an entry as part of the authentication process.
      */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
-
-    /**
-     * Default ctor.
-     */
-    public LdapAuthenticationHandler() {
-    }
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -146,13 +138,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         this.additionalAttributes = additionalAttributes;
     }
 
-    public void setAuthenticator(final Authenticator authenticator) {
-        this.authenticator = authenticator;
-    }
-
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc)
-            throws GeneralSecurityException, PreventedException {
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc) throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
             logger.debug("Attempting LDAP authentication for {}", upc);
@@ -169,12 +156,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         final List<MessageDescriptor> messageList;
 
-        final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration =
-                (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();
+        final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration = (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();
         if (ldapPasswordPolicyConfiguration != null) {
             logger.debug("Applying password policy to {}", response);
-            messageList = ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(
-                    response, ldapPasswordPolicyConfiguration);
+            messageList = ldapPasswordPolicyConfiguration.getAccountStateHandler().handle(response, ldapPasswordPolicyConfiguration);
         } else {
             logger.debug("No ldap password policy configuration is defined");
             messageList = Collections.emptyList();
@@ -253,10 +238,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (!this.allowMultiplePrincipalAttributeValues) {
                     throw new LoginException("Multiple principal values are not allowed: " + principalAttr);
                 }
-                logger.warn(
-                        "Found multiple values for principal id attribute: {}. Using first value={}.",
-                        principalAttr,
-                        principalAttr.getStringValue());
+                logger.warn("Found multiple values for principal id attribute: {}. Using first value={}.", principalAttr, principalAttr.getStringValue());
             }
             logger.debug("Retrieved principal id attribute {}", principalAttr.getStringValue());
             return principalAttr.getStringValue();

@@ -63,13 +63,13 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
 
         if (StringUtils.isNotBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isNotBlank(policy.getPrincipalAttributeValueToMatch())) {
-            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...");
+            logger.debug("Authentication policy for {} has defined principal attribute triggers. Skipping...",
+                    service.getServiceId());
             return null;
         }
 
         return resolveEventPerAuthenticationProvider(authentication.getPrincipal(), context, service);
     }
-
 
 
     /**
