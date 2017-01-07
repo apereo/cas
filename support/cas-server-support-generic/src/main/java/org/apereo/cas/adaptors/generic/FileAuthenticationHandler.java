@@ -30,15 +30,18 @@ import java.security.GeneralSecurityException;
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
-    private static final String DEFAULT_SEPARATOR = "::";
+    public static final String DEFAULT_SEPARATOR = "::";
 
     /** The separator to use. */
-    
-    private String separator = DEFAULT_SEPARATOR;
+    private final String separator;
 
     /** The filename to read the list of usernames from. */
-    private Resource fileName;
+    private final Resource fileName;
 
+    public FileAuthenticationHandler(final Resource fileName, final String separator) {
+        this.fileName = fileName;
+        this.separator = separator;
+    }
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
@@ -62,21 +65,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             throw new PreventedException("IO error reading backing file", e);
         }
         throw new FailedLoginException();
-    }
-
-    /**
-     * @param fileName The fileName to set.
-     */
-
-    public void setFileName(final Resource fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     * @param separator The separator to set.
-     */
-    public void setSeparator(final String separator) {
-        this.separator = separator;
     }
 
     /**
