@@ -41,9 +41,7 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    private static final String LDAP_ATTRIBUTE_ENTRY_DN = LdapAuthenticationHandler.class.getSimpleName().concat(".dn");
-
+    
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
@@ -60,13 +58,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * Performs LDAP authentication given username/password.
      **/
     private Authenticator authenticator;
-
-    /**
-     * Component name.
-     */
-
-    private String name = LdapAuthenticationHandler.class.getSimpleName();
-
+    
     /**
      * Name of attribute to be used for resolved principal.
      */
@@ -96,17 +88,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     public LdapAuthenticationHandler(final Authenticator authenticator) {
         this.authenticator = authenticator;
     }
-
-    /**
-     * Sets the component name. Defaults to simple class name.
-     *
-     * @param name Authentication handler name.
-     */
-    @Override
-    public void setName(final String name) {
-        this.name = name;
-    }
-
+    
     /**
      * Sets the name of the LDAP principal attribute whose value should be used for the
      * principal ID.
@@ -209,12 +191,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         throw new FailedLoginException("Invalid credentials");
     }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
+    
     /**
      * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.
      *
@@ -242,9 +219,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
             }
         }
-
-        attributeMap.put(LDAP_ATTRIBUTE_ENTRY_DN, ldapEntry.getDn());
-
+        final String dnAttribute = getName().concat(".").concat(username);
+        logger.debug("Recording principal DN attribute as {}", dnAttribute);
+        
+        attributeMap.put(dnAttribute, ldapEntry.getDn());
         logger.debug("Created LDAP principal for id {} and {} attributes", id, attributeMap.size());
         return this.principalFactory.createPrincipal(id, attributeMap);
     }

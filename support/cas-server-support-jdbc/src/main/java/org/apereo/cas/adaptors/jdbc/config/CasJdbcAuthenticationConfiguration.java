@@ -14,6 +14,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +39,8 @@ import java.util.regex.Pattern;
 @Configuration("CasJdbcAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasJdbcAuthenticationConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasJdbcAuthenticationConfiguration.class);
+    
     @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")
     private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
@@ -98,7 +101,7 @@ public class CasJdbcAuthenticationConfiguration {
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
-
+        
         h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
         h.setPrincipalFactory(jdbcPrincipalFactory());
         h.setServicesManager(servicesManager);
@@ -107,8 +110,9 @@ public class CasJdbcAuthenticationConfiguration {
             final Predicate<String> predicate = Pattern.compile(b.getCredentialCriteria()).asPredicate();
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
-
         h.setName(b.getName());
+        
+        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
         return h;
     }
 
@@ -136,6 +140,8 @@ public class CasJdbcAuthenticationConfiguration {
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
         h.setName(b.getName());
+
+        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
         return h;
     }
 
@@ -159,11 +165,14 @@ public class CasJdbcAuthenticationConfiguration {
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
         h.setName(b.getName());
+
+        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
         return h;
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final JdbcAuthenticationProperties.Search b) {
-        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getFieldUser(), b.getFieldPassword(),
+        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getFieldUser(), 
+                b.getFieldPassword(),
                 b.getTableUsers());
 
         h.setOrder(b.getOrder());
@@ -185,6 +194,8 @@ public class CasJdbcAuthenticationConfiguration {
             h.setCredentialSelectionPredicate(credential -> predicate.test(credential.getId()));
         }
         h.setName(b.getName());
+
+        LOGGER.debug("Created authentication handler {} to handle database url at {}", h.getName(), b.getUrl());
         return h;
     }
 

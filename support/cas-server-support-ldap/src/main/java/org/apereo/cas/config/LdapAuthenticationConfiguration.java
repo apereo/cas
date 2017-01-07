@@ -195,7 +195,6 @@ public class LdapAuthenticationConfiguration {
             final LdapAuthenticationProperties l, final Authenticator authenticator) {
 
         final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
-
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
         if (cfg.getPasswordWarningNumberOfDays() > 0) {
             handlers.add(new EDirectoryAuthenticationResponseHandler(Period.ofDays(cfg.getPasswordWarningNumberOfDays())));

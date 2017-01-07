@@ -1,7 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
@@ -15,7 +14,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 
 /**
  * This is {@link SAML2ClientLogoutAction}.
@@ -46,8 +44,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
                 LOGGER.debug("Located SAML2 client [{}]", client);
                 final RedirectAction action = client.getLogoutAction(context, null, null);
                 LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
-                final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(action.getLocation()));
-                LOGGER.debug("Logout message response from the identity provider is {}", msg);
+                action.perform(context);
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
