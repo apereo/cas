@@ -7,7 +7,6 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import com.google.common.base.Throwables;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -17,9 +16,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-
 /**
  * A Ticket Registry storage backend which uses the memcached protocol.
  * CouchBase is a multi host NoSQL database with a memcached interface
@@ -44,6 +40,7 @@ import java.util.stream.StreamSupport;
  * @since 4.2.0
  */
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
+
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
 
     private static final String END_TOKEN = "\u02ad";
@@ -57,26 +54,29 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_TICKETS_VIEW});
     private static final String UTIL_DOCUMENT = "statistics";
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
+    private final CouchbaseClientFactory couchbase;
 
-    private CouchbaseClientFactory couchbase;
+    public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase, final boolean isQueryEnabled) {
+        this.couchbase = couchbase;
 
-    /**
-     * Default constructor.
-     */
-    public CouchbaseTicketRegistry() {
+        logger.info("Setting up Couchbase Ticket Registry instance");
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
+        logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
+        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
+
+        logger.info("Initializing Couchbase...");
+        this.couchbase.initialize();
+        logger.info("Initialized Couchbase bucket {}", this.couchbase.bucket().name());
+
     }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
-            final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
+            final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
 
-            logger.debug("Upserting document {} into couchbase bucket {}", document.id(),
-                    this.couchbase.bucket().name());
+            logger.debug("Upserting document {} into couchbase bucket {}", document.id(), this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed updating {}: {}", ticket, e);
@@ -89,10 +89,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         logger.debug("Adding ticket {}", ticketToAdd);
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
-            final SerializableDocument document =
-                    SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            logger.debug("Created document for ticket {}. Upserting into bucket {}",
-                    ticketToAdd, this.couchbase.bucket().name());
+            final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
+            logger.debug("Created document for ticket {}. Upserting into bucket {}", ticketToAdd, this.couchbase.bucket().name());
             this.couchbase.bucket().upsert(document);
         } catch (final Exception e) {
             logger.error("Failed adding {}: {}", ticketToAdd, e);
@@ -122,24 +120,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
     }
-
-
-    /**
-     * Starts the couchbase client.
-     */
-    @PostConstruct
-    public void initialize() {
-        logger.info("Setting up Couchbase Ticket Registry instance");
-        System.setProperty("com.couchbase.queryEnabled",
-                Boolean.toString(casProperties.getTicket().getRegistry().getCouchbase().isQueryEnabled()));
-        logger.debug("Setting up indexes on document {} and views {}", UTIL_DOCUMENT, ALL_VIEWS);
-        this.couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
-
-        logger.info("Initializing Couchbase...");
-        this.couchbase.initialize();
-        logger.info("Initialized Couchbase bucket {}", this.couchbase.bucket().name());
-    }
-
 
     /**
      * Stops the couchbase client.
@@ -242,12 +222,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         logger.debug("Running query on document {} and view {} with prefix {}",
                 UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
-        final ViewResult allKeys = this.couchbase.bucket().query(
+        return this.couchbase.bucket().query(
                 ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
                         .startKey(prefix)
                         .endKey(prefix + END_TOKEN)
                         .reduce());
-        return allKeys;
     }
 
     /**
@@ -265,10 +244,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
         }
         return expTime;
-    }
-
-    public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
-        this.couchbase = couchbase;
     }
 }
 
