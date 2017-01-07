@@ -82,7 +82,6 @@ class ServiceRegistryConfigWatcher implements Runnable, Closeable {
                     final boolean valid = key != null && key.reset();
                     if (!valid) {
                         LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
-                        break;
                     }
                 }
             }

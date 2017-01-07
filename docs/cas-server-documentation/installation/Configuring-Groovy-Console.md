@@ -40,7 +40,7 @@ CAS provides `metrics`, `beans`, `autoconfig` and `endpoint` commands.
 ### Custom Groovy Scripts
 
 The shell by default will compile and load all groovy scripts that are found at the specified location below.
-Scripts are loaded by their class name and added to the shell. Here is an example groovy script that, when invokved, will
+Scripts are loaded by their class name and added to the shell. Here is an example groovy script that, when invoked, will
 return the CAS version and ticket/service registry type names:
 
 ```groovy

@@ -52,13 +52,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     public boolean supports(final Credential credential) {
         return credential instanceof RemoteAddressCredential;
     }
-
-    /**
-     * The following code is from the Apache Software Foundations's Lenya project
-     * See InetAddressUtil.java
-     * Distributed under the Apache 2.0 software license
-     */
-
+    
     /**
      * Checks if a subnet contains a specific IP address.
      *

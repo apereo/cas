@@ -74,10 +74,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final IncorrectCredentialsException ice) {
             throw new FailedLoginException(ice.getMessage());
-        } catch (final LockedAccountException lae) {
+        } catch (final LockedAccountException|ExcessiveAttemptsException lae) {
             throw new AccountLockedException(lae.getMessage());
-        } catch (final ExcessiveAttemptsException eae) {
-            throw new AccountLockedException(eae.getMessage());
         } catch (final ExpiredCredentialsException eae) {
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {

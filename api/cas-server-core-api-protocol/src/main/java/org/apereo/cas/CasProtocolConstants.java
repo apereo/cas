@@ -11,7 +11,7 @@ package org.apereo.cas;
  */
 public interface CasProtocolConstants {
 
-    /** CAS Protocol Validation Fields. **/
+    /* CAS Protocol Validation Fields. **/
 
     /** Constant representing the PGT in the cas validation model. */
     String VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET = "proxyGrantingTicket";
@@ -34,7 +34,7 @@ public interface CasProtocolConstants {
     /** Represents the flag to note whether assertion is backed by new login. */
     String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN = "isFromNewLogin";
 
-    /** CAS Protocol Parameters. **/
+    /* CAS Protocol Parameters. **/
 
     /** Constant representing the proxy callback url parameter in the request. */
     String PARAMETER_PROXY_CALLBACK_URL = "pgtUrl";
@@ -61,7 +61,7 @@ public interface CasProtocolConstants {
     String PARAMETER_METHOD = "method";
 
     /** Constant representing the pgtId parameter in the request. */
-    String PARAMETER_PROXY_GRANTINOG_TICKET_ID = "pgtId";
+    String PARAMETER_PROXY_GRANTING_TICKET_ID = "pgtId";
 
     /** Constant representing the pgt parameter in the request. */
     String PARAMETER_PROXY_GRANTING_TICKET = "pgt";
@@ -69,7 +69,7 @@ public interface CasProtocolConstants {
     /** Constant representing the pgtIou parameter in the request. */
     String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
-    /** CAS Protocol Error Codes. **/
+    /* CAS Protocol Error Codes. **/
 
     /** Constant representing an invalid request for validation. */
     String ERROR_CODE_INVALID_REQUEST = "INVALID_REQUEST";

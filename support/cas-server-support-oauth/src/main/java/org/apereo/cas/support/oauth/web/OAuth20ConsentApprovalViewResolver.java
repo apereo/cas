@@ -27,7 +27,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
         final String bypassApprovalParameter = context.getRequestParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("bypassApprovalParameter: {}", bypassApprovalParameter);
 
-        /**
+        /*
          * Inbound request; approval handled already.
          */
         if (StringUtils.isNotBlank(bypassApprovalParameter) || isConsentApprovalBypassed(context, service)) {

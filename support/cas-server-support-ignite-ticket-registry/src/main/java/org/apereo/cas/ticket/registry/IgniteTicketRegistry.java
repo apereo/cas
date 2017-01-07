@@ -51,8 +51,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Instantiates a new Ignite ticket registry.
-     * @param igniteConfiguration
      *
+     * @param igniteConfiguration the ignite configuration
+     * @param properties          the properties
      */
     public IgniteTicketRegistry(final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
         this.igniteConfiguration = igniteConfiguration;

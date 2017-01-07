@@ -7,12 +7,12 @@ import org.apereo.cas.support.oauth.web.OAuth20AuthorizeControllerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({OAuth20AccessTokenControllerTests.class, OAuth20AuthorizeControllerTests.class,
-                     OAuth20ProfileControllerTests.class, OAuthWebApplicationServiceTests.class})
 /**
  * OAuth test suite that runs all test in a batch.
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({OAuth20AccessTokenControllerTests.class, OAuth20AuthorizeControllerTests.class,
+                     OAuth20ProfileControllerTests.class, OAuthWebApplicationServiceTests.class})
 public class OAuthTestSuite {}
