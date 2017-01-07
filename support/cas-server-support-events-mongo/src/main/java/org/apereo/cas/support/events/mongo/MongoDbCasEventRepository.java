@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
@@ -19,33 +18,16 @@ import java.util.Collection;
  */
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private String collectionName;
+    private final String collectionName;
+    private final MongoOperations mongoTemplate;
 
-    private boolean dropCollection;
-
-    private MongoOperations mongoTemplate;
-
-    public MongoDbCasEventRepository() {
-    }
-
-    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, 
-                                     final String collectionName, 
-                                     final boolean dropCollection) {
+    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-        this.dropCollection = dropCollection;
-    }
 
-    /**
-     * Initialized registry post construction.
-     * Will decide if the configured collection should
-     * be dropped and recreated.
-     */
-    @PostConstruct
-    public void init() {
         Assert.notNull(this.mongoTemplate);
 
-        if (this.dropCollection) {
+        if (dropCollection) {
             logger.debug("Dropping database collection: {}", this.collectionName);
             this.mongoTemplate.dropCollection(this.collectionName);
         }
@@ -54,22 +36,6 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
             logger.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
-    }
-
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(final String collectionName) {
-        this.collectionName = collectionName;
-    }
-
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
     }
 
     @Override
