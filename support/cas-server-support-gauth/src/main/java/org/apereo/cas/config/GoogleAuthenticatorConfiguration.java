@@ -156,13 +156,11 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
-        final GoogleAuthenticatorAuthenticationMetaDataPopulator g =
-                new GoogleAuthenticatorAuthenticationMetaDataPopulator(
-                        casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                        googleAuthenticatorAuthenticationHandler(),
-                        googleAuthenticatorAuthenticationProvider()
-                );
-        return g;
+        return new GoogleAuthenticatorAuthenticationMetaDataPopulator(
+                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+                googleAuthenticatorAuthenticationHandler(),
+                googleAuthenticatorAuthenticationProvider()
+        );
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
@@ -209,17 +207,13 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public Action saveAccountRegistrationAction() {
-        final GoogleAccountSaveRegistrationAction a = new GoogleAccountSaveRegistrationAction();
-        a.setGoogleAuthenticator(googleAuthenticatorInstance());
-        return a;
+        return new GoogleAccountSaveRegistrationAction(googleAuthenticatorInstance());
     }
 
     @Bean
     @RefreshScope
     public Action googleAuthenticatorAuthenticationWebflowAction() {
-        final GoogleAuthenticatorAuthenticationWebflowAction a = new GoogleAuthenticatorAuthenticationWebflowAction();
-        a.setCasWebflowEventResolver(googleAuthenticatorAuthenticationWebflowEventResolver());
-        return a;
+        return new GoogleAuthenticatorAuthenticationWebflowAction(googleAuthenticatorAuthenticationWebflowEventResolver());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
@@ -231,9 +225,7 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public Action googleAccountRegistrationAction() {
-        final GoogleAccountCheckRegistrationAction a = new GoogleAccountCheckRegistrationAction();
-        a.setGoogleAuthenticatorInstance(googleAuthenticatorInstance());
-        return a;
+        return new GoogleAccountCheckRegistrationAction(googleAuthenticatorInstance(), casProperties.getAuthn().getMfa().getGauth());
     }
 
     @PostConstruct

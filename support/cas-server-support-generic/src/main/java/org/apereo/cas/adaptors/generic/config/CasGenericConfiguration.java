@@ -13,6 +13,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -29,6 +32,7 @@ import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link CasGenericConfiguration}.
@@ -101,19 +105,17 @@ public class CasGenericConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
-        final FileAuthenticationHandler h = new FileAuthenticationHandler();
-
-        h.setFileName(casProperties.getAuthn().getFile().getFilename());
-        h.setSeparator(casProperties.getAuthn().getFile().getSeparator());
+        final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
+        final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getFilename(), fileProperties.getSeparator());
         h.setPrincipalFactory(filePrincipalFactory());
         h.setServicesManager(servicesManager);
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getFile().getPasswordEncoder()));
+        h.setPasswordEncoder(Beans.newPasswordEncoder(fileProperties.getPasswordEncoder()));
         if (filePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getFile().getPrincipalTransformation()));
-        h.setName(casProperties.getAuthn().getFile().getName());
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
+        h.setName(fileProperties.getName());
 
         return h;
     }
@@ -136,38 +138,35 @@ public class CasGenericConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
-        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler();
+        final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
+        final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
+        final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(users);
         h.setPrincipalFactory(rejectUsersPrincipalFactory());
         h.setServicesManager(servicesManager);
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers())) {
-            h.setUsers(org.springframework.util.StringUtils.commaDelimitedListToSet(
-                    casProperties.getAuthn().getReject().getUsers()));
-        }
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getReject().getPasswordEncoder()));
+        h.setPasswordEncoder(Beans.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         if (rejectPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getReject().getPrincipalTransformation()));
-        h.setName(casProperties.getAuthn().getReject().getName());
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
+        h.setName(rejectProperties.getName());
         return h;
     }
 
     @RefreshScope
     @Bean
     public AuthenticationHandler shiroAuthenticationHandler() {
-        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler();
+        final ShiroAuthenticationProperties shiro = casProperties.getAuthn().getShiro();
+        final ShiroAuthenticationHandler h = new ShiroAuthenticationHandler(shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.setPrincipalFactory(shiroPrincipalFactory());
         h.setServicesManager(servicesManager);
-        h.setRequiredRoles(casProperties.getAuthn().getShiro().getRequiredRoles());
-        h.setRequiredPermissions(casProperties.getAuthn().getShiro().getRequiredPermissions());
-        h.loadShiroConfiguration(casProperties.getAuthn().getShiro().getConfig().getLocation());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(casProperties.getAuthn().getShiro().getPasswordEncoder()));
+        h.loadShiroConfiguration(shiro.getConfig().getLocation());
+        h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(casProperties.getAuthn().getShiro().getPrincipalTransformation()));
-        h.setName(casProperties.getAuthn().getShiro().getName());
+        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
+        h.setName(shiro.getName());
         return h;
     }
 

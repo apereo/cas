@@ -29,20 +29,17 @@ public class MongoDbEventsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
-
     @RefreshScope
     @Bean
     public MongoTemplate mongoEventsTemplate() {
         return new MongoTemplate(mongoAuthNEventsDbFactory());
     }
-
 
     @RefreshScope
     @Bean

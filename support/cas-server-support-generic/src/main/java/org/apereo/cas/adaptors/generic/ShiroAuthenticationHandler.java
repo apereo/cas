@@ -29,7 +29,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,19 +39,14 @@ import java.util.Set;
  */
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
-    private Set<String> requiredRoles = new HashSet<>();
+    private final Set<String> requiredRoles;
+    private final Set<String> requiredPermissions;
 
-    private Set<String> requiredPermissions = new HashSet<>();
-
-
-    public void setRequiredRoles(final Set<String> requiredRoles) {
+    public ShiroAuthenticationHandler(final Set<String> requiredRoles, final Set<String> requiredPermissions) {
         this.requiredRoles = requiredRoles;
-    }
-
-    public void setRequiredPermissions(final Set<String> requiredPermissions) {
         this.requiredPermissions = requiredPermissions;
     }
-    
+
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
@@ -118,8 +112,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @param currentUser the current user
      * @return the handler result
      */
-    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential,
-                                                             final Subject currentUser) {
+    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }

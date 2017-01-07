@@ -77,7 +77,6 @@ public class GoogleAuthentiacatorJpaConfiguration {
         return mgmr;
     }
 
-
     @Bean
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
         return new JpaGoogleAuthenticatorAccountRegistry();
