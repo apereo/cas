@@ -69,7 +69,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @JsonIgnore
     @Override
     public Long getTimeToLive() {
-        return new Long(Integer.MAX_VALUE);
+        return Long.MAX_VALUE;
     }
 
     @Override

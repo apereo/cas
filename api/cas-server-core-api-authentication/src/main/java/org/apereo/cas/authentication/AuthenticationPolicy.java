@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
 /**
- * Stategy interface for pluggable authentication security policies.
+ * Strategy interface for pluggable authentication security policies.
  *
  * @author Marvin S. Addison
  * @since 4.0.0

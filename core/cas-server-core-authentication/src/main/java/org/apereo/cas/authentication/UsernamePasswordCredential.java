@@ -86,11 +86,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
             return false;
         }
 
-        if (this.username != null ? !this.username.equals(that.username) : that.username != null) {
-            return false;
-        }
-
-        return true;
+        return this.username != null ? this.username.equals(that.username) : that.username == null;
     }
 
     @Override

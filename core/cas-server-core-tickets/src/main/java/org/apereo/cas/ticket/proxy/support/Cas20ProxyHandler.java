@@ -66,7 +66,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
                 .append('=')
                 .append(proxyIou)
                 .append('&')
-                .append(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET_ID)
+                .append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_ID)
                 .append('=')
                 .append(proxyGrantingTicketId);
 

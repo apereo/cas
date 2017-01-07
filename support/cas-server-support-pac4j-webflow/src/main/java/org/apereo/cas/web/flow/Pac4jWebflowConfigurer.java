@@ -75,9 +75,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
                 final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
                         response.getStatus());
-                if (mv.isPresent()) {
-                    mv.get().getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v));
-                }
+                mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));
                 return null;
             }
         });

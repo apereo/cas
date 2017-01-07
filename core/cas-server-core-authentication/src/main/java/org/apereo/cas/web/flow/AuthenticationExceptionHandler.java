@@ -57,7 +57,7 @@ public class AuthenticationExceptionHandler {
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
+    /*
      * Order is important here; We want the account policy exceptions to be handled
      * first before moving onto more generic errors. In the event that multiple handlers
      * are defined, where one failed due to account policy restriction and one fails
@@ -220,11 +220,7 @@ public class AuthenticationExceptionHandler {
                 .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
                 .findFirst();
 
-        if (match.isPresent()) {
-            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build());
-        }
-
-        // return the matched simple class name
+        match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
         return match.orElse(UNKNOWN);
     }
 }
