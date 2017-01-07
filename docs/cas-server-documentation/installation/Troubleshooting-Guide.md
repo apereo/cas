@@ -87,6 +87,7 @@ you may want to adjust the [ticket expiration policy configuration](Configuring-
 Furthermore, if the ticket itself cannot be located in the CAS ticket registry the ticket is also considered invalid. You will need 
 to observe the ticket used and compare it with the value that exists in the ticket registry to ensure that the ticket id provided is valid.  
 
+
 ## Out of Heap Memory Error
 
 ```bash
