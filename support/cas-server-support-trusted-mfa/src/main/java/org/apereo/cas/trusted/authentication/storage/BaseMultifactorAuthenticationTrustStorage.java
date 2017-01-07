@@ -49,10 +49,7 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
             }
-            if (!decodedKey.equals(currentKey)) {
-                return true;
-            }
-            return false;
+            return !decodedKey.equals(currentKey);
         });
         return res;
     }

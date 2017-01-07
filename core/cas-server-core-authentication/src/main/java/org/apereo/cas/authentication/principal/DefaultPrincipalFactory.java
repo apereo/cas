@@ -32,10 +32,7 @@ public class DefaultPrincipalFactory implements PrincipalFactory {
         if (obj == this) {
             return true;
         }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return true;
+        return obj.getClass() == getClass();
     }
 
     @Override

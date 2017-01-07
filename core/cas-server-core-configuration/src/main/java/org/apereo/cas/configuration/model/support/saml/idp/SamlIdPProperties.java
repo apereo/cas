@@ -268,14 +268,12 @@ public class SamlIdPProperties {
                 return Collections.emptyMap();
             }
             final Map<String, String> nameFormats = new HashMap<>();
-            this.attributeNameFormats.forEach(value -> {
-                Arrays.stream(value.split(",")).forEach(format -> {
-                    final String[] values = format.split("->");
-                    if (values.length == 2) {
-                        nameFormats.put(values[0], values[1]);
-                    }
-                });
-            });
+            this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {
+                final String[] values = format.split("->");
+                if (values.length == 2) {
+                    nameFormats.put(values[0], values[1]);
+                }
+            }));
             return nameFormats;
         }
     }

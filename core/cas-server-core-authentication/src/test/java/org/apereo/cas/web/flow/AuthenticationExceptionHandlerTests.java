@@ -43,7 +43,7 @@ public class AuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void handleUnknownExceptionByDefefault() {
+    public void handleUnknownExceptionByDefault() {
         final AuthenticationExceptionHandler handler = new AuthenticationExceptionHandler();
         final MessageContext ctx = mock(MessageContext.class);
         

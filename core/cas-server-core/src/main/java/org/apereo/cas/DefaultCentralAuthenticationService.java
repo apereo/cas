@@ -281,7 +281,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
 
         try {
-            /**
+            /*
              * Synchronization on ticket object in case of cache based registry doesn't serialize
              * access to critical section. The reason is that cache pulls serialized data and
              * builds new object, most likely for each pull. Is this synchronization needed here?
