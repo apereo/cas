@@ -62,7 +62,7 @@ public abstract class AbstractManagementController {
                     ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            final ModelAndView mv = new ModelAndView("errors");
+            final ModelAndView mv = new ModelAndView("error");
             mv.addObject(ex);
             return mv;
         }
