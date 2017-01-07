@@ -8,4 +8,8 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
  * @since 4.2
  */
 public class WarningCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
+
+    public WarningCookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure) {
+        super(name, path, maxAge, secure, null);
+    }
 }

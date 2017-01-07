@@ -43,6 +43,5 @@ public class CasLoggingConfiguration {
         bean.setName("threadContextMDCServletFilter");
         bean.setOrder(0);
         return bean;
-
     }
 }
