@@ -118,7 +118,6 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         return decodeTickets(cacheTickets.stream().map(e -> (Ticket) e.getObjectValue()).collect(Collectors.toList()));
     }
 
-
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);

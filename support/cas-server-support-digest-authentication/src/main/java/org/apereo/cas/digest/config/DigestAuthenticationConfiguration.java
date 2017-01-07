@@ -48,7 +48,7 @@ public class DigestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
+    private Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -120,5 +120,4 @@ public class DigestAuthenticationConfiguration {
     public void initializeAuthenticationHandler() {
         this.authenticationHandlersResolvers.put(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
-
 }
