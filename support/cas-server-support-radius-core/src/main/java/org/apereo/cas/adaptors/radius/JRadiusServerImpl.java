@@ -66,8 +66,6 @@ public class JRadiusServerImpl implements RadiusServer {
     
     private long nasPortType = -1;
     
-    
-    /** Load the dictionary implementation. */
     static {
         AttributeFactory.loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
     }

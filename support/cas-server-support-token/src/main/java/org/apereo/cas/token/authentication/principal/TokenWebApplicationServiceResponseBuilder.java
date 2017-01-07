@@ -96,8 +96,8 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
                             .jwtID(ticketId)
                             .issueTime(assertion.getAuthenticationDate())
                             .subject(assertion.getPrincipal().getName());
-            assertion.getAttributes().forEach((k, v) -> claims.claim(k, v));
-            assertion.getPrincipal().getAttributes().forEach((k, v) -> claims.claim(k, v));
+            assertion.getAttributes().forEach(claims::claim);
+            assertion.getPrincipal().getAttributes().forEach(claims::claim);
 
             if (assertion.getValidUntilDate() != null) {
                 claims.expirationTime(assertion.getValidUntilDate());

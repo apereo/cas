@@ -61,7 +61,7 @@ MFA can be triggered for all users/subjects carrying a specific attribute that m
 to know what provider to next activate.
 
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
-This option is more relevant if you have more than one provider configured or if you have the flexibilty of assigning
+This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning
 provider ids to attributes as values.
 
 Needless to say, the attributes need to have been resolved for the principal prior to this step. 
@@ -159,7 +159,7 @@ A few simple examples follow:
 - Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
 
 Note that in addition to the above options, some multifactor authentication providers
-may also skip and bypass the authentication request in the event that the authentiated principal doesn't quite "qualify"
+may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
 for multifactor authentication. See the documentation for each specific provider to learn more. 
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html).

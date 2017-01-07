@@ -47,9 +47,7 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
                 return true;
             }
 
-            Arrays.stream(groupsResult.getWsGroups()).forEach(group -> {
-                grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group));
-            });
+            Arrays.stream(groupsResult.getWsGroups()).forEach(group -> grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group)));
             return false;
         });
 

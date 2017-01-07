@@ -37,8 +37,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     @Override
     public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                              final Assertion assertion, final SamlRegisteredService service,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                        final Assertion assertion, final SamlRegisteredService service,
+                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
@@ -68,17 +68,17 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 requiredNameFormat = null;
             }
         }
-        
+
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest), adaptor.getEntityId());
             throw new SamlException("Required NameID format cannot be provided because it is not supported");
         }
 
-        try {
-            for (final String nameFormat : supportedNameFormats) {
+        for (final String nameFormat : supportedNameFormats) {
+            try {
                 logger.debug("Evaluating NameID format {}", nameFormat);
-                
+
                 final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
                 encoder.setNameFormat(nameFormat);
                 if (authnRequest.getNameIDPolicy() != null) {
@@ -91,15 +91,16 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 logger.debug("NameID attribute value is set to {}", assertion.getPrincipal().getName());
                 attribute.setValues(Collections.singletonList(value));
                 logger.debug("Encoding NameID based on {}", nameFormat);
-                
+
                 final NameID nameid = encoder.encode(attribute);
                 logger.debug("Final NameID encoded is {} with value {}", nameid.getFormat(), nameid.getValue());
                 return nameid;
+
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
             }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
         }
         return null;
     }
-    
+
 }

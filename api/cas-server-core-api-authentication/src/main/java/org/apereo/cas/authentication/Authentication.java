@@ -16,7 +16,7 @@ import java.util.Map;
  * of attributes.
  * </p>
  * <p>
- * An Authentication object must be serializable to permit persistance and
+ * An Authentication object must be serializable to permit persistence and
  * clustering.
  * </p>
  * <p>

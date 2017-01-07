@@ -28,13 +28,13 @@ public class SpnegoCredential implements Credential, Serializable {
 
     private static final int NTLM_TOKEN_MAX_LENGTH = 8;
 
-    private static final Byte CHAR_S_BYTE = Byte.valueOf((byte) 'S');
+    private static final Byte CHAR_S_BYTE = (byte) 'S';
 
     /** The ntlmssp signature. */
-    private static final Byte[] NTLMSSP_SIGNATURE = {Byte.valueOf((byte) 'N'),
-            Byte.valueOf((byte) 'T'), Byte.valueOf((byte) 'L'),
-            Byte.valueOf((byte) 'M'), CHAR_S_BYTE, CHAR_S_BYTE,
-            Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
+    private static final Byte[] NTLMSSP_SIGNATURE = {(byte) 'N',
+            (byte) 'T', (byte) 'L',
+            (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
+            (byte) 'P', (byte) 0};
 
     private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -119,7 +119,7 @@ public class SpnegoCredential implements Credential, Serializable {
             return false;
         }
         for (int i = 0; i < NTLM_TOKEN_MAX_LENGTH; i++) {
-            if (NTLMSSP_SIGNATURE[i].byteValue() != token[i]) {
+            if (NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
             }
         }

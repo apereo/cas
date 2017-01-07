@@ -46,7 +46,7 @@ public class ReverseDNSRunnable implements Runnable {
             final InetAddress address = InetAddress.getByName(this.ipAddress);
             set(address.getCanonicalHostName());
         } catch (final UnknownHostException e) {
-            /** N/A -- Default to IP address, but that's already done. **/
+            /* N/A -- Default to IP address, but that's already done. **/
             LOGGER.debug("Unable to identify the canonical hostname for ip address.", e);
         }
     }

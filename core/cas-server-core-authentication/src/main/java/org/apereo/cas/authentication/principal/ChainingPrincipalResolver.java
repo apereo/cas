@@ -81,7 +81,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
             }
         });
 
-        final long count = principals.stream().map(p -> p.getId()).distinct().collect(Collectors.toSet()).size();
+        final long count = principals.stream().map(Principal::getId).distinct().collect(Collectors.toSet()).size();
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique",
                     Collections.emptyMap(),

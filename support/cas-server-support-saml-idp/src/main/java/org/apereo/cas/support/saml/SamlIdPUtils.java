@@ -144,7 +144,6 @@ public final class SamlIdPUtils {
                     acs.setLocation(foundAcs.getLocation());
                     acs.setResponseLocation(foundAcs.getResponseLocation());
                     acs.setIndex(acsIndex);
-                    return;
                 });
             } else {
                 acs.setBinding(authnRequest.getProtocolBinding());

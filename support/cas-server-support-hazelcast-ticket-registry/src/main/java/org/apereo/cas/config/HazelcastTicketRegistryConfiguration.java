@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +73,6 @@ public class HazelcastTicketRegistryConfiguration {
      * Get Hazelcast <code>Config</code> instance.
      *
      * @return Hazelcast Config
-     * @throws IOException if parsing of hazelcast xml configuration fails
      */
     private Config getConfig() {
         final HazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();

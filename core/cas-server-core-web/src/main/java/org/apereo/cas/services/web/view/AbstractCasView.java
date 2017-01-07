@@ -291,7 +291,12 @@ public abstract class AbstractCasView extends AbstractView {
 
     /**
      * Gets chained authentications.
-     *
+     * Note that the last index in the list always describes the primary authentication
+     * event. All others in the chain should denote proxies. Per the CAS protocol,
+     * when authentication has proceeded through multiple proxies,
+     * the order in which the proxies were traversed MUST be reflected in the response.
+     * The most recently-visited proxy MUST be the first proxy listed, and all the
+     * other proxies MUST be shifted down as new proxies are added.
      * @param model the model
      * @return the chained authentications
      */
@@ -300,15 +305,6 @@ public abstract class AbstractCasView extends AbstractView {
 
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();
-
-        /**
-         * Note that the last index in the list always describes the primary authentication
-         * event. All others in the chain should denote proxies. Per the CAS protocol,
-         * when authentication has proceeded through multiple proxies,
-         * the order in which the proxies were traversed MUST be reflected in the response.
-         * The most recently-visited proxy MUST be the first proxy listed, and all the
-         * other proxies MUST be shifted down as new proxies are added. I
-         */
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
     }
 

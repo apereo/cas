@@ -53,15 +53,14 @@ public class RegisteredServiceThemeBasedViewResolver extends ThymeleafViewResolv
 
         final RequestContext requestContext = RequestContextHolder.getRequestContext();
         final WebApplicationService service;
-        final HttpServletRequest request;
+        
         final HttpServletResponse response;
 
         if (requestContext != null) {
-            request = WebUtils.getHttpServletRequest(requestContext);
             response = WebUtils.getHttpServletResponse(requestContext);
             service = WebUtils.getService(this.argumentExtractors, requestContext);
         } else {
-            request = WebUtils.getHttpServletRequestFromRequestAttributes();
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
             service = WebUtils.getService(this.argumentExtractors, request);
             response = WebUtils.getHttpServletResponseFromRequestAttributes();
         }

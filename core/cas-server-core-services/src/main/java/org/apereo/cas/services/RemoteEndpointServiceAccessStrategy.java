@@ -47,7 +47,7 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
                 final HttpMessage message = client.sendMessageToEndPoint(url);
                 LOGGER.debug("Message received from {} is {}", url, message);
                 return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes)
-                        .contains(message.getResponseCode());
+                        .contains(String.valueOf(message.getResponseCode()));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

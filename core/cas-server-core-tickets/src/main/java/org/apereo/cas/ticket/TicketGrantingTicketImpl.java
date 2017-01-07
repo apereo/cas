@@ -194,9 +194,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             // loop on existing services
             existingServices.stream()
                     .filter(existingService -> path.equals(normalizePath(existingService)))
-                    .findFirst().ifPresent(existingService -> {
-                existingServices.remove(existingService);
-            });
+                    .findFirst().ifPresent(existingServices::remove);
         }
         this.services.put(id, service);
     }

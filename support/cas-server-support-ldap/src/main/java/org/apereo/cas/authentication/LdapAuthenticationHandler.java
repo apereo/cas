@@ -253,7 +253,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     @PostConstruct
     public void initialize() {
-        /**
+        /*
          * Use a set to ensure we ignore duplicates.
          */
         final Set<String> attributes = new HashSet<>();

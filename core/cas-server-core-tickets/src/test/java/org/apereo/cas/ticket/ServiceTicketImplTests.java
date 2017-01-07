@@ -163,7 +163,7 @@ public class ServiceTicketImplTests {
                     new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
         } catch (final Exception e) {
-            return;
+
         }
     }
 }

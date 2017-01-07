@@ -43,7 +43,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        boolean foundCode = false;
+        final boolean foundCode;
         
         if (!locale.equals(Locale.ENGLISH)) {
             foundCode = IntStream.range(0, this.basenames.length).filter(i -> {
