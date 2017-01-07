@@ -37,11 +37,11 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
      * @param initialCapacity  - the initial capacity. The implementation
      *                         performs internal sizing to accommodate this many elements.
      * @param loadFactor       - the load factor threshold, used to control resizing.
-     *                         Resizing may be performed when the average number of elements per bin
-     *                         exceeds this threshold.
+     *                         Resizing may be performed when the average number of elements per bin exceeds this threshold.
      * @param concurrencyLevel - the estimated number of concurrently updating
      *                         threads. The implementation performs internal sizing to try to
      *                         accommodate this many threads.
+     * @param cipherExecutor   the cipher executor
      */
     public DefaultTicketRegistry(final int initialCapacity,
                                  final float loadFactor,
@@ -65,7 +65,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     @PostConstruct
     public void init() {
         logger.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
-                    + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
+                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
     }
 
     @Override
@@ -93,7 +93,7 @@ public class DefaultTicketRegistry extends AbstractTicketRegistry {
     public Collection<Ticket> getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
-    
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         addTicket(ticket);
