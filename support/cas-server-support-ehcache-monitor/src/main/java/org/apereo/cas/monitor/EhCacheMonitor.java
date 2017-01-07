@@ -18,13 +18,7 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
     /**
      * The Ticket granting tickets cache.
      */
-    private Cache ehcacheTicketsCache;
-
-    /**
-     * Instantiates a new Ehcache monitor.
-     */
-    public EhCacheMonitor() {
-    }
+    private final Cache ehcacheTicketsCache;
 
     /**
      * Instantiates a new Eh cache monitor.
@@ -43,6 +37,4 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
         }
         return list.toArray(new CacheStatistics[]{});
     }
-    
-    
 }
