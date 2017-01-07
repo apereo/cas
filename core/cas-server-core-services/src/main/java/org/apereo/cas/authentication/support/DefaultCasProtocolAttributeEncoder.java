@@ -131,7 +131,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                 .map(s -> Pair.of(s.replace(':', '_'), attributes.get(s)))
                 .collect(Collectors.toSet());
         if (!attrs.isEmpty()) {
-            logger.debug("Found {} attribute(s) that need to be sanitized/encoded.");
+            logger.debug("Found {} attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.entrySet().removeIf(s -> s.getKey().contains(":"));
             attrs.forEach(p -> {
                 logger.debug("Sanitized attribute name to be {}", p.getKey());
