@@ -1,4 +1,6 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.configuration.model.support;
+
+import org.apereo.cas.configuration.support.Beans;
 
 /**
  * This is {@link ConnectionPoolingProperties}.

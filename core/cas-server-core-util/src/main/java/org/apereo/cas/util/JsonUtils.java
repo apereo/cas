@@ -1,4 +1,4 @@
-package org.apereo.cas.util.serialization;
+package org.apereo.cas.util;
 
 import com.google.common.base.Throwables;
 import org.springframework.http.MediaType;
