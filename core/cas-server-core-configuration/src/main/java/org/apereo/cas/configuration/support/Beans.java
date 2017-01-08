@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.util.CryptographyProperties;
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -25,6 +26,9 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationPropert
 import org.apereo.cas.configuration.model.support.mongo.AbstractMongoInstanceProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
+import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
+import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.ldaptive.ActivePassiveConnectionStrategy;

@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.util.transforms;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 

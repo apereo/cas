@@ -71,7 +71,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                 if (StringUtils.isNotBlank(this.includePattern)) {
                     final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
                     for (final NbtAddress dc2 : dcs) {
-                        if(dc2.getHostAddress().matches(this.includePattern)){
+                        if (dc2.getHostAddress().matches(this.includePattern)) {
                             dc = new UniAddress(dc2);
                             break;
                         }

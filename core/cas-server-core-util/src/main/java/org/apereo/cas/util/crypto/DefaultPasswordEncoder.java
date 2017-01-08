@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.support;
+package org.apereo.cas.util.crypto;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,7 +29,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
      * @param encodingAlgorithm the encoding algorithm
      * @param characterEncoding the character encoding
      */
-    DefaultPasswordEncoder(final String encodingAlgorithm, final String characterEncoding) {
+    public DefaultPasswordEncoder(final String encodingAlgorithm, final String characterEncoding) {
         this.encodingAlgorithm = encodingAlgorithm;
         this.characterEncoding = characterEncoding;
     }

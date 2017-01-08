@@ -46,9 +46,15 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         if (idleValue <= 0) {
             idleValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
         }
+        if (idleValue <= 0) {
+            idleValue = Integer.MAX_VALUE;
+        }
         element.setTimeToIdle(idleValue);
 
-        final int aliveValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+        int aliveValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+        if (aliveValue <= 0) {
+            aliveValue = Integer.MAX_VALUE;
+        }
         element.setTimeToLive(aliveValue);
 
         logger.debug("Adding ticket {} to the cache {} to live {} seconds and stay idle for {} seconds",

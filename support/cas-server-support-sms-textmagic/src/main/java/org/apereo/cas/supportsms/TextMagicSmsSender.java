@@ -1,8 +1,12 @@
 package org.apereo.cas.supportsms;
 
+import com.textmagic.sdk.RestClient;
+import com.textmagic.sdk.resource.instance.TMNewMessage;
 import org.apereo.cas.util.io.SmsSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  * This is {@link TextMagicSmsSender}.
@@ -13,15 +17,22 @@ import org.slf4j.LoggerFactory;
 public class TextMagicSmsSender implements SmsSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(TextMagicSmsSender.class);
     
-    public TextMagicSmsSender() {
+    private final RestClient client;
+            
+    public TextMagicSmsSender(final String uid, final String token) {
+        client = new RestClient(uid, token);
     }
 
     @Override
     public void send(final String from, final String to, final String message) {
         try {
-            
+            final TMNewMessage m = this.client.getResource(TMNewMessage.class);
+            m.setText(message);
+            m.setPhones(Arrays.asList(new String[]{to}));
+            m.setFrom(from);
+            m.send();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);        
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }
