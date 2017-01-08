@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.configuration.support.PrefixSuffixPrincipalNameTransformer;
+import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

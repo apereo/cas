@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 

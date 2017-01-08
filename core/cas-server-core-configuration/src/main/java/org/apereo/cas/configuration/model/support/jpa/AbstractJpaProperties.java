@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
 
 /**
  * Common properties for all jpa configs.

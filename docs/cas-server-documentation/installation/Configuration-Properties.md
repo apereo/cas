@@ -746,7 +746,8 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 ### TextMagic
 
 ```properties
-# cas.textMagic
+# cas.textMagic.username=
+# cas.textMagic.token=
 ```
 
 ## GoogleMaps GeoTracking
