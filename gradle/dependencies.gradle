@@ -1144,6 +1144,11 @@ ext.libraries = [
             exclude(group: "javax.xml.bind", module: "jaxb-api")
             force = true
         },
+        textmagic                 : dependencies.create("com.textmagic.sdk:1.2.0") {
+            exclude(group: "org.slf4j", module: "slf4j-api")
+            
+            force = true
+        },
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")

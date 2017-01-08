@@ -10,6 +10,7 @@ import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -226,20 +227,12 @@ public class ElectronicFenceConfiguration {
     private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
         final RiskBasedAuthenticationProperties.Response.Mail mail =
                 casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
-
-        final RiskBasedAuthenticationProperties.Response.Sms sms =
-                casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
-
-        if (StringUtils.isNotBlank(mail.getText())
-                && StringUtils.isNotBlank(mail.getFrom())
-                && StringUtils.isNotBlank(mail.getSubject())) {
+        if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
             b.getNotifiers().add(authenticationRiskEmailNotifier());
         }
 
-        if (StringUtils.isNotBlank(sms.getText())
-                && StringUtils.isNotBlank(sms.getFrom())
-                && StringUtils.isNotBlank(sms.getTwilio().getToken())
-                && StringUtils.isNotBlank(sms.getTwilio().getAccountId())) {
+        final SmsProperties sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
+        if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }
     }

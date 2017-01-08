@@ -2,7 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.config.CasEmbeddedContainerConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CasBanner;
+import org.apereo.cas.util.spring.boot.CasBanner;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

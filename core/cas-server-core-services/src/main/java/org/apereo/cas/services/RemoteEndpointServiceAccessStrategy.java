@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.util.URIBuilder;
-import org.apereo.cas.util.ApplicationContextProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

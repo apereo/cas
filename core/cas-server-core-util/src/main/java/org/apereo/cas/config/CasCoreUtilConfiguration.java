@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.util.ApplicationContextProvider;
-import org.apereo.cas.util.SpringAwareMessageMessageInterpolator;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;

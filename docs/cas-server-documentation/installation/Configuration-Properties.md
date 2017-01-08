@@ -733,8 +733,20 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 # cas.authn.adaptive.risk.response.sms.from=
 # cas.authn.adaptive.risk.response.sms.text=
 # cas.authn.adaptive.risk.response.sms.attributeName=phone
-# cas.authn.adaptive.risk.response.sms.twilio.accountId=
-# cas.authn.adaptive.risk.response.sms.twilio.token=
+```
+## Sms Messaging
+
+### Twillio
+
+```properties
+# cas.twilio.accountId=
+# cas.twilio.token=
+```
+
+### TextMagic
+
+```properties
+# cas.textMagic
 ```
 
 ## GoogleMaps GeoTracking

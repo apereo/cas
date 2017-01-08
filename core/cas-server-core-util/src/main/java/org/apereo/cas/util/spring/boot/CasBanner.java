@@ -1,8 +1,10 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.spring.boot;
 
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.util.CasVersion;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.env.Environment;

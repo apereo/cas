@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.spring;
 
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
