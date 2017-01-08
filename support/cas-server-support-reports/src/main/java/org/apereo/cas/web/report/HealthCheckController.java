@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.monitor.HealthCheckMonitor;
 import org.apereo.cas.monitor.HealthStatus;
 import org.apereo.cas.monitor.Monitor;
-import org.apereo.cas.util.serialization.JsonUtils;
+import org.apereo.cas.util.JsonUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.core.monitor;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.ConnectionPoolingProperties;
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**

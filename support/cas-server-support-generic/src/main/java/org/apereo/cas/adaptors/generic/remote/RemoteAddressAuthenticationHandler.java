@@ -19,17 +19,20 @@ import java.security.GeneralSecurityException;
  * @author David Harrison
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
     private final transient Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The network netmask. */
+    /**
+     * The network netmask.
+     */
     private InetAddress inetNetmask;
 
-    /** The network base address. */
+    /**
+     * The network base address.
+     */
     private InetAddress inetNetwork;
 
     @Override
@@ -52,13 +55,13 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     public boolean supports(final Credential credential) {
         return credential instanceof RemoteAddressCredential;
     }
-    
+
     /**
      * Checks if a subnet contains a specific IP address.
      *
      * @param network The network address.
      * @param netmask The subnet mask.
-     * @param ip The IP address to check.
+     * @param ip      The IP address to check.
      * @return A boolean value.
      */
     private boolean containsAddress(final InetAddress network, final InetAddress netmask, final InetAddress ip) {
@@ -69,7 +72,7 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         final byte[] ipBytes = ip.getAddress();
 
         /* check IPv4/v6-compatibility or parameters: */
-        if(networkBytes.length != netmaskBytes.length
+        if (networkBytes.length != netmaskBytes.length
                 || netmaskBytes.length != ipBytes.length) {
             logger.debug("Network address {}, subnet mask {} and/or host address {}"
                     + " have different sizes! (return false ...)", network, netmask, ip);
@@ -77,9 +80,9 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         }
 
         /* Check if the masked network and ip addresses match: */
-        for(int i=0; i < netmaskBytes.length; i++) {
+        for (int i = 0; i < netmaskBytes.length; i++) {
             final int mask = netmaskBytes[i] & HEX_RIGHT_SHIFT_COEFFICIENT;
-            if((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
+            if ((networkBytes[i] & mask) != (ipBytes[i] & mask)) {
                 logger.debug("{} is not in {}/{}", ip, network, netmask);
                 return false;
             }
