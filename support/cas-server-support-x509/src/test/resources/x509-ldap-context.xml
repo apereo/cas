@@ -92,7 +92,7 @@
           p:validatePeriodically="${ldap.pool.validatePeriodically}"
           p:validatePeriod="${ldap.pool.validatePeriod}"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
     
     

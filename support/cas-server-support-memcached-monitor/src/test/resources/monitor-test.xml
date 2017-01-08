@@ -29,7 +29,7 @@
     <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
           p:compressionThreshold="2048" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
     
     
