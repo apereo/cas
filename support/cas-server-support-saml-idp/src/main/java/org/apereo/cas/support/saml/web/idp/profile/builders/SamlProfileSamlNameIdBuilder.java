@@ -43,15 +43,26 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
 
-    private NameID buildNameId(final AuthnRequest authnRequest, final Assertion assertion,
-                               final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
-            throws SamlException {
+    /**
+     * Build name id.
+     * If there are no explicitly defined NameIDFormats, include the default format.
+     * see: http://saml2int.org/profile/current/#section92
+     *
+     * @param authnRequest the authn request
+     * @param assertion    the assertion
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @return the name id
+     * @throws SamlException the saml exception
+     */
+    private NameID buildNameId(final AuthnRequest authnRequest,
+                               final Assertion assertion,
+                               final SamlRegisteredService service,
+                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
-        final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
+        final List<String> supportedNameFormats = adaptor.getSupportedNameIdFormats();
         logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
-        // there are no explicitly defined NameIDFormats, include the default format
-        // see: http://saml2int.org/profile/current/#section92
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
         }

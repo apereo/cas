@@ -4,6 +4,7 @@ import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -174,4 +175,21 @@ public class JpaServiceRegistryDaoImplTests {
         assertEquals(r, r2);
     }
 
+    @Test
+    public void verifySamlService() {
+        final SamlRegisteredService r = new SamlRegisteredService();
+        r.setName("test345");
+        r.setServiceId("Testing");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final Map fmt = new HashMap();
+        fmt.put("key", "value");
+        r.setAttributeNameFormats(fmt);
+        r.setMetadataCriteriaDirection("INCLUDE");
+        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
+        r.setMetadataSignatureLocation("location");
+        r.setRequiredAuthenticationContextClass("Testing");
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        assertEquals(r, r2);
+    }
 }

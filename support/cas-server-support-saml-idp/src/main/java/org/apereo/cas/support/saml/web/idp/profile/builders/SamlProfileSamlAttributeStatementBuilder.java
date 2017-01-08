@@ -58,9 +58,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
         final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
-        final Map<String, String> nameIdFormats = new HashMap<>(resp.configureAttributeNameFormats());
+        final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
+        nameFormats.putAll(service.getAttributeNameFormats());
+        
         return newAttributeStatement(encodedAttrs,
                 resp.isUseAttributeFriendlyName(),
-                nameIdFormats);
+                nameFormats);
     }
 }
