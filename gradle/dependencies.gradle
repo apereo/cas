@@ -1144,7 +1144,7 @@ ext.libraries = [
             exclude(group: "javax.xml.bind", module: "jaxb-api")
             force = true
         },
-        textmagic                 : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:1.2.0") {
+        textmagic                 : dependencies.create("com.textmagic.sdk:textmagic-java-sdk:$textMagicVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
