@@ -194,7 +194,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
      *
      * @return the supported name formats
      */
-    public List<String> getSupportedNameFormats() {
+    public List<String> getSupportedNameIdFormats() {
         final List<String> nameIdFormats = new ArrayList<>();
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
