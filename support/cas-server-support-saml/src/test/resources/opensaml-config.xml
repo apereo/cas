@@ -22,7 +22,7 @@
         </property>
     </bean>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
     
     <bean class="org.thymeleaf.spring4.SpringTemplateEngine"/>

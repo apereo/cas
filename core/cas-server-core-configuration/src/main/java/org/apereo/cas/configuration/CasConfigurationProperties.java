@@ -33,6 +33,7 @@ import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProp
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethAttributeResolverProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
+import org.apereo.cas.configuration.model.support.sms.TwillioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -112,6 +113,9 @@ public class CasConfigurationProperties {
 
     @NestedConfigurationProperty
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
+
+    @NestedConfigurationProperty
+    private TwillioProperties twillio = new TwillioProperties();
     
     @NestedConfigurationProperty
     private AcceptableUsagePolicyProperties acceptableUsagePolicy = new AcceptableUsagePolicyProperties();
@@ -455,5 +459,13 @@ public class CasConfigurationProperties {
 
     public void setSamlSP(final SamlServiceProviderProperties samlSP) {
         this.samlSP = samlSP;
+    }
+
+    public TwillioProperties getTwillio() {
+        return twillio;
+    }
+
+    public void setTwillio(final TwillioProperties twillio) {
+        this.twillio = twillio;
     }
 }

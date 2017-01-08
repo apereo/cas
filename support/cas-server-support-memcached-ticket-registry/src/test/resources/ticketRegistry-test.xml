@@ -36,6 +36,6 @@
 
     <bean id="kryoTranscover" class="org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder"/>
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.CustomBeanValidationPostProcessor"
+    <bean id="validationAnnotationBeanPostProcessor" class="org.apereo.cas.util.spring.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 </beans>
