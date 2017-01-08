@@ -18,6 +18,7 @@ import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.oauth.OAuthConstants;
 import org.apereo.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -116,9 +117,27 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
+    public void verifySamlService() {
+        final SamlRegisteredService r = new SamlRegisteredService();
+        r.setName("verifySamlService");
+        r.setServiceId("Testing");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final Map fmt = new HashMap();
+        fmt.put("key", "value");
+        r.setAttributeNameFormats(fmt);
+        r.setMetadataCriteriaDirection("INCLUDE");
+        r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
+        r.setMetadataSignatureLocation("location");
+        r.setRequiredAuthenticationContextClass("Testing");
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.dao.save(r);
+        assertEquals(r, r2);
+    }
+    
+    @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
-        r.setName("test456");
+        r.setName("test1456");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
@@ -133,7 +152,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     @Test
     public void verifyOAuthServicesCallback() {
         final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("test345");
+        r.setName("test1345");
         r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
@@ -145,7 +164,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     @Test
     public void verifyOAuthRegisteredServicesCallback() {
         final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
-        r.setName("testoauth");
+        r.setName("testoauth1");
         r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
