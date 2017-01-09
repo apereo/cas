@@ -209,7 +209,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (setFriendlyName) {
             attribute.setFriendlyName(e.getKey());
         }
-        addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
+        addAttributeValuesToSamlAttribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             final String nameFormat = configuredNameFormats.get(attribute.getName());
