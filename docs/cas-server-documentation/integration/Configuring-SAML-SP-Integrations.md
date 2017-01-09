@@ -39,6 +39,8 @@ The following SAML SP integrations are provided by CAS:
 * [Office365](https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx)
 * [Zoom](https://support.zoom.us/hc/en-us/articles/201363003-Getting-Started-with-SSO)
 * [Evernote](https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business)
+* [Asana](https://asana.com/guide/help/premium/authentication#gl-saml)
+
 
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html).
