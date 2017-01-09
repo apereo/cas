@@ -199,14 +199,17 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     protected boolean locateMatchingAttributeValue(final String attrName, final String attrValue,
                                                    final Map<String, Object> attributes,
                                                    final boolean matchIfNoValueProvided) {
+        LOGGER.debug("Locating matching attribute {} with value {} amongst the attribute collection {}", attributes);
         if (StringUtils.isBlank(attrName)) {
+            LOGGER.debug("Failed to match since attribute name is undefined");
             return false;
         }
 
-        final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e ->
-                e.getKey().matches(attrName)
+        final Set<Map.Entry<String, Object>> names = attributes.entrySet().stream().filter(e -> {
+                    LOGGER.debug("Attempting to match {} against {}", attrName, e.getKey());
+                    return e.getKey().matches(attrName);
+                }
         ).collect(Collectors.toSet());
-
 
         LOGGER.debug("Found {} attributes relevant for multifactor authentication bypass", names.size());
 
@@ -215,19 +218,22 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         }
 
         if (StringUtils.isBlank(attrValue)) {
+            LOGGER.debug("No attribute value to match is provided; Match result is set to {}", matchIfNoValueProvided);
             return matchIfNoValueProvided;
         }
 
-
         final Set<Map.Entry<String, Object>> values = names.stream().filter(e -> {
+            
             final Set<Object> valuesCol = CollectionUtils.toCollection(e.getValue());
+            LOGGER.debug("Matching attribute {} with values {} against {}", e.getKey(), valuesCol, attrValue);
+            
             return valuesCol.stream()
                     .filter(v -> v.toString().matches(attrValue))
                     .findAny()
                     .isPresent();
         }).collect(Collectors.toSet());
 
+        LOGGER.debug("Matching attribute values remaining are {}", values);
         return !values.isEmpty();
-
     }
 }

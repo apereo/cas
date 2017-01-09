@@ -22,14 +22,7 @@ import java.util.stream.Collectors;
  * @since 4.1
  */
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
-
-    /**
-     * Instantiates a new Default cas attribute encoder.
-     */
-    protected DefaultCasProtocolAttributeEncoder() {
-        super();
-    }
-
+    
     /**
      * Instantiates a new Default cas attribute encoder.
      *

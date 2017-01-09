@@ -32,13 +32,7 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
     protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private RegisteredServiceCipherExecutor cipherExecutor;
-
-    /**
-     * Instantiates a new abstract cas attribute encoder.
-     */
-    protected AbstractProtocolAttributeEncoder() {
-    }
-
+    
     /**
      * Instantiates a new attribute encoder with the default
      * cipher as {@link DefaultRegisteredServiceCipherExecutor}.
@@ -69,7 +63,8 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
         final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
-            logger.debug("[{}] Encoded attributes are available for release to [{}]", newEncodedAttributes.size(), registeredService);
+            logger.debug("[{}] Encoded attributes are available for release to [{}]: {}", 
+                    newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
         } else {
             logger.debug("Service [{}] is not found/enabled in the service registry so no encoding has taken place.", registeredService);
         }
