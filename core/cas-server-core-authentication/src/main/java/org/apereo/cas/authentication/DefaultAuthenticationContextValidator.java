@@ -102,7 +102,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
             LOGGER.debug("Found multifactor authentication bypass attributes for provider {}", bypassedId);
 
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
-                LOGGER.debug("Requested authentication context {} is satisfied given mfa was bypass for the authentication attempt", requestedContext);
+                LOGGER.debug("Requested authentication context {} is satisfied given mfa was bypassed for the authentication attempt", 
+                        requestedContext);
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
 
