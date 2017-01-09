@@ -36,6 +36,15 @@ public class CasVersion {
     }
 
     /**
+     * Gets specification version from the manifest package.
+     *
+     * @return the specification version
+     */
+    public static String getSpecificationVersion() {
+        return CasVersion.class.getPackage().getSpecificationVersion();
+    }
+    
+    /**
      * Gets last modified date/time for the module.
      * @return the date/time
      */

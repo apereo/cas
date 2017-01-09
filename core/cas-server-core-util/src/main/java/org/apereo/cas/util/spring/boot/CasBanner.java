@@ -47,6 +47,7 @@ public class CasBanner implements Banner {
 
         try (Formatter formatter = new Formatter()) {
             formatter.format("CAS Version: %s%n", CasVersion.getVersion());
+            formatter.format("CAS Commit Id: %s%n", CasVersion.getSpecificationVersion());
             formatter.format("CAS Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("Spring Boot Version: %s%n", SpringBootVersion.getVersion());
             formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
