@@ -22,6 +22,15 @@ public class SamlServiceProviderProperties {
     private InCommon inCommon = new InCommon();
     private Zoom zoom = new Zoom();
     private Evernote evernote = new Evernote();
+    private Asana asana = new Asana();
+
+    public Asana getAsana() {
+        return asana;
+    }
+
+    public void setAsana(final Asana asana) {
+        this.asana = asana;
+    }
 
     public Evernote getEvernote() {
         return evernote;
@@ -38,7 +47,6 @@ public class SamlServiceProviderProperties {
     public void setZoom(final Zoom zoom) {
         this.zoom = zoom;
     }
-
     
     public InCommon getInCommon() {
         return inCommon;
@@ -203,6 +211,13 @@ public class SamlServiceProviderProperties {
     
     public static class Evernote extends AbstractSamlSPProperties {
         public Evernote() {
+            setNameIdAttribute("email");
+            setNameIdFormat("emailAddress");
+        }
+    }
+    
+    public static class Asana extends AbstractSamlSPProperties {
+        public Asana() {
             setNameIdAttribute("email");
             setNameIdFormat("emailAddress");
         }
