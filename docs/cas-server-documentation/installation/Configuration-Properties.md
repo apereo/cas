@@ -1942,6 +1942,26 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSP.zoom.nameIdAttribute=mail
 ```
 
+### Evernote
+
+```properties
+# cas.samlSP.evernote.metadata=/etc/cas/saml/evernote.xml
+# cas.samlSP.evernote.name=Evernote
+# cas.samlSP.evernote.description=Evernote Integration
+# cas.samlSP.evernote.nameIdAttribute=mail
+# cas.samlSP.evernote.nameIdFormat=emailAddress
+```
+
+### Asana
+
+```properties
+# cas.samlSP.asana.metadata=/etc/cas/saml/asana.xml
+# cas.samlSP.asana.name=Asana
+# cas.samlSP.asana.description=Asana Integration
+# cas.samlSP.asana.nameIdAttribute=mail
+# cas.samlSP.asana.nameIdFormat=emailAddress
+```
+
 ### Box
 
 ```properties
