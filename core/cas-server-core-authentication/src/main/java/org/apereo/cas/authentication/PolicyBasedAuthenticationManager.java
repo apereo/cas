@@ -122,7 +122,7 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
             return false;
         });
 
-        if(!success) {
+        if (!success) {
             evaluateProducedAuthenticationContext(builder);
         }
 
