@@ -8,8 +8,10 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.spring.MemcachedClientFactoryBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.MemCacheTicketRegistry;
+import org.apereo.cas.ticket.registry.NoOpLockingStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.kryo.KryoTranscoder;
@@ -33,11 +35,10 @@ public class MemcachedTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * Memcached client memcached client factory bean.
-     *
-     * @return the memcached client factory bean
-     */
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+
     @Lazy
     @Bean
     public MemcachedClientFactoryBean memcachedClient() {
@@ -60,20 +61,24 @@ public class MemcachedTicketRegistryConfiguration {
     public KryoTranscoder kryoTranscoder() {
         return new KryoTranscoder();
     }
-    
+
     @Autowired
     @Bean(name = {"memcachedTicketRegistry", "ticketRegistry"})
-    public TicketRegistry memcachedTicketRegistry(
-            @Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) throws Exception {
+    public TicketRegistry memcachedTicketRegistry(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
         final MemCacheTicketRegistry registry = new MemCacheTicketRegistry(memcachedClientIF);
         registry.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(
                 casProperties.getTicket().getRegistry().getMemcached().getCrypto()));
         return registry;
     }
 
+    @Autowired
     @Bean
-    public TicketRegistryCleaner ticketRegistryCleaner() {
-        return new MemcachedTicketRegistryCleaner();
+    public TicketRegistryCleaner ticketRegistryCleaner(@Qualifier("memcachedClient") final MemcachedClientIF memcachedClientIF) {
+        final MemcachedTicketRegistryCleaner c = new MemcachedTicketRegistryCleaner();
+        c.setLockingStrategy(new NoOpLockingStrategy());
+        c.setLogoutManager(logoutManager);
+        c.setTicketRegistry(memcachedTicketRegistry(memcachedClientIF));
+        return c;
     }
 
     /**

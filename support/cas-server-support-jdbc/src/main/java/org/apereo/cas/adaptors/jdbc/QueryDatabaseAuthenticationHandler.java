@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -30,7 +29,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
@@ -44,8 +43,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
 
-            if ((StringUtils.isNotBlank(originalPassword) && !this.matches(originalPassword, dbPassword)) ||
-                    (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
+            if ((StringUtils.isNotBlank(originalPassword) && !this.matches(originalPassword, dbPassword))
+                  || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
         } catch (final IncorrectResultSizeDataAccessException e) {
@@ -63,9 +62,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
-                throws GeneralSecurityException, PreventedException
-    {
-        return authenticateUsernamePasswordInternal(credential,null);
+                throws GeneralSecurityException, PreventedException {
+        return authenticateUsernamePasswordInternal(credential, null);
     }
 
     public void setSql(final String sql) {
