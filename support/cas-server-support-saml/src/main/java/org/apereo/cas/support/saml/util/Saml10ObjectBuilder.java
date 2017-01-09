@@ -209,7 +209,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                 attribute.setAttributeNamespace(attributeNamespace);
             }
 
-            addAttributeValuesToSamlAttribute(e.getValue(), attribute.getAttributeValues());
+            addAttributeValuesToSamlAttribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
             attrStatement.getAttributes().add(attribute);
         }
 
