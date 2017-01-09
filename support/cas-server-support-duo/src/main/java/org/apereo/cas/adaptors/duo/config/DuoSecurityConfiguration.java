@@ -5,12 +5,12 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.BasicDuoAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
-import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -136,7 +136,7 @@ public class DuoSecurityConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new DuoAuthenticationMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(), duoMultifactorAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(), duoMultifactorAuthenticationProvider());
     }
 
     @Bean

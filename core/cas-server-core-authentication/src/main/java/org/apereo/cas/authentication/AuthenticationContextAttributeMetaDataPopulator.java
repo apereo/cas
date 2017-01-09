@@ -1,27 +1,21 @@
-package org.apereo.cas.adaptors.duo.authn;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
 /**
- * This is {@link DuoAuthenticationMetaDataPopulator} which inserts the
- * duo MFA provider id into the final authentication object.
+ * This is {@link AuthenticationContextAttributeMetaDataPopulator}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class DuoAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
-
+public class AuthenticationContextAttributeMetaDataPopulator implements AuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
     private final AuthenticationHandler authenticationHandler;
     private final MultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationMetaDataPopulator(final String authenticationContextAttribute, final AuthenticationHandler authenticationHandler,
-                                              final MultifactorAuthenticationProvider provider) {
+    public AuthenticationContextAttributeMetaDataPopulator(final String authenticationContextAttribute,
+                                                           final AuthenticationHandler authenticationHandler,
+                                                           final MultifactorAuthenticationProvider provider) {
         this.authenticationContextAttribute = authenticationContextAttribute;
         this.authenticationHandler = authenticationHandler;
         this.provider = provider;

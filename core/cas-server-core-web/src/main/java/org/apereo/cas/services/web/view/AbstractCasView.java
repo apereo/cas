@@ -228,13 +228,9 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model the model
      * @return the satisfied multifactor authentication provider
      */
-    protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(
-            final Map<String, Object> model) {
-        if (StringUtils.isNotBlank(authenticationContextAttribute)
-                && model.containsKey(this.authenticationContextAttribute)) {
-            final Optional<MultifactorAuthenticationProvider> result =
-                    (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
-            return result;
+    protected Optional<MultifactorAuthenticationProvider> getSatisfiedMultifactorAuthenticationProvider(final Map<String, Object> model) {
+        if (StringUtils.isNotBlank(authenticationContextAttribute) && model.containsKey(this.authenticationContextAttribute)) {
+            return (Optional<MultifactorAuthenticationProvider>) model.get(this.authenticationContextAttribute);
         }
         return Optional.empty();
     }
@@ -297,6 +293,7 @@ public abstract class AbstractCasView extends AbstractView {
      * the order in which the proxies were traversed MUST be reflected in the response.
      * The most recently-visited proxy MUST be the first proxy listed, and all the
      * other proxies MUST be shifted down as new proxies are added.
+     *
      * @param model the model
      * @return the chained authentications
      */

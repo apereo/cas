@@ -8,7 +8,6 @@ import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
@@ -18,6 +17,7 @@ import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorAuthenticationW
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.rest.GoogleAuthenticatorQRGeneratorController;
+import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -157,7 +157,7 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
-        return new GoogleAuthenticatorAuthenticationMetaDataPopulator(
+        return new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 googleAuthenticatorAuthenticationHandler(),
                 googleAuthenticatorAuthenticationProvider()

@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
-import org.apereo.cas.adaptors.radius.RadiusAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
@@ -12,6 +11,7 @@ import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowAction
 import org.apereo.cas.adaptors.radius.web.flow.RadiusAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -163,9 +163,9 @@ public class RadiusMultifactorConfiguration {
 
     @Bean
     @RefreshScope
-    public RadiusAuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
+    public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         final String attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new RadiusAuthenticationMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
     }
 
     @RefreshScope
