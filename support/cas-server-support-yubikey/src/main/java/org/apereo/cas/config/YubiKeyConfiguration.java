@@ -4,12 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -158,9 +158,9 @@ public class YubiKeyConfiguration {
 
     @Bean
     @RefreshScope
-    public YubiKeyAuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
+    public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new YubiKeyAuthenticationMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), yubikeyAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), yubikeyAuthenticationProvider());
     }
 
     @Bean

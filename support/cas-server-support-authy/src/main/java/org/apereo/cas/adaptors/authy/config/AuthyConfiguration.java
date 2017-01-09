@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
-import org.apereo.cas.adaptors.authy.AuthyAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.adaptors.authy.AuthyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWebflowAction;
@@ -12,6 +11,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -143,7 +143,7 @@ public class AuthyConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator authyAuthenticationMetaDataPopulator() {
-        return new AuthyAuthenticationMetaDataPopulator(
+        return new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 authyAuthenticationHandler(),
                 authyAuthenticatorAuthenticationProvider()
