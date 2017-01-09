@@ -65,15 +65,18 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         if (supportedNameFormats.isEmpty()) {
             supportedNameFormats.add(NameIDType.TRANSIENT);
+            logger.debug("No supported nameId formats could be determined from metadata. Added default {}", NameIDType.TRANSIENT);
         }
         if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
-            supportedNameFormats.add(0, service.getRequiredNameIdFormat());
+            final String fmt = parseAndBuildRequiredNameIdFormat(service);
+            supportedNameFormats.add(0, fmt);
+            logger.debug("Added required nameId format {} based on saml service configuration for {}", fmt, service.getServiceId());
         }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
             requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            logger.debug("AuthN request says [{}] is the required NameID format", requiredNameFormat);
+            logger.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
             if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
                 logger.warn("Encrypted NameID formats are not supported");
                 requiredNameFormat = null;
@@ -112,6 +115,38 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             }
         }
         return null;
+    }
+
+    private String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
+        final String fmt = service.getRequiredNameIdFormat().trim();
+        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
+            return NameIDType.EMAIL;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
+            return NameIDType.TRANSIENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.UNSPECIFIED, fmt)) {
+            return NameIDType.UNSPECIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
+            return NameIDType.PERSISTENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
+            return NameIDType.ENTITY;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
+            return NameIDType.X509_SUBJECT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
+            return NameIDType.WIN_DOMAIN_QUALIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
+            return NameIDType.KERBEROS;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
+            return NameIDType.ENCRYPTED;
+        }
+        return fmt;
     }
 
 }

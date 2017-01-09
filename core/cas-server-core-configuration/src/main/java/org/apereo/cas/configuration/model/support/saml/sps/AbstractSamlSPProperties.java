@@ -14,6 +14,7 @@ public abstract class AbstractSamlSPProperties {
     private String name = this.getClass().getSimpleName();
     private String description = this.getClass().getSimpleName().concat(" SAML SP Integration");
     private String nameIdAttribute;
+    private String nameIdFormat;
     private List<String> attributes = new ArrayList<>();
     private String signatureLocation;
     private List<String> entityIds = new ArrayList<>();
@@ -24,6 +25,14 @@ public abstract class AbstractSamlSPProperties {
 
     public void setEntityIds(final List<String> entityIds) {
         this.entityIds = entityIds;
+    }
+
+    public String getNameIdFormat() {
+        return nameIdFormat;
+    }
+
+    public void setNameIdFormat(final String nameIdFormat) {
+        this.nameIdFormat = nameIdFormat;
     }
 
     public String getSignatureLocation() {
