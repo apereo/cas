@@ -33,6 +33,7 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
                     .forEach(code -> overall[0] = code);
             status = new CacheStatus(overall[0], null, statistics);
         } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
             status = new CacheStatus(e);
         }
         return status;
