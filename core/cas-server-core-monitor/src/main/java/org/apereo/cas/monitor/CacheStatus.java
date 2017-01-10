@@ -68,9 +68,8 @@ public class CacheStatus extends Status {
         return Stream.of(statistics)
                 .filter(s -> s != null)
                 .map(s -> {
-                    final StringBuilder builder = new StringBuilder();
-                    s.toString(builder);
-                    return builder.toString();
+                    s.toString(sb);
+                    return sb.toString();
                 })
                 .collect(Collectors.joining("|",
                         sb.toString() + "Cache statistics: [", "]"));
