@@ -1286,7 +1286,7 @@ ext.libraries = [
                 }
         ],
         springbootredis         : [
-                dependencies.create("org.springframework.boot:spring-boot-starter-redis:$springBootVersion") {
+                dependencies.create("org.springframework.boot:spring-boot-starter-data-redis:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework", module: "spring-context-support")
