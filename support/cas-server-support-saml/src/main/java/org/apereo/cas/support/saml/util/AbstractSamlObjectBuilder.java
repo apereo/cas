@@ -201,6 +201,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     public void addAttributeValuesToSamlAttribute(final String attributeName,
                                                   final Object attributeValue, 
                                                   final List<XMLObject> attributeList) {
+        if (attributeValue == null) {
+            logger.debug("Skipping over SAML attribute {} since it has no value {}", attributeName);
+            return;
+        }
+
+        logger.debug("Attempting to generate SAML attribute {} with value(s) {}", attributeName, attributeValue);
         if (attributeValue instanceof Collection<?>) {
             final Collection<?> c = (Collection<?>) attributeValue;
             logger.debug("Generating multi-valued SAML attribute {} with values {}", attributeName, c);
