@@ -11,7 +11,7 @@ customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 
-## What is War Overlay?
+## What is a WAR Overlay?
 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
 overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
