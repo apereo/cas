@@ -22,7 +22,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
- * This is {@link GoogleAuthentiacatorJpaConfiguration}.
+ * This is {@link GoogleAuthenticatorJpaConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 @Configuration("googleAuthentiacatorJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class GoogleAuthentiacatorJpaConfiguration {
+public class GoogleAuthenticatorJpaConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
