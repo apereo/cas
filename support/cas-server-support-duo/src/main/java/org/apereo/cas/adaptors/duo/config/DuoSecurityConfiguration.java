@@ -136,7 +136,8 @@ public class DuoSecurityConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(), duoMultifactorAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(), 
+                duoMultifactorAuthenticationProvider());
     }
 
     @Bean

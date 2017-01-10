@@ -160,7 +160,8 @@ public class YubiKeyConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), yubikeyAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, yubikeyAuthenticationHandler(), 
+                yubikeyAuthenticationProvider());
     }
 
     @Bean
