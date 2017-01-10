@@ -9,5 +9,4 @@ import com.warrenstrange.googleauth.ICredentialRepository;
  * @since 5.0.0
  */
 public abstract class BaseGoogleAuthenticatorCredentialRepository implements ICredentialRepository {
-    
 }
