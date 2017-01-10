@@ -29,7 +29,7 @@ public class RestAuthenticationApi {
     }
 
     /**
-     * Authenticate and receive eneity from the rest template.
+     * Authenticate and receive entity from the rest template.
      *
      * @param c the credential
      * @return the response entity
