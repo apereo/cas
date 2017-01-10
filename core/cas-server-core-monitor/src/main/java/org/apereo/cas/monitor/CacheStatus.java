@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Describes meaningful health metrics on the status of a cache.
@@ -70,9 +71,15 @@ public class CacheStatus extends Status {
             }
             sb.append(' ');
         }
-        sb.append("Cache statistics: [");
-        sb.append(String.join("|", Arrays.stream(statistics).map(Object::toString).collect(Collectors.toList())));
-        sb.append(']');
-        return sb.toString();
+        return Stream.of(statistics)
+                .filter(s -> s != null)
+                .map(s -> {
+                    final StringBuilder builder = new StringBuilder();
+                    s.toString(builder);
+                    return builder.toString();
+                })
+                .collect(Collectors.joining("|",
+                        sb.toString() + "Cache statistics: [", "]"));
+
     }
 }
