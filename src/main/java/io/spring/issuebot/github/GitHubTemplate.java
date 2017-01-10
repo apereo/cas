@@ -19,6 +19,7 @@ package io.spring.issuebot.github;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,9 +154,16 @@ public class GitHubTemplate implements GitHubOperations {
 
 	@Override
 	public Issue removeLabel(Issue issue, String labelName) {
+		String encodedName;
+		try {
+			encodedName = new URI(null, null, labelName, null).toString();
+		}
+		catch (URISyntaxException ex) {
+			throw new RuntimeException(ex);
+		}
 		ResponseEntity<Label[]> response = this.rest.exchange(
 				new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-						issue.getLabelsUrl().replace("{/name}", "/" + labelName))),
+						issue.getLabelsUrl().replace("{/name}", "/" + encodedName))),
 				Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to remove label from issue. Response status: "

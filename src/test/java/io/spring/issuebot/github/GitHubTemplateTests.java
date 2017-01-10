@@ -180,6 +180,17 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
+	public void removeLabelWithNameThatRequiresEncodingFromIssue() {
+		this.server.expect(requestTo("labels/status:%20foo")).andExpect(method(HttpMethod.DELETE))
+				.andExpect(basicAuth())
+				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
+		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
+				null);
+		Issue modifiedIssue = this.gitHub.removeLabel(issue, "status: foo");
+		assertThat(modifiedIssue.getLabels(), hasSize(0));
+	}
+
+	@Test
 	public void addCommentToIssue() {
 		this.server.expect(requestTo("commentsUrl")).andExpect(method(HttpMethod.POST))
 				.andExpect(basicAuth())
