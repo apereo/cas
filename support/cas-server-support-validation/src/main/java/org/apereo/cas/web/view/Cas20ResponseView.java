@@ -34,6 +34,7 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
+        logger.debug("Prepared CAS response output model with attribute names {}", model.keySet());
     }
     
 }
