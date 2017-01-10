@@ -1,5 +1,8 @@
 package org.apereo.cas.config;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.ICredentialRepository;
@@ -7,8 +10,11 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.CachingGoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorTokenRepository;
 import org.apereo.cas.adaptors.gauth.InMemoryGoogleAuthenticatorAccountRegistry;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAccountSaveRegistrationAction;
@@ -36,6 +42,8 @@ import org.apereo.cas.validation.AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.FirstMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -53,6 +61,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -66,7 +75,11 @@ import java.util.concurrent.TimeUnit;
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class GoogleAuthenticatorConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorConfiguration.class);
+    
+    private static final int INITIAL_CACHE_SIZE = 50;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
+    
     @Autowired
     @Qualifier("authenticationRequestServiceSelectionStrategies")
     private List<AuthenticationRequestServiceSelectionStrategy> authenticationRequestServiceSelectionStrategies;
@@ -81,6 +94,10 @@ public class GoogleAuthenticatorConfiguration {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private ICredentialRepository googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    @Qualifier("googleAuthenticatorTokenRepository")
+    private GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository;
+    
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -132,7 +149,8 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
-        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(googleAuthenticatorInstance());
+        final GoogleAuthenticatorAuthenticationHandler h = new GoogleAuthenticatorAuthenticationHandler(
+                googleAuthenticatorInstance(), googleAuthenticatorTokenRepository);
         h.setPrincipalFactory(googlePrincipalFactory());
         h.setServicesManager(servicesManager);
         h.setName(casProperties.getAuthn().getMfa().getGauth().getName());
@@ -201,8 +219,13 @@ public class GoogleAuthenticatorConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver googleAuthenticatorAuthenticationWebflowEventResolver() {
-        return new GoogleAuthenticatorAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+        return new GoogleAuthenticatorAuthenticationWebflowEventResolver(authenticationSystemSupport, 
+                centralAuthenticationService, 
+                servicesManager,
+                ticketRegistrySupport, 
+                warnCookieGenerator, 
+                authenticationRequestServiceSelectionStrategies, 
+                multifactorAuthenticationProviderSelector);
     }
 
     @Bean
@@ -241,7 +264,25 @@ public class GoogleAuthenticatorConfiguration {
     public GoogleAuthenticatorQRGeneratorController googleAuthenticatorQRGeneratorController() {
         return new GoogleAuthenticatorQRGeneratorController();
     }
-    
+
+    @ConditionalOnMissingBean(name = "googleAuthenticatorTokenRepository")
+    @Bean
+    public GoogleAuthenticatorTokenRepository googleAuthenticatorTokenRepository() {
+        final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage = CacheBuilder.newBuilder()
+                .initialCapacity(INITIAL_CACHE_SIZE)
+                .maximumSize(MAX_CACHE_SIZE)
+                .recordStats()
+                .expireAfterWrite(casProperties.getAuthn().getMfa().getGauth().getTimeStepSize() * 2, TimeUnit.SECONDS)
+                .build(new CacheLoader<String, Collection<GoogleAuthenticatorToken>>() {
+                    @Override
+                    public Collection<GoogleAuthenticatorToken> load(final String s) throws Exception {
+                        LOGGER.error("Load operation of the cache is not supported.");
+                        return null;
+                    }
+                });
+        return new CachingGoogleAuthenticatorTokenRepository(storage);
+    }
+
     /**
      * The google authenticator multifactor trust configuration.
      */

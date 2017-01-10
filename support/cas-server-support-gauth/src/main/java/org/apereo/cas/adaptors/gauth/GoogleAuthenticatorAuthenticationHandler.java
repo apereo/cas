@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
+import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -23,11 +24,14 @@ import java.security.GeneralSecurityException;
  * @since 5.0.0
  */
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    
-    private IGoogleAuthenticator googleAuthenticatorInstance;
 
-    public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance) {
+    private final IGoogleAuthenticator googleAuthenticatorInstance;
+    private final GoogleAuthenticatorTokenRepository tokenRepository;
+
+    public GoogleAuthenticatorAuthenticationHandler(final IGoogleAuthenticator googleAuthenticatorInstance,
+                                                    final GoogleAuthenticatorTokenRepository tokenRepository) {
         this.googleAuthenticatorInstance = googleAuthenticatorInstance;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -35,25 +39,29 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         final GoogleAuthenticatorTokenCredential tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
 
         if (!NumberUtils.isCreatable(tokenCredential.getToken())) {
-            throw new PreventedException("Invalid non-numeric OTP format specified.", new IllegalArgumentException());
+            throw new PreventedException("Invalid non-numeric OTP format specified.",
+                    new IllegalArgumentException("Invalid token " + tokenCredential.getToken()));
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
         logger.debug("Received OTP {}", otp);
-        
+
         final RequestContext context = RequestContextHolder.getRequestContext();
         final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
 
         logger.debug("Received principal id {}", uid);
-        
+
         final String secKey = this.googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
         if (StringUtils.isBlank(secKey)) {
             throw new AccountNotFoundException(uid + " cannot be found in the registry");
         }
+
+        if (this.tokenRepository.exists(uid, otp)) {
+            throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired");
+        }
         
         final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(secKey, otp);
         if (isCodeValid) {
-            return createHandlerResult(tokenCredential,
-                    this.principalFactory.createPrincipal(uid), null);
+            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);
         }
         throw new FailedLoginException("Failed to authenticate code " + otp);
     }
