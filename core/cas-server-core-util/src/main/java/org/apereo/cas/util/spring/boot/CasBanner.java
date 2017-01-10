@@ -22,13 +22,15 @@ import java.util.Properties;
  * @since 5.0.0
  */
 public class CasBanner implements Banner {
-
-
+    
     @Override
     public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
-        AsciiArtUtils.printAsciiArt(out, "(CAS)", collectEnvironmentInfo());
+        AsciiArtUtils.printAsciiArt(out, getTitle(), collectEnvironmentInfo());
     }
 
+    protected String getTitle() {
+        return "(CAS)";
+    }
     /**
      * Collect environment info with
      * details on the java and os deployment
