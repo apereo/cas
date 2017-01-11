@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 
 /**
  * This is {@link JpaGoogleAuthenticatorTokenRepository}.
@@ -26,11 +27,17 @@ public class JpaGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticat
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
+    private final long expireTokensInSeconds;
+    
+    public JpaGoogleAuthenticatorTokenRepository(final long expireTokensInSeconds) {
+        this.expireTokensInSeconds = expireTokensInSeconds;
+    }
+
     @Override
-    public void clean() {
+    public void cleanInternal() {
         final int count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-                + " r where r.issuedDateTime<= :now", GoogleAuthenticatorToken.class)
-                .setParameter("now", LocalDateTime.now())
+                + " r where r.issuedDateTime>= :expired", GoogleAuthenticatorToken.class)
+                .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
                 .executeUpdate();
         logger.debug("Deleted {} expired previously used otp record(s)", count);
     }

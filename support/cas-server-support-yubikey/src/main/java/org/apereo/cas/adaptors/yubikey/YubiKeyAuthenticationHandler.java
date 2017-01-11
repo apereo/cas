@@ -22,7 +22,6 @@ import java.security.GeneralSecurityException;
  * platform to authenticate one-time password tokens that are
  * issued by a YubiKey device. To use YubiCloud you need a
  * client id and an API key which must be obtained from Yubico.
- * <p>
  * <p>For more info, please visit
  * <a href="http://yubico.github.io/yubico-java-client/">this link</a></p>
  *

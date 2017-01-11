@@ -49,8 +49,9 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     /**
      * Default constructor.
      *
-     * @param couchbase couchbase instance
+     * @param couchbase             couchbase instance
      * @param serviceJsonSerializer the JSON serializer to use.
+     * @param isQueryEnabled        the is query enabled
      */
     public CouchbaseServiceRegistryDao(final CouchbaseClientFactory couchbase, final StringSerializer<RegisteredService> serviceJsonSerializer,
                                        final boolean isQueryEnabled) {
