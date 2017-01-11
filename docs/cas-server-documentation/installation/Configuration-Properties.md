@@ -1683,6 +1683,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.mongodb.clientUri=
 # cas.authn.mfa.gauth.mongodb.dropCollection=false
 # cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA
