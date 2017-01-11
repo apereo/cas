@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.gauth.repository.token;
 
 import com.google.common.cache.LoadingCache;
-import org.apereo.cas.GoogleAuthenticatorToken;
 
 import java.util.ArrayList;
 import java.util.Collection;
