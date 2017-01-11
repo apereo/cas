@@ -37,7 +37,7 @@ public class JsonGoogleAuthenticatorCredentialRepository extends BaseGoogleAuthe
 
             final Collection<GoogleAuthenticatorAccount> c = this.serializer.from(this.location.getFile());
             return c.stream()
-                    .filter(a -> a.getUserId().equals(username))
+                    .filter(a -> a.getUsername().equals(username))
                     .map(a -> a.getSecretKey())
                     .findAny()
                     .orElse(null);
