@@ -89,7 +89,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
                 Collections.singleton(isRememberMeAuthentication(model)));
 
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
-        if (StringUtils.isNotBlank(authenticationContextAttribute)) {
+        if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, Collections.singleton(contextProvider));
         }
 
