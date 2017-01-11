@@ -215,7 +215,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        logger.debug("Final principal resolved for this authentication event is {}", principal);
+        logger.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
 

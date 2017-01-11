@@ -298,8 +298,6 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the chained authentications
      */
     protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
-        final Collection<Authentication> chainedAuthenticationsToReturn = new ArrayList<>();
-
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
