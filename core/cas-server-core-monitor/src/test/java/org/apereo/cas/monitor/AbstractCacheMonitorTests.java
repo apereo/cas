@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class AbstractCacheMonitorTests {
     @Test
     public void verifyObserveOk() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+        final AbstractCacheMonitor monitor = new AbstractCacheMonitor("monitor") {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
@@ -23,7 +23,7 @@ public class AbstractCacheMonitorTests {
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+        final AbstractCacheMonitor monitor = new AbstractCacheMonitor("monitor") {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 0));
@@ -34,7 +34,7 @@ public class AbstractCacheMonitorTests {
 
     @Test
     public void verifyObserveError() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+        final AbstractCacheMonitor monitor = new AbstractCacheMonitor("monitor") {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 1));
@@ -47,7 +47,7 @@ public class AbstractCacheMonitorTests {
     @Test
     public void verifyObserveError2() throws Exception {
         // When cache has exceeded both thresholds, should report ERROR status
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+        final AbstractCacheMonitor monitor = new AbstractCacheMonitor("monitor") {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 1));

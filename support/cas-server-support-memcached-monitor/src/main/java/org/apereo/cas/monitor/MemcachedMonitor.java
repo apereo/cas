@@ -24,6 +24,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      * @param client Memcached client.
      */
     public MemcachedMonitor(final MemcachedClientIF client) {
+        super(MemcachedMonitor.class.getSimpleName());
         this.memcachedClient = client;
     }
 

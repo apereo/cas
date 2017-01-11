@@ -25,6 +25,7 @@ public class JdbcDataSourceMonitor extends AbstractPoolMonitor {
      * at least one result; otherwise results are ignored.
      */
     public JdbcDataSourceMonitor(final DataSource dataSource, final String validationQuery) {
+        super(JdbcDataSourceMonitor.class.getSimpleName());
         if (dataSource != null) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         } else {

@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -19,7 +19,7 @@ public class AbstractPoolMonitorTests {
 
     @Test
     public void verifyObserveOK() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor") {
             @Override
             protected StatusCode checkPool() throws Exception {
                 return StatusCode.OK;
@@ -46,7 +46,7 @@ public class AbstractPoolMonitorTests {
 
     @Test
     public void verifyObserveWarn() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor") {
             @Override
             protected StatusCode checkPool() throws Exception {
                 Thread.sleep(1000);
@@ -74,7 +74,7 @@ public class AbstractPoolMonitorTests {
 
     @Test
     public void verifyObserveError() throws Exception {
-        final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+        final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor") {
             @Override
             protected StatusCode checkPool() throws Exception {
                 throw new RuntimeException("Pool check failed due to rogue penguins.");

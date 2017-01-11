@@ -18,24 +18,16 @@ public class PooledLdapConnectionFactoryMonitor extends AbstractPoolMonitor {
     /** Connection validator. */
     private Validator<Connection> validator;
 
-
-    /**
-     * Instantiates a new Pooled connection factory monitor.
-     */
-    public PooledLdapConnectionFactoryMonitor() {}
-
     /**
      * Creates a new instance that monitors the given pooled connection factory.
-     *
-     * @param  factory  Connection factory to monitor.
+     *  @param  factory  Connection factory to monitor.
      * @param  validator  Validates connections from the factory.
      */
-    public PooledLdapConnectionFactoryMonitor(
-            final PooledConnectionFactory factory, final Validator<Connection> validator) {
+    public PooledLdapConnectionFactoryMonitor(final PooledConnectionFactory factory, final Validator<Connection> validator) {
+        super(PooledLdapConnectionFactoryMonitor.class.getSimpleName());
         this.connectionFactory = factory;
         this.validator = validator;
     }
-
 
     @Override
     protected StatusCode checkPool() throws Exception {

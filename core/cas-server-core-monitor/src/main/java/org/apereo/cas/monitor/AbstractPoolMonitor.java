@@ -19,7 +19,11 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
     /** Executor that performs pool resource validation. */
     private ExecutorService executor;
-    
+
+    public AbstractPoolMonitor(final String name) {
+        super(name);
+    }
+
     /**
      * Sets the executor service responsible for pool resource validation.
      *
@@ -60,7 +64,6 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
         return new PoolStatus(code, description, getActiveCount(), getIdleCount());
     }
 
-
     /**
      * Performs a health check on a the pool.  The recommended implementation is to
      * obtain a pool resource, validate it, and return it to the pool.
@@ -71,14 +74,12 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      */
     protected abstract StatusCode checkPool() throws Exception;
 
-
     /**
      * Gets the number of pool resources idle at present.
      *
      * @return Number of idle pool resources.
      */
     protected abstract int getIdleCount();
-
 
     /**
      * Gets the number of pool resources active at present.
