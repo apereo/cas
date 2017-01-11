@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.gauth.web.flow;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAccount;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class GoogleAccountCheckRegistrationAction extends AbstractAction {
         final String secretKey = googleAuthenticatorInstance.getCredentialRepository().getSecretKey(uid);
         if (StringUtils.isBlank(secretKey)) {
             final GoogleAuthenticatorKey key = this.googleAuthenticatorInstance.createCredentials();
-            final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(key.getKey(),
+            final GoogleAuthenticatorAccount keyAccount = new GoogleAuthenticatorAccount(uid, key.getKey(),
                     key.getVerificationCode(), key.getScratchCodes());
 
             final String keyUri = "otpauth://totp/" + gauthProperties.getLabel() + ':' + uid + "?secret="

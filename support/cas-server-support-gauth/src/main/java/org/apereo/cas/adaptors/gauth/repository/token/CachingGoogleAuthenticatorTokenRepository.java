@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.gauth;
+package org.apereo.cas.adaptors.gauth.repository.token;
 
 import com.google.common.cache.LoadingCache;
 import org.apereo.cas.GoogleAuthenticatorToken;

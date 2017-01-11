@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.mongodb.MongoClientURI;
 import com.warrenstrange.googleauth.ICredentialRepository;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorAccountRegistry;
+import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorCredentialRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class GoogleAuthentiacatorMongoDbConfiguration {
     
     @Bean
     public ICredentialRepository googleAuthenticatorAccountRegistry() {
-        return new MongoDbGoogleAuthenticatorAccountRegistry(
+        return new MongoDbGoogleAuthenticatorCredentialRepository(
                 mongoDbGoogleAuthenticatorTemplate(),
                 casProperties.getAuthn().getMfa().getGauth().getMongodb().getCollection(),
                 casProperties.getAuthn().getMfa().getGauth().getMongodb().isDropCollection()
