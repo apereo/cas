@@ -14,14 +14,16 @@ import java.util.Collection;
  */
 public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthenticatorTokenRepository {
     private final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage;
-    
+
     public CachingGoogleAuthenticatorTokenRepository(final LoadingCache<String, Collection<GoogleAuthenticatorToken>> storage) {
         this.storage = storage;
     }
 
     @Override
     public void clean() {
+        logger.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
+        logger.debug("Total of {} token(s) remain in the cache and may be removed in future iterations", this.storage.size());
     }
 
     @Override
@@ -30,13 +32,17 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
             try {
                 final Collection<GoogleAuthenticatorToken> tokens = this.storage.get(token.getUserId());
                 tokens.add(token);
+
+                logger.debug("Storing previously used tokens [{}] for user [{}]", tokens, token.getUserId());
                 this.storage.put(token.getUserId(), tokens);
-            } catch (final Exception e){
+            } catch (final Exception e) {
                 logger.warn(e.getMessage(), e);
             }
         } else {
             final Collection<GoogleAuthenticatorToken> tokens = new ArrayList<>();
             tokens.add(token);
+
+            logger.debug("Storing previously used token [{}] for user [{}]", token, token.getUserId());
             this.storage.put(token.getUserId(), tokens);
         }
     }
@@ -44,9 +50,10 @@ public class CachingGoogleAuthenticatorTokenRepository extends BaseGoogleAuthent
     @Override
     public boolean exists(final String uid, final Integer otp) {
         try {
-            final Collection<GoogleAuthenticatorToken> tokens = this.storage.get(uid);
-            return tokens.stream().anyMatch(t -> t.getToken().equals(otp));
-        } catch (final Exception e){
+            final Collection<GoogleAuthenticatorToken> tokens = this.storage.getIfPresent(uid);
+            logger.debug("Found used tokens {}", tokens);
+            return tokens != null && tokens.stream().anyMatch(t -> t.getToken().equals(otp));
+        } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
         }
         return false;

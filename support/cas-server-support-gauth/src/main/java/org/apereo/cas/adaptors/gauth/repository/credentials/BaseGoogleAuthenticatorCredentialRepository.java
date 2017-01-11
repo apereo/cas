@@ -11,5 +11,5 @@ import org.slf4j.LoggerFactory;
  * @since 5.0.0
  */
 public abstract class BaseGoogleAuthenticatorCredentialRepository implements ICredentialRepository {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 }

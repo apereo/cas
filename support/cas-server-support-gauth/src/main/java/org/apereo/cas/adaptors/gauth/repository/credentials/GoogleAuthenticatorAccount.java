@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
@@ -24,16 +26,20 @@ public class GoogleAuthenticatorAccount implements Serializable, Comparable<Goog
     /**
      * Instantiates a new Google authenticator account.
      *
-     * @param uid            the uid
+     * @param userId         the uid
      * @param secretKey      the secret key
      * @param validationCode the validation code
      * @param scratchCodes   the scratch codes
      */
-    public GoogleAuthenticatorAccount(final String uid, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
+    @JsonCreator
+    public GoogleAuthenticatorAccount(@JsonProperty("userId") final String userId,
+                                      @JsonProperty("secretKey") final String secretKey,
+                                      @JsonProperty("validationCode") final int validationCode,
+                                      @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
         this.secretKey = secretKey;
         this.validationCode = validationCode;
         this.scratchCodes = scratchCodes;
-        this.userId = uid;
+        this.userId = userId;
     }
 
     public String getSecretKey() {

@@ -25,9 +25,9 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Registration
 
-By defaults, an account registry implementation is included that collects user device registration and saves them into memory. 
+By defaults, an account registry implementation is included that collects user device registration and saves them into memory.
 This option should only be used for demo and testing purposes. Production deployments of this feature will require a separate
-implementation of the registry that is capable to register accounts into persistent storage. 
+implementation of the registry that is capable to register accounts into persistent storage.
 
 ### JPA
 
@@ -54,3 +54,10 @@ Registration records may be kept inside a mongo db instance, via the following m
      <version>${cas.version}</version>
 </dependency>
 ```
+
+### JSON
+
+Registration records may also be kept inside a single JSON file for all users.
+The behavior is only activated when a path to a JSON data store file is provided,
+and otherwise CAS may fallback to keeping records in memory. This feature is mostly
+useful during development and for demo purposes.
